@@ -1,14 +1,14 @@
-#CapyCSS
+# CapyCSS
 
-##まとめ
+## まとめ
 * メモを書くときにマウスを使って簡単にプログラムを書くことができます。
 * ソースを変更してメソッドを追加することでノードとして使用できるようにインポートする機能があります（ビルドが必要です）。
 
-##目標
+## 目標
 * .Net Core 3.1
 * c＃
 
-##オプション
+## オプション
 保存したスクリプトファイルをコマンド引数で指定すると、起動時に自動的に読み込まれます。オプションに-asが指定されている場合、「public」として指定されたノードは、スクリプトのロード後に実行されます。オプションに-aeを指定した場合、スクリプト実行後に自動的に終了します。
 ```
 CapybaraVS.exe script.cbs
@@ -16,7 +16,7 @@ CapybaraVS.exe -as script.cbs
 CapybaraVS.exe -as -ae script.cbs
 ```
 
-##特性
+## 特性
 これは、属性を使用して、作成されたメソッドをノード化するサンプルです。
 ```
 [ScriptMethod]
@@ -27,7 +27,7 @@ public static System.IO.StreamReader GetReadStream(string fileName, string encod
 }
 ```
 
-##操作方法
+## 操作方法
 ※画面左側のメニューから項目をクリックしてノードを配置します。
 * 左クリックしてドラッグし、ノードを円と正方形に接続します。
 * Ctrlキーを押しながら四角形を左クリックすると、ノードが切断されます。
@@ -41,12 +41,12 @@ public static System.IO.StreamReader GetReadStream(string fileName, string encod
 * Ctrl + Sで保存します。
 ※ノード名、引数名、変数名をダブルクリックで編集（画面左側の変数名一覧でのみ変更可能）
 
-##スクリプトの便利な機能
+## スクリプトの便利な機能
 ※カーソルを動かすだけで、ノードが処理した内容を確認できます。
 * 数字と文字をドラッグアンドドロップするだけで、定数ノードを作成できます。
 * ノードの接続時に型キャストをサポートします（オブジェクトからのキャストはサポートしていません）。
 
-##ヒント表示
+## ヒント表示
 英語と日本語をサポートします。ただし、初期状態では英語のみの機械翻訳です。
 日本語で表示するには、実行後に作成されるapp.xmlファイルの内容を変更します。
 ```<Language>en-US</Language>```
@@ -54,11 +54,11 @@ public static System.IO.StreamReader GetReadStream(string fileName, string encod
 ```<Language>ja-JP</Language>```
 再起動すると設定が適用されます。
 
-##メソッドのインポートでサポートされるメソッド
+## メソッドのインポートでサポートされるメソッド
 * Static method
 * Class method(thisを受け取る引数が追加されます)
 
-##スクリプトが対応するメソッド引数
+## スクリプトが対応するメソッド引数
 * Type: int, string, double, byte, sbyte, long, short, ushort, uint, ulong, char, float, decimal, bool, object
 * Class
 * Interface
@@ -68,7 +68,7 @@ public static System.IO.StreamReader GetReadStream(string fileName, string encod
 * Reference(Used as a variable reference)
 * Overload(Different node types)
 
-##スクリプトが対応するメソッドの戻り型
+## スクリプトが対応するメソッドの戻り型
 * Type: int, string, double, byte, sbyte, long, short, ushort, uint, ulong, char, float, decimal, bool, object
 * Class
 * Interface
@@ -76,10 +76,10 @@ public static System.IO.StreamReader GetReadStream(string fileName, string encod
 * Generics
 * void
 
-##メソッドからのメソッド呼び出し
+## メソッドからのメソッド呼び出し
 「Func <>」および「Action <>」タイプの引数は、ノードを外部プロセスとして呼び出すことができます。 「Func <>」の場合、ノード型と戻り値型が一致した場合に接続できます。
 
-##スクリプト実行フロー
+## スクリプト実行フロー
 以下の方法でリフレクションで公開するメソッドを見つけてメニューに登録してください。
 
 ```ScriptImplement.ImplemantScriptMethods(TreeMenuNode node)```
@@ -126,5 +126,5 @@ UIの引数はLinkConnectorで管理され、List関数の引数はLinkConnector
 ただし、強制がチェックされるノードとイベント呼び出し（Func <>）は毎回計算されます。
 毎回計算する必要があるノード（状態を持つノード）については、必要に応じて[強制]をオンにする必要があります。
 
-##ライセンス
+## ライセンス
 MITライセンス

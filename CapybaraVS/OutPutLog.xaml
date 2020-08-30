@@ -1,0 +1,17 @@
+﻿<UserControl x:Class="CapybaraVS.OutPutLog"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:CapybaraVS"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800">
+    <Grid>
+        <TextBox x:Name="Log" Background="#FF272727" BorderBrush="#FF959595" VerticalScrollBarVisibility="Auto" Foreground="White" />
+        <Grid HorizontalAlignment="Right" VerticalAlignment="Top" Background="#FF6C6C6C" Margin="0,4,20,0" >
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="1,0,2,0" >
+                <CheckBox x:Name="AutoClear" Foreground="White" Content="Auto Clear" />
+            </StackPanel>
+        </Grid>
+    </Grid>
+</UserControl>

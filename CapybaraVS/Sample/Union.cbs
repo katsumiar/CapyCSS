@@ -1,0 +1,565 @@
+<?xml version="1.0" encoding="utf-16"?>
+<CommandCanvas Id="2">
+  <WorkCanvas Id="1">
+    <EnabelGridLine>false</EnabelGridLine>
+    <EnableInfo>true</EnableInfo>
+    <CanvasScale>0.8227024747918817</CanvasScale>
+    <CanvasRenderTransform>
+      <M11>0.8227024747918817</M11>
+      <M12>0</M12>
+      <M21>0</M21>
+      <M22>0.8227024747918817</M22>
+      <OffsetX>224.20632279435492</OffsetX>
+      <OffsetY>1.3784652421540926</OffsetY>
+    </CanvasRenderTransform>
+  </WorkCanvas>
+  <WorkStack>
+    <StackList />
+  </WorkStack>
+  <WorkCanvasAssetList>
+    <Asset Id="3" X="870" Y="120">
+      <MultiRootConnector>
+        <RootFunc AssetType="FuncType" AssetFuncType="CapybaraVS.Script.Lib.Union.Jaccard#_List&lt;string&gt;_List&lt;string&gt;">
+          <AttachVariableIds />
+          <AttachVariableId>0</AttachVariableId>
+          <AssetLiteralType>
+            <LiteralType>Double</LiteralType>
+            <ObjectType>none</ObjectType>
+          </AssetLiteralType>
+          <RootConnector PointId="772">
+            <Caption>
+              <LabelString>Jaccard</LabelString>
+            </Caption>
+            <Value>0.125</Value>
+            <ForcedChecked>false</ForcedChecked>
+            <Connector>
+              <LinkList>
+                <PointID>806</PointID>
+              </LinkList>
+            </Connector>
+            <Arguments>
+              <LinkConnector PointId="773">
+                <CastConnect>false</CastConnect>
+                <ParamInfo>
+                  <ParamName>A</ParamName>
+                  <ParamNameLabelOverlap>A</ParamNameLabelOverlap>
+                  <ParamNameLabel>
+                    <LabelString>A</LabelString>
+                  </ParamNameLabel>
+                </ParamInfo>
+                <LinkConnectorList>
+                  <List />
+                </LinkConnectorList>
+              </LinkConnector>
+              <LinkConnector PointId="774">
+                <CastConnect>false</CastConnect>
+                <ParamInfo>
+                  <ParamName>B</ParamName>
+                  <ParamNameLabelOverlap>B</ParamNameLabelOverlap>
+                  <ParamNameLabel>
+                    <LabelString>B</LabelString>
+                  </ParamNameLabel>
+                </ParamInfo>
+                <LinkConnectorList>
+                  <List />
+                </LinkConnectorList>
+              </LinkConnector>
+            </Arguments>
+            <IsPublicExecute>false</IsPublicExecute>
+          </RootConnector>
+        </RootFunc>
+      </MultiRootConnector>
+    </Asset>
+    <Asset Id="4" X="450" Y="60">
+      <MultiRootConnector>
+        <RootFunc AssetType="ListType" AssetFuncType="none">
+          <AttachVariableIds />
+          <AttachVariableId>0</AttachVariableId>
+          <AssetLiteralType>
+            <LiteralType>String</LiteralType>
+            <ObjectType>List</ObjectType>
+          </AssetLiteralType>
+          <RootConnector PointId="777">
+            <Caption>
+              <LabelString>list&lt;string&gt;</LabelString>
+            </Caption>
+            <ForcedChecked>false</ForcedChecked>
+            <Connector>
+              <LinkList>
+                <PointID>773</PointID>
+                <PointID>815</PointID>
+                <PointID>821</PointID>
+              </LinkList>
+            </Connector>
+            <Arguments>
+              <LinkConnector PointId="778">
+                <CastConnect>false</CastConnect>
+                <ParamInfo>
+                  <ParamName />
+                  <ParamNameLabelOverlap />
+                  <ParamNameLabel>
+                    <LabelString />
+                  </ParamNameLabel>
+                </ParamInfo>
+                <LinkConnectorList>
+                  <List>
+                    <LinkConnector PointId="780">
+                      <Value>rrr</Value>
+                      <CastConnect>false</CastConnect>
+                      <ParamInfo>
+                        <ParamName />
+                        <ParamNameLabelOverlap />
+                        <ParamNameLabel>
+                          <LabelString />
+                        </ParamNameLabel>
+                      </ParamInfo>
+                      <LinkConnectorList>
+                        <List />
+                      </LinkConnectorList>
+                    </LinkConnector>
+                    <LinkConnector PointId="782">
+                      <Value>tfg</Value>
+                      <CastConnect>false</CastConnect>
+                      <ParamInfo>
+                        <ParamName />
+                        <ParamNameLabelOverlap />
+                        <ParamNameLabel>
+                          <LabelString />
+                        </ParamNameLabel>
+                      </ParamInfo>
+                      <LinkConnectorList>
+                        <List />
+                      </LinkConnectorList>
+                    </LinkConnector>
+                    <LinkConnector PointId="784">
+                      <Value>a</Value>
+                      <CastConnect>false</CastConnect>
+                      <ParamInfo>
+                        <ParamName />
+                        <ParamNameLabelOverlap />
+                        <ParamNameLabel>
+                          <LabelString />
+                        </ParamNameLabel>
+                      </ParamInfo>
+                      <LinkConnectorList>
+                        <List />
+                      </LinkConnectorList>
+                    </LinkConnector>
+                    <LinkConnector PointId="786">
+                      <Value>aaa</Value>
+                      <CastConnect>false</CastConnect>
+                      <ParamInfo>
+                        <ParamName />
+                        <ParamNameLabelOverlap />
+                        <ParamNameLabel>
+                          <LabelString />
+                        </ParamNameLabel>
+                      </ParamInfo>
+                      <LinkConnectorList>
+                        <List />
+                      </LinkConnectorList>
+                    </LinkConnector>
+                    <LinkConnector PointId="788">
+                      <Value>ddd</Value>
+                      <CastConnect>false</CastConnect>
+                      <ParamInfo>
+                        <ParamName />
+                        <ParamNameLabelOverlap />
+                        <ParamNameLabel>
+                          <LabelString />
+                        </ParamNameLabel>
+                      </ParamInfo>
+                      <LinkConnectorList>
+                        <List />
+                      </LinkConnectorList>
+                    </LinkConnector>
+                  </List>
+                </LinkConnectorList>
+              </LinkConnector>
+            </Arguments>
+            <IsPublicExecute>false</IsPublicExecute>
+          </RootConnector>
+        </RootFunc>
+      </MultiRootConnector>
+    </Asset>
+    <Asset Id="4" X="450" Y="360">
+      <MultiRootConnector>
+        <RootFunc AssetType="ListType" AssetFuncType="none">
+          <AttachVariableIds />
+          <AttachVariableId>0</AttachVariableId>
+          <AssetLiteralType>
+            <LiteralType>String</LiteralType>
+            <ObjectType>List</ObjectType>
+          </AssetLiteralType>
+          <RootConnector PointId="791">
+            <Caption>
+              <LabelString>list&lt;string&gt;</LabelString>
+            </Caption>
+            <ForcedChecked>false</ForcedChecked>
+            <Connector>
+              <LinkList />
+            </Connector>
+            <Arguments>
+              <LinkConnector PointId="792">
+                <CastConnect>false</CastConnect>
+                <ParamInfo>
+                  <ParamName />
+                  <ParamNameLabelOverlap />
+                  <ParamNameLabel>
+                    <LabelString />
+                  </ParamNameLabel>
+                </ParamInfo>
+                <LinkConnectorList>
+                  <List>
+                    <LinkConnector PointId="794">
+                      <Value>erd</Value>
+                      <CastConnect>false</CastConnect>
+                      <ParamInfo>
+                        <ParamName />
+                        <ParamNameLabelOverlap />
+                        <ParamNameLabel>
+                          <LabelString />
+                        </ParamNameLabel>
+                      </ParamInfo>
+                      <LinkConnectorList>
+                        <List />
+                      </LinkConnectorList>
+                    </LinkConnector>
+                    <LinkConnector PointId="796">
+                      <Value>aaa</Value>
+                      <CastConnect>false</CastConnect>
+                      <ParamInfo>
+                        <ParamName />
+                        <ParamNameLabelOverlap />
+                        <ParamNameLabel>
+                          <LabelString />
+                        </ParamNameLabel>
+                      </ParamInfo>
+                      <LinkConnectorList>
+                        <List />
+                      </LinkConnectorList>
+                    </LinkConnector>
+                    <LinkConnector PointId="798">
+                      <Value>aaa</Value>
+                      <CastConnect>false</CastConnect>
+                      <ParamInfo>
+                        <ParamName />
+                        <ParamNameLabelOverlap />
+                        <ParamNameLabel>
+                          <LabelString />
+                        </ParamNameLabel>
+                      </ParamInfo>
+                      <LinkConnectorList>
+                        <List />
+                      </LinkConnectorList>
+                    </LinkConnector>
+                    <LinkConnector PointId="800">
+                      <Value>ddd</Value>
+                      <CastConnect>false</CastConnect>
+                      <ParamInfo>
+                        <ParamName />
+                        <ParamNameLabelOverlap />
+                        <ParamNameLabel>
+                          <LabelString />
+                        </ParamNameLabel>
+                      </ParamInfo>
+                      <LinkConnectorList>
+                        <List />
+                      </LinkConnectorList>
+                    </LinkConnector>
+                  </List>
+                </LinkConnectorList>
+              </LinkConnector>
+            </Arguments>
+            <IsPublicExecute>false</IsPublicExecute>
+          </RootConnector>
+        </RootFunc>
+      </MultiRootConnector>
+    </Asset>
+    <Asset Id="6" X="1242.54271875" Y="190.55190000000002">
+      <MultiRootConnector>
+        <RootFunc AssetType="FuncType" AssetFuncType="Subroutine">
+          <AttachVariableIds />
+          <AttachVariableId>0</AttachVariableId>
+          <AssetLiteralType>
+            <LiteralType>Object</LiteralType>
+            <ObjectType>none</ObjectType>
+          </AssetLiteralType>
+          <RootConnector PointId="803">
+            <Caption>
+              <LabelString>Sequence</LabelString>
+            </Caption>
+            <Value>[object]</Value>
+            <ForcedChecked>false</ForcedChecked>
+            <Connector>
+              <LinkList />
+            </Connector>
+            <Arguments>
+              <LinkConnector PointId="804">
+                <CastConnect>false</CastConnect>
+                <ParamInfo>
+                  <ParamName>call list</ParamName>
+                  <ParamNameLabelOverlap>call list</ParamNameLabelOverlap>
+                  <ParamNameLabel>
+                    <LabelString>call list</LabelString>
+                  </ParamNameLabel>
+                </ParamInfo>
+                <LinkConnectorList>
+                  <List>
+                    <LinkConnector PointId="806">
+                      <Value>[object]&lt;null&gt;</Value>
+                      <CastConnect>false</CastConnect>
+                      <ParamInfo>
+                        <ParamName />
+                        <ParamNameLabelOverlap />
+                        <ParamNameLabel>
+                          <LabelString />
+                        </ParamNameLabel>
+                      </ParamInfo>
+                      <LinkConnectorList>
+                        <List />
+                      </LinkConnectorList>
+                    </LinkConnector>
+                    <LinkConnector PointId="808">
+                      <Value>[object]&lt;null&gt;</Value>
+                      <CastConnect>false</CastConnect>
+                      <ParamInfo>
+                        <ParamName />
+                        <ParamNameLabelOverlap />
+                        <ParamNameLabel>
+                          <LabelString />
+                        </ParamNameLabel>
+                      </ParamInfo>
+                      <LinkConnectorList>
+                        <List />
+                      </LinkConnectorList>
+                    </LinkConnector>
+                    <LinkConnector PointId="810">
+                      <Value>[object]&lt;null&gt;</Value>
+                      <CastConnect>false</CastConnect>
+                      <ParamInfo>
+                        <ParamName />
+                        <ParamNameLabelOverlap />
+                        <ParamNameLabel>
+                          <LabelString />
+                        </ParamNameLabel>
+                      </ParamInfo>
+                      <LinkConnectorList>
+                        <List />
+                      </LinkConnectorList>
+                    </LinkConnector>
+                  </List>
+                </LinkConnectorList>
+              </LinkConnector>
+            </Arguments>
+            <IsPublicExecute>true</IsPublicExecute>
+          </RootConnector>
+        </RootFunc>
+      </MultiRootConnector>
+    </Asset>
+    <Asset Id="8" X="870" Y="300">
+      <MultiRootConnector>
+        <RootFunc AssetType="FuncType" AssetFuncType="CapybaraVS.Script.Lib.Union.Dice#_List&lt;string&gt;_List&lt;string&gt;">
+          <AttachVariableIds />
+          <AttachVariableId>0</AttachVariableId>
+          <AssetLiteralType>
+            <LiteralType>Double</LiteralType>
+            <ObjectType>none</ObjectType>
+          </AssetLiteralType>
+          <RootConnector PointId="814">
+            <Caption>
+              <LabelString>Dice</LabelString>
+            </Caption>
+            <Value>0.2222222222222222</Value>
+            <ForcedChecked>false</ForcedChecked>
+            <Connector>
+              <LinkList>
+                <PointID>808</PointID>
+              </LinkList>
+            </Connector>
+            <Arguments>
+              <LinkConnector PointId="815">
+                <CastConnect>false</CastConnect>
+                <ParamInfo>
+                  <ParamName>A</ParamName>
+                  <ParamNameLabelOverlap>A</ParamNameLabelOverlap>
+                  <ParamNameLabel>
+                    <LabelString>A</LabelString>
+                  </ParamNameLabel>
+                </ParamInfo>
+                <LinkConnectorList>
+                  <List />
+                </LinkConnectorList>
+              </LinkConnector>
+              <LinkConnector PointId="816">
+                <CastConnect>false</CastConnect>
+                <ParamInfo>
+                  <ParamName>B</ParamName>
+                  <ParamNameLabelOverlap>B</ParamNameLabelOverlap>
+                  <ParamNameLabel>
+                    <LabelString>B</LabelString>
+                  </ParamNameLabel>
+                </ParamInfo>
+                <LinkConnectorList>
+                  <List />
+                </LinkConnectorList>
+              </LinkConnector>
+            </Arguments>
+            <IsPublicExecute>false</IsPublicExecute>
+          </RootConnector>
+        </RootFunc>
+      </MultiRootConnector>
+    </Asset>
+    <Asset Id="9" X="870" Y="480">
+      <MultiRootConnector>
+        <RootFunc AssetType="FuncType" AssetFuncType="CapybaraVS.Script.Lib.Union.Simpson#_List&lt;string&gt;_List&lt;string&gt;">
+          <AttachVariableIds />
+          <AttachVariableId>0</AttachVariableId>
+          <AssetLiteralType>
+            <LiteralType>Double</LiteralType>
+            <ObjectType>none</ObjectType>
+          </AssetLiteralType>
+          <RootConnector PointId="820">
+            <Caption>
+              <LabelString>Simpson</LabelString>
+            </Caption>
+            <Value>0.25</Value>
+            <ForcedChecked>false</ForcedChecked>
+            <Connector>
+              <LinkList>
+                <PointID>810</PointID>
+              </LinkList>
+            </Connector>
+            <Arguments>
+              <LinkConnector PointId="821">
+                <CastConnect>false</CastConnect>
+                <ParamInfo>
+                  <ParamName>A</ParamName>
+                  <ParamNameLabelOverlap>A</ParamNameLabelOverlap>
+                  <ParamNameLabel>
+                    <LabelString>A</LabelString>
+                  </ParamNameLabel>
+                </ParamInfo>
+                <LinkConnectorList>
+                  <List />
+                </LinkConnectorList>
+              </LinkConnector>
+              <LinkConnector PointId="822">
+                <CastConnect>false</CastConnect>
+                <ParamInfo>
+                  <ParamName>B</ParamName>
+                  <ParamNameLabelOverlap>B</ParamNameLabelOverlap>
+                  <ParamNameLabel>
+                    <LabelString>B</LabelString>
+                  </ParamNameLabel>
+                </ParamInfo>
+                <LinkConnectorList>
+                  <List />
+                </LinkConnectorList>
+              </LinkConnector>
+            </Arguments>
+            <IsPublicExecute>false</IsPublicExecute>
+          </RootConnector>
+        </RootFunc>
+      </MultiRootConnector>
+    </Asset>
+    <Asset Id="10" X="450" Y="630">
+      <MultiRootConnector>
+        <RootFunc AssetType="ListType" AssetFuncType="none">
+          <AttachVariableIds />
+          <AttachVariableId>0</AttachVariableId>
+          <AssetLiteralType>
+            <LiteralType>String</LiteralType>
+            <ObjectType>List</ObjectType>
+          </AssetLiteralType>
+          <RootConnector PointId="825">
+            <Caption>
+              <LabelString>list&lt;string&gt;</LabelString>
+            </Caption>
+            <ForcedChecked>false</ForcedChecked>
+            <Connector>
+              <LinkList>
+                <PointID>822</PointID>
+                <PointID>816</PointID>
+                <PointID>774</PointID>
+              </LinkList>
+            </Connector>
+            <Arguments>
+              <LinkConnector PointId="826">
+                <CastConnect>false</CastConnect>
+                <ParamInfo>
+                  <ParamName />
+                  <ParamNameLabelOverlap />
+                  <ParamNameLabel>
+                    <LabelString />
+                  </ParamNameLabel>
+                </ParamInfo>
+                <LinkConnectorList>
+                  <List>
+                    <LinkConnector PointId="828">
+                      <Value>eeee</Value>
+                      <CastConnect>false</CastConnect>
+                      <ParamInfo>
+                        <ParamName />
+                        <ParamNameLabelOverlap />
+                        <ParamNameLabel>
+                          <LabelString />
+                        </ParamNameLabel>
+                      </ParamInfo>
+                      <LinkConnectorList>
+                        <List />
+                      </LinkConnectorList>
+                    </LinkConnector>
+                    <LinkConnector PointId="830">
+                      <Value>uuu</Value>
+                      <CastConnect>false</CastConnect>
+                      <ParamInfo>
+                        <ParamName />
+                        <ParamNameLabelOverlap />
+                        <ParamNameLabel>
+                          <LabelString />
+                        </ParamNameLabel>
+                      </ParamInfo>
+                      <LinkConnectorList>
+                        <List />
+                      </LinkConnectorList>
+                    </LinkConnector>
+                    <LinkConnector PointId="832">
+                      <Value>rrr</Value>
+                      <CastConnect>false</CastConnect>
+                      <ParamInfo>
+                        <ParamName />
+                        <ParamNameLabelOverlap />
+                        <ParamNameLabel>
+                          <LabelString />
+                        </ParamNameLabel>
+                      </ParamInfo>
+                      <LinkConnectorList>
+                        <List />
+                      </LinkConnectorList>
+                    </LinkConnector>
+                    <LinkConnector PointId="834">
+                      <Value>erd</Value>
+                      <CastConnect>false</CastConnect>
+                      <ParamInfo>
+                        <ParamName />
+                        <ParamNameLabelOverlap />
+                        <ParamNameLabel>
+                          <LabelString />
+                        </ParamNameLabel>
+                      </ParamInfo>
+                      <LinkConnectorList>
+                        <List />
+                      </LinkConnectorList>
+                    </LinkConnector>
+                  </List>
+                </LinkConnectorList>
+              </LinkConnector>
+            </Arguments>
+            <IsPublicExecute>false</IsPublicExecute>
+          </RootConnector>
+        </RootFunc>
+      </MultiRootConnector>
+    </Asset>
+  </WorkCanvasAssetList>
+</CommandCanvas>

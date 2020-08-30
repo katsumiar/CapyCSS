@@ -1,0 +1,266 @@
+<?xml version="1.0" encoding="utf-16"?>
+<CommandCanvas Id="2">
+  <WorkCanvas Id="1">
+    <EnabelGridLine>false</EnabelGridLine>
+    <EnableInfo>true</EnableInfo>
+    <CanvasScale>1</CanvasScale>
+    <CanvasRenderTransform>
+      <M11>1</M11>
+      <M12>0</M12>
+      <M21>0</M21>
+      <M22>1</M22>
+      <OffsetX>-59</OffsetX>
+      <OffsetY>34</OffsetY>
+    </CanvasRenderTransform>
+  </WorkCanvas>
+  <WorkStack>
+    <StackList>
+      <Asset>
+        <Id>1</Id>
+        <VariableType>
+          <ClassName>System.Func`2[[System.Object, System.Private.CoreLib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.Int32, System.Private.CoreLib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]</ClassName>
+          <LiteralType>Func</LiteralType>
+          <ObjectType>none</ObjectType>
+        </VariableType>
+        <Name>func</Name>
+      </Asset>
+    </StackList>
+  </WorkStack>
+  <WorkCanvasAssetList>
+    <Asset Id="3" X="609" Y="375">
+      <MultiRootConnector>
+        <RootFunc AssetType="FuncType" AssetFuncType="GetVariable">
+          <AttachVariableIds>
+            <int>1</int>
+          </AttachVariableIds>
+          <AttachVariableId>1</AttachVariableId>
+          <AssetLiteralType>
+            <LiteralType>Int</LiteralType>
+            <ObjectType>Func</ObjectType>
+          </AssetLiteralType>
+          <RootConnector PointId="2">
+            <Caption>
+              <LabelString>[ func ]</LabelString>
+            </Caption>
+            <Value>[Func&lt;object, int&gt;()]&lt;null&gt;</Value>
+            <ForcedChecked>false</ForcedChecked>
+            <Connector>
+              <LinkList>
+                <PointID>8</PointID>
+              </LinkList>
+            </Connector>
+            <Arguments />
+            <IsPublicExecute>false</IsPublicExecute>
+          </RootConnector>
+        </RootFunc>
+      </MultiRootConnector>
+    </Asset>
+    <Asset Id="5" X="888" Y="282">
+      <MultiRootConnector>
+        <RootFunc AssetType="FuncType" AssetFuncType="InvokeWithArg">
+          <AttachVariableIds />
+          <AttachVariableId>0</AttachVariableId>
+          <AssetLiteralType>
+            <LiteralType>Int</LiteralType>
+            <ObjectType>none</ObjectType>
+          </AssetLiteralType>
+          <RootConnector PointId="6">
+            <Caption>
+              <LabelString>Func&lt;object,int&gt;.Invoke</LabelString>
+            </Caption>
+            <Value>999</Value>
+            <ForcedChecked>false</ForcedChecked>
+            <Connector>
+              <LinkList>
+                <PointID>20</PointID>
+              </LinkList>
+            </Connector>
+            <Arguments>
+              <LinkConnector PointId="7">
+                <Value>999</Value>
+                <CastConnect>false</CastConnect>
+                <ParamInfo>
+                  <ParamName>argument</ParamName>
+                  <ParamNameLabelOverlap>argument</ParamNameLabelOverlap>
+                  <ParamNameLabel>
+                    <LabelString>argument</LabelString>
+                  </ParamNameLabel>
+                </ParamInfo>
+                <LinkConnectorList>
+                  <List />
+                </LinkConnectorList>
+              </LinkConnector>
+              <LinkConnector PointId="8">
+                <Value>[Func&lt;object, int&gt;()]&lt;null&gt;</Value>
+                <CastConnect>false</CastConnect>
+                <ParamInfo>
+                  <ParamName />
+                  <ParamNameLabelOverlap>func</ParamNameLabelOverlap>
+                  <ParamNameLabel>
+                    <LabelString>func</LabelString>
+                  </ParamNameLabel>
+                </ParamInfo>
+                <LinkConnectorList>
+                  <List />
+                </LinkConnectorList>
+              </LinkConnector>
+            </Arguments>
+            <IsPublicExecute>false</IsPublicExecute>
+          </RootConnector>
+        </RootFunc>
+      </MultiRootConnector>
+    </Asset>
+    <Asset Id="6" X="638" Y="176">
+      <MultiRootConnector>
+        <RootFunc AssetType="FuncType" AssetFuncType="CallerArguments">
+          <AttachVariableIds />
+          <AttachVariableId>0</AttachVariableId>
+          <AssetLiteralType>
+            <LiteralType>Int</LiteralType>
+            <ObjectType>none</ObjectType>
+          </AssetLiteralType>
+          <RootConnector PointId="11">
+            <Caption>
+              <LabelString>DummyArguments&lt;int&gt;</LabelString>
+            </Caption>
+            <Value>999</Value>
+            <ForcedChecked>false</ForcedChecked>
+            <Connector>
+              <LinkList>
+                <PointID>23</PointID>
+              </LinkList>
+            </Connector>
+            <Arguments>
+              <LinkConnector PointId="12">
+                <Value>INDEX.ARG_1</Value>
+                <CastConnect>false</CastConnect>
+                <ParamInfo>
+                  <ParamName>select</ParamName>
+                  <ParamNameLabelOverlap>select</ParamNameLabelOverlap>
+                  <ParamNameLabel>
+                    <LabelString>select</LabelString>
+                  </ParamNameLabel>
+                </ParamInfo>
+                <LinkConnectorList>
+                  <List />
+                </LinkConnectorList>
+              </LinkConnector>
+            </Arguments>
+            <IsPublicExecute>false</IsPublicExecute>
+          </RootConnector>
+        </RootFunc>
+      </MultiRootConnector>
+    </Asset>
+    <Asset Id="8" X="1248" Y="93">
+      <MultiRootConnector>
+        <RootFunc AssetType="FuncType" AssetFuncType="Subroutine">
+          <AttachVariableIds />
+          <AttachVariableId>0</AttachVariableId>
+          <AssetLiteralType>
+            <LiteralType>Object</LiteralType>
+            <ObjectType>none</ObjectType>
+          </AssetLiteralType>
+          <RootConnector PointId="15">
+            <Caption>
+              <LabelString>Sequence</LabelString>
+            </Caption>
+            <Value>[object]&lt;null&gt;</Value>
+            <ForcedChecked>false</ForcedChecked>
+            <Connector>
+              <LinkList />
+            </Connector>
+            <Arguments>
+              <LinkConnector PointId="16">
+                <CastConnect>false</CastConnect>
+                <ParamInfo>
+                  <ParamName>call list</ParamName>
+                  <ParamNameLabelOverlap>call list</ParamNameLabelOverlap>
+                  <ParamNameLabel>
+                    <LabelString>call list</LabelString>
+                  </ParamNameLabel>
+                </ParamInfo>
+                <LinkConnectorList>
+                  <List>
+                    <LinkConnector PointId="18">
+                      <Value>[object]&lt;null&gt;</Value>
+                      <CastConnect>false</CastConnect>
+                      <ParamInfo>
+                        <ParamName />
+                        <ParamNameLabelOverlap />
+                        <ParamNameLabel>
+                          <LabelString />
+                        </ParamNameLabel>
+                      </ParamInfo>
+                      <LinkConnectorList>
+                        <List />
+                      </LinkConnectorList>
+                    </LinkConnector>
+                    <LinkConnector PointId="20">
+                      <Value>[object]&lt;null&gt;</Value>
+                      <CastConnect>false</CastConnect>
+                      <ParamInfo>
+                        <ParamName />
+                        <ParamNameLabelOverlap />
+                        <ParamNameLabel>
+                          <LabelString />
+                        </ParamNameLabel>
+                      </ParamInfo>
+                      <LinkConnectorList>
+                        <List />
+                      </LinkConnectorList>
+                    </LinkConnector>
+                  </List>
+                </LinkConnectorList>
+              </LinkConnector>
+            </Arguments>
+            <IsPublicExecute>true</IsPublicExecute>
+          </RootConnector>
+        </RootFunc>
+      </MultiRootConnector>
+    </Asset>
+    <Asset Id="12" X="885" Y="125">
+      <MultiRootConnector>
+        <RootFunc AssetType="FuncType" AssetFuncType="SetVariable">
+          <AttachVariableIds>
+            <int>1</int>
+          </AttachVariableIds>
+          <AttachVariableId>1</AttachVariableId>
+          <AssetLiteralType>
+            <ClassName>System.Func`2[[System.Object, System.Private.CoreLib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.Int32, System.Private.CoreLib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]</ClassName>
+            <LiteralType>Func</LiteralType>
+            <ObjectType>none</ObjectType>
+          </AssetLiteralType>
+          <RootConnector PointId="22">
+            <Caption>
+              <LabelString>[ func ]</LabelString>
+            </Caption>
+            <Value>[Func&lt;object, int&gt;()]&lt;null&gt;</Value>
+            <ForcedChecked>false</ForcedChecked>
+            <Connector>
+              <LinkList>
+                <PointID>18</PointID>
+              </LinkList>
+            </Connector>
+            <Arguments>
+              <LinkConnector PointId="23">
+                <Value>[Func&lt;object, int&gt;()]&lt;null&gt;</Value>
+                <CastConnect>false</CastConnect>
+                <ParamInfo>
+                  <ParamName />
+                  <ParamNameLabelOverlap>n</ParamNameLabelOverlap>
+                  <ParamNameLabel>
+                    <LabelString>n</LabelString>
+                  </ParamNameLabel>
+                </ParamInfo>
+                <LinkConnectorList>
+                  <List />
+                </LinkConnectorList>
+              </LinkConnector>
+            </Arguments>
+            <IsPublicExecute>false</IsPublicExecute>
+          </RootConnector>
+        </RootFunc>
+      </MultiRootConnector>
+    </Asset>
+  </WorkCanvasAssetList>
+</CommandCanvas>

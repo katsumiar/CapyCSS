@@ -1,0 +1,32 @@
+﻿<UserControl x:Class="CapybaraVS.Controls.BaseControls.RootConnector"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:CapybaraVS.Controls.BaseControls"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800" FocusVisualStyle="{x:Null}">
+    <StackPanel x:Name="MainPanel" HorizontalAlignment="Center" VerticalAlignment="Center">
+        <local:NameLabel x:Name="FuncCaption" CehckTitle="True" LabelString="" HorizontalAlignment="Right" />
+        <Grid x:Name="RootMainPanel" HorizontalAlignment="Right" VerticalAlignment="Center" MouseEnter="RootMainPanel_MouseEnter" MouseLeave="RootMainPanel_MouseLeave">
+            <StackPanel x:Name="RootLinkMainPanel" HorizontalAlignment="Center" VerticalAlignment="Center" MouseLeftButtonDown="Grid_MouseLeftButtonDown" Orientation="Horizontal">
+                <CheckBox x:Name="Forced" Content="Forced" Click="Forced_Click" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,0,6,0" FontStyle="Italic" />
+                <local:UIParam x:Name="NameText" />
+                <Ellipse x:Name="EllipseType" Width="22" Height="22" Stroke="#FF0017FF" Fill="#7F78D862" StrokeThickness="2" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                <Rectangle x:Name="RectangleType" Visibility="Collapsed" Width="20" Height="20" Stroke="#FF0017FF" Fill="#7F78D862" StrokeThickness="2" HorizontalAlignment="Center" VerticalAlignment="Center" />
+            </StackPanel>
+        </Grid>
+        <Grid x:Name="BoxMainPanel" HorizontalAlignment="Left" VerticalAlignment="Center">
+            <Grid HorizontalAlignment="Center" VerticalAlignment="Top">
+                <Rectangle x:Name="RectBox" RadiusX="6" RadiusY="6" StrokeThickness="3" Fill="#99E2E2E2"/>
+                <Grid HorizontalAlignment="Center" VerticalAlignment="Center" Margin="5,5,6,5">
+                    <ListView x:Name="Box" Background="Transparent" BorderBrush="#00ABADB3" />
+                </Grid>
+            </Grid>
+        </Grid>
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+            <CheckBox x:Name="IsPublicExecute" Visibility="Collapsed" Content="Entry" Checked="IsPublicExecute_Checked" Unchecked="IsPublicExecute_Unchecked" HorizontalAlignment="Right" Margin="0,0,6,0"/>
+            <Button x:Name="ExecuteButtunControl" Visibility="Collapsed" Content="Run" MinWidth="80" HorizontalAlignment="Right" Padding="6,1,6,1" />
+        </StackPanel>
+    </StackPanel>
+</UserControl>

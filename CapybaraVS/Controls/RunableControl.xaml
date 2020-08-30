@@ -1,0 +1,17 @@
+﻿<UserControl xmlns:Controls="clr-namespace:CapybaraVS.Controls"  x:Class="CapybaraVS.Controls.RunableControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:CapybaraVS.Controls.BaseControls"
+             mc:Ignorable="d" 
+             d:DesignHeight="313" d:DesignWidth="600" FocusVisualStyle="{x:Null}">
+    <StackPanel x:Name="MainGrid" HorizontalAlignment="Center" VerticalAlignment="Center" MinWidth="40" MinHeight="16">
+        <Grid>
+            <local:NameLabel x:Name="CaptionLabel"  HorizontalAlignment="Center" VerticalAlignment="Center" CehckTitle="True" />
+        </Grid>
+        <Controls:LinkConnectorList x:Name="LinkConnectorListControl" />
+        <Grid x:Name="SetGrid"/>
+        <Button x:Name="ButtunControl" Command="{Binding RunCommand}" CommandParameter="{Binding ElementName=LinkConnectorListControl}"  Content="Run" MinWidth="80" HorizontalAlignment="Right" Padding="6,1,6,1" />
+    </StackPanel>
+</UserControl>

@@ -1,0 +1,29 @@
+﻿<UserControl x:Class="CapybaraVS.Controls.Stack"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:CapybaraVS.Controls"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800" FocusVisualStyle="{x:Null}">
+    <Grid HorizontalAlignment="Center">
+        <Rectangle Fill="#B2FFFFFF" />
+        <ScrollViewer Margin="3,3,3,3" >
+            <StackPanel x:Name="ListPanel" ScrollViewer.VerticalScrollBarVisibility="Auto" Margin="4,4,4,4">
+                <Grid>
+                    <Rectangle x:Name="ConnectorBackground" Visibility="Collapsed" RadiusX="3" RadiusY="3" Margin="10, 0,10,0" />
+                    <ListView x:Name="StackList" Background="{x:Null}" BorderBrush="{x:Null}">
+                        <ListView.ItemContainerStyle>
+                            <Style TargetType="{x:Type ListViewItem}">
+                                <Setter Property="Background" Value="Transparent"/>
+                                <Setter Property="BorderBrush" Value="Transparent"/>
+                                <Setter Property="BorderThickness" Value="0,0,0,0"/>
+                                <Setter Property="Padding" Value="0,0,0,0"/>
+                            </Style>
+                        </ListView.ItemContainerStyle>
+                    </ListView>
+                </Grid>
+            </StackPanel>
+        </ScrollViewer>
+    </Grid>
+</UserControl>

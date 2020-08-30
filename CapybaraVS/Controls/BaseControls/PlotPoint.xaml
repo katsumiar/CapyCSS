@@ -1,0 +1,12 @@
+﻿<UserControl x:Class="CapybaraVS.Controls.BaseControls.PlotPoint"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:CapybaraVS.Controls.BaseControls"
+             mc:Ignorable="d" 
+             d:DesignHeight="96.881" d:DesignWidth="102.817" HorizontalAlignment="Center" VerticalAlignment="Center" FocusVisualStyle="{x:Null}">
+    <Grid x:Name="PlotMain">
+        <Ellipse x:Name="Plot" Width="10" Height="10" Fill="#FFB2B2B2" Stroke="#FF5F5F5F" Margin="-5,-5,0,0" />
+    </Grid>
+</UserControl>
