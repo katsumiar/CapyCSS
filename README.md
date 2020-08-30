@@ -1,4 +1,5 @@
 # CapyCSS
+![sample](https://user-images.githubusercontent.com/63950487/91655061-fd3a7380-eae8-11ea-97e2-f4d868b25e97.png)
 
 ## まとめ
 * メモを書くときにマウスを使って簡単にプログラムを書くことができます。
