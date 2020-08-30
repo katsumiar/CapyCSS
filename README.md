@@ -41,6 +41,7 @@ public static System.IO.StreamReader GetReadStream(string path, string encoding 
 * Ctrl + Cで選択したノードをコピーします。
 * Ctrl + Vでコピーされているノードを貼り付けます。
 * Ctrl + Sでスクリプトを保存します。
+
 ※ノード名、引数名はダブルクリックで編集できます。ただし、変数名は画面左側の変数名一覧でのみダブルクリックで編集できます。
 
 ## スクリプトの便利な機能
