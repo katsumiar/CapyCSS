@@ -215,11 +215,27 @@ namespace CapybaraVS.Controls.BaseControls
                 return;
 
             if (typeName.Length != 0)
+            {
+                // 型名
+
                 TypeName = typeName;
+            }
             if (valueData.Name.Length != 0)
+            {
+                // パラメータ名
+
                 ParamName = valueData.Name;
-            TypeNameLabel.Visibility = (typeName.Length != 0 ? Visibility.Visible : Visibility.Collapsed);
-            ParamNameLabel.Visibility = (valueData.Name.Length != 0 ? Visibility.Visible : Visibility.Collapsed);
+            }
+
+            if (ParamName.Length == 0)
+            {
+                // 何もないと編集もできなくなるので空白を入れておく
+
+                ParamName = " ";
+            }
+
+            TypeNameLabel.Visibility = (TypeName.Length != 0 ? Visibility.Visible : Visibility.Collapsed);
+            ParamNameLabel.Visibility = (ParamName.Length != 0 ? Visibility.Visible : Visibility.Collapsed);
             if (ParamNameLabelOverlap.Length != 0)
                 ParamNameLabel.Visibility = Visibility.Visible;
 

@@ -610,7 +610,7 @@ namespace CapybaraVS.Script
                     if (type.GenericTypeArguments.Length > 1)
                         return null;
 
-                    return CbList.Create(type.GenericTypeArguments[0]);
+                    return CbList.Create(type.GenericTypeArguments[0], name);
                 }
 
                 if (CbFunc.IsActionType(type))
