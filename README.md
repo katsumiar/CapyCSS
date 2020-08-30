@@ -17,8 +17,9 @@ CapybaraVS.exe -as script.cbs
 CapybaraVS.exe -as -ae script.cbs
 ```
 
-## 特性
-これは、属性を使用して、作成されたメソッドをノード化するサンプルです。
+## 特徴
+本ツールでは、c# の多くのメソッドを簡単にノード化することができます。
+下記は、属性を使用してメソッドをノード化する例です。
 ```
 [ScriptMethod]
 public static System.IO.StreamReader GetReadStream(string fileName, string encoding = "utf-8")
@@ -29,23 +30,23 @@ public static System.IO.StreamReader GetReadStream(string fileName, string encod
 ```
 
 ## 操作方法
-※画面左側のメニューから項目をクリックしてノードを配置します。
-* 左クリックしてドラッグし、ノードを円と正方形に接続します。
-* Ctrlキーを押しながら四角形を左クリックすると、ノードが切断されます。
-* Shiftキーを押しながらマウスをドラッグして範囲を選択します。
-* Deleteキーで選択したノードを削除します。
-* 左クリックでノードを移動します（Ctrlキーを押したままにすると、ガイドに沿って移動します）。
-* 画面を左クリックしてドラッグすると、画面全体が移動します（選択した場合、選択したものが移動します）。
-* ホイールボタンで表示をスケーリングします。
+* 画面左側のメニューから項目をクリックしてノードを配置します。
+* ノードの○を左クリックしてドラッグし、ノードの□に接続します。
+* Ctrlキーを押しながら□を左クリックすると、ノードが切断されます。
+* Shiftキーを押しながらマウスをドラッグして範囲内のノードを複数選択します。
+* Deleteキーで選択されているノードを削除します。
+* 左クリックでノードを移動できます（Ctrlキーを押下した状態だと、ガイドに沿って移動します）。
+* 画面を左クリックしてドラッグすると、画面全体が移動します（選択されたノードがある場合、選択されているノードが移動します）。
+* ホイールボタンで表示を拡大もしくは縮小します。
 * Ctrl + Cで選択したノードをコピーします。
-* Ctrl + Vで貼り付けます（貼り付け後に選択）。
-* Ctrl + Sで保存します。
-※ノード名、引数名、変数名をダブルクリックで編集（画面左側の変数名一覧でのみ変更可能）
+* Ctrl + Vでコピーされているノードを貼り付けます。
+* Ctrl + Sでスクリプトを保存します。
+※ノード名、引数名はダブルクリックで編集できます。ただし、変数名は画面左側の変数名一覧でのみダブルクリックで編集できます。
 
 ## スクリプトの便利な機能
-※カーソルを動かすだけで、ノードが処理した内容を確認できます。
-* 数字と文字をドラッグアンドドロップするだけで、定数ノードを作成できます。
-* ノードの接続時に型キャストをサポートします（オブジェクトからのキャストはサポートしていません）。
+* 引数の上にカーソルを置くと内容を確認できます。
+* 数字と文字をドラッグアンドドロップするだけで定数ノードを作成できます。
+* ノードの接続時に型キャストが可能です（オブジェクトからのキャストはサポートしていません）。
 
 ## ヒント表示
 英語と日本語をサポートします。ただし、初期状態では英語のみの機械翻訳です。
@@ -66,8 +67,8 @@ public static System.IO.StreamReader GetReadStream(string fileName, string encod
 * Enum
 * Generics
 * Default arguments
-* Reference(Used as a variable reference)
-* Overload(Different node types)
+* Reference
+* Overload
 
 ## スクリプトが対応するメソッドの戻り型
 * Type: int, string, double, byte, sbyte, long, short, ushort, uint, ulong, char, float, decimal, bool, object
@@ -78,54 +79,7 @@ public static System.IO.StreamReader GetReadStream(string fileName, string encod
 * void
 
 ## メソッドからのメソッド呼び出し
-「Func <>」および「Action <>」タイプの引数は、ノードを外部プロセスとして呼び出すことができます。 「Func <>」の場合、ノード型と戻り値型が一致した場合に接続できます。
-
-## スクリプト実行フロー
-以下の方法でリフレクションで公開するメソッドを見つけてメニューに登録してください。
-
-```ScriptImplement.ImplemantScriptMethods(TreeMenuNode node)```
-
-パブリックメソッドは、AutoImplementFunctionクラスで以下のメソッドによって登録および管理されます。
-
-```bool AutoImplementFunction.ImplAsset(MultiRootConnector col, bool noThreadMode = false, DummyArgumentsControl dummyArgumentsControl = null)```
-
-（イベントを呼び出す機能を持つメソッドは、AutoImplementEventFunctionクラスによって管理されます。）
-
-メニューに登録されているパブリックメソッドをクリックすると、以下の方法でBaseWorkCanvasにコマンドが登録されます。
-
-```TreeMenuNodeCommand CommandCanvas.CreateEventCanvasCommand(Func<object> action, TreeMenuNode vm = null)```
-
-コマンド登録されたコマンドは、キャンバス（BaseWorkCanvas）をクリックすると以下の方法で実行されます。
-
-```void BaseWorkCanvas.ProcessCommand(Point setPos)```
-
-キャンバスに配置されるノードは、コマンドの実行時に作成されるMultiRootConnectorによって作成されます。
-MultiRootConnectorの内容は、以下のメソッドによって形成されます。
-
-```void MultiRootConnector.MakeFunctionType()```
-
-ここで呼び出されたAutoImplementFunction.ImplAssetは、以下のメソッドでMultiRootConnectorのFunctionにpublicメソッド呼び出しプロセスを登録します。
-
-```
-void MultiRootConnector.MakeFunction(
-            string name,
-            string hint,
-            Func<ICbVSValue> retType,
-            List<ICbVSValue> argumentList,
-            Func<List<ICbVSValue>, CbPushList, ICbVSValue> func
-            )
-```
-
-UI上のノードの戻り値は、RootConnectorによって管理されます。
-このRootConnectorには、パブリックメソッドを呼び出す機能もあります。
-UIの引数はLinkConnectorで管理され、List関数の引数はLinkConnectorのLinkConnectorListで管理されます。
-
-スクリプトが実行されると、RootConnectorは自身に接続されているノードからRootConnectorの情報（戻り値）を引き出します。
-取得した引数からpublicメソッドを呼び出し、自身の戻り値を計算します。
-このようにして、RootConnectorからLinkConnectorを取得し、最終結果を計算します。
-また、基本的には、結果が得られたら、RootConnectorからの結果のみを参照することで処理が高速化されます。
-ただし、強制がチェックされるノードとイベント呼び出し（Func <>）は毎回計算されます。
-毎回計算する必要があるノード（状態を持つノード）については、必要に応じて[強制]をオンにする必要があります。
+Func<> および Action<> タイプの引数は、ノードを外部プロセスとして呼び出すことができます。Func<> の場合、ノード型と戻り値型が一致した場合に接続できます。Action だと無条件に接続できます。
 
 ## ライセンス
 MITライセンス
