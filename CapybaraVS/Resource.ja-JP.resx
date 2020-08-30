@@ -444,6 +444,9 @@
   <data name="Image_CreateUnsharpMasking" xml:space="preserve">
     <value>鮮鋭化（３✕３アンシャープマスキング）処理を作成します。</value>
   </data>
+  <data name="Image_CreateWhiteMaskFilter" xml:space="preserve">
+    <value>白色を抜き色にします。</value>
+  </data>
   <data name="Image_CRTGamma2dot2" xml:space="preserve">
     <value>CRT gamma 2.2</value>
   </data>

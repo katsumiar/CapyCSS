@@ -1788,6 +1788,78 @@ namespace CbVS.Script.Lib
 
         //------------------------------------------------------------------
         /// <summary>
+        /// 透過処理を定義するクラスです。
+        /// </summary>
+        public class CRGBAWhiteMaskFilter : IRGBAFilter, IRGBA3x3Filter
+        {
+            bool smooth = false;
+
+            public CRGBAWhiteMaskFilter(bool smooth = false)
+            {
+                this.smooth = smooth;
+            }
+
+            public override string ToString()
+            {
+                return $"{this.GetType().FullName} - {nameof(smooth)}: {smooth}";
+            }
+
+            void IRGBA3x3Filter.CalcValueOfPixels(
+                CRGBA pixel00,
+                CRGBA pixel01,
+                CRGBA pixel02,
+                CRGBA pixel10,
+                CRGBA pixel11,
+                CRGBA pixel12,
+                CRGBA pixel20,
+                CRGBA pixel21,
+                CRGBA pixel22,
+                out double R,
+                out double G,
+                out double B,
+                out double Alpha
+                )
+            {
+                CalcValueOfPixels(
+                    pixel11.R, pixel11.G, pixel11.B, pixel11.Alpha,
+                    out R, out G, out B, out Alpha
+                    );
+            }
+
+            public void CalcValueOfPixels(
+                double r, double g, double b, double a,
+                out double R, out double G, out double B, out double Alpha
+                )
+            {
+                R = r;
+                G = g;
+                B = b;
+                if (!smooth && r.Equals(1.0) && r.Equals(g) && g.Equals(b))
+                {
+                    Alpha = 0;
+                }
+                else if (r.Equals(g) && g.Equals(b))
+                {
+                    double avg = (r + g + b) / 3.0;
+                    Alpha = 1.0 - EasingFunction.InOutSine(avg);
+                }
+                else
+                {
+                    Alpha = 1.0;
+                }
+            }
+        }
+
+        [ScriptMethod(nameSpace + ".Filter." + nameof(CreateRGBAWhiteMaskFilter), "",
+            "RS=>Image_CreateWhiteMaskFilter"
+            )]
+        public static CRGBAWhiteMaskFilter CreateRGBAWhiteMaskFilter(bool smooth = false)
+        {
+            return new CRGBAWhiteMaskFilter(smooth);
+        }
+
+        //------------------------------------------------------------------
+        /// <summary>
         /// コントラスト処理を定義するクラスです。
         /// </summary>
         public class CRGBAContrastFilter : IRGBAFilter, IRGBA3x3Filter
@@ -2030,7 +2102,7 @@ namespace CbVS.Script.Lib
 
             public CRGBA3x3FreeFilter(List<double> kernel, double div)
             {
-                kernel.ConvertAll((o) => o / div);
+                kernel = kernel.ConvertAll((o) => o / div);
                 SetupKernel(kernel);
             }
 

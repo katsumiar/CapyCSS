@@ -444,6 +444,9 @@
   <data name="Image_CreateUnsharpMasking" xml:space="preserve">
     <value>Creates a sharpening (3x3 unsharp masking) process.</value>
   </data>
+  <data name="Image_CreateWhiteMaskFilter" xml:space="preserve">
+    <value>Remove the white color.</value>
+  </data>
   <data name="Image_CRTGamma2dot2" xml:space="preserve">
     <value>CRT gamma 2.2</value>
   </data>

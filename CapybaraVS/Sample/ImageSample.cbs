@@ -3,21 +3,21 @@
   <WorkCanvas Id="1">
     <EnabelGridLine>false</EnabelGridLine>
     <EnableInfo>false</EnableInfo>
-    <CanvasScale>0.5568374181775592</CanvasScale>
+    <CanvasScale>0.7106813301301196</CanvasScale>
     <CanvasRenderTransform>
-      <M11>0.5568374181775592</M11>
+      <M11>0.7106813301301196</M11>
       <M12>0</M12>
       <M21>0</M21>
-      <M22>0.5568374181775592</M22>
-      <OffsetX>700.6972000430825</OffsetX>
-      <OffsetY>160.37218553872052</OffsetY>
+      <M22>0.7106813301301196</M22>
+      <OffsetX>501.7260157717609</OffsetX>
+      <OffsetY>108.15904685635394</OffsetY>
     </CanvasRenderTransform>
   </WorkCanvas>
   <WorkStack>
     <StackList />
   </WorkStack>
   <WorkCanvasAssetList>
-    <Asset Id="3" X="358.1551309731735" Y="-183.26405335258545">
+    <Asset Id="3" X="112.1693788741037" Y="-49.30486439782327">
       <MultiRootConnector>
         <RootFunc AssetType="FuncType" AssetFuncType="CbVS.Script.Lib.Image.OpenImage#_string">
           <AttachVariableIds />
@@ -73,7 +73,7 @@
             <ForcedChecked>false</ForcedChecked>
             <Connector>
               <LinkList>
-                <PointID>30</PointID>
+                <PointID>32</PointID>
               </LinkList>
             </Connector>
             <Arguments>
@@ -161,7 +161,7 @@
                   </List>
                 </LinkConnectorList>
               </LinkConnector>
-              <LinkConnector PointId="22">
+              <LinkConnector PointId="24">
                 <Value>[IRGBAFilter]&lt;null&gt;</Value>
                 <CastConnect>false</CastConnect>
                 <ParamInfo>
@@ -175,7 +175,7 @@
                   <List />
                 </LinkConnectorList>
               </LinkConnector>
-              <LinkConnector PointId="23">
+              <LinkConnector PointId="25">
                 <Value>True</Value>
                 <CastConnect>false</CastConnect>
                 <ParamInfo>
@@ -189,7 +189,7 @@
                   <List />
                 </LinkConnectorList>
               </LinkConnector>
-              <LinkConnector PointId="24">
+              <LinkConnector PointId="26">
                 <Value>96</Value>
                 <CastConnect>false</CastConnect>
                 <ParamInfo>
@@ -209,7 +209,7 @@
         </RootFunc>
       </MultiRootConnector>
     </Asset>
-    <Asset Id="5" X="1163" Y="11">
+    <Asset Id="5" X="1184" Y="-41">
       <MultiRootConnector>
         <RootFunc AssetType="FuncType" AssetFuncType="CbVS.Script.Lib.Image.OutImageWindow#_string_BitmapSource">
           <AttachVariableIds />
@@ -218,7 +218,7 @@
             <LiteralType>Double</LiteralType>
             <ObjectType>none</ObjectType>
           </AssetLiteralType>
-          <RootConnector PointId="28">
+          <RootConnector PointId="30">
             <Caption>
               <LabelString>OutImageWindow</LabelString>
             </Caption>
@@ -226,11 +226,11 @@
             <ForcedChecked>false</ForcedChecked>
             <Connector>
               <LinkList>
-                <PointID>36</PointID>
+                <PointID>38</PointID>
               </LinkList>
             </Connector>
             <Arguments>
-              <LinkConnector PointId="29">
+              <LinkConnector PointId="31">
                 <Value />
                 <CastConnect>false</CastConnect>
                 <ParamInfo>
@@ -244,7 +244,7 @@
                   <List />
                 </LinkConnectorList>
               </LinkConnector>
-              <LinkConnector PointId="30">
+              <LinkConnector PointId="32">
                 <Value>[BitmapSource]&lt;null&gt;</Value>
                 <CastConnect>false</CastConnect>
                 <ParamInfo>
@@ -264,7 +264,7 @@
         </RootFunc>
       </MultiRootConnector>
     </Asset>
-    <Asset Id="6" X="1452.794687136086" Y="-51.220395446861346">
+    <Asset Id="6" X="1473.794687136086" Y="-103.2203954468614">
       <MultiRootConnector>
         <RootFunc AssetType="FuncType" AssetFuncType="Subroutine">
           <AttachVariableIds />
@@ -273,7 +273,7 @@
             <LiteralType>Object</LiteralType>
             <ObjectType>none</ObjectType>
           </AssetLiteralType>
-          <RootConnector PointId="33">
+          <RootConnector PointId="35">
             <Caption>
               <LabelString>Sequence</LabelString>
             </Caption>
@@ -283,7 +283,7 @@
               <LinkList />
             </Connector>
             <Arguments>
-              <LinkConnector PointId="34">
+              <LinkConnector PointId="36">
                 <CastConnect>false</CastConnect>
                 <ParamInfo>
                   <ParamName>call list</ParamName>
@@ -294,7 +294,7 @@
                 </ParamInfo>
                 <LinkConnectorList>
                   <List>
-                    <LinkConnector PointId="36">
+                    <LinkConnector PointId="38">
                       <Value>[object]&lt;null&gt;</Value>
                       <CastConnect>false</CastConnect>
                       <ParamInfo>
@@ -326,7 +326,7 @@
             <LiteralType>Double</LiteralType>
             <ObjectType>none</ObjectType>
           </AssetLiteralType>
-          <RootConnector PointId="40">
+          <RootConnector PointId="42">
             <Caption>
               <LabelString>CreateRGBAGlayScaleFilter</LabelString>
             </Caption>
@@ -338,7 +338,7 @@
               </LinkList>
             </Connector>
             <Arguments>
-              <LinkConnector PointId="41">
+              <LinkConnector PointId="43">
                 <Value>GlayScaleType.AVERAGE</Value>
                 <CastConnect>false</CastConnect>
                 <ParamInfo>
@@ -352,7 +352,7 @@
                   <List />
                 </LinkConnectorList>
               </LinkConnector>
-              <LinkConnector PointId="42">
+              <LinkConnector PointId="44">
                 <Value>[IRGBAFilter]&lt;null&gt;</Value>
                 <CastConnect>false</CastConnect>
                 <ParamInfo>
@@ -381,7 +381,7 @@
             <LiteralType>Double</LiteralType>
             <ObjectType>none</ObjectType>
           </AssetLiteralType>
-          <RootConnector PointId="45">
+          <RootConnector PointId="47">
             <Caption>
               <LabelString>CreateRGBA3x3DiffFilter</LabelString>
             </Caption>
@@ -393,7 +393,7 @@
               </LinkList>
             </Connector>
             <Arguments>
-              <LinkConnector PointId="46">
+              <LinkConnector PointId="48">
                 <CastConnect>false</CastConnect>
                 <ParamInfo>
                   <ParamName />
@@ -404,7 +404,7 @@
                 </ParamInfo>
                 <LinkConnectorList>
                   <List>
-                    <LinkConnector PointId="48">
+                    <LinkConnector PointId="50">
                       <Value>[IRGBA3x3Filter]&lt;null&gt;</Value>
                       <CastConnect>false</CastConnect>
                       <ParamInfo>
@@ -436,7 +436,7 @@
             <LiteralType>Double</LiteralType>
             <ObjectType>none</ObjectType>
           </AssetLiteralType>
-          <RootConnector PointId="50">
+          <RootConnector PointId="52">
             <Caption>
               <LabelString>CreateRGBA3x3DilationFilter</LabelString>
             </Caption>
@@ -444,7 +444,7 @@
             <ForcedChecked>false</ForcedChecked>
             <Connector>
               <LinkList>
-                <PointID>48</PointID>
+                <PointID>50</PointID>
               </LinkList>
             </Connector>
             <Arguments />
@@ -453,7 +453,7 @@
         </RootFunc>
       </MultiRootConnector>
     </Asset>
-    <Asset Id="10" X="386.48555934528554" Y="772.5526582975274">
+    <Asset Id="10" X="313.72055934528566" Y="773.6551582975274">
       <MultiRootConnector>
         <RootFunc AssetType="FuncType" AssetFuncType="CbVS.Script.Lib.Image.CreateRGBANegativePositiveReversalFilter#">
           <AttachVariableIds />
@@ -462,7 +462,7 @@
             <LiteralType>Double</LiteralType>
             <ObjectType>none</ObjectType>
           </AssetLiteralType>
-          <RootConnector PointId="52">
+          <RootConnector PointId="54">
             <Caption>
               <LabelString>CreateRGBANegativePositiveReversalFilter</LabelString>
             </Caption>
@@ -479,7 +479,7 @@
         </RootFunc>
       </MultiRootConnector>
     </Asset>
-    <Asset Id="12" X="403.5501697210493" Y="867.1836794722175">
+    <Asset Id="12" X="328.5801697210493" Y="852.8511794722176">
       <MultiRootConnector>
         <RootFunc AssetType="FuncType" AssetFuncType="CbVS.Script.Lib.Image.CreateRGBAContrastFilter#_ContrastType">
           <AttachVariableIds />
@@ -488,7 +488,7 @@
             <LiteralType>Double</LiteralType>
             <ObjectType>none</ObjectType>
           </AssetLiteralType>
-          <RootConnector PointId="55">
+          <RootConnector PointId="57">
             <Caption>
               <LabelString>CreateRGBAContrastFilter</LabelString>
             </Caption>
@@ -496,11 +496,11 @@
             <ForcedChecked>false</ForcedChecked>
             <Connector>
               <LinkList>
-                <PointID>22</PointID>
+                <PointID>24</PointID>
               </LinkList>
             </Connector>
             <Arguments>
-              <LinkConnector PointId="56">
+              <LinkConnector PointId="58">
                 <Value>ContrastType.InOutSine</Value>
                 <CastConnect>false</CastConnect>
                 <ParamInfo>
@@ -529,7 +529,7 @@
             <LiteralType>Double</LiteralType>
             <ObjectType>none</ObjectType>
           </AssetLiteralType>
-          <RootConnector PointId="61">
+          <RootConnector PointId="63">
             <Caption>
               <LabelString>CreateRGBAMulRateFilter</LabelString>
             </Caption>
@@ -541,7 +541,7 @@
               </LinkList>
             </Connector>
             <Arguments>
-              <LinkConnector PointId="62">
+              <LinkConnector PointId="64">
                 <Value>5</Value>
                 <CastConnect>false</CastConnect>
                 <ParamInfo>
@@ -555,7 +555,7 @@
                   <List />
                 </LinkConnectorList>
               </LinkConnector>
-              <LinkConnector PointId="63">
+              <LinkConnector PointId="65">
                 <Value>5</Value>
                 <CastConnect>false</CastConnect>
                 <ParamInfo>
@@ -569,7 +569,7 @@
                   <List />
                 </LinkConnectorList>
               </LinkConnector>
-              <LinkConnector PointId="64">
+              <LinkConnector PointId="66">
                 <Value>5</Value>
                 <CastConnect>false</CastConnect>
                 <ParamInfo>
@@ -598,7 +598,7 @@
             <LiteralType>Double</LiteralType>
             <ObjectType>none</ObjectType>
           </AssetLiteralType>
-          <RootConnector PointId="65">
+          <RootConnector PointId="68">
             <Caption>
               <LabelString>ScreenCapture</LabelString>
             </Caption>
