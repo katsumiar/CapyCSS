@@ -1,142 +1,85 @@
-# CbVS
-![CbVS](https://user-images.githubusercontent.com/63950487/85939295-168b3c00-b94f-11ea-8fcf-07b27c3dfc26.png)
+# CapyCSS
+![sample](https://user-images.githubusercontent.com/63950487/91655061-fd3a7380-eae8-11ea-97e2-f4d868b25e97.png)
 
-## Summary
-You can easily write a program using the mouse as you write notes.<br>
-There is a function to import so that it can be used as a node by modifying the source and adding a method(Requires build).<br>
+## まとめ
+* マウスを使って簡単にプログラムを書くことができます。
+* ソースを変更してメソッドを追加することでノードとして使用できるようにインポートする機能があります（ビルドが必要です）。
 
-## Target
+## 目標
 * .Net Core 3.1
-* c#
-* wpf
-* Math.NET Numerics
-* MaterialDesignInXamlToolkit
+* c＃
 
-## Options
-If you specify the saved script file in the command argument, it will be automatically loaded at startup. If -as is specified for the option, the node specified as "public" will be executed after the script is loaded. If -ae is specified for the option, it will be automatically terminated after the script is executed.
+## オプション
+保存したスクリプトファイルをコマンド引数で指定すると、起動時に自動的に読み込まれます。オプションに-asが指定されている場合、public として指定されたノードは、スクリプトのロード後に実行されます。オプションに-aeを指定した場合、スクリプト実行後に自動的に終了します。
 ```
 CapybaraVS.exe script.cbs
 CapybaraVS.exe -as script.cbs
 CapybaraVS.exe -as -ae script.cbs
 ```
 
-## Characteristic
-This is a sample that uses the attribute to nodeize the written method.
+## 特徴
+本ツールでは、c# の多くのメソッドを簡単にノード化することができます。
+下記は、属性を使用してメソッドをノード化する例です。
 ```
 [ScriptMethod]
-public static System.IO.StreamReader GetReadStream(string fileName, string encoding = "utf-8")
+public static System.IO.StreamReader GetReadStream(string path, string encoding = "utf-8")
 {
     var encodingCode = Encoding.GetEncoding(encoding);
-    return new System.IO.StreamReader(fileName, encodingCode);
+    return new System.IO.StreamReader(path, encodingCode);
 }
 ```
 
-## Method of operation
-* Click an item from the menu on the left side of the screen to place a node.
-* Left click and drag to connect the nodes with the circle and the square.
-* Ctrl + left click on the square to disconnect the node.
-* Range selection by dragging the mouse while pressing the Shift key.
-* Delete the selected node with the Delete key.
-* Move node by left-click dragging (If you hold down the Ctrl key, move it along the guide).
-* Move the entire screen by dragging with a left click on the screen (if selected, the selected one moves).
-* Scale the display with the wheel button.
-* Copy selected nodes with Ctrl + C.
-* Paste with Ctrl + V (Selected after pasting).
-* Save with Ctrl + S.
-* Edit node name, argument name and variable name by double-clicking(Can be changed only in the variable name list on the left of the screen).
+## 操作方法
+* 画面左側のメニューから項目をクリックしてノードを配置します。
+* ノードの○を左クリックしてドラッグし、ノードの□に接続します。
+* Ctrlキーを押しながら□を左クリックすると、ノードが切断されます。
+* Shiftキーを押しながらマウスをドラッグして範囲内のノードを複数選択します。
+* Deleteキーで選択されているノードを削除します。
+* 左クリックでノードを移動できます（Ctrlキーを押下した状態だと、ガイドに沿って移動します）。
+* 画面を左クリックしてドラッグすると、画面全体が移動します（選択されたノードがある場合、選択されているノードが移動します）。
+* ホイールボタンで表示を拡大もしくは縮小します。
+* Ctrl + Cで選択したノードをコピーします。
+* Ctrl + Vでコピーされているノードを貼り付けます。
+* Ctrl + Sでスクリプトを保存します。
+※ノード名、引数名はダブルクリックで編集できます。ただし、変数名は画面左側の変数名一覧でのみダブルクリックで編集できます。
 
-## Convenient function of script
-* You can check the contents processed by the node just by moving the cursor.
-* Just drag and drop numbers and letters to create a constant node.
-* Supports type casting when connecting nodes(Does not support casting from objects).
+## スクリプトの便利な機能
+* 引数の上にカーソルを置くと内容を確認できます。
+* 数字と文字をドラッグアンドドロップするだけで定数ノードを作成できます。
+* ノードの接続時に型キャストが可能です（オブジェクトからのキャストはサポートしていません）。
 
-## Tip display
-Supports English and Japanese. However, in the initial state, it is English only machine translated.
-To display in Japanese, modify the contents of the app.xml file created after execution.
-```
-<Language>en-US</Language>
-```
-Modify the above contents as follows.
-```
-<Language>ja-JP</Language>
-```
-The settings will be applied when you restart.
+## ヒント表示
+英語と日本語をサポートします。ただし、初期状態では英語のみの機械翻訳です。
+日本語で表示するには、実行後に作成されるapp.xmlファイルの内容を変更します。
+```<Language>en-US</Language>```
+上記の内容を次のように変更します。
+```<Language>ja-JP</Language>```
+再起動すると設定が適用されます。
 
-## Methods supported by method import
+## メソッドのインポートでサポートされるメソッド
 * Static method
-* Class method(The self argument that receives this is added to the first argument)
+* Class method(thisを受け取る引数が追加されます)
 
-## Corresponding method argument
-* Type: int, string, double, sbyte, long, short, ushort, uint, ulong, char, float, decimal, bool, object
+## スクリプトが対応するメソッド引数
+* Type: int, string, double, byte, sbyte, long, short, ushort, uint, ulong, char, float, decimal, bool, object
 * Class
+* Interface
 * Enum
-* List&lt;&gt;
-* Func&lt;&gt;
-* Action&lt;&gt;
-* Generic
+* Generics
 * Default arguments
-* Reference(Used as a variable reference)
-* Overload(Different node types)
+* Reference
+* Overload
 
-## Return type of the corresponding method
-* Type: int, string, double, sbyte, long, short, ushort, uint, ulong, char, float, decimal, bool, object
+## スクリプトが対応するメソッドの戻り型
+* Type: int, string, double, byte, sbyte, long, short, ushort, uint, ulong, char, float, decimal, bool, object
 * Class
+* Interface
 * Enum
-* List&lt;&gt;
-* Func&lt;&gt;
-* Action&lt;&gt;
-* Generic
+* Generics
 * void
 
-## Method call from method
-"Func <>" and "Action <>" type arguments can call the node as an external process. In case of "Func<>", connection can be made when the node type and return value type match.
+## メソッドからのメソッド呼び出し
+Func<> および Action<> タイプの引数は、ノードを外部プロセスとして呼び出すことができます。Func<> の場合、ノード型と戻り値型が一致した場合に接続できます。Action だと無条件に接続できます。
 
-## Script execution flow
-Find the method to expose by reflection by the following method and register it in the menu.
-
-```ScriptImplement.ImplemantScriptMethods(TreeMenuNode node)```
-
-Public methods are registered and managed in the AutoImplementFunction class by the methods below.
-
-```bool AutoImplementFunction.ImplAsset(MultiRootConnector col, bool noThreadMode = false, DummyArgumentsControl dummyArgumentsControl = null)```
-
-(The method that has the function of calling an event is managed by the AutoImplementEventFunction class.)
-
-By clicking the public method registered in the menu, the command will be registered in BaseWorkCanvas by the following method.
-
-```TreeMenuNodeCommand CommandCanvas.CreateEventCanvasCommand(Func<object> action, TreeMenuNode vm = null)```
-
-Command The registered command will be executed by the following method when the canvas (BaseWorkCanvas) is clicked.
-
-```void BaseWorkCanvas.ProcessCommand(Point setPos)```
-
-The node placed on the canvas is created by the MultiRootConnector created when the command is executed.
-The contents of MultiRootConnector are formed by the following methods.
-
-```void MultiRootConnector.MakeFunctionType()```
-
-AutoImplementFunction.ImplAsset called in this registers the public method call process in the Function of MultiRootConnector by the following method.
-
-```
-void MultiRootConnector.MakeFunction(
-            string name,
-            string hint,
-            Func<ICbVSValue> retType,
-            List<ICbVSValue> argumentList,
-            Func<List<ICbVSValue>, CbPushList, ICbVSValue> func
-            )
-```
-
-The return value of the node on the UI is managed by RootConnector.
-This RootConnector also has the ability to call public methods.
-Arguments on UI are managed by LinkConnector, and arguments with List function are managed by LinkConnectorList of LinkConnector.
-
-When the script is executed, RootConnector pulls out the information (return value) of RootConnector from the node connected to itself.
-Call the public method from the obtained argument and calculate the return value of itself.
-In this way we grab the LinkConnector from the RootConnector and calculate the final result.
-In addition, basically, once the result is obtained, the processing is sped up by referencing only the result from RootConnector.
-However, the node where Forced is checked and the event call (Func<>) will be calculated every time.
-For nodes that need to be calculated each time (nodes that have state), you need to check Forced as necessary.
-
-## License
-MIT License
+## ライセンス
+MITライセンス
