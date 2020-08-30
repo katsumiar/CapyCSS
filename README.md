@@ -22,10 +22,10 @@ CapybaraVS.exe -as -ae script.cbs
 下記は、属性を使用してメソッドをノード化する例です。
 ```
 [ScriptMethod]
-public static System.IO.StreamReader GetReadStream(string fileName, string encoding = "utf-8")
+public static System.IO.StreamReader GetReadStream(string path, string encoding = "utf-8")
 {
     var encodingCode = Encoding.GetEncoding(encoding);
-    return new System.IO.StreamReader(fileName, encodingCode);
+    return new System.IO.StreamReader(path, encodingCode);
 }
 ```
 
