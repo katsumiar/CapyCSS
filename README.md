@@ -12,9 +12,9 @@
 ## オプション
 保存したスクリプトファイルをコマンド引数で指定すると、起動時に自動的に読み込まれます。オプションに-asが指定されている場合、public として指定されたノードは、スクリプトのロード後に実行されます。オプションに-aeを指定した場合、スクリプト実行後に自動的に終了します。
 ```
-CapybaraVS.exe script.cbs
-CapybaraVS.exe -as script.cbs
-CapybaraVS.exe -as -ae script.cbs
+CapyCSS.exe script.cbs
+CapyCSS.exe -as script.cbs
+CapyCSS.exe -as -ae script.cbs
 ```
 
 ## 特徴
