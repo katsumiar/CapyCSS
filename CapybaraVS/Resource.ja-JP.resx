@@ -435,6 +435,9 @@
   <data name="Image_CreatePrewittFilter" xml:space="preserve">
     <value>輪郭抽出（３✕３プレヴィットフィルタ）処理を作成します。</value>
   </data>
+  <data name="Image_CreateRGBA3x3FilteringProc" xml:space="preserve">
+    <value>３✕３の畳み込み処理を作成します。</value>
+  </data>
   <data name="Image_CreateSobelFilter" xml:space="preserve">
     <value>輪郭抽出（３✕３ソーベルフィルタ）処理を作成します。</value>
   </data>

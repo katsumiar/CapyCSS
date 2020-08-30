@@ -435,6 +435,9 @@
   <data name="Image_CreatePrewittFilter" xml:space="preserve">
     <value>Create the contour extraction (3x3 Prewitt filter) process.</value>
   </data>
+  <data name="Image_CreateRGBA3x3FilteringProc" xml:space="preserve">
+    <value>Create a 3✕3 convolution process.</value>
+  </data>
   <data name="Image_CreateSobelFilter" xml:space="preserve">
     <value>Create a contour extraction (3x3 Sobel filter) process.</value>
   </data>

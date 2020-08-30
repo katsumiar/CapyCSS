@@ -640,7 +640,9 @@ namespace CbVS.Script.Lib
             public bool useThread = true;
         }
 
-        [ScriptMethod(nameSpace + "." + nameof(RGBA3x3FilteringProc) + "(" + nameof(CRGBA3x3FilteringProc) + ")", nameof(RGBA3x3FilteringProc))]
+        [ScriptMethod(nameSpace + "." + nameof(RGBA3x3FilteringProc) + "(" + nameof(CRGBA3x3FilteringProc) + ")", nameof(RGBA3x3FilteringProc),
+            "RS=>Image_Kernel3x3RGBAProcessing"
+            )]
         public static BitmapImage RGBA3x3FilteringProc(
             BitmapSource image,
             CRGBA3x3FilteringProc cRGBA3x3Proc,
@@ -657,8 +659,10 @@ namespace CbVS.Script.Lib
                 );
         }
 
-        [ScriptMethod(nameSpace + "." + nameof(RGBA3x3FilteringProc), "")]
-        public static CRGBA3x3FilteringProc RGBA3x3FilteringProc(
+        [ScriptMethod(nameSpace + "." + nameof(CreateRGBA3x3FilteringProc), "",
+            "RS=>Image_CreateRGBA3x3FilteringProc"
+            )]
+        public static CRGBA3x3FilteringProc CreateRGBA3x3FilteringProc(
             IRGBAFilter beforeImageProcessing = null,
             List<IRGBA3x3Filter> imageProcessingList = null,
             IRGBAFilter afterImageProcessing = null,
@@ -681,11 +685,18 @@ namespace CbVS.Script.Lib
         /// <returns>キャプチャしたイメージ</returns>
         [ScriptMethod(nameSpace + "." + nameof(ScreenCapture), "",
            "RS=>Image_ScreenCapture")]
-        public static BitmapSource ScreenCapture()
+        public static BitmapSource ScreenCapture(bool hideAndCapture = true)
         {
-            MainWindow.Instance.WindowState = WindowState.Minimized;
+            if (hideAndCapture)
+            {
+                MainWindow.Instance.WindowState = WindowState.Minimized;
+                Thread.Sleep(500);
+            }
             BitmapSource bitmap = getScreenImage();
-            MainWindow.Instance.WindowState = WindowState.Normal;
+            if (hideAndCapture)
+            {
+                MainWindow.Instance.WindowState = WindowState.Normal;
+            }
             return bitmap;
         }
 
