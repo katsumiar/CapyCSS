@@ -2431,9 +2431,15 @@ namespace CbVS.Script.Lib
                     new Tuple<int, double>(7, (pixel21.R + pixel21.G + pixel21.B) / 3.0),
                     new Tuple<int, double>(8, (pixel22.R + pixel22.G + pixel22.B) / 3.0)
                 };
-                sort.Sort((a, b) => (int)(a.Item2 - b.Item2));
+                sort.Sort((a, b) => {
+                    if (a.Item2 > b.Item2)
+                        return 1;
+                    if (a.Item2 < b.Item2)
+                        return -1;
+                    return 0;
+                    });
 
-                int medianIndex = sort[4].Item1;    // 中央値のインデックスを取得
+                int medianIndex = sort[9 / 2].Item1;    // 中央値のインデックスを取得
 
                 var listR = new double[9] { pixel00.R, pixel01.R, pixel02.R, pixel10.R, pixel11.R, pixel12.R, pixel20.R, pixel21.R, pixel22.R };
                 var listG = new double[9] { pixel00.G, pixel01.G, pixel02.G, pixel10.G, pixel11.G, pixel12.G, pixel20.G, pixel21.G, pixel22.G };
