@@ -6,12 +6,22 @@
         xmlns:local="clr-namespace:CbVS.Controls"
         mc:Ignorable="d"
         Title="MediaWindow" Background="DarkGray" HorizontalAlignment="Center" VerticalAlignment="Center" WindowStyle="ToolWindow" MinWidth="140" MinHeight="60" d:DesignWidth="392" d:DesignHeight="234">
+    <Window.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Light.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Defaults.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MaterialDesignColors;component/Themes/Recommended/Primary/MaterialDesignColor.DeepPurple.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MaterialDesignColors;component/Themes/Recommended/Accent/MaterialDesignColor.Lime.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Window.Resources>
     <Grid x:Name="ImagePanel" Background="DarkGray" HorizontalAlignment="Center" VerticalAlignment="Center">
         <ScrollViewer x:Name="ImageBoxS" Visibility="Collapsed" VerticalScrollBarVisibility="Disabled" HorizontalScrollBarVisibility="Visible">
             <Image x:Name="ImageBox" Stretch="Uniform"/>
         </ScrollViewer>
         <MediaElement x:Name="MediaBox" Visibility="Collapsed"/>
         <Button x:Name="SaveButton" Content="Save" Click="Save_Click" HorizontalAlignment="Right" VerticalAlignment="Top" Visibility="Collapsed" />
-        <Button x:Name="toggleUniform" Content="Togle Uniform" Click="toggleUniform_Click" HorizontalAlignment="Right" VerticalAlignment="Bottom" Visibility="Collapsed" />
+        <Button x:Name="toggleUniform" Content="Toggle Uniform" Click="toggleUniform_Click" HorizontalAlignment="Right" VerticalAlignment="Bottom" Visibility="Collapsed" />
     </Grid>
 </Window>

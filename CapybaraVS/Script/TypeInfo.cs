@@ -634,7 +634,6 @@ namespace CapybaraVS.Script
                     var ret = ClassValue(type, name);
                     if (ret != null && ret is ICbClass cbClass)
                     {
-                        //return _CbCreate(Type.GetType(cbClass.ItemName), name, true);
                         return _CbCreate(cbClass.OriginalReturnType, name, true);
                     }
                 }
