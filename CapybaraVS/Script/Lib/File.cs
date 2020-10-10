@@ -380,14 +380,26 @@ namespace CapybaraVS.Script.Lib
         public static List<string> GetFiles(
             string path
             , [param: ScriptParam("search pattern")] string searchPattern = "*.*"
-            , [param: ScriptParam("all directories")] bool allDirectories = false)
+            , [param: ScriptParam("all directories")] bool allDirectories = false
+            , bool relativePath = false)
         {
             IEnumerable<string> files;
             if (allDirectories)
                 files = Directory.EnumerateFiles(path, searchPattern, SearchOption.AllDirectories);
             else
                 files = Directory.EnumerateFiles(path, searchPattern);
-            return new List<string>(files);
+            var list = new List<string>(files);
+            if (relativePath)
+            {
+                if (path.EndsWith(@"\"))
+                    path = path.Replace(path, "");
+                else
+                    path = path.Replace(path + @"\", "");
+
+                list.ForEach(s => s = s.Replace(path, ""));
+
+            }
+            return list;
         }
 
         //------------------------------------------------------------------
@@ -398,12 +410,26 @@ namespace CapybaraVS.Script.Lib
             string path
             , [param: ScriptParam("func f(path)")] Action<string> func
             , [param: ScriptParam("search pattern")] string searchPattern
-            , [param: ScriptParam("all directories")] bool allDirectories = false)
+            , [param: ScriptParam("all directories")] bool allDirectories = false
+            , bool relativePath = false)
         {
+            if (func is null)
+            {
+                return 0;
+            }
             var files = FileLib.GetFiles(path, searchPattern, allDirectories);
+            if (path.EndsWith(@"\"))
+                path = path.Replace(path, "");
+            else
+                path = path.Replace(path + @"\", "");
             foreach (var node in files)
             {
-                func?.Invoke(node);
+                string _path = node;
+                if (relativePath)
+                {
+                    _path = node.Replace(path + @"\", "");
+                }
+                func.Invoke(_path);
             }
             return files.Count;
         }
@@ -462,10 +488,10 @@ namespace CapybaraVS.Script.Lib
         }
 
         //------------------------------------------------------------------
-        [ScriptMethod("File" + ".Searcher." + nameof(GetFilsFromDirectories), "",
+        [ScriptMethod("File" + ".Searcher." + nameof(GetFilesFromDirectories), "",
             "RS=>FileLib_GetFilsFromDirectories"//"ディレクトリ一覧を参照：\n<directories>ディレクトリリストにあるディレクトリからサブディレクトリ一覧を参照します。\n<all directories> が True の場合は、サブディレクトリ以下も再帰的に検索します。\n<ignore list> には無視するディレクトリ名を指定します。"
             )]
-        public static List<string> GetFilsFromDirectories(
+        public static List<string> GetFilesFromDirectories(
             List<string> directories
             , [param: ScriptParam("search pattern")] string searchPattern = "*.*"
             , [param: ScriptParam("ignore list")] List<string> ignoreList = null)
