@@ -1,5 +1,5 @@
 # CapyCSS
-![sample](https://user-images.githubusercontent.com/63950487/91655061-fd3a7380-eae8-11ea-97e2-f4d868b25e97.png)
+![sample](https://user-images.githubusercontent.com/63950487/92327819-4bc2b180-f097-11ea-832d-3077861a8dea.png)
 
 ## 特徴
 * マウスを使って簡単にプログラムを書くことができます。
