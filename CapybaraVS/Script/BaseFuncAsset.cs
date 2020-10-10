@@ -992,7 +992,7 @@ namespace CapybaraVS.Script
             col.MakeFunction(
                 MenuTitle,
                 HelpText,
-                CbFunc<object, CbInt>.TF,   // 返し値の型
+                CbFunc<Func<int>, CbInt>.TF,   // 返し値の型
                 new List<ICbValue>()      // 引数
                 {
                     CbST.CbCreate<string>("path"),
@@ -1002,7 +1002,7 @@ namespace CapybaraVS.Script
                 new Func<List<ICbValue>, DummyArgumentsStack, ICbValue>(
                     (argument, cagt) =>
                     {
-                        var ret = CbST.CbCreate<Func<object, int>>() as ICbEvent;    // 返し値
+                        var ret = CbST.CbCreate<Func<int>>() as ICbEvent;    // 返し値
                         try
                         {
                             string path = GetArgument<string>(argument, 0);

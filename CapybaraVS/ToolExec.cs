@@ -26,9 +26,12 @@ namespace CapybaraVS
             foreach (var proc in Processes)
             {
                 if (!proc.HasExited)
+                {
                     proc.Kill();
+                }
                 proc.Close();
             }
+            Processes = null;
         }
 
         public int Start(string logName, bool redirect = false)
@@ -38,8 +41,8 @@ namespace CapybaraVS
             {
                 execOption ??= new string("");
                 if (execOption != "")
-                    execOption = " ";
-                execOption = node;
+                    execOption += " ";
+                execOption += node;
             }
 
             ProcessStartInfo psInfo = new ProcessStartInfo();
