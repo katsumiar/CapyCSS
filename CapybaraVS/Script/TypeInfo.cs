@@ -1282,7 +1282,14 @@ namespace CapybaraVS.Script
                     Value = (dynamic)cbObject.ValueTypeObject.Data;
                 }
                 else
+                {
                     Value = (dynamic)n.Data;
+                }
+                if (IsError)
+                {
+                    IsError = false;
+                    ErrorMessage = "";
+                }
             }
             catch (Exception ex)
             {
