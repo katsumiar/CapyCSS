@@ -537,6 +537,9 @@
   <data name="Ip_GetMyHostName" xml:space="preserve">
     <value>Browse to the host name.</value>
   </data>
+  <data name="Ip_WebAPI" xml:space="preserve">
+    <value>Invokes a Web API command.</value>
+  </data>
   <data name="IsPublicExecute" xml:space="preserve">
     <value>Register in the entry list that can be executed by clicking the "Execute" button.</value>
   </data>
@@ -844,7 +847,10 @@
     <value>A random value from &lt;min&gt; to &lt;max&gt; is randomly calculated with either +/-.</value>
   </data>
   <data name="ReturnVoidFor" xml:space="preserve">
-    <value>Loop from &lt;from&gt; to less than &lt;to&gt; into the index and call &lt;invoke&gt; with the index as the dummy argument.</value>
+    <value>Executes the file specified by &lt;path&gt;. You can specify execution parameters in the &lt;arguments&gt; list. &lt;redirect&gt; Specify the redirect. The exit code cannot be obtained without enabling redirects.</value>
+  </data>
+  <data name="SetExitCode" xml:space="preserve">
+    <value>Set the exit code of the application and exit the application.</value>
   </data>
   <data name="SetListIndex" xml:space="preserve">
     <value>Substitute &lt;n&gt; for the &lt;index&gt; th element of the &lt;sample&gt; list.</value>

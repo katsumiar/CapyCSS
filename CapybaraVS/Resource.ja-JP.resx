@@ -142,7 +142,7 @@
     <value>仮引数を参照します。</value>
   </data>
   <data name="CallFile" xml:space="preserve">
-    <value>&lt;path&gt;で指定したファイルを実行します。&lt;arguments&gt;リストに実行パラメータを指定できます。&lt;redirect&gt;リダイレクトを指定します。</value>
+    <value>&lt;path&gt;で指定したファイルを実行します。&lt;arguments&gt;リストに実行パラメータを指定できます。&lt;redirect&gt;リダイレクトを指定します。終了コードは、リダイレクトを有効にしなければ取得できません。</value>
   </data>
   <data name="Confirmation" xml:space="preserve">
     <value>確認</value>
@@ -537,6 +537,9 @@
   <data name="Ip_GetMyHostName" xml:space="preserve">
     <value>ホスト名を参照します。</value>
   </data>
+  <data name="Ip_WebAPI" xml:space="preserve">
+    <value>WebAPIコマンドを呼び出します。</value>
+  </data>
   <data name="IsPublicExecute" xml:space="preserve">
     <value>「Execute」ボタンで実行できるエントリーリストに登録します。</value>
   </data>
@@ -845,6 +848,9 @@
   </data>
   <data name="ReturnVoidFor" xml:space="preserve">
     <value>&lt;from&gt; から &lt;to&gt; 未満までをインデックスにループし、インデックスを仮引数に &lt;invoke&gt; をコールします。</value>
+  </data>
+  <data name="SetExitCode" xml:space="preserve">
+    <value>アプリケーションの終了コードをセットし、アプリケーションを終了します。</value>
   </data>
   <data name="SetListIndex" xml:space="preserve">
     <value>&lt;sample&gt; リストの &lt;index&gt; 番目の要素に &lt;n&gt; を代入します。</value>

@@ -9,6 +9,13 @@ namespace CapybaraVS.Script.Lib
 {
     class Ip
     {
+        public enum WebMethod
+        {
+            GET,
+            POST
+        }
+
+        //------------------------------------------------------------------
         [ScriptMethod("Net" + ".Web" + "." + nameof(GetContents), "",
             "RS=>Ip_GetContents"//"HTTPのコンテンツを参照します。"
             )]
@@ -30,6 +37,27 @@ namespace CapybaraVS.Script.Lib
             var response = client.GetAsync(address);
             var contens = response.Result.Headers.ToString();
             return contens;
+        }
+
+        //------------------------------------------------------------------
+        [ScriptMethod("Net" + ".Web." + nameof(WebAPI), "",
+            "RS=>Ip_WebAPI"
+            )]
+        public static HttpWebResponse WebAPI(string command, string account, string passwd, WebMethod method = WebMethod.GET)
+        {
+            WebRequest req = WebRequest.Create(command);
+            switch (method)
+            {
+                case WebMethod.GET:
+                    req.Method = "GET";
+                    break;
+
+                case WebMethod.POST:
+                    req.Method = "POST";
+                    break;
+            }
+            req.Headers["Authorization"] = "Basic " + Convert.ToBase64String(Encoding.Default.GetBytes(account + ":" + passwd));
+            return req.GetResponse() as HttpWebResponse;
         }
 
         //------------------------------------------------------------------
