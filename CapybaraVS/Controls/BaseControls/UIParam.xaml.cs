@@ -83,7 +83,7 @@ namespace CapybaraVS.Controls.BaseControls
 
                             self.Edit.Text = cbObject.ValueTypeObject.ValueString.Trim('\r', '\n');
                         }
-                        if (self.ValueData is ICbClass cbClass && cbClass.Data != null)
+                        else if (self.ValueData is ICbClass cbClass && cbClass.Data != null)
                         {
                             // ICbClass は中身の型を表示する
 
