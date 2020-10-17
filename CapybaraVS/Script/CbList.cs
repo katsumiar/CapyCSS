@@ -88,9 +88,33 @@ namespace CbVS.Script
         }
 
         /// <summary>
+        /// CbList<T>に要素を追加します。
+        /// </summary>
+        /// <param name="instance">CbList<T>のインスタンス</param>
+        /// <param name="originalNode">T の型</param>
+        /// <param name="data">追加する要素</param>
+        public static void Append(ICbValue instance, Type originalNode, ICbValue data)
+        {
+            var listType = CbList.GetCbType(originalNode);
+            MethodInfo addMethod = listType.GetMethod("Append");
+            addMethod.Invoke(instance, new Object[] { data });
+        }
+
+        /// <summary>
+        /// CbList<T>に要素を追加します。
+        /// </summary>
+        /// <param name="instance">CbList<T>のインスタンス</param>
+        /// <param name="originalNode">T の型</param>
+        public static void Append(ICbValue instance, Type originalNode)
+        {
+            Append(instance, originalNode, CbST.CbCreate(originalNode));
+        }
+
+        /// <summary>
         /// CbXXX型の List<> 変数を作成します。
         /// </summary>
         /// <param name="original">オリジナルのList<T>のTの型</param>
+        /// <param name="name">変数名</param>
         /// <returns>CbList<original>型の変数</returns>
         public static ICbValue Create(Type original, string name = "")
         {
@@ -326,7 +350,7 @@ namespace CbVS.Script
         /// リストに要素を追加します。
         /// </summary>
         /// <param name="cbVSValue">追加要素</param>
-        public void Append(ICbValue cbVSValue)
+        public void Append(ICbValue cbVSValue)  // CbList.Append にリフレクションとして参照されている
         {
             var addData = NodeTF();
             addData.CopyValue(cbVSValue);

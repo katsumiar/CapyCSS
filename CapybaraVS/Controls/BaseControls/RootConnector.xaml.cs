@@ -485,6 +485,20 @@ namespace CapybaraVS.Controls.BaseControls
             return arguments;
         }
 
+        /// <summary>
+        /// 指定番目の引数を管理するリンクコネクターを取得する
+        /// </summary>
+        /// <param name="index">指定位置</param>
+        /// <returns>引数を管理するリンクコネクター</returns>
+        public LinkConnector GetArgument(int index)
+        {
+            if (ListData.Count <= index)
+            {
+                return null;
+            }
+            return ListData[index] as LinkConnector;
+        }
+
         public void UpdateValueData()
         {
             NameText.UpdateValueData();

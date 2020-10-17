@@ -620,6 +620,24 @@ namespace CapybaraVS.Controls.BaseControls
         }
 
         /// <summary>
+        /// 管理している値がList<>なら指定要素数だけ増やす
+        /// </summary>
+        /// <param name="count">増やす要素の数</param>
+        public void TryAddListNode(int count)
+        {
+            if (BoxMainPanel.Visibility == Visibility.Visible &&
+                ValueData is ICbList list)
+            {
+                // リンクされているリストを表示に再反映する
+
+                while (count-- > 0)
+                {
+                    ConnectorList.AddOption_MouseDown(null, null);
+                }
+            }
+        }
+
+        /// <summary>
         /// リンクされているリストを表示に再反映します。
         /// </summary>
         private void UpdateLinkedList()
