@@ -15,7 +15,7 @@ namespace CapybaraVS.Script
     {
         public ImplementBaseAsset()
         {
-            var assetNode = CreateGroup("Asset");
+            var assetNode = CreateGroup("Program");
 
             CreateAssetMenu(assetNode, new Subroutine());
 
@@ -71,7 +71,7 @@ namespace CapybaraVS.Script
             }
 
             {
-                var embeddedNode = CreateGroup(assetNode, "Embedded");
+                var embeddedNode = CreateGroup(assetNode, "Function");
 
                 {
                     var mathNode = CreateGroup(embeddedNode, "Math");
@@ -106,12 +106,17 @@ namespace CapybaraVS.Script
             }
 
             {
-                var functionNode = CreateGroup(assetNode, "Function");
+                var functionNode = CreateGroup(assetNode, ".Net Function");
 
                 {
-                    var fileLib = CreateGroup(functionNode, "File");
-                    CreateAssetMenu(fileLib, new CallFile());
-                    CreateAssetMenu(fileLib, new ConsoleOut());
+                    var io = CreateGroup(functionNode, "Input/Output");
+                    var conOut = CreateGroup(io, "ConsolOut");
+                    CreateAssetMenu(conOut, new ConsoleOut());
+                }
+
+                {
+                    var tools = CreateGroup(functionNode, "Exec");
+                    CreateAssetMenu(tools, new CallFile());
                 }
 
                 ScriptImplement.ImplemantScriptMethods(functionNode);
@@ -277,7 +282,7 @@ namespace CapybaraVS.Script
                 CbST.CbCreateTF(col.SelectedVariableType[0]),  // 返し値の型
                 new List<ICbValue>()  // 引数
                 {
-                    CbList.Create(typeof(object), "call list"),
+                    CbList.Create(col.SelectedVariableType[0], "call list"),
                 },
                 new Func<List<ICbValue>, DummyArgumentsStack, ICbValue>(
                     (argument, cagt) =>
@@ -287,7 +292,9 @@ namespace CapybaraVS.Script
                         {
                             var argList = GetArgumentList(argument, 0);
                             if (argList.Count != 0)
+                            {
                                 ret.Set(argList[argList.Count - 1]);
+                            }
                         }
                         catch (Exception ex)
                         {
@@ -300,6 +307,13 @@ namespace CapybaraVS.Script
 
             // 実行を可能にする
             col.LinkConnectorControl.IsRunable = true;
+
+            if (!notheradMode)
+            {// 「call list」のリンクコネクターを取得する
+                LinkConnector arg = col.LinkConnectorControl.GetArgument(0);
+                // 要素を1つ増やす
+                arg?.TryAddListNode(1);
+            }
 
             return true;
         }
@@ -1105,14 +1119,14 @@ namespace CapybaraVS.Script
         public bool ImplAsset(MultiRootConnector col, bool notheradMode = false)
         {
             col.MakeFunction(
-                $"If {CbSTUtils.ACTION_STR}<{col.SelectedVariableTypeName[0]}>.Invoke",
+                $"If {CbSTUtils.ACTION_STR}.Invoke",
                 HelpText,
                 CbVoid.TF,  // 返し値の型
                 new List<ICbValue>()  // 引数
                 {
                     CbST.CbCreate<bool>("conditions", false),
-                    CbFunc.CreateAction(col.SelectedVariableType[0], "func true"),
-                    CbFunc.CreateAction(col.SelectedVariableType[0], "func false"),
+                    CbFunc.CreateAction("func true"),
+                    CbFunc.CreateAction("func false"),
                 },
                 new Func<List<ICbValue>, DummyArgumentsStack, ICbValue>(
                     (argument, cagt) =>
@@ -1199,7 +1213,7 @@ namespace CapybaraVS.Script
     //-----------------------------------------------------------------
     class Invoke : FuncAssetSub, IFuncAssetWithArgumentDef
     {
-        public string AssetCode => nameof(Invoke);
+        public string AssetCode => "Invoke Func";
 
         public string HelpText { get; } = Language.GetInstance["Invoke"];
 
@@ -1251,7 +1265,7 @@ namespace CapybaraVS.Script
 
         public string HelpText { get; } = Language.GetInstance["InvokeWithArg"];
 
-        public string MenuTitle => "Invoke With Argument";
+        public string MenuTitle => "Invoke Func With Argument";
 
         public CbST TargetType => CbST.FreeType;    // 型の選択を要求する
 
@@ -1306,7 +1320,7 @@ namespace CapybaraVS.Script
     //-----------------------------------------------------------------
     class InvokeAction : FuncAssetSub, IFuncAssetWithArgumentDef
     {
-        public string AssetCode => nameof(InvokeAction);
+        public string AssetCode => "Invoke Action";
 
         public string HelpText { get; } = Language.GetInstance["Invoke"];
 
@@ -1357,9 +1371,9 @@ namespace CapybaraVS.Script
 
         public string HelpText { get; } = Language.GetInstance["InvokeWithArg"];
 
-        public string MenuTitle => "Invoke With Argument";
+        public string MenuTitle => "Invoke Action With Argument";
 
-        public CbST TargetType => CbST.Object;    // 型の選択を要求する
+        public CbST TargetType => CbST.FreeType;    // 型の選択を要求する
 
         public CbType[] DeleteSelectItems => CbScript.BaseDeleteCbTypes;
 
@@ -1369,13 +1383,13 @@ namespace CapybaraVS.Script
             DummyArgumentsControl dummyArgumentsControl = new DummyArgumentsControl(col);
 
             col.MakeFunction(
-                $"{CbSTUtils.ACTION_STR}<{CbSTUtils.OBJECT_STR}>.Invoke",
+                $"{CbSTUtils.ACTION_STR}<{col.SelectedVariableTypeName[0]}>.Invoke",
                 HelpText,
                 CbVoid.TF,    // 返し値の型
                 new List<ICbValue>()          // 引数
                 {
                    CbST.CbCreate(col.SelectedVariableType[0], "argument"),
-                   CbFunc.CreateAction(typeof(object), "func"),
+                   CbFunc.CreateAction(col.SelectedVariableType[0], "func"),
                 },
                 new Func<List<ICbValue>, DummyArgumentsStack, ICbValue>(
                     (argument, cagt) =>
@@ -1836,6 +1850,9 @@ namespace CapybaraVS.Script
                     }
                     )
                 );
+
+            // 実行を可能にする
+            col.LinkConnectorControl.IsRunable = true;
 
             return true;
         }

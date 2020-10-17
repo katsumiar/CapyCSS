@@ -53,7 +53,7 @@ namespace CapybaraVS.Script.Lib
         }
 
         //------------------------------------------------------------------
-        [ScriptMethod("Environment" + "." + nameof(CommandLineArgs), "",
+        [ScriptMethod("Input/Output" + "." + nameof(CommandLineArgs), "",
             "RS=>EnvironmentLib_CommandLineArgs"//"コマンドライン引数：\nコマンドライン引数を参照します。"
             )]
         public static List<string> CommandLineArgs()
@@ -62,7 +62,7 @@ namespace CapybaraVS.Script.Lib
         }
 
         //------------------------------------------------------------------
-        [ScriptMethod("Environment" + "." + nameof(CommandLineParam), "")]
+        [ScriptMethod("Input/Output" + "." + nameof(CommandLineParam), "")]
         public static List<string> CommandLineParam()
         {
             List<string> arg = CommandLineArgs();
@@ -83,7 +83,7 @@ namespace CapybaraVS.Script.Lib
         }
 
         //------------------------------------------------------------------
-        [ScriptMethod("Environment" + "." + nameof(CommandLineOption), "")]
+        [ScriptMethod("Input/Output" + "." + nameof(CommandLineOption), "")]
         public static List<string> CommandLineOption()
         {
             List<string> arg = CommandLineArgs();

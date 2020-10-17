@@ -9,7 +9,7 @@ namespace CapybaraVS.Script.Lib
 {
     class FileLib
     {
-        [ScriptMethod("File" + ".ConsolOut." + "String List", "",
+        [ScriptMethod("Input/Output" + ".ConsolOut.List." + "String List", "",
             "RS=>FileLib_ConsolOutStringList"//"文字列リストをコンソールに出力します。"
             )]
         public static int ConsolOutStringList(List<string> list)
@@ -22,7 +22,7 @@ namespace CapybaraVS.Script.Lib
         }
 
         //------------------------------------------------------------------
-        [ScriptMethod("File" + ".ConsolOut." + "Int List", "",
+        [ScriptMethod("Input/Output" + ".ConsolOut.List." + "Int List", "",
             "RS=>FileLib_ConsolOutIntList"//"int 型リストをコンソールに出力します。"
             )]
         public static int ConsolOutIntList(List<int> list)
@@ -35,7 +35,7 @@ namespace CapybaraVS.Script.Lib
         }
 
         //------------------------------------------------------------------
-        [ScriptMethod("File" + ".ConsolOut." + "Long List", "",
+        [ScriptMethod("Input/Output" + ".ConsolOut.List." + "Long List", "",
             "RS=>FileLib_ConsolOutLongList"//"long 型リストをコンソールに出力します。"
             )]
         public static int ConsolOutLongList(List<long> list)
@@ -48,7 +48,7 @@ namespace CapybaraVS.Script.Lib
         }
 
         //------------------------------------------------------------------
-        [ScriptMethod("File" + ".ConsolOut." + "Double List", "",
+        [ScriptMethod("Input/Output" + ".ConsolOut.List." + "Double List", "",
             "RS=>FileLib_ConsolOutDoubleList"//"double 型リストをコンソールに出力します。"
             )]
         public static int ConsolOutDoubleList(List<double> list)
@@ -61,7 +61,7 @@ namespace CapybaraVS.Script.Lib
         }
 
         //------------------------------------------------------------------
-        [ScriptMethod("File" + ".ConsolOut." + "Bool List", "",
+        [ScriptMethod("Input/Output" + ".ConsolOut.List." + "Bool List", "",
             "RS=>FileLib_ConsolOutBoolList"//"bool 型リストをコンソールに出力します。"
             )]
         public static int ConsolOutBoolList(List<bool> list)
