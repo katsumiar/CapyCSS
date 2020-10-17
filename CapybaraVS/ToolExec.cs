@@ -62,7 +62,14 @@ namespace CapybaraVS
                 string output = p.StandardOutput.ReadToEnd();   // 標準出力の読み取り
 
                 // 出力
-                MainWindow.Instance.MainLog.OutString(logName, output);
+                if (App.IsAutoExit)
+                {
+                    Console.Write(output);
+                }
+                else
+                {
+                    MainWindow.Instance.MainLog.OutString(logName, output);
+                }
 
                 return p.ExitCode;
             }

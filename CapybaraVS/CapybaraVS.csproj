@@ -1,18 +1,18 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
 
   <PropertyGroup>
-    <OutputType>WinExe</OutputType>
+    <OutputType>Exe</OutputType>
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <UseWPF>true</UseWPF>
     <ApplicationIcon>Image\cpbvs_mUG_icon.ico</ApplicationIcon>
     <Copyright>Copyright (c) 2020 Katsumi Aradono</Copyright>
-    <Version>0.0.4.5</Version>
-    <AssemblyVersion>0.0.4.5</AssemblyVersion>
+    <Version>0.0.4.7</Version>
+    <AssemblyVersion>0.0.4.7</AssemblyVersion>
     <Authors>Katsumi Aradono</Authors>
     <PackageId>CapyCSS</PackageId>
     <AssemblyName>CapyCSS</AssemblyName>
     <RootNamespace>CapyCSS</RootNamespace>
-    <FileVersion>0.0.4.5</FileVersion>
+    <FileVersion>0.0.4.7</FileVersion>
     <Product>CapyCSS</Product>
   </PropertyGroup>
 
