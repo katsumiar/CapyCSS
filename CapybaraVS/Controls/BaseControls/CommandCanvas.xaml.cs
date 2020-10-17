@@ -1,5 +1,6 @@
 ﻿using CapybaraVS.Control.BaseControls;
 using CapybaraVS.Script;
+using CapyCSS.Controls;
 using CbVS;
 using MathNet.Numerics.RootFinding;
 using Microsoft.Win32;
@@ -162,10 +163,8 @@ namespace CapybaraVS.Controls.BaseControls
             ScriptWorkStack = WorkStack;
             AssetTreeData ??= new ObservableCollection<TreeMenuNode>();
 
-            TreeViewCommand.AssetTreeData = AssetTreeData;
-
-            AddTreeCommandAsset(TreeViewCommand);
-            (OpenListContents as IAddChild).AddChild(TreeViewCommand);
+            CommandWindow.TreeViewCommand.AssetTreeData ??= new ObservableCollection<TreeMenuNode>();
+            AddTreeCommandAsset(CommandWindow.TreeViewCommand);
 
             Dispatcher.BeginInvoke(new Action(() =>
             {
@@ -178,16 +177,6 @@ namespace CapybaraVS.Controls.BaseControls
                     LoadXML(System.IO.Path.GetFullPath(App.EntryLoadFile));
                 }
             }), DispatcherPriority.ApplicationIdle);
-        }
-
-        private void Grid_MouseEnter(object sender, MouseEventArgs e)
-        {
-            OpenList.Visibility = Visibility.Visible;
-        }
-
-        private void Grid_MouseLeave(object sender, MouseEventArgs e)
-        {
-            OpenList.Visibility = Visibility.Collapsed;
         }
 
         public void HideWorkStack()
@@ -210,6 +199,7 @@ namespace CapybaraVS.Controls.BaseControls
         });
         public static Action ClickExitEvent = new Action(() =>
         {
+            CommandWindow.CloseWindow();
             ScriptWorkCanvas.Cursor = Cursors.Hand;
             TreeViewCommand.Cursor = Cursors.Hand;
         });
@@ -287,6 +277,8 @@ namespace CapybaraVS.Controls.BaseControls
                 {
                     if (MainWindow.Instance.Cursor == Cursors.Wait)
                         return; // 処理中は禁止
+
+                    CommandWindow.CloseWindow();
 
                     action?.Invoke();
                 }

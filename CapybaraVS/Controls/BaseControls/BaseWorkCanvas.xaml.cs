@@ -1,5 +1,6 @@
 ﻿using CapybaraVS.Controls;
 using CapybaraVS.Controls.BaseControls;
+using CapyCSS.Controls;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -611,7 +612,12 @@ namespace CapybaraVS.Control.BaseControls
 
             if (ObjectSetCommand is null)
             {
-                if ((Keyboard.GetKeyStates(Key.LeftShift) & KeyStates.Down) > 0 ||
+                if (e.ChangedButton == MouseButton.Middle && e.ButtonState == MouseButtonState.Pressed)
+                {
+                    CommandWindow commandWindow = CommandWindow.Create(pos);
+                    commandWindow?.ShowDialog();
+                }
+                else if ((Keyboard.GetKeyStates(Key.LeftShift) & KeyStates.Down) > 0 ||
                     (Keyboard.GetKeyStates(Key.RightShift) & KeyStates.Down) > 0)
                 {
                     // 選択用矩形描写開始
@@ -772,6 +778,9 @@ namespace CapybaraVS.Control.BaseControls
 
         private void CanvasBase_KeyDown(object sender, KeyEventArgs e)
         {
+            // マウスカーソルの座標で取得する
+            Point pos = new Point();
+
             if ((Keyboard.GetKeyStates(Key.LeftCtrl) & KeyStates.Down) > 0 ||
                   (Keyboard.GetKeyStates(Key.RightCtrl) & KeyStates.Down) > 0)
             {
@@ -840,6 +849,15 @@ namespace CapybaraVS.Control.BaseControls
             {
                 switch (e.Key)
                 {
+                    case Key.Space:
+                        {
+                            // コマンドウインドウを表示する
+
+                            CommandWindow commandWindow = CommandWindow.Create(pos);
+                            commandWindow?.ShowDialog();
+                        }
+                        break;
+
                     case Key.Delete:
                         if (SelectedContorls.Count != 0 &&
                                 MessageBox.Show(CapybaraVS.Language.GetInstance["ConfirmationDelete"],
