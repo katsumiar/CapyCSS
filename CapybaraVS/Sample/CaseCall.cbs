@@ -9,53 +9,14 @@
       <M12>0</M12>
       <M21>0</M21>
       <M22>0.8227024747918819</M22>
-      <OffsetX>92.4337875091728</OffsetX>
-      <OffsetY>127.73424873674774</OffsetY>
+      <OffsetX>73.4337875091728</OffsetX>
+      <OffsetY>64.73424873674774</OffsetY>
     </CanvasRenderTransform>
   </WorkCanvas>
   <WorkStack>
     <StackList />
   </WorkStack>
   <WorkCanvasAssetList>
-    <Asset Id="353" X="1544.3811723214287" Y="107.2875723214286">
-      <MultiRootConnector>
-        <RootFunc AssetType="FuncType" AssetFuncType="InvokeAction">
-          <AttachVariableIds />
-          <AttachVariableId>0</AttachVariableId>
-          <AssetLiteralType>
-            <LiteralType>Int</LiteralType>
-            <ObjectType>none</ObjectType>
-          </AssetLiteralType>
-          <RootConnector PointId="259">
-            <Caption>
-              <LabelString>Action.Invoke</LabelString>
-            </Caption>
-            <Value>void</Value>
-            <ForcedChecked>false</ForcedChecked>
-            <Connector>
-              <LinkList />
-            </Connector>
-            <Arguments>
-              <LinkConnector PointId="260">
-                <Value>[Action()]&lt;null&gt;</Value>
-                <CastConnect>false</CastConnect>
-                <ParamInfo>
-                  <ParamName> </ParamName>
-                  <ParamNameLabelOverlap>func</ParamNameLabelOverlap>
-                  <ParamNameLabel>
-                    <LabelString>func</LabelString>
-                  </ParamNameLabel>
-                </ParamInfo>
-                <LinkConnectorList>
-                  <List />
-                </LinkConnectorList>
-              </LinkConnector>
-            </Arguments>
-            <IsPublicExecute>true</IsPublicExecute>
-          </RootConnector>
-        </RootFunc>
-      </MultiRootConnector>
-    </Asset>
     <Asset Id="355" X="666.7856598214287" Y="84.19295357142853">
       <MultiRootConnector>
         <RootFunc AssetType="FuncType" AssetFuncType="CapybaraVS.Script.Lib.CaseFlow.AddList#_Dictionary&lt;int,Action&lt;object&gt;&gt;_List&lt;int&gt;_List&lt;Action&lt;object&gt;&gt;">
@@ -65,19 +26,19 @@
             <LiteralType>Double</LiteralType>
             <ObjectType>none</ObjectType>
           </AssetLiteralType>
-          <RootConnector PointId="265">
+          <RootConnector PointId="243">
             <Caption>
               <LabelString>AddFromList</LabelString>
             </Caption>
-            <Value>[Dictionary&lt;int,Action&lt;object&gt;&gt;]</Value>
+            <Value>[Dictionary&lt;int,Action&lt;object&gt;&gt;]&lt;null&gt;</Value>
             <ForcedChecked>false</ForcedChecked>
             <Connector>
               <LinkList>
-                <PointID>281</PointID>
+                <PointID>259</PointID>
               </LinkList>
             </Connector>
             <Arguments>
-              <LinkConnector PointId="266">
+              <LinkConnector PointId="244">
                 <Value>[Dictionary&lt;int,Action&lt;object&gt;&gt;]&lt;null&gt;</Value>
                 <CastConnect>false</CastConnect>
                 <ParamInfo>
@@ -91,7 +52,7 @@
                   <List />
                 </LinkConnectorList>
               </LinkConnector>
-              <LinkConnector PointId="267">
+              <LinkConnector PointId="245">
                 <CastConnect>false</CastConnect>
                 <ParamInfo>
                   <ParamName>keyList</ParamName>
@@ -102,7 +63,7 @@
                 </ParamInfo>
                 <LinkConnectorList>
                   <List>
-                    <LinkConnector PointId="269">
+                    <LinkConnector PointId="247">
                       <Value>0</Value>
                       <CastConnect>false</CastConnect>
                       <ParamInfo>
@@ -116,7 +77,7 @@
                         <List />
                       </LinkConnectorList>
                     </LinkConnector>
-                    <LinkConnector PointId="271">
+                    <LinkConnector PointId="249">
                       <Value>1</Value>
                       <CastConnect>false</CastConnect>
                       <ParamInfo>
@@ -133,7 +94,7 @@
                   </List>
                 </LinkConnectorList>
               </LinkConnector>
-              <LinkConnector PointId="272">
+              <LinkConnector PointId="250">
                 <CastConnect>false</CastConnect>
                 <ParamInfo>
                   <ParamName>valueList</ParamName>
@@ -144,21 +105,21 @@
                 </ParamInfo>
                 <LinkConnectorList>
                   <List>
-                    <LinkConnector PointId="274">
+                    <LinkConnector PointId="252">
                       <Value>[Action&lt;object&gt;()]&lt;null&gt;</Value>
                       <CastConnect>false</CastConnect>
                       <ParamInfo>
-                        <ParamName> </ParamName>
+                        <ParamName />
                         <ParamNameLabelOverlap />
                         <ParamNameLabel>
-                          <LabelString> </LabelString>
+                          <LabelString />
                         </ParamNameLabel>
                       </ParamInfo>
                       <LinkConnectorList>
                         <List />
                       </LinkConnectorList>
                     </LinkConnector>
-                    <LinkConnector PointId="276">
+                    <LinkConnector PointId="254">
                       <Value>[Action&lt;object&gt;()]&lt;null&gt;</Value>
                       <CastConnect>false</CastConnect>
                       <ParamInfo>
@@ -181,7 +142,7 @@
         </RootFunc>
       </MultiRootConnector>
     </Asset>
-    <Asset Id="356" X="1120.1694910714289" Y="142.53725357142855">
+    <Asset Id="356" X="1150.5571473214288" Y="208.17459107142855">
       <MultiRootConnector>
         <RootFunc AssetType="FuncType" AssetFuncType="CapybaraVS.Script.Lib.CaseFlow.GetFromDictionary#_Dictionary&lt;int,Action&lt;object&gt;&gt;_int">
           <AttachVariableIds />
@@ -190,23 +151,23 @@
             <LiteralType>Double</LiteralType>
             <ObjectType>none</ObjectType>
           </AssetLiteralType>
-          <RootConnector PointId="280">
+          <RootConnector PointId="258">
             <Caption>
               <LabelString>GetFromDictionary</LabelString>
             </Caption>
-            <Value>[Action&lt;object&gt;()]</Value>
+            <Value>[Action&lt;object&gt;()]&lt;null&gt;</Value>
             <ForcedChecked>false</ForcedChecked>
             <Connector>
               <LinkList>
-                <PointID>260</PointID>
+                <PointID>274</PointID>
               </LinkList>
             </Connector>
             <Arguments>
-              <LinkConnector PointId="281">
+              <LinkConnector PointId="259">
                 <Value>[Dictionary&lt;int,Action&lt;object&gt;&gt;]&lt;null&gt;</Value>
                 <CastConnect>false</CastConnect>
                 <ParamInfo>
-                  <ParamName />
+                  <ParamName> </ParamName>
                   <ParamNameLabelOverlap>dic</ParamNameLabelOverlap>
                   <ParamNameLabel>
                     <LabelString>dic</LabelString>
@@ -216,11 +177,11 @@
                   <List />
                 </LinkConnectorList>
               </LinkConnector>
-              <LinkConnector PointId="282">
+              <LinkConnector PointId="260">
                 <Value>0</Value>
                 <CastConnect>false</CastConnect>
                 <ParamInfo>
-                  <ParamName>key</ParamName>
+                  <ParamName />
                   <ParamNameLabelOverlap>key</ParamNameLabelOverlap>
                   <ParamNameLabel>
                     <LabelString>key</LabelString>
@@ -245,7 +206,7 @@
             <LiteralType>String</LiteralType>
             <ObjectType>none</ObjectType>
           </AssetLiteralType>
-          <RootConnector PointId="285">
+          <RootConnector PointId="263">
             <Caption>
               <LabelString>ConsoleOut</LabelString>
             </Caption>
@@ -253,11 +214,11 @@
             <ForcedChecked>false</ForcedChecked>
             <Connector>
               <LinkList>
-                <PointID>274</PointID>
+                <PointID>252</PointID>
               </LinkList>
             </Connector>
             <Arguments>
-              <LinkConnector PointId="286">
+              <LinkConnector PointId="264">
                 <Value>Key 0 Action</Value>
                 <CastConnect>false</CastConnect>
                 <ParamInfo>
@@ -286,7 +247,7 @@
             <LiteralType>String</LiteralType>
             <ObjectType>none</ObjectType>
           </AssetLiteralType>
-          <RootConnector PointId="289">
+          <RootConnector PointId="267">
             <Caption>
               <LabelString>ConsoleOut</LabelString>
             </Caption>
@@ -294,11 +255,11 @@
             <ForcedChecked>false</ForcedChecked>
             <Connector>
               <LinkList>
-                <PointID>276</PointID>
+                <PointID>254</PointID>
               </LinkList>
             </Connector>
             <Arguments>
-              <LinkConnector PointId="290">
+              <LinkConnector PointId="268">
                 <Value>Key 1 Action</Value>
                 <CastConnect>false</CastConnect>
                 <ParamInfo>
@@ -313,6 +274,126 @@
                 </LinkConnectorList>
               </LinkConnector>
             </Arguments>
+            <IsPublicExecute>false</IsPublicExecute>
+          </RootConnector>
+        </RootFunc>
+      </MultiRootConnector>
+    </Asset>
+    <Asset Id="361" X="1548.0276910714288" Y="38.00371607142857">
+      <MultiRootConnector>
+        <RootFunc AssetType="FuncType" AssetFuncType="InvokeActionWithArg">
+          <AttachVariableIds />
+          <AttachVariableId>0</AttachVariableId>
+          <AssetLiteralType>
+            <LiteralType>Object</LiteralType>
+            <ObjectType>none</ObjectType>
+          </AssetLiteralType>
+          <RootConnector PointId="272">
+            <Caption>
+              <LabelString>Action&lt;object&gt;.Invoke</LabelString>
+            </Caption>
+            <Value>void</Value>
+            <ForcedChecked>false</ForcedChecked>
+            <Connector>
+              <LinkList />
+            </Connector>
+            <Arguments>
+              <LinkConnector PointId="273">
+                <Value>[object]&lt;null&gt;</Value>
+                <CastConnect>false</CastConnect>
+                <ParamInfo>
+                  <ParamName />
+                  <ParamNameLabelOverlap>argument</ParamNameLabelOverlap>
+                  <ParamNameLabel>
+                    <LabelString>argument</LabelString>
+                  </ParamNameLabel>
+                </ParamInfo>
+                <LinkConnectorList>
+                  <List />
+                </LinkConnectorList>
+              </LinkConnector>
+              <LinkConnector PointId="274">
+                <Value>[Action&lt;object&gt;()]&lt;null&gt;</Value>
+                <CastConnect>false</CastConnect>
+                <ParamInfo>
+                  <ParamName />
+                  <ParamNameLabelOverlap>func</ParamNameLabelOverlap>
+                  <ParamNameLabel>
+                    <LabelString>func</LabelString>
+                  </ParamNameLabel>
+                </ParamInfo>
+                <LinkConnectorList>
+                  <List />
+                </LinkConnectorList>
+              </LinkConnector>
+            </Arguments>
+            <IsPublicExecute>true</IsPublicExecute>
+          </RootConnector>
+        </RootFunc>
+      </MultiRootConnector>
+    </Asset>
+    <Asset Id="362" X="896.5163410714288" Y="493.81855982142866">
+      <MultiRootConnector>
+        <RootFunc AssetType="FuncType" AssetFuncType="CallerArguments">
+          <AttachVariableIds />
+          <AttachVariableId>0</AttachVariableId>
+          <AssetLiteralType>
+            <LiteralType>Int</LiteralType>
+            <ObjectType>none</ObjectType>
+          </AssetLiteralType>
+          <RootConnector PointId="277">
+            <Caption>
+              <LabelString>DummyArguments&lt;int&gt;</LabelString>
+            </Caption>
+            <Value>1</Value>
+            <ForcedChecked>false</ForcedChecked>
+            <Connector>
+              <LinkList>
+                <PointID>260</PointID>
+              </LinkList>
+            </Connector>
+            <Arguments>
+              <LinkConnector PointId="278">
+                <Value>INDEX.ARG_1</Value>
+                <CastConnect>false</CastConnect>
+                <ParamInfo>
+                  <ParamName>select</ParamName>
+                  <ParamNameLabelOverlap>select</ParamNameLabelOverlap>
+                  <ParamNameLabel>
+                    <LabelString>select</LabelString>
+                  </ParamNameLabel>
+                </ParamInfo>
+                <LinkConnectorList>
+                  <List />
+                </LinkConnectorList>
+              </LinkConnector>
+            </Arguments>
+            <IsPublicExecute>false</IsPublicExecute>
+          </RootConnector>
+        </RootFunc>
+      </MultiRootConnector>
+    </Asset>
+    <Asset Id="363" X="1415.537509821429" Y="12.478084821428553">
+      <MultiRootConnector>
+        <RootFunc AssetType="LiteralType" AssetFuncType="none">
+          <AttachVariableIds />
+          <AttachVariableId>0</AttachVariableId>
+          <AssetLiteralType>
+            <LiteralType>Int</LiteralType>
+            <ObjectType>none</ObjectType>
+          </AssetLiteralType>
+          <RootConnector PointId="280">
+            <Caption>
+              <LabelString>int</LabelString>
+            </Caption>
+            <Value>1</Value>
+            <ForcedChecked>false</ForcedChecked>
+            <Connector>
+              <LinkList>
+                <PointID>273</PointID>
+              </LinkList>
+            </Connector>
+            <Arguments />
             <IsPublicExecute>false</IsPublicExecute>
           </RootConnector>
         </RootFunc>
