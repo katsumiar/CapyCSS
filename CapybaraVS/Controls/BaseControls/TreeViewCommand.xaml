@@ -6,7 +6,7 @@
              xmlns:local="clr-namespace:CapybaraVS.Controls.BaseControls"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800" FocusVisualStyle="{x:Null}">
-    <TreeView x:Name="TreeView" ItemsSource="{Binding TreeData}" Background="#FFF7F7F7" Margin="0">
+    <TreeView x:Name="TreeView" ItemsSource="{Binding TreeData}" Background="#FFF7F7F7" Margin="0" ScrollViewer.VerticalScrollBarVisibility="Disabled">
         <TreeView.ItemTemplate>
             <HierarchicalDataTemplate DataType= "local:TreeMenuNode" ItemsSource="{Binding Child}">
                 <Grid>

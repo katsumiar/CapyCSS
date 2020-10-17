@@ -234,6 +234,20 @@ namespace CapybaraVS.Controls.BaseControls
             InitializeComponent();
 
             TreeView.ItemsSource = AssetTreeData;
+            TreeView.PreviewMouseWheel += PreviewMouseWheel;
+        }
+
+        private static new void PreviewMouseWheel(object sender, MouseWheelEventArgs e)
+        {
+            if (!e.Handled)
+            {
+                e.Handled = true;
+                var eventArg = new MouseWheelEventArgs(e.MouseDevice, e.Timestamp, e.Delta);
+                eventArg.RoutedEvent = UIElement.MouseWheelEvent;
+                eventArg.Source = sender;
+                var parent = ((System.Windows.Controls.Control)sender).Parent as UIElement;
+                parent.RaiseEvent(eventArg);
+            }
         }
     }
 }
