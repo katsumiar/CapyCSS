@@ -90,6 +90,11 @@ namespace CapybaraVS
                             case "-ae":
                                 IsAutoExit = true;
                                 break;
+
+                            case "-ase":
+                                IsAutoExecute = true;
+                                IsAutoExit = true;
+                                break;
                         }
                         continue;
                     }

@@ -1,23 +1,27 @@
 # CapyCSS
-![sample](https://user-images.githubusercontent.com/63950487/91655061-fd3a7380-eae8-11ea-97e2-f4d868b25e97.png)
+![sample](https://user-images.githubusercontent.com/63950487/92327819-4bc2b180-f097-11ea-832d-3077861a8dea.png)
 
-## まとめ
+## 特徴
 * マウスを使って簡単にプログラムを書くことができます。
 * ソースを変更してメソッドを追加することでノードとして使用できるようにインポートする機能があります（ビルドが必要です）。
 
-## 目標
+## ターゲット環境
 * .Net Core 3.1
 * c＃
 
-## オプション
-保存したスクリプトファイルをコマンド引数で指定すると、起動時に自動的に読み込まれます。オプションに-asが指定されている場合、public として指定されたノードは、スクリプトのロード後に実行されます。オプションに-aeを指定した場合、スクリプト実行後に自動的に終了します。
+## 実行オプション
+保存したスクリプトファイルをコマンド引数で指定すると、起動時に自動的に読み込まれます。
+オプションとして-asが併せて指定されている場合、public として指定されたノードは、スクリプトのロード後に自動で実行されます。
+オプションとして-aeを指定した場合、スクリプト実行後に自動的に終了します。
+オプションとして-aseを指定した場合、-asと-aeを併せて実行した場合と同様になります。
 ```
-CapybaraVS.exe script.cbs
-CapybaraVS.exe -as script.cbs
-CapybaraVS.exe -as -ae script.cbs
+CapyCSS.exe script.cbs
+CapyCSS.exe -as script.cbs
+CapyCSS.exe -as -ae script.cbs
+CapyCSS.exe -ase script.cbs
 ```
 
-## 特徴
+## ノードのインポート
 本ツールでは、c# の多くのメソッドを簡単にノード化することができます。
 下記は、属性を使用してメソッドをノード化する例です。
 ```
@@ -41,6 +45,7 @@ public static System.IO.StreamReader GetReadStream(string path, string encoding 
 * Ctrl + Cで選択したノードをコピーします。
 * Ctrl + Vでコピーされているノードを貼り付けます。
 * Ctrl + Sでスクリプトを保存します。
+
 ※ノード名、引数名はダブルクリックで編集できます。ただし、変数名は画面左側の変数名一覧でのみダブルクリックで編集できます。
 
 ## スクリプトの便利な機能
