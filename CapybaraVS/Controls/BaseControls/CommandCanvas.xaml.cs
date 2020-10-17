@@ -1,6 +1,7 @@
 ﻿using CapybaraVS.Control.BaseControls;
 using CapybaraVS.Script;
 using CbVS;
+using MathNet.Numerics.RootFinding;
 using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
@@ -302,7 +303,7 @@ namespace CapybaraVS.Controls.BaseControls
             // コマンドを追加
             {
                 var commandNode = new TreeMenuNode("Command");
-                commandNode.Child.Add(new TreeMenuNode("Clear()", CreateImmediateExecutionCanvasCommand(() =>
+                commandNode.Child.Add(new TreeMenuNode("Clear", CreateImmediateExecutionCanvasCommand(() =>
                 {
                     if (CommandCanvas.ScriptWorkCanvas.Count != 0 &&
                         MessageBox.Show(CapybaraVS.Language.GetInstance["ConfirmationAllDelete"],
@@ -324,10 +325,10 @@ namespace CapybaraVS.Controls.BaseControls
                         }), DispatcherPriority.ApplicationIdle);
                     }
                 })));
-                commandNode.Child.Add(new TreeMenuNode("Toggle ShowMouseInfo()", CreateImmediateExecutionCanvasCommand(() => ScriptWorkCanvas.EnableInfo = ScriptWorkCanvas.EnableInfo ? false : true)));
-                commandNode.Child.Add(new TreeMenuNode("Toggle ShowGridLine()", CreateImmediateExecutionCanvasCommand(() => ScriptWorkCanvas.EnabelGridLine = ScriptWorkCanvas.EnabelGridLine ? false : true)));
-                commandNode.Child.Add(new TreeMenuNode("Save()", CreateImmediateExecutionCanvasCommand(() => SaveXML())));
-                commandNode.Child.Add(new TreeMenuNode("Load()", CreateImmediateExecutionCanvasCommand(() => LoadXML())));
+                commandNode.Child.Add(new TreeMenuNode("Toggle ShowMouseInfo", CreateImmediateExecutionCanvasCommand(() => ScriptWorkCanvas.EnableInfo = ScriptWorkCanvas.EnableInfo ? false : true)));
+                commandNode.Child.Add(new TreeMenuNode("Toggle ShowGridLine", CreateImmediateExecutionCanvasCommand(() => ScriptCommandCanvas.ToggleGridLine())));
+                commandNode.Child.Add(new TreeMenuNode("Save", CreateImmediateExecutionCanvasCommand(() => SaveXML())));
+                commandNode.Child.Add(new TreeMenuNode("Load", CreateImmediateExecutionCanvasCommand(() => LoadXML())));
                 treeViewCommand.AssetTreeData.Add(commandNode);
             }
 
@@ -396,7 +397,7 @@ namespace CapybaraVS.Controls.BaseControls
         /// <summary>
         /// キャンバスの作業を上書き保存します。
         /// </summary>
-        private static void OverSaveXML()
+        private static void OverwriteSaveXML()
         {
             if (MainWindow.Instance.Cursor == Cursors.Wait)
                 return;
@@ -594,22 +595,75 @@ namespace CapybaraVS.Controls.BaseControls
         }
 #endregion
 
+        public void ToggleGridLine()
+        {
+            ScriptWorkCanvas.EnabelGridLine = ScriptWorkCanvas.EnabelGridLine ? false : true;
+        }
+
         private void Grid_KeyDown(object sender, KeyEventArgs e)
         {
-            if (e.Key == Key.S)
+            if ((Keyboard.GetKeyStates(Key.LeftCtrl) & KeyStates.Down) > 0 ||
+                   (Keyboard.GetKeyStates(Key.RightCtrl) & KeyStates.Down) > 0)
             {
-                if ((Keyboard.GetKeyStates(Key.LeftCtrl) & KeyStates.Down) > 0 ||
-                       (Keyboard.GetKeyStates(Key.RightCtrl) & KeyStates.Down) > 0)
+                // Ctrl + key
+
+                switch (e.Key)
                 {
-                    OverSaveXML();
+                    case Key.S:
+                        OverwriteSaveXML();
+                        break;
+
+                    case Key.O:
+                        LoadXML();
+                        break;
+
+                    case Key.N:
+                        if (CommandCanvas.ScriptWorkCanvas.Count != 0 &&
+                                MessageBox.Show(CapybaraVS.Language.GetInstance["ConfirmationDelete"],
+                                    CapybaraVS.Language.GetInstance["Confirmation"],
+                                    MessageBoxButton.OKCancel) == MessageBoxResult.OK)
+                        {
+                            MainWindow.Instance.Cursor = Cursors.Wait;
+                            ScriptWorkCanvas.Dispatcher.BeginInvoke(new Action(() =>
+                            {
+                                WorkCanvasClear();
+                                ScriptCommandCanvas.Dispatcher.BeginInvoke(new Action(() =>
+                                {
+                                    // アイドル状態になってから戻す
+
+                                    GC.Collect();
+                                    MainWindow.Instance.Cursor = Cursors.Arrow;
+
+                                }), DispatcherPriority.ApplicationIdle);
+                            }), DispatcherPriority.ApplicationIdle);
+                        }
+                        break;
+
+                        // BaseWorkCanvas で使用
+                    case Key.C:
+                    case Key.V:
+                        break;
                 }
             }
-            else if (e.Key == Key.O)
+            else if ((Keyboard.GetKeyStates(Key.LeftShift) & KeyStates.Down) > 0 ||
+                        (Keyboard.GetKeyStates(Key.RightShift) & KeyStates.Down) > 0)
             {
-                if ((Keyboard.GetKeyStates(Key.LeftCtrl) & KeyStates.Down) > 0 ||
-                       (Keyboard.GetKeyStates(Key.RightCtrl) & KeyStates.Down) > 0)
+                // Shift + key
+
+
+
+            }
+            else
+            {
+                switch (e.Key)
                 {
-                    LoadXML();
+                    case Key.G:
+                        ToggleGridLine();
+                        break;
+
+                        // BaseWorkCanvas で使用
+                    case Key.Delete:
+                        break;
                 }
             }
         }

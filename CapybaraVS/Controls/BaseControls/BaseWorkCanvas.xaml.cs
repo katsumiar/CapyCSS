@@ -772,72 +772,88 @@ namespace CapybaraVS.Control.BaseControls
 
         private void CanvasBase_KeyDown(object sender, KeyEventArgs e)
         {
-            if (e.Key == Key.Delete)
+            if ((Keyboard.GetKeyStates(Key.LeftCtrl) & KeyStates.Down) > 0 ||
+                  (Keyboard.GetKeyStates(Key.RightCtrl) & KeyStates.Down) > 0)
             {
-                if (SelectedContorls.Count != 0 &&
-                        MessageBox.Show(CapybaraVS.Language.GetInstance["ConfirmationDelete"],
-                            CapybaraVS.Language.GetInstance["Confirmation"],
-                            MessageBoxButton.OKCancel) == MessageBoxResult.OK)
+                // Ctrl + key
+
+                switch (e.Key)
                 {
-                    foreach (var node in SelectedContorls)
-                    {
-                        node.Dispose();
-                        ControlsCanvas.Children.Remove(node);
-                    }
-                    ClearSelectedContorls();
+                    case Key.C:
+                        // 選択されたアセットをxmlシリアライズしてクリップボードにコピーする
+
+                        try
+                        {
+                            var writer = new StringWriter();
+                            var serializer = new XmlSerializer(CopyAssetXML.GetType());
+                            var namespaces = new XmlSerializerNamespaces();
+                            namespaces.Add(string.Empty, string.Empty);
+                            CopyAssetXML.WriteAction();
+                            serializer.Serialize(writer, CopyAssetXML, namespaces);
+
+                            Clipboard.SetDataObject(writer.ToString());
+                        }
+                        catch (Exception ex)
+                        {
+                            MessageBox.Show(nameof(CanvasBase_KeyDown) + ": [Key.C] " + ex.Message);
+                        }
+                        break;
+
+                    case Key.V:
+                        // クリップボードのxmlをデシリアライズしてアセットをキャンバスに置く
+
+                        try
+                        {
+                            var reader = new StringReader(Clipboard.GetText());
+                            XmlSerializer serializer = new XmlSerializer(CopyAssetXML.GetType());
+
+                            XmlDocument doc = new XmlDocument();
+                            doc.PreserveWhitespace = true;
+                            doc.Load(reader);
+                            XmlNodeReader nodeReader = new XmlNodeReader(doc.DocumentElement);
+
+                            object data = (_CopyAssetXML<BaseWorkCanvas>)serializer.Deserialize(nodeReader);
+                            CopyAssetXML = (_CopyAssetXML<BaseWorkCanvas>)data;
+
+                            PointIdProvider.InitCheckRequest();
+                            CopyAssetXML.ReadAction(this);
+                        }
+                        catch (Exception ex)
+                        {
+                            MessageBox.Show(nameof(CanvasBase_KeyDown) + ": [Key.V] " + ex.Message);
+                        }
+                        break;
+
+                    case Key.N:
+                        break;
                 }
             }
-            else if (e.Key == Key.C)
+            else if ((Keyboard.GetKeyStates(Key.LeftShift) & KeyStates.Down) > 0 ||
+                        (Keyboard.GetKeyStates(Key.RightShift) & KeyStates.Down) > 0)
             {
-                if ((Keyboard.GetKeyStates(Key.LeftCtrl) & KeyStates.Down) > 0 ||
-                       (Keyboard.GetKeyStates(Key.RightCtrl) & KeyStates.Down) > 0)
-                {
-                    // 選択されたアセットをxmlシリアライズしてクリップボードにコピーする
+                // Shift + key
 
-                    try
-                    {
-                        var writer = new StringWriter();
-                        var serializer = new XmlSerializer(CopyAssetXML.GetType());
-                        var namespaces = new XmlSerializerNamespaces();
-                        namespaces.Add(string.Empty, string.Empty);
-                        CopyAssetXML.WriteAction();
-                        serializer.Serialize(writer, CopyAssetXML, namespaces);
 
-                        Clipboard.SetDataObject(writer.ToString());
-                    }
-                    catch (Exception ex)
-                    {
-                        MessageBox.Show(nameof(CanvasBase_KeyDown) + ": [Key.C] " + ex.Message);
-                    }
-                }
+
             }
-            else if (e.Key == Key.V)
+            else
             {
-                if ((Keyboard.GetKeyStates(Key.LeftCtrl) & KeyStates.Down) > 0 ||
-                       (Keyboard.GetKeyStates(Key.RightCtrl) & KeyStates.Down) > 0)
+                switch (e.Key)
                 {
-                    // クリップボードのxmlをデシリアライズしてアセットをキャンバスに置く
-
-                    try
-                    {
-                        var reader = new StringReader(Clipboard.GetText());
-                        XmlSerializer serializer = new XmlSerializer(CopyAssetXML.GetType());
-
-                        XmlDocument doc = new XmlDocument();
-                        doc.PreserveWhitespace = true;
-                        doc.Load(reader);
-                        XmlNodeReader nodeReader = new XmlNodeReader(doc.DocumentElement);
-
-                        object data = (_CopyAssetXML<BaseWorkCanvas>)serializer.Deserialize(nodeReader);
-                        CopyAssetXML = (_CopyAssetXML<BaseWorkCanvas>)data;
-
-                        PointIdProvider.InitCheckRequest();
-                        CopyAssetXML.ReadAction(this);
-                    }
-                    catch (Exception ex)
-                    {
-                        MessageBox.Show(nameof(CanvasBase_KeyDown) + ": [Key.V] " + ex.Message);
-                    }
+                    case Key.Delete:
+                        if (SelectedContorls.Count != 0 &&
+                                MessageBox.Show(CapybaraVS.Language.GetInstance["ConfirmationDelete"],
+                                    CapybaraVS.Language.GetInstance["Confirmation"],
+                                    MessageBoxButton.OKCancel) == MessageBoxResult.OK)
+                        {
+                            foreach (var node in SelectedContorls)
+                            {
+                                node.Dispose();
+                                ControlsCanvas.Children.Remove(node);
+                            }
+                            ClearSelectedContorls();
+                        }
+                        break;
                 }
             }
         }
@@ -884,6 +900,9 @@ namespace CapybaraVS.Control.BaseControls
                     }
 
                     CreateTextAsset(pos, filename);
+                    // 重ならないようにする（値は適当）
+                    pos.X += 20;
+                    pos.Y += 50;
                 }
                 return;
             }
