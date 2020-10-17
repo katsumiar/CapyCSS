@@ -1,4 +1,5 @@
 ﻿using CapybaraVS.Controls.BaseControls;
+using CapybaraVS.Script;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -266,6 +267,12 @@ namespace CapybaraVS
                     CallPublicExecuteEntryPoint();
                     break;
             }
+        }
+
+        [ScriptMethod(nameof(SetExitCode), "", "RS=>SetExitCode")]
+        public static void SetExitCode(int code)
+        {
+            Environment.Exit(code);
         }
     }
 }
