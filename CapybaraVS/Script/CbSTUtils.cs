@@ -97,6 +97,8 @@ namespace CapybaraVS.Script
             { nameof(CbBool), BOOL_STR },
             { nameof(CbObject), OBJECT_STR },
             { nameof(CbList), LIST_STR },
+
+            { nameof(CbVoid), VOID_STR },
         };
 
         static private List<string> eqTypeList = new List<string>()
