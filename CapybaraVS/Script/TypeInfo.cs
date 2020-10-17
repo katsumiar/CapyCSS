@@ -1245,19 +1245,34 @@ namespace CapybaraVS.Script
         /// <param name="cbVSValue"></param>
         public virtual void CopyValue(ICbValue cbVSValue)
         {
-            if (!(this is ICbList) && cbVSValue is ICbList cbList)
+            try
             {
-                // リストはオリジナルの型にしないと代入できない
+                if (cbVSValue.IsError)
+                {
+                    IsError = cbVSValue.IsError;
+                    ErrorMessage = cbVSValue.ErrorMessage;
+                    return;
+                }
 
-                Value = (T)cbList.ConvertOriginalTypeList(null, null);
+                if (!(this is ICbList) && cbVSValue is ICbList cbList)
+                {
+                    // リストはオリジナルの型にしないと代入できない
+
+                    Value = (T)cbList.ConvertOriginalTypeList(null, null);
+                }
+                else
+                {
+                    Data = cbVSValue.Data;
+                }
+
+                IsError = cbVSValue.IsError;
+                ErrorMessage = cbVSValue.ErrorMessage;
             }
-            else
+            catch (Exception ex)
             {
-                Data = cbVSValue.Data;
+                IsError = true;
+                ErrorMessage = ex.Message;
             }
-
-            IsError = cbVSValue.IsError;
-            ErrorMessage = cbVSValue.ErrorMessage;
         }
 
         /// <summary>
