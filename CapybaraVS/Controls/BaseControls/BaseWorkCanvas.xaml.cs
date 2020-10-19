@@ -614,7 +614,7 @@ namespace CapybaraVS.Control.BaseControls
             {
                 if (e.ChangedButton == MouseButton.Middle && e.ButtonState == MouseButtonState.Pressed)
                 {
-                    CommandWindow commandWindow = CommandWindow.Create(pos);
+                    CommandWindow commandWindow = CommandWindow.Create(new Point(Mouse.GetPosition(null).X, Mouse.GetPosition(null).Y));
                     commandWindow?.ShowDialog();
                 }
                 else if ((Keyboard.GetKeyStates(Key.LeftShift) & KeyStates.Down) > 0 ||

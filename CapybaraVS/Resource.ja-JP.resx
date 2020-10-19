@@ -181,10 +181,16 @@
     <value>&lt;base&gt;を&lt;sample&gt;リストの値だけ除算します。</value>
   </data>
   <data name="EnvironmentLib_CommandLineArgs" xml:space="preserve">
-    <value>環境変数一覧を参照します。</value>
+    <value>コマンドライン引数一覧を返します。</value>
+  </data>
+  <data name="EnvironmentLib_CommandLineOption" xml:space="preserve">
+    <value>-から始まるコマンドライン引数一覧を返します。</value>
+  </data>
+  <data name="EnvironmentLib_CommandLineParam" xml:space="preserve">
+    <value>-から始まらないコマンドライン引数一覧を返します。</value>
   </data>
   <data name="EnvironmentLib_GetEnvironmentVariable" xml:space="preserve">
-    <value>コマンドライン引数を参照します。</value>
+    <value>環境変数一覧を参照します。</value>
   </data>
   <data name="EnvironmentLib_MachineName" xml:space="preserve">
     <value>マシン名を参照します。</value>

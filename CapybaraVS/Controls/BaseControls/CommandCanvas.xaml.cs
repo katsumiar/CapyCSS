@@ -295,7 +295,7 @@ namespace CapybaraVS.Controls.BaseControls
             // コマンドを追加
             {
                 var commandNode = new TreeMenuNode("Command");
-                commandNode.Child.Add(new TreeMenuNode("Clear", CreateImmediateExecutionCanvasCommand(() =>
+                commandNode.Child.Add(new TreeMenuNode("Clear(Ctrl+N)", CreateImmediateExecutionCanvasCommand(() =>
                 {
                     if (CommandCanvas.ScriptWorkCanvas.Count != 0 &&
                         MessageBox.Show(CapybaraVS.Language.GetInstance["ConfirmationAllDelete"],
@@ -318,9 +318,9 @@ namespace CapybaraVS.Controls.BaseControls
                     }
                 })));
                 commandNode.Child.Add(new TreeMenuNode("Toggle ShowMouseInfo", CreateImmediateExecutionCanvasCommand(() => ScriptWorkCanvas.EnableInfo = ScriptWorkCanvas.EnableInfo ? false : true)));
-                commandNode.Child.Add(new TreeMenuNode("Toggle ShowGridLine", CreateImmediateExecutionCanvasCommand(() => ScriptCommandCanvas.ToggleGridLine())));
-                commandNode.Child.Add(new TreeMenuNode("Save", CreateImmediateExecutionCanvasCommand(() => SaveXML())));
-                commandNode.Child.Add(new TreeMenuNode("Load", CreateImmediateExecutionCanvasCommand(() => LoadXML())));
+                commandNode.Child.Add(new TreeMenuNode("Toggle ShowGridLine(G)", CreateImmediateExecutionCanvasCommand(() => ScriptCommandCanvas.ToggleGridLine())));
+                commandNode.Child.Add(new TreeMenuNode("Save(Ctrl+S)", CreateImmediateExecutionCanvasCommand(() => SaveXML())));
+                commandNode.Child.Add(new TreeMenuNode("Load(Ctrl+O)", CreateImmediateExecutionCanvasCommand(() => LoadXML())));
                 treeViewCommand.AssetTreeData.Add(commandNode);
             }
 

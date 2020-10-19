@@ -181,10 +181,16 @@
     <value>Divides &lt;base&gt; by the value in the &lt;sample&gt; list.</value>
   </data>
   <data name="EnvironmentLib_CommandLineArgs" xml:space="preserve">
-    <value>Refer to the list of environment variables.</value>
+    <value>Returns a list of command line arguments.</value>
+  </data>
+  <data name="EnvironmentLib_CommandLineOption" xml:space="preserve">
+    <value>Returns a list of command line arguments starting with "-".</value>
+  </data>
+  <data name="EnvironmentLib_CommandLineParam" xml:space="preserve">
+    <value>Returns a list of command line arguments that do not start with "-".</value>
   </data>
   <data name="EnvironmentLib_GetEnvironmentVariable" xml:space="preserve">
-    <value>Refers to command line arguments.</value>
+    <value>Refer to the list of environment variables.</value>
   </data>
   <data name="EnvironmentLib_MachineName" xml:space="preserve">
     <value>Browse to the machine name.</value>

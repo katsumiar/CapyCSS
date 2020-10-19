@@ -62,7 +62,7 @@ namespace CapybaraVS.Script.Lib
         }
 
         //------------------------------------------------------------------
-        [ScriptMethod("Input/Output" + "." + nameof(CommandLineParam), "")]
+        [ScriptMethod("Input/Output" + "." + nameof(CommandLineParam), "", "RS=>EnvironmentLib_CommandLineParam")]
         public static List<string> CommandLineParam()
         {
             List<string> arg = CommandLineArgs();
@@ -83,7 +83,7 @@ namespace CapybaraVS.Script.Lib
         }
 
         //------------------------------------------------------------------
-        [ScriptMethod("Input/Output" + "." + nameof(CommandLineOption), "")]
+        [ScriptMethod("Input/Output" + "." + nameof(CommandLineOption), "", "RS=>EnvironmentLib_CommandLineOption")]
         public static List<string> CommandLineOption()
         {
             List<string> arg = CommandLineArgs();
