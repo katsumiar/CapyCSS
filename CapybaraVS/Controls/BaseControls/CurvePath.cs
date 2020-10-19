@@ -869,7 +869,7 @@ namespace CapybaraVS
 
             var ch3 = (sx.X - sy.X) * (es.Y - sx.Y) + (sx.Y - sy.Y) * (sx.X - es.X);
             var ch4 = (sx.X - sy.X) * (ey.Y - sx.Y) + (sx.Y - sy.Y) * (sx.X - ey.X);
-            return ch3 * ch4 < 0;
+            return ch3 * ch4 < 0 && sx.Y < es.Y;
         }
 
         //-----------------------------------------------------------------------------------
