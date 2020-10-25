@@ -2,7 +2,7 @@
 <CommandCanvas Id="2">
   <WorkCanvas Id="1">
     <EnabelGridLine>false</EnabelGridLine>
-    <EnableInfo>true</EnableInfo>
+    <EnableInfo>false</EnableInfo>
     <CanvasScale>0.48101709809096993</CanvasScale>
     <CanvasRenderTransform>
       <M11>0.48101709809096993</M11>
@@ -26,7 +26,7 @@
             <LiteralType>Int</LiteralType>
             <ObjectType>none</ObjectType>
           </AssetLiteralType>
-          <RootConnector PointId="1690">
+          <RootConnector PointId="1270">
             <Caption>
               <LabelString>DummyArgument&lt;int&gt;</LabelString>
             </Caption>
@@ -34,10 +34,10 @@
             <ForcedChecked>false</ForcedChecked>
             <Connector>
               <LinkList>
-                <PointID>1696</PointID>
-                <PointID>1698</PointID>
-                <PointID>1706</PointID>
-                <PointID>1703</PointID>
+                <PointID>1276</PointID>
+                <PointID>1278</PointID>
+                <PointID>1286</PointID>
+                <PointID>1283</PointID>
               </LinkList>
             </Connector>
             <Arguments />
@@ -55,7 +55,7 @@
             <LiteralType>Int</LiteralType>
             <ObjectType>none</ObjectType>
           </AssetLiteralType>
-          <RootConnector PointId="1693">
+          <RootConnector PointId="1273">
             <Caption>
               <LabelString>Sum</LabelString>
             </Caption>
@@ -63,11 +63,11 @@
             <ForcedChecked>false</ForcedChecked>
             <Connector>
               <LinkList>
-                <PointID>1728</PointID>
+                <PointID>1308</PointID>
               </LinkList>
             </Connector>
             <Arguments>
-              <LinkConnector PointId="1694">
+              <LinkConnector PointId="1274">
                 <CastConnect>false</CastConnect>
                 <ParamInfo>
                   <ParamName>sample</ParamName>
@@ -78,7 +78,7 @@
                 </ParamInfo>
                 <LinkConnectorList>
                   <List>
-                    <LinkConnector PointId="1696">
+                    <LinkConnector PointId="1276">
                       <Value>0</Value>
                       <CastConnect>false</CastConnect>
                       <ParamInfo>
@@ -92,7 +92,7 @@
                         <List />
                       </LinkConnectorList>
                     </LinkConnector>
-                    <LinkConnector PointId="1698">
+                    <LinkConnector PointId="1278">
                       <Value>0</Value>
                       <CastConnect>false</CastConnect>
                       <ParamInfo>
@@ -124,7 +124,7 @@
             <LiteralType>Int</LiteralType>
             <ObjectType>none</ObjectType>
           </AssetLiteralType>
-          <RootConnector PointId="1702">
+          <RootConnector PointId="1282">
             <Caption>
               <LabelString>Multiply</LabelString>
             </Caption>
@@ -132,11 +132,11 @@
             <ForcedChecked>false</ForcedChecked>
             <Connector>
               <LinkList>
-                <PointID>1730</PointID>
+                <PointID>1310</PointID>
               </LinkList>
             </Connector>
             <Arguments>
-              <LinkConnector PointId="1703">
+              <LinkConnector PointId="1283">
                 <Value>0</Value>
                 <CastConnect>false</CastConnect>
                 <ParamInfo>
@@ -150,7 +150,7 @@
                   <List />
                 </LinkConnectorList>
               </LinkConnector>
-              <LinkConnector PointId="1704">
+              <LinkConnector PointId="1284">
                 <CastConnect>false</CastConnect>
                 <ParamInfo>
                   <ParamName>sample</ParamName>
@@ -161,7 +161,7 @@
                 </ParamInfo>
                 <LinkConnectorList>
                   <List>
-                    <LinkConnector PointId="1706">
+                    <LinkConnector PointId="1286">
                       <Value>0</Value>
                       <CastConnect>false</CastConnect>
                       <ParamInfo>
@@ -193,7 +193,7 @@
             <LiteralType>Object</LiteralType>
             <ObjectType>none</ObjectType>
           </AssetLiteralType>
-          <RootConnector PointId="1709">
+          <RootConnector PointId="1289">
             <Caption>
               <LabelString>Sequence</LabelString>
             </Caption>
@@ -203,7 +203,7 @@
               <LinkList />
             </Connector>
             <Arguments>
-              <LinkConnector PointId="1710">
+              <LinkConnector PointId="1290">
                 <CastConnect>false</CastConnect>
                 <ParamInfo>
                   <ParamName>call list</ParamName>
@@ -214,7 +214,7 @@
                 </ParamInfo>
                 <LinkConnectorList>
                   <List>
-                    <LinkConnector PointId="1712">
+                    <LinkConnector PointId="1292">
                       <Value>[object]&lt;null&gt;</Value>
                       <CastConnect>false</CastConnect>
                       <ParamInfo>
@@ -228,7 +228,7 @@
                         <List />
                       </LinkConnectorList>
                     </LinkConnector>
-                    <LinkConnector PointId="1714">
+                    <LinkConnector PointId="1294">
                       <Value>[object]&lt;null&gt;</Value>
                       <CastConnect>false</CastConnect>
                       <ParamInfo>
@@ -260,7 +260,7 @@
             <LiteralType>Double</LiteralType>
             <ObjectType>none</ObjectType>
           </AssetLiteralType>
-          <RootConnector PointId="1719">
+          <RootConnector PointId="1299">
             <Caption>
               <LabelString>AddFromList</LabelString>
             </Caption>
@@ -268,12 +268,12 @@
             <ForcedChecked>false</ForcedChecked>
             <Connector>
               <LinkList>
-                <PointID>1737</PointID>
-                <PointID>1745</PointID>
+                <PointID>1325</PointID>
+                <PointID>1317</PointID>
               </LinkList>
             </Connector>
             <Arguments>
-              <LinkConnector PointId="1720">
+              <LinkConnector PointId="1300">
                 <Value>[Dictionary&lt;int,Func&lt;object,int&gt;&gt;]&lt;null&gt;</Value>
                 <CastConnect>false</CastConnect>
                 <ParamInfo>
@@ -287,7 +287,7 @@
                   <List />
                 </LinkConnectorList>
               </LinkConnector>
-              <LinkConnector PointId="1721">
+              <LinkConnector PointId="1301">
                 <CastConnect>false</CastConnect>
                 <ParamInfo>
                   <ParamName>keyList</ParamName>
@@ -298,7 +298,7 @@
                 </ParamInfo>
                 <LinkConnectorList>
                   <List>
-                    <LinkConnector PointId="1723">
+                    <LinkConnector PointId="1303">
                       <Value>1</Value>
                       <CastConnect>false</CastConnect>
                       <ParamInfo>
@@ -312,7 +312,7 @@
                         <List />
                       </LinkConnectorList>
                     </LinkConnector>
-                    <LinkConnector PointId="1725">
+                    <LinkConnector PointId="1305">
                       <Value>2</Value>
                       <CastConnect>false</CastConnect>
                       <ParamInfo>
@@ -329,7 +329,7 @@
                   </List>
                 </LinkConnectorList>
               </LinkConnector>
-              <LinkConnector PointId="1726">
+              <LinkConnector PointId="1306">
                 <CastConnect>false</CastConnect>
                 <ParamInfo>
                   <ParamName>valueList</ParamName>
@@ -340,7 +340,7 @@
                 </ParamInfo>
                 <LinkConnectorList>
                   <List>
-                    <LinkConnector PointId="1728">
+                    <LinkConnector PointId="1308">
                       <Value>[Func&lt;object, int&gt;()]&lt;null&gt;</Value>
                       <CastConnect>false</CastConnect>
                       <ParamInfo>
@@ -354,7 +354,7 @@
                         <List />
                       </LinkConnectorList>
                     </LinkConnector>
-                    <LinkConnector PointId="1730">
+                    <LinkConnector PointId="1310">
                       <Value>[Func&lt;object, int&gt;()]&lt;null&gt;</Value>
                       <CastConnect>false</CastConnect>
                       <ParamInfo>
@@ -386,7 +386,7 @@
             <LiteralType>Double</LiteralType>
             <ObjectType>none</ObjectType>
           </AssetLiteralType>
-          <RootConnector PointId="1736">
+          <RootConnector PointId="1316">
             <Caption>
               <LabelString>SwitchCall</LabelString>
             </Caption>
@@ -394,11 +394,11 @@
             <ForcedChecked>false</ForcedChecked>
             <Connector>
               <LinkList>
-                <PointID>1712</PointID>
+                <PointID>1292</PointID>
               </LinkList>
             </Connector>
             <Arguments>
-              <LinkConnector PointId="1737">
+              <LinkConnector PointId="1317">
                 <Value>[Dictionary&lt;int,Func&lt;object,int&gt;&gt;]&lt;null&gt;</Value>
                 <CastConnect>false</CastConnect>
                 <ParamInfo>
@@ -412,7 +412,7 @@
                   <List />
                 </LinkConnectorList>
               </LinkConnector>
-              <LinkConnector PointId="1738">
+              <LinkConnector PointId="1318">
                 <Value>1</Value>
                 <CastConnect>false</CastConnect>
                 <ParamInfo>
@@ -426,7 +426,7 @@
                   <List />
                 </LinkConnectorList>
               </LinkConnector>
-              <LinkConnector PointId="1739">
+              <LinkConnector PointId="1319">
                 <Value>4</Value>
                 <CastConnect>false</CastConnect>
                 <ParamInfo>
@@ -440,7 +440,7 @@
                   <List />
                 </LinkConnectorList>
               </LinkConnector>
-              <LinkConnector PointId="1740">
+              <LinkConnector PointId="1320">
                 <Value>999</Value>
                 <CastConnect>false</CastConnect>
                 <ParamInfo>
@@ -469,7 +469,7 @@
             <LiteralType>Double</LiteralType>
             <ObjectType>none</ObjectType>
           </AssetLiteralType>
-          <RootConnector PointId="1744">
+          <RootConnector PointId="1324">
             <Caption>
               <LabelString>GetFromDictionary</LabelString>
             </Caption>
@@ -477,11 +477,11 @@
             <ForcedChecked>false</ForcedChecked>
             <Connector>
               <LinkList>
-                <PointID>1752</PointID>
+                <PointID>1332</PointID>
               </LinkList>
             </Connector>
             <Arguments>
-              <LinkConnector PointId="1745">
+              <LinkConnector PointId="1325">
                 <Value>[Dictionary&lt;int,Func&lt;object,int&gt;&gt;]&lt;null&gt;</Value>
                 <CastConnect>false</CastConnect>
                 <ParamInfo>
@@ -495,7 +495,7 @@
                   <List />
                 </LinkConnectorList>
               </LinkConnector>
-              <LinkConnector PointId="1746">
+              <LinkConnector PointId="1326">
                 <Value>1</Value>
                 <CastConnect>false</CastConnect>
                 <ParamInfo>
@@ -524,7 +524,7 @@
             <LiteralType>Int</LiteralType>
             <ObjectType>none</ObjectType>
           </AssetLiteralType>
-          <RootConnector PointId="1750">
+          <RootConnector PointId="1330">
             <Caption>
               <LabelString>Func&lt;int,int&gt;.Invoke</LabelString>
             </Caption>
@@ -532,11 +532,11 @@
             <ForcedChecked>false</ForcedChecked>
             <Connector>
               <LinkList>
-                <PointID>1714</PointID>
+                <PointID>1294</PointID>
               </LinkList>
             </Connector>
             <Arguments>
-              <LinkConnector PointId="1751">
+              <LinkConnector PointId="1331">
                 <Value>10</Value>
                 <CastConnect>false</CastConnect>
                 <ParamInfo>
@@ -550,7 +550,7 @@
                   <List />
                 </LinkConnectorList>
               </LinkConnector>
-              <LinkConnector PointId="1752">
+              <LinkConnector PointId="1332">
                 <Value>[Func&lt;object, int&gt;()]&lt;null&gt;</Value>
                 <CastConnect>false</CastConnect>
                 <ParamInfo>

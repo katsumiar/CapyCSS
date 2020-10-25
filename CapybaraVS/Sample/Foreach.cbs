@@ -2,7 +2,7 @@
 <CommandCanvas Id="2">
   <WorkCanvas Id="1">
     <EnabelGridLine>false</EnabelGridLine>
-    <EnableInfo>true</EnableInfo>
+    <EnableInfo>false</EnableInfo>
     <CanvasScale>0.8227024747918819</CanvasScale>
     <CanvasRenderTransform>
       <M11>0.8227024747918819</M11>
@@ -26,7 +26,7 @@
             <LiteralType>String</LiteralType>
             <ObjectType>none</ObjectType>
           </AssetLiteralType>
-          <RootConnector PointId="670">
+          <RootConnector PointId="250">
             <Caption>
               <LabelString>Foreach Func&lt;string,string&gt;.Invoke</LabelString>
             </Caption>
@@ -34,11 +34,11 @@
             <ForcedChecked>false</ForcedChecked>
             <Connector>
               <LinkList>
-                <PointID>690</PointID>
+                <PointID>270</PointID>
               </LinkList>
             </Connector>
             <Arguments>
-              <LinkConnector PointId="671">
+              <LinkConnector PointId="251">
                 <CastConnect>false</CastConnect>
                 <ParamInfo>
                   <ParamName>sample</ParamName>
@@ -49,7 +49,7 @@
                 </ParamInfo>
                 <LinkConnectorList>
                   <List>
-                    <LinkConnector PointId="673">
+                    <LinkConnector PointId="253">
                       <Value>AB</Value>
                       <CastConnect>false</CastConnect>
                       <ParamInfo>
@@ -63,7 +63,7 @@
                         <List />
                       </LinkConnectorList>
                     </LinkConnector>
-                    <LinkConnector PointId="675">
+                    <LinkConnector PointId="255">
                       <Value>123</Value>
                       <CastConnect>false</CastConnect>
                       <ParamInfo>
@@ -77,7 +77,7 @@
                         <List />
                       </LinkConnectorList>
                     </LinkConnector>
-                    <LinkConnector PointId="677">
+                    <LinkConnector PointId="257">
                       <Value>def</Value>
                       <CastConnect>false</CastConnect>
                       <ParamInfo>
@@ -94,7 +94,7 @@
                   </List>
                 </LinkConnectorList>
               </LinkConnector>
-              <LinkConnector PointId="678">
+              <LinkConnector PointId="258">
                 <Value>[Action&lt;string&gt;()]&lt;null&gt;</Value>
                 <CastConnect>false</CastConnect>
                 <ParamInfo>
@@ -123,7 +123,7 @@
             <LiteralType>String</LiteralType>
             <ObjectType>none</ObjectType>
           </AssetLiteralType>
-          <RootConnector PointId="680">
+          <RootConnector PointId="260">
             <Caption>
               <LabelString>DummyArgument&lt;string&gt;</LabelString>
             </Caption>
@@ -131,7 +131,7 @@
             <ForcedChecked>false</ForcedChecked>
             <Connector>
               <LinkList>
-                <PointID>684</PointID>
+                <PointID>264</PointID>
               </LinkList>
             </Connector>
             <Arguments />
@@ -149,7 +149,7 @@
             <LiteralType>String</LiteralType>
             <ObjectType>none</ObjectType>
           </AssetLiteralType>
-          <RootConnector PointId="683">
+          <RootConnector PointId="263">
             <Caption>
               <LabelString>ConsoleOut</LabelString>
             </Caption>
@@ -157,11 +157,11 @@
             <ForcedChecked>false</ForcedChecked>
             <Connector>
               <LinkList>
-                <PointID>678</PointID>
+                <PointID>258</PointID>
               </LinkList>
             </Connector>
             <Arguments>
-              <LinkConnector PointId="684">
+              <LinkConnector PointId="264">
                 <Value />
                 <CastConnect>false</CastConnect>
                 <ParamInfo>
@@ -190,7 +190,7 @@
             <LiteralType>Object</LiteralType>
             <ObjectType>none</ObjectType>
           </AssetLiteralType>
-          <RootConnector PointId="687">
+          <RootConnector PointId="267">
             <Caption>
               <LabelString>Sequence</LabelString>
             </Caption>
@@ -200,7 +200,7 @@
               <LinkList />
             </Connector>
             <Arguments>
-              <LinkConnector PointId="688">
+              <LinkConnector PointId="268">
                 <CastConnect>false</CastConnect>
                 <ParamInfo>
                   <ParamName>call list</ParamName>
@@ -211,7 +211,7 @@
                 </ParamInfo>
                 <LinkConnectorList>
                   <List>
-                    <LinkConnector PointId="690">
+                    <LinkConnector PointId="270">
                       <Value>[object]&lt;null&gt;</Value>
                       <CastConnect>false</CastConnect>
                       <ParamInfo>

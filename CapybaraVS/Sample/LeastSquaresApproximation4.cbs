@@ -2,7 +2,7 @@
 <CommandCanvas Id="2">
   <WorkCanvas Id="1">
     <EnabelGridLine>false</EnabelGridLine>
-    <EnableInfo>true</EnableInfo>
+    <EnableInfo>false</EnableInfo>
     <CanvasScale>0.09614210898704938</CanvasScale>
     <CanvasRenderTransform>
       <M11>0.2953027716977617</M11>
@@ -26,7 +26,7 @@
             <LiteralType>Double</LiteralType>
             <ObjectType>none</ObjectType>
           </AssetLiteralType>
-          <RootConnector PointId="1351">
+          <RootConnector PointId="931">
             <Caption>
               <LabelString>1Column</LabelString>
             </Caption>
@@ -34,11 +34,11 @@
             <ForcedChecked>false</ForcedChecked>
             <Connector>
               <LinkList>
-                <PointID>1424</PointID>
+                <PointID>1004</PointID>
               </LinkList>
             </Connector>
             <Arguments>
-              <LinkConnector PointId="1352">
+              <LinkConnector PointId="932">
                 <CastConnect>false</CastConnect>
                 <ParamInfo>
                   <ParamName>m</ParamName>
@@ -49,7 +49,7 @@
                 </ParamInfo>
                 <LinkConnectorList>
                   <List>
-                    <LinkConnector PointId="1354">
+                    <LinkConnector PointId="934">
                       <Value>-0.577</Value>
                       <CastConnect>false</CastConnect>
                       <ParamInfo>
@@ -63,7 +63,7 @@
                         <List />
                       </LinkConnectorList>
                     </LinkConnector>
-                    <LinkConnector PointId="1356">
+                    <LinkConnector PointId="936">
                       <Value>2.512</Value>
                       <CastConnect>false</CastConnect>
                       <ParamInfo>
@@ -77,7 +77,7 @@
                         <List />
                       </LinkConnectorList>
                     </LinkConnector>
-                    <LinkConnector PointId="1358">
+                    <LinkConnector PointId="938">
                       <Value>3</Value>
                       <CastConnect>false</CastConnect>
                       <ParamInfo>
@@ -91,7 +91,7 @@
                         <List />
                       </LinkConnectorList>
                     </LinkConnector>
-                    <LinkConnector PointId="1360">
+                    <LinkConnector PointId="940">
                       <Value>5.66</Value>
                       <CastConnect>false</CastConnect>
                       <ParamInfo>
@@ -105,7 +105,7 @@
                         <List />
                       </LinkConnectorList>
                     </LinkConnector>
-                    <LinkConnector PointId="1362">
+                    <LinkConnector PointId="942">
                       <Value>8.33</Value>
                       <CastConnect>false</CastConnect>
                       <ParamInfo>
@@ -119,7 +119,7 @@
                         <List />
                       </LinkConnectorList>
                     </LinkConnector>
-                    <LinkConnector PointId="1364">
+                    <LinkConnector PointId="944">
                       <Value>10.256</Value>
                       <CastConnect>false</CastConnect>
                       <ParamInfo>
@@ -133,7 +133,7 @@
                         <List />
                       </LinkConnectorList>
                     </LinkConnector>
-                    <LinkConnector PointId="1366">
+                    <LinkConnector PointId="946">
                       <Value>12.699</Value>
                       <CastConnect>false</CastConnect>
                       <ParamInfo>
@@ -147,7 +147,7 @@
                         <List />
                       </LinkConnectorList>
                     </LinkConnector>
-                    <LinkConnector PointId="1368">
+                    <LinkConnector PointId="948">
                       <Value>14.371</Value>
                       <CastConnect>false</CastConnect>
                       <ParamInfo>
@@ -161,7 +161,7 @@
                         <List />
                       </LinkConnectorList>
                     </LinkConnector>
-                    <LinkConnector PointId="1370">
+                    <LinkConnector PointId="950">
                       <Value>16.756</Value>
                       <CastConnect>false</CastConnect>
                       <ParamInfo>
@@ -175,7 +175,7 @@
                         <List />
                       </LinkConnectorList>
                     </LinkConnector>
-                    <LinkConnector PointId="1372">
+                    <LinkConnector PointId="952">
                       <Value>17.136</Value>
                       <CastConnect>false</CastConnect>
                       <ParamInfo>
@@ -189,7 +189,7 @@
                         <List />
                       </LinkConnectorList>
                     </LinkConnector>
-                    <LinkConnector PointId="1374">
+                    <LinkConnector PointId="954">
                       <Value>20.121</Value>
                       <CastConnect>false</CastConnect>
                       <ParamInfo>
@@ -221,7 +221,7 @@
             <LiteralType>Object</LiteralType>
             <ObjectType>none</ObjectType>
           </AssetLiteralType>
-          <RootConnector PointId="1377">
+          <RootConnector PointId="957">
             <Caption>
               <LabelString>Sequence</LabelString>
             </Caption>
@@ -231,7 +231,7 @@
               <LinkList />
             </Connector>
             <Arguments>
-              <LinkConnector PointId="1378">
+              <LinkConnector PointId="958">
                 <CastConnect>false</CastConnect>
                 <ParamInfo>
                   <ParamName>call list</ParamName>
@@ -242,7 +242,7 @@
                 </ParamInfo>
                 <LinkConnectorList>
                   <List>
-                    <LinkConnector PointId="1380">
+                    <LinkConnector PointId="960">
                       <Value>[object]&lt;null&gt;</Value>
                       <CastConnect>false</CastConnect>
                       <ParamInfo>
@@ -256,7 +256,7 @@
                         <List />
                       </LinkConnectorList>
                     </LinkConnector>
-                    <LinkConnector PointId="1382">
+                    <LinkConnector PointId="962">
                       <Value>[object]&lt;null&gt;</Value>
                       <CastConnect>false</CastConnect>
                       <ParamInfo>
@@ -288,7 +288,7 @@
             <LiteralType>Double</LiteralType>
             <ObjectType>none</ObjectType>
           </AssetLiteralType>
-          <RootConnector PointId="1385">
+          <RootConnector PointId="965">
             <Caption>
               <LabelString>PseudoInverse</LabelString>
             </Caption>
@@ -296,11 +296,11 @@
             <ForcedChecked>false</ForcedChecked>
             <Connector>
               <LinkList>
-                <PointID>1423</PointID>
+                <PointID>1003</PointID>
               </LinkList>
             </Connector>
             <Arguments>
-              <LinkConnector PointId="1386">
+              <LinkConnector PointId="966">
                 <Value>[Matrix]&lt;null&gt;</Value>
                 <CastConnect>false</CastConnect>
                 <ParamInfo>
@@ -329,20 +329,20 @@
             <LiteralType>Double</LiteralType>
             <ObjectType>List</ObjectType>
           </AssetLiteralType>
-          <RootConnector PointId="1389">
+          <RootConnector PointId="969">
             <Caption>
               <LabelString>list&lt;double&gt;</LabelString>
             </Caption>
             <ForcedChecked>false</ForcedChecked>
             <Connector>
               <LinkList>
-                <PointID>1352</PointID>
-                <PointID>1418</PointID>
-                <PointID>1465</PointID>
+                <PointID>932</PointID>
+                <PointID>998</PointID>
+                <PointID>1045</PointID>
               </LinkList>
             </Connector>
             <Arguments>
-              <LinkConnector PointId="1390">
+              <LinkConnector PointId="970">
                 <CastConnect>false</CastConnect>
                 <ParamInfo>
                   <ParamName> </ParamName>
@@ -353,7 +353,7 @@
                 </ParamInfo>
                 <LinkConnectorList>
                   <List>
-                    <LinkConnector PointId="1392">
+                    <LinkConnector PointId="972">
                       <Value>10</Value>
                       <CastConnect>false</CastConnect>
                       <ParamInfo>
@@ -367,7 +367,7 @@
                         <List />
                       </LinkConnectorList>
                     </LinkConnector>
-                    <LinkConnector PointId="1394">
+                    <LinkConnector PointId="974">
                       <Value>8</Value>
                       <CastConnect>false</CastConnect>
                       <ParamInfo>
@@ -381,7 +381,7 @@
                         <List />
                       </LinkConnectorList>
                     </LinkConnector>
-                    <LinkConnector PointId="1396">
+                    <LinkConnector PointId="976">
                       <Value>6</Value>
                       <CastConnect>false</CastConnect>
                       <ParamInfo>
@@ -395,7 +395,7 @@
                         <List />
                       </LinkConnectorList>
                     </LinkConnector>
-                    <LinkConnector PointId="1398">
+                    <LinkConnector PointId="978">
                       <Value>13</Value>
                       <CastConnect>false</CastConnect>
                       <ParamInfo>
@@ -409,7 +409,7 @@
                         <List />
                       </LinkConnectorList>
                     </LinkConnector>
-                    <LinkConnector PointId="1400">
+                    <LinkConnector PointId="980">
                       <Value>14</Value>
                       <CastConnect>false</CastConnect>
                       <ParamInfo>
@@ -423,7 +423,7 @@
                         <List />
                       </LinkConnectorList>
                     </LinkConnector>
-                    <LinkConnector PointId="1402">
+                    <LinkConnector PointId="982">
                       <Value>22</Value>
                       <CastConnect>false</CastConnect>
                       <ParamInfo>
@@ -437,7 +437,7 @@
                         <List />
                       </LinkConnectorList>
                     </LinkConnector>
-                    <LinkConnector PointId="1404">
+                    <LinkConnector PointId="984">
                       <Value>31</Value>
                       <CastConnect>false</CastConnect>
                       <ParamInfo>
@@ -451,7 +451,7 @@
                         <List />
                       </LinkConnectorList>
                     </LinkConnector>
-                    <LinkConnector PointId="1406">
+                    <LinkConnector PointId="986">
                       <Value>39</Value>
                       <CastConnect>false</CastConnect>
                       <ParamInfo>
@@ -465,7 +465,7 @@
                         <List />
                       </LinkConnectorList>
                     </LinkConnector>
-                    <LinkConnector PointId="1408">
+                    <LinkConnector PointId="988">
                       <Value>47</Value>
                       <CastConnect>false</CastConnect>
                       <ParamInfo>
@@ -479,7 +479,7 @@
                         <List />
                       </LinkConnectorList>
                     </LinkConnector>
-                    <LinkConnector PointId="1410">
+                    <LinkConnector PointId="990">
                       <Value>54</Value>
                       <CastConnect>false</CastConnect>
                       <ParamInfo>
@@ -493,7 +493,7 @@
                         <List />
                       </LinkConnectorList>
                     </LinkConnector>
-                    <LinkConnector PointId="1412">
+                    <LinkConnector PointId="992">
                       <Value>65</Value>
                       <CastConnect>false</CastConnect>
                       <ParamInfo>
@@ -525,7 +525,7 @@
             <LiteralType>Double</LiteralType>
             <ObjectType>none</ObjectType>
           </AssetLiteralType>
-          <RootConnector PointId="1414">
+          <RootConnector PointId="994">
             <Caption>
               <LabelString>DummyArgument&lt;double&gt;</LabelString>
             </Caption>
@@ -533,7 +533,7 @@
             <ForcedChecked>false</ForcedChecked>
             <Connector>
               <LinkList>
-                <PointID>1429</PointID>
+                <PointID>1009</PointID>
               </LinkList>
             </Connector>
             <Arguments />
@@ -551,7 +551,7 @@
             <LiteralType>Double</LiteralType>
             <ObjectType>none</ObjectType>
           </AssetLiteralType>
-          <RootConnector PointId="1417">
+          <RootConnector PointId="997">
             <Caption>
               <LabelString>Count</LabelString>
             </Caption>
@@ -559,13 +559,13 @@
             <ForcedChecked>false</ForcedChecked>
             <Connector>
               <LinkList>
-                <PointID>1440</PointID>
-                <PointID>1448</PointID>
-                <PointID>1472</PointID>
+                <PointID>1052</PointID>
+                <PointID>1028</PointID>
+                <PointID>1020</PointID>
               </LinkList>
             </Connector>
             <Arguments>
-              <LinkConnector PointId="1418">
+              <LinkConnector PointId="998">
                 <CastConnect>false</CastConnect>
                 <ParamInfo>
                   <ParamName>sample</ParamName>
@@ -593,7 +593,7 @@
             <LiteralType>Double</LiteralType>
             <ObjectType>none</ObjectType>
           </AssetLiteralType>
-          <RootConnector PointId="1422">
+          <RootConnector PointId="1002">
             <Caption>
               <LabelString>*</LabelString>
             </Caption>
@@ -601,11 +601,11 @@
             <ForcedChecked>false</ForcedChecked>
             <Connector>
               <LinkList>
-                <PointID>1434</PointID>
+                <PointID>1014</PointID>
               </LinkList>
             </Connector>
             <Arguments>
-              <LinkConnector PointId="1423">
+              <LinkConnector PointId="1003">
                 <Value>[Matrix]&lt;null&gt;</Value>
                 <CastConnect>false</CastConnect>
                 <ParamInfo>
@@ -619,7 +619,7 @@
                   <List />
                 </LinkConnectorList>
               </LinkConnector>
-              <LinkConnector PointId="1424">
+              <LinkConnector PointId="1004">
                 <Value>[Matrix]&lt;null&gt;</Value>
                 <CastConnect>false</CastConnect>
                 <ParamInfo>
@@ -648,7 +648,7 @@
             <LiteralType>Double</LiteralType>
             <ObjectType>none</ObjectType>
           </AssetLiteralType>
-          <RootConnector PointId="1428">
+          <RootConnector PointId="1008">
             <Caption>
               <LabelString>Polynomial</LabelString>
             </Caption>
@@ -656,11 +656,11 @@
             <ForcedChecked>false</ForcedChecked>
             <Connector>
               <LinkList>
-                <PointID>1473</PointID>
+                <PointID>1053</PointID>
               </LinkList>
             </Connector>
             <Arguments>
-              <LinkConnector PointId="1429">
+              <LinkConnector PointId="1009">
                 <Value>0</Value>
                 <CastConnect>false</CastConnect>
                 <ParamInfo>
@@ -674,7 +674,7 @@
                   <List />
                 </LinkConnectorList>
               </LinkConnector>
-              <LinkConnector PointId="1430">
+              <LinkConnector PointId="1010">
                 <CastConnect>false</CastConnect>
                 <ParamInfo>
                   <ParamName> </ParamName>
@@ -702,18 +702,18 @@
             <LiteralType>Double</LiteralType>
             <ObjectType>none</ObjectType>
           </AssetLiteralType>
-          <RootConnector PointId="1433">
+          <RootConnector PointId="1013">
             <Caption>
               <LabelString>AsColumnMajorArray</LabelString>
             </Caption>
             <ForcedChecked>false</ForcedChecked>
             <Connector>
               <LinkList>
-                <PointID>1430</PointID>
+                <PointID>1010</PointID>
               </LinkList>
             </Connector>
             <Arguments>
-              <LinkConnector PointId="1434">
+              <LinkConnector PointId="1014">
                 <Value>[Matrix]&lt;null&gt;</Value>
                 <CastConnect>false</CastConnect>
                 <ParamInfo>
@@ -742,7 +742,7 @@
             <LiteralType>String</LiteralType>
             <ObjectType>none</ObjectType>
           </AssetLiteralType>
-          <RootConnector PointId="1437">
+          <RootConnector PointId="1017">
             <Caption>
               <LabelString>Sum</LabelString>
             </Caption>
@@ -750,11 +750,11 @@
             <ForcedChecked>false</ForcedChecked>
             <Connector>
               <LinkList>
-                <PointID>1380</PointID>
+                <PointID>960</PointID>
               </LinkList>
             </Connector>
             <Arguments>
-              <LinkConnector PointId="1438">
+              <LinkConnector PointId="1018">
                 <CastConnect>false</CastConnect>
                 <ParamInfo>
                   <ParamName>sample</ParamName>
@@ -765,7 +765,7 @@
                 </ParamInfo>
                 <LinkConnectorList>
                   <List>
-                    <LinkConnector PointId="1440">
+                    <LinkConnector PointId="1020">
                       <Value />
                       <CastConnect>false</CastConnect>
                       <ParamInfo>
@@ -779,7 +779,7 @@
                         <List />
                       </LinkConnectorList>
                     </LinkConnector>
-                    <LinkConnector PointId="1442">
+                    <LinkConnector PointId="1022">
                       <Value>th order</Value>
                       <CastConnect>false</CastConnect>
                       <ParamInfo>
@@ -811,7 +811,7 @@
             <LiteralType>Double</LiteralType>
             <ObjectType>none</ObjectType>
           </AssetLiteralType>
-          <RootConnector PointId="1446">
+          <RootConnector PointId="1026">
             <Caption>
               <LabelString>Term</LabelString>
             </Caption>
@@ -819,11 +819,11 @@
             <ForcedChecked>false</ForcedChecked>
             <Connector>
               <LinkList>
-                <PointID>1386</PointID>
+                <PointID>966</PointID>
               </LinkList>
             </Connector>
             <Arguments>
-              <LinkConnector PointId="1447">
+              <LinkConnector PointId="1027">
                 <Value>2</Value>
                 <CastConnect>false</CastConnect>
                 <ParamInfo>
@@ -837,7 +837,7 @@
                   <List />
                 </LinkConnectorList>
               </LinkConnector>
-              <LinkConnector PointId="1448">
+              <LinkConnector PointId="1028">
                 <Value>0</Value>
                 <CastConnect>false</CastConnect>
                 <ParamInfo>
@@ -866,7 +866,7 @@
             <LiteralType>Double</LiteralType>
             <ObjectType>none</ObjectType>
           </AssetLiteralType>
-          <RootConnector PointId="1453">
+          <RootConnector PointId="1033">
             <Caption>
               <LabelString>OutPlot</LabelString>
             </Caption>
@@ -874,11 +874,11 @@
             <ForcedChecked>false</ForcedChecked>
             <Connector>
               <LinkList>
-                <PointID>1382</PointID>
+                <PointID>962</PointID>
               </LinkList>
             </Connector>
             <Arguments>
-              <LinkConnector PointId="1454">
+              <LinkConnector PointId="1034">
                 <Value />
                 <CastConnect>false</CastConnect>
                 <ParamInfo>
@@ -892,7 +892,7 @@
                   <List />
                 </LinkConnectorList>
               </LinkConnector>
-              <LinkConnector PointId="1455">
+              <LinkConnector PointId="1035">
                 <CastConnect>false</CastConnect>
                 <ParamInfo>
                   <ParamName>list</ParamName>
@@ -903,7 +903,7 @@
                 </ParamInfo>
                 <LinkConnectorList>
                   <List>
-                    <LinkConnector PointId="1457">
+                    <LinkConnector PointId="1037">
                       <Value>[PlotInfo]&lt;null&gt;</Value>
                       <CastConnect>false</CastConnect>
                       <ParamInfo>
@@ -917,7 +917,7 @@
                         <List />
                       </LinkConnectorList>
                     </LinkConnector>
-                    <LinkConnector PointId="1459">
+                    <LinkConnector PointId="1039">
                       <Value>[PlotInfo]&lt;null&gt;</Value>
                       <CastConnect>false</CastConnect>
                       <ParamInfo>
@@ -934,7 +934,7 @@
                   </List>
                 </LinkConnectorList>
               </LinkConnector>
-              <LinkConnector PointId="1460">
+              <LinkConnector PointId="1040">
                 <CastConnect>false</CastConnect>
                 <ParamInfo>
                   <ParamName>guideLines</ParamName>
@@ -962,7 +962,7 @@
             <LiteralType>Double</LiteralType>
             <ObjectType>none</ObjectType>
           </AssetLiteralType>
-          <RootConnector PointId="1464">
+          <RootConnector PointId="1044">
             <Caption>
               <LabelString>CreatePlotInfo</LabelString>
             </Caption>
@@ -970,11 +970,11 @@
             <ForcedChecked>false</ForcedChecked>
             <Connector>
               <LinkList>
-                <PointID>1457</PointID>
+                <PointID>1037</PointID>
               </LinkList>
             </Connector>
             <Arguments>
-              <LinkConnector PointId="1465">
+              <LinkConnector PointId="1045">
                 <CastConnect>false</CastConnect>
                 <ParamInfo>
                   <ParamName>list</ParamName>
@@ -987,7 +987,7 @@
                   <List />
                 </LinkConnectorList>
               </LinkConnector>
-              <LinkConnector PointId="1466">
+              <LinkConnector PointId="1046">
                 <Value>DrawType.NormalPlot</Value>
                 <CastConnect>false</CastConnect>
                 <ParamInfo>
@@ -1016,18 +1016,18 @@
             <LiteralType>Double</LiteralType>
             <ObjectType>none</ObjectType>
           </AssetLiteralType>
-          <RootConnector PointId="1471">
+          <RootConnector PointId="1051">
             <Caption>
               <LabelString>MakePlotList</LabelString>
             </Caption>
             <ForcedChecked>false</ForcedChecked>
             <Connector>
               <LinkList>
-                <PointID>1479</PointID>
+                <PointID>1059</PointID>
               </LinkList>
             </Connector>
             <Arguments>
-              <LinkConnector PointId="1472">
+              <LinkConnector PointId="1052">
                 <Value>0</Value>
                 <CastConnect>false</CastConnect>
                 <ParamInfo>
@@ -1041,7 +1041,7 @@
                   <List />
                 </LinkConnectorList>
               </LinkConnector>
-              <LinkConnector PointId="1473">
+              <LinkConnector PointId="1053">
                 <Value>[Func&lt;double, double&gt;()]&lt;null&gt;</Value>
                 <CastConnect>false</CastConnect>
                 <ParamInfo>
@@ -1055,7 +1055,7 @@
                   <List />
                 </LinkConnectorList>
               </LinkConnector>
-              <LinkConnector PointId="1474">
+              <LinkConnector PointId="1054">
                 <Value>0.05</Value>
                 <CastConnect>false</CastConnect>
                 <ParamInfo>
@@ -1084,7 +1084,7 @@
             <LiteralType>Double</LiteralType>
             <ObjectType>none</ObjectType>
           </AssetLiteralType>
-          <RootConnector PointId="1478">
+          <RootConnector PointId="1058">
             <Caption>
               <LabelString>CreatePlotInfo</LabelString>
             </Caption>
@@ -1092,11 +1092,11 @@
             <ForcedChecked>false</ForcedChecked>
             <Connector>
               <LinkList>
-                <PointID>1459</PointID>
+                <PointID>1039</PointID>
               </LinkList>
             </Connector>
             <Arguments>
-              <LinkConnector PointId="1479">
+              <LinkConnector PointId="1059">
                 <CastConnect>false</CastConnect>
                 <ParamInfo>
                   <ParamName>list</ParamName>
@@ -1109,7 +1109,7 @@
                   <List />
                 </LinkConnectorList>
               </LinkConnector>
-              <LinkConnector PointId="1480">
+              <LinkConnector PointId="1060">
                 <Value>DrawType.Line</Value>
                 <CastConnect>false</CastConnect>
                 <ParamInfo>
