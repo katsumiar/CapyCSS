@@ -111,18 +111,21 @@ namespace CapybaraVS
                 // 移動量を求める
                 Point pos = e.GetPosition(targetCanvas);
 
+                bool isGridMove = (Keyboard.GetKeyStates(Key.LeftCtrl) & KeyStates.Down) > 0 ||
+                                (Keyboard.GetKeyStates(Key.RightCtrl) & KeyStates.Down) > 0;
+
                 if (target is IMovableCanvas movementCanvas)
                 {
                     // 画面全体を動かす
 
                     Point movePoint = pos;
-                    movePoint.X -= dragOffset.X;
-                    movePoint.Y -= dragOffset.Y;
-                    dragOffset = pos;
 
                     if (CommandCanvas.ScriptWorkCanvas.SelectedContorls.Count == 0)
                     {
                         // 全体を移動
+                        movePoint.X -= dragOffset.X;
+                        movePoint.Y -= dragOffset.Y;
+                        dragOffset = pos;
 
                         Matrix matrix = movementCanvas.CanvasRenderTransform.Value;
                         matrix.Translate(movePoint.X, movePoint.Y);
@@ -131,12 +134,16 @@ namespace CapybaraVS
                     else
                     {
                         // 選択されているアセットを移動
-                        // TODO ここの移動量計算は間違えているので直す必要がある
-
+                        double sx = movePoint.X - dragOffset.X;
+                        double sy = movePoint.Y - dragOffset.Y;
+                        double ms = 1.0 / CommandCanvas.ScriptWorkCanvas.CanvasScale;
+                        sx = sx * ms;
+                        sy = sy * ms;
+                        dragOffset = pos;
                         foreach (var node in CommandCanvas.ScriptWorkCanvas.SelectedContorls)
                         {
                             Matrix matrix = node.RenderTransform.Value;
-                            matrix.Translate(movePoint.X, movePoint.Y);
+                            matrix.Translate(matrix.OffsetX + sx, matrix.OffsetY + sy);
                             var mt = new MatrixTransform(matrix);
                             Point newPos = mt.Transform(new Point(Canvas.GetLeft(node), Canvas.GetTop(node)));
                             Canvas.SetLeft(node, newPos.X);
@@ -151,8 +158,7 @@ namespace CapybaraVS
                     double x = pos.X - targetOffset.X;
                     double y = pos.Y - targetOffset.Y;
 
-                    if ((Keyboard.GetKeyStates(Key.LeftCtrl) & KeyStates.Down) > 0 ||
-                            (Keyboard.GetKeyStates(Key.RightCtrl) & KeyStates.Down) > 0)
+                    if (isGridMove)
                     {
                         x -= x % 30;
                         y -= y % 30;
