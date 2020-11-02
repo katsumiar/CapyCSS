@@ -267,17 +267,22 @@ namespace CapybaraVS.Control.BaseControls
         /// </summary>
         public void Clear()
         {
-            foreach (var node in InfoCanvas.Children)
+            for (int i = 0; i < ControlsCanvas.Children.Count; ++i)
+            {
+                var node = ControlsCanvas.Children[i];
                 if (node is IDisposable target)
                     target.Dispose();
-
+            }
             ControlsCanvas.Children.Clear();
 
-            foreach (var node in InfoCanvas.Children)
+            for (int i = 0; i < InfoCanvas.Children.Count; ++i)
+            {
+                var node = InfoCanvas.Children[i];
                 if (node is IDisposable target)
                     target.Dispose();
-
+            }
             InfoCanvas.Children.Clear();
+
             LinePosList.Clear();
         }
 
