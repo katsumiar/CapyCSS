@@ -1,5 +1,5 @@
 # CapyCSS
-![sample](https://user-images.githubusercontent.com/63950487/92327819-4bc2b180-f097-11ea-832d-3077861a8dea.png)
+![title](https://user-images.githubusercontent.com/63950487/97864065-5f169400-1d4b-11eb-9d12-403b099e0ffb.png)
 
 ## 特徴
 * ビジュアルなスクリプトを作成することができます。
