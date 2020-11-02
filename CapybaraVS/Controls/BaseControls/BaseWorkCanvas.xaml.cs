@@ -789,7 +789,7 @@ namespace CapybaraVS.Control.BaseControls
                 switch (e.Key)
                 {
                     case Key.C:
-                        // 選択されたアセットをxmlシリアライズしてクリップボードにコピーする
+                        // 選択された作業内容をxmlシリアライズしてクリップボードにコピーする
 
                         try
                         {
@@ -809,23 +809,34 @@ namespace CapybaraVS.Control.BaseControls
                         break;
 
                     case Key.V:
-                        // クリップボードのxmlをデシリアライズしてアセットをキャンバスに置く
-
                         try
                         {
                             var reader = new StringReader(Clipboard.GetText());
-                            XmlSerializer serializer = new XmlSerializer(CopyAssetXML.GetType());
+                            string text = reader.ReadToEnd();
+                            if (!text.Contains("<CopyAsset Id="))
+                            {
+                                // テキストの内容に合わせて貼り付ける
 
-                            XmlDocument doc = new XmlDocument();
-                            doc.PreserveWhitespace = true;
-                            doc.Load(reader);
-                            XmlNodeReader nodeReader = new XmlNodeReader(doc.DocumentElement);
+                                CreateTextAsset(startPoint, text);
+                            }
+                            else
+                            {
+                                // クリップボードのxmlをデシリアライズしてアセットをキャンバスに置く
 
-                            object data = (_CopyAssetXML<BaseWorkCanvas>)serializer.Deserialize(nodeReader);
-                            CopyAssetXML = (_CopyAssetXML<BaseWorkCanvas>)data;
+                                reader = new StringReader(Clipboard.GetText());
+                                XmlSerializer serializer = new XmlSerializer(CopyAssetXML.GetType());
 
-                            PointIdProvider.InitCheckRequest();
-                            CopyAssetXML.ReadAction(this);
+                                XmlDocument doc = new XmlDocument();
+                                doc.PreserveWhitespace = true;
+                                doc.Load(reader);
+                                XmlNodeReader nodeReader = new XmlNodeReader(doc.DocumentElement);
+
+                                object data = (_CopyAssetXML<BaseWorkCanvas>)serializer.Deserialize(nodeReader);
+                                CopyAssetXML = (_CopyAssetXML<BaseWorkCanvas>)data;
+
+                                PointIdProvider.InitCheckRequest();
+                                CopyAssetXML.ReadAction(this);
+                            }
                         }
                         catch (Exception ex)
                         {
@@ -833,7 +844,7 @@ namespace CapybaraVS.Control.BaseControls
                         }
                         break;
 
-                    case Key.N:
+                    case Key.N: // 使用済み
                         break;
                 }
             }
@@ -926,10 +937,10 @@ namespace CapybaraVS.Control.BaseControls
             }
         }
 
-        private void CreateTextAsset(Point pos, string filename)
+        private void CreateTextAsset(Point pos, string contents)
         {
             var obj = new MultiRootConnector();
-            obj.AttachParam = new MultiRootConnector.AttachText(filename);
+            obj.AttachParam = new MultiRootConnector.AttachText(contents);
 
             if (obj is UIElement element)
             {
