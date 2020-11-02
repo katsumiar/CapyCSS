@@ -9,66 +9,66 @@ namespace CapybaraVS.Script.Lib
 {
     class FileLib
     {
-        [ScriptMethod("Input/Output" + ".ConsolOut.List." + "String List", "",
-            "RS=>FileLib_ConsolOutStringList"//"文字列リストをコンソールに出力します。"
+        [ScriptMethod("Input/Output" + ".ConsoleOut.List." + "String List", "",
+            "RS=>FileLib_ConsoleOutStringList"//"文字列リストをコンソールに出力します。"
             )]
-        public static int ConsolOutStringList(List<string> list)
+        public static int ConsoleOutStringList(List<string> list)
         {
             foreach (var node in list)
             {
-                MainWindow.Instance.MainLog.OutLine("ConsolOutStringList", node);
+                MainWindow.Instance.MainLog.OutLine("ConsoleOutStringList", node);
             }
             return list.Count;
         }
 
         //------------------------------------------------------------------
-        [ScriptMethod("Input/Output" + ".ConsolOut.List." + "Int List", "",
-            "RS=>FileLib_ConsolOutIntList"//"int 型リストをコンソールに出力します。"
+        [ScriptMethod("Input/Output" + ".ConsoleOut.List." + "Int List", "",
+            "RS=>FileLib_ConsoleOutIntList"//"int 型リストをコンソールに出力します。"
             )]
-        public static int ConsolOutIntList(List<int> list)
+        public static int ConsoleOutIntList(List<int> list)
         {
             foreach (var node in list)
             {
-                MainWindow.Instance.MainLog.OutLine("ConsolOutIntList", node.ToString());
+                MainWindow.Instance.MainLog.OutLine("ConsoleOutIntList", node.ToString());
             }
             return list.Count;
         }
 
         //------------------------------------------------------------------
-        [ScriptMethod("Input/Output" + ".ConsolOut.List." + "Long List", "",
-            "RS=>FileLib_ConsolOutLongList"//"long 型リストをコンソールに出力します。"
+        [ScriptMethod("Input/Output" + ".ConsoleOut.List." + "Long List", "",
+            "RS=>FileLib_ConsoleOutLongList"//"long 型リストをコンソールに出力します。"
             )]
-        public static int ConsolOutLongList(List<long> list)
+        public static int ConsoleOutLongList(List<long> list)
         {
             foreach (var node in list)
             {
-                MainWindow.Instance.MainLog.OutLine("ConsolOutIntList", node.ToString());
+                MainWindow.Instance.MainLog.OutLine("ConsoleOutIntList", node.ToString());
             }
             return list.Count;
         }
 
         //------------------------------------------------------------------
-        [ScriptMethod("Input/Output" + ".ConsolOut.List." + "Double List", "",
-            "RS=>FileLib_ConsolOutDoubleList"//"double 型リストをコンソールに出力します。"
+        [ScriptMethod("Input/Output" + ".ConsoleOut.List." + "Double List", "",
+            "RS=>FileLib_ConsoleOutDoubleList"//"double 型リストをコンソールに出力します。"
             )]
-        public static int ConsolOutDoubleList(List<double> list)
+        public static int ConsoleOutDoubleList(List<double> list)
         {
             foreach (var node in list)
             {
-                MainWindow.Instance.MainLog.OutLine("ConsolOutIntList", node.ToString());
+                MainWindow.Instance.MainLog.OutLine("ConsoleOutIntList", node.ToString());
             }
             return list.Count;
         }
 
         //------------------------------------------------------------------
-        [ScriptMethod("Input/Output" + ".ConsolOut.List." + "Bool List", "",
-            "RS=>FileLib_ConsolOutBoolList"//"bool 型リストをコンソールに出力します。"
+        [ScriptMethod("Input/Output" + ".ConsoleOut.List." + "Bool List", "",
+            "RS=>FileLib_ConsoleOutBoolList"//"bool 型リストをコンソールに出力します。"
             )]
-        public static int ConsolOutBoolList(List<bool> list)
+        public static int ConsoleOutBoolList(List<bool> list)
         {
             foreach (var node in list)
             {
-                MainWindow.Instance.MainLog.OutLine("ConsolOutIntList", node.ToString());
+                MainWindow.Instance.MainLog.OutLine("ConsoleOutIntList", node.ToString());
             }
             return list.Count;
         }

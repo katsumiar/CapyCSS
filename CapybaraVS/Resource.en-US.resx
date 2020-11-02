@@ -213,19 +213,19 @@
   <data name="FileLib_Combine" xml:space="preserve">
     <value>Combine multiple strings into one path. If &lt;slashSeparate&gt; is True, separate directories with / instead of &lt;//&gt;.</value>
   </data>
-  <data name="FileLib_ConsolOutBoolList" xml:space="preserve">
+  <data name="FileLib_ConsoleOutBoolList" xml:space="preserve">
     <value>Print a bool type list to the console.</value>
   </data>
-  <data name="FileLib_ConsolOutDoubleList" xml:space="preserve">
+  <data name="FileLib_ConsoleOutDoubleList" xml:space="preserve">
     <value>Outputs a double type list to the console.</value>
   </data>
-  <data name="FileLib_ConsolOutIntList" xml:space="preserve">
+  <data name="FileLib_ConsoleOutIntList" xml:space="preserve">
     <value>Prints an int type list to the console.</value>
   </data>
-  <data name="FileLib_ConsolOutLongList" xml:space="preserve">
+  <data name="FileLib_ConsoleOutLongList" xml:space="preserve">
     <value>Outputs a long type list to the console.</value>
   </data>
-  <data name="FileLib_ConsolOutStringList" xml:space="preserve">
+  <data name="FileLib_ConsoleOutStringList" xml:space="preserve">
     <value>Output a string list to the console.</value>
   </data>
   <data name="FileLib_Copy" xml:space="preserve">

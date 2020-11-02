@@ -110,7 +110,7 @@ namespace CapybaraVS.Script
 
                 {
                     var io = CreateGroup(functionNode, "Input/Output");
-                    var conOut = CreateGroup(io, "ConsolOut");
+                    var conOut = CreateGroup(io, "ConsoleOut");
                     CreateAssetMenu(conOut, new ConsoleOut());
                 }
 

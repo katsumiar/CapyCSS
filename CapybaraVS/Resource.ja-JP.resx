@@ -213,19 +213,19 @@
   <data name="FileLib_Combine" xml:space="preserve">
     <value>複数の文字列を１つのパスに結合します。&lt;slashSeparate&gt; が True のときは、&lt;//&gt; の代わりに / でディレクトリを区切ります。</value>
   </data>
-  <data name="FileLib_ConsolOutBoolList" xml:space="preserve">
+  <data name="FileLib_ConsoleOutBoolList" xml:space="preserve">
     <value>bool 型リストをコンソールに出力します。</value>
   </data>
-  <data name="FileLib_ConsolOutDoubleList" xml:space="preserve">
+  <data name="FileLib_ConsoleOutDoubleList" xml:space="preserve">
     <value>double 型リストをコンソールに出力します。</value>
   </data>
-  <data name="FileLib_ConsolOutIntList" xml:space="preserve">
+  <data name="FileLib_ConsoleOutIntList" xml:space="preserve">
     <value>int 型リストをコンソールに出力します。</value>
   </data>
-  <data name="FileLib_ConsolOutLongList" xml:space="preserve">
+  <data name="FileLib_ConsoleOutLongList" xml:space="preserve">
     <value>long 型リストをコンソールに出力します。</value>
   </data>
-  <data name="FileLib_ConsolOutStringList" xml:space="preserve">
+  <data name="FileLib_ConsoleOutStringList" xml:space="preserve">
     <value>文字列リストをコンソールに出力します。</value>
   </data>
   <data name="FileLib_Copy" xml:space="preserve">
