@@ -1,5 +1,5 @@
 # CapyCSS
-![sample](https://user-images.githubusercontent.com/63950487/92327819-4bc2b180-f097-11ea-832d-3077861a8dea.png)
+![title](https://user-images.githubusercontent.com/63950487/97864065-5f169400-1d4b-11eb-9d12-403b099e0ffb.png)
 
 ## 特徴
 * ビジュアルなスクリプトを作成することができます。
@@ -21,7 +21,7 @@ CapyCSS.exe -as -ae script.cbs
 CapyCSS.exe -ase script.cbs
 ```
 「SetExitCode」ノードを使って終了コードをセットできます。
--ae および -ase オプション時は、「ConsolOut」ノードでコンソールにメッセージを出力できます。
+-ae および -ase オプション時は、「ConsoleOut」ノードでコンソールにメッセージを出力できます。
 これらを使って、バッチ処理的なことができます。
 
 ## ノードのインポート
@@ -37,7 +37,8 @@ public static System.IO.StreamReader GetReadStream(string path, string encoding 
 ```
 
 ## 操作方法
-* 画面左側のコマンドメニューから項目をクリックしてノードを配置できます。
+* スペースキーもしくはホイールボタンの押下でコマンドウインドウを表示できます。
+* コマンドウインドウを表示し、コマンドメニューの「Program」下から項目をクリックしてノードを配置できます。
 * ノードの○を左クリックしてドラッグし、ノードの□に接続できます。
 * Ctrlキーを押しながら□を左クリックすると、接続しているノードを切断できます。
 * Shiftキーを押しながらマウスをドラッグして範囲内のノードを複数選択します。
@@ -90,6 +91,24 @@ public static System.IO.StreamReader GetReadStream(string path, string encoding 
 
 ## メソッドからのメソッド呼び出し
 Func<> および Action<> タイプの引数は、ノードを外部プロセスとして呼び出すことができます。Func<> の場合、ノード型と戻り値型が一致した場合に接続できます。Action だと無条件に接続できます。
+
+## Hello World!
+「Hello World!」と出力するサンプルです。<br>
+![CapyCSS01](https://user-images.githubusercontent.com/63950487/97863495-6f7a3f00-1d4a-11eb-9ef4-0017be21d13e.png)
+<br>ホイールボタンをクリックするかスペースキーでコマンドウインドウが表示されます。
+その中からProgram→.Net Function→Input/Output→ConsoleOut→ConsoleOutをクリックします。
+
+![CapyCSS02](https://user-images.githubusercontent.com/63950487/97861283-d4cc3100-1d46-11eb-9aed-1bf981d57ad3.png)
+<br>作業エリアをクリックすると型選択ウインドウが表示されますので、その中からstringを選択します。
+
+![CapyCSS03](https://user-images.githubusercontent.com/63950487/97861311-deee2f80-1d46-11eb-8352-ef904e6d8818.png)
+<br>引数nの部分に「Hello World!」と入力し、Runをクリックするとスクリプトが実行されます。
+
+![CapyCSS04](https://user-images.githubusercontent.com/63950487/97861328-e7df0100-1d46-11eb-9f44-2c72d97f86a1.png)
+<br>このように「Hello World!」と出力されます。
+
+![CapyCSS05](https://user-images.githubusercontent.com/63950487/97861338-eca3b500-1d46-11eb-8c6e-5cc957366621.png)
+<br>EntryをチェックするとF5キーで実行できるようになります。
 
 ## ライセンス
 MITライセンス
