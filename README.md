@@ -110,5 +110,10 @@ Func<> および Action<> タイプの引数は、ノードを外部プロセス
 ![CapyCSS05](https://user-images.githubusercontent.com/63950487/97861338-eca3b500-1d46-11eb-8c6e-5cc957366621.png)
 <br>EntryをチェックするとF5キーで実行できるようになります。
 
+## 簡単な足し算
+
+![CapyCSS](https://user-images.githubusercontent.com/63950487/98212435-ef8ce880-1f86-11eb-9e4b-d2a6612d86ac.gif)
+<br>ノードを繋ぐことによって、一連のノードを実行できます。
+
 ## ライセンス
 MITライセンス
