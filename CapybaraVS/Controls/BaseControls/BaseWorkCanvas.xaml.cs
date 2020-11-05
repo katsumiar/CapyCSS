@@ -1,6 +1,7 @@
 ﻿using CapybaraVS.Controls;
 using CapybaraVS.Controls.BaseControls;
 using CapyCSS.Controls;
+using CapyCSS.Controls.BaseControls;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -52,6 +53,11 @@ namespace CapybaraVS.Control.BaseControls
         double CanvasScale { get; }
     }
 
+    interface IDisplayPriority
+    {
+        int Priority { get; }
+    }
+
     /// <summary>
     /// BaseWorkCanvas.xaml の相互作用ロジック
     /// </summary>
@@ -89,7 +95,6 @@ namespace CapybaraVS.Control.BaseControls
                     self.AssetId = AssetId;
                     self.EnabelGridLine = EnabelGridLine;
                     self.EnableInfo = EnableInfo;
-                    self.canvasScale = CanvasScale;
                     self.ForcedDrawGridLine();
                     if (CanvasRenderTransform != null)
                     {
@@ -107,7 +112,6 @@ namespace CapybaraVS.Control.BaseControls
                     AssetId = self.AssetId;
                     EnabelGridLine = self.EnabelGridLine;
                     EnableInfo = self.EnableInfo;
-                    CanvasScale = self.canvasScale;
                     CanvasRenderTransform = self.CanvasRenderTransform.Value;
                 };
             }
@@ -116,7 +120,7 @@ namespace CapybaraVS.Control.BaseControls
             #region 固有定義
             public bool EnabelGridLine { get; set; } = false;
             public bool EnableInfo { get; set; } = false;
-            public double CanvasScale { get; set; } = 1.0;
+            public double CanvasScale { get; set; } = 1.0;  // 不要になった
             public Matrix CanvasRenderTransform { get; set; }
             #endregion
         }
@@ -203,7 +207,6 @@ namespace CapybaraVS.Control.BaseControls
         private int before_GridCanvas_heightCount = 0;
 
         private bool enabelGridLine = false;
-        private double canvasScale = 1.0;
         
         /// <summary>
         /// 重ね合わせキャンバスの一元管理用リスト
@@ -385,7 +388,7 @@ namespace CapybaraVS.Control.BaseControls
         /// </summary>
         public double CanvasScale
         { 
-            get => canvasScale;
+            get => CanvasRenderTransform.Value.M11;
             set 
             {
                 CanvasAtScale(value);
@@ -418,13 +421,11 @@ namespace CapybaraVS.Control.BaseControls
         /// <param name="pos">中心位置</param>
         public void CanvasAtScale(double scale = 1.0, Point? pos = null)
         {
-            if (scale > 1.0 && canvasScale >= CANVAS_MAX_SCALE)
+            if (scale > 1.0 && CanvasScale >= CANVAS_MAX_SCALE)
                 return;
 
-            if (scale < 1.0 && canvasScale <= CANVAS_MIN_SCALE)
+            if (scale < 1.0 && CanvasScale <= CANVAS_MIN_SCALE)
                 return;
-
-            canvasScale *= scale;
 
             Matrix matrix = CanvasRenderTransform.Value;
 
@@ -684,6 +685,12 @@ namespace CapybaraVS.Control.BaseControls
 
                     Add(movable);
 
+                    // レイヤー設定
+                    if (element is IDisplayPriority dp)
+                    {
+                        Canvas.SetZIndex(movable, dp.Priority);
+                    }
+
                     // マウスカーソルの座標でセットする
                     Canvas.SetLeft(movable, setPos.X);
                     Canvas.SetTop(movable, setPos.Y);
@@ -734,34 +741,46 @@ namespace CapybaraVS.Control.BaseControls
                 rectangle.Height = Math.Abs(ypos);
 
                 Rect rect = new Rect(Canvas.GetLeft(rectangle), Canvas.GetTop(rectangle), rectangle.Width, rectangle.Height);
-                foreach (var node in ControlsCanvas.Children)
-                {
-                    if (node is Movable target)
-                    {
-                        bool isContains = target.IsContains(rect);
-                        bool isCollect = SelectedContorls.Contains(target);
-
-                        if (isContains && !isCollect)
-                        {
-                            // 選択オブジェクトに追加
-
-                            target.SelectedObject = true;
-                            SelectedContorls.Add(target);
-                        }
-                        else if (!isContains && isCollect)
-                        {
-                            // 選択オブジェクトから外す
-
-                            target.SelectedObject = false;
-                            SelectedContorls.Remove(target);
-                        }
-                    }
-                }
+                GetControlWithinRange(rect, ref SelectedContorls);
             }
 
             mouseInfo.Content = "MOUSE POS: (" + (int)pos.X + ", " + (int)pos.Y + ")";
 
             mouseDragObserver?.MouseMove(sender, e);
+        }
+
+        /// <summary>
+        /// 範囲内の移動可能コントロールを取得する
+        /// </summary>
+        /// <param name="rect"></param>
+        /// <param name="movables"></param>
+        public void GetControlWithinRange(Rect rect, ref ObservableCollection<Movable> movables, bool selectMark = true)
+        {
+            foreach (var node in ControlsCanvas.Children)
+            {
+                if (node is Movable target)
+                {
+                    bool isContains = target.IsContains(rect);
+                    bool isCollect = movables.Contains(target);
+
+                    if (isContains && !isCollect)
+                    {
+                        // 選択オブジェクトに追加
+
+                        if (selectMark)
+                            target.SelectedObject = true;
+                        movables.Add(target);
+                    }
+                    else if (!isContains && isCollect)
+                    {
+                        // 選択オブジェクトから外す
+
+                        if (selectMark)
+                            target.SelectedObject = false;
+                        movables.Remove(target);
+                    }
+                }
+            }
         }
 
         /// <summary>

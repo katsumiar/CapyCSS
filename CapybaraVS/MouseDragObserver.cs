@@ -1,7 +1,9 @@
 ﻿using CapybaraVS.Control.BaseControls;
 using CapybaraVS.Controls.BaseControls;
+using CapyCSS.Controls.BaseControls;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
@@ -23,6 +25,7 @@ namespace CapybaraVS
         private Point dragOffset;
         private Point targetOffset;
         private UIElement captureTarget = null;
+        private ObservableCollection<Movable> groupList = null;
 
         public MouseDragObserver(
             UIElement canvas,
@@ -57,6 +60,22 @@ namespace CapybaraVS
 
             if (targetCanvas != null)
                 dragOffset = e.GetPosition(targetCanvas);
+
+            if (!(target is IMovableCanvas movementCanvas))
+            {
+                // 単体移動時
+
+                if (target != null && target is Movable movable)
+                {
+                    if (movable.ControlObject is IGroupList haveGroupNode)
+                    {
+                        // グループ情報を持っている
+
+                        groupList = haveGroupNode.GroupList;
+                    }
+                }
+            }
+
             captureTarget?.CaptureMouse();
         }
 
@@ -118,14 +137,13 @@ namespace CapybaraVS
                 {
                     // 画面全体を動かす
 
-                    Point movePoint = pos;
-
                     if (CommandCanvas.ScriptWorkCanvas.SelectedContorls.Count == 0)
                     {
                         // 全体を移動
+
+                        Point movePoint = pos;
                         movePoint.X -= dragOffset.X;
                         movePoint.Y -= dragOffset.Y;
-                        dragOffset = pos;
 
                         Matrix matrix = movementCanvas.CanvasRenderTransform.Value;
                         matrix.Translate(movePoint.X, movePoint.Y);
@@ -133,40 +151,66 @@ namespace CapybaraVS
                     }
                     else
                     {
-                        // 選択されているアセットを移動
-                        double sx = movePoint.X - dragOffset.X;
-                        double sy = movePoint.Y - dragOffset.Y;
-                        double ms = 1.0 / CommandCanvas.ScriptWorkCanvas.CanvasScale;
-                        sx = sx * ms;
-                        sy = sy * ms;
-                        dragOffset = pos;
-                        foreach (var node in CommandCanvas.ScriptWorkCanvas.SelectedContorls)
-                        {
-                            Matrix matrix = node.RenderTransform.Value;
-                            matrix.Translate(matrix.OffsetX + sx, matrix.OffsetY + sy);
-                            var mt = new MatrixTransform(matrix);
-                            Point newPos = mt.Transform(new Point(Canvas.GetLeft(node), Canvas.GetTop(node)));
-                            Canvas.SetLeft(node, newPos.X);
-                            Canvas.SetTop(node, newPos.Y);
-                        }
+                        // 選択されているノードを移動
+
+                        MoveSelectedNode(pos, CommandCanvas.ScriptWorkCanvas.SelectedContorls);
                     }
                 }
                 else
                 {
-                    // 個別のアセットを移動
+                    // 個別のノードを移動
 
-                    double x = pos.X - targetOffset.X;
-                    double y = pos.Y - targetOffset.Y;
-
-                    if (isGridMove)
+                    if (groupList != null)
                     {
-                        x -= x % 30;
-                        y -= y % 30;
-                    }
+                        // グループ情報を持っているのでグループ（自身を含む）で移動する
 
-                    Canvas.SetLeft(target, x);
-                    Canvas.SetTop(target, y);
+                        MoveSelectedNode(pos, groupList, false);
+                    }
+                    else
+                    {
+                        SingleMove(pos, isGridMove);
+                    }
                 }
+                dragOffset = pos;
+            }
+        }
+
+        private Point SingleMove(Point pos, bool isGridMove)
+        {
+            double x = pos.X - targetOffset.X;
+            double y = pos.Y - targetOffset.Y;
+
+            if (isGridMove)
+            {
+                x -= x % 30;
+                y -= y % 30;
+            }
+
+            Canvas.SetLeft(target, x);
+            Canvas.SetTop(target, y);
+            return pos;
+        }
+
+        private void MoveSelectedNode(Point currentPoint, ObservableCollection<Movable> movables, bool scale = true)
+        {
+            double sx = currentPoint.X - dragOffset.X;
+            double sy = currentPoint.Y - dragOffset.Y;
+            
+            if (scale)
+            {
+                double ms = 1.0 / CommandCanvas.ScriptWorkCanvas.CanvasScale;
+                sx *= ms;
+                sy *= ms;
+            }
+
+            foreach (var node in movables)
+            {
+                Matrix matrix = node.RenderTransform.Value;
+                matrix.Translate(matrix.OffsetX + sx, matrix.OffsetY + sy);
+                var mt = new MatrixTransform(matrix);
+                Point newPos = mt.Transform(new Point(Canvas.GetLeft(node), Canvas.GetTop(node)));
+                Canvas.SetLeft(node, newPos.X);
+                Canvas.SetTop(node, newPos.Y);
             }
         }
     }

@@ -1,0 +1,20 @@
+﻿<UserControl x:Class="CapyCSS.Controls.BaseControls.GroupArea"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:CapyCSS.Controls.BaseControls"
+             mc:Ignorable="d" 
+             d:DesignHeight="185.497" d:DesignWidth="259.542">
+    <Grid x:Name="BaseArea">
+        <Rectangle Fill="#197EDCFF" Stroke="#FF6A969C" StrokeThickness="2" RadiusX="4" RadiusY="4" />
+        <ContentControl MouseDoubleClick="ContentControl_MouseDoubleClick">
+            <TextBlock x:Name="TextView" FontFamily="Meiryo" FontSize="16" Margin="8,4,0,4" Foreground="#FF0027AC" />
+        </ContentControl>
+        <TextBox x:Name="Edit" Visibility="Collapsed" AcceptsReturn="True" FontSize="16" />
+        <Border x:Name="ResizeAreaNWSE_D" HorizontalAlignment="Right" VerticalAlignment="Bottom" Width="20" Height="20" Background="#02FFFFFF" MouseDown="Border_MouseDownNWSE_D" MouseUp="Border_MouseUp" MouseLeave="Border_MouseLeave" MouseMove="Border_MouseMove" />
+        <Border x:Name="ResizeAreaNESW_D" HorizontalAlignment="Left" VerticalAlignment="Bottom" Width="20" Height="20" Background="#02FFFFFF" MouseDown="Border_MouseDownNESW_D"  MouseUp="Border_MouseUp" MouseLeave="Border_MouseLeave" MouseMove="Border_MouseMove" />
+        <Border x:Name="ResizeAreaNESW_U" HorizontalAlignment="Right" VerticalAlignment="Top" Width="20" Height="20" Background="#02FFFFFF" MouseDown="Border_MouseDownNESW_U" MouseUp="Border_MouseUp" MouseLeave="Border_MouseLeave" MouseMove="Border_MouseMove" />
+        <Border x:Name="ResizeAreaNWSE_U" HorizontalAlignment="Left" VerticalAlignment="Top" Width="20" Height="20" Background="#02FFFFFF" MouseDown="Border_MouseDownNWSE_U"  MouseUp="Border_MouseUp" MouseLeave="Border_MouseLeave" MouseMove="Border_MouseMove" />
+    </Grid>
+</UserControl>

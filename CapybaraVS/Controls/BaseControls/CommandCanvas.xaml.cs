@@ -1,6 +1,7 @@
 ﻿using CapybaraVS.Control.BaseControls;
 using CapybaraVS.Script;
 using CapyCSS.Controls;
+using CapyCSS.Controls.BaseControls;
 using CbVS;
 using MathNet.Numerics.RootFinding;
 using Microsoft.Win32;
@@ -103,12 +104,19 @@ namespace CapybaraVS.Controls.BaseControls
                     {
                         try
                         {
-                            Movable movableAsset = new Movable();
-                            self.WorkCanvas.Add(movableAsset);
-                            movableAsset.AssetXML = node;
-                            movableAsset.AssetXML.ReadAction?.Invoke(movableAsset);
+                            Movable movableNode = new Movable();
+                            self.WorkCanvas.Add(movableNode);
+
+                            movableNode.AssetXML = node;
+                            movableNode.AssetXML.ReadAction?.Invoke(movableNode);
+
+                            // レイヤー設定
+                            if (movableNode.ControlObject is IDisplayPriority dp)
+                            {
+                                Canvas.SetZIndex(movableNode, dp.Priority);
+                            }
                         }
-                        catch(Exception ex)
+                        catch (Exception ex)
                         {
                             System.Diagnostics.Debug.WriteLine(nameof(CommandCanvas) + "._AssetXML(ReadAction): " + ex.Message);
                         }
@@ -321,6 +329,11 @@ namespace CapybaraVS.Controls.BaseControls
                 commandNode.Child.Add(new TreeMenuNode("Toggle ShowGridLine(G)", CreateImmediateExecutionCanvasCommand(() => ScriptCommandCanvas.ToggleGridLine())));
                 commandNode.Child.Add(new TreeMenuNode("Save(Ctrl+S)", CreateImmediateExecutionCanvasCommand(() => SaveXML())));
                 commandNode.Child.Add(new TreeMenuNode("Load(Ctrl+O)", CreateImmediateExecutionCanvasCommand(() => LoadXML())));
+                {
+                    var decorationNode = new TreeMenuNode("Decoration");
+                    decorationNode.Child.Add(new TreeMenuNode("Text Area", CreateEventCanvasCommand(() => new GroupArea() { Name = "test", Width = 150, Height = 150 })));
+                    commandNode.Child.Add(decorationNode);
+                }
                 treeViewCommand.AssetTreeData.Add(commandNode);
             }
 
@@ -361,7 +374,6 @@ namespace CapybaraVS.Controls.BaseControls
             #endregion
             {
                 var testAssetNode = new TreeMenuNode("TestAsset");
-                testAssetNode.Child.Add(new TreeMenuNode("Button", CreateEventCanvasCommand(() => new Button() { Name = "test", Content = "TEST" })));
                 testAssetNode.Child.Add(new TreeMenuNode("Rectangle", CreateEventCanvasCommand(() => new Rectangle() { Fill = Brushes.Red, Width = 50, Height = 50 })));
                 treeViewCommand.AssetTreeData.Add(testAssetNode);
             }

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CapyCSS.Controls.BaseControls;
+using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Windows;
@@ -51,6 +52,21 @@ namespace CapybaraVS.Controls.BaseControls
                         obj.AssetXML = MultiRootConnector;
                         obj.AssetXML.ReadAction?.Invoke(obj);
                     }
+                    if (RunableControl != null)
+                    {
+                        var obj = new RunableControl();
+                        self.SetControl(obj);
+                        obj.AssetXML = RunableControl;
+                        obj.AssetXML.ReadAction?.Invoke(obj);
+                    }
+                    if (GroupAreaControl != null)
+                    {
+                        var obj = new GroupArea();
+                        self.SetControl(obj);
+                        obj.AssetXML = GroupAreaControl;
+                        obj.AssetXML.ReadAction?.Invoke(obj);
+                    }
+
                     if (SingleRootConnector != null)
                     {
                         var obj = new SingleRootConnector();
@@ -72,13 +88,6 @@ namespace CapybaraVS.Controls.BaseControls
                         obj.AssetXML = SingleLinkConnector;
                         obj.AssetXML.ReadAction?.Invoke(obj);
                     }
-                    if (RunableControl != null)
-                    {
-                        var obj = new RunableControl();
-                        self.SetControl(obj);
-                        obj.AssetXML = RunableControl;
-                        obj.AssetXML.ReadAction?.Invoke(obj);
-                    }
 
                     // 次回の為の初期化
                     self.AssetXML = new _AssetXML<Movable>(self);
@@ -98,6 +107,17 @@ namespace CapybaraVS.Controls.BaseControls
                             target.AssetXML.WriteAction?.Invoke();
                             MultiRootConnector = target.AssetXML;
                         }
+                        if (self.myElement is GroupArea target6)
+                        {
+                            target6.AssetXML.WriteAction?.Invoke();
+                            GroupAreaControl = target6.AssetXML;
+                        }
+                        if (self.myElement is RunableControl target5)
+                        {
+                            target5.AssetXML.WriteAction?.Invoke();
+                            RunableControl = target5.AssetXML;
+                        }
+
                         if (self.myElement is SingleRootConnector target2)
                         {
                             target2.AssetXML.WriteAction?.Invoke();
@@ -112,11 +132,6 @@ namespace CapybaraVS.Controls.BaseControls
                         {
                             target4.AssetXML.WriteAction?.Invoke();
                             SingleLinkConnector = target4.AssetXML;
-                        }
-                        if (self.myElement is RunableControl target5)
-                        {
-                            target5.AssetXML.WriteAction?.Invoke();
-                            RunableControl = target5.AssetXML;
                         }
                     }
                 };
@@ -133,6 +148,7 @@ namespace CapybaraVS.Controls.BaseControls
             public MultiLinkConnector._AssetXML<MultiLinkConnector> MultiLinkConnector { get; set; } = null;
             public SingleLinkConnector._AssetXML<SingleLinkConnector> SingleLinkConnector { get; set; } = null;
             public RunableControl._AssetXML<RunableControl> RunableControl { get; set; } = null;
+            public GroupArea._AssetXML<GroupArea> GroupAreaControl { get; set; } = null;
             #endregion
         }
         public _AssetXML<Movable> AssetXML { get; set; } = null;
@@ -160,6 +176,7 @@ namespace CapybaraVS.Controls.BaseControls
         #endregion
 
         private UIElement myElement = null;
+        public UIElement ControlObject => myElement;
 
         public Movable()
         {
