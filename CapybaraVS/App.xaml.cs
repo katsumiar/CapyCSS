@@ -2,6 +2,8 @@
 Copyright © 2020 Katsumi Aradono. All rights reserved.
 */
 
+using CapybaraVS.Controls.BaseControls;
+using CapyCSS.Controls;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
@@ -35,6 +37,20 @@ namespace CapybaraVS
                 {
                     CapybaraVS.Language.GetInstance.LanguageType = Language;
 
+                    if (Recent != null)
+                    {
+                        // 最近使ったスクリプトノードを復元する
+
+                        var recentNode = CommandWindow.TreeViewCommand.GetRecent();
+                        foreach (var node in Recent)
+                        {
+                            recentNode.AddChild(new TreeMenuNode(node, CommandCanvas.CreateImmediateExecutionCanvasCommand(() =>
+                            {
+                                CommandWindow.TreeViewCommand.ExecuteFindCommand(node);
+                            })));
+                        }
+                    }
+
                     // 次回の為の初期化
                     self.AssetXML = new _AssetXML<App>(self);
                 };
@@ -44,23 +60,42 @@ namespace CapybaraVS
                 WriteAction = () =>
                 {
                     Language = CapybaraVS.Language.GetInstance.LanguageType;
+
+                    var recentNode = CommandWindow.TreeViewCommand.GetRecent();
+                    if (recentNode.Child.Count != 0)
+                    {
+                        // 最近使ったスクリプトノードを記録する
+
+                        Recent = new List<string>();
+                        foreach (var node in recentNode.Child)
+                        {
+                            Recent.Add(node.Name);
+                        }
+                    }
                 };
             }
             #region 固有定義
             public string Language { get; set; } = "ja-JP";
+            public List<string> Recent { get; set; } = null;
             #endregion
         }
         public _AssetXML<App> AssetXML { get; set; } = null;
         #endregion
 
-        const string APP_INFO_NAME = "./app.xml";
+        string APP_INFO_NAME = @"\app.xml";
         public static string ErrorLog = "";
         public static string EntryLoadFile = null;  // スクリプトの起動後読み込み
         public static bool IsAutoExecute = false;   // スクリプトの自動実行
         public static bool IsAutoExit = false;      // スクリプトの自動実行後自動終了
+        public static App Instance = null;
 
         private void Application_StartUp(object sender, StartupEventArgs e)
         {
+            Instance = this;
+
+            // カレントディレクトリに作成する
+            APP_INFO_NAME = CurrentAppDir + APP_INFO_NAME;
+
             // ツールチップの表示時間を設定
             System.Windows.Controls.ToolTipService.ShowDurationProperty.OverrideMetadata(
                 typeof(DependencyObject),
@@ -106,6 +141,11 @@ namespace CapybaraVS
                 }
             }
         }
+
+        /// <summary>
+        /// アプリケーションのカレントディレクトリを参照します。
+        /// </summary>
+        public static string CurrentAppDir => System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
 
         public void SaveAppInfo()
         {

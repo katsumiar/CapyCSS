@@ -110,6 +110,7 @@ namespace CapybaraVS.Controls.BaseControls
         public TreeMenuNode(string name, TreeMenuNodeCommand personCommand = null)
         {
             Name = name;
+            Path = name;
             if (personCommand is null)
             {
                 LeftClickCommand = new TreeMenuNodeCommand(this);
@@ -128,8 +129,11 @@ namespace CapybaraVS.Controls.BaseControls
         public TreeMenuNode(string name, string hintText, TreeMenuNodeCommand personCommand = null)
         {
             Name = name;
+            Path = name;
             if (hintText != "")
+            {
                 HintText = hintText;
+            }
             if (personCommand is null)
             {
                 LeftClickCommand = new TreeMenuNodeCommand(this);
@@ -148,6 +152,13 @@ namespace CapybaraVS.Controls.BaseControls
 
         //-----------------------------------------------------------------------------------
         /// <summary>
+        /// 正確な項目名を参照します。
+        /// </summary>
+
+        public string Path { get; set; } = null;
+
+        //-----------------------------------------------------------------------------------
+        /// <summary>
         /// 説明を参照します。
         /// </summary>
         public string HintText { get; set; } = null;
@@ -155,8 +166,27 @@ namespace CapybaraVS.Controls.BaseControls
         //-----------------------------------------------------------------------------------
         /// <summary>
         /// 子メニューコレクションを参照します。
+        /// ※ 直接 add しないでください（AddChild を使ってください）。
         /// </summary>
-        public List<TreeMenuNode> Child { get; set; } = new List<TreeMenuNode>();
+        public ObservableCollection<TreeMenuNode> Child { get; set; } = new ObservableCollection<TreeMenuNode>();
+
+        //-----------------------------------------------------------------------------------
+        /// <summary>
+        /// 子を追加します。
+        /// </summary>
+        public void AddChild(TreeMenuNode node)
+        {
+            if (Path is null)
+            {
+                node.Path = "";
+            }
+            else
+            {
+                node.Path = Path + ".";
+            }
+            node.Path = node.Path + node.Name;
+            Child.Add(node);
+        }
 
         //-----------------------------------------------------------------------------------
         /// <summary>
@@ -235,6 +265,139 @@ namespace CapybaraVS.Controls.BaseControls
 
             TreeView.ItemsSource = AssetTreeData;
             TreeView.PreviewMouseWheel += PreviewMouseWheel;
+        }
+
+        const string RecentName = "Recent";
+        const int MaxRecent = 10;
+
+        /// <summary>
+        /// 名前を指定してコマンドを実行します。
+        /// </summary>
+        /// <param name="name"></param>
+        public void ExecuteFindCommand(string name)
+        {
+            TreeMenuNode hit = FindMenuName(name, true);
+            if (hit != null)
+            {
+                hit.LeftClickCommand.Execute(null);
+            }
+        }
+
+        /// <summary>
+        /// 最近使ったスクリプトノードのメニューを取得します。
+        /// </summary>
+        public TreeMenuNode GetRecent()
+        {
+            foreach (var node in AssetTreeData)
+            {
+                if (node.Path == RecentName)
+                {
+                    return node;
+                }
+            }
+            var recentNode = new TreeMenuNode(RecentName);
+            AssetTreeData.Add(recentNode);
+            return recentNode;
+        }
+
+        /// <summary>
+        /// 最近使ったスクリプトノードの数を規定数に調整します。
+        /// </summary>
+        public void AdjustNumberRecent()
+        {
+            TreeMenuNode recent = GetRecent();
+            while (recent.Child.Count > MaxRecent)
+            {
+                recent.Child.RemoveAt(0);
+            }
+        }
+
+        /// <summary>
+        /// 名前からコマンドノードを参照します。
+        /// </summary>
+        /// <param name="name">メニュー名</param>
+        /// <param name="execute">実行可能な対象か</param>
+        /// <returns>存在しているならノードを返します</returns>
+        public TreeMenuNode FindMenuName(string name, bool execute = false)
+        {
+            foreach (var node in AssetTreeData)
+            {
+                if (node.Path == RecentName)
+                {
+                    continue;
+                }
+
+                TreeMenuNode hit = FindMenuPath(node, name, execute);
+                if (hit != null)
+                {
+                    return hit;
+                }
+            }
+            return null;
+        }
+
+        /// <summary>
+        /// 正式な名前からコマンドノードを参照します。
+        /// </summary>
+        /// <param name="node">メニューノード</param>
+        /// <param name="name">正式なメニュー名</param>
+        /// <param name="execute">実行可能な対象か</param>
+        /// <returns>存在しているならノードを返します</returns>
+        public TreeMenuNode FindMenuPath(TreeMenuNode node, string name, bool execute = false)
+        {
+            if (node.Path == name)
+            {
+                if (execute)
+                {
+                    if (node.LeftClickCommand.CanExecute(null))
+                        return node;
+                }
+                else
+                {
+                    return node;
+                }
+            }
+            foreach (var child in node.Child)
+            {
+                TreeMenuNode hit = FindMenuPath(child, name, execute);
+                if (hit != null)
+                {
+                    return hit;
+                }
+            }
+            return null;
+        }
+
+        /// <summary>
+        /// 名前からコマンドノードを参照します。
+        /// </summary>
+        /// <param name="node">メニューノード</param>
+        /// <param name="name">メニュー名</param>
+        /// <param name="execute">実行可能な対象か</param>
+        /// <returns>存在しているならノードを返します</returns>
+        public TreeMenuNode FindMenuName(TreeMenuNode node, string name, bool execute = false)
+        {
+            if (node.Name == name)
+            {
+                if (execute)
+                {
+                    if (node.LeftClickCommand.CanExecute(null))
+                        return node;
+                }
+                else
+                {
+                    return node;
+                }
+            }
+            foreach (var child in node.Child)
+            {
+                TreeMenuNode hit = FindMenuName(child, name, execute);
+                if (hit != null)
+                {
+                    return hit;
+                }
+            }
+            return null;
         }
 
         private static new void PreviewMouseWheel(object sender, MouseWheelEventArgs e)

@@ -233,13 +233,13 @@ namespace CapybaraVS
         /// </summary>
         public void CallClosing()
         {
-            ToolExec.KillProcess();
             Close();
         }
 
         private void MainWindow_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
             ToolExec.KillProcess();
+            App.Instance.SaveAppInfo();
         }
 
         /// <summary>

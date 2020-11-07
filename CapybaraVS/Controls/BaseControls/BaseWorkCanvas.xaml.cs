@@ -260,6 +260,8 @@ namespace CapybaraVS.Control.BaseControls
         /// </summary>
         public Func<object> ObjectSetCommand = null;
 
+        public string ObjectSetCommandName = null;
+
         /// <summary>
         /// ObjectSetCommand の終了時処理
         /// </summary>
@@ -694,6 +696,24 @@ namespace CapybaraVS.Control.BaseControls
                     // マウスカーソルの座標でセットする
                     Canvas.SetLeft(movable, setPos.X);
                     Canvas.SetTop(movable, setPos.Y);
+
+                    if (ObjectSetCommandName != null)
+                    {
+                        // 最近使ったコマンドノード記録に登録する
+
+                        var recentNode = CommandWindow.TreeViewCommand.GetRecent();
+
+                        if (CommandWindow.TreeViewCommand.FindMenuName(recentNode, ObjectSetCommandName) is null)
+                        {
+                            // 未登録なので登録する
+
+                            recentNode.AddChild(new TreeMenuNode(ObjectSetCommandName, CommandCanvas.CreateImmediateExecutionCanvasCommand(() =>
+                            {
+                                CommandWindow.TreeViewCommand.ExecuteFindCommand(ObjectSetCommandName);
+                            })));
+                            CommandWindow.TreeViewCommand.AdjustNumberRecent();
+                        }
+                    }
                 }
             }
             ResetCommand();

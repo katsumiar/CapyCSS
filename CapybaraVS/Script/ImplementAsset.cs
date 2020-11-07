@@ -32,7 +32,7 @@ namespace CapybaraVS.Script
         protected static TreeMenuNode CreateGroup(TreeMenuNode node, string name)
         {
             var newNode = new TreeMenuNode(name);
-            node.Child.Add(newNode);
+            node.AddChild(newNode);
             return newNode;
         }
 
@@ -45,7 +45,9 @@ namespace CapybaraVS.Script
         {
             AddAsset(funcAssetDef);
             string title = TryMakeGroup(ref group, funcAssetDef.MenuTitle);
-            group.Child.Add(new TreeMenuNode(title, funcAssetDef.HelpText, CommandCanvas.CreateEventCanvasCommand(() => CbScript.CreateFunction(funcAssetDef.AssetCode))));
+            var menu = new TreeMenuNode(title, funcAssetDef.HelpText);
+            group.AddChild(menu);
+            menu.LeftClickCommand = CommandCanvas.CreateEventCanvasCommand(menu.Path, () => CbScript.CreateFunction(funcAssetDef.AssetCode));
         }
 
         /// <summary>
@@ -57,7 +59,9 @@ namespace CapybaraVS.Script
         {
             AddAsset(funcAssetDef);
             string title = TryMakeGroup(ref group, funcAssetDef.MenuTitle);
-            group.Child.Add(new TreeMenuNode(title, funcAssetDef.HelpText, CommandCanvas.CreateEventCanvasCommand(() => CbScript.CreateFreeTypeVariableFunction(funcAssetDef.AssetCode, funcAssetDef.TargetType, funcAssetDef.DeleteSelectItems))));
+            var menu = new TreeMenuNode(title, funcAssetDef.HelpText);
+            group.AddChild(menu);
+            menu.LeftClickCommand = CommandCanvas.CreateEventCanvasCommand(menu.Path, () => CbScript.CreateFreeTypeVariableFunction(funcAssetDef.AssetCode, funcAssetDef.TargetType, funcAssetDef.DeleteSelectItems));
         }
 
         /// <summary>
@@ -69,7 +73,9 @@ namespace CapybaraVS.Script
         {
             AddAsset(funcAssetDef);
             string title = TryMakeGroup(ref group, funcAssetDef.MenuTitle);
-            group.Child.Add(new TreeMenuNode(title, funcAssetDef.HelpText, CommandCanvas.CreateEventCanvasCommand(() => CbScript.CreateFreeTypeVariableFunction(funcAssetDef.AssetCode, funcAssetDef.TargetType, null, true))));
+            var menu = new TreeMenuNode(title, funcAssetDef.HelpText);
+            group.AddChild(menu);
+            menu.LeftClickCommand = CommandCanvas.CreateEventCanvasCommand(menu.Path, () => CbScript.CreateFreeTypeVariableFunction(funcAssetDef.AssetCode, funcAssetDef.TargetType, null, true));
         }
 
         /// <summary>
@@ -81,7 +87,9 @@ namespace CapybaraVS.Script
         {
             AddAsset(funcAssetDef);
             string title = TryMakeGroup(ref group, funcAssetDef.MenuTitle);
-            group.Child.Add(new TreeMenuNode(title, funcAssetDef.HelpText, CommandCanvas.CreateEventCanvasCommand(() => CbScript.CreateFreeTypeVariableFunction(funcAssetDef.AssetCode, funcAssetDef.TargetType))));
+            var menu = new TreeMenuNode(title, funcAssetDef.HelpText);
+            group.AddChild(menu);
+            menu.LeftClickCommand = CommandCanvas.CreateEventCanvasCommand(menu.Path, () => CbScript.CreateFreeTypeVariableFunction(funcAssetDef.AssetCode, funcAssetDef.TargetType));
         }
 
         /// <summary>
@@ -93,7 +101,9 @@ namespace CapybaraVS.Script
         {
             AddAsset(funcAssetDef);
             string title = TryMakeGroup(ref group, funcAssetDef.MenuTitle);
-            group.Child.Add(new TreeMenuNode(title, funcAssetDef.HelpText, CommandCanvas.CreateEventCanvasCommand(() => CbScript.CreateFreeTypeFunction(funcAssetDef.AssetCode, funcAssetDef.TargetType, funcAssetDef.DeleteSelectItems))));
+            var menu = new TreeMenuNode(title, funcAssetDef.HelpText);
+            group.AddChild(menu);
+            menu.LeftClickCommand = CommandCanvas.CreateEventCanvasCommand(menu.Path, () => CbScript.CreateFreeTypeFunction(funcAssetDef.AssetCode, funcAssetDef.TargetType, funcAssetDef.DeleteSelectItems));
         }
 
         /// <summary>
@@ -105,7 +115,9 @@ namespace CapybaraVS.Script
         {
             //AddAsset(funcAssetDef); 不要
             string title = TryMakeGroup(ref group, funcAssetDef.MenuTitle);
-            group.Child.Add(new TreeMenuNode(title, funcAssetDef.HelpText, CommandCanvas.CreateEventCanvasCommand(() => CbScript.SelectVariableType(funcAssetDef.TargetType, funcAssetDef.DeleteSelectItems))));
+            var menu = new TreeMenuNode(title, funcAssetDef.HelpText);
+            group.AddChild(menu);
+            menu.LeftClickCommand = CommandCanvas.CreateEventCanvasCommand(menu.Path, () => CbScript.SelectVariableType(funcAssetDef.TargetType, funcAssetDef.DeleteSelectItems));
         }
 
         /// <summary>
@@ -122,11 +134,19 @@ namespace CapybaraVS.Script
                 title = arr[arr.Length - 1];
                 for (int i = 0; i < arr.Length - 1; ++i)
                 {
-                    TreeMenuNode temp = group.Child.Find(m => m.Name == arr[i]);
+                    TreeMenuNode temp = null;
+                    foreach (var child in group.Child)
+                    {
+                        if (child.Name == arr[i])
+                        {
+                            temp = child;
+                            break;
+                        }
+                    }
                     if (temp == null)
                     {
                         temp = new TreeMenuNode(arr[i]);
-                        group.Child.Add(temp);
+                        group.AddChild(temp);
                     }
                     group = temp;
                 }

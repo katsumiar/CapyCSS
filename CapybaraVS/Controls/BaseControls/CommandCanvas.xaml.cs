@@ -259,15 +259,17 @@ namespace CapybaraVS.Controls.BaseControls
         /// <summary>
         /// キャンバス登録用のコマンドを作成します。
         /// </summary>
+        /// <param name="path">コマンドの正式な名前</param>
+        /// <param name="action">実行されるイベント</param>
         /// <param name="vm"></param>
-        /// <param name="action"></param>
-        /// <returns></returns>
-        public static TreeMenuNodeCommand CreateEventCanvasCommand(Func<object> action, TreeMenuNode vm = null)
+        /// <returns>コマンド</returns>
+        public static TreeMenuNodeCommand CreateEventCanvasCommand(string path, Func<object> action, TreeMenuNode vm = null)
         {
             return new TreeMenuNodeCommand(vm, (a) =>
                 {
                     ClickEvent = action;
                     ScriptWorkCanvas.ObjectSetCommand = ClickEvent;
+                    ScriptWorkCanvas.ObjectSetCommandName = path;
                     ScriptWorkCanvas.ObjectSetExitCommand = new Action(() => ClickEvent = null);
                 }
             );
@@ -303,7 +305,7 @@ namespace CapybaraVS.Controls.BaseControls
             // コマンドを追加
             {
                 var commandNode = new TreeMenuNode("Command");
-                commandNode.Child.Add(new TreeMenuNode("Clear(Ctrl+N)", CreateImmediateExecutionCanvasCommand(() =>
+                commandNode.AddChild(new TreeMenuNode("Clear(Ctrl+N)", CreateImmediateExecutionCanvasCommand(() =>
                 {
                     if (CommandCanvas.ScriptWorkCanvas.Count != 0 &&
                         MessageBox.Show(CapybaraVS.Language.GetInstance["ConfirmationAllDelete"],
@@ -325,16 +327,18 @@ namespace CapybaraVS.Controls.BaseControls
                         }), DispatcherPriority.ApplicationIdle);
                     }
                 })));
-                commandNode.Child.Add(new TreeMenuNode("Toggle ShowMouseInfo", CreateImmediateExecutionCanvasCommand(() => ScriptWorkCanvas.EnableInfo = ScriptWorkCanvas.EnableInfo ? false : true)));
-                commandNode.Child.Add(new TreeMenuNode("Toggle ShowGridLine(G)", CreateImmediateExecutionCanvasCommand(() => ScriptCommandCanvas.ToggleGridLine())));
-                commandNode.Child.Add(new TreeMenuNode("Save(Ctrl+S)", CreateImmediateExecutionCanvasCommand(() => SaveXML())));
-                commandNode.Child.Add(new TreeMenuNode("Load(Ctrl+O)", CreateImmediateExecutionCanvasCommand(() => LoadXML())));
-                {
-                    var decorationNode = new TreeMenuNode("Decoration");
-                    decorationNode.Child.Add(new TreeMenuNode("Text Area", CreateEventCanvasCommand(() => new GroupArea() { Name = "test", Width = 150, Height = 150 })));
-                    commandNode.Child.Add(decorationNode);
-                }
+                commandNode.AddChild(new TreeMenuNode("Toggle ShowMouseInfo", CreateImmediateExecutionCanvasCommand(() => ScriptWorkCanvas.EnableInfo = ScriptWorkCanvas.EnableInfo ? false : true)));
+                commandNode.AddChild(new TreeMenuNode("Toggle ShowGridLine(G)", CreateImmediateExecutionCanvasCommand(() => ScriptCommandCanvas.ToggleGridLine())));
+                commandNode.AddChild(new TreeMenuNode("Save(Ctrl+S)", CreateImmediateExecutionCanvasCommand(() => SaveXML())));
+                commandNode.AddChild(new TreeMenuNode("Load(Ctrl+O)", CreateImmediateExecutionCanvasCommand(() => LoadXML())));
                 treeViewCommand.AssetTreeData.Add(commandNode);
+            }
+
+            // 飾りを追加
+            {
+                var decorationNode = new TreeMenuNode("Decoration");
+                decorationNode.AddChild(new TreeMenuNode("Text Area", CreateEventCanvasCommand(decorationNode.Name + ".Text Area", () => new GroupArea() { Name = "test", Width = 150, Height = 150 })));
+                treeViewCommand.AssetTreeData.Add(decorationNode);
             }
 
             // 基本的なアセットを追加
@@ -349,14 +353,14 @@ namespace CapybaraVS.Controls.BaseControls
         {
             {
                 var testCommandNode = new TreeMenuNode("TestCommand");
-                testCommandNode.Child.Add(new TreeMenuNode("OutputControlXML()", CreateImmediateExecutionCanvasCommand(() => OutputControlXML())));
+                testCommandNode.AddChild(new TreeMenuNode("OutputControlXML()", CreateImmediateExecutionCanvasCommand(() => OutputControlXML())));
                 treeViewCommand.AssetTreeData.Add(testCommandNode);
             }
             #region Connector
 #if false// 今は動かない
             {
                 var connectorNode = new TreeMenuNode("Connector");
-                connectorNode.Child.Add(new TreeMenuNode("Node List", CreateEventCanvasCommand(
+                connectorNode.AddChild(new TreeMenuNode("Node List", CreateEventCanvasCommand(
                     () =>
                     {
                         var ret = new RunableControl();
@@ -364,17 +368,17 @@ namespace CapybaraVS.Controls.BaseControls
                         return ret;
                     }
                     )));
-                connectorNode.Child.Add(new TreeMenuNode("SingleRootConnector", CreateEventCanvasCommand(() => CbScript.MakeSingleRootConnector())));
-                connectorNode.Child.Add(new TreeMenuNode("MakeMultiRootConnector", CreateEventCanvasCommand(() => CbScript.MakeMultiRootConnector())));
-                connectorNode.Child.Add(new TreeMenuNode("SingleLinkConnector", CreateEventCanvasCommand(() => CbScript.MakeSingleLinkConnector())));
-                connectorNode.Child.Add(new TreeMenuNode("MultiLinkConnector", CreateEventCanvasCommand(() => CbScript.MakeMultiLinkConnector())));
+                connectorNode.AddChild(new TreeMenuNode("SingleRootConnector", CreateEventCanvasCommand(() => CbScript.MakeSingleRootConnector())));
+                connectorNode.AddChild(new TreeMenuNode("MakeMultiRootConnector", CreateEventCanvasCommand(() => CbScript.MakeMultiRootConnector())));
+                connectorNode.AddChild(new TreeMenuNode("SingleLinkConnector", CreateEventCanvasCommand(() => CbScript.MakeSingleLinkConnector())));
+                connectorNode.AddChild(new TreeMenuNode("MultiLinkConnector", CreateEventCanvasCommand(() => CbScript.MakeMultiLinkConnector())));
                 treeViewCommand.AssetTreeData.Add(connectorNode);
             }
 #endif
             #endregion
             {
                 var testAssetNode = new TreeMenuNode("TestAsset");
-                testAssetNode.Child.Add(new TreeMenuNode("Rectangle", CreateEventCanvasCommand(() => new Rectangle() { Fill = Brushes.Red, Width = 50, Height = 50 })));
+                testAssetNode.AddChild(new TreeMenuNode("Rectangle", CreateEventCanvasCommand(testAssetNode.Name + ".Rectangle", () => new Rectangle() { Fill = Brushes.Red, Width = 50, Height = 50 })));
                 treeViewCommand.AssetTreeData.Add(testAssetNode);
             }
         }
