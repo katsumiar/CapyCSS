@@ -9,9 +9,9 @@
     <Grid x:Name="BaseArea">
         <Rectangle Fill="#197EDCFF" Stroke="#FF6A969C" StrokeThickness="2" RadiusX="4" RadiusY="4" />
         <ContentControl MouseDoubleClick="ContentControl_MouseDoubleClick">
-            <TextBlock x:Name="TextView" FontFamily="Meiryo" FontSize="16" Margin="8,4,0,4" Foreground="#FF0027AC" />
+            <TextBlock x:Name="TextView" FontFamily="Meiryo" FontSize="16" Margin="8,8,8,8" Foreground="#FF0027AC" TextWrapping="Wrap" />
         </ContentControl>
-        <TextBox x:Name="Edit" Visibility="Collapsed" AcceptsReturn="True" FontSize="16" />
+        <TextBox x:Name="Edit" Visibility="Collapsed" AcceptsReturn="True" FontSize="16" Margin="8,8,8,8" TextWrapping="Wrap" />
         <Border x:Name="ResizeAreaNWSE_D" HorizontalAlignment="Right" VerticalAlignment="Bottom" Width="20" Height="20" Background="#02FFFFFF" MouseDown="Border_MouseDownNWSE_D" MouseUp="Border_MouseUp" MouseLeave="Border_MouseLeave" MouseMove="Border_MouseMove" />
         <Border x:Name="ResizeAreaNESW_D" HorizontalAlignment="Left" VerticalAlignment="Bottom" Width="20" Height="20" Background="#02FFFFFF" MouseDown="Border_MouseDownNESW_D"  MouseUp="Border_MouseUp" MouseLeave="Border_MouseLeave" MouseMove="Border_MouseMove" />
         <Border x:Name="ResizeAreaNESW_U" HorizontalAlignment="Right" VerticalAlignment="Top" Width="20" Height="20" Background="#02FFFFFF" MouseDown="Border_MouseDownNESW_U" MouseUp="Border_MouseUp" MouseLeave="Border_MouseLeave" MouseMove="Border_MouseMove" />
