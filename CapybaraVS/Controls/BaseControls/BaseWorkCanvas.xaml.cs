@@ -1,5 +1,6 @@
 ﻿using CapybaraVS.Controls;
 using CapybaraVS.Controls.BaseControls;
+using CapybaraVS.Script;
 using CapyCSS.Controls;
 using CapyCSS.Controls.BaseControls;
 using System;
@@ -253,7 +254,29 @@ namespace CapybaraVS.Control.BaseControls
             WorkCanvasList.Add(GridCanvas);
             WorkCanvasList.Add(ControlsCanvas);
             WorkCanvasList.Add(InfoCanvas);
+
+            Dispatcher.BeginInvoke(new Action(() =>
+            {
+                try
+                {
+                    if (BackGrountImagePath != null)
+                    {
+                        // 作業領域の背景をセットする
+
+                        BaseWorkCanvas.SetWorkCanvasBG(BackGrountImagePath);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MainWindow.Instance.MainLog.OutLine("System", nameof(BaseWorkCanvas) + ":" + ex.Message);
+                }
+            }), DispatcherPriority.Loaded);
         }
+
+        /// <summary>
+        /// 背景イメージへのパスです。
+        /// </summary>
+        static public string BackGrountImagePath = null;
 
         /// <summary>
         /// コントロールを返す処理を登録するとクリック時にコントロールをセットします。
@@ -1000,6 +1023,20 @@ namespace CapybaraVS.Control.BaseControls
                 Canvas.SetLeft(movable, pos.X);
                 Canvas.SetTop(movable, pos.Y);
             }
+        }
+
+        [ScriptMethod("System.Application." + nameof(SetWorkCanvasBG), "",
+            "RS=>SA_SetWorkCanvasBG"
+        )]
+        static public void SetWorkCanvasBG(string path, Stretch stretch = Stretch.UniformToFill, bool overwriteSettings = false)
+        {
+            if (overwriteSettings)
+            {
+                BaseWorkCanvas.BackGrountImagePath = path;
+            }
+
+            CommandCanvas.ScriptWorkCanvas.BGImage.Stretch = stretch;
+            CommandCanvas.ScriptWorkCanvas.BGImage.Source = new BitmapImage(new Uri(path));
         }
 
         //-------------------------------------------------------------------------------------

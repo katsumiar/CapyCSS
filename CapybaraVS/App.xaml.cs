@@ -2,6 +2,7 @@
 Copyright © 2020 Katsumi Aradono. All rights reserved.
 */
 
+using CapybaraVS.Control.BaseControls;
 using CapybaraVS.Controls.BaseControls;
 using CapyCSS.Controls;
 using System;
@@ -51,6 +52,13 @@ namespace CapybaraVS
                         }
                     }
 
+                    if (BackGroundImagePath != null)
+                    {
+                        // 作業領域の背景イメージのパスをセットする
+
+                        BaseWorkCanvas.BackGrountImagePath = BackGroundImagePath;
+                    }
+
                     // 次回の為の初期化
                     self.AssetXML = new _AssetXML<App>(self);
                 };
@@ -72,11 +80,14 @@ namespace CapybaraVS
                             Recent.Add(node.Name);
                         }
                     }
+
+                    BackGroundImagePath = BaseWorkCanvas.BackGrountImagePath;
                 };
             }
             #region 固有定義
             public string Language { get; set; } = "ja-JP";
             public List<string> Recent { get; set; } = null;
+            public string BackGroundImagePath { get; set; } = null;
             #endregion
         }
         public _AssetXML<App> AssetXML { get; set; } = null;

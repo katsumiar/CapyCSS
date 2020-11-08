@@ -855,6 +855,9 @@
   <data name="ReturnVoidFor" xml:space="preserve">
     <value>&lt;from&gt; から &lt;to&gt; 未満までをインデックスにループし、インデックスを仮引数に &lt;invoke&gt; をコールします。</value>
   </data>
+  <data name="SA_SetWorkCanvasBG" xml:space="preserve">
+    <value>作業領域に背景にイメージをセットします。</value>
+  </data>
   <data name="SetExitCode" xml:space="preserve">
     <value>アプリケーションの終了コードをセットし、アプリケーションを終了します。</value>
   </data>

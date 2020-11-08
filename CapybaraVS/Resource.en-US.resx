@@ -855,6 +855,9 @@
   <data name="ReturnVoidFor" xml:space="preserve">
     <value>Executes the file specified by &lt;path&gt;. You can specify execution parameters in the &lt;arguments&gt; list. &lt;redirect&gt; Specify the redirect. The exit code cannot be obtained without enabling redirects.</value>
   </data>
+  <data name="SA_SetWorkCanvasBG" xml:space="preserve">
+    <value>Set the image as the background in the work area.</value>
+  </data>
   <data name="SetExitCode" xml:space="preserve">
     <value>Set the exit code of the application and exit the application.</value>
   </data>
