@@ -12,6 +12,7 @@ using System.Windows.Markup;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using System.Windows.Threading;
 
 namespace CapyCSS.Controls
 {
@@ -85,6 +86,33 @@ namespace CapyCSS.Controls
         {
             Hide();
             e.Cancel = true;
+        }
+
+        DispatcherTimer filterProcTimer = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(300) };
+
+        private void FilterText_KeyUp(object sender, KeyEventArgs e)
+        {
+            FilterText.Text = FilterText.Text.Trim();
+            if (FilterText.Text != "")
+            {
+                // フィルタリング処理は、スレッドが使えないのでタイマーで時間差を置いて処理する
+
+                filterProcTimer.IsEnabled = true;
+                filterProcTimer.Start();
+                filterProcTimer.Tick += (s, args) =>
+                {
+                    filterProcTimer.Stop();
+
+                    // 待機後の処理
+                    TreeViewCommand.SetFilter(FilterText.Text);
+                    filterProcTimer.IsEnabled = false;
+                };
+            }
+            else
+            {
+                filterProcTimer.IsEnabled = false;
+                TreeViewCommand.ClearFilter();
+            }
         }
     }
 }

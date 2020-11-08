@@ -18,6 +18,11 @@
         </ResourceDictionary>
     </Window.Resources>
     <ScrollViewer x:Name="scrollViewer" VerticalScrollBarVisibility="Auto" VerticalAlignment="Top" HorizontalAlignment="Stretch">
-        <StackPanel x:Name="OpenListContents" HorizontalAlignment="Stretch" />
+        <StackPanel x:Name="OpenListContents" HorizontalAlignment="Stretch" >
+            <StackPanel Orientation="Horizontal">
+                <Label Content="Filter :" />
+                <TextBox x:Name="FilterText" KeyUp="FilterText_KeyUp" Width="230" />
+            </StackPanel>
+        </StackPanel>
     </ScrollViewer>
 </Window>

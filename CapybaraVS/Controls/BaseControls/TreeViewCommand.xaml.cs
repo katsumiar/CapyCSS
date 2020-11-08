@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CapyCSS.Controls;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -255,6 +256,8 @@ namespace CapybaraVS.Controls.BaseControls
 
         #endregion
 
+        public ObservableCollection<TreeMenuNode> BackupTreeData = null;
+
         //-----------------------------------------------------------------------------------
         /// <summary>
         /// 
@@ -334,6 +337,56 @@ namespace CapybaraVS.Controls.BaseControls
                 }
             }
             return null;
+        }
+
+        /// <summary>
+        /// コマンドのフィルタリングを解除します。
+        /// </summary>
+        public void ClearFilter()
+        {
+            TreeView.ItemsSource = AssetTreeData;
+        }
+
+        /// <summary>
+        /// コマンドをフィルタリングします。
+        /// </summary>
+        /// <param name="name">メニュー名</param>
+        public void SetFilter(string name)
+        {
+            var findData = new ObservableCollection<TreeMenuNode>();
+            foreach (var node in AssetTreeData)
+            {
+                if (node.Path == RecentName)
+                {
+                    continue;
+                }
+                SetFilter(findData, node, name.ToUpper());
+            }
+            TreeView.ItemsSource = findData;
+        }
+
+        /// <summary>
+        /// コマンドをフィルタリングします。
+        /// </summary>
+        /// <param name="findData">結果登録用リスト</param>
+        /// <param name="node">メニューノード</param>
+        /// <param name="name">メニュー名</param>
+        private void SetFilter(ObservableCollection<TreeMenuNode> findData, TreeMenuNode node, string name)
+        {
+            if (node.Name.ToUpper().Contains(name))
+            {
+                if (node.LeftClickCommand.CanExecute(null))
+                {
+                    findData.Add(new TreeMenuNode(node.Path, CommandCanvas.CreateImmediateExecutionCanvasCommand(() =>
+                    {
+                        CommandWindow.TreeViewCommand.ExecuteFindCommand(node.Path);
+                    })));
+                }
+            }
+            foreach (var child in node.Child)
+            {
+                SetFilter(findData, child, name);
+            }
         }
 
         /// <summary>
