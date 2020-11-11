@@ -115,5 +115,10 @@ Func<> および Action<> タイプの引数は、ノードを外部プロセス
 ![CapyCSS](https://user-images.githubusercontent.com/63950487/98212435-ef8ce880-1f86-11eb-9e4b-d2a6612d86ac.gif)
 <br>ノードを繋ぐことによって、一連のノードを実行できます。
 
+## グループ化及びテキスト
+
+![CapyCSS02](https://user-images.githubusercontent.com/63950487/98465611-6b986200-220d-11eb-8184-bd8b6a2e9bca.gif)
+<br>Test Areaを使うとノードのグループ化とテキストの書き込みが行えます。
+
 ## ライセンス
 MITライセンス
