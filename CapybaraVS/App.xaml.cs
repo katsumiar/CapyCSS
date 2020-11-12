@@ -100,6 +100,15 @@ namespace CapybaraVS
         public static bool IsAutoExit = false;      // スクリプトの自動実行後自動終了
         public static App Instance = null;
 
+        [System.Runtime.InteropServices.DllImport("Kernel32.dll")]
+        public static extern bool AttachConsole(int processId);
+
+        static App()
+        {
+            // コンソールにアタッチする
+            AttachConsole(-1);
+        }
+
         private void Application_StartUp(object sender, StartupEventArgs e)
         {
             Instance = this;
@@ -156,7 +165,7 @@ namespace CapybaraVS
         /// <summary>
         /// アプリケーションのカレントディレクトリを参照します。
         /// </summary>
-        public static string CurrentAppDir => System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
+        public static string CurrentAppDir => System.AppDomain.CurrentDomain.BaseDirectory;
 
         public void SaveAppInfo()
         {

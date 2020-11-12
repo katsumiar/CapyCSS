@@ -34,7 +34,7 @@ namespace CapybaraVS
             Processes = null;
         }
 
-        public int Start(string logName, bool redirect = false)
+        public int Start(bool redirect = false)
         {
             string execOption = null;
             foreach (var node in ParamData)
@@ -61,15 +61,7 @@ namespace CapybaraVS
 
                 string output = p.StandardOutput.ReadToEnd();   // 標準出力の読み取り
 
-                // 出力
-                if (App.IsAutoExit)
-                {
-                    Console.Write(output);
-                }
-                else
-                {
-                    MainWindow.Instance.MainLog.OutString(logName, output);
-                }
+                MainWindow.Instance.MainLog.OutString(nameof(ToolExec), output);
 
                 return p.ExitCode;
             }

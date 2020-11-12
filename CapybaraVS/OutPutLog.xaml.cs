@@ -19,6 +19,14 @@ namespace CapybaraVS
     /// </summary>
     public partial class OutPutLog : UserControl
     {
+        static readonly List<string> consolOutTagList = new List<string>() 
+        {
+            // コンソール出力対象のタグ名リスト
+
+            nameof(Script.ConsoleOut),
+            nameof(ToolExec)
+        };
+
         public OutPutLog()
         {
             InitializeComponent();
@@ -35,6 +43,13 @@ namespace CapybaraVS
 
             Log.AppendText(msg);
             ImmediateReflection();
+
+            if (consolOutTagList.Contains(tag))
+            {
+                // コンソールからの起動であればコンソールにも出力する
+
+                Console.Write(msg);
+            }
         }
 
         public void OutLine(string tag, string msg)

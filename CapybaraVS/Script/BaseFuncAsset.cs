@@ -1032,7 +1032,7 @@ namespace CapybaraVS.Script
 
                             ret.CallBack = (cagt2) =>
                             {
-                                return CbInt.Create(toolExec.Start(col.LinkConnectorControl.Caption, redirect));
+                                return CbInt.Create(toolExec.Start(redirect));
                             };
                         }
                         catch (Exception ex)
@@ -1840,7 +1840,7 @@ namespace CapybaraVS.Script
                         {
                             ret.Set(argument[0]);
                             string str = argument[0].ValueString;
-                            MainWindow.Instance.MainLog.OutLine("Console Out", str);
+                            MainWindow.Instance.MainLog.OutLine(nameof(ConsoleOut), str);
                         }
                         catch (Exception ex)
                         {

@@ -99,7 +99,7 @@ namespace CapybaraVS.Control.BaseControls
                     self.ForcedDrawGridLine();
                     if (CanvasRenderTransform != null)
                     {
-                        self.CanvasRenderTransform = new MatrixTransform(CanvasRenderTransform);
+                        self.CanvasRenderTransform = new MatrixTransform(CanvasRenderTransform.Value);
                     }
 
                     // 次回の為の初期化
@@ -122,7 +122,7 @@ namespace CapybaraVS.Control.BaseControls
             public bool EnabelGridLine { get; set; } = false;
             public bool EnableInfo { get; set; } = false;
             public double CanvasScale { get; set; } = 1.0;  // 不要になった
-            public Matrix CanvasRenderTransform { get; set; }
+            public Matrix? CanvasRenderTransform { get; set; }
             #endregion
         }
         public _AssetXML<BaseWorkCanvas> AssetXML { get; set; } = null;

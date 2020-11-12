@@ -1,19 +1,22 @@
-﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <OutputType>Exe</OutputType>
-    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net5.0-windows</TargetFramework>
     <UseWPF>true</UseWPF>
     <ApplicationIcon>Image\cpbvs_mUG_icon.ico</ApplicationIcon>
     <Copyright>Copyright (c) 2020 Katsumi Aradono</Copyright>
-    <Version>0.0.4.12</Version>
-    <AssemblyVersion>0.0.4.12</AssemblyVersion>
+    <Version>0.0.4.13</Version>
+    <AssemblyVersion>0.0.4.13</AssemblyVersion>
     <Authors>Katsumi Aradono</Authors>
     <PackageId>CapyCSS</PackageId>
     <AssemblyName>CapyCSS</AssemblyName>
     <RootNamespace>CapyCSS</RootNamespace>
-    <FileVersion>0.0.4.12</FileVersion>
+    <FileVersion>0.0.4.13</FileVersion>
     <Product>CapyCSS</Product>
+    <StartupObject>CapybaraVS.App</StartupObject>
+    <PackageProjectUrl>https://katsumiar.github.io/CapyCSS/</PackageProjectUrl>
+    <Description>A node-connected visual scripting tool that allows you to node c # methods.</Description>
   </PropertyGroup>
 
   <ItemGroup>

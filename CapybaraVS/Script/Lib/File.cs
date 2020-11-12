@@ -9,66 +9,66 @@ namespace CapybaraVS.Script.Lib
 {
     class FileLib
     {
-        [ScriptMethod("Input/Output" + ".ConsoleOut.List." + "String List", "",
+        [ScriptMethod("Input/Output" + ".ConsoleOut.List." + "Out String List", "",
             "RS=>FileLib_ConsoleOutStringList"//"文字列リストをコンソールに出力します。"
             )]
         public static int ConsoleOutStringList(List<string> list)
         {
             foreach (var node in list)
             {
-                MainWindow.Instance.MainLog.OutLine("ConsoleOutStringList", node);
+                MainWindow.Instance.MainLog.OutLine(nameof(ConsoleOut), node);
             }
             return list.Count;
         }
 
         //------------------------------------------------------------------
-        [ScriptMethod("Input/Output" + ".ConsoleOut.List." + "Int List", "",
+        [ScriptMethod("Input/Output" + ".ConsoleOut.List." + "Out Int List", "",
             "RS=>FileLib_ConsoleOutIntList"//"int 型リストをコンソールに出力します。"
             )]
         public static int ConsoleOutIntList(List<int> list)
         {
             foreach (var node in list)
             {
-                MainWindow.Instance.MainLog.OutLine("ConsoleOutIntList", node.ToString());
+                MainWindow.Instance.MainLog.OutLine(nameof(ConsoleOut), node.ToString());
             }
             return list.Count;
         }
 
         //------------------------------------------------------------------
-        [ScriptMethod("Input/Output" + ".ConsoleOut.List." + "Long List", "",
+        [ScriptMethod("Input/Output" + ".ConsoleOut.List." + "Out Long List", "",
             "RS=>FileLib_ConsoleOutLongList"//"long 型リストをコンソールに出力します。"
             )]
         public static int ConsoleOutLongList(List<long> list)
         {
             foreach (var node in list)
             {
-                MainWindow.Instance.MainLog.OutLine("ConsoleOutIntList", node.ToString());
+                MainWindow.Instance.MainLog.OutLine(nameof(ConsoleOut), node.ToString());
             }
             return list.Count;
         }
 
         //------------------------------------------------------------------
-        [ScriptMethod("Input/Output" + ".ConsoleOut.List." + "Double List", "",
+        [ScriptMethod("Input/Output" + ".ConsoleOut.List." + "Out Double List", "",
             "RS=>FileLib_ConsoleOutDoubleList"//"double 型リストをコンソールに出力します。"
             )]
         public static int ConsoleOutDoubleList(List<double> list)
         {
             foreach (var node in list)
             {
-                MainWindow.Instance.MainLog.OutLine("ConsoleOutIntList", node.ToString());
+                MainWindow.Instance.MainLog.OutLine(nameof(ConsoleOut), node.ToString());
             }
             return list.Count;
         }
 
         //------------------------------------------------------------------
-        [ScriptMethod("Input/Output" + ".ConsoleOut.List." + "Bool List", "",
+        [ScriptMethod("Input/Output" + ".ConsoleOut.List." + "Out Bool List", "",
             "RS=>FileLib_ConsoleOutBoolList"//"bool 型リストをコンソールに出力します。"
             )]
         public static int ConsoleOutBoolList(List<bool> list)
         {
             foreach (var node in list)
             {
-                MainWindow.Instance.MainLog.OutLine("ConsoleOutIntList", node.ToString());
+                MainWindow.Instance.MainLog.OutLine(nameof(ConsoleOut), node.ToString());
             }
             return list.Count;
         }
