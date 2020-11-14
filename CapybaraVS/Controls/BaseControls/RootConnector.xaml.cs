@@ -254,6 +254,16 @@ namespace CapybaraVS.Controls.BaseControls
 
         #endregion
 
+        /// <summary>
+        /// 通常のノード背景色です。
+        /// </summary>
+        private Brush NodeNormalColor = null;
+
+        /// <summary>
+        /// Entry指定時のノード背景色です。
+        /// </summary>
+        private Brush NodeEntryColor = (Brush)(new System.Windows.Media.BrushConverter()).ConvertFromString("#99BCBCFF");
+
         public RootConnector()
         {
             InitializeComponent();
@@ -262,6 +272,7 @@ namespace CapybaraVS.Controls.BaseControls
             DataContext = this;
             Box.ItemsSource = ListData;
 
+            NodeNormalColor = RectBox.Fill;
             ChangeLinkConnectorStroke();
             RectBox.Stroke = RectboxStroke;
             CheckBoxVisibility();
@@ -771,20 +782,28 @@ namespace CapybaraVS.Controls.BaseControls
                 e.Handled = true;
         }
 
+        /// <summary>
+        /// Entry指定時の処理です。
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void IsPublicExecute_Checked(object sender, RoutedEventArgs e)
         {
             MainWindow.AddPublicExecuteEntryPoint(ExecuteRoot);
             IsPublicExecute.Foreground = Brushes.Tomato;
-            var converter = new System.Windows.Media.BrushConverter();
-            RectBox.Fill = (Brush)converter.ConvertFromString("#99BCBCFF");
+            RectBox.Fill = NodeEntryColor;
         }
 
+        /// <summary>
+        /// Entry指定解除時の処理です。
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void IsPublicExecute_Unchecked(object sender, RoutedEventArgs e)
         {
             MainWindow.RemovePublicExecuteEntryPoint(ExecuteRoot);
             IsPublicExecute.Foreground = Brushes.Black;
-            var converter = new System.Windows.Media.BrushConverter();
-            RectBox.Fill = (Brush)converter.ConvertFromString("#99E2E2E2");
+            RectBox.Fill = NodeNormalColor;
         }
 
         //-----------------------------------------------------------------------------------
@@ -998,7 +1017,7 @@ namespace CapybaraVS.Controls.BaseControls
         /// <param name="e"></param>
         private void RootMainPanel_MouseEnter(object sender, MouseEventArgs e)
         {
-            rootCurveLinks.EnterEmphasis();
+            rootCurveLinks?.EnterEmphasis();
         }
 
         /// <summary>
@@ -1008,7 +1027,7 @@ namespace CapybaraVS.Controls.BaseControls
         /// <param name="e"></param>
         private void RootMainPanel_MouseLeave(object sender, MouseEventArgs e)
         {
-            rootCurveLinks.LeaveEmphasis();
+            rootCurveLinks?.LeaveEmphasis();
         }
 
         #endregion
