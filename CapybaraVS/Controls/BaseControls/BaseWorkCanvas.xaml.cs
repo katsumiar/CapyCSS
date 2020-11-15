@@ -479,6 +479,108 @@ namespace CapybaraVS.Control.BaseControls
             CanvasRenderTransform = new MatrixTransform(matrix);
         }
 
+        const double ADJUST_MARGIN_WIDTH = 200;
+        const double ADJUST_MARGIN_HEIGHT = 100;
+
+        /// <summary>
+        /// 画面に配置されているスクリプト全体を画面に収めるようにスケールをアジャストします。
+        /// </summary>
+        public void AdjustScriptScale()
+        {
+            Point leftTop, rightBottom;
+            GetScriptNodesRect(out leftTop, out rightBottom);
+
+            double revScale = 1.0 / CanvasScale;
+            double width = Math.Abs(leftTop.X - rightBottom.X);
+            double height = Math.Abs(leftTop.Y - rightBottom.Y);
+            double canvasWidth = ControlsCanvas.ActualWidth * revScale;
+            double canvasHeight = ControlsCanvas.ActualHeight * revScale;
+
+            double requestScaleX = canvasWidth / (width + ADJUST_MARGIN_WIDTH);
+            double requestScaleY = canvasHeight / (height + ADJUST_MARGIN_HEIGHT);
+            double requestScale = Math.Abs(requestScaleX) > Math.Abs(requestScaleY) ? requestScaleY : requestScaleX;
+            requestScale = ((requestScale / 0.05) - 0) * 0.05;
+
+            // スケール変更
+            CanvasAtScale(requestScale);
+        }
+
+        /// <summary>
+        /// 画面に配置されているスクリプト全体の範囲を取得します。
+        /// </summary>
+        /// <param name="leftTop"></param>
+        /// <param name="rightBottom"></param>
+        private void GetScriptNodesRect(out Point leftTop, out Point rightBottom)
+        {
+            leftTop = new Point(double.MaxValue, double.MaxValue);
+            rightBottom = new Point(double.MinValue, double.MinValue);
+            foreach (var node in ControlsCanvas.Children)
+            {
+                if (node is Movable)
+                {
+                    var el = node as FrameworkElement;
+                    double x = Canvas.GetLeft(el);
+                    double y = Canvas.GetTop(el);
+                    leftTop.X = Math.Min(leftTop.X, x);
+                    leftTop.Y = Math.Min(leftTop.Y, y);
+                    rightBottom.X = Math.Max(rightBottom.X, x + el.ActualWidth);
+                    rightBottom.Y = Math.Max(rightBottom.Y, y + el.ActualHeight);
+                }
+            }
+        }
+
+        /// <summary>
+        /// 画面に配置されているスクリプト全体を画面に画面左上にアジャストします。
+        /// </summary>
+        public void AdjustScriptLeftTopPos()
+        {
+            double revScale = 1.0 / CanvasScale;
+            Point leftTop, rightBottom;
+            GetScriptNodesRect(out leftTop, out rightBottom);
+
+            {// 移動
+                Point canvasLeftTop = ScreenToCanvasPosition(new Point(0, 0));
+                CanvasMovePos(
+                    ((canvasLeftTop.X - leftTop.X) + ADJUST_MARGIN_WIDTH / 2.0) * CanvasScale,
+                    ((canvasLeftTop.Y - leftTop.Y) + ADJUST_MARGIN_HEIGHT / 2.0) * CanvasScale);
+            }
+        }
+
+        /// <summary>
+        /// 画面に配置されているスクリプト全体を画面に画面中央にアジャストします。
+        /// </summary>
+        public void AdjustScriptCenterPos()
+        {
+            Point leftTop, rightBottom;
+            GetScriptNodesRect(out leftTop, out rightBottom);
+
+            double halfWidth = Math.Abs(leftTop.X - rightBottom.X) / 2.0;
+            double halfHeight = Math.Abs(leftTop.Y - rightBottom.Y) / 2.0;
+
+            double revScale = 1.0 / CanvasScale;
+            double halfCanvasWidth = ControlsCanvas.ActualWidth * revScale / 2.0;
+            double halfcanvasHeight = ControlsCanvas.ActualHeight * revScale / 2.0;
+
+            {// 移動
+                Point canvasLeftTop = ScreenToCanvasPosition(new Point(0, 0));
+                CanvasMovePos(
+                    ((canvasLeftTop.X - leftTop.X) + (halfCanvasWidth - halfWidth)) * CanvasScale,
+                    ((canvasLeftTop.Y - leftTop.Y) + (halfcanvasHeight - halfHeight)) * CanvasScale);
+            }
+        }
+
+        /// <summary>
+        /// キャンバスの表示位置を移動します。
+        /// </summary>
+        /// <param name="moveX"></param>
+        /// <param name="moveY"></param>
+        private void CanvasMovePos(double moveX, double moveY)
+        {
+            Matrix matrix = CanvasRenderTransform.Value;
+            matrix.Translate(moveX, moveY);
+            CanvasRenderTransform = new MatrixTransform(matrix);
+        }
+
         /// <summary>
         /// キャンバスサイズ変更時に呼ぶ
         /// </summary>
@@ -629,13 +731,6 @@ namespace CapybaraVS.Control.BaseControls
             pos = trans.Transform(pos);
 
             return pos;
-        }
-
-        private bool IsAcceptMovableElemet(FrameworkElement element)
-        {
-            if (element is Button) return true;
-
-            return false;
         }
 
         private void Grid_MouseDown(object sender, MouseButtonEventArgs e)
@@ -905,6 +1000,10 @@ namespace CapybaraVS.Control.BaseControls
                         }
                         break;
 
+                    case Key.J: // スクリプト全体の左上位置を画面に合わせる
+                        AdjustScriptLeftTopPos();
+                        break;
+
                     case Key.N: // 使用済み
                         break;
                 }
@@ -928,6 +1027,11 @@ namespace CapybaraVS.Control.BaseControls
                             CommandWindow commandWindow = CommandWindow.Create(pos);
                             commandWindow?.ShowDialog();
                         }
+                        break;
+
+                    case Key.J: // スクリプト全体を画面に収める（スクリプトは画面中央に表示する）
+                        AdjustScriptScale();
+                        AdjustScriptCenterPos();
                         break;
 
                     case Key.Delete:
