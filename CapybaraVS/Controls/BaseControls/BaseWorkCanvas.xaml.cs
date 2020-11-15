@@ -136,21 +136,34 @@ namespace CapybaraVS.Control.BaseControls
             [XmlIgnore]
             public Action WriteAction = null;
             [XmlIgnore]
-            public Action<OwnerClass> ReadAction = null;
+            public Action<OwnerClass,Point?> ReadAction = null;
             public _CopyAssetXML()
             {
-                ReadAction = (self) =>
+                ReadAction = (self, relPos) =>
                 {
                     self.ClearSelectedContorls();
+                    var nodeList = new List<FrameworkElement>();
+                    Point leftTopPoint = new Point(double.MaxValue, double.MaxValue);
                     foreach (var node in WorkCanvasAssetList)
                     {
                         Movable movableAsset = new Movable();
                         self.Add(movableAsset);
                         movableAsset.AssetXML = node;
                         movableAsset.AssetXML.ReadAction?.Invoke(movableAsset);
-
                         movableAsset.SelectedObject = true;
-                        self.SelectedContorls.Add(movableAsset);
+                        self.SelectedNodes.Add(movableAsset);
+                        if (relPos != null)
+                        {
+                            var el = movableAsset as FrameworkElement;
+                            nodeList.Add(el);
+                            leftTopPoint.X = Math.Min(leftTopPoint.X, Canvas.GetLeft(el));
+                            leftTopPoint.Y = Math.Min(leftTopPoint.Y, Canvas.GetTop(el));
+                        }
+                    }
+                    foreach (var node in nodeList)
+                    {
+                        Canvas.SetLeft(node, Canvas.GetLeft(node) + relPos.Value.X - leftTopPoint.X);
+                        Canvas.SetTop(node, Canvas.GetTop(node) + relPos.Value.Y - leftTopPoint.Y);
                     }
 
                     // 次回の為の初期化
@@ -162,7 +175,7 @@ namespace CapybaraVS.Control.BaseControls
                 WriteAction = () =>
                 {
                     List<Movable._AssetXML<Movable>> workList = new List<Movable._AssetXML<Movable>>();
-                    foreach (var node in self.SelectedContorls)
+                    foreach (var node in self.SelectedNodes)
                     {
                         if (node is Movable target)
                         {
@@ -232,7 +245,7 @@ namespace CapybaraVS.Control.BaseControls
         /// <summary>
         /// 選択中のコントロール
         /// </summary>
-        public ObservableCollection<Movable> SelectedContorls = new ObservableCollection<Movable>();
+        public ObservableCollection<Movable> SelectedNodes = new ObservableCollection<Movable>();
 
         /// <summary>
         /// 接続線の交差管理用リスト
@@ -784,7 +797,7 @@ namespace CapybaraVS.Control.BaseControls
                 rectangle.Height = Math.Abs(ypos);
 
                 Rect rect = new Rect(Canvas.GetLeft(rectangle), Canvas.GetTop(rectangle), rectangle.Width, rectangle.Height);
-                GetControlWithinRange(rect, ref SelectedContorls);
+                GetControlWithinRange(rect, ref SelectedNodes);
             }
 
             mouseInfo.Content = "MOUSE POS: (" + (int)pos.X + ", " + (int)pos.Y + ")";
@@ -831,11 +844,11 @@ namespace CapybaraVS.Control.BaseControls
         /// </summary>
         public void ClearSelectedContorls()
         {
-            foreach (var node in SelectedContorls)
+            foreach (var node in SelectedNodes)
             {
                 node.SelectedObject = false;
             }
-            SelectedContorls.Clear();
+            SelectedNodes.Clear();
         }
 
         private void Grid_MouseLeave(object sender, MouseEventArgs e)
@@ -856,18 +869,11 @@ namespace CapybaraVS.Control.BaseControls
                 switch (e.Key)
                 {
                     case Key.C:
-                        // 選択された作業内容をxmlシリアライズしてクリップボードにコピーする
-
                         try
                         {
-                            var writer = new StringWriter();
-                            var serializer = new XmlSerializer(CopyAssetXML.GetType());
-                            var namespaces = new XmlSerializerNamespaces();
-                            namespaces.Add(string.Empty, string.Empty);
-                            CopyAssetXML.WriteAction();
-                            serializer.Serialize(writer, CopyAssetXML, namespaces);
+                            // 選択された作業内容をxmlシリアライズしてクリップボードにコピーする
 
-                            Clipboard.SetDataObject(writer.ToString());
+                            CopySelectedNodesToClipboard();
                         }
                         catch (Exception ex)
                         {
@@ -880,7 +886,7 @@ namespace CapybaraVS.Control.BaseControls
                         {
                             var reader = new StringReader(Clipboard.GetText());
                             string text = reader.ReadToEnd();
-                            if (!text.Contains("<CopyAsset Id="))
+                            if (!IsSerializeCBSdata(text))
                             {
                                 // テキストの内容に合わせて貼り付ける
 
@@ -890,19 +896,7 @@ namespace CapybaraVS.Control.BaseControls
                             {
                                 // クリップボードのxmlをデシリアライズしてアセットをキャンバスに置く
 
-                                reader = new StringReader(Clipboard.GetText());
-                                XmlSerializer serializer = new XmlSerializer(CopyAssetXML.GetType());
-
-                                XmlDocument doc = new XmlDocument();
-                                doc.PreserveWhitespace = true;
-                                doc.Load(reader);
-                                XmlNodeReader nodeReader = new XmlNodeReader(doc.DocumentElement);
-
-                                object data = (_CopyAssetXML<BaseWorkCanvas>)serializer.Deserialize(nodeReader);
-                                CopyAssetXML = (_CopyAssetXML<BaseWorkCanvas>)data;
-
-                                PointIdProvider.InitCheckRequest();
-                                CopyAssetXML.ReadAction(this);
+                                PasteNodesFromClipboard();
                             }
                         }
                         catch (Exception ex)
@@ -937,20 +931,80 @@ namespace CapybaraVS.Control.BaseControls
                         break;
 
                     case Key.Delete:
-                        if (SelectedContorls.Count != 0 &&
-                                MessageBox.Show(CapybaraVS.Language.GetInstance["ConfirmationDelete"],
-                                    CapybaraVS.Language.GetInstance["Confirmation"],
-                                    MessageBoxButton.OKCancel) == MessageBoxResult.OK)
-                        {
-                            foreach (var node in SelectedContorls)
-                            {
-                                node.Dispose();
-                                ControlsCanvas.Children.Remove(node);
-                            }
-                            ClearSelectedContorls();
-                        }
+                        DeleteSelectedNodes();
                         break;
                 }
+            }
+        }
+
+        /// <summary>
+        /// シリアライズされたCBSデータかどうか判定します。
+        /// </summary>
+        /// <param name="text"></param>
+        /// <returns></returns>
+        private static bool IsSerializeCBSdata(string text)
+        {
+            return text.Contains("<CopyAsset Id=");
+        }
+
+        /// <summary>
+        /// クリップボードにあるシリアライズされたノードをデシリアライズしてペーストします。
+        /// </summary>
+        private void PasteNodesFromClipboard()
+        {
+            StringReader reader = new StringReader(Clipboard.GetText());
+            XmlSerializer serializer = new XmlSerializer(CopyAssetXML.GetType());
+
+            XmlDocument doc = new XmlDocument();
+            doc.PreserveWhitespace = true;
+            doc.Load(reader);
+            XmlNodeReader nodeReader = new XmlNodeReader(doc.DocumentElement);
+
+            object data = (_CopyAssetXML<BaseWorkCanvas>)serializer.Deserialize(nodeReader);
+            CopyAssetXML = (_CopyAssetXML<BaseWorkCanvas>)data;
+
+            PointIdProvider.InitCheckRequest();
+            CopyAssetXML.ReadAction(this, startPoint);
+        }
+
+        /// <summary>
+        /// 選択されているノードをシリアライズしてクリップボードにコピーします。
+        /// </summary>
+        private void CopySelectedNodesToClipboard()
+        {
+            try
+            {
+                var writer = new StringWriter();
+                var serializer = new XmlSerializer(CopyAssetXML.GetType());
+                var namespaces = new XmlSerializerNamespaces();
+                namespaces.Add(string.Empty, string.Empty);
+                CopyAssetXML.WriteAction();
+                serializer.Serialize(writer, CopyAssetXML, namespaces);
+
+                Clipboard.SetDataObject(writer.ToString());
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(nameof(CanvasBase_KeyDown) + ": [Key.C] " + ex.Message);
+            }
+        }
+
+        /// <summary>
+        /// 選択されているノードを削除します。
+        /// </summary>
+        public void DeleteSelectedNodes()
+        {
+            if (SelectedNodes.Count != 0 &&
+                    MessageBox.Show(CapybaraVS.Language.GetInstance["ConfirmationDelete"],
+                        CapybaraVS.Language.GetInstance["Confirmation"],
+                        MessageBoxButton.OKCancel) == MessageBoxResult.OK)
+            {
+                foreach (var node in SelectedNodes)
+                {
+                    node.Dispose();
+                    ControlsCanvas.Children.Remove(node);
+                }
+                ClearSelectedContorls();
             }
         }
 
@@ -971,7 +1025,7 @@ namespace CapybaraVS.Control.BaseControls
 
             if (e.Data.GetDataPresent(DataFormats.Text))
             {
-                string text = e.Data.GetData(DataFormats.Text) as string;
+                var text = e.Data.GetData(DataFormats.Text) as string;
                 if (text != null)
                 {
                     CreateTextAsset(pos, text);
@@ -991,16 +1045,17 @@ namespace CapybaraVS.Control.BaseControls
                             // スクリプトファイルを読み込む
 
                             CommandCanvas.LoadXML(filename);
-                            return;
                         }
                     }
-
-                    CreateTextAsset(pos, filename);
-                    // 重ならないようにする（値は適当）
-                    pos.X += 20;
-                    pos.Y += 50;
+                    else
+                    {
+                        CreateTextAsset(pos, filename);
+                        
+                        // 重ならないようにする（値は適当）
+                        pos.X += 20;
+                        pos.Y += 50;
+                    }
                 }
-                return;
             }
         }
 

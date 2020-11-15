@@ -137,7 +137,7 @@ namespace CapybaraVS
                 {
                     // 画面全体を動かす
 
-                    if (CommandCanvas.ScriptWorkCanvas.SelectedContorls.Count == 0)
+                    if (CommandCanvas.ScriptWorkCanvas.SelectedNodes.Count == 0)
                     {
                         // 全体を移動
 
@@ -153,7 +153,7 @@ namespace CapybaraVS
                     {
                         // 選択されているノードを移動
 
-                        MoveSelectedNode(pos, CommandCanvas.ScriptWorkCanvas.SelectedContorls);
+                        MoveSelectedNode(pos, CommandCanvas.ScriptWorkCanvas.SelectedNodes);
                     }
                 }
                 else
