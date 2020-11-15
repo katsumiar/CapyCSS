@@ -514,7 +514,14 @@ namespace CapybaraVS.Control.BaseControls
         {
             leftTop = new Point(double.MaxValue, double.MaxValue);
             rightBottom = new Point(double.MinValue, double.MinValue);
-            foreach (var node in ControlsCanvas.Children)
+
+            IEnumerable enumerable;
+            if (SelectedNodes.Count != 0)
+                enumerable = SelectedNodes;
+            else
+                enumerable = ControlsCanvas.Children;
+
+            foreach (var node in enumerable)
             {
                 if (node is Movable)
                 {
@@ -534,7 +541,6 @@ namespace CapybaraVS.Control.BaseControls
         /// </summary>
         public void AdjustScriptLeftTopPos()
         {
-            double revScale = 1.0 / CanvasScale;
             Point leftTop, rightBottom;
             GetScriptNodesRect(out leftTop, out rightBottom);
 
