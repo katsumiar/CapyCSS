@@ -1,5 +1,5 @@
 # CapyCSS
-![title](https://user-images.githubusercontent.com/63950487/97864065-5f169400-1d4b-11eb-9d12-403b099e0ffb.png)
+![CapyCSS](https://user-images.githubusercontent.com/63950487/99184540-e5d56300-2786-11eb-8868-dd06a950d7d6.png)
 
 ## 特徴
 * ビジュアルなスクリプトを作成することができます。
@@ -61,7 +61,8 @@ public static System.IO.StreamReader GetReadStream(string path, string encoding 
 ## スクリプトの便利な機能
 * 引数の上にカーソルを置くと内容を確認できます。
 * 数字と文字をドラッグアンドドロップするだけで定数ノードを作成できます。
-* ノードの接続時に型キャストが可能です（オブジェクト型からのキャストはサポートしていません）。
+* ノードの接続時に型キャストが可能です。
+* object型からのキャストをできるようにしました。
 
 ## ヒント表示
 英語と日本語をサポートします。ただし、初期状態では英語のみの機械翻訳です。

@@ -224,12 +224,12 @@ namespace CapybaraVS.Script
         /// <summary>
         /// 代入の可否を判定します。
         /// </summary>
-        /// <param name="toName"></param>
-        /// <param name="fromName"></param>
-        /// <param name="toType"></param>
-        /// <param name="fromType"></param>
-        /// <param name="isCast"></param>
-        /// <returns></returns>
+        /// <param name="toName">代入先の型名</param>
+        /// <param name="fromName">代入元の型名</param>
+        /// <param name="toType">代入先の型情報</param>
+        /// <param name="fromType">代入元の型情報</param>
+        /// <param name="isCast">キャストでの判定なら true</param>
+        /// <returns>接続可能なら true</returns>
         static public bool IsAssignment(
             string toName, 
             string fromName, 
@@ -276,11 +276,19 @@ namespace CapybaraVS.Script
                 return false;
             }
 
+            if (fromName == OBJECT_STR)
+            {
+                // object からの代入ならキャストで許可
+
+                if (isCast)
+                {
+                    return IsCastAssignment(toName, fromName);
+                }
+                return false;
+            }
+
             if (toName == STRING_STR)
             {
-                if (fromName == OBJECT_STR)
-                    return false;
-
                 return true;    // 文字列型になら変換可能
             }
 
@@ -327,11 +335,14 @@ namespace CapybaraVS.Script
         /// <summary>
         /// キャストを通しての代入の可否を判定します。
         /// </summary>
-        /// <param name="toName">代入元の型名</param>
-        /// <param name="fromName">代入先の型名</param>
+        /// <param name="toName">代入先の型名</param>
+        /// <param name="fromName">代入元の型名</param>
         /// <returns></returns>
         public static bool IsCastAssignment(string toName, string fromName)
         {
+            if (fromName == OBJECT_STR)
+                return true;    // 接続元が object なら無条件でキャスト可能
+
             if (fromName == DECIMAL_STR && toName == CHAR_STR)
                 return false;
 

@@ -585,17 +585,31 @@ namespace CapybaraVS.Controls.BaseControls
         {
             try
             {
-                bool isFromDf = connectValueData is CbDouble || connectValueData is CbFloat;
-                bool isToDF = ValueData is CbDouble || ValueData is CbFloat;
-                if (isFromDf && !isToDF)
+                if (connectValueData is CbObject cbObject)
                 {
-                    double tmp = (dynamic)connectValueData.Data;
-                    long tmp2 = (long)tmp;
-                    ValueData.ValueString = tmp2.ToString();
+                    if (cbObject.Data is ICbValue cbValue)
+                    {
+                        ValueData.Data = cbValue.Data;
+                    }
+                    else
+                    {
+                        ValueData.Data = cbObject.Data;
+                    }
                 }
                 else
                 {
-                    ValueData.ValueString = Convert.ChangeType(connectValueData.Data, backupValueData.OriginalReturnType).ToString();
+                    bool isFromDf = connectValueData is CbDouble || connectValueData is CbFloat;
+                    bool isToDF = ValueData is CbDouble || ValueData is CbFloat;
+                    if (isFromDf && !isToDF)
+                    {
+                        double tmp = (dynamic)connectValueData.Data;
+                        long tmp2 = (long)tmp;
+                        ValueData.ValueString = tmp2.ToString();
+                    }
+                    else
+                    {
+                        ValueData.ValueString = Convert.ChangeType(connectValueData.Data, backupValueData.OriginalReturnType).ToString();
+                    }
                 }
             }
             catch (Exception ex)
