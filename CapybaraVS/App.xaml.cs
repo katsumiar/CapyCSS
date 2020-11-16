@@ -11,6 +11,7 @@ using System.Configuration;
 using System.Data;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Xml;
@@ -93,7 +94,7 @@ namespace CapybaraVS
         public _AssetXML<App> AssetXML { get; set; } = null;
         #endregion
 
-        string APP_INFO_NAME = @"\app.xml";
+        string APP_INFO_NAME = @"app.xml";
         public static string ErrorLog = "";
         public static string EntryLoadFile = null;  // スクリプトの起動後読み込み
         public static bool IsAutoExecute = false;   // スクリプトの自動実行
@@ -114,7 +115,16 @@ namespace CapybaraVS
             Instance = this;
 
             // カレントディレクトリに作成する
-            APP_INFO_NAME = CurrentAppDir + APP_INFO_NAME;
+            {
+                string path = Path.Combine(
+                    System.Environment.GetFolderPath(Environment.SpecialFolder.Personal),
+                    Path.GetFileNameWithoutExtension(Assembly.GetExecutingAssembly().GetName().Name));
+                if (!Directory.Exists(path))
+                {
+                    Directory.CreateDirectory(path);
+                }
+                APP_INFO_NAME = Path.Combine(path, APP_INFO_NAME);
+            }
 
             // ツールチップの表示時間を設定
             System.Windows.Controls.ToolTipService.ShowDurationProperty.OverrideMetadata(
@@ -165,7 +175,7 @@ namespace CapybaraVS
         /// <summary>
         /// アプリケーションのカレントディレクトリを参照します。
         /// </summary>
-        public static string CurrentAppDir => System.AppDomain.CurrentDomain.BaseDirectory;
+        public static string CurrentAppDir => System.Environment.CurrentDirectory;
 
         public void SaveAppInfo()
         {

@@ -1155,16 +1155,15 @@ namespace CapybaraVS.Control.BaseControls
                             // スクリプトファイルを読み込む
 
                             CommandCanvas.LoadXML(filename);
+                            return;
                         }
                     }
-                    else
-                    {
-                        CreateTextAsset(pos, filename);
+
+                    CreateTextAsset(pos, filename);
                         
-                        // 重ならないようにする（値は適当）
-                        pos.X += 20;
-                        pos.Y += 50;
-                    }
+                    // 重ならないようにする（値は適当）
+                    pos.X += 20;
+                    pos.Y += 50;
                 }
             }
         }
