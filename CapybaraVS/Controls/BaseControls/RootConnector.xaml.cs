@@ -701,9 +701,6 @@ namespace CapybaraVS.Controls.BaseControls
                 }
                 catch (Exception ex)
                 {
-                    // クリア時にエラーが発生する
-                    // ※恐らく接続線周りで回収忘れのラムダ関数がある
-
                     System.Diagnostics.Debug.WriteLine(ex.Message);
                 }
             }
