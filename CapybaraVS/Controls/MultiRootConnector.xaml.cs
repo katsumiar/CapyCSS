@@ -1,6 +1,7 @@
 ﻿using CapybaraVS.Control.BaseControls;
 using CapybaraVS.Controls.BaseControls;
 using CapybaraVS.Script;
+using CapyCSS.Script;
 using CbVS.Script;
 using System;
 using System.Collections.Generic;
@@ -220,42 +221,36 @@ namespace CapybaraVS.Controls
                     {
                         string text = (string)afn.Value;
 
-                        int intNum;
-                        double doubleNum;
-                        long longNum;
-                        bool boolNum;
                         ICbValue setValue = null;
                         if (text.Contains(','))
                         {
                             // , と数字だけだと double と判定されるので強引に string にする
 
-                            self.AssetLiteralType = new CbST(CbType.String);
-                            setValue = CbString.Create(text, "");
+                            setValue = toStringNode(self, ref text);
                         }
-                        else if (int.TryParse(text, out intNum))
+                        else if (int.TryParse(text, out int intNum))
                         {
                             self.AssetLiteralType = new CbST(CbType.Int);
                             setValue = CbInt.Create(intNum);
                         }
-                        else if (long.TryParse(text, out longNum))
+                        else if (long.TryParse(text, out long longNum))
                         {
                             self.AssetLiteralType = new CbST(CbType.Long);
                             setValue = CbLong.Create(longNum);
                         }
-                        else if (double.TryParse(text, out doubleNum))
+                        else if (double.TryParse(text, out double doubleNum))
                         {
                             self.AssetLiteralType = new CbST(CbType.Double);
                             setValue = CbDouble.Create(doubleNum);
                         }
-                        else if (bool.TryParse(text, out boolNum))
+                        else if (bool.TryParse(text, out bool boolNum))
                         {
                             self.AssetLiteralType = new CbST(CbType.Bool);
                             setValue = CbBool.Create(boolNum);
                         }
                         else
                         {
-                            self.AssetLiteralType = new CbST(CbType.String);
-                            setValue = CbString.Create(text, "");
+                            setValue = toStringNode(self, ref text);
                         }
                         self.AssetType = FunctionType.LiteralType;
                         if (self.LinkConnectorControl.ValueData != null && setValue != null)
@@ -266,6 +261,34 @@ namespace CapybaraVS.Controls
                         }
                     }
                 });
+
+        /// <summary>
+        /// string型に変換します。
+        /// ただし、複数行の場合は、text型に変換します。
+        /// </summary>
+        /// <param name="self">所属のクラスインスタンス</param>
+        /// <param name="text">テキスト</param>
+        /// <returns>型</returns>
+        private static ICbValue toStringNode(MultiRootConnector self, ref string text)
+        {
+            ICbValue setValue;
+            if (text.Contains(Environment.NewLine))
+            {
+                self.AssetLiteralType = new CbST(CbType.Text);
+                setValue = CbText.Create(text, "");
+                text = text.Split(Environment.NewLine)[0];
+            }
+            else
+            {
+                self.AssetLiteralType = new CbST(CbType.String);
+                setValue = CbString.Create(text, "");
+            }
+            if (text.Length > 20)
+            {
+                text = text.Substring(0, 20) + "...";
+            }
+            return setValue;
+        }
 
         public static readonly DependencyProperty AttachParamProperty = impAttachParam.Regist(null);
 

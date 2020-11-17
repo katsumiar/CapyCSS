@@ -86,6 +86,8 @@ public static System.IO.StreamReader GetReadStream(string path, string encoding 
 * Reference
 * Overload
 
+※リテラルノードのみ独自のtext型を用意しています。string型とobject型へ代入可能です。
+
 ## スクリプトが対応するメソッドの戻り型
 * Type: int, string, double, byte, sbyte, long, short, ushort, uint, ulong, char, float, decimal, bool, object
 * Class

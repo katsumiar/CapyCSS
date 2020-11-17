@@ -133,7 +133,7 @@ namespace CapybaraVS.Script
 
         public CbST TargetType => CbST.FreeType;    // 型の選択を要求する
 
-        public CbType[] DeleteSelectItems => CbScript.BaseDeleteCbTypes;
+        public CbType[] DeleteSelectItems => CbScript.BaseDeleteCbTypes2;
     }
 
     //-----------------------------------------------------------------

@@ -15,27 +15,32 @@ namespace CbVS.Script
         /// <summary>
         /// 型選択時に選択すべきでない最低限の型を除く
         /// </summary>
-        public static CbType[] BaseDeleteCbTypes => new CbType[] { CbType.none, CbType.Func, CbType.Class };
+        public static CbType[] BaseDeleteCbTypes => new CbType[] { CbType.none, CbType.Func, CbType.Class, CbType.Text };
+
+        /// <summary>
+        /// 型選択時に選択すべきでない最低限の型を除く
+        /// </summary>
+        public static CbType[] BaseDeleteCbTypes2 => new CbType[] { CbType.none, CbType.Func, CbType.Class };
 
         /// <summary>
         /// 型選択時に object 型を除く
         /// </summary>
-        public static CbType[] ObjectDeleteCbTypes => new CbType[] { CbType.none, CbType.Func, CbType.Class, CbType.Object };
+        public static CbType[] ObjectDeleteCbTypes => new CbType[] { CbType.none, CbType.Func, CbType.Class, CbType.Object, CbType.Text };
 
         /// <summary>
         /// 型選択時に演算不可能な型を除く
         /// </summary>
-        public static CbType[] MathDeleteNotCbCalcableTypes => new CbType[] { CbType.none, CbType.Func, CbType.Class, CbType.Object, CbType.String, CbType.Bool };
+        public static CbType[] MathDeleteNotCbCalcableTypes => new CbType[] { CbType.none, CbType.Func, CbType.Class, CbType.Object, CbType.String, CbType.Text, CbType.Bool };
 
         /// <summary>
         /// 型選択時に加算不可能な型を除く
         /// </summary>
-        public static CbType[] MathDeleteNotCbAddableTypes => new CbType[] { CbType.none, CbType.Func, CbType.Class, CbType.Object, CbType.Bool };
+        public static CbType[] MathDeleteNotCbAddableTypes => new CbType[] { CbType.none, CbType.Func, CbType.Class, CbType.Text, CbType.Object, CbType.Bool };
 
         /// <summary>
         /// 型選択時にマイナス表現の無い型を除く
         /// </summary>
-        public static CbType[] MathDeleteNotCbSignedNumberTypes => new CbType[] { CbType.none, CbType.Func, CbType.Class, CbType.Object, CbType.String, CbType.Bool, CbType.Char, CbType.UInt, CbType.ULong, CbType.UShort };
+        public static CbType[] MathDeleteNotCbSignedNumberTypes => new CbType[] { CbType.none, CbType.Func, CbType.Class, CbType.Object, CbType.String, CbType.Text, CbType.Bool, CbType.Char, CbType.UInt, CbType.ULong, CbType.UShort };
 
         /// <summary>
         /// アセットコードでノードを作成します。

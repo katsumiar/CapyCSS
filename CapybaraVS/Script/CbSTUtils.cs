@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using CapyCSS.Script;
 using CbVS.Script;
 
 namespace CapybaraVS.Script
@@ -31,6 +32,7 @@ namespace CapybaraVS.Script
         public const string DECIMAL_STR = "decimal";
         public const string BOOL_STR = "bool";
         public const string STRING_STR = "string";
+        public const string TEXT_STR = "text";
 
         static public string EnumCbTypeToString(CbType cbType)
         {
@@ -39,6 +41,7 @@ namespace CapybaraVS.Script
                 case CbType.none: return cbType.ToString();
                 case CbType.Int: return INT_STR;
                 case CbType.String: return STRING_STR;
+                case CbType.Text: return TEXT_STR;
                 case CbType.Double: return DOUBLE_STR;
                 case CbType.Byte: return BYTE_STR;
                 case CbType.Sbyte: return SBYTE_STR;
@@ -83,6 +86,7 @@ namespace CapybaraVS.Script
 
             { nameof(CbInt), INT_STR },
             { nameof(CbString), STRING_STR},
+            { nameof(CbText), TEXT_STR },
             { nameof(CbDouble), DOUBLE_STR },
             { nameof(CbByte), BYTE_STR },
             { nameof(CbSByte), SBYTE_STR },
@@ -287,7 +291,7 @@ namespace CapybaraVS.Script
                 return false;
             }
 
-            if (toName == STRING_STR)
+            if (toName == STRING_STR || toName == TEXT_STR)
             {
                 return true;    // 文字列型になら変換可能
             }

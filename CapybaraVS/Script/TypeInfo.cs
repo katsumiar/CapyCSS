@@ -19,6 +19,7 @@ using System.Threading.Tasks;
 using System.Linq;
 using System.Windows.Media;
 using CbVS.Script;
+using CapyCSS.Script;
 
 namespace CapybaraVS.Script
 {
@@ -26,8 +27,9 @@ namespace CapybaraVS.Script
     {
         none,
         Int,
-        String,
         Double,
+        String,
+        Text,
         Byte,
         Sbyte,
         Long,
@@ -791,6 +793,7 @@ namespace CapybaraVS.Script
             {
                 case CbType.Int: return typeof(int);
                 case CbType.String: return typeof(string);
+                case CbType.Text: return typeof(string);
                 case CbType.Double: return typeof(double);
                 case CbType.Byte: return typeof(byte);
                 case CbType.Sbyte: return typeof(sbyte);
@@ -879,6 +882,7 @@ namespace CapybaraVS.Script
                 {
                     case CbType.Int: return CbFunc<Func<object, int>, CbInt>.Create(name);
                     case CbType.String: return CbFunc<Func<object, string>, CbString>.Create(name);
+                    case CbType.Text: return CbFunc<Func<object, string>, CbText>.Create(name);
                     case CbType.Double: return CbFunc<Func<object, double>, CbDouble>.Create(name);
                     case CbType.Byte: return CbFunc<Func<object, byte>, CbByte>.Create(name);
                     case CbType.Sbyte: return CbFunc<Func<object, sbyte>, CbSByte>.Create(name);
@@ -940,6 +944,7 @@ namespace CapybaraVS.Script
             {
                 case CbType.Int: return CbInt.Create(name);
                 case CbType.String: return CbString.Create("", name);
+                case CbType.Text: return CbText.Create("", name);
                 case CbType.Double: return CbDouble.Create(name);
                 case CbType.Byte: return CbByte.Create(name);
                 case CbType.Sbyte: return CbSByte.Create(name);
@@ -1191,7 +1196,17 @@ namespace CapybaraVS.Script
         /// <summary>
         /// 型の名前を参照します。
         /// </summary>
-        public virtual string TypeName => CbSTUtils.GetTypeName(Value as object);
+        public virtual string TypeName
+        {
+            get
+            {
+                if (Value is null)
+                {
+                    return CbSTUtils._GetTypeName(OriginalType);
+                }
+                return CbSTUtils.GetTypeName(Value as object);
+            }
+        }
 
         /// <summary>
         /// 自分の型情報を参照します。

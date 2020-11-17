@@ -1,6 +1,7 @@
 ﻿//#define SHOW_LINK_ARRAY   // リスト型を接続したときにリストの要素をコピーして表示する
 
 using CapybaraVS.Script;
+using CapyCSS.Script;
 using CbVS.Script;
 using System;
 using System.Collections.Generic;
@@ -197,7 +198,7 @@ namespace CapybaraVS.Controls.BaseControls
 
         private void _UpdateValueData(ICbValue valueData)
         {
-            string typeName = CbSTUtils._GetTypeName(valueData.OriginalType);
+            string typeName = valueData.TypeName;
             if (valueData is CbObject cbObject)
             {
                 // CbObject は中身を表示する
@@ -310,10 +311,29 @@ namespace CapybaraVS.Controls.BaseControls
                 ToolTipUpdate();    // 必ず更新確認が必要
 
                 Edit.IsReadOnly = valueData.IsReadOnlyValue || ReadOnly || valueData.IsNull;
+
                 if (Edit.IsReadOnly)
                     Edit.Background = Brushes.Lavender;
+
+                if (valueData is CbText cbText)
+                {
+                    Edit.ToolTip = null;
+                    Edit.MaxWidth = Edit.MinWidth = Edit.Width = 360;
+                    Edit.MaxHeight = Edit.MinHeight = Edit.Height = 300;
+                    Edit.AcceptsReturn = true;
+                    Edit.AcceptsTab = true;
+                    Edit.VerticalScrollBarVisibility = ScrollBarVisibility.Auto;
+                    Edit.HorizontalScrollBarVisibility = ScrollBarVisibility.Auto;
+                    //Edit.TextWrapping = TextWrapping.Wrap;
+                    if (!Edit.IsReadOnly)
+                        Edit.Background = Brushes.Honeydew;
+                }
                 else
-                    Edit.Background = Brushes.White;
+                {
+                    Edit.MaxHeight = 36;
+                    if (!Edit.IsReadOnly)
+                        Edit.Background = Brushes.White;
+                }
             }
             if (!valueData.IsVisibleValue)
             {
@@ -523,7 +543,7 @@ namespace CapybaraVS.Controls.BaseControls
 
         private void Edit_KeyDown(object sender, KeyEventArgs e)
         {
-            if (e.Key == Key.Enter)
+            if (e.Key == Key.Enter && !(ValueData is CbText))
             {
                 ExitEditMode();
             }
