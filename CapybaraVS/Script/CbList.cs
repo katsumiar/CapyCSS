@@ -442,7 +442,15 @@ namespace CbVS.Script
                 MethodInfo addMethod = genericType.GetMethod("Add");
                 foreach (var node in Value)
                 {
-                    addMethod.Invoke(instanct, new Object[] { node.Data });
+                    if (node is CbObject cbObject)
+                    {
+                        ICbValue cbValue = cbObject.Data as ICbValue;
+                        addMethod.Invoke(instanct, new Object[] { cbValue.Data });
+                    }
+                    else
+                    {
+                        addMethod.Invoke(instanct, new Object[] { node.Data });
+                    }
                 }
             }
 
