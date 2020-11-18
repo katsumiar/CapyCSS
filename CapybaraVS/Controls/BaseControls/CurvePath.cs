@@ -814,6 +814,9 @@ namespace CapybaraVS
 
         public void LeaveMouseEvent()
         {
+            if (ellipsePath is null)
+                return; // 保険
+
             Brush brush = CreateMainBrush(true);
             if (brush != null)
                 ellipsePath.Stroke = brush;
