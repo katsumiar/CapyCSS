@@ -328,7 +328,7 @@ namespace CapybaraVS.Controls.BaseControls
                     }
                 })));
                 commandNode.AddChild(new TreeMenuNode("Toggle ShowMouseInfo", CreateImmediateExecutionCanvasCommand(() => ScriptWorkCanvas.EnableInfo = ScriptWorkCanvas.EnableInfo ? false : true)));
-                commandNode.AddChild(new TreeMenuNode("Toggle ShowGridLine(G)", CreateImmediateExecutionCanvasCommand(() => ScriptCommandCanvas.ToggleGridLine())));
+                commandNode.AddChild(new TreeMenuNode("Toggle ShowGridLine(Ctrl+G)", CreateImmediateExecutionCanvasCommand(() => ScriptCommandCanvas.ToggleGridLine())));
                 commandNode.AddChild(new TreeMenuNode("Save(Ctrl+S)", CreateImmediateExecutionCanvasCommand(() => SaveXML())));
                 commandNode.AddChild(new TreeMenuNode("Load(Ctrl+O)", CreateImmediateExecutionCanvasCommand(() => LoadXML())));
                 treeViewCommand.AssetTreeData.Add(commandNode);
@@ -647,6 +647,10 @@ namespace CapybaraVS.Controls.BaseControls
                         }
                         break;
 
+                    case Key.G:
+                        ToggleGridLine();
+                        break;
+
                         // BaseWorkCanvas で使用
                     case Key.C:
                     case Key.V:
@@ -665,11 +669,7 @@ namespace CapybaraVS.Controls.BaseControls
             {
                 switch (e.Key)
                 {
-                    case Key.G:
-                        ToggleGridLine();
-                        break;
-
-                        // BaseWorkCanvas で使用
+                    // BaseWorkCanvas で使用
                     case Key.Delete:
                         break;
                 }
