@@ -587,6 +587,9 @@ namespace CapybaraVS.Controls.BaseControls
             {
                 if (connectValueData is CbObject cbObject)
                 {
+                    if (cbObject.Data is null)
+                        return; // 保険
+
                     if (cbObject.Data is ICbValue cbValue)
                     {
                         ValueData.Data = cbValue.Data;
