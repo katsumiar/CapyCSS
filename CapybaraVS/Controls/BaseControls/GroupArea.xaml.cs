@@ -30,7 +30,10 @@ namespace CapyCSS.Controls.BaseControls
     /// GroupArea.xaml の相互作用ロジック
     /// </summary>
     public partial class GroupArea
-        : UserControl, IGroupList, IDisplayPriority
+        : UserControl
+        , IGroupList
+        , IDisplayPriority
+        , IHaveCommandCanvas
     {
         #region XML定義
         [XmlRoot(nameof(GroupArea))]
@@ -77,7 +80,7 @@ namespace CapyCSS.Controls.BaseControls
             {
                 ObservableCollection<Movable> groupList = new ObservableCollection<Movable>();
                 UIElement parentControl = (Parent as FrameworkElement).Parent as UIElement;
-                CommandCanvas.ScriptWorkCanvas.GetControlWithinRange(
+                OwnerCommandCanvas.ScriptWorkCanvas.GetControlWithinRange(
                     new Rect(Canvas.GetLeft(parentControl), Canvas.GetTop(parentControl), Width, Height),
                     ref groupList,
                     false);
@@ -85,7 +88,7 @@ namespace CapyCSS.Controls.BaseControls
             }
         }
 
-        public int Priority => -2000;
+        public int Priority => -500;
 
         private readonly double minWidth = 36;
         private readonly double minHeight = 36;
@@ -93,6 +96,18 @@ namespace CapyCSS.Controls.BaseControls
         // 高さと幅は、内部で独自に管理する（リアルタイムでの取得だとタイミング上の問題で振れる）
         private double _witdh;
         private double _height;
+
+        private CommandCanvas _OwnerCommandCanvas = null;
+
+        public CommandCanvas OwnerCommandCanvas
+        {
+            get => _OwnerCommandCanvas;
+            set
+            {
+                if (_OwnerCommandCanvas is null)
+                    _OwnerCommandCanvas = value;
+            }
+        }
 
         public GroupArea()
         {
@@ -185,7 +200,7 @@ namespace CapyCSS.Controls.BaseControls
             double offsetY = currentPoint.Y - startPoint.Y;
             startPoint = currentPoint;
 
-            double ms = 1.0 / CommandCanvas.ScriptWorkCanvas.CanvasScale;
+            double ms = 1.0 / OwnerCommandCanvas.ScriptWorkCanvas.CanvasScale;
             offsetX *= ms;
             offsetY *= ms;
 

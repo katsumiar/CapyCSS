@@ -13,61 +13,61 @@ namespace CapybaraVS.Script
     /// </summary>
     class ImplementBaseAsset : ImplementAsset
     {
-        public ImplementBaseAsset()
+        public ImplementBaseAsset(CommandCanvas OwnerCommandCanvas)
         {
-            var assetNode = CreateGroup("Program");
+            var assetNode = CreateGroup(OwnerCommandCanvas, "Program");
 
-            CreateAssetMenu(assetNode, new Subroutine());
+            CreateAssetMenu(OwnerCommandCanvas, assetNode, new Subroutine());
 
             {
                 var literalNode = CreateGroup(assetNode, "Literal");
-                CreateAssetMenu(literalNode, new LiteralType());
-                CreateAssetMenu(literalNode, new LiteralListType());
+                CreateAssetMenu(OwnerCommandCanvas, literalNode, new LiteralType());
+                CreateAssetMenu(OwnerCommandCanvas, literalNode, new LiteralListType());
             }
 
             {
                 var variableNode = CreateGroup(assetNode, "Variable");
-                CreateAssetMenu(variableNode, new CreateVariable());
-                CreateAssetMenu(variableNode, new CreateVariableFunc());
-                CreateAssetMenu(variableNode, new GetVariable());
-                CreateAssetMenu(variableNode, new SetVariable());
+                CreateAssetMenu(OwnerCommandCanvas, variableNode, new CreateVariable());
+                CreateAssetMenu(OwnerCommandCanvas, variableNode, new CreateVariableFunc());
+                CreateAssetMenu(OwnerCommandCanvas, variableNode, new GetVariable());
+                CreateAssetMenu(OwnerCommandCanvas, variableNode, new SetVariable());
 
                 {
                     var variableListNode = CreateGroup(variableNode, "Variable List");
-                    CreateAssetMenu(variableListNode, new CreateVariableList());
-                    CreateAssetMenu(variableListNode, new GetVariableFromIndex());
-                    CreateAssetMenu(variableListNode, new SetVariableToIndex());
-                    CreateAssetMenu(variableListNode, new AppendVariableList());
+                    CreateAssetMenu(OwnerCommandCanvas, variableListNode, new CreateVariableList());
+                    CreateAssetMenu(OwnerCommandCanvas, variableListNode, new GetVariableFromIndex());
+                    CreateAssetMenu(OwnerCommandCanvas, variableListNode, new SetVariableToIndex());
+                    CreateAssetMenu(OwnerCommandCanvas, variableListNode, new AppendVariableList());
                 }
             }
 
             {
                 var flowOperation = CreateGroup(assetNode, "Flow");
-                CreateAssetMenu(flowOperation, new If());
-                CreateAssetMenu(flowOperation, new If_Func());
-                CreateAssetMenu(flowOperation, new If_Action());
-                CreateAssetMenu(flowOperation, new For());
-                CreateAssetMenu(flowOperation, new Foreach());
+                CreateAssetMenu(OwnerCommandCanvas, flowOperation, new If());
+                CreateAssetMenu(OwnerCommandCanvas, flowOperation, new If_Func());
+                CreateAssetMenu(OwnerCommandCanvas, flowOperation, new If_Action());
+                CreateAssetMenu(OwnerCommandCanvas, flowOperation, new For());
+                CreateAssetMenu(OwnerCommandCanvas, flowOperation, new Foreach());
             }
 
             {
                 var listNode = CreateGroup(assetNode, "List");
-                CreateAssetMenu(listNode, new Count());
-                CreateAssetMenu(listNode, new Contains());
-                CreateAssetMenu(listNode, new GetListIndex());
-                CreateAssetMenu(listNode, new GetListLast());
-                CreateAssetMenu(listNode, new SetListIndex());
-                CreateAssetMenu(listNode, new Append());
+                CreateAssetMenu(OwnerCommandCanvas, listNode, new Count());
+                CreateAssetMenu(OwnerCommandCanvas, listNode, new Contains());
+                CreateAssetMenu(OwnerCommandCanvas, listNode, new GetListIndex());
+                CreateAssetMenu(OwnerCommandCanvas, listNode, new GetListLast());
+                CreateAssetMenu(OwnerCommandCanvas, listNode, new SetListIndex());
+                CreateAssetMenu(OwnerCommandCanvas, listNode, new Append());
             }
 
             {
                 var funcNode = CreateGroup(assetNode, "f(x)");
-                CreateAssetMenu(funcNode, new CallerArgument());
-                CreateAssetMenu(funcNode, new CallerArguments());
-                CreateAssetMenu(funcNode, new Invoke());
-                CreateAssetMenu(funcNode, new InvokeWithArg());
-                CreateAssetMenu(funcNode, new InvokeAction());
-                CreateAssetMenu(funcNode, new InvokeActionWithArg());
+                CreateAssetMenu(OwnerCommandCanvas, funcNode, new CallerArgument());
+                CreateAssetMenu(OwnerCommandCanvas, funcNode, new CallerArguments());
+                CreateAssetMenu(OwnerCommandCanvas, funcNode, new Invoke());
+                CreateAssetMenu(OwnerCommandCanvas, funcNode, new InvokeWithArg());
+                CreateAssetMenu(OwnerCommandCanvas, funcNode, new InvokeAction());
+                CreateAssetMenu(OwnerCommandCanvas, funcNode, new InvokeActionWithArg());
             }
 
             {
@@ -75,33 +75,33 @@ namespace CapybaraVS.Script
 
                 {
                     var mathNode = CreateGroup(embeddedNode, "Math");
-                    CreateAssetMenu(mathNode, new Abs());
-                    CreateAssetMenu(mathNode, new Inc());
-                    CreateAssetMenu(mathNode, new Dec());
-                    CreateAssetMenu(mathNode, new Sum());
-                    CreateAssetMenu(mathNode, new Sum_Func());
-                    CreateAssetMenu(mathNode, new Sub());
-                    CreateAssetMenu(mathNode, new Mul());
-                    CreateAssetMenu(mathNode, new Div());
-                    CreateAssetMenu(mathNode, new Pow());
-                    CreateAssetMenu(mathNode, new Mod());
-                    CreateAssetMenu(mathNode, new Rand());
+                    CreateAssetMenu(OwnerCommandCanvas, mathNode, new Abs());
+                    CreateAssetMenu(OwnerCommandCanvas, mathNode, new Inc());
+                    CreateAssetMenu(OwnerCommandCanvas, mathNode, new Dec());
+                    CreateAssetMenu(OwnerCommandCanvas, mathNode, new Sum());
+                    CreateAssetMenu(OwnerCommandCanvas, mathNode, new Sum_Func());
+                    CreateAssetMenu(OwnerCommandCanvas, mathNode, new Sub());
+                    CreateAssetMenu(OwnerCommandCanvas, mathNode, new Mul());
+                    CreateAssetMenu(OwnerCommandCanvas, mathNode, new Div());
+                    CreateAssetMenu(OwnerCommandCanvas, mathNode, new Pow());
+                    CreateAssetMenu(OwnerCommandCanvas, mathNode, new Mod());
+                    CreateAssetMenu(OwnerCommandCanvas, mathNode, new Rand());
                 }
 
                 {
                     var logicalOperation = CreateGroup(embeddedNode, "Logical operation");
-                    CreateAssetMenu(logicalOperation, new And());
-                    CreateAssetMenu(logicalOperation, new Or());
-                    CreateAssetMenu(logicalOperation, new Not());
+                    CreateAssetMenu(OwnerCommandCanvas, logicalOperation, new And());
+                    CreateAssetMenu(OwnerCommandCanvas, logicalOperation, new Or());
+                    CreateAssetMenu(OwnerCommandCanvas, logicalOperation, new Not());
                 }
 
                 {
                     var comparisonNode = CreateGroup(embeddedNode, "Comparison");
-                    CreateAssetMenu(comparisonNode, new Eq());
-                    CreateAssetMenu(comparisonNode, new Gt());
-                    CreateAssetMenu(comparisonNode, new Ge());
-                    CreateAssetMenu(comparisonNode, new Lt());
-                    CreateAssetMenu(comparisonNode, new Le());
+                    CreateAssetMenu(OwnerCommandCanvas, comparisonNode, new Eq());
+                    CreateAssetMenu(OwnerCommandCanvas, comparisonNode, new Gt());
+                    CreateAssetMenu(OwnerCommandCanvas, comparisonNode, new Ge());
+                    CreateAssetMenu(OwnerCommandCanvas, comparisonNode, new Lt());
+                    CreateAssetMenu(OwnerCommandCanvas, comparisonNode, new Le());
                 }
             }
 
@@ -111,15 +111,15 @@ namespace CapybaraVS.Script
                 {
                     var io = CreateGroup(functionNode, "Input/Output");
                     var conOut = CreateGroup(io, "ConsoleOut");
-                    CreateAssetMenu(conOut, new ConsoleOut());
+                    CreateAssetMenu(OwnerCommandCanvas, conOut, new ConsoleOut());
                 }
 
                 {
                     var tools = CreateGroup(functionNode, "Exec");
-                    CreateAssetMenu(tools, new CallFile());
+                    CreateAssetMenu(OwnerCommandCanvas, tools, new CallFile());
                 }
 
-                ScriptImplement.ImplemantScriptMethods(functionNode);
+                ScriptImplement.ImplemantScriptMethods(OwnerCommandCanvas, functionNode);
             }
         }
     }
@@ -1514,7 +1514,7 @@ namespace CapybaraVS.Script
                         ICbValue ret = CbST.CbCreate(col.SelectedVariableType[0]);    // 返し値
                         try
                         {
-                            ICbValue cbVSValue = CommandCanvas.ScriptWorkStack.Find(variableGetter.Id);
+                            ICbValue cbVSValue = col.OwnerCommandCanvas.ScriptWorkStack.Find(variableGetter.Id);
                             ret.CopyValue(cbVSValue);
                             col.LinkConnectorControl.UpdateValueData();
                         }
@@ -1612,7 +1612,7 @@ namespace CapybaraVS.Script
                         ICbValue ret = CbST.CbCreate(col.SelectedVariableType[0]);    // 返し値
                         try
                         {
-                            ICbValue cbVSValue = CommandCanvas.ScriptWorkStack.Find(variableGetter.Id);
+                            ICbValue cbVSValue = col.OwnerCommandCanvas.ScriptWorkStack.Find(variableGetter.Id);
 
                             if (argument[0] is ICbList cbList && cbVSValue is ICbList toList)
                             {
@@ -1626,7 +1626,7 @@ namespace CapybaraVS.Script
 
                                 cbVSValue.CopyValue(argument[0]);
                             }
-                            CommandCanvas.ScriptWorkStack.UpdateValueData(variableGetter.Id);
+                            col.OwnerCommandCanvas.ScriptWorkStack.UpdateValueData(variableGetter.Id);
                             ret.Set(argument[0]);
                             col.LinkConnectorControl.UpdateValueData();
                         }
@@ -1840,7 +1840,7 @@ namespace CapybaraVS.Script
                         {
                             ret.Set(argument[0]);
                             string str = argument[0].ValueString;
-                            MainWindow.Instance.MainLog.OutLine(nameof(ConsoleOut), str);
+                            col.OwnerCommandCanvas.CommandCanvasControl.MainLog.OutLine(nameof(ConsoleOut), str);
                         }
                         catch (Exception ex)
                         {
@@ -1937,7 +1937,7 @@ namespace CapybaraVS.Script
                        {
                            int index = GetArgument<int>(argument, 0);
 
-                           ICbValue cbVSValue = CommandCanvas.ScriptWorkStack.Find(variableGetter.Id);
+                           ICbValue cbVSValue = col.OwnerCommandCanvas.ScriptWorkStack.Find(variableGetter.Id);
                            var argList = (cbVSValue as ICbList).Value;
 
                            ret.CopyValue(argList[index]);
@@ -1992,11 +1992,11 @@ namespace CapybaraVS.Script
                        {
                            int index = GetArgument<int>(argument, 0);
 
-                           ICbValue cbVSValue = CommandCanvas.ScriptWorkStack.Find(variableGetter.Id);
+                           ICbValue cbVSValue = col.OwnerCommandCanvas.ScriptWorkStack.Find(variableGetter.Id);
                            var argList = (cbVSValue as ICbList).Value;
 
                            argList[index].CopyValue(argument[1]);
-                           CommandCanvas.ScriptWorkStack.UpdateValueData(variableGetter.Id);
+                           col.OwnerCommandCanvas.ScriptWorkStack.UpdateValueData(variableGetter.Id);
                            ret.Set(argument[1]);
                            col.LinkConnectorControl.UpdateValueData();
 
@@ -2047,11 +2047,11 @@ namespace CapybaraVS.Script
                        var ret = CbST.CbCreate(col.SelectedVariableType[0]);    // 返し値
                        try
                        {
-                           ICbValue cbVSValue = CommandCanvas.ScriptWorkStack.Find(variableGetter.Id);
+                           ICbValue cbVSValue = col.OwnerCommandCanvas.ScriptWorkStack.Find(variableGetter.Id);
                            var argList = cbVSValue as ICbList;
                            argList.Append(argument[0]);
 
-                           CommandCanvas.ScriptWorkStack.UpdateValueData(variableGetter.Id);
+                           col.OwnerCommandCanvas.ScriptWorkStack.UpdateValueData(variableGetter.Id);
                            argList.CopyTo(ret as ICbList);
                            col.LinkConnectorControl.UpdateValueData();
                        }

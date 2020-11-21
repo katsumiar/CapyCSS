@@ -18,7 +18,10 @@ namespace CapybaraVS.Controls
     /// <summary>
     /// MultiLinkConnector.xaml の相互作用ロジック
     /// </summary>
-    public partial class MultiLinkConnector : UserControl, IDisposable
+    public partial class MultiLinkConnector 
+        : UserControl
+        , IDisposable
+        , IHaveCommandCanvas
     {
         #region XML定義
         [XmlRoot(nameof(MultiLinkConnector))]
@@ -54,6 +57,8 @@ namespace CapybaraVS.Controls
         }
         public _AssetXML<MultiLinkConnector> AssetXML { get; set; } = null;
         #endregion
+
+        public CommandCanvas OwnerCommandCanvas { get; set; } = null;
 
         public MultiLinkConnector()
         {

@@ -1,4 +1,5 @@
-﻿using CbVS.Controls;
+﻿using CapyCSS.Controls;
+using CbVS.Controls;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -16,7 +17,7 @@ namespace CapybaraVS.Script.Lib
         {
             foreach (var node in list)
             {
-                MainWindow.Instance.MainLog.OutLine(nameof(ConsoleOut), node);
+                CommandCanvasList.OutPut.OutLine(nameof(ConsoleOut), node);
             }
             return list.Count;
         }
@@ -29,7 +30,7 @@ namespace CapybaraVS.Script.Lib
         {
             foreach (var node in list)
             {
-                MainWindow.Instance.MainLog.OutLine(nameof(ConsoleOut), node.ToString());
+                CommandCanvasList.OutPut.OutLine(nameof(ConsoleOut), node.ToString());
             }
             return list.Count;
         }
@@ -42,7 +43,7 @@ namespace CapybaraVS.Script.Lib
         {
             foreach (var node in list)
             {
-                MainWindow.Instance.MainLog.OutLine(nameof(ConsoleOut), node.ToString());
+                CommandCanvasList.OutPut.OutLine(nameof(ConsoleOut), node.ToString());
             }
             return list.Count;
         }
@@ -55,7 +56,7 @@ namespace CapybaraVS.Script.Lib
         {
             foreach (var node in list)
             {
-                MainWindow.Instance.MainLog.OutLine(nameof(ConsoleOut), node.ToString());
+                CommandCanvasList.OutPut.OutLine(nameof(ConsoleOut), node.ToString());
             }
             return list.Count;
         }
@@ -68,7 +69,7 @@ namespace CapybaraVS.Script.Lib
         {
             foreach (var node in list)
             {
-                MainWindow.Instance.MainLog.OutLine(nameof(ConsoleOut), node.ToString());
+                CommandCanvasList.OutPut.OutLine(nameof(ConsoleOut), node.ToString());
             }
             return list.Count;
         }

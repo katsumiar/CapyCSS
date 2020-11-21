@@ -70,6 +70,7 @@ namespace CapybaraVS.Control.BaseControls
         , INotifyCollectionChanged
         , IAsset
         , IDisposable
+        , IHaveCommandCanvas
     {
         #region ID管理
         private AssetIdProvider assetIdProvider = null;
@@ -148,6 +149,7 @@ namespace CapybaraVS.Control.BaseControls
                     {
                         Movable movableAsset = new Movable();
                         self.Add(movableAsset);
+                        movableAsset.OwnerCommandCanvas = self.OwnerCommandCanvas;
                         movableAsset.AssetXML = node;
                         movableAsset.AssetXML.ReadAction?.Invoke(movableAsset);
                         movableAsset.SelectedObject = true;
@@ -252,6 +254,35 @@ namespace CapybaraVS.Control.BaseControls
         /// </summary>
         public List<LinePos> LinePosList { get; } = new List<LinePos>();
 
+        private CommandCanvas _OwnerCommandCanvas = null;
+
+        public CommandCanvas OwnerCommandCanvas
+        {
+            get => _OwnerCommandCanvas;
+            set
+            {
+                if (_OwnerCommandCanvas is null)
+                    _OwnerCommandCanvas = value;
+
+                Dispatcher.BeginInvoke(new Action(() =>
+                {
+                    try
+                    {
+                        if (BackGrountImagePath != null)
+                        {
+                            // 作業領域の背景をセットする
+
+                            BaseWorkCanvas.SetWorkCanvasBG(OwnerCommandCanvas, BackGrountImagePath);
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        OwnerCommandCanvas.CommandCanvasControl.MainLog.OutLine("System", nameof(BaseWorkCanvas) + ":" + ex.Message);
+                    }
+                }), DispatcherPriority.Loaded);
+            }
+        }
+
         public BaseWorkCanvas()
         {
             InitializeComponent();
@@ -267,29 +298,12 @@ namespace CapybaraVS.Control.BaseControls
             WorkCanvasList.Add(GridCanvas);
             WorkCanvasList.Add(ControlsCanvas);
             WorkCanvasList.Add(InfoCanvas);
-
-            Dispatcher.BeginInvoke(new Action(() =>
-            {
-                try
-                {
-                    if (BackGrountImagePath != null)
-                    {
-                        // 作業領域の背景をセットする
-
-                        BaseWorkCanvas.SetWorkCanvasBG(BackGrountImagePath);
-                    }
-                }
-                catch (Exception ex)
-                {
-                    MainWindow.Instance.MainLog.OutLine("System", nameof(BaseWorkCanvas) + ":" + ex.Message);
-                }
-            }), DispatcherPriority.Loaded);
         }
 
         /// <summary>
         /// 背景イメージへのパスです。
         /// </summary>
-        static public string BackGrountImagePath = null;
+        static public string BackGrountImagePath = null;    // TODO static を外す
 
         /// <summary>
         /// コントロールを返す処理を登録するとクリック時にコントロールをセットします。
@@ -759,8 +773,7 @@ namespace CapybaraVS.Control.BaseControls
             {
                 if (e.ChangedButton == MouseButton.Middle && e.ButtonState == MouseButtonState.Pressed)
                 {
-                    CommandWindow commandWindow = CommandWindow.Create(new Point(Mouse.GetPosition(null).X, Mouse.GetPosition(null).Y));
-                    commandWindow?.ShowDialog();
+                    OwnerCommandCanvas.ShowCommandMenu(new Point(Mouse.GetPosition(null).X, Mouse.GetPosition(null).Y));
                 }
                 else if ((Keyboard.GetKeyStates(Key.LeftShift) & KeyStates.Down) > 0 ||
                     (Keyboard.GetKeyStates(Key.RightShift) & KeyStates.Down) > 0)
@@ -786,6 +799,7 @@ namespace CapybaraVS.Control.BaseControls
                     // ControlsCanvasの子コントロールは、ドラックによる移動対象とする
 
                     mouseDragObserver = new MouseDragObserver(ControlsCanvas, sender, e, this, null);
+                    mouseDragObserver.OwnerCommandCanvas = OwnerCommandCanvas;
                 }
             }
             else
@@ -820,6 +834,7 @@ namespace CapybaraVS.Control.BaseControls
 
                     // ムーバブルコントロールに入れる
                     Movable movable = new Movable();
+                    movable.OwnerCommandCanvas = OwnerCommandCanvas;
                     movable.SetControl(element);
 
                     Add(movable);
@@ -838,17 +853,17 @@ namespace CapybaraVS.Control.BaseControls
                     {
                         // 最近使ったコマンドノード記録に登録する
 
-                        var recentNode = CommandWindow.TreeViewCommand.GetRecent();
+                        var recentNode = OwnerCommandCanvas.CommandMenu.GetRecent();
 
-                        if (CommandWindow.TreeViewCommand.FindMenuName(recentNode, ObjectSetCommandName) is null)
+                        if (OwnerCommandCanvas.CommandMenu.FindMenuName(recentNode, ObjectSetCommandName) is null)
                         {
                             // 未登録なので登録する
 
-                            recentNode.AddChild(new TreeMenuNode(ObjectSetCommandName, CommandCanvas.CreateImmediateExecutionCanvasCommand(() =>
+                            recentNode.AddChild(new TreeMenuNode(ObjectSetCommandName, OwnerCommandCanvas.CreateImmediateExecutionCanvasCommand(() =>
                             {
-                                CommandWindow.TreeViewCommand.ExecuteFindCommand(ObjectSetCommandName);
+                                OwnerCommandCanvas.CommandMenu.ExecuteFindCommand(ObjectSetCommandName);
                             })));
-                            CommandWindow.TreeViewCommand.AdjustNumberRecent();
+                            OwnerCommandCanvas.CommandMenu.AdjustNumberRecent();
                         }
                     }
                 }
@@ -1027,21 +1042,21 @@ namespace CapybaraVS.Control.BaseControls
                 switch (e.Key)
                 {
                     case Key.Space:
-                        {
-                            // コマンドウインドウを表示する
+                        // コマンドウインドウを表示する
 
-                            CommandWindow commandWindow = CommandWindow.Create(pos);
-                            commandWindow?.ShowDialog();
-                        }
+                        OwnerCommandCanvas.ShowCommandMenu(pos);
+                        e.Handled = true;
                         break;
 
                     case Key.J: // スクリプト全体を画面に収める（スクリプトは画面中央に表示する）
                         AdjustScriptScale();
                         AdjustScriptCenterPos();
+                        e.Handled = true;
                         break;
 
                     case Key.Delete:
                         DeleteSelectedNodes();
+                        e.Handled = true;
                         break;
                 }
             }
@@ -1154,7 +1169,7 @@ namespace CapybaraVS.Control.BaseControls
                         {
                             // スクリプトファイルを読み込む
 
-                            CommandCanvas.LoadXML(filename);
+                            OwnerCommandCanvas.LoadXML(filename);
                             return;
                         }
                     }
@@ -1179,9 +1194,12 @@ namespace CapybaraVS.Control.BaseControls
 
                 // ムーバブルコントロールに入れる
                 Movable movable = new Movable();
+                movable.OwnerCommandCanvas = OwnerCommandCanvas;
                 movable.SetControl(element);
 
                 Add(movable);
+
+                movable.OwnerCommandCanvas = OwnerCommandCanvas;
 
                 // ドロップ位置の座標でセットする
                 Canvas.SetLeft(movable, pos.X);
@@ -1192,15 +1210,15 @@ namespace CapybaraVS.Control.BaseControls
         [ScriptMethod("System.Application." + nameof(SetWorkCanvasBG), "",
             "RS=>SA_SetWorkCanvasBG"
         )]
-        static public void SetWorkCanvasBG(string path, Stretch stretch = Stretch.UniformToFill, bool overwriteSettings = false)
+        static public void SetWorkCanvasBG(CommandCanvas canvas, string path, Stretch stretch = Stretch.UniformToFill, bool overwriteSettings = false)
         {
             if (overwriteSettings)
             {
                 BaseWorkCanvas.BackGrountImagePath = path;
             }
 
-            CommandCanvas.ScriptWorkCanvas.BGImage.Stretch = stretch;
-            CommandCanvas.ScriptWorkCanvas.BGImage.Source = new BitmapImage(new Uri(path));
+            canvas.ScriptWorkCanvas.BGImage.Stretch = stretch;
+            canvas.ScriptWorkCanvas.BGImage.Source = new BitmapImage(new Uri(path));
         }
 
         //-------------------------------------------------------------------------------------

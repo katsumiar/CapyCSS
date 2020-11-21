@@ -34,7 +34,7 @@ namespace CapybaraVS.Script
             try
             {
                 id = (int)(this.owner.GetAttachVariableId(index));
-                valueName = CommandCanvas.ScriptWorkStack.Find(id).Name;
+                valueName = this.owner.OwnerCommandCanvas.ScriptWorkStack.Find(id).Name;
 
                 // 名前生成処理を登録
                 if (func != null)
@@ -44,7 +44,7 @@ namespace CapybaraVS.Script
                 this.owner.LinkConnectorControl.CaptionReadOnly = true;
 
                 // 参照関係を登録する
-                CommandCanvas.ScriptWorkStack.Link(id, this.owner);
+                this.owner.OwnerCommandCanvas.ScriptWorkStack.Link(id, this.owner);
 
                 is_error = false;
             }

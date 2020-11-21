@@ -1,6 +1,7 @@
 ﻿using CapybaraVS.Control.BaseControls;
 using CapybaraVS.Controls.BaseControls;
 using CapybaraVS.Script;
+using CapyCSS.Controls;
 using CapyCSS.Script;
 using CbVS.Script;
 using System;
@@ -43,7 +44,11 @@ namespace CapybaraVS.Controls
     /// <summary>
     /// MultiRootConnector.xaml の相互作用ロジック
     /// </summary>
-    public partial class MultiRootConnector : UserControl, ICbExecutable, IDisposable
+    public partial class MultiRootConnector 
+        : UserControl
+        , ICbExecutable
+        , IDisposable
+        , IHaveCommandCanvas
     {
         #region XML定義
         [XmlRoot(nameof(MultiRootConnector))]
@@ -319,6 +324,21 @@ namespace CapybaraVS.Controls
 
         #endregion
 
+        private CommandCanvas _OwnerCommandCanvas = null;
+
+        public CommandCanvas OwnerCommandCanvas
+        {
+            get => _OwnerCommandCanvas;
+            set
+            {
+                Debug.Assert(value != null);
+                if (LinkConnectorControl.OwnerCommandCanvas is null)
+                    LinkConnectorControl.OwnerCommandCanvas = value;
+                if (_OwnerCommandCanvas is null)
+                    _OwnerCommandCanvas = value;
+            }
+        }
+
         public MultiRootConnector()
         {
             InitializeComponent();
@@ -447,7 +467,7 @@ namespace CapybaraVS.Controls
                 try
                 {
                     int id = (int)variable.Value;
-                    foreach (var node in CommandCanvas.ScriptWorkStack.StackData)
+                    foreach (var node in OwnerCommandCanvas.ScriptWorkStack.StackData)
                     {
                         if (node.stackNode.Id == id)
                         {
@@ -585,7 +605,7 @@ namespace CapybaraVS.Controls
                 msg = ex.Message;
             msg += ex.StackTrace;
             msg = caption + ": " + msg;
-            MainWindow.Instance.MainLog.OutLine("Script", msg);
+            CommandCanvasList.OutPut.OutLine("Script", msg);
             System.Diagnostics.Debug.WriteLine(msg);
             return msg;
         }
@@ -639,7 +659,7 @@ namespace CapybaraVS.Controls
                 {
                     // 存在しないアセットコード
 
-                    MainWindow.Instance.MainLog.OutLine("System", "Implement Error: " + AssetFuncType);
+                    OwnerCommandCanvas.CommandCanvasControl.MainLog.OutLine("System", "Implement Error: " + AssetFuncType);
                     return;
                 }
                 AssetFuncType = asset.AssetCode;    // 正しいアセットコードにリセットする
@@ -655,7 +675,7 @@ namespace CapybaraVS.Controls
                         // 失敗かキャンセル
 
                         // コントロールを削除する
-                        CommandCanvas.ScriptWorkCanvas.Remove(ControlTools.FindAncestor<Movable>(this));
+                        OwnerCommandCanvas.ScriptWorkCanvas.Remove(ControlTools.FindAncestor<Movable>(this));
                     }
                 }
                 else
@@ -668,7 +688,7 @@ namespace CapybaraVS.Controls
                                     // 失敗かキャンセル
 
                                     // コントロールを削除する
-                                    CommandCanvas.ScriptWorkCanvas.Remove(ControlTools.FindAncestor<Movable>(this));
+                                    OwnerCommandCanvas.ScriptWorkCanvas.Remove(ControlTools.FindAncestor<Movable>(this));
                                 }
                             }
                         ), DispatcherPriority.Loaded);
@@ -692,7 +712,7 @@ namespace CapybaraVS.Controls
                     {
                         // 変数アセットは参照の解除を知らせる
 
-                        CommandCanvas.ScriptWorkStack?.Unlink((int)variable.Value, this);
+                        OwnerCommandCanvas.ScriptWorkStack?.Unlink((int)variable.Value, this);
                     }
                 }
                 disposedValue = true;

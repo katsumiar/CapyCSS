@@ -6,6 +6,7 @@ using CbVS.Script;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
@@ -23,7 +24,10 @@ namespace CapybaraVS.Controls
     /// <summary>
     /// LinkConnectorList.xaml の相互作用ロジック
     /// </summary>
-    public partial class LinkConnectorList : UserControl, IDisposable, ICbExecutable
+    public partial class LinkConnectorList 
+        : UserControl
+        , IDisposable
+        , ICbExecutable
     {
         #region XML定義
         [XmlRoot(nameof(LinkConnectorList))]
@@ -122,6 +126,34 @@ namespace CapybaraVS.Controls
 
         #endregion
 
+        private CommandCanvas _OwnerCommandCanvas = null;
+
+        public CommandCanvas OwnerCommandCanvas
+        {
+            get => _OwnerCommandCanvas;
+            set
+            {
+                Debug.Assert(value != null);
+                SetOunerCanvas(ListData, value);
+                SetOunerCanvas(backupListDataForLinkList, value);
+                SetOunerCanvas(backupListDataForSetList, value);
+                if (_OwnerCommandCanvas is null)
+                    _OwnerCommandCanvas = value;
+            }
+        }
+
+        private void SetOunerCanvas(IEnumerable<LinkConnector> list, CommandCanvas value)
+        {
+            if (list is null)
+                return;
+
+            foreach (var node in list)
+            {
+                if (node.OwnerCommandCanvas is null)
+                    node.OwnerCommandCanvas = value;
+            }
+        }
+
         public LinkConnectorList()
         {
             InitializeComponent();
@@ -187,6 +219,7 @@ namespace CapybaraVS.Controls
         {
             var linkConnector = new LinkConnector()
             {
+                OwnerCommandCanvas = this.OwnerCommandCanvas,
                 ValueData = node,
                 HideLinkPoint = true
             };
@@ -223,11 +256,11 @@ namespace CapybaraVS.Controls
         {
             if (backupListDataForSetList != null)
             {
-                if (CommandCanvas.LinkConnectorListHoldAction.Enabled)
+                if (OwnerCommandCanvas.LinkConnectorListHoldAction.Enabled)
                 {
                     // 画面反映はあとから一括で行う
 
-                    CommandCanvas.LinkConnectorListHoldAction.Add(this, () =>
+                    OwnerCommandCanvas.LinkConnectorListHoldAction.Add(this, () =>
                             {
                                 UpdateListData(list);
                             }
@@ -360,6 +393,7 @@ namespace CapybaraVS.Controls
 
             var linkConnector = new LinkConnector()
             {
+                OwnerCommandCanvas = this.OwnerCommandCanvas,
                 ValueData = addNode
             };
 

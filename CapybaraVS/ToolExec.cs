@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CapyCSS.Controls;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
@@ -61,7 +62,7 @@ namespace CapybaraVS
 
                 string output = p.StandardOutput.ReadToEnd();   // 標準出力の読み取り
 
-                MainWindow.Instance.MainLog.OutString(nameof(ToolExec), output);
+                CommandCanvasList.OutPut.OutString(nameof(ToolExec), output);
 
                 return p.ExitCode;
             }

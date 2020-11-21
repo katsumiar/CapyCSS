@@ -103,8 +103,9 @@ namespace CapybaraVS.Script
                         {
                             ListSelectWindow.DefaultValue = node.CreateArgument();
                             StackNode stackNode = ListSelectWindow.Create(
+                                col.OwnerCommandCanvas,
                                 "Variable",
-                                CommandCanvas.ScriptWorkStack.StackData,
+                                col.OwnerCommandCanvas.ScriptWorkStack.StackData,
                                 false,
                                 new Point(Mouse.GetPosition(null).X, Mouse.GetPosition(null).Y));
 
@@ -185,6 +186,7 @@ namespace CapybaraVS.Script
                     );
 
                 object result = CallMethod(
+                    col,
                     callArguments,
                     variableIds,
                     isClassInstanceMethod, 
@@ -259,7 +261,7 @@ namespace CapybaraVS.Script
                 {
                     // アサインされている変数の値を引数用に取り込む
 
-                    ICbValue cbVSValue = CommandCanvas.ScriptWorkStack.Find(variableIds[i]);
+                    ICbValue cbVSValue = col.OwnerCommandCanvas.ScriptWorkStack.Find(variableIds[i]);
                     methodArguments.Add(cbVSValue.Data);
                     continue;
                 }
@@ -312,6 +314,7 @@ namespace CapybaraVS.Script
         /// <param name="methodArguments">メソッド呼び出し引数リスト</param>
         /// <returns>メソッドの返り値</returns>
         private object CallMethod(
+            MultiRootConnector col,
             List<ICbValue> callArguments, 
             List<int> variableIds, 
             bool isClassInstanceMethod, 
@@ -354,9 +357,9 @@ namespace CapybaraVS.Script
                     {
                         // リファレンス引数のための結果の取り込み
 
-                        ICbValue cbVSValue = CommandCanvas.ScriptWorkStack.Find(variableIds[i]);
+                        ICbValue cbVSValue = col.OwnerCommandCanvas.ScriptWorkStack.Find(variableIds[i]);
                         cbVSValue.Data = args[i];
-                        CommandCanvas.ScriptWorkStack.UpdateValueData(variableIds[i]);
+                        col.OwnerCommandCanvas.ScriptWorkStack.UpdateValueData(variableIds[i]);
                     }
                 }
             }

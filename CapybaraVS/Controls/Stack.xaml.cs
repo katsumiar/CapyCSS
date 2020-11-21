@@ -4,6 +4,7 @@ using CbVS.Script;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
@@ -121,9 +122,10 @@ namespace CapybaraVS.Controls
         public new _AssetXML<StackNode> AssetXML { get; set; } = null;
         #endregion
 
-        public StackNode(ICbValue obj = null)
+        public StackNode(CommandCanvas ownerCommandCanvas, ICbValue obj = null)
         {
             stackNodeIdProvider = new StackNodeIdProvider(this);
+            OwnerCommandCanvas = ownerCommandCanvas;
             AssetXML = new _AssetXML<StackNode>(this);
             ValueData = obj;
         }
@@ -132,7 +134,9 @@ namespace CapybaraVS.Controls
     /// <summary>
     /// Stack.xaml の相互作用ロジック
     /// </summary>
-    public partial class Stack : UserControl
+    public partial class Stack 
+        : UserControl
+        , IHaveCommandCanvas
     {
         #region XML定義
         [XmlRoot(nameof(Stack))]
@@ -149,7 +153,7 @@ namespace CapybaraVS.Controls
                 {
                     foreach (var node in StackList)
                     {
-                        StackNode stackAsset = new StackNode();
+                        StackNode stackAsset = new StackNode(self.OwnerCommandCanvas);
                         stackAsset.AssetXML = node;
                         stackAsset.AssetXML.ReadAction?.Invoke(stackAsset);
                         StackGroup sg = self.Append(stackAsset);
@@ -163,7 +167,7 @@ namespace CapybaraVS.Controls
                                     var insertValue = cbList.NodeTF();
                                     insertValue.ValueString = vs;
                                     cbList.Value.Add(insertValue);
-                                    var sn = new StackNode()
+                                    var sn = new StackNode(self.OwnerCommandCanvas)
                                     {
                                         ValueData = insertValue
                                     };
@@ -208,6 +212,32 @@ namespace CapybaraVS.Controls
         /// </summary>
         private Dictionary<int, List<MultiRootConnector>> linkList = new Dictionary<int, List<MultiRootConnector>>();
 
+        private CommandCanvas _OwnerCommandCanvas = null;
+
+        public CommandCanvas OwnerCommandCanvas
+        {
+            get => _OwnerCommandCanvas;
+            set
+            {
+                Debug.Assert(value != null);
+                SetOunerCanvas(StackData, value);
+                if (_OwnerCommandCanvas is null)
+                    _OwnerCommandCanvas = value;
+            }
+        }
+
+        private void SetOunerCanvas(IEnumerable<StackGroup> list, CommandCanvas value)
+        {
+            if (list is null)
+                return;
+
+            foreach (var node in list)
+            {
+                if (node.OwnerCommandCanvas is null)
+                    node.OwnerCommandCanvas = value;
+            }
+        }
+
         public Stack()
         {
             InitializeComponent();
@@ -223,14 +253,15 @@ namespace CapybaraVS.Controls
         /// <returns></returns>
         public StackGroup Append(ICbValue obj)
         {
-           StackNode stackNode = new StackNode(obj);
-           return Append(stackNode);
+            StackNode stackNode = new StackNode(OwnerCommandCanvas, obj);
+            return Append(stackNode);
         }
 
         public StackGroup Append(StackNode stackNode)
         {
             stackNode.UpdateEvent = () => UpdateLinkedVariableAsset(stackNode.Id);
             StackGroup stackGroup = new StackGroup();
+            stackGroup.OwnerCommandCanvas = OwnerCommandCanvas;
             stackGroup.IsEnableDelete = () =>
             {
                 return IsLinkedVariableAsset(stackNode.Id);
@@ -264,7 +295,7 @@ namespace CapybaraVS.Controls
 
         public void UpdateValueData(int id)
         {
-            foreach (var node in CommandCanvas.ScriptWorkStack.StackData)
+            foreach (var node in OwnerCommandCanvas.ScriptWorkStack.StackData)
             {
                 if (node.stackNode.Id == id)
                 {
@@ -275,7 +306,7 @@ namespace CapybaraVS.Controls
 
         public ICbValue Find(int id)
         {
-            foreach (var node in CommandCanvas.ScriptWorkStack.StackData)
+            foreach (var node in OwnerCommandCanvas.ScriptWorkStack.StackData)
             {
                 if (node.stackNode.Id == id)
                 {

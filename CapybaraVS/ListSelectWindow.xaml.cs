@@ -46,6 +46,7 @@ namespace CapybaraVS
         public static ICbValue DefaultValue { get; set; } = null;
 
         public static StackNode Create(
+            CommandCanvas OwnerCommandCanvas,
             string caption,
             ObservableCollection<StackGroup> stackList,
             bool forcedListTypeSelect,
@@ -109,8 +110,8 @@ namespace CapybaraVS
                     return null;
 
                 // 新規作成する
-                DefaultValue.Name = "variable" + (CommandCanvas.ScriptWorkStack.StackData.Count + 1);
-                var ret = CommandCanvas.ScriptWorkStack.Append(DefaultValue).stackNode;
+                DefaultValue.Name = "variable" + (OwnerCommandCanvas.ScriptWorkStack.StackData.Count + 1);
+                var ret = OwnerCommandCanvas.ScriptWorkStack.Append(DefaultValue).stackNode;
                 DefaultValue = null;
                 return ret;
             }

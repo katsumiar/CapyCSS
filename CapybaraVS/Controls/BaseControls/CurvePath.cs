@@ -828,7 +828,7 @@ namespace CapybaraVS
         }
 
         //-----------------------------------------------------------------------------------
-        private static List<LinePos> _LinePosList = new List<LinePos>(); // DrawControl.Parent が IHaveLinePosList インターフェイスを持っていなかった場合用
+        //private static List<LinePos> _LinePosList = new List<LinePos>(); // DrawControl.Parent が IHaveLinePosList インターフェイスを持っていなかった場合用
         private List<LinePos> LinePosListCache = null;
         /// <summary>
         /// 交差チェック用管理リストを参照します。
@@ -846,8 +846,9 @@ namespace CapybaraVS
                         return LinePosListCache = haveLinePosList.LinePosList;
                     }
                 }
-                Debug.Assert(false);    // 本来正しくない
-                return LinePosListCache = _LinePosList;
+                Debug.Assert(false);
+                return null;
+                //return LinePosListCache = _LinePosList;
             }
         }
 

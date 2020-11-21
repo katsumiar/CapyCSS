@@ -3,6 +3,7 @@ using CbVS.Script;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -22,7 +23,10 @@ namespace CapybaraVS.Controls.BaseControls
     /// <summary>
     /// RootConnector.xaml の相互作用ロジック
     /// </summary>
-    public partial class RootConnector : UserControl, ICurveLinkRoot, IDisposable
+    public partial class RootConnector 
+        : UserControl
+        , ICurveLinkRoot
+        , IDisposable
     {
         #region ID管理
         private PointIdProvider pointIdProvider = null;
@@ -236,11 +240,11 @@ namespace CapybaraVS.Controls.BaseControls
 
                     if (value)
                     {
-                        MainWindow.AddAllExecuteEntryPointEnable(self.SetExecuteButtonEnable);
+                        self.OwnerCommandCanvas.CommandCanvasControl.AddAllExecuteEntryPointEnable(self.SetExecuteButtonEnable);
                     }
                     else
                     {
-                        MainWindow.RemoveAllExecuteEntryPointEnable(self.SetExecuteButtonEnable);
+                        self.OwnerCommandCanvas.CommandCanvasControl.RemoveAllExecuteEntryPointEnable(self.SetExecuteButtonEnable);
                     }
                 });
 
@@ -263,6 +267,34 @@ namespace CapybaraVS.Controls.BaseControls
         /// Entry指定時のノード背景色です。
         /// </summary>
         private Brush NodeEntryColor = (Brush)(new System.Windows.Media.BrushConverter()).ConvertFromString("#99BCBCFF");
+
+        private CommandCanvas _OwnerCommandCanvas = null;
+
+        public CommandCanvas OwnerCommandCanvas
+        {
+            get => _OwnerCommandCanvas;
+            set
+            {
+                Debug.Assert(value != null);
+                SetOunerCanvas(ListData, value);
+                if (NameText.OwnerCommandCanvas is null)
+                    NameText.OwnerCommandCanvas = value;
+                if (_OwnerCommandCanvas is null)
+                    _OwnerCommandCanvas = value;
+            }
+        }
+
+        private void SetOunerCanvas(IEnumerable<LinkConnector> list, CommandCanvas value)
+        {
+            if (list is null)
+                return;
+
+            foreach (var node in list)
+            {
+                if (node.OwnerCommandCanvas is null)
+                    node.OwnerCommandCanvas = value;
+            }
+        }
 
         public RootConnector()
         {
@@ -318,15 +350,15 @@ namespace CapybaraVS.Controls.BaseControls
             MainWindow.Instance.Cursor = Cursors.Wait;
             IsLockExecute = true;
 
-            CommandCanvas.ScriptWorkCanvas.Dispatcher.BeginInvoke(new Action(() =>
+            OwnerCommandCanvas.ScriptWorkCanvas.Dispatcher.BeginInvoke(new Action(() =>
             {
-                MainWindow.Instance.MainLog.TryAutoClear();
+                OwnerCommandCanvas.CommandCanvasControl.MainLog.TryAutoClear();
                 GC.Collect();
 
                 // スクリプトを実行する
 
-                MainWindow.CallAllExecuteEntryPointEnable(false);
-                CommandCanvas.EnabledScriptHoldActionMode = true;  // 表示更新処理を保留する
+                OwnerCommandCanvas.CommandCanvasControl.CallAllExecuteEntryPointEnable(false);
+                OwnerCommandCanvas.EnabledScriptHoldActionMode = true;  // 表示更新処理を保留する
 
                 var sw = new System.Diagnostics.Stopwatch();
                 sw.Start();
@@ -335,18 +367,18 @@ namespace CapybaraVS.Controls.BaseControls
 
                 sw.Stop();
                 TimeSpan ts = sw.Elapsed;
-                MainWindow.Instance.MainLog.OutLine(
+                OwnerCommandCanvas.CommandCanvasControl.MainLog.OutLine(
                     "system",
                     $"Execute Time: {sw.ElapsedMilliseconds} (ms)");
 
-                CommandCanvas.EnabledScriptHoldActionMode = false; // 保留した表示更新処理を実行する
+                OwnerCommandCanvas.EnabledScriptHoldActionMode = false; // 保留した表示更新処理を実行する
 
                 this.Dispatcher.BeginInvoke(new Action(() =>
                 {
                     // アイドル状態になってから戻す
 
                     IsLockExecute = false;
-                    MainWindow.CallAllExecuteEntryPointEnable(true);
+                    OwnerCommandCanvas.CommandCanvasControl.CallAllExecuteEntryPointEnable(true);
                     GC.Collect();
                     MainWindow.Instance.Cursor = null;
 
@@ -372,12 +404,12 @@ namespace CapybaraVS.Controls.BaseControls
         /// <summary>
         /// スクリプト実行ボタン再入禁止フラグ
         /// </summary>
-        private static bool IsLockExecute
+        private bool IsLockExecute
         {
-            get => MainWindow.IsLockExecute;
+            get => OwnerCommandCanvas.CommandCanvasControl.IsLockExecute;
             set
             {
-                MainWindow.IsLockExecute = value;
+                OwnerCommandCanvas.CommandCanvasControl.IsLockExecute = value;
             }
         }
 
@@ -452,12 +484,6 @@ namespace CapybaraVS.Controls.BaseControls
             functionStack.Add(this);    // 実行済みであることを記録する
             arguments?.Clear();
         }
-
-        /// <summary>
-        /// 接続されている１ノードだけを実行する
-        /// ※そのノードに接続されているノードは実行しない
-        /// </summary>
-        //private static bool IsOnlyOneNodeExecute = false;
 
         /// <summary>
         /// 引数に接続された情報を参照します。
@@ -599,6 +625,7 @@ namespace CapybaraVS.Controls.BaseControls
             // リストをリンクする為のリンクコネクターを作成する
             var linkConnector = new LinkConnector()
             {
+                OwnerCommandCanvas = this.OwnerCommandCanvas,
                 ValueData = obj
             };
             // リンクコネクターにリストを追加する
@@ -626,6 +653,7 @@ namespace CapybaraVS.Controls.BaseControls
         {
             var linkConnector = new LinkConnector()
             {
+                OwnerCommandCanvas = this.OwnerCommandCanvas,
                 ValueData = obj
             };
             AppendBox(linkConnector);
@@ -786,7 +814,7 @@ namespace CapybaraVS.Controls.BaseControls
         /// <param name="e"></param>
         private void IsPublicExecute_Checked(object sender, RoutedEventArgs e)
         {
-            MainWindow.AddPublicExecuteEntryPoint(ExecuteRoot);
+            OwnerCommandCanvas.CommandCanvasControl.AddPublicExecuteEntryPoint(OwnerCommandCanvas, ExecuteRoot);
             IsPublicExecute.Foreground = Brushes.Tomato;
             RectBox.Fill = NodeEntryColor;
         }
@@ -798,7 +826,7 @@ namespace CapybaraVS.Controls.BaseControls
         /// <param name="e"></param>
         private void IsPublicExecute_Unchecked(object sender, RoutedEventArgs e)
         {
-            MainWindow.RemovePublicExecuteEntryPoint(ExecuteRoot);
+            OwnerCommandCanvas.CommandCanvasControl.RemovePublicExecuteEntryPoint(ExecuteRoot);
             IsPublicExecute.Foreground = Brushes.Black;
             RectBox.Fill = NodeNormalColor;
         }
@@ -1041,7 +1069,7 @@ namespace CapybaraVS.Controls.BaseControls
                 {
                     if (IsRunable)
                     {
-                        MainWindow.RemoveAllExecuteEntryPointEnable(SetExecuteButtonEnable);
+                        OwnerCommandCanvas.CommandCanvasControl.RemoveAllExecuteEntryPointEnable(SetExecuteButtonEnable);
                     }
                     LayoutUpdated -= _LayoutUpdated;
                     foreach (var node in ListData)

@@ -229,7 +229,8 @@ namespace CapybaraVS.Controls.BaseControls
     /// <summary>
     /// TreeViewCommand.xaml の相互作用ロジック
     /// </summary>
-    public partial class TreeViewCommand : UserControl
+    public partial class TreeViewCommand
+        : UserControl
     {
         //-----------------------------------------------------------------------------------
         /// <summary>
@@ -252,6 +253,26 @@ namespace CapybaraVS.Controls.BaseControls
         {
             get { return impAssetTreeData.GetValue(this); }
             set { impAssetTreeData.SetValue(this, value); }
+        }
+
+        #endregion
+
+        #region OwnerCommandCanvas 添付プロパティ実装
+
+        private static ImplementDependencyProperty<TreeViewCommand, CommandCanvas> impOwnerCommandCanvas =
+            new ImplementDependencyProperty<TreeViewCommand, CommandCanvas>(
+                nameof(OwnerCommandCanvas),
+                (self, getValue) =>
+                {
+                    //Action value = getValue(self);
+                });
+
+        public static readonly DependencyProperty OwnerCommandCanvasProperty = impOwnerCommandCanvas.Regist(null);
+
+        public CommandCanvas OwnerCommandCanvas
+        {
+            get { return impOwnerCommandCanvas.GetValue(this); }
+            set { impOwnerCommandCanvas.SetValue(this, value); }
         }
 
         #endregion
@@ -377,9 +398,9 @@ namespace CapybaraVS.Controls.BaseControls
             {
                 if (node.LeftClickCommand.CanExecute(null))
                 {
-                    findData.Add(new TreeMenuNode(node.Path, CommandCanvas.CreateImmediateExecutionCanvasCommand(() =>
+                    findData.Add(new TreeMenuNode(node.Path, OwnerCommandCanvas.CreateImmediateExecutionCanvasCommand(() =>
                     {
-                        CommandWindow.TreeViewCommand.ExecuteFindCommand(node.Path);
+                        ExecuteFindCommand(node.Path);
                     })));
                 }
             }

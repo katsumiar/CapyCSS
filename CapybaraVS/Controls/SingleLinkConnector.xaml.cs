@@ -18,7 +18,10 @@ namespace CapybaraVS.Controls
     /// <summary>
     /// SingleLinkConnector.xaml の相互作用ロジック
     /// </summary>
-    public partial class SingleLinkConnector : UserControl, IDisposable
+    public partial class SingleLinkConnector
+        : UserControl
+        , IDisposable
+        , IHaveCommandCanvas
     {
         #region XML定義
         [XmlRoot(nameof(SingleLinkConnector))]
@@ -60,6 +63,8 @@ namespace CapybaraVS.Controls
             InitializeComponent();
             AssetXML = new _AssetXML<SingleLinkConnector>(this);
         }
+
+        public CommandCanvas OwnerCommandCanvas { get; set; } = null;
 
         #region IDisposable Support
         private bool disposedValue = false; // 重複する呼び出しを検出するには

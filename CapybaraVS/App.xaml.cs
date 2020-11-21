@@ -39,20 +39,6 @@ namespace CapybaraVS
                 {
                     CapybaraVS.Language.GetInstance.LanguageType = Language;
 
-                    if (Recent != null)
-                    {
-                        // 最近使ったスクリプトノードを復元する
-
-                        var recentNode = CommandWindow.TreeViewCommand.GetRecent();
-                        foreach (var node in Recent)
-                        {
-                            recentNode.AddChild(new TreeMenuNode(node, CommandCanvas.CreateImmediateExecutionCanvasCommand(() =>
-                            {
-                                CommandWindow.TreeViewCommand.ExecuteFindCommand(node);
-                            })));
-                        }
-                    }
-
                     if (BackGroundImagePath != null)
                     {
                         // 作業領域の背景イメージのパスをセットする
@@ -70,24 +56,11 @@ namespace CapybaraVS
                 {
                     Language = CapybaraVS.Language.GetInstance.LanguageType;
 
-                    var recentNode = CommandWindow.TreeViewCommand.GetRecent();
-                    if (recentNode.Child.Count != 0)
-                    {
-                        // 最近使ったスクリプトノードを記録する
-
-                        Recent = new List<string>();
-                        foreach (var node in recentNode.Child)
-                        {
-                            Recent.Add(node.Name);
-                        }
-                    }
-
                     BackGroundImagePath = BaseWorkCanvas.BackGrountImagePath;
                 };
             }
             #region 固有定義
             public string Language { get; set; } = "ja-JP";
-            public List<string> Recent { get; set; } = null;
             public string BackGroundImagePath { get; set; } = null;
             #endregion
         }

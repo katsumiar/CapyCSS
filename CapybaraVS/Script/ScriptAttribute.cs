@@ -69,7 +69,7 @@ namespace CapybaraVS.Script
         /// リフレクションでメソッドを取り込み、ノード化します。
         /// </summary>
         /// <param name="node"></param>
-        static public void ImplemantScriptMethods(TreeMenuNode node)
+        static public void ImplemantScriptMethods(CommandCanvas OwnerCommandCanvas, TreeMenuNode node)
         {
             // 現在のコードを実行しているアセンブリを取得する
             Assembly asm = Assembly.GetExecutingAssembly();
@@ -82,7 +82,7 @@ namespace CapybaraVS.Script
                 {
                     try 
                     {
-                        _implementScriptMethods(node, classType, info);
+                        _implementScriptMethods(OwnerCommandCanvas, node, classType, info);
                     }
                     catch (Exception ex) 
                     {
@@ -92,7 +92,7 @@ namespace CapybaraVS.Script
             }
         }
 
-        private static void _implementScriptMethods(TreeMenuNode node, Type classType, MethodInfo info)
+        private static void _implementScriptMethods(CommandCanvas OwnerCommandCanvas, TreeMenuNode node, Type classType, MethodInfo info)
         {
             var methods = info.GetCustomAttributes(typeof(ScriptMethodAttribute));
             foreach (Attribute att in methods)
@@ -183,6 +183,7 @@ namespace CapybaraVS.Script
                             // Func<> 引数を持つノードを作成
 
                             ImplementAsset.CreateAssetMenu(
+                                OwnerCommandCanvas,
                                 node,
                                 AutoImplementEventFunction.Create(autoImplementFunctionInfo)
                             );
@@ -192,6 +193,7 @@ namespace CapybaraVS.Script
                             // 通常のノードを作成
 
                             ImplementAsset.CreateAssetMenu(
+                                OwnerCommandCanvas,
                                 node,
                                 AutoImplementFunction.Create(autoImplementFunctionInfo)
                             );

@@ -1,6 +1,7 @@
 ﻿using CapyCSS.Controls.BaseControls;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
@@ -18,7 +19,12 @@ namespace CapybaraVS.Controls.BaseControls
     /// <summary>
     /// Movable.xaml の相互作用ロジック
     /// </summary>
-    public partial class Movable : UserControl, IMovableControl, IAsset, IDisposable
+    public partial class Movable
+        : UserControl
+        , IMovableControl
+        , IAsset
+        , IDisposable
+        , IHaveCommandCanvas
     {
         #region ID管理
         private AssetIdProvider assetIdProvider = null;
@@ -66,7 +72,6 @@ namespace CapybaraVS.Controls.BaseControls
                         obj.AssetXML = GroupAreaControl;
                         obj.AssetXML.ReadAction?.Invoke(obj);
                     }
-
                     if (SingleRootConnector != null)
                     {
                         var obj = new SingleRootConnector();
@@ -203,10 +208,32 @@ namespace CapybaraVS.Controls.BaseControls
             set { Canvas.SetTop(this, value); }
         }
 
+        private CommandCanvas _OwnerCommandCanvas = null;
+
+        public CommandCanvas OwnerCommandCanvas
+        {
+            get => _OwnerCommandCanvas;
+            set
+            {
+                Debug.Assert(value != null);
+                if (myElement is IHaveCommandCanvas haveCommandCanvas)
+                {
+                    if (haveCommandCanvas.OwnerCommandCanvas is null)
+                        haveCommandCanvas.OwnerCommandCanvas = value;
+                }
+                if (_OwnerCommandCanvas is null)
+                    _OwnerCommandCanvas = value;
+            }
+        }
+
         public void SetControl(UIElement element)
         {
             if (myElement is null)
             {
+                if (element is IHaveCommandCanvas haveCommandCanvas)
+                {
+                    haveCommandCanvas.OwnerCommandCanvas = OwnerCommandCanvas;
+                }
                 MainGrid.Children.Add(myElement = element);
             }
         }

@@ -20,11 +20,13 @@ namespace CapybaraVS.Controls
     /// <summary>
     /// PlotWindow.xaml の相互作用ロジック
     /// </summary>
-    public partial class PlotWindow : Window
+    public partial class PlotWindow
+        : Window
     {
         private double magnification = 1.0;
         private double baseLine = 0;
         private double topSpace = 10;
+
         public PlotWindow()
         {
             InitializeComponent();
@@ -179,15 +181,15 @@ namespace CapybaraVS.Controls
                 );
         }
 
-        public static void Create(string msg, List<PlotInfo> plotInfos, double baseLine = 0)
+        public static void Create(CommandCanvas OwnerCommandCanvas, string msg, List<PlotInfo> plotInfos, double baseLine = 0)
         {
             List<double> lines = new List<double>() { baseLine };
 
-            if (CommandCanvas.PlotWindowHoldAction.Enabled)
+            if (OwnerCommandCanvas.PlotWindowHoldAction.Enabled)
             {
                 // スクリプト実行後に一括で行う
 
-                CommandCanvas.PlotWindowHoldAction.Add(() => Create(msg, plotInfos, lines));
+                OwnerCommandCanvas.PlotWindowHoldAction.Add(() => Create(msg, plotInfos, lines));
                 return;
             }
             Create(msg, plotInfos, lines);

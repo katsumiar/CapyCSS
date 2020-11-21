@@ -20,7 +20,11 @@ namespace CapybaraVS.Controls
     /// <summary>
     /// SingleRootConnector.xaml の相互作用ロジック
     /// </summary>
-    public partial class SingleRootConnector : UserControl, ICbExecutable, IDisposable
+    public partial class SingleRootConnector
+        : UserControl
+        , ICbExecutable
+        , IDisposable
+        , IHaveCommandCanvas
     {
         #region XML定義
         [XmlRoot(nameof(SingleRootConnector))]
@@ -77,6 +81,8 @@ namespace CapybaraVS.Controls
         }
 
         #endregion
+
+        public CommandCanvas OwnerCommandCanvas { get; set; } = null;
 
         public SingleRootConnector()
         {

@@ -27,133 +27,6 @@ namespace CapybaraVS
     /// </summary>
     public partial class MainWindow : Window
     {
-        public bool EnablePublicExecuteEntryPoint
-        {
-            get => ExecuteButton.IsEnabled;
-            set
-            {
-                ExecuteButton.IsEnabled = value;
-            }
-        }
-        private bool backupIsEnebleExecuteButton = false;
-
-        /// <summary>
-        /// 実行ボタンの有効か無効かを制御します。
-        /// </summary>
-        /// <param name="enable">true = 有効</param>
-        public void SetExecuteButtonEnable(bool enable)
-        {
-            if (enable)
-            {
-                // 有効化時は、復元として動作する
-
-                EnablePublicExecuteEntryPoint = backupIsEnebleExecuteButton;
-            }
-            else
-            {
-                backupIsEnebleExecuteButton = EnablePublicExecuteEntryPoint;
-                EnablePublicExecuteEntryPoint = false;
-            }
-        }
-
-        static public bool IsLockExecute = false; 
-
-        /// <summary>
-        /// 全スクリプトエントリーポイントEnableリスト
-        /// </summary>
-        private static List<Action<bool>> AllExecuteEntryPointList = new List<Action<bool>>();
-
-        /// <summary>
-        /// スクリプト実行用公開エントリーポイントリスト
-        /// </summary>
-        private static List<Action> PublicExecuteEntryPointList = new List<Action>();
-
-        /// <summary>
-        /// スクリプト実行用公開エントリーポイントリストをクリアします。
-        /// </summary>
-        public static void ClearPublicExecuteEntryPoint()
-        {
-            AllExecuteEntryPointList.Clear();
-            AddAllExecuteEntryPointEnable(Instance.SetExecuteButtonEnable);
-
-            PublicExecuteEntryPointList.Clear();
-            
-            Instance.EnablePublicExecuteEntryPoint = false;
-        }
-
-        /// <summary>
-        /// 全スクリプトエントリーポイントEnableリストにEnable制御を追加します。
-        /// </summary>
-        public static void AddAllExecuteEntryPointEnable(Action<bool> func)
-        {
-            AllExecuteEntryPointList.Add(func);
-        }
-
-        /// <summary>
-        /// 全スクリプトエントリーポイントリストからエントリーポイントを削除します。
-        /// </summary>
-        public static void RemoveAllExecuteEntryPointEnable(Action<bool> func)
-        {
-            AllExecuteEntryPointList.Remove(func);
-        }
-
-        /// <summary>
-        /// 全スクリプトエントリーポイントリストを使ってすべての Enable を制御します。
-        /// </summary>
-        public static void CallAllExecuteEntryPointEnable(bool enable)
-        {
-            foreach (var act in AllExecuteEntryPointList)
-            {
-                act?.Invoke(enable);
-            }
-        }
-
-        /// <summary>
-        /// スクリプト実行用公開エントリーポイントリストにエントリーポイントを追加します。
-        /// </summary>
-        public static void AddPublicExecuteEntryPoint(Action func)
-        {
-            PublicExecuteEntryPointList.Add(func);
-            Instance.EnablePublicExecuteEntryPoint = true;
-        }
-
-        /// <summary>
-        /// スクリプト実行用公開エントリーポイントリストからエントリーポイントを削除します。
-        /// </summary>
-        public static void RemovePublicExecuteEntryPoint(Action func)
-        {
-            PublicExecuteEntryPointList.Remove(func);
-            if (PublicExecuteEntryPointList.Count == 0)
-            {
-                Instance.EnablePublicExecuteEntryPoint = false;
-            }
-        }
-
-        /// <summary>
-        /// スクリプト実行用公開エントリーポイントリストからエントリーポイントをまとめて順次呼び出しします。
-        /// </summary>
-        public static void CallPublicExecuteEntryPoint()
-        {
-            if (IsLockExecute)
-                return; // 再入を禁止する
-
-            foreach (var act in PublicExecuteEntryPointList)
-            {
-                act?.Invoke();
-            }
-            Instance.Dispatcher.BeginInvoke(new Action(() =>
-            {
-                // アイドル状態になってから戻す
-
-                if (App.IsAutoExit)
-                {
-                    // スクリプト実行後自動終了
-
-                    MainWindow.Instance.CallClosing();
-                }
-            }), DispatcherPriority.ApplicationIdle);
-        }
-
         static private MainWindow instance;
 
         /// <summary>
@@ -169,15 +42,32 @@ namespace CapybaraVS
             InitializeComponent();
             instance = this;
             Closing += MainWindow_Closing;
-            OpenFileName = "";
-            ClearPublicExecuteEntryPoint();
 
-            Dispatcher.BeginInvoke(new Action(() =>
+            CommandControl.IsAutoExecute = App.IsAutoExecute;
+            CommandControl.IsAutoExit = App.IsAutoExit;
+
+            CommandControl.SetTitleFunc = (filename) =>
             {
-                // アイドル状態になってから戻す
+                // タイトルをセットします。
 
-                ShowSystemErrorLog();
-            }), DispatcherPriority.ApplicationIdle);
+                var assm = Assembly.GetExecutingAssembly();
+                var name = assm.GetName();
+                Title = name.Name + " ver " + AppVersion;
+                if (filename != null && filename != "")
+                    Title += $" [{filename}]";
+            };
+            CommandControl.SetTitleFunc(null);
+
+            if (App.EntryLoadFile != null)
+            {
+                Dispatcher.BeginInvoke(new Action(() =>
+                {
+                    // アイドル状態になってから戻す
+
+                    ShowSystemErrorLog();
+                    CommandControl.LoadCbsFile(App.EntryLoadFile);
+                }), DispatcherPriority.ApplicationIdle);
+            }
         }
 
         /// <summary>
@@ -193,25 +83,6 @@ namespace CapybaraVS
                 outputWindow.Show();
 
                 outputWindow.AddBindText = App.ErrorLog;
-            }
-        }
-
-        private string openFileName;
-
-        /// <summary>
-        /// 開いているファイルを参照します。
-        /// </summary>
-        public string OpenFileName
-        {
-            get => openFileName;
-            set
-            {
-                var assm = Assembly.GetExecutingAssembly();
-                var name = assm.GetName();
-                openFileName = value;
-                Title = name.Name + " ver " + AppVersion;
-                if (openFileName != "")
-                    Title += $" [{openFileName}]";
             }
         }
 
@@ -238,35 +109,8 @@ namespace CapybaraVS
 
         private void MainWindow_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            ToolExec.KillProcess();
+            CommandControl.Dispose();
             App.Instance.SaveAppInfo();
-        }
-
-        /// <summary>
-        /// スクリプトを実行します。
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void Button_Click(object sender, RoutedEventArgs e)
-        {
-            // スクリプトを実行する
-
-            CallPublicExecuteEntryPoint();
-        }
-
-        /// <summary>
-        /// キーボードによる操作を定義します。
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void Grid_KeyDown(object sender, KeyEventArgs e)
-        {
-            switch (e.Key)
-            {
-                case Key.F5:    // スクリプト実行
-                    CallPublicExecuteEntryPoint();
-                    break;
-            }
         }
 
         [ScriptMethod(nameof(SetExitCode), "", "RS=>SetExitCode")]

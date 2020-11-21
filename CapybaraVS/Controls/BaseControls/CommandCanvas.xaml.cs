@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.IO;
+using System.Reflection;
 using System.Runtime.Serialization;
 using System.Text;
 using System.Threading;
@@ -30,6 +31,12 @@ using System.Xml.Serialization;
 
 namespace CapybaraVS.Controls.BaseControls
 {
+    public interface IHaveCommandCanvas
+    {
+        CommandCanvas OwnerCommandCanvas { get; set; }
+    }
+
+
     public interface IAsset
     {
         int AssetId { get; set; }
@@ -68,7 +75,10 @@ namespace CapybaraVS.Controls.BaseControls
     /// <summary>
     /// CommandCanvas.xaml の相互作用ロジック
     /// </summary>
-    public partial class CommandCanvas : UserControl, IAsset
+    public partial class CommandCanvas 
+        : UserControl
+        , IAsset
+        , IDisposable
     {
         #region ID管理
         private AssetIdProvider assetIdProvider = null;
@@ -93,10 +103,12 @@ namespace CapybaraVS.Controls.BaseControls
                 ReadAction = (self) =>
                 {
                     self.AssetId = AssetId;
+                    self.WorkCanvas.OwnerCommandCanvas = self;
                     self.WorkCanvas.AssetXML = WorkCanvas;
                     self.WorkCanvas.AssetXML.ReadAction?.Invoke(self.WorkCanvas);
                     if (WorkStack != null)
                     {
+                        self.WorkStack.OwnerCommandCanvas = self;
                         self.WorkStack.AssetXML = WorkStack;
                         self.WorkStack.AssetXML.ReadAction?.Invoke(self.WorkStack);
                     }
@@ -107,6 +119,7 @@ namespace CapybaraVS.Controls.BaseControls
                             Movable movableNode = new Movable();
                             self.WorkCanvas.Add(movableNode);
 
+                            movableNode.OwnerCommandCanvas = self;
                             movableNode.AssetXML = node;
                             movableNode.AssetXML.ReadAction?.Invoke(movableNode);
 
@@ -121,6 +134,7 @@ namespace CapybaraVS.Controls.BaseControls
                             System.Diagnostics.Debug.WriteLine(nameof(CommandCanvas) + "._AssetXML(ReadAction): " + ex.Message);
                         }
                     }
+                    self.ScriptControlRecent = ScriptControlRecent;
 
                     // 次回の為の初期化
                     self.AssetXML = new _AssetXML<CommandCanvas>(self);
@@ -145,6 +159,7 @@ namespace CapybaraVS.Controls.BaseControls
                         }
                     }
                     WorkCanvasAssetList = workList;
+                    ScriptControlRecent = self.ScriptControlRecent;
                 };
             }
             [XmlAttribute("Id")]
@@ -154,37 +169,83 @@ namespace CapybaraVS.Controls.BaseControls
             public Stack._AssetXML<Stack> WorkStack { get; set; } = null;
             [XmlArrayItem("Asset")]
             public List<Movable._AssetXML<Movable>> WorkCanvasAssetList { get; set; } = null;
+            public List<string> ScriptControlRecent { get; set; } = null;
             #endregion
         }
         public _AssetXML<CommandCanvas> AssetXML { get; set; } = null;
         #endregion
 
-        public static ObservableCollection<TreeMenuNode> AssetTreeData { get; set; } = null;
-        public CommandCanvas()
+        public CommandCanvas(CommandCanvasList commandCanvasList)
         {
             InitializeComponent();
             assetIdProvider = new AssetIdProvider(this);
+            CommandCanvasControl = commandCanvasList;
+            WorkCanvas.OwnerCommandCanvas = this;
+            WorkStack.OwnerCommandCanvas = this;
             AssetXML = new _AssetXML<CommandCanvas>(this);
 
             ScriptCommandCanvas = this;
             ScriptWorkCanvas = WorkCanvas;
             ScriptWorkStack = WorkStack;
-            AssetTreeData ??= new ObservableCollection<TreeMenuNode>();
 
-            CommandWindow.TreeViewCommand.AssetTreeData ??= new ObservableCollection<TreeMenuNode>();
-            AddTreeCommandAsset(CommandWindow.TreeViewCommand);
+            CommandMenuWindow = CommandWindow.Create();
+            CommandMenuWindow.treeViewCommand.OwnerCommandCanvas = this;
+            CommandMenuWindow.treeViewCommand.AssetTreeData = new ObservableCollection<TreeMenuNode>();
+            AddTreeCommandAsset(CommandMenuWindow.treeViewCommand);
 
-            Dispatcher.BeginInvoke(new Action(() =>
+            ClickEntryEvent = new Action(() =>
             {
-                // アイドル状態になってから戻す
+                ScriptWorkCanvas.Cursor = null;
+                CommandMenu.Cursor = null;
+            });
 
-                if (App.EntryLoadFile != null)
+            ClickExitEvent = new Action(() =>
+            {
+                CommandMenuWindow.CloseWindow();
+                ScriptWorkCanvas.Cursor = Cursors.Hand;
+                CommandMenu.Cursor = Cursors.Hand;
+            });
+        }
+
+        public List<string> ScriptControlRecent
+        {
+            get
+            {
+                var recentNode = CommandMenuWindow.treeViewCommand.GetRecent();
+                if (recentNode.Child.Count != 0)
                 {
-                    // 起動時にコマンドライン引数から渡されたファイルを読み込む
+                    // 最近使ったスクリプトノードを記録する
 
-                    LoadXML(System.IO.Path.GetFullPath(App.EntryLoadFile));
+                    var Recent = new List<string>();
+                    foreach (var node in recentNode.Child)
+                    {
+                        Recent.Add(node.Name);
+                    }
+                    return Recent;
                 }
-            }), DispatcherPriority.ApplicationIdle);
+                return null;
+            }
+            set
+            {
+                if (value != null)
+                {
+                    // 最近使ったスクリプトノードを復元する
+
+                    var recentNode = CommandMenu.GetRecent();
+                    foreach (var node in value)
+                    {
+                        recentNode.AddChild(new TreeMenuNode(node, CreateImmediateExecutionCanvasCommand(() =>
+                        {
+                            CommandMenu.ExecuteFindCommand(node);
+                        })));
+                    }
+                }
+            }
+        }
+
+        ~CommandCanvas()
+        {
+            Dispose();
         }
 
         public void HideWorkStack()
@@ -195,27 +256,20 @@ namespace CapybaraVS.Controls.BaseControls
         //----------------------------------------------------------------------
         #region 広域処理 TODO インスタンス化する
 
-        public static TreeViewCommand TreeViewCommand = new TreeViewCommand();
-        public static CommandCanvas ScriptCommandCanvas = null;
-        public static BaseWorkCanvas ScriptWorkCanvas = null;
-        public static Stack ScriptWorkStack = null;
-        public static Func<object> ScriptWorkClickEvent = null;
-        public static Action ClickEntryEvent = new Action(() =>
-        {
-            ScriptWorkCanvas.Cursor = null;
-            TreeViewCommand.Cursor = null;
-        });
-        public static Action ClickExitEvent = new Action(() =>
-        {
-            CommandWindow.CloseWindow();
-            ScriptWorkCanvas.Cursor = Cursors.Hand;
-            TreeViewCommand.Cursor = Cursors.Hand;
-        });
-        public static HoldActionManager<UIParam> UIParamHoldAction = new HoldActionManager<UIParam>();
-        public static HoldActionManager<StackGroup> StackGroupHoldAction = new HoldActionManager<StackGroup>();
-        public static HoldActionManager<PlotWindow> PlotWindowHoldAction = new HoldActionManager<PlotWindow>();
-        public static HoldActionManager<LinkConnectorList> LinkConnectorListHoldAction = new HoldActionManager<LinkConnectorList>();
-        public static bool EnabledScriptHoldActionMode
+        public CommandWindow CommandMenuWindow = null;
+        public CommandCanvasList CommandCanvasControl = null;
+        public TreeViewCommand CommandMenu => CommandMenuWindow.treeViewCommand;
+        public CommandCanvas ScriptCommandCanvas = null;
+        public BaseWorkCanvas ScriptWorkCanvas = null;
+        public Stack ScriptWorkStack = null;
+        public Func<object> ScriptWorkClickEvent = null;
+        public Action ClickEntryEvent = null;
+        public Action ClickExitEvent = null;
+        public HoldActionManager<UIParam> UIParamHoldAction = new HoldActionManager<UIParam>();
+        public HoldActionManager<StackGroup> StackGroupHoldAction = new HoldActionManager<StackGroup>();
+        public HoldActionManager<PlotWindow> PlotWindowHoldAction = new HoldActionManager<PlotWindow>();
+        public HoldActionManager<LinkConnectorList> LinkConnectorListHoldAction = new HoldActionManager<LinkConnectorList>();
+        public bool EnabledScriptHoldActionMode
         {
             set
             {
@@ -229,7 +283,7 @@ namespace CapybaraVS.Controls.BaseControls
         /// <summary>
         /// クリック実行呼び出し処理用イベントを参照します。
         /// </summary>
-        public static Func<object> ClickEvent
+        public Func<object> ClickEvent
         {
             get => ScriptWorkClickEvent;
             set
@@ -241,7 +295,7 @@ namespace CapybaraVS.Controls.BaseControls
                     ClickEntryEvent?.Invoke();
 
                     // コマンドツリー上でのコマンドキャンセルイベントを消す
-                    TreeViewCommand.MouseRightButtonDown -= (s, e) => ScriptWorkCanvas.ResetCommand();
+                    CommandMenu.MouseRightButtonDown -= (s, e) => ScriptWorkCanvas.ResetCommand();
                 }
                 else
                 {
@@ -250,7 +304,7 @@ namespace CapybaraVS.Controls.BaseControls
                     ClickExitEvent?.Invoke();
 
                     // コマンドツリー上でのコマンドキャンセルイベントを登録する
-                    TreeViewCommand.MouseRightButtonDown += (s, e) => ScriptWorkCanvas.ResetCommand();
+                    CommandMenu.MouseRightButtonDown += (s, e) => ScriptWorkCanvas.ResetCommand();
                 }
                 ScriptWorkClickEvent = value;
             }
@@ -263,7 +317,7 @@ namespace CapybaraVS.Controls.BaseControls
         /// <param name="action">実行されるイベント</param>
         /// <param name="vm"></param>
         /// <returns>コマンド</returns>
-        public static TreeMenuNodeCommand CreateEventCanvasCommand(string path, Func<object> action, TreeMenuNode vm = null)
+        public TreeMenuNodeCommand CreateEventCanvasCommand(string path, Func<object> action, TreeMenuNode vm = null)
         {
             return new TreeMenuNodeCommand(vm, (a) =>
                 {
@@ -281,14 +335,14 @@ namespace CapybaraVS.Controls.BaseControls
         /// <param name="vm"></param>
         /// <param name="action"></param>
         /// <returns></returns>
-        public static TreeMenuNodeCommand CreateImmediateExecutionCanvasCommand(Action action, TreeMenuNode vm = null)
+        public TreeMenuNodeCommand CreateImmediateExecutionCanvasCommand(Action action, TreeMenuNode vm = null)
         {
             return new TreeMenuNodeCommand(vm, (a) =>
                 {
                     if (MainWindow.Instance.Cursor == Cursors.Wait)
                         return; // 処理中は禁止
 
-                    CommandWindow.CloseWindow();
+                    CommandMenuWindow.CloseWindow();
 
                     action?.Invoke();
                 }
@@ -300,37 +354,16 @@ namespace CapybaraVS.Controls.BaseControls
         //----------------------------------------------------------------------
         #region アセットリストを実装
 
-        private static void AddTreeCommandAsset(TreeViewCommand treeViewCommand)
+        private void AddTreeCommandAsset(TreeViewCommand treeViewCommand)
         {
             // コマンドを追加
             {
                 var commandNode = new TreeMenuNode("Command");
-                commandNode.AddChild(new TreeMenuNode("Clear(Ctrl+N)", CreateImmediateExecutionCanvasCommand(() =>
-                {
-                    if (CommandCanvas.ScriptWorkCanvas.Count != 0 &&
-                        MessageBox.Show(CapybaraVS.Language.GetInstance["ConfirmationAllDelete"],
-                            CapybaraVS.Language.GetInstance["Confirmation"],
-                            MessageBoxButton.OKCancel) == MessageBoxResult.OK)
-                    {
-                        MainWindow.Instance.Cursor = Cursors.Wait;
-                        ScriptWorkCanvas.Dispatcher.BeginInvoke(new Action(() =>
-                        {
-                            WorkCanvasClear();
-                            ScriptCommandCanvas.Dispatcher.BeginInvoke(new Action(() =>
-                            {
-                                // アイドル状態になってから戻す
-
-                                GC.Collect();
-                                MainWindow.Instance.Cursor = Cursors.Arrow;
-
-                            }), DispatcherPriority.ApplicationIdle);
-                        }), DispatcherPriority.ApplicationIdle);
-                    }
-                })));
+                commandNode.AddChild(new TreeMenuNode("Clear(Ctrl+N)", CreateImmediateExecutionCanvasCommand(() => ClearWorkCanvasWithConfirmation())));
                 commandNode.AddChild(new TreeMenuNode("Toggle ShowMouseInfo", CreateImmediateExecutionCanvasCommand(() => ScriptWorkCanvas.EnableInfo = ScriptWorkCanvas.EnableInfo ? false : true)));
                 commandNode.AddChild(new TreeMenuNode("Toggle ShowGridLine(Ctrl+G)", CreateImmediateExecutionCanvasCommand(() => ScriptCommandCanvas.ToggleGridLine())));
-                commandNode.AddChild(new TreeMenuNode("Save(Ctrl+S)", CreateImmediateExecutionCanvasCommand(() => SaveXML())));
-                commandNode.AddChild(new TreeMenuNode("Load(Ctrl+O)", CreateImmediateExecutionCanvasCommand(() => LoadXML())));
+                commandNode.AddChild(new TreeMenuNode("Save(Ctrl+S)", CreateImmediateExecutionCanvasCommand(() => CommandCanvasControl.SaveCbsFile())));
+                commandNode.AddChild(new TreeMenuNode("Load(Ctrl+O)", CreateImmediateExecutionCanvasCommand(() => CommandCanvasControl.LoadCbsFile())));
                 treeViewCommand.AssetTreeData.Add(commandNode);
             }
 
@@ -342,14 +375,14 @@ namespace CapybaraVS.Controls.BaseControls
             }
 
             // 基本的なアセットを追加
-            new ImplementBaseAsset();
+            new ImplementBaseAsset(this);
 
             // デバッグ用アセットを追加
             AddTestTreeAsset(treeViewCommand);
         }
 
         [Conditional("DEBUG")]
-        private static void AddTestTreeAsset(TreeViewCommand treeViewCommand)
+        private void AddTestTreeAsset(TreeViewCommand treeViewCommand)
         {
             {
                 var testCommandNode = new TreeMenuNode("TestCommand");
@@ -386,7 +419,7 @@ namespace CapybaraVS.Controls.BaseControls
         /// <summary>
         /// キャンバスの作業をxml化して表示します。
         /// </summary>
-        private static void OutputControlXML()
+        private void OutputControlXML()
         {
             var outputWindow = new OutputWindow();
             outputWindow.Title = "Contorl List <Output[" + ScriptWorkCanvas.Name + "]>";
@@ -405,24 +438,47 @@ namespace CapybaraVS.Controls.BaseControls
         /// <summary>
         /// キャンバスの作業を上書き保存します。
         /// </summary>
-        private static void OverwriteSaveXML()
+        public void OverwriteSaveXML()
         {
             if (MainWindow.Instance.Cursor == Cursors.Wait)
                 return;
 
-            if (MainWindow.Instance.OpenFileName == "")
+            if (OpenFileName == "")
             {
                 SaveXML();
                 return;
             }
 
-            SaveXml(MainWindow.Instance.OpenFileName);
+            SaveXml(OpenFileName);
+        }
+
+        private string openFileName = "";
+
+        /// <summary>
+        /// 開いているファイルを参照します。
+        /// </summary>
+        public string OpenFileName
+        {
+            get => openFileName;
+            set
+            {
+                openFileName = value;
+                SetupTitle();
+            }
+        }
+
+        /// <summary>
+        /// タイトルのセットを依頼します。
+        /// </summary>
+        public void SetupTitle()
+        {
+            CommandCanvasControl.RequestSetTitle(openFileName);
         }
 
         /// <summary>
         /// キャンバスの作業を保存します。
         /// </summary>
-        public static void SaveXML()
+        public void SaveXML()
         {
             if (MainWindow.Instance.Cursor == Cursors.Wait)
                 return;
@@ -439,7 +495,7 @@ namespace CapybaraVS.Controls.BaseControls
         /// キャンバスの作業を保存します。
         /// </summary>
         /// <param name="path">ファイルのパス</param>
-        private static void SaveXml(string path)
+        private void SaveXml(string path)
         {
             if (path is null)
                 return;
@@ -461,8 +517,8 @@ namespace CapybaraVS.Controls.BaseControls
                 swriter.WriteLine(writer.ToString());
                 swriter.Close();
 
-                MainWindow.Instance.OpenFileName = path;
-                MainWindow.Instance.MainLog.OutLine("System", $"Save...\"{path}.xml\"");
+                OpenFileName = path;
+                CommandCanvasList.OutPut.OutLine("System", $"Save...\"{path}.xml\"");
             }
             catch (Exception ex)
             {
@@ -475,7 +531,7 @@ namespace CapybaraVS.Controls.BaseControls
         /// <summary>
         /// キャンバスの作業を読み込みます。
         /// </summary>
-        private static void LoadXML()
+        public void LoadXML()
         {
             if (MainWindow.Instance.Cursor == Cursors.Wait)
                 return;
@@ -491,11 +547,12 @@ namespace CapybaraVS.Controls.BaseControls
         /// キャンバスの作業を読み込みます。
         /// </summary>
         /// <param name="path">ファイルのパス</param>
-        public static void LoadXML(string path)
+        public void LoadXML(string path)
         {
             if (MainWindow.Instance.Cursor == Cursors.Wait)
                 return;
 
+            OpenFileName = path;
             MainWindow.Instance.Cursor = Cursors.Wait;
             ScriptWorkCanvas.Dispatcher.BeginInvoke(new Action(() =>
             {
@@ -521,7 +578,7 @@ namespace CapybaraVS.Controls.BaseControls
                 {
                     reader?.Close();
                 }
-                WorkCanvasClear(false);
+                ClearWorkCanvas(false);
                 GC.Collect();
 
                 PointIdProvider.InitCheckRequest();
@@ -533,18 +590,15 @@ namespace CapybaraVS.Controls.BaseControls
 
                     GC.Collect();
                     MainWindow.Instance.Cursor = Cursors.Arrow;
-                    if (App.IsAutoExecute)
+                    if (CommandCanvasControl.IsAutoExecute)
                     {
-                        MainWindow.CallPublicExecuteEntryPoint();
-                        App.IsAutoExecute = false;
+                        CommandCanvasControl.CallPublicExecuteEntryPoint();
+                        CommandCanvasControl.IsAutoExecute = false;
                     }
                     else
                     {
-                        App.IsAutoExit = false;
+                        CommandCanvasControl.IsAutoExit = false;
                     }
-
-                    MainWindow.Instance.OpenFileName = path;
-
                 }), DispatcherPriority.ApplicationIdle);
             }), DispatcherPriority.ApplicationIdle);
         }
@@ -552,15 +606,15 @@ namespace CapybaraVS.Controls.BaseControls
         /// <summary>
         /// キャンバスの作業をクリアします。
         /// </summary>
-        private static void WorkCanvasClear(bool full = true)
+        public void ClearWorkCanvas(bool full = true)
         {
-            MainWindow.ClearPublicExecuteEntryPoint();
+            CommandCanvasControl.ClearPublicExecuteEntryPoint(this);
             ScriptWorkCanvas.Clear();
             ScriptWorkStack.Clear();
             ScriptCommandCanvas.HideWorkStack();
             if (full)
             {
-                MainWindow.Instance.OpenFileName = "";
+                OpenFileName = "";
             }
         }
 
@@ -568,12 +622,18 @@ namespace CapybaraVS.Controls.BaseControls
         /// 保存用ファイル選択ダイアログを表示します。
         /// </summary>
         /// <returns></returns>
-        public static string ShowSaveDialog()
+        public string ShowSaveDialog()
         {
             var dialog = new SaveFileDialog();
 
+            // ディレクトリを設定
+            dialog.InitialDirectory = System.IO.Path.GetDirectoryName(OpenFileName);
+
+            // ファイル名を設定
+            dialog.FileName = System.IO.Path.GetFileNameWithoutExtension(OpenFileName);
+
             // ファイルの種類を設定
-            dialog.Filter = "CBSファイル (*.cbs)|*.cbs|全てのファイル (*.*)|*.*";
+            dialog.Filter = "CBS files (*.cbs)|*.cbs|all (*.*)|*.*";
 
             // ダイアログを表示する
             if (dialog.ShowDialog() == true)
@@ -587,12 +647,12 @@ namespace CapybaraVS.Controls.BaseControls
         /// 読み込み用ファイル選択ダイアログを表示します。
         /// </summary>
         /// <returns></returns>
-        public static string ShowLoadDialog()
+        public string ShowLoadDialog()
         {
             var dialog = new OpenFileDialog();
 
             // ファイルの種類を設定
-            dialog.Filter = "CBSファイル (*.cbs, *.xml)|*.cbs;*.xml|全てのファイル (*.*)|*.*";
+            dialog.Filter = "CBS files (*.cbs, *.xml)|*.cbs;*.xml|all (*.*)|*.*";
 
             // ダイアログを表示する
             if (dialog.ShowDialog() == true)
@@ -617,38 +677,15 @@ namespace CapybaraVS.Controls.BaseControls
 
                 switch (e.Key)
                 {
+                    // CommandCanvasList で使用
                     case Key.S:
-                        OverwriteSaveXML();
-                        break;
-
                     case Key.O:
-                        LoadXML();
-                        break;
-
                     case Key.N:
-                        if (CommandCanvas.ScriptWorkCanvas.Count != 0 &&
-                                MessageBox.Show(CapybaraVS.Language.GetInstance["ConfirmationDelete"],
-                                    CapybaraVS.Language.GetInstance["Confirmation"],
-                                    MessageBoxButton.OKCancel) == MessageBoxResult.OK)
-                        {
-                            MainWindow.Instance.Cursor = Cursors.Wait;
-                            ScriptWorkCanvas.Dispatcher.BeginInvoke(new Action(() =>
-                            {
-                                WorkCanvasClear();
-                                ScriptCommandCanvas.Dispatcher.BeginInvoke(new Action(() =>
-                                {
-                                    // アイドル状態になってから戻す
-
-                                    GC.Collect();
-                                    MainWindow.Instance.Cursor = Cursors.Arrow;
-
-                                }), DispatcherPriority.ApplicationIdle);
-                            }), DispatcherPriority.ApplicationIdle);
-                        }
                         break;
 
                     case Key.G:
                         ToggleGridLine();
+                        e.Handled = true;
                         break;
 
                         // BaseWorkCanvas で使用
@@ -662,18 +699,69 @@ namespace CapybaraVS.Controls.BaseControls
             {
                 // Shift + key
 
-
-
+                switch (e.Key)
+                {
+                    // CommandCanvasList で使用
+                    case Key.N: // 全クリア
+                        ClearWorkCanvasWithConfirmation();
+                        break;
+                }
             }
             else
             {
                 switch (e.Key)
                 {
+                    // CommandCanvasList で使用
+                    case Key.F5:
+                        break;
+
                     // BaseWorkCanvas で使用
                     case Key.Delete:
                         break;
                 }
             }
+        }
+
+        private void ClearWorkCanvasWithConfirmation()
+        {
+            if (ScriptWorkCanvas.Count != 0 &&
+                    MessageBox.Show(CapybaraVS.Language.GetInstance["ConfirmationDelete"],
+                        CapybaraVS.Language.GetInstance["Confirmation"],
+                        MessageBoxButton.OKCancel) == MessageBoxResult.OK)
+            {
+                MainWindow.Instance.Cursor = Cursors.Wait;
+                ScriptWorkCanvas.Dispatcher.BeginInvoke(new Action(() =>
+                {
+                    ClearWorkCanvas();
+                    ScriptCommandCanvas.Dispatcher.BeginInvoke(new Action(() =>
+                    {
+                        // アイドル状態になってから戻す
+
+                        GC.Collect();
+                        MainWindow.Instance.Cursor = Cursors.Arrow;
+
+                    }), DispatcherPriority.ApplicationIdle);
+                }), DispatcherPriority.ApplicationIdle);
+            }
+        }
+
+        /// <summary>
+        /// コマンドメニューを表示します。
+        /// </summary>
+        /// <param name="pos">表示位置</param>
+        public void ShowCommandMenu(Point? pos = null)
+        {
+            CommandMenuWindow.SetPos(pos);
+            CommandMenuWindow.ShowDialog();
+        }
+
+        public void Dispose()
+        {
+            if (CommandMenuWindow is null)
+                return;
+
+            CommandMenuWindow.Dispose();
+            CommandMenuWindow = null;
         }
     }
 }

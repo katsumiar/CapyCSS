@@ -23,7 +23,9 @@ namespace CapybaraVS.Controls.BaseControls
     /// <summary>
     /// StackGroup.xaml の相互作用ロジック
     /// </summary>
-    public partial class StackGroup : UserControl
+    public partial class StackGroup
+        : UserControl
+        , IHaveCommandCanvas
     {
         public ObservableCollection<StackGroup> ListData { get; set; } = new ObservableCollection<StackGroup>();
 
@@ -89,6 +91,32 @@ namespace CapybaraVS.Controls.BaseControls
         private StackNode CbValue = null;
         private StackNode CbListValue = null;
 
+        private CommandCanvas _OwnerCommandCanvas = null;
+
+        public CommandCanvas OwnerCommandCanvas
+        {
+            get => _OwnerCommandCanvas;
+            set
+            {
+                Debug.Assert(value != null);
+                SetOunerCanvas(ListData, value);
+                if (_OwnerCommandCanvas is null)
+                    _OwnerCommandCanvas = value;
+            }
+        }
+
+        private void SetOunerCanvas(IEnumerable<StackGroup> list, CommandCanvas value)
+        {
+            if (list is null)
+                return;
+
+            foreach (var node in list)
+            {
+                if (node.OwnerCommandCanvas is null)
+                    node.OwnerCommandCanvas = value;
+            }
+        }
+
         public StackNode stackNode
         {
             get
@@ -123,11 +151,11 @@ namespace CapybaraVS.Controls.BaseControls
 
         public void UpdateValueData()
         {
-            if (CommandCanvas.StackGroupHoldAction.Enabled)
+            if (OwnerCommandCanvas.StackGroupHoldAction.Enabled)
             {
                 // 画面反映はあとから一括で行う
 
-                CommandCanvas.StackGroupHoldAction.Add(this, () =>
+                OwnerCommandCanvas.StackGroupHoldAction.Add(this, () =>
                     {
                         if (EnableAdd)
                             CloseAccordion();   // スクリプト実行後にアコーディオンを閉じる
@@ -184,7 +212,7 @@ namespace CapybaraVS.Controls.BaseControls
                             remaining = Math.Abs(remaining);
                             for (int j = 0; j < remaining; ++j)
                             {
-                                AddListNode(CbList.ConvertStackNode(target[i + j]));
+                                AddListNode(CbList.ConvertStackNode(OwnerCommandCanvas, target[i + j]));
                             }
                         }
                     }
@@ -194,7 +222,7 @@ namespace CapybaraVS.Controls.BaseControls
                     ListData.Clear();
                     foreach (var node in target.Value)
                     {
-                        AddListNode(CbList.ConvertStackNode(node));
+                        AddListNode(CbList.ConvertStackNode(OwnerCommandCanvas, node));
                     }
                 }
             }
@@ -215,7 +243,8 @@ namespace CapybaraVS.Controls.BaseControls
                 {
                     var listNode = cbList.NodeTF();
                     cbList.Value.Add(listNode);
-                    var node = new StackNode(listNode);
+                    var node = new StackNode(OwnerCommandCanvas, listNode);
+                    node.OwnerCommandCanvas = OwnerCommandCanvas;
                     return node;
                 };
                 InnerList.Margin = new Thickness(12, 0, 0, 0);
@@ -226,6 +255,7 @@ namespace CapybaraVS.Controls.BaseControls
             else
             {
                 var grp = new StackGroup();
+                grp.OwnerCommandCanvas = OwnerCommandCanvas;
                 grp.ListPanel.Children.Insert(0, node);
                 grp.ListPanel.Children[0].Visibility = Visibility.Visible;
 

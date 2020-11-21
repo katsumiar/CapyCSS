@@ -17,7 +17,8 @@ namespace CapybaraVS
         void SetControl(UIElement element);
     }
 
-    class MouseDragObserver
+    class MouseDragObserver 
+        : IHaveCommandCanvas
     {
         private IInputElement targetCanvas = null;
         private UIElement target = null;
@@ -26,6 +27,18 @@ namespace CapybaraVS
         private Point targetOffset;
         private UIElement captureTarget = null;
         private ObservableCollection<Movable> groupList = null;
+
+        private CommandCanvas _OwnerCommandCanvas = null;
+
+        public CommandCanvas OwnerCommandCanvas
+        {
+            get => _OwnerCommandCanvas;
+            set
+            {
+                if (_OwnerCommandCanvas is null)
+                    _OwnerCommandCanvas = value;
+            }
+        }
 
         public MouseDragObserver(
             UIElement canvas,
@@ -137,7 +150,7 @@ namespace CapybaraVS
                 {
                     // 画面全体を動かす
 
-                    if (CommandCanvas.ScriptWorkCanvas.SelectedNodes.Count == 0)
+                    if (OwnerCommandCanvas.ScriptWorkCanvas.SelectedNodes.Count == 0)
                     {
                         // 全体を移動
 
@@ -153,7 +166,7 @@ namespace CapybaraVS
                     {
                         // 選択されているノードを移動
 
-                        MoveSelectedNode(pos, CommandCanvas.ScriptWorkCanvas.SelectedNodes);
+                        MoveSelectedNode(pos, OwnerCommandCanvas.ScriptWorkCanvas.SelectedNodes);
                     }
                 }
                 else
@@ -198,7 +211,7 @@ namespace CapybaraVS
             
             if (scale)
             {
-                double ms = 1.0 / CommandCanvas.ScriptWorkCanvas.CanvasScale;
+                double ms = 1.0 / OwnerCommandCanvas.ScriptWorkCanvas.CanvasScale;
                 sx *= ms;
                 sy *= ms;
             }

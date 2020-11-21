@@ -19,11 +19,11 @@ namespace CapyCSS.Controls
     /// <summary>
     /// CommandWindow.xaml の相互作用ロジック
     /// </summary>
-    public partial class CommandWindow : Window
+    public partial class CommandWindow
+        : Window
+        , IDisposable
     {
-        public static TreeViewCommand TreeViewCommand = new TreeViewCommand();
-
-        private static CommandWindow self = null;
+        public TreeViewCommand treeViewCommand = new TreeViewCommand();
 
         /// <summary>
         /// コマンドウインドウを表示します。
@@ -32,22 +32,24 @@ namespace CapyCSS.Controls
         /// <returns>ウインドウクラスのインスタンス</returns>
         public static CommandWindow Create(Point? pos = null)
         {
-            if (self is null)
-            {
-                self = new CommandWindow();
-                self.Owner = MainWindow.Instance;
-            }
-            CommandWindow commandWindow = self;
+            CommandWindow commandWindow = new CommandWindow();
+            commandWindow.Owner = MainWindow.Instance;
+            commandWindow.SetPos(pos);
+            return commandWindow;
+        }
+
+        public void SetPos(Point? pos = null)
+        {
             if (pos.HasValue)
             {
-                commandWindow.Left = pos.Value.X;
-                commandWindow.Top = pos.Value.Y;
+                Left = pos.Value.X;
+                Top = pos.Value.Y;
                 if (MainWindow.Instance.WindowState != WindowState.Maximized)
                 {
                     // ウインドウが最大化されても元のサイズが帰ってくるようなので、最大化していないときだけ相対位置にする
 
-                    commandWindow.Left += MainWindow.Instance.Left;
-                    commandWindow.Top += MainWindow.Instance.Top;
+                    Left += MainWindow.Instance.Left;
+                    Top += MainWindow.Instance.Top;
                 }
                 else
                 {
@@ -55,27 +57,28 @@ namespace CapyCSS.Controls
                     {
                         // セカンダリディスプレイでクリックされた
 
-                        commandWindow.Left += SystemParameters.PrimaryScreenWidth;
+                        Left += SystemParameters.PrimaryScreenWidth;
                     }
                 }
             }
-            return commandWindow;
         }
 
         /// <summary>
         /// /コマンドウインドウを閉じます。
         /// </summary>
-        public static void CloseWindow()
+        public void CloseWindow()
         {
-            self?.Hide();
+            Close();
         }
 
         public CommandWindow()
         {
             InitializeComponent();
 
-            (OpenListContents as IAddChild).AddChild(TreeViewCommand);
+            (OpenListContents as IAddChild).AddChild(treeViewCommand);
         }
+
+        bool trueCloseing = false;
 
         /// <summary>
         /// ウインドウ破棄をキャンセルします。
@@ -84,8 +87,11 @@ namespace CapyCSS.Controls
         /// <param name="e"></param>
         protected virtual void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            Hide();
-            e.Cancel = true;
+            if (!trueCloseing)
+            {
+                Hide();
+                e.Cancel = true;
+            }
         }
 
         DispatcherTimer filterProcTimer = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(300) };
@@ -104,15 +110,21 @@ namespace CapyCSS.Controls
                     filterProcTimer.Stop();
 
                     // 待機後の処理
-                    TreeViewCommand.SetFilter(FilterText.Text);
+                    treeViewCommand.SetFilter(FilterText.Text);
                     filterProcTimer.IsEnabled = false;
                 };
             }
             else
             {
                 filterProcTimer.IsEnabled = false;
-                TreeViewCommand.ClearFilter();
+                treeViewCommand.ClearFilter();
             }
+        }
+
+        public void Dispose()
+        {
+            trueCloseing = true;
+            Close();
         }
     }
 }

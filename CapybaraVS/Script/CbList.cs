@@ -148,18 +148,19 @@ namespace CbVS.Script
             return (name) => CbList.Create(original, name);
         }
 
-        public static LinkConnector ConvertLinkConnector(ICbValue cbVSValue)
+        public static LinkConnector ConvertLinkConnector(CommandCanvas ownerCommandCanvas, ICbValue cbVSValue)
         {
             var linkConnector = new LinkConnector()
             {
+                OwnerCommandCanvas = ownerCommandCanvas,
                 ValueData = cbVSValue
             };
             return linkConnector;
         }
 
-        public static StackNode ConvertStackNode(ICbValue cbVSValue)
+        public static StackNode ConvertStackNode(CommandCanvas ownerCommandCanvas, ICbValue cbVSValue)
         {
-            var stackNode = new StackNode()
+            var stackNode = new StackNode(ownerCommandCanvas)
             {
                 ValueData = cbVSValue
             };
@@ -364,7 +365,7 @@ namespace CbVS.Script
                 ObservableCollection<LinkConnector> ret = new ObservableCollection<LinkConnector>();
                 foreach (var node in Value)
                 {
-                    ret.Add(CbList.ConvertLinkConnector(node));
+                    ret.Add(CbList.ConvertLinkConnector(null, node));
                 }
                 return ret;
             }

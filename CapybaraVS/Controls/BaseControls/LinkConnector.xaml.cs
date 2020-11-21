@@ -22,7 +22,11 @@ namespace CapybaraVS.Controls.BaseControls
     /// <summary>
     /// LinkConnector.xaml の相互作用ロジック
     /// </summary>
-    public partial class LinkConnector : UserControl, ICurveLinkPoint, IDisposable
+    public partial class LinkConnector 
+        : UserControl
+        , ICurveLinkPoint
+        , IDisposable
+        , IHaveCommandCanvas
     {
         #region ID管理
         private PointIdProvider pointIdProvider = null;
@@ -116,7 +120,7 @@ namespace CapybaraVS.Controls.BaseControls
 
         private bool singleLinkMode = true;
 
-        #region UpdateListEvent 添付プロパティ実装
+        #region UpdateEvent 添付プロパティ実装
 
         private static ImplementDependencyProperty<LinkConnector, Action> impUpdateEvent =
             new ImplementDependencyProperty<LinkConnector, Action>(
@@ -177,6 +181,23 @@ namespace CapybaraVS.Controls.BaseControls
         }
 
         #endregion
+
+        private CommandCanvas _OwnerCommandCanvas = null;
+
+        public CommandCanvas OwnerCommandCanvas
+        {
+            get => _OwnerCommandCanvas;
+            set
+            {
+                Debug.Assert(value != null);
+                if (ConnectorList.OwnerCommandCanvas is null)
+                    ConnectorList.OwnerCommandCanvas = value;
+                if (ParamTextBox.OwnerCommandCanvas is null)
+                    ParamTextBox.OwnerCommandCanvas = value;
+                if (_OwnerCommandCanvas is null)
+                    _OwnerCommandCanvas = value;
+            }
+        }
 
         public LinkConnector()
         {

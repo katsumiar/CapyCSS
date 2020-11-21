@@ -5,6 +5,7 @@ using CapyCSS.Script;
 using CbVS.Script;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
@@ -23,7 +24,9 @@ namespace CapybaraVS.Controls.BaseControls
     /// <summary>
     /// UIParam.xaml の相互作用ロジック
     /// </summary>
-    public partial class UIParam : UserControl
+    public partial class UIParam 
+        : UserControl
+        , IHaveCommandCanvas
     {
         #region XML定義
         [XmlRoot(nameof(UIParam))]
@@ -185,11 +188,11 @@ namespace CapybaraVS.Controls.BaseControls
         {
             valueData ??= ValueData;
 
-            if (CommandCanvas.UIParamHoldAction.Enabled)
+            if (OwnerCommandCanvas.UIParamHoldAction.Enabled)
             {
                 // 画面反映はあとから一括で行う
 
-                CommandCanvas.UIParamHoldAction.Add(this, () => UpdateValueData(valueData));
+                OwnerCommandCanvas.UIParamHoldAction.Add(this, () => UpdateValueData(valueData));
                 return;
             }
 
@@ -475,6 +478,19 @@ namespace CapybaraVS.Controls.BaseControls
             set { impCastType.SetValue(this, value); }
         }
         #endregion
+
+        private CommandCanvas _OwnerCommandCanvas = null;
+
+        public CommandCanvas OwnerCommandCanvas
+        {
+            get => _OwnerCommandCanvas;
+            set
+            {
+                Debug.Assert(value != null);
+                if (_OwnerCommandCanvas is null)
+                    _OwnerCommandCanvas = value;
+            }
+        }
 
         public UIParam()
         {

@@ -2,6 +2,7 @@
 using CapybaraVS.Script;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
@@ -30,7 +31,11 @@ namespace CapybaraVS.Controls
     /// <summary>
     /// RunableControl.xaml の相互作用ロジック
     /// </summary>
-    public partial class RunableControl : UserControl, IDisposable, IRunableControl
+    public partial class RunableControl
+        : UserControl
+        , IDisposable
+        , IRunableControl
+        , IHaveCommandCanvas
     {
         #region XML定義
         [XmlRoot(nameof(RunableControl))]
@@ -141,6 +146,35 @@ namespace CapybaraVS.Controls
             Dispose();
         }
 
+        private CommandCanvas _OwnerCommandCanvas = null;
+
+        public CommandCanvas OwnerCommandCanvas
+        {
+            get => _OwnerCommandCanvas;
+            set
+            {
+                Debug.Assert(value != null);
+                SetOunerCanvas(SetGrid.Children, value);
+                if (_OwnerCommandCanvas is null)
+                    _OwnerCommandCanvas = value;
+            }
+        }
+
+        private void SetOunerCanvas(UIElementCollection list, CommandCanvas value)
+        {
+            if (list is null)
+                return;
+
+            foreach (var node in list)
+            {
+                if (node is IHaveCommandCanvas haveCommandCanvas)
+                {
+                    if (haveCommandCanvas.OwnerCommandCanvas is null)
+                        haveCommandCanvas.OwnerCommandCanvas = value;
+                }
+            }
+        }
+
         public void SetContents(UIElement element)
         {
             SetGrid.Children.Add(element);
@@ -186,13 +220,13 @@ namespace CapybaraVS.Controls
                                         node.RequestExecute(null, null);
                                         ICbValue value = node.ValueData;
                                         if (value != null)
-                                            MainWindow.Instance.MainLog.OutLine(CommandCanvas.ScriptWorkCanvas.Name, value.ValueString);
+                                            OwnerCommandCanvas.CommandCanvasControl.MainLog.OutLine(OwnerCommandCanvas.ScriptWorkCanvas.Name, value.ValueString);
                                     }
-                                    MainWindow.Instance.MainLog.OutLine(CommandCanvas.ScriptWorkCanvas.Name, "[Total Count] " + count);
+                                    OwnerCommandCanvas.CommandCanvasControl.MainLog.OutLine(OwnerCommandCanvas.ScriptWorkCanvas.Name, "[Total Count] " + count);
                                 }
                                 else
                                 {
-                                    MainWindow.Instance.MainLog.OutLine(CommandCanvas.ScriptWorkCanvas.Name, "not found data!!!");
+                                    OwnerCommandCanvas.CommandCanvasControl.MainLog.OutLine(OwnerCommandCanvas.ScriptWorkCanvas.Name, "not found data!!!");
                                 }
                             });
                     }
