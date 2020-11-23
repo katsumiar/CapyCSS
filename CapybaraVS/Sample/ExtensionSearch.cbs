@@ -3,21 +3,21 @@
   <WorkCanvas Id="1">
     <EnabelGridLine>false</EnabelGridLine>
     <EnableInfo>false</EnableInfo>
-    <CanvasScale>0.16443563297285876</CanvasScale>
+    <CanvasScale>1</CanvasScale>
     <CanvasRenderTransform>
-      <M11>0.5050679529955182</M11>
+      <M11>0.9935018321889239</M11>
       <M12>0</M12>
       <M21>0</M21>
-      <M22>0.5050679529955182</M22>
-      <OffsetX>481.3045032742123</OffsetX>
-      <OffsetY>113.25849198889323</OffsetY>
+      <M22>0.9935018321889239</M22>
+      <OffsetX>901.9774815379172</OffsetX>
+      <OffsetY>166.01767093779915</OffsetY>
     </CanvasRenderTransform>
   </WorkCanvas>
   <WorkStack>
     <StackList />
   </WorkStack>
   <WorkCanvasAssetList>
-    <Asset Id="150" X="110.81142977466834" Y="-18.34432187525411">
+    <Asset Id="150" X="113.92979293987378" Y="26.35221682602321">
       <MultiRootConnector>
         <RootFunc AssetType="LiteralType" AssetFuncType="none">
           <AttachVariableIds />
@@ -27,7 +27,7 @@
             <LiteralType>String</LiteralType>
             <ObjectType>none</ObjectType>
           </AssetLiteralType>
-          <RootConnector PointId="200">
+          <RootConnector PointId="50">
             <Caption>
               <LabelString>D:\Download</LabelString>
             </Caption>
@@ -35,7 +35,7 @@
             <ForcedChecked>false</ForcedChecked>
             <Connector>
               <LinkList>
-                <PointID>242</PointID>
+                <PointID>92</PointID>
               </LinkList>
             </Connector>
             <Arguments />
@@ -44,7 +44,7 @@
         </RootFunc>
       </MultiRootConnector>
     </Asset>
-    <Asset Id="153" X="-871.0713577367064" Y="403.2271823399202">
+    <Asset Id="153" X="-800.3884593253831" Y="422.9768157195541">
       <MultiRootConnector>
         <RootFunc AssetType="FuncType" AssetFuncType="CallerArgument">
           <AttachVariableIds />
@@ -53,7 +53,7 @@
             <LiteralType>String</LiteralType>
             <ObjectType>none</ObjectType>
           </AssetLiteralType>
-          <RootConnector PointId="202">
+          <RootConnector PointId="52">
             <Caption>
               <LabelString>DummyArgument&lt;string&gt;</LabelString>
             </Caption>
@@ -61,8 +61,8 @@
             <ForcedChecked>false</ForcedChecked>
             <Connector>
               <LinkList>
-                <PointID>206</PointID>
-                <PointID>220</PointID>
+                <PointID>56</PointID>
+                <PointID>70</PointID>
               </LinkList>
             </Connector>
             <Arguments />
@@ -71,7 +71,7 @@
         </RootFunc>
       </MultiRootConnector>
     </Asset>
-    <Asset Id="154" X="-651.2767186320191" Y="244.54775545163875">
+    <Asset Id="154" X="-626.3298133103756" Y="103.18195862899421">
       <MultiRootConnector>
         <RootFunc AssetType="FuncType" AssetFuncType="CapybaraVS.Script.Lib.FileLib.GetExtension#_string">
           <AttachVariableIds />
@@ -80,7 +80,7 @@
             <LiteralType>Double</LiteralType>
             <ObjectType>none</ObjectType>
           </AssetLiteralType>
-          <RootConnector PointId="205">
+          <RootConnector PointId="55">
             <Caption>
               <LabelString>GetExtension</LabelString>
             </Caption>
@@ -88,11 +88,11 @@
             <ForcedChecked>false</ForcedChecked>
             <Connector>
               <LinkList>
-                <PointID>216</PointID>
+                <PointID>66</PointID>
               </LinkList>
             </Connector>
             <Arguments>
-              <LinkConnector PointId="206">
+              <LinkConnector PointId="56">
                 <Value />
                 <CastConnect>false</CastConnect>
                 <ParamInfo>
@@ -112,7 +112,7 @@
         </RootFunc>
       </MultiRootConnector>
     </Asset>
-    <Asset Id="155" X="-386.1494876281125" Y="102.80907517351363">
+    <Asset Id="155" X="-361.2025823064697" Y="-38.55672164913082">
       <MultiRootConnector>
         <RootFunc AssetType="FuncType" AssetFuncType="Contains">
           <AttachVariableIds />
@@ -121,7 +121,7 @@
             <LiteralType>String</LiteralType>
             <ObjectType>none</ObjectType>
           </AssetLiteralType>
-          <RootConnector PointId="210">
+          <RootConnector PointId="60">
             <Caption>
               <LabelString>Contains</LabelString>
             </Caption>
@@ -129,11 +129,11 @@
             <ForcedChecked>false</ForcedChecked>
             <Connector>
               <LinkList>
-                <PointID>226</PointID>
+                <PointID>76</PointID>
               </LinkList>
             </Connector>
             <Arguments>
-              <LinkConnector PointId="211">
+              <LinkConnector PointId="61">
                 <CastConnect>false</CastConnect>
                 <ParamInfo>
                   <ParamName>sample</ParamName>
@@ -144,7 +144,7 @@
                 </ParamInfo>
                 <LinkConnectorList>
                   <List>
-                    <LinkConnector PointId="213">
+                    <LinkConnector PointId="63">
                       <Value>.txt</Value>
                       <CastConnect>false</CastConnect>
                       <ParamInfo>
@@ -158,7 +158,7 @@
                         <List />
                       </LinkConnectorList>
                     </LinkConnector>
-                    <LinkConnector PointId="215">
+                    <LinkConnector PointId="65">
                       <Value>.bat</Value>
                       <CastConnect>false</CastConnect>
                       <ParamInfo>
@@ -175,7 +175,7 @@
                   </List>
                 </LinkConnectorList>
               </LinkConnector>
-              <LinkConnector PointId="216">
+              <LinkConnector PointId="66">
                 <Value />
                 <CastConnect>false</CastConnect>
                 <ParamInfo>
@@ -195,7 +195,7 @@
         </RootFunc>
       </MultiRootConnector>
     </Asset>
-    <Asset Id="156" X="-381.31269437420656" Y="369.56961100398263">
+    <Asset Id="156" X="-310.6297959628845" Y="389.3192443836164">
       <MultiRootConnector>
         <RootFunc AssetType="FuncType" AssetFuncType="ConsoleOut">
           <AttachVariableIds />
@@ -204,7 +204,7 @@
             <LiteralType>String</LiteralType>
             <ObjectType>none</ObjectType>
           </AssetLiteralType>
-          <RootConnector PointId="219">
+          <RootConnector PointId="69">
             <Caption>
               <LabelString>ConsoleOut</LabelString>
             </Caption>
@@ -212,11 +212,11 @@
             <ForcedChecked>false</ForcedChecked>
             <Connector>
               <LinkList>
-                <PointID>227</PointID>
+                <PointID>77</PointID>
               </LinkList>
             </Connector>
             <Arguments>
-              <LinkConnector PointId="220">
+              <LinkConnector PointId="70">
                 <Value />
                 <CastConnect>false</CastConnect>
                 <ParamInfo>
@@ -236,7 +236,7 @@
         </RootFunc>
       </MultiRootConnector>
     </Asset>
-    <Asset Id="157" X="-83.97524163123796" Y="119.57333737351388">
+    <Asset Id="157" X="-50.71270120238046" Y="300.4384009554268">
       <MultiRootConnector>
         <RootFunc AssetType="FuncType" AssetFuncType="If_Func">
           <AttachVariableIds />
@@ -245,7 +245,7 @@
             <LiteralType>Object</LiteralType>
             <ObjectType>none</ObjectType>
           </AssetLiteralType>
-          <RootConnector PointId="225">
+          <RootConnector PointId="75">
             <Caption>
               <LabelString>If Func&lt;object&gt;.Invoke</LabelString>
             </Caption>
@@ -253,11 +253,11 @@
             <ForcedChecked>false</ForcedChecked>
             <Connector>
               <LinkList>
-                <PointID>243</PointID>
+                <PointID>93</PointID>
               </LinkList>
             </Connector>
             <Arguments>
-              <LinkConnector PointId="226">
+              <LinkConnector PointId="76">
                 <Value>False</Value>
                 <CastConnect>false</CastConnect>
                 <ParamInfo>
@@ -271,7 +271,7 @@
                   <List />
                 </LinkConnectorList>
               </LinkConnector>
-              <LinkConnector PointId="227">
+              <LinkConnector PointId="77">
                 <Value>[Func&lt;object&gt;()]&lt;null&gt;</Value>
                 <CastConnect>false</CastConnect>
                 <ParamInfo>
@@ -285,7 +285,7 @@
                   <List />
                 </LinkConnectorList>
               </LinkConnector>
-              <LinkConnector PointId="228">
+              <LinkConnector PointId="78">
                 <Value>[Func&lt;object&gt;()]&lt;null&gt;</Value>
                 <CastConnect>false</CastConnect>
                 <ParamInfo>
@@ -314,7 +314,7 @@
             <LiteralType>Object</LiteralType>
             <ObjectType>none</ObjectType>
           </AssetLiteralType>
-          <RootConnector PointId="231">
+          <RootConnector PointId="81">
             <Caption>
               <LabelString>Sequence</LabelString>
             </Caption>
@@ -324,7 +324,7 @@
               <LinkList />
             </Connector>
             <Arguments>
-              <LinkConnector PointId="232">
+              <LinkConnector PointId="82">
                 <CastConnect>false</CastConnect>
                 <ParamInfo>
                   <ParamName>call list</ParamName>
@@ -335,7 +335,7 @@
                 </ParamInfo>
                 <LinkConnectorList>
                   <List>
-                    <LinkConnector PointId="234">
+                    <LinkConnector PointId="84">
                       <Value>[object]&lt;null&gt;</Value>
                       <CastConnect>false</CastConnect>
                       <ParamInfo>
@@ -358,7 +358,7 @@
         </RootFunc>
       </MultiRootConnector>
     </Asset>
-    <Asset Id="386" X="334.5341877797" Y="-8.963187438205011">
+    <Asset Id="386" X="333.49473339129827" Y="-98.35626484075962">
       <MultiRootConnector>
         <RootFunc AssetType="FuncType" AssetFuncType="CapybaraVS.Script.Lib.FileLib.ForeachFilesInvoke#_string_Action&lt;string&gt;_string_bool_bool">
           <AttachVariableIds />
@@ -367,7 +367,7 @@
             <LiteralType>Double</LiteralType>
             <ObjectType>none</ObjectType>
           </AssetLiteralType>
-          <RootConnector PointId="241">
+          <RootConnector PointId="91">
             <Caption>
               <LabelString>ForeachFiles Invoke</LabelString>
             </Caption>
@@ -375,11 +375,11 @@
             <ForcedChecked>false</ForcedChecked>
             <Connector>
               <LinkList>
-                <PointID>234</PointID>
+                <PointID>84</PointID>
               </LinkList>
             </Connector>
             <Arguments>
-              <LinkConnector PointId="242">
+              <LinkConnector PointId="92">
                 <Value />
                 <CastConnect>false</CastConnect>
                 <ParamInfo>
@@ -393,7 +393,7 @@
                   <List />
                 </LinkConnectorList>
               </LinkConnector>
-              <LinkConnector PointId="243">
+              <LinkConnector PointId="93">
                 <Value>[Action&lt;string&gt;()]&lt;null&gt;</Value>
                 <CastConnect>false</CastConnect>
                 <ParamInfo>
@@ -407,7 +407,7 @@
                   <List />
                 </LinkConnectorList>
               </LinkConnector>
-              <LinkConnector PointId="244">
+              <LinkConnector PointId="94">
                 <Value />
                 <CastConnect>false</CastConnect>
                 <ParamInfo>
@@ -421,7 +421,7 @@
                   <List />
                 </LinkConnectorList>
               </LinkConnector>
-              <LinkConnector PointId="245">
+              <LinkConnector PointId="95">
                 <Value>False</Value>
                 <CastConnect>false</CastConnect>
                 <ParamInfo>
@@ -435,7 +435,7 @@
                   <List />
                 </LinkConnectorList>
               </LinkConnector>
-              <LinkConnector PointId="246">
+              <LinkConnector PointId="96">
                 <Value>False</Value>
                 <CastConnect>false</CastConnect>
                 <ParamInfo>
@@ -454,6 +454,29 @@
           </RootConnector>
         </RootFunc>
       </MultiRootConnector>
+    </Asset>
+    <Asset Id="388" X="-807.8770187576239" Y="268.98186342428426">
+      <GroupAreaControl>
+        <Text>仮引数のファイル名の拡張子が該当する拡張子なら出力します。</Text>
+        <Witdh>1089.6667671152256</Witdh>
+        <Height>300.72088631826233</Height>
+      </GroupAreaControl>
+    </Asset>
+    <Asset Id="389" X="-666.5112219349788" Y="-52.2095425918715">
+      <GroupAreaControl>
+        <Text>拡張子が sample リストに登録されている
+ものと一致するか判定します。</Text>
+        <Witdh>573.05793607953</Witdh>
+        <Height>288.247433657439</Height>
+      </GroupAreaControl>
+    </Asset>
+    <Asset Id="390" X="15.370856856599659" Y="-108.34007956556866">
+      <GroupAreaControl>
+        <Text>path フォルダにあるファイル一覧を取得し、
+ファイル名を仮引数に func を実行します。</Text>
+        <Witdh>636.464653772042</Witdh>
+        <Height>336.06233552392155</Height>
+      </GroupAreaControl>
     </Asset>
   </WorkCanvasAssetList>
 </CommandCanvas>

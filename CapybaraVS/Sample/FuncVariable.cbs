@@ -3,14 +3,14 @@
   <WorkCanvas Id="1">
     <EnabelGridLine>false</EnabelGridLine>
     <EnableInfo>false</EnableInfo>
-    <CanvasScale>0.8227024747918817</CanvasScale>
+    <CanvasScale>1</CanvasScale>
     <CanvasRenderTransform>
-      <M11>0.8227024747918817</M11>
+      <M11>1.5186839961352618</M11>
       <M12>0</M12>
       <M21>0</M21>
-      <M22>0.8227024747918817</M22>
-      <OffsetX>-382.00539610124025</OffsetX>
-      <OffsetY>23.462690237871836</OffsetY>
+      <M22>1.5186839961352618</M22>
+      <OffsetX>-601.0402715386344</OffsetX>
+      <OffsetY>-52.708634019914115</OffsetY>
     </CanvasRenderTransform>
   </WorkCanvas>
   <WorkStack>
@@ -18,7 +18,7 @@
       <Asset>
         <Id>1</Id>
         <VariableType>
-          <ClassName>System.Func`2[[System.Object, System.Private.CoreLib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.Int32, System.Private.CoreLib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]</ClassName>
+          <ClassName>System.Func`2[[System.Object, System.Private.CoreLib, Version=5.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.Int32, System.Private.CoreLib, Version=5.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]</ClassName>
           <LiteralType>Func</LiteralType>
           <ObjectType>none</ObjectType>
         </VariableType>
@@ -27,7 +27,7 @@
     </StackList>
   </WorkStack>
   <WorkCanvasAssetList>
-    <Asset Id="3" X="609" Y="375">
+    <Asset Id="3" X="619.8669211316146" Y="390.06669823595246">
       <MultiRootConnector>
         <RootFunc AssetType="FuncType" AssetFuncType="GetVariable">
           <AttachVariableIds>
@@ -38,15 +38,15 @@
             <LiteralType>Int</LiteralType>
             <ObjectType>Func</ObjectType>
           </AssetLiteralType>
-          <RootConnector PointId="272">
+          <RootConnector PointId="2">
             <Caption>
               <LabelString>[ func ]</LabelString>
             </Caption>
-            <Value>[Func&lt;object, int&gt;()]&lt;null&gt;</Value>
+            <Value>[Func&lt;object, int&gt;()]</Value>
             <ForcedChecked>false</ForcedChecked>
             <Connector>
               <LinkList>
-                <PointID>278</PointID>
+                <PointID>8</PointID>
               </LinkList>
             </Connector>
             <Arguments />
@@ -55,7 +55,7 @@
         </RootFunc>
       </MultiRootConnector>
     </Asset>
-    <Asset Id="5" X="888" Y="282">
+    <Asset Id="5" X="898.8669211316146" Y="297.06669823595246">
       <MultiRootConnector>
         <RootFunc AssetType="FuncType" AssetFuncType="InvokeWithArg">
           <AttachVariableIds />
@@ -64,7 +64,7 @@
             <LiteralType>Int</LiteralType>
             <ObjectType>none</ObjectType>
           </AssetLiteralType>
-          <RootConnector PointId="276">
+          <RootConnector PointId="6">
             <Caption>
               <LabelString>Func&lt;object,int&gt;.Invoke</LabelString>
             </Caption>
@@ -72,11 +72,11 @@
             <ForcedChecked>false</ForcedChecked>
             <Connector>
               <LinkList>
-                <PointID>290</PointID>
+                <PointID>20</PointID>
               </LinkList>
             </Connector>
             <Arguments>
-              <LinkConnector PointId="277">
+              <LinkConnector PointId="7">
                 <Value>999</Value>
                 <CastConnect>false</CastConnect>
                 <ParamInfo>
@@ -90,11 +90,11 @@
                   <List />
                 </LinkConnectorList>
               </LinkConnector>
-              <LinkConnector PointId="278">
+              <LinkConnector PointId="8">
                 <Value>[Func&lt;object, int&gt;()]&lt;null&gt;</Value>
                 <CastConnect>false</CastConnect>
                 <ParamInfo>
-                  <ParamName />
+                  <ParamName> </ParamName>
                   <ParamNameLabelOverlap>func</ParamNameLabelOverlap>
                   <ParamNameLabel>
                     <LabelString>func</LabelString>
@@ -110,7 +110,7 @@
         </RootFunc>
       </MultiRootConnector>
     </Asset>
-    <Asset Id="6" X="638" Y="176">
+    <Asset Id="6" X="621.6988678261007" Y="126.35564292494303">
       <MultiRootConnector>
         <RootFunc AssetType="FuncType" AssetFuncType="CallerArguments">
           <AttachVariableIds />
@@ -119,7 +119,7 @@
             <LiteralType>Int</LiteralType>
             <ObjectType>none</ObjectType>
           </AssetLiteralType>
-          <RootConnector PointId="281">
+          <RootConnector PointId="11">
             <Caption>
               <LabelString>DummyArguments&lt;int&gt;</LabelString>
             </Caption>
@@ -127,11 +127,11 @@
             <ForcedChecked>false</ForcedChecked>
             <Connector>
               <LinkList>
-                <PointID>294</PointID>
+                <PointID>24</PointID>
               </LinkList>
             </Connector>
             <Arguments>
-              <LinkConnector PointId="282">
+              <LinkConnector PointId="12">
                 <Value>INDEX.ARG_1</Value>
                 <CastConnect>false</CastConnect>
                 <ParamInfo>
@@ -151,7 +151,7 @@
         </RootFunc>
       </MultiRootConnector>
     </Asset>
-    <Asset Id="8" X="1248" Y="93">
+    <Asset Id="8" X="1262.8192110671812" Y="121.89746158100327">
       <MultiRootConnector>
         <RootFunc AssetType="FuncType" AssetFuncType="Subroutine">
           <AttachVariableIds />
@@ -160,17 +160,17 @@
             <LiteralType>Object</LiteralType>
             <ObjectType>none</ObjectType>
           </AssetLiteralType>
-          <RootConnector PointId="285">
+          <RootConnector PointId="15">
             <Caption>
               <LabelString>Sequence</LabelString>
             </Caption>
-            <Value>[object]&lt;null&gt;</Value>
+            <Value>[object]</Value>
             <ForcedChecked>false</ForcedChecked>
             <Connector>
               <LinkList />
             </Connector>
             <Arguments>
-              <LinkConnector PointId="286">
+              <LinkConnector PointId="16">
                 <CastConnect>false</CastConnect>
                 <ParamInfo>
                   <ParamName>call list</ParamName>
@@ -181,28 +181,28 @@
                 </ParamInfo>
                 <LinkConnectorList>
                   <List>
-                    <LinkConnector PointId="288">
+                    <LinkConnector PointId="18">
                       <Value>[object]&lt;null&gt;</Value>
                       <CastConnect>false</CastConnect>
                       <ParamInfo>
-                        <ParamName />
+                        <ParamName> </ParamName>
                         <ParamNameLabelOverlap />
                         <ParamNameLabel>
-                          <LabelString />
+                          <LabelString> </LabelString>
                         </ParamNameLabel>
                       </ParamInfo>
                       <LinkConnectorList>
                         <List />
                       </LinkConnectorList>
                     </LinkConnector>
-                    <LinkConnector PointId="290">
+                    <LinkConnector PointId="20">
                       <Value>[object]&lt;null&gt;</Value>
                       <CastConnect>false</CastConnect>
                       <ParamInfo>
-                        <ParamName />
+                        <ParamName> </ParamName>
                         <ParamNameLabelOverlap />
                         <ParamNameLabel>
-                          <LabelString />
+                          <LabelString> </LabelString>
                         </ParamNameLabel>
                       </ParamInfo>
                       <LinkConnectorList>
@@ -230,23 +230,23 @@
             <LiteralType>Func</LiteralType>
             <ObjectType>none</ObjectType>
           </AssetLiteralType>
-          <RootConnector PointId="293">
+          <RootConnector PointId="23">
             <Caption>
               <LabelString>[ func ]</LabelString>
             </Caption>
-            <Value>[Func&lt;object, int&gt;()]&lt;null&gt;</Value>
+            <Value>[Func&lt;object, int&gt;()]</Value>
             <ForcedChecked>false</ForcedChecked>
             <Connector>
               <LinkList>
-                <PointID>288</PointID>
+                <PointID>18</PointID>
               </LinkList>
             </Connector>
             <Arguments>
-              <LinkConnector PointId="294">
+              <LinkConnector PointId="24">
                 <Value>[Func&lt;object, int&gt;()]&lt;null&gt;</Value>
                 <CastConnect>false</CastConnect>
                 <ParamInfo>
-                  <ParamName />
+                  <ParamName> </ParamName>
                   <ParamNameLabelOverlap>n</ParamNameLabelOverlap>
                   <ParamNameLabel>
                     <LabelString>n</LabelString>
@@ -261,6 +261,22 @@
           </RootConnector>
         </RootFunc>
       </MultiRootConnector>
+    </Asset>
+    <Asset Id="14" X="554.4379539963941" Y="84.70678176239872">
+      <GroupAreaControl>
+        <Text>一番目の仮引数を受け取る処理を func 変数に登録します。</Text>
+        <Witdh>653.1122157308012</Witdh>
+        <Height>173.7107377074899</Height>
+      </GroupAreaControl>
+    </Asset>
+    <Asset Id="15" X="603.0938633493206" Y="286.495539444834">
+      <GroupAreaControl>
+        <Text>argument を引数に func 変数を
+無名関数として実行し、
+結果を返します。</Text>
+        <Witdh>605.6907403158215</Witdh>
+        <Height>216.68644980231534</Height>
+      </GroupAreaControl>
     </Asset>
   </WorkCanvasAssetList>
 </CommandCanvas>

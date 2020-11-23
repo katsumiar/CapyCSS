@@ -3,21 +3,21 @@
   <WorkCanvas Id="1">
     <EnabelGridLine>false</EnabelGridLine>
     <EnableInfo>false</EnableInfo>
-    <CanvasScale>0.6768393620286869</CanvasScale>
+    <CanvasScale>1</CanvasScale>
     <CanvasRenderTransform>
-      <M11>0.6768393620286869</M11>
+      <M11>1.144000292549546</M11>
       <M12>0</M12>
       <M21>0</M21>
-      <M22>0.6768393620286869</M22>
-      <OffsetX>-140.66459707760288</OffsetX>
-      <OffsetY>230.68322261616765</OffsetY>
+      <M22>1.144000292549546</M22>
+      <OffsetX>-93.56534132800327</OffsetX>
+      <OffsetY>397.79668007350494</OffsetY>
     </CanvasRenderTransform>
   </WorkCanvas>
   <WorkStack>
     <StackList />
   </WorkStack>
   <WorkCanvasAssetList>
-    <Asset Id="4" X="1176.8594104308395" Y="-241.91836734693877">
+    <Asset Id="4" X="1203.4187403785638" Y="-189.71554641520459">
       <MultiRootConnector>
         <RootFunc AssetType="FuncType" AssetFuncType="Subroutine">
           <AttachVariableIds />
@@ -26,17 +26,17 @@
             <LiteralType>Object</LiteralType>
             <ObjectType>none</ObjectType>
           </AssetLiteralType>
-          <RootConnector PointId="435">
+          <RootConnector PointId="131">
             <Caption>
               <LabelString>Sequence</LabelString>
             </Caption>
-            <Value>[object]&lt;null&gt;</Value>
+            <Value>[object]</Value>
             <ForcedChecked>false</ForcedChecked>
             <Connector>
               <LinkList />
             </Connector>
             <Arguments>
-              <LinkConnector PointId="436">
+              <LinkConnector PointId="132">
                 <CastConnect>false</CastConnect>
                 <ParamInfo>
                   <ParamName>call list</ParamName>
@@ -47,28 +47,28 @@
                 </ParamInfo>
                 <LinkConnectorList>
                   <List>
-                    <LinkConnector PointId="438">
+                    <LinkConnector PointId="134">
                       <Value>[object]&lt;null&gt;</Value>
                       <CastConnect>false</CastConnect>
                       <ParamInfo>
-                        <ParamName />
+                        <ParamName> </ParamName>
                         <ParamNameLabelOverlap />
                         <ParamNameLabel>
-                          <LabelString />
+                          <LabelString> </LabelString>
                         </ParamNameLabel>
                       </ParamInfo>
                       <LinkConnectorList>
                         <List />
                       </LinkConnectorList>
                     </LinkConnector>
-                    <LinkConnector PointId="440">
+                    <LinkConnector PointId="136">
                       <Value>[object]&lt;null&gt;</Value>
                       <CastConnect>false</CastConnect>
                       <ParamInfo>
-                        <ParamName />
+                        <ParamName> </ParamName>
                         <ParamNameLabelOverlap />
                         <ParamNameLabel>
-                          <LabelString />
+                          <LabelString> </LabelString>
                         </ParamNameLabel>
                       </ParamInfo>
                       <LinkConnectorList>
@@ -84,7 +84,7 @@
         </RootFunc>
       </MultiRootConnector>
     </Asset>
-    <Asset Id="5" X="480.97052154195023" Y="-276.9024943310657">
+    <Asset Id="5" X="480.05468257823566" Y="-244.81970571396818">
       <MultiRootConnector>
         <RootFunc AssetType="FuncType" AssetFuncType="ConsoleOut">
           <AttachVariableIds />
@@ -93,7 +93,7 @@
             <LiteralType>String</LiteralType>
             <ObjectType>none</ObjectType>
           </AssetLiteralType>
-          <RootConnector PointId="443">
+          <RootConnector PointId="139">
             <Caption>
               <LabelString>ConsoleOut</LabelString>
             </Caption>
@@ -101,12 +101,12 @@
             <ForcedChecked>false</ForcedChecked>
             <Connector>
               <LinkList>
-                <PointID>455</PointID>
-                <PointID>463</PointID>
+                <PointID>151</PointID>
+                <PointID>159</PointID>
               </LinkList>
             </Connector>
             <Arguments>
-              <LinkConnector PointId="444">
+              <LinkConnector PointId="140">
                 <Value>OK</Value>
                 <CastConnect>false</CastConnect>
                 <ParamInfo>
@@ -135,7 +135,7 @@
             <LiteralType>String</LiteralType>
             <ObjectType>none</ObjectType>
           </AssetLiteralType>
-          <RootConnector PointId="447">
+          <RootConnector PointId="143">
             <Caption>
               <LabelString>ConsoleOut</LabelString>
             </Caption>
@@ -143,12 +143,12 @@
             <ForcedChecked>false</ForcedChecked>
             <Connector>
               <LinkList>
-                <PointID>456</PointID>
-                <PointID>464</PointID>
+                <PointID>160</PointID>
+                <PointID>152</PointID>
               </LinkList>
             </Connector>
             <Arguments>
-              <LinkConnector PointId="448">
+              <LinkConnector PointId="144">
                 <Value>NG</Value>
                 <CastConnect>false</CastConnect>
                 <ParamInfo>
@@ -168,7 +168,7 @@
         </RootFunc>
       </MultiRootConnector>
     </Asset>
-    <Asset Id="9" X="871.5487528344673" Y="-320.62811791383206">
+    <Asset Id="9" X="870.6329138707528" Y="-288.5453292967345">
       <MultiRootConnector>
         <RootFunc AssetType="FuncType" AssetFuncType="If_Action">
           <AttachVariableIds />
@@ -177,7 +177,7 @@
             <LiteralType>Int</LiteralType>
             <ObjectType>none</ObjectType>
           </AssetLiteralType>
-          <RootConnector PointId="453">
+          <RootConnector PointId="149">
             <Caption>
               <LabelString>If Action.Invoke</LabelString>
             </Caption>
@@ -185,11 +185,11 @@
             <ForcedChecked>false</ForcedChecked>
             <Connector>
               <LinkList>
-                <PointID>438</PointID>
+                <PointID>134</PointID>
               </LinkList>
             </Connector>
             <Arguments>
-              <LinkConnector PointId="454">
+              <LinkConnector PointId="150">
                 <Value>True</Value>
                 <CastConnect>false</CastConnect>
                 <ParamInfo>
@@ -203,11 +203,11 @@
                   <List />
                 </LinkConnectorList>
               </LinkConnector>
-              <LinkConnector PointId="455">
+              <LinkConnector PointId="151">
                 <Value>[Action()]&lt;null&gt;</Value>
                 <CastConnect>false</CastConnect>
                 <ParamInfo>
-                  <ParamName />
+                  <ParamName> </ParamName>
                   <ParamNameLabelOverlap>func true</ParamNameLabelOverlap>
                   <ParamNameLabel>
                     <LabelString>func true</LabelString>
@@ -217,11 +217,11 @@
                   <List />
                 </LinkConnectorList>
               </LinkConnector>
-              <LinkConnector PointId="456">
+              <LinkConnector PointId="152">
                 <Value>[Action()]&lt;null&gt;</Value>
                 <CastConnect>false</CastConnect>
                 <ParamInfo>
-                  <ParamName />
+                  <ParamName> </ParamName>
                   <ParamNameLabelOverlap>func false</ParamNameLabelOverlap>
                   <ParamNameLabel>
                     <LabelString>func false</LabelString>
@@ -246,19 +246,19 @@
             <LiteralType>String</LiteralType>
             <ObjectType>none</ObjectType>
           </AssetLiteralType>
-          <RootConnector PointId="461">
+          <RootConnector PointId="157">
             <Caption>
               <LabelString>If Func&lt;string&gt;.Invoke</LabelString>
             </Caption>
-            <Value />
+            <Value>NG</Value>
             <ForcedChecked>false</ForcedChecked>
             <Connector>
               <LinkList>
-                <PointID>440</PointID>
+                <PointID>136</PointID>
               </LinkList>
             </Connector>
             <Arguments>
-              <LinkConnector PointId="462">
+              <LinkConnector PointId="158">
                 <Value>False</Value>
                 <CastConnect>false</CastConnect>
                 <ParamInfo>
@@ -272,11 +272,11 @@
                   <List />
                 </LinkConnectorList>
               </LinkConnector>
-              <LinkConnector PointId="463">
+              <LinkConnector PointId="159">
                 <Value>[Func&lt;string&gt;()]&lt;null&gt;</Value>
                 <CastConnect>false</CastConnect>
                 <ParamInfo>
-                  <ParamName />
+                  <ParamName> </ParamName>
                   <ParamNameLabelOverlap>func true</ParamNameLabelOverlap>
                   <ParamNameLabel>
                     <LabelString>func true</LabelString>
@@ -286,11 +286,11 @@
                   <List />
                 </LinkConnectorList>
               </LinkConnector>
-              <LinkConnector PointId="464">
+              <LinkConnector PointId="160">
                 <Value>[Func&lt;string&gt;()]&lt;null&gt;</Value>
                 <CastConnect>false</CastConnect>
                 <ParamInfo>
-                  <ParamName />
+                  <ParamName> </ParamName>
                   <ParamNameLabelOverlap>func false</ParamNameLabelOverlap>
                   <ParamNameLabel>
                     <LabelString>func false</LabelString>
@@ -305,6 +305,22 @@
           </RootConnector>
         </RootFunc>
       </MultiRootConnector>
+    </Asset>
+    <Asset Id="400" X="453.62948634015925" Y="-297.7242817717869">
+      <GroupAreaControl>
+        <Text>条件が True なら「OK」と出力します。
+条件が False なら「NG」と出力します。</Text>
+        <Witdh>644.2896406825217</Witdh>
+        <Height>235.191751356413</Height>
+      </GroupAreaControl>
+    </Asset>
+    <Asset Id="401" X="398.6382384762277" Y="-13.887659108852636">
+      <GroupAreaControl>
+        <Text>条件が True なら「OK」と出力し、「OK」を返します。
+条件が True なら「NG」と出力し、「NG」を返します。</Text>
+        <Witdh>705.5212119699426</Witdh>
+        <Height>307.0722915633866</Height>
+      </GroupAreaControl>
     </Asset>
   </WorkCanvasAssetList>
 </CommandCanvas>
