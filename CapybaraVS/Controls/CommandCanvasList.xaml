@@ -18,7 +18,7 @@
             <Button Content="Save" x:Name="SaveButton" Click="SaveButton_Click" Height="30" Margin="6,2,0,2" />
             <Button Content="New(Ctrl+N)" x:Name="AddButton" Click="AddButton_Click" Height="30" Margin="6,2,0,2" />
             <Button Content="Remove" x:Name="DeleteButton" Click="DeleteButton_Click" Height="30" Margin="12,2,0,2" />
-            <Button Content="Command Menu(space)" x:Name="CommandMenuButton" Click="CommandMenuButton_Click" Height="30" Margin="12,2,0,2" />
+            <Button Content="Command Menu(Space)" x:Name="CommandMenuButton" Click="CommandMenuButton_Click" Height="30" Margin="12,2,0,2" />
             <Button Content="Execute All (Ctrl+F5)" x:Name="ExecuteAllButton" IsEnabled="False" Click="ExecuteAllButton_Click" Height="30" Margin="48,2,0,2" />
             <Button Content="Execute (F5)" x:Name="ExecuteButton" IsEnabled="False" Click="ExecuteButton_Click" Height="30" Margin="6,2,6,2" />
         </ToolBarPanel>

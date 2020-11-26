@@ -207,50 +207,9 @@ namespace CapybaraVS.Controls.BaseControls
             });
         }
 
-        public List<string> ScriptControlRecent
-        {
-            get
-            {
-                var recentNode = CommandMenuWindow.treeViewCommand.GetRecent();
-                if (recentNode.Child.Count != 0)
-                {
-                    // 最近使ったスクリプトノードを記録する
-
-                    var Recent = new List<string>();
-                    foreach (var node in recentNode.Child)
-                    {
-                        Recent.Add(node.Name);
-                    }
-                    return Recent;
-                }
-                return null;
-            }
-            set
-            {
-                if (value != null)
-                {
-                    // 最近使ったスクリプトノードを復元する
-
-                    var recentNode = CommandMenu.GetRecent();
-                    foreach (var node in value)
-                    {
-                        recentNode.AddChild(new TreeMenuNode(node, CreateImmediateExecutionCanvasCommand(() =>
-                        {
-                            CommandMenu.ExecuteFindCommand(node);
-                        })));
-                    }
-                }
-            }
-        }
-
         ~CommandCanvas()
         {
             Dispose();
-        }
-
-        public void HideWorkStack()
-        {
-            WorkStack.Visibility = Visibility.Collapsed;
         }
 
         //----------------------------------------------------------------------
@@ -359,7 +318,7 @@ namespace CapybaraVS.Controls.BaseControls
             // コマンドを追加
             {
                 var commandNode = new TreeMenuNode("Command");
-                commandNode.AddChild(new TreeMenuNode("Clear(Ctrl+N)", CreateImmediateExecutionCanvasCommand(() => ClearWorkCanvasWithConfirmation())));
+                commandNode.AddChild(new TreeMenuNode("Clear(Ctrl+Shift+N)", CreateImmediateExecutionCanvasCommand(() => ClearWorkCanvasWithConfirmation())));
                 commandNode.AddChild(new TreeMenuNode("Toggle ShowMouseInfo", CreateImmediateExecutionCanvasCommand(() => ScriptWorkCanvas.EnableInfo = ScriptWorkCanvas.EnableInfo ? false : true)));
                 commandNode.AddChild(new TreeMenuNode("Toggle ShowGridLine(Ctrl+G)", CreateImmediateExecutionCanvasCommand(() => ScriptCommandCanvas.ToggleGridLine())));
                 commandNode.AddChild(new TreeMenuNode("Save(Ctrl+S)", CreateImmediateExecutionCanvasCommand(() => CommandCanvasControl.SaveCbsFile())));
@@ -414,6 +373,47 @@ namespace CapybaraVS.Controls.BaseControls
                 testAssetNode.AddChild(new TreeMenuNode("Rectangle", CreateEventCanvasCommand(testAssetNode.Name + ".Rectangle", () => new Rectangle() { Fill = Brushes.Red, Width = 50, Height = 50 })));
                 treeViewCommand.AssetTreeData.Add(testAssetNode);
             }
+        }
+
+        public List<string> ScriptControlRecent
+        {
+            get
+            {
+                var recentNode = CommandMenuWindow.treeViewCommand.GetRecent();
+                if (recentNode.Child.Count != 0)
+                {
+                    // 最近使ったスクリプトノードを記録する
+
+                    var Recent = new List<string>();
+                    foreach (var node in recentNode.Child)
+                    {
+                        Recent.Add(node.Name);
+                    }
+                    return Recent;
+                }
+                return null;
+            }
+            set
+            {
+                if (value != null)
+                {
+                    // 最近使ったスクリプトノードを復元する
+
+                    var recentNode = CommandMenu.GetRecent();
+                    foreach (var node in value)
+                    {
+                        recentNode.AddChild(new TreeMenuNode(node, CreateImmediateExecutionCanvasCommand(() =>
+                        {
+                            CommandMenu.ExecuteFindCommand(node);
+                        })));
+                    }
+                }
+            }
+        }
+
+        public void HideWorkStack()
+        {
+            WorkStack.Visibility = Visibility.Collapsed;
         }
 
         /// <summary>
@@ -670,9 +670,25 @@ namespace CapybaraVS.Controls.BaseControls
 
         private void Grid_KeyDown(object sender, KeyEventArgs e)
         {
-            if ((Keyboard.GetKeyStates(Key.LeftCtrl) & KeyStates.Down) > 0 ||
-                   (Keyboard.GetKeyStates(Key.RightCtrl) & KeyStates.Down) > 0)
+            bool isCtrlButton = (Keyboard.GetKeyStates(Key.LeftCtrl) & KeyStates.Down) > 0 ||
+                   (Keyboard.GetKeyStates(Key.RightCtrl) & KeyStates.Down) > 0;
+            bool isShiftButton = (Keyboard.GetKeyStates(Key.LeftShift) & KeyStates.Down) > 0 ||
+                        (Keyboard.GetKeyStates(Key.RightShift) & KeyStates.Down) > 0;
+
+            if (isCtrlButton && isShiftButton)
             {
+                // Ctrl + Shift + key
+
+                switch (e.Key)
+                {
+                    // CommandCanvasList で使用
+                    case Key.N: // 全クリア
+                        ClearWorkCanvasWithConfirmation();
+                        break;
+                }
+            }
+            else if (isCtrlButton)
+                {
                 // Ctrl + key
 
                 switch (e.Key)
@@ -694,18 +710,9 @@ namespace CapybaraVS.Controls.BaseControls
                         break;
                 }
             }
-            else if ((Keyboard.GetKeyStates(Key.LeftShift) & KeyStates.Down) > 0 ||
-                        (Keyboard.GetKeyStates(Key.RightShift) & KeyStates.Down) > 0)
+            else if (isShiftButton)
             {
                 // Shift + key
-
-                switch (e.Key)
-                {
-                    // CommandCanvasList で使用
-                    case Key.N: // 全クリア
-                        ClearWorkCanvasWithConfirmation();
-                        break;
-                }
             }
             else
             {

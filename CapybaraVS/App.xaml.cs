@@ -37,14 +37,6 @@ namespace CapybaraVS
             {
                 ReadAction = (self) =>
                 {
-                    CapybaraVS.Language.GetInstance.LanguageType = Language;
-
-                    if (BackGroundImagePath != null)
-                    {
-                        // 作業領域の背景イメージのパスをセットする
-
-                        BaseWorkCanvas.BackGrountImagePath = BackGroundImagePath;
-                    }
 
                     // 次回の為の初期化
                     self.AssetXML = new _AssetXML<App>(self);
@@ -54,20 +46,17 @@ namespace CapybaraVS
             {
                 WriteAction = () =>
                 {
-                    Language = CapybaraVS.Language.GetInstance.LanguageType;
 
-                    BackGroundImagePath = BaseWorkCanvas.BackGrountImagePath;
                 };
             }
             #region 固有定義
-            public string Language { get; set; } = "ja-JP";
-            public string BackGroundImagePath { get; set; } = null;
             #endregion
         }
         public _AssetXML<App> AssetXML { get; set; } = null;
         #endregion
 
-        string APP_INFO_NAME = @"app.xml";
+        public static string APP_INFO_NAME = @"app.xml";
+        public static string CAPYCSS_INFO_NAME = @"CapyCSS.xml";
         public static string ErrorLog = "";
         public static string EntryLoadFile = null;  // スクリプトの起動後読み込み
         public static bool IsAutoExecute = false;   // スクリプトの自動実行
@@ -97,6 +86,7 @@ namespace CapybaraVS
                     Directory.CreateDirectory(path);
                 }
                 APP_INFO_NAME = Path.Combine(path, APP_INFO_NAME);
+                CAPYCSS_INFO_NAME = Path.Combine(path, CAPYCSS_INFO_NAME);
             }
 
             // ツールチップの表示時間を設定

@@ -50,8 +50,10 @@ public static System.IO.StreamReader GetReadStream(string path, string encoding 
 * ホイールボタンの回転で表示を拡大もしくは縮小できます。
 * Ctrl + Cで選択したノードをコピーできます。
 * Ctrl + Vでコピーされているノードを貼り付けられます。
-* Ctrl + Sでスクリプトを保存できます。
+* Ctrl + Sでスクリプトを上書き保存できます。
 * Ctrl + Oでスクリプトの読み込みができます。
+* Ctrl + Nで新規にスクリプトを作成できます。
+* Ctrl + Shift + Nでスクリプトをクリアできます。
 * jキーでスクリプトの表示を画面の中央に画面に収まるように調整します。
 * Ctrl + jキーでスクリプトの表示位置を画面の左上に調整します。
 * F5でEntryをチェックされたノードをすべて実行できます。

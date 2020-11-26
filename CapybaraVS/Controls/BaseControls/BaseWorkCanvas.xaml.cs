@@ -272,7 +272,7 @@ namespace CapybaraVS.Control.BaseControls
                         {
                             // 作業領域の背景をセットする
 
-                            BaseWorkCanvas.SetWorkCanvasBG(OwnerCommandCanvas, BackGrountImagePath);
+                            CommandCanvasList.SetWorkCanvasBG(BackGrountImagePath);
                         }
                     }
                     catch (Exception ex)
@@ -849,26 +849,35 @@ namespace CapybaraVS.Control.BaseControls
                     Canvas.SetLeft(movable, setPos.X);
                     Canvas.SetTop(movable, setPos.Y);
 
-                    if (ObjectSetCommandName != null)
-                    {
-                        // 最近使ったコマンドノード記録に登録する
-
-                        var recentNode = OwnerCommandCanvas.CommandMenu.GetRecent();
-
-                        if (OwnerCommandCanvas.CommandMenu.FindMenuName(recentNode, ObjectSetCommandName) is null)
-                        {
-                            // 未登録なので登録する
-
-                            recentNode.AddChild(new TreeMenuNode(ObjectSetCommandName, OwnerCommandCanvas.CreateImmediateExecutionCanvasCommand(() =>
-                            {
-                                OwnerCommandCanvas.CommandMenu.ExecuteFindCommand(ObjectSetCommandName);
-                            })));
-                            OwnerCommandCanvas.CommandMenu.AdjustNumberRecent();
-                        }
-                    }
+                    // 全てのワークに最近使ったスクリプトノードを記録します。
+                    OwnerCommandCanvas.CommandCanvasControl.AddScriptCommandRecent(ObjectSetCommandName);
                 }
             }
             ResetCommand();
+        }
+
+        /// <summary>
+        /// 最近使ったスクリプトノードに記録します。
+        /// </summary>
+        public void AddScriptCommandRecent(string name)
+        {
+            if (name != null)
+            {
+                // 最近使ったコマンドノード記録に登録する
+
+                var recentNode = OwnerCommandCanvas.CommandMenu.GetRecent();
+
+                if (OwnerCommandCanvas.CommandMenu.FindMenuName(recentNode, name) is null)
+                {
+                    // 未登録なので登録する
+
+                    recentNode.AddChild(new TreeMenuNode(name, OwnerCommandCanvas.CreateImmediateExecutionCanvasCommand(() =>
+                    {
+                        OwnerCommandCanvas.CommandMenu.ExecuteFindCommand(name);
+                    })));
+                    OwnerCommandCanvas.CommandMenu.AdjustNumberRecent();
+                }
+            }
         }
 
         /// <summary>
@@ -1186,6 +1195,7 @@ namespace CapybaraVS.Control.BaseControls
         private void CreateTextAsset(Point pos, string contents)
         {
             var obj = new MultiRootConnector();
+            obj.OwnerCommandCanvas = OwnerCommandCanvas;
             obj.AttachParam = new MultiRootConnector.AttachText(contents);
 
             if (obj is UIElement element)
@@ -1205,20 +1215,6 @@ namespace CapybaraVS.Control.BaseControls
                 Canvas.SetLeft(movable, pos.X);
                 Canvas.SetTop(movable, pos.Y);
             }
-        }
-
-        [ScriptMethod("System.Application." + nameof(SetWorkCanvasBG), "",
-            "RS=>SA_SetWorkCanvasBG"
-        )]
-        static public void SetWorkCanvasBG(CommandCanvas canvas, string path, Stretch stretch = Stretch.UniformToFill, bool overwriteSettings = false)
-        {
-            if (overwriteSettings)
-            {
-                BaseWorkCanvas.BackGrountImagePath = path;
-            }
-
-            canvas.ScriptWorkCanvas.BGImage.Stretch = stretch;
-            canvas.ScriptWorkCanvas.BGImage.Source = new BitmapImage(new Uri(path));
         }
 
         //-------------------------------------------------------------------------------------

@@ -42,6 +42,12 @@ namespace CapybaraVS
             InitializeComponent();
             instance = this;
             Closing += MainWindow_Closing;
+            
+            if (!File.Exists(App.CAPYCSS_INFO_NAME))
+            {
+                CommandControl.SaveInfo(App.CAPYCSS_INFO_NAME);
+            }
+            CommandControl.LoadInfo(App.CAPYCSS_INFO_NAME);
 
             CommandControl.IsAutoExecute = App.IsAutoExecute;
             CommandControl.IsAutoExit = App.IsAutoExit;
@@ -62,7 +68,7 @@ namespace CapybaraVS
             {
                 Dispatcher.BeginInvoke(new Action(() =>
                 {
-                    // アイドル状態になってから戻す
+                    // アイドル状態になってから読み込む
 
                     ShowSystemErrorLog();
                     CommandControl.LoadCbsFile(App.EntryLoadFile);
@@ -109,6 +115,7 @@ namespace CapybaraVS
 
         private void MainWindow_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
+            CommandControl.SaveInfo(App.CAPYCSS_INFO_NAME);
             CommandControl.Dispose();
             App.Instance.SaveAppInfo();
         }

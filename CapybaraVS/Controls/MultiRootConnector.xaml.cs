@@ -528,6 +528,7 @@ namespace CapybaraVS.Controls
         {
             if (literalType != null)
             {
+                LinkConnectorControl.OwnerCommandCanvas = OwnerCommandCanvas;
                 LinkConnectorControl.Caption = literalType().TypeName;
                 LinkConnectorControl.ValueData = literalType();
                 return true;
@@ -540,6 +541,7 @@ namespace CapybaraVS.Controls
             if (literalType != null)
             {
                 var listType = literalType();
+                LinkConnectorControl.OwnerCommandCanvas = OwnerCommandCanvas;
                 LinkConnectorControl.Caption = literalType().TypeName;
                 LinkConnectorControl.ValueData = listType;
                 AppendToBox(listType as ICbList, true);

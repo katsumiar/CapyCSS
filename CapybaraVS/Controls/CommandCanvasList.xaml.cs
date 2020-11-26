@@ -1,5 +1,7 @@
 ﻿using CapybaraVS;
+using CapybaraVS.Control.BaseControls;
 using CapybaraVS.Controls.BaseControls;
+using CapybaraVS.Script;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -18,6 +20,8 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Windows.Threading;
+using System.Xml;
+using System.Xml.Serialization;
 
 namespace CapyCSS.Controls
 {
@@ -28,6 +32,55 @@ namespace CapyCSS.Controls
         : UserControl
         , IDisposable
     {
+        #region XML定義
+        [XmlRoot("CapyCSS")]
+        public class _AssetXML<OwnerClass>
+            where OwnerClass : CommandCanvasList
+        {
+            [XmlIgnore]
+            public Action WriteAction = null;
+            [XmlIgnore]
+            public Action<OwnerClass> ReadAction = null;
+            public _AssetXML()
+            {
+                ReadAction = (self) =>
+                {
+                    CapybaraVS.Language.GetInstance.LanguageType = Language;
+
+                    if (BackGroundImagePath != null)
+                    {
+                        // 作業領域の背景イメージのパスをセットする
+
+                        BaseWorkCanvas.BackGrountImagePath = BackGroundImagePath;
+                    }
+
+                    self.scriptWorkRecentList = ScriptWorkRecentList;
+
+                    // 次回の為の初期化
+                    self.AssetXML = new _AssetXML<CommandCanvasList>(self);
+                };
+            }
+            public _AssetXML(OwnerClass self)
+            {
+                WriteAction = () =>
+                {
+                    Language = CapybaraVS.Language.GetInstance.LanguageType;
+
+                    BackGroundImagePath = BaseWorkCanvas.BackGrountImagePath;
+
+                    ScriptWorkRecentList = self.scriptWorkRecentList;
+                };
+            }
+            #region 固有定義
+            public string Language { get; set; } = "ja-JP";
+            public string BackGroundImagePath { get; set; } = null;
+
+            public List<string> ScriptWorkRecentList = null;
+            #endregion
+        }
+        public _AssetXML<CommandCanvasList> AssetXML { get; set; } = null;
+        #endregion
+
         public ObservableCollection<CommandCanvas> CanvasData { get; set; } = new ObservableCollection<CommandCanvas>();
 
         public static CommandCanvasList Instance = null;
@@ -39,6 +92,9 @@ namespace CapyCSS.Controls
         public Action<string> SetTitleFunc = null;
 
         private int CurrentTabIndex = -1;
+
+        private List<string> scriptWorkRecentList = new List<string>();
+
         private TabItem CurrentTabItem
         {
             get
@@ -54,11 +110,63 @@ namespace CapyCSS.Controls
         public CommandCanvasList()
         {
             InitializeComponent();
+            AssetXML = new _AssetXML<CommandCanvasList>(this);
             ClearPublicExecuteEntryPoint(null);
             Instance = this;
 
             Tab.Items.Clear();
             AddNewContents();
+        }
+
+        /// <summary>
+        /// 全体的な情報を保存します。
+        /// </summary>
+        /// <param name="filename">保存ファイル名</param>
+        public void SaveInfo(string filename)
+        {
+            try
+            {
+                var writer = new StringWriter();
+                var serializer = new XmlSerializer(AssetXML.GetType());
+                var namespaces = new XmlSerializerNamespaces();
+                namespaces.Add(string.Empty, string.Empty);
+                AssetXML.WriteAction();
+                serializer.Serialize(writer, AssetXML, namespaces);
+                StreamWriter swriter = new StreamWriter(filename, false);
+                swriter.WriteLine(writer.ToString());
+                swriter.Close();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+        }
+
+        /// <summary>
+        /// 全体的な情報を読み込みます。
+        /// </summary>
+        /// <param name="filename">保存ファイル名</param>
+        public void LoadInfo(string filename)
+        {
+            try
+            {
+                StreamReader reader = new StreamReader(filename);
+                XmlSerializer serializer = new XmlSerializer(AssetXML.GetType());
+
+                XmlDocument doc = new XmlDocument();
+                doc.PreserveWhitespace = true;
+                doc.Load(reader);
+                XmlNodeReader nodeReader = new XmlNodeReader(doc.DocumentElement);
+
+                object data = (CommandCanvasList._AssetXML<CommandCanvasList>)serializer.Deserialize(nodeReader);
+                AssetXML = (CommandCanvasList._AssetXML<CommandCanvasList>)data;
+                reader.Close();
+                AssetXML.ReadAction(this);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
         }
 
         /// <summary>
@@ -69,7 +177,9 @@ namespace CapyCSS.Controls
             Dispatcher.BeginInvoke(new Action(() =>
             {
                 CurrentScriptCanvas.SaveXML();
-                CurrentTabItem.Header = System.IO.Path.GetFileNameWithoutExtension(CurrentScriptCanvas.OpenFileName);
+                {
+                    CurrentTabItem.Header = System.IO.Path.GetFileNameWithoutExtension(CurrentScriptCanvas.OpenFileName);
+                }
             }), DispatcherPriority.ApplicationIdle);
         }
 
@@ -81,7 +191,10 @@ namespace CapyCSS.Controls
             Dispatcher.BeginInvoke(new Action(() =>
             {
                 CurrentScriptCanvas.OverwriteSaveXML();
-                CurrentTabItem.Header = System.IO.Path.GetFileNameWithoutExtension(CurrentScriptCanvas.OpenFileName);
+                if (CurrentScriptCanvas.OpenFileName != null && CurrentScriptCanvas.OpenFileName != "")
+                {
+                    CurrentTabItem.Header = System.IO.Path.GetFileNameWithoutExtension(CurrentScriptCanvas.OpenFileName);
+                }
             }), DispatcherPriority.ApplicationIdle);
         }
 
@@ -121,7 +234,12 @@ namespace CapyCSS.Controls
                     Content = CurrentScriptCanvas = CreateCanvas()
                 }
                 );
-            CurrentScriptCanvas.OpenFileName = newName;
+            if (CurrentTabIndex == -1)
+            {
+                CurrentTabIndex = 0;
+            }
+            //CurrentScriptCanvas.OpenFileName = newName;
+            SetupScriptCommandRecent(CurrentScriptCanvas);
             Dispatcher.BeginInvoke(new Action(() =>
             {
                 // アイドル状態になって反映する
@@ -489,6 +607,56 @@ namespace CapyCSS.Controls
             CurrentScriptCanvas = CanvasData[index];
             CurrentScriptCanvas.SetupTitle();
             UpdateButtonEnable();
+        }
+
+        /// <summary>
+        /// 最近使ったスクリプトノードに記録します。
+        /// </summary>
+        public void AddScriptCommandRecent(string name)
+        {
+            if (!scriptWorkRecentList.Contains(name))
+            {
+                scriptWorkRecentList.Add(name);
+            }
+
+            foreach (var node in CanvasData)
+            {
+                node.WorkCanvas.AddScriptCommandRecent(name);
+            }
+        }
+
+        /// <summary>
+        /// 最近使ったスクリプトノードをまとめてセットアップします。
+        /// </summary>
+        private void SetupScriptCommandRecent(CommandCanvas commandCanvas)
+        {
+            foreach (var recent in scriptWorkRecentList)
+            {
+                commandCanvas.WorkCanvas.AddScriptCommandRecent(recent);
+            }
+        }
+
+
+        [ScriptMethod("System.Application." + nameof(SetWorkCanvasBG), "",
+            "RS=>SA_SetWorkCanvasBG"
+        )]
+        static public void SetWorkCanvasBG(string path, Stretch stretch = Stretch.UniformToFill, bool overwriteSettings = false)
+        {
+            if (overwriteSettings)
+            {
+                BaseWorkCanvas.BackGrountImagePath = path;
+            }
+
+            foreach (var canvas in CommandCanvasList.Instance.CanvasData)
+            {
+                SetTargetWorkCanvasBB(canvas, path, stretch);
+            }
+        }
+
+        private static void SetTargetWorkCanvasBB(CommandCanvas canvas, string path, Stretch stretch = Stretch.UniformToFill)
+        {
+            canvas.ScriptWorkCanvas.BGImage.Stretch = stretch;
+            canvas.ScriptWorkCanvas.BGImage.Source = new BitmapImage(new Uri(path));
         }
 
         public void Dispose()
