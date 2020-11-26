@@ -134,7 +134,6 @@ namespace CapybaraVS.Controls.BaseControls
                             System.Diagnostics.Debug.WriteLine(nameof(CommandCanvas) + "._AssetXML(ReadAction): " + ex.Message);
                         }
                     }
-                    self.ScriptControlRecent = ScriptControlRecent;
 
                     // 次回の為の初期化
                     self.AssetXML = new _AssetXML<CommandCanvas>(self);
@@ -159,7 +158,6 @@ namespace CapybaraVS.Controls.BaseControls
                         }
                     }
                     WorkCanvasAssetList = workList;
-                    ScriptControlRecent = self.ScriptControlRecent;
                 };
             }
             [XmlAttribute("Id")]
@@ -169,7 +167,6 @@ namespace CapybaraVS.Controls.BaseControls
             public Stack._AssetXML<Stack> WorkStack { get; set; } = null;
             [XmlArrayItem("Asset")]
             public List<Movable._AssetXML<Movable>> WorkCanvasAssetList { get; set; } = null;
-            public List<string> ScriptControlRecent { get; set; } = null;
             #endregion
         }
         public _AssetXML<CommandCanvas> AssetXML { get; set; } = null;
