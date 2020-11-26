@@ -115,7 +115,12 @@ namespace CapyCSS.Controls
             Instance = this;
 
             Tab.Items.Clear();
-            AddNewContents();
+            Dispatcher.BeginInvoke(new Action(() =>
+            {
+                // アイドル状態になってから作成する
+
+                AddNewContents();
+            }), DispatcherPriority.ApplicationIdle);
         }
 
         /// <summary>
