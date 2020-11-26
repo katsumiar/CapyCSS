@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:CapyCSS.Controls"
         mc:Ignorable="d"
-        Title="Command" Width="300" Height="450"
+        Title="Command" Width="538" Height="450"
         Closing="Window_Closing" HorizontalAlignment="Center" FocusVisualStyle="{x:Null}">
     <Window.Resources>
         <ResourceDictionary>
@@ -21,7 +21,7 @@
         <StackPanel x:Name="OpenListContents" HorizontalAlignment="Stretch" FocusVisualStyle="{x:Null}">
             <StackPanel Orientation="Horizontal" FocusVisualStyle="{x:Null}">
                 <Label Content="Filter :" />
-                <TextBox x:Name="FilterText" KeyUp="FilterText_KeyUp" Width="230" />
+                <TextBox x:Name="FilterText" KeyUp="FilterText_KeyUp" Width="385" />
             </StackPanel>
         </StackPanel>
     </ScrollViewer>
