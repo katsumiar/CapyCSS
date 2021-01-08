@@ -210,7 +210,7 @@ namespace CapybaraVS.Controls.BaseControls
         }
 
         //----------------------------------------------------------------------
-        #region 広域処理 TODO インスタンス化する
+        #region スクリプト内共有
 
         public CommandWindow CommandMenuWindow = null;
         public CommandCanvasList CommandCanvasControl = null;
@@ -685,7 +685,7 @@ namespace CapybaraVS.Controls.BaseControls
                 }
             }
             else if (isCtrlButton)
-                {
+            {
                 // Ctrl + key
 
                 switch (e.Key)

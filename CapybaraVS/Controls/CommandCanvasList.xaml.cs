@@ -54,6 +54,10 @@ namespace CapyCSS.Controls
                         BaseWorkCanvas.BackGrountImagePath = BackGroundImagePath;
                     }
 
+                    while (ScriptWorkRecentList.Count >= 10)
+                    {
+                        ScriptWorkRecentList.RemoveAt(0);
+                    }
                     self.scriptWorkRecentList = ScriptWorkRecentList;
 
                     // 次回の為の初期化
@@ -214,12 +218,18 @@ namespace CapyCSS.Controls
                 if (filename is null)
                 {
                     CurrentScriptCanvas.LoadXML();
-                    CurrentTabItem.Header = System.IO.Path.GetFileNameWithoutExtension(CurrentScriptCanvas.OpenFileName);
+                    if (CurrentScriptCanvas.OpenFileName != null && CurrentScriptCanvas.OpenFileName != "")
+                    {
+                        CurrentTabItem.Header = System.IO.Path.GetFileNameWithoutExtension(CurrentScriptCanvas.OpenFileName);
+                    }
                 }
                 else
                 {
                     CurrentScriptCanvas.LoadXML(System.IO.Path.GetFullPath(filename));
-                    CurrentTabItem.Header = System.IO.Path.GetFileNameWithoutExtension(filename);
+                    if (CurrentScriptCanvas.OpenFileName != null && CurrentScriptCanvas.OpenFileName != "")
+                    {
+                        CurrentTabItem.Header = System.IO.Path.GetFileNameWithoutExtension(filename);
+                    }
                 }
             }), DispatcherPriority.ApplicationIdle);
         }
@@ -621,6 +631,10 @@ namespace CapyCSS.Controls
         {
             if (!scriptWorkRecentList.Contains(name))
             {
+                while (scriptWorkRecentList.Count >= 10)
+                {
+                    scriptWorkRecentList.RemoveAt(0);
+                }
                 scriptWorkRecentList.Add(name);
             }
 
