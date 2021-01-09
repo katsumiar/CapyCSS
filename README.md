@@ -78,9 +78,10 @@ public static System.IO.StreamReader GetReadStream(string path, string encoding 
 * Static method
 * Class method(thisを受け取る引数が追加されます)
 
-## スクリプトが対応するメソッド引数
+## スクリプトが対応するメソッドの引数の型
 * Type: int, string, double, byte, sbyte, long, short, ushort, uint, ulong, char, float, decimal, bool, object
 * Class
+* Struct
 * Interface
 * Enum
 * Generics
@@ -90,9 +91,10 @@ public static System.IO.StreamReader GetReadStream(string path, string encoding 
 
 ※リテラルノードのみ独自のtext型を用意しています。string型とobject型へ代入可能です。
 
-## スクリプトが対応するメソッドの戻り型
+## スクリプトが対応するメソッドの戻り値の型
 * Type: int, string, double, byte, sbyte, long, short, ushort, uint, ulong, char, float, decimal, bool, object
 * Class
+* Struct
 * Interface
 * Enum
 * Generics
