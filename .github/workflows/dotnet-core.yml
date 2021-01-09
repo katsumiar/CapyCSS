@@ -10,16 +10,21 @@ jobs:
   build:
 
     runs-on: windows-latest
+    env:
+      Solution_Name: CapybaraVS.sln
+      Test_Project_Path: CapybaraVS\CapybaraVS.csproj
+      Wap_Project_Directory: CapybaraVS
+      Wap_Project_Path: CapybaraVS\CapybaraVS.wapproj
 
     steps:
     - uses: actions/checkout@v2
-    - name: Setup .NET Sdk
+    - name: Setup .NET Core SDK
       uses: actions/setup-dotnet@v1
       with:
-        dotnet-version: 5.0
+        dotnet-version: 5.0.100
     - name: Install dependencies
       run: dotnet restore
     - name: Build
       run: dotnet build --configuration Release --no-restore
     - name: Test
-      run: dotnet test --no-restore --verbosity normal
+      run: dotnet test
