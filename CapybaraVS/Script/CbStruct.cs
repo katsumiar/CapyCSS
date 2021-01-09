@@ -1,14 +1,12 @@
-﻿//#define SHOW_LINK_ARRAY   // リスト型を接続したときにリストの要素をコピーして表示する
-
-using System;
+﻿using System;
 using System.Reflection;
 
 namespace CapybaraVS.Script
 {
     /// <summary>
-    /// class型インターフェイス
+    /// struct型インターフェイス
     /// </summary>
-    public interface ICbClass
+    public interface ICbStruct
     {
         /// <summary>
         /// 変数の値
@@ -16,7 +14,7 @@ namespace CapybaraVS.Script
         object Data { get; }
 
         /// <summary>
-        /// CbClass<T> の管理するT型の名前
+        /// CbStruct<T> の管理するT型の名前
         /// </summary>
         string ItemName { get; }
 
@@ -28,30 +26,30 @@ namespace CapybaraVS.Script
         string ValueString { get; }
     }
 
-    public class CbClass
+    public class CbStruct
     {
         /// <summary>
-        /// CbClass<T> 型なら同様の型の変数を返します。
+        /// CbStruct<T> 型なら同様の型の変数を返します。
         /// </summary>
         /// <param name="value">参考変数</param>
         /// <param name="name">変数名</param>
-        /// <returns>CbClass<T>型の変数</returns>
-        public static ICbValue ClassValue(ICbValue value, string name)
+        /// <returns>CbStruct<T>型の変数</returns>
+        public static ICbValue StructValue(ICbValue value, string name)
         {
-            if (value is ICbClass cbClass)
+            if (value is ICbStruct cbStruct)
             {
-                return ClassValue(cbClass.OriginalReturnType, name);
+                return StructValue(cbStruct.OriginalReturnType, name);
             }
             return null;
         }
 
         /// <summary>
-        /// オリジナル型情報から CbClass<type>型の変数を返します。
+        /// オリジナル型情報から CbStruct<type>型の変数を返します。
         /// </summary>
         /// <param name="type">オリジナルのクラスの型</param>
         /// <param name="name"></param>
-        /// <returns>CbClass<T>型の変数</returns>
-        public static ICbValue ClassValue(Type type, string name)
+        /// <returns>CbStruct<T>型の変数</returns>
+        public static ICbValue StructValue(Type type, string name)
         {
             string typeName = type.FullName;
             if (type.IsByRef)
@@ -61,22 +59,32 @@ namespace CapybaraVS.Script
                 typeName = typeName.Replace("&", "");
                 type = Type.GetType(typeName);
             }
-            Type openedType = typeof(CbClass<>); //CapybaraVS.Script.CbClass`1
-            Type cbClassType = openedType.MakeGenericType(type);
+            Type openedType = typeof(CbStruct<>); //CapybaraVS.Script.CbStruct`1
+            Type cbStructType = openedType.MakeGenericType(type);
 
-            object result = cbClassType.InvokeMember("Create", BindingFlags.InvokeMethod,
+            object result = cbStructType.InvokeMember("Create", BindingFlags.InvokeMethod,
                         null, null, new object[] { name }) as ICbValue;
             return result as ICbValue;
+        }
+
+        /// <summary>
+        /// 構造体を判定します。
+        /// </summary>
+        /// <param name="type">true==構造体</param>
+        /// <returns></returns>
+        public static bool IsStruct(System.Type type)
+        {
+            return type.IsValueType && !type.IsPrimitive && !type.IsEnum;
         }
     }
 
     /// <summary>
-    /// class型
+    /// struct型
     /// </summary>
-    public class CbClass<T> : BaseCbValueClass<T>, ICbValueClass<T>, ICbClass
-         where T : class
+    public class CbStruct<T> : BaseCbValueClass<T>, ICbValueClass<T>, ICbStruct
+         where T : struct
     {
-        public override Type MyType => typeof(CbClass<T>);
+        public override Type MyType => typeof(CbStruct<T>);
 
         public override CbST CbType
         {
@@ -95,18 +103,14 @@ namespace CapybaraVS.Script
 
         public override Type OriginalType => typeof(T);
 
-#pragma warning disable 414  // 使っているのに使っていないと言われる
-        private bool nullFlg = true;
-
-        public CbClass(T n, string name = "")
+        public CbStruct(T n, string name = "")
         {
             Value = n;
             Name = name;
         }
 
-        public CbClass(string name = "")
+        public CbStruct(string name = "")
         {
-            Value = null;
             Name = name;
         }
 
@@ -114,8 +118,6 @@ namespace CapybaraVS.Script
         {
             get
             {
-                if (CbVoid.Is(typeof(T)))
-                    return CbSTUtils.VOID_STR;
                 return CbSTUtils._GetTypeName(typeof(T));
             }
         }
@@ -127,14 +129,6 @@ namespace CapybaraVS.Script
             get => _value;
             set
             {
-                if (value is null)
-                {
-                    nullFlg = true;
-                }
-                else
-                {
-                    nullFlg = false;
-                }
                 _value = value;
             }
         }
@@ -143,13 +137,9 @@ namespace CapybaraVS.Script
         {
             get
             {
-                if (CbVoid.Is(typeof(T)))
-                    return CbSTUtils.VOID_STR;
                 string baseName = "[" + TypeName + "]";
                 if (IsError)
                     return ERROR_STR;
-                if (IsNull)
-                    return baseName + NULL_STR;
                 return baseName;
             }
             set => new NotImplementedException();
@@ -159,17 +149,17 @@ namespace CapybaraVS.Script
 
         public override bool IsReadOnlyValue { get; set; } = true;
 
-        public static CbClass<T> Create(string name = "")
+        public static CbStruct<T> Create(string name = "")
         {
-            return new CbClass<T>(name);
+            return new CbStruct<T>(name);
         }
 
-        public static CbClass<T> Create(T n, string name = "")
+        public static CbStruct<T> Create(T n, string name = "")
         {
-            return new CbClass<T>(n, name);
+            return new CbStruct<T>(n, name);
         }
 
-        public static Func<ICbValue> TF = () => CbClass<T>.Create();
-        public static Func<string, ICbValue> NTF = (name) => CbClass<T>.Create(name);
+        public static Func<ICbValue> TF = () => CbStruct<T>.Create();
+        public static Func<string, ICbValue> NTF = (name) => CbStruct<T>.Create(name);
     }
 }

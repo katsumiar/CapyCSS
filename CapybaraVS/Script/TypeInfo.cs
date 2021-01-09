@@ -44,6 +44,7 @@ namespace CapybaraVS.Script
         Object,
         Class,
         Func,
+        Struct,
     }
 
     public enum CbCType // この定義は将来的に不要になる予定
@@ -53,6 +54,7 @@ namespace CapybaraVS.Script
         Enum,
         Func,
         Class,
+        Struct,
     }
 
     /// <summary>
@@ -88,6 +90,15 @@ namespace CapybaraVS.Script
                     else if (ObjectType == CbCType.Class)
                     {
                         Type openedType = typeof(CbClass<>); //CapybaraVS.Script.CbClass`1
+                        Type argType = Type.GetType(ClassName);
+                        Type cbClassType = openedType.MakeGenericType(argType);
+
+                        self.Value = cbClassType.InvokeMember("Create", BindingFlags.InvokeMethod,
+                                  null, null, new object[] { "" }) as ICbValue;
+                    }
+                    else if (ObjectType == CbCType.Struct)
+                    {
+                        Type openedType = typeof(CbStruct<>); //CapybaraVS.Script.CbStruct`1
                         Type argType = Type.GetType(ClassName);
                         Type cbClassType = openedType.MakeGenericType(argType);
 
@@ -235,46 +246,20 @@ namespace CapybaraVS.Script
             if (ObjectType != CbCType.Class)
                 return null;
 
-            return ClassValue(Value, name);
+            return CbClass.ClassValue(Value, name);
         }
 
         /// <summary>
-        /// CbClass<T> 型なら同様の型の変数を返します。
+        /// Value を参考に構造体の変数を返します。
         /// </summary>
-        /// <param name="value">参考変数</param>
         /// <param name="name">変数名</param>
-        /// <returns>CbClass<T>型の変数</returns>
-        public static ICbValue ClassValue(ICbValue value, string name)
+        /// <returns>CbStruct<T>型の変数</returns>
+        private ICbValue StructValue(string name)
         {
-            if (value is ICbClass cbClass)
-            {
-                return ClassValue(cbClass.OriginalReturnType, name);
-            }
-            return null;
-        }
+            if (ObjectType != CbCType.Struct)
+                return null;
 
-        /// <summary>
-        /// オリジナル型情報から CbClass<type>型の変数を返します。
-        /// </summary>
-        /// <param name="type">オリジナルのクラスの型</param>
-        /// <param name="name"></param>
-        /// <returns>CbClass<T>型の変数</returns>
-        public static ICbValue ClassValue(Type type, string name)
-        {
-            string typeName = type.FullName;
-            if (type.IsByRef)
-            {
-                // リファレンス（スクリプト変数接続）
-
-                typeName = typeName.Replace("&", "");
-                type = Type.GetType(typeName);
-            }
-            Type openedType = typeof(CbClass<>); //CapybaraVS.Script.CbClass`1
-            Type cbClassType = openedType.MakeGenericType(type);
-
-            object result = cbClassType.InvokeMember("Create", BindingFlags.InvokeMethod,
-                        null, null, new object[] { name }) as ICbValue;
-            return result as ICbValue;
+            return CbStruct.StructValue(Value, name);
         }
 
         /// <summary>
@@ -287,91 +272,7 @@ namespace CapybaraVS.Script
             if (ObjectType != CbCType.Enum)
                 return null;
 
-            return EnumValue(Value, name);
-        }
-
-        /// <summary>
-        /// CbEnum<T> 型なら同様の型の変数を返します。
-        /// </summary>
-        /// <param name="value">参考変数</param>
-        /// <param name="name">変数名</param>
-        /// <returns>CbEnum<T>型の変数</returns>
-        public static ICbValue EnumValue(ICbValue value, string name)
-        {
-            if (value is ICbEnum cbEnum)
-            {
-                return EnumValue(Type.GetType(cbEnum.ItemName), name);
-            }
-            return null;
-        }
-
-        /// <summary>
-        /// オリジナル型情報から CbEnum<type>型の変数を返します。
-        /// </summary>
-        /// <param name="type">オリジナルの共用体の型</param>
-        /// <param name="name">変数名</param>
-        /// <returns>CbEnum<type>型の変数</returns>
-        public static ICbValue EnumValue(Type type, string name)
-        {
-            string typeName = type.FullName;
-            if (type.IsByRef)
-            {
-                // リファレンス（スクリプト変数接続）
-
-                typeName = typeName.Replace("&", "");
-                type = Type.GetType(typeName);
-            }
-            Type openedType = typeof(CbEnum<>); //CapybaraVS.Script.CbEnum`1
-            Type cbEnumType = openedType.MakeGenericType(type);
-
-            object result = cbEnumType.InvokeMember("Create", BindingFlags.InvokeMethod,
-                        null, null, new object[] { name }) as ICbValue;
-            return result as ICbValue;
-        }
-
-        /// <summary>
-        /// Func<object, type> 型の CbFunc<type> 型の変数を返します。
-        /// </summary>
-        /// <param name="type">オリジナルの元々の型</param>
-        /// <param name="retType">オリジナルの返し値の型</param>
-        /// <param name="name">変数名</param>
-        /// <returns>CbFunc<type> 型の変数</returns>
-        public static ICbValue FuncValue(Type type, Type retType, string name)
-        {
-            string typeName = type.FullName;
-            if (type.IsByRef)
-            {
-                // リファレンス（スクリプト変数接続）
-
-                typeName = typeName.Replace("&", "");
-                type = Type.GetType(typeName);
-            }
-
-            foreach (var arg in type.GenericTypeArguments)
-            {
-                Type cbType = ConvertCbType(arg);
-                if (cbType is null)
-                    return null;
-            }
-
-            return CbFunc.CreateFuncFromOriginalType(type, retType, name);
-        }
-
-        /// <summary>
-        /// メソッド呼び出し用引数情報リストの中にイベント型を含んでいるかを判定します。
-        /// </summary>
-        /// <param name="arguments">メソッド呼び出し用引数情報リスト</param>
-        /// <returns>イベント型を含んでいるなら true</returns>
-        public static bool ConteinsEvent(List<ArgumentInfoNode> arguments)
-        {
-            if (arguments is null)
-                return false;
-            foreach (var node in arguments)
-            {
-                if (node.CreateArgument() is ICbEvent)
-                    return true;
-            }
-            return false;
+            return CbEnumTools.EnumValue(Value, name);
         }
 
         /// <summary>
@@ -415,6 +316,10 @@ namespace CapybaraVS.Script
             {
                 return type.GetGenericArguments()[0];
             }
+            if (type.GetGenericTypeDefinition() == typeof(CbStruct<>))
+            {
+                return type.GetGenericArguments()[0];
+            }
 
             return null;
         }
@@ -454,11 +359,18 @@ namespace CapybaraVS.Script
                 return cbEnumType;
             }
 
-            if (type.IsClass)
+            if (type.IsClass || type.IsInterface)
             {
                 Type openedType = typeof(CbClass<>);
                 Type cbClassType = openedType.MakeGenericType(type);
                 return cbClassType;
+            }
+
+            if (CbStruct.IsStruct(type))
+            {
+                Type openedType = typeof(CbStruct<>);
+                Type cbStructType = openedType.MakeGenericType(type);
+                return cbStructType;
             }
 
             if (type.GetGenericTypeDefinition() == typeof(List<>))
@@ -594,14 +506,14 @@ namespace CapybaraVS.Script
 
             if (type.IsEnum)
             {
-                return EnumValue(type, name);
+                return CbEnumTools.EnumValue(type, name);
             }
 
             if (type == typeof(Action))
             {
                 if (CbFunc.IsActionType(type))
                 {
-                    return FuncValue(type, typeof(CbVoid), name);
+                    return CbFunc.FuncValue(type, typeof(CbVoid), name);
                 }
             }
 
@@ -617,29 +529,42 @@ namespace CapybaraVS.Script
 
                 if (CbFunc.IsActionType(type))
                 {
-                    return FuncValue(type, typeof(CbVoid), name);
+                    return CbFunc.FuncValue(type, typeof(CbVoid), name);
                 }
 
                 if (CbFunc.IsFuncType(type))
                 {
-                    return FuncValue(type, type.GenericTypeArguments.Last(), name);
+                    return CbFunc.FuncValue(type, type.GenericTypeArguments.Last(), name);
                 }
 
                 // その他のジェネリックは、クラスとして扱う
-                return ClassValue(type, name);
+                return CbClass.ClassValue(type, name);
             }
 
             if (type.IsClass || type.IsInterface)
             {
                 if (!isCancelClass)
                 {
-                    var ret = ClassValue(type, name);
+                    var ret = CbClass.ClassValue(type, name);
                     if (ret != null && ret is ICbClass cbClass)
                     {
                         return _CbCreate(cbClass.OriginalReturnType, name, true);
                     }
                 }
-                return ClassValue(type, name);
+                return CbClass.ClassValue(type, name);
+            }
+
+            if (CbStruct.IsStruct(type))
+            {
+                if (!isCancelClass)
+                {
+                    var ret = CbStruct.StructValue(type, name);
+                    if (ret != null && ret is ICbStruct cbStruct)
+                    {
+                        return _CbCreate(cbStruct.OriginalReturnType, name, true);
+                    }
+                }
+                return CbStruct.StructValue(type, name);
             }
 
             return null;
@@ -731,6 +656,12 @@ namespace CapybaraVS.Script
                 LiteralType = CbType.Class;
                 ObjectType = CbCType.Class;
             }
+            else if (value is ICbStruct)
+            {
+                Value = value;
+                LiteralType = CbType.Struct;
+                ObjectType = CbCType.Struct;
+            }
             else
             {
                 Value = value;
@@ -774,6 +705,11 @@ namespace CapybaraVS.Script
             }
 
             if (type.IsClass)
+            {
+                return CbType.Object;
+            }
+
+            if (CbStruct.IsStruct(type))
             {
                 return CbType.Object;
             }
@@ -858,6 +794,10 @@ namespace CapybaraVS.Script
             else if (cbTypeInfo.ObjectType == CbCType.Class)
             {
                 return cbTypeInfo.ClassValue(name);
+            }
+            else if (cbTypeInfo.ObjectType == CbCType.Struct)
+            {
+                return cbTypeInfo.StructValue(name);
             }
             else if (cbTypeInfo.ObjectType == CbCType.Enum)
             {
@@ -958,7 +898,8 @@ namespace CapybaraVS.Script
                 case CbType.Decimal: return CbDecimal.Create(name);
                 case CbType.Bool: return CbBool.Create(name);
                 case CbType.Object: return CbObject.Create(name);
-                case CbType.Class: return ClassValue(init, name);
+                case CbType.Class: return CbClass.ClassValue(init, name);
+                case CbType.Struct: return CbStruct.StructValue(init, name);
                 default:
                     break;
             }

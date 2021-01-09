@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Reflection;
 
 namespace CapybaraVS.Script
 {
@@ -12,6 +13,48 @@ namespace CapybaraVS.Script
         /// CbEnum<T> の管理するT型の名前
         /// </summary>
         string ItemName { get; }
+    }
+
+    public class CbEnumTools
+    {
+        /// <summary>
+        /// CbEnum<T> 型なら同様の型の変数を返します。
+        /// </summary>
+        /// <param name="value">参考変数</param>
+        /// <param name="name">変数名</param>
+        /// <returns>CbEnum<T>型の変数</returns>
+        public static ICbValue EnumValue(ICbValue value, string name)
+        {
+            if (value is ICbEnum cbEnum)
+            {
+                return EnumValue(Type.GetType(cbEnum.ItemName), name);
+            }
+            return null;
+        }
+
+        /// <summary>
+        /// オリジナル型情報から CbEnum<type>型の変数を返します。
+        /// </summary>
+        /// <param name="type">オリジナルの共用体の型</param>
+        /// <param name="name">変数名</param>
+        /// <returns>CbEnum<type>型の変数</returns>
+        public static ICbValue EnumValue(Type type, string name)
+        {
+            string typeName = type.FullName;
+            if (type.IsByRef)
+            {
+                // リファレンス（スクリプト変数接続）
+
+                typeName = typeName.Replace("&", "");
+                type = Type.GetType(typeName);
+            }
+            Type openedType = typeof(CbEnum<>); //CapybaraVS.Script.CbEnum`1
+            Type cbEnumType = openedType.MakeGenericType(type);
+
+            object result = cbEnumType.InvokeMember("Create", BindingFlags.InvokeMethod,
+                        null, null, new object[] { name }) as ICbValue;
+            return result as ICbValue;
+        }
     }
 
     /// <summary>

@@ -178,7 +178,7 @@ namespace CapybaraVS.Script
                         };
 
                         // ノード化を依頼
-                        if (CbST.ConteinsEvent(argumentList))
+                        if (CbFunc.ContainsEvent(argumentList))
                         {
                             // Func<> 引数を持つノードを作成
 

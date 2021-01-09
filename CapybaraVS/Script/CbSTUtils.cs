@@ -33,6 +33,7 @@ namespace CapybaraVS.Script
         public const string BOOL_STR = "bool";
         public const string STRING_STR = "string";
         public const string TEXT_STR = "text";
+        public const string STRUCT_STR = "text";
 
         static public string EnumCbTypeToString(CbType cbType)
         {
@@ -57,6 +58,7 @@ namespace CapybaraVS.Script
                 case CbType.Object: return OBJECT_STR;
                 case CbType.Class: return CLASS_STR;
                 case CbType.Func: return FUNC_STR;
+                case CbType.Struct: return STRUCT_STR;
                 default:
                     Debug.Assert(false);
                     break;
@@ -140,6 +142,7 @@ namespace CapybaraVS.Script
                 // ジェネリック型内のジェネリックCbクラス用
 
                 if (type.GetGenericTypeDefinition() == typeof(CbClass<>) ||
+                    type.GetGenericTypeDefinition() == typeof(CbStruct<>) ||
                     type.GetGenericTypeDefinition() == typeof(CbEnum<>))
                 {
                     isNotGeneName = true;

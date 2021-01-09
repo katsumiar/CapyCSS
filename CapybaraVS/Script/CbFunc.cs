@@ -5,6 +5,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using static CapybaraVS.Script.ScriptImplement;
 
 namespace CbVS.Script
 {
@@ -401,6 +402,50 @@ namespace CbVS.Script
             return -1;
         }
 
+        /// <summary>
+        /// Func<object, type> 型の CbFunc<type> 型の変数を返します。
+        /// </summary>
+        /// <param name="type">オリジナルの元々の型</param>
+        /// <param name="retType">オリジナルの返し値の型</param>
+        /// <param name="name">変数名</param>
+        /// <returns>CbFunc<type> 型の変数</returns>
+        public static ICbValue FuncValue(Type type, Type retType, string name)
+        {
+            string typeName = type.FullName;
+            if (type.IsByRef)
+            {
+                // リファレンス（スクリプト変数接続）
+
+                typeName = typeName.Replace("&", "");
+                type = Type.GetType(typeName);
+            }
+
+            foreach (var arg in type.GenericTypeArguments)
+            {
+                Type cbType = CbST.ConvertCbType(arg);
+                if (cbType is null)
+                    return null;
+            }
+
+            return CbFunc.CreateFuncFromOriginalType(type, retType, name);
+        }
+
+        /// <summary>
+        /// メソッド呼び出し用引数情報リストの中にイベント型を含んでいるかを判定します。
+        /// </summary>
+        /// <param name="arguments">メソッド呼び出し用引数情報リスト</param>
+        /// <returns>イベント型を含んでいるなら true</returns>
+        public static bool ContainsEvent(List<ArgumentInfoNode> arguments)
+        {
+            if (arguments is null)
+                return false;
+            foreach (var node in arguments)
+            {
+                if (node.CreateArgument() is ICbEvent)
+                    return true;
+            }
+            return false;
+        }
     }
 
     /// <summary>
