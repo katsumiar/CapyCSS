@@ -17,10 +17,11 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using static CapybaraVS.Controls.PlotWindow;
+using static CbVS.Script.Lib.Media;
 
 namespace CbVS.Script.Lib
 {
-    class Image
+    public class Image
     {
         const string nameSpace = "Graphics.Image";
 
@@ -224,13 +225,14 @@ namespace CbVS.Script.Lib
         [ScriptMethod(nameSpace + "." + "OutImageWindow", "",
             "RS=>Image_OutImageWindow"
             )]
-        public static void OutImageWindow(string title, BitmapSource image)
+        public static void OutImageWindow(string title, BitmapSource image, MediaOption mediaOption = null)
         {
             if (image is null)
             {
                 return;
             }
             var window = new MediaWindow();
+            window.MediaOption = mediaOption;
             window.Owner = MainWindow.Instance;
             window.ImageSource = image;
             window.Caption = title;

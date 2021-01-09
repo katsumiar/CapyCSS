@@ -6,27 +6,75 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using System.Threading;
+using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using static CbVS.Script.Lib.Image;
 
 namespace CbVS.Script.Lib
 {
-    class Media
+    public class Media
     {
         const string nameSpace = "Graphics.Media";
+
+        public enum Display
+        {
+            None,
+            Primary,
+            Secondary
+        }
+
+        /// <summary>
+        /// 画像や映像用の表示オプション
+        /// </summary>
+        public class MediaOption
+        {
+            public double scale;    // スケール
+            public double offsetX;  // 表示開始X位置
+            public double offsetY;  // 表示開始Y位置
+            public double width;    // 表示横幅
+            public double height;   // 表示縦幅
+            public double posX;     // ウインドウX位置
+            public double posY;     // ウインドウY位置
+            public Display display; // ディスプレイ
+        }
+
+        [ScriptMethod(nameSpace + "." + nameof(CreateMediaOption))]
+        public static MediaOption CreateMediaOption(
+            double scale = 1.0,                 // スケール
+            double offsetX = 0,                 // 表示開始X位置
+            double offsetY = 0,                 // 表示開始Y位置
+            double width = 640,                 // 表示横幅
+            double height = 320,                // 表示縦幅
+            double posX = 0,                    // ウインドウX位置
+            double posY = 0,                    // ウインドウY位置
+            Display display = Display.Primary   // ディスプレイ
+            )
+        {
+            var obj = new MediaOption();
+            obj.scale = scale;
+            obj.offsetX = offsetX;
+            obj.offsetY = offsetY;
+            obj.width = width;
+            obj.height = height;
+            obj.posX = posX;
+            obj.posY = posY;
+            obj.display = display;
+            return obj;
+        }
 
         //------------------------------------------------------------------
         [ScriptMethod(nameSpace + "." + "OutMediaWindow", "",
             "RS=>Image_OutMediaWindow"
             )]
-        public static void OutMediaWindow(string title, MediaPlayer media)
+        public static void OutMediaWindow(string title, MediaPlayer media, MediaOption mediaOption = null)
         {
             if (media is null)
             {
                 return;
             }
             var window = new MediaWindow();
+            window.MediaOption = mediaOption;
             window.Owner = MainWindow.Instance;
             window.MediaSource = media;
             window.Caption = title;

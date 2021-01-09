@@ -11,6 +11,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using System.Windows.Threading;
+using static CbVS.Script.Lib.Media;
 
 namespace CbVS.Controls
 {
@@ -21,9 +22,14 @@ namespace CbVS.Controls
     {
         BitmapSource imageData = null;
 
+        public MediaOption MediaOption = null;
+
         public MediaWindow()
         {
             InitializeComponent();
+            KeyUp += (o, e) => { if (e.Key == Key.Escape) Close(); };
+            MouseLeftButtonDown += (o, e) => DragMove();
+            ImageBox.MouseLeftButtonDown += (o, e) => DragMove();
         }
 
         string caption = "";
@@ -49,11 +55,10 @@ namespace CbVS.Controls
                 if (value is null)
                     return;
 
-                Width = value.PixelWidth;
-                Height = value.PixelHeight;
+                Width = value.PixelWidth + SystemParameters.VerticalScrollBarWidth;
+                Height = value.PixelHeight + SystemParameters.VerticalScrollBarWidth;
                 imageData = value.CloneCurrentValue();
                 ImageBox.Source = imageData;
-                //ImageBox.Source = value;
 
                 ImageBoxS.Visibility = Visibility.Visible;
                 toggleUniform.Visibility = Visibility.Visible;
@@ -61,10 +66,23 @@ namespace CbVS.Controls
                 Dispatcher.BeginInvoke(
                    new Action(() =>
                    {
-                       if (Width > 1600)
-                           Width = 1600;
-                       if (Height > 900)
-                           Height = 900;
+                       if (MediaOption != null)
+                       {
+                           Width = MediaOption.width;
+                           Height = MediaOption.height;
+                           ImageBox.Width = MediaOption.width * MediaOption.scale;
+                           ImageBox.Height = MediaOption.height * MediaOption.scale;
+                           ImageBox.Margin = new Thickness(-MediaOption.offsetX, -MediaOption.offsetY, 0, 0);
+
+                           setupWindowPosition();
+                       }
+                       else
+                       {
+                           if (Width > 1600)
+                               Width = 1600;
+                           if (Height > 900)
+                               Height = 900;
+                       }
                    }
                    ), DispatcherPriority.Loaded);
             }
@@ -77,12 +95,53 @@ namespace CbVS.Controls
                 if (value is null)
                     return;
 
-                Width = 640;
-                Height = 480;
                 MediaPlayer media = (MediaPlayer)(value as MediaPlayer).CloneCurrentValue();
                 //MediaPlayer media = (MediaPlayer)(value as MediaPlayer);
                 MediaBox.Source = media.Source;
                 MediaBox.Visibility = Visibility.Visible;
+
+                if (MediaOption != null)
+                {
+                    Width = MediaOption.width;
+                    Height = MediaOption.height;
+                    MediaBox.Width = MediaOption.width * MediaOption.scale;
+                    MediaBox.Height = MediaOption.height * MediaOption.scale;
+                    MediaBox.Margin = new Thickness(-MediaOption.offsetX, -MediaOption.offsetY, 0, 0);
+
+                    setupWindowPosition();
+                }
+                else
+                {
+                    Width = media.NaturalVideoWidth;
+                    Height = media.NaturalVideoHeight;
+                }
+            }
+        }
+
+        private void setupWindowPosition()
+        {
+            switch (MediaOption.display)
+            {
+                case Display.None:
+                    Left += MediaOption.posX;
+                    Top += MediaOption.posY;
+                    break;
+                case Display.Primary:
+                    Left = MediaOption.posX;
+                    Top = MediaOption.posY;
+                    Width = Math.Min(Width, SystemParameters.PrimaryScreenWidth - MediaOption.posX);
+                    break;
+                case Display.Secondary:
+                    Left = MediaOption.posX;
+                    Top = MediaOption.posY;
+                    Left += SystemParameters.PrimaryScreenWidth;
+                    Width = Math.Min(Width, SystemParameters.VirtualScreenWidth - SystemParameters.PrimaryScreenWidth - MediaOption.posX);
+                    break;
+            }
+            if (MediaOption.display != Display.None)
+            {
+                WindowStyle = WindowStyle.None;
+                AllowsTransparency = true;
             }
         }
 
