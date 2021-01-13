@@ -253,7 +253,6 @@ namespace CapyCSS.Controls
             {
                 CurrentTabIndex = 0;
             }
-            //CurrentScriptCanvas.OpenFileName = newName;
             SetupScriptCommandRecent(CurrentScriptCanvas);
             Dispatcher.BeginInvoke(new Action(() =>
             {
@@ -590,7 +589,7 @@ namespace CapyCSS.Controls
             {
                 TabItem selectedTab = e.AddedItems[0] as TabItem;
                 int index = 0;
-                CurrentTabIndex = -1;
+                //CurrentTabIndex = -1;
                 foreach (var node in Tab.Items)
                 {
                     if (node == selectedTab)
