@@ -77,7 +77,7 @@ namespace CapybaraVS
         }
 
         /// <summary>
-        /// システムエラーを出力する
+        /// システムエラーを出力します。
         /// </summary>
         private static void ShowSystemErrorLog()
         {
