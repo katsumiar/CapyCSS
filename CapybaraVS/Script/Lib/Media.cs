@@ -17,6 +17,9 @@ namespace CbVS.Script.Lib
     {
         const string nameSpace = "Graphics.Media";
 
+        /// <summary>
+        /// 出力先ディスプレイ定義
+        /// </summary>
         public enum Display
         {
             None,
@@ -36,19 +39,21 @@ namespace CbVS.Script.Lib
             public double height;   // 表示縦幅
             public double posX;     // ウインドウX位置
             public double posY;     // ウインドウY位置
+            public bool repeat;     // リピート再生
             public Display display; // ディスプレイ
         }
 
         [ScriptMethod(nameSpace + "." + nameof(CreateMediaOption))]
         public static MediaOption CreateMediaOption(
-            double scale = 1.0,                 // スケール
-            double offsetX = 0,                 // 表示開始X位置
-            double offsetY = 0,                 // 表示開始Y位置
-            double width = 640,                 // 表示横幅
-            double height = 320,                // 表示縦幅
-            double posX = 0,                    // ウインドウX位置
-            double posY = 0,                    // ウインドウY位置
-            Display display = Display.Primary   // ディスプレイ
+            double scale = 1.0,             // スケール
+            double offsetX = 0,             // 表示開始X位置
+            double offsetY = 0,             // 表示開始Y位置
+            double width = 640,             // 表示横幅
+            double height = 320,            // 表示縦幅
+            double posX = 0,                // ウインドウX位置
+            double posY = 0,                // ウインドウY位置
+            bool repeat = false,            // リピート再生
+        Display display = Display.Primary   // ディスプレイ
             )
         {
             var obj = new MediaOption();
@@ -60,6 +65,7 @@ namespace CbVS.Script.Lib
             obj.posX = posX;
             obj.posY = posY;
             obj.display = display;
+            obj.repeat = repeat;
             return obj;
         }
 

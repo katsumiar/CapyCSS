@@ -96,25 +96,53 @@ namespace CbVS.Controls
                     return;
 
                 MediaPlayer media = (MediaPlayer)(value as MediaPlayer).CloneCurrentValue();
-                //MediaPlayer media = (MediaPlayer)(value as MediaPlayer);
                 MediaBox.Source = media.Source;
                 MediaBox.Visibility = Visibility.Visible;
-
-                if (MediaOption != null)
+                MediaBox.LoadedBehavior = MediaState.Manual;
+                if (MediaOption != null && MediaOption.display != Display.None)
                 {
-                    Width = MediaOption.width;
-                    Height = MediaOption.height;
-                    MediaBox.Width = MediaOption.width * MediaOption.scale;
-                    MediaBox.Height = MediaOption.height * MediaOption.scale;
-                    MediaBox.Margin = new Thickness(-MediaOption.offsetX, -MediaOption.offsetY, 0, 0);
+                    WindowStyle = WindowStyle.None;
+                    AllowsTransparency = true;
 
-                    setupWindowPosition();
+                    if (MediaOption.repeat)
+                    {
+                        // リピート再生制御を追加する
+
+                        MediaBox.MediaEnded += (s, e) =>
+                        {
+                            MediaBox.Stop();
+                            MediaBox.Play();
+                        };
+                    }
                 }
-                else
-                {
-                    Width = media.NaturalVideoWidth;
-                    Height = media.NaturalVideoHeight;
-                }
+
+                Dispatcher.BeginInvoke(
+                   new Action(() =>
+                   {
+                       if (MediaOption != null)
+                       {
+                           Width = MediaOption.width;
+                           Height = MediaOption.height;
+                           double sw = media.NaturalVideoWidth * MediaOption.scale;
+                           double sh = media.NaturalVideoHeight * MediaOption.scale;
+                           MediaBox.Margin = new Thickness(
+                               -MediaOption.offsetX - (sw - media.NaturalVideoWidth) / 2.0,
+                               -MediaOption.offsetY - (sh - media.NaturalVideoHeight) / 2.0,
+                               0,
+                               0);
+                           MediaBox.Width = sw;
+                           MediaBox.Height = sh;
+
+                           setupWindowPosition();
+                       }
+                       else
+                       {
+                           Width = media.NaturalVideoWidth;
+                           Height = media.NaturalVideoHeight;
+                       }
+                       MediaBox.Play();
+                   }
+                   ), DispatcherPriority.Loaded);
             }
         }
 
@@ -137,11 +165,6 @@ namespace CbVS.Controls
                     Left += SystemParameters.PrimaryScreenWidth;
                     Width = Math.Min(Width, SystemParameters.VirtualScreenWidth - SystemParameters.PrimaryScreenWidth - MediaOption.posX);
                     break;
-            }
-            if (MediaOption.display != Display.None)
-            {
-                WindowStyle = WindowStyle.None;
-                AllowsTransparency = true;
             }
         }
 
