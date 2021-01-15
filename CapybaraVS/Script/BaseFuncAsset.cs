@@ -1027,7 +1027,7 @@ namespace CapybaraVS.Script
                             TryArgListProc(argument[2],
                                 (valueData) =>
                                 {
-                                    toolExec.ParamData.Add(GetArgument<string>(valueData));
+                                    toolExec.ParamList.Add(GetArgument<string>(valueData));
                                 });
 
                             ret.CallBack = (cagt2) =>

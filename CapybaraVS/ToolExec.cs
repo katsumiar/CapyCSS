@@ -9,22 +9,36 @@ namespace CapybaraVS
 {
     class ToolExec
     {
-        public static List<Process> Processes = null;
+        /// <summary>
+        /// 呼ばれた実行ファイルのプロセスリストです。
+        /// </summary>
+        private static List<Process> ProcessList = null;
 
-        public List<string> ParamData = new List<string>();
-        public string FileName { get; set; } = null;
+        /// <summary>
+        /// 実行ファイルを呼び出すときの引数リストです。
+        /// </summary>
+        public List<string> ParamList = new List<string>();
 
-        public ToolExec(string fileName)
+        /// <summary>
+        /// 実行ファイルのパスです。
+        /// </summary>
+        public string ExecPath => _ExecPath;
+
+        private string _ExecPath = null;
+        public ToolExec(string path)
         {
-            FileName = fileName;
+            _ExecPath = path;
         }
 
+        /// <summary>
+        /// ToolExecによって作られた実行ファイルをすべて殺します。
+        /// </summary>
         public static void KillProcess()
         {
-            if (Processes is null)
+            if (ProcessList is null)
                 return;
 
-            foreach (var proc in Processes)
+            foreach (var proc in ProcessList)
             {
                 if (!proc.HasExited)
                 {
@@ -32,13 +46,36 @@ namespace CapybaraVS
                 }
                 proc.Close();
             }
-            Processes = null;
+            ProcessList = null;
         }
 
+        /// <summary>
+        /// ToolExecによって呼ばれたすべての実行ファイルの終了を待ちます。
+        /// </summary>
+        public static void WaitForExit()
+        {
+            if (ProcessList is null)
+                return;
+
+            foreach (var proc in ProcessList)
+            {
+                if (!proc.HasExited)
+                {
+                    proc.WaitForExit();
+                }
+            }
+        }
+
+        /// <summary>
+        /// プロセスを実行します。
+        /// ※redirectがfalseの場合、実行ファイルを呼び出すと終わりを待たずにすぐに返ります。
+        /// </summary>
+        /// <param name="redirect">リダイレクトするか？</param>
+        /// <returns>呼び出された実行ファイルの終了コード（リダイレクトでない場合は、常に 0）</returns>
         public int Start(bool redirect = false)
         {
             string execOption = null;
-            foreach (var node in ParamData)
+            foreach (var node in ParamList)
             {
                 execOption ??= new string("");
                 if (execOption != "")
@@ -47,12 +84,12 @@ namespace CapybaraVS
             }
 
             ProcessStartInfo psInfo = new ProcessStartInfo();
-            psInfo.FileName = FileName;
+            psInfo.FileName = ExecPath;
             if (execOption != null)
                 psInfo.Arguments = execOption;
             psInfo.CreateNoWindow = true;                   // コンソールウィンドウを開かない
-            psInfo.UseShellExecute = !redirect;             // シェル機能を使用しない
-            psInfo.RedirectStandardOutput = redirect;       // 標準出力をリダイレクト
+            psInfo.UseShellExecute = !redirect;             // シェル機能を使用するか？
+            psInfo.RedirectStandardOutput = redirect;       // 標準出力をリダイレクトするか？
 
             Process p = Process.Start(psInfo);              // アプリの実行開始
 
@@ -67,8 +104,8 @@ namespace CapybaraVS
                 return p.ExitCode;
             }
 
-            Processes ??= new List<Process>();
-            Processes.Add(p);
+            ProcessList ??= new List<Process>();
+            ProcessList.Add(p);
             return 0;
         }
     }
