@@ -530,6 +530,16 @@ namespace CapybaraVS.Script
 
             if (type.IsGenericType)
             {
+                if (type.GetGenericTypeDefinition() == typeof(Nullable<>))
+                {
+                    if (type.GenericTypeArguments.Length > 1)
+                        return null;
+
+                    var ret = _CbCreate(type.GenericTypeArguments[0], name, false);
+                    ret.IsNullable = true;
+                    return ret;
+                }
+
                 if (type.GetGenericTypeDefinition() == typeof(List<>))
                 {
                     if (type.GenericTypeArguments.Length > 1)
@@ -1001,6 +1011,10 @@ namespace CapybaraVS.Script
         /// </summary>
         bool IsStringableValue { get; }
         bool IsNull { get; }
+        /// <summary>
+        /// null許容型か？
+        /// </summary>
+        bool IsNullable { get; set; }
         bool IsAssignment(ICbValue obj, bool isCast = false);
         bool IsError { get; set; }
         string ErrorMessage { get; set; }
@@ -1152,11 +1166,18 @@ namespace CapybaraVS.Script
         {
             get
             {
+                string typeName;
                 if (Value is null)
                 {
-                    return CbSTUtils._GetTypeName(OriginalType);
+                    typeName = CbSTUtils._GetTypeName(OriginalType);
                 }
-                return CbSTUtils.GetTypeName(Value as object);
+                else
+                {
+                    typeName = CbSTUtils.GetTypeName(Value as object);
+                }
+                if (IsNullable)
+                    return typeName + "?";
+                return typeName;
             }
         }
 
@@ -1251,6 +1272,11 @@ namespace CapybaraVS.Script
         /// 変数の持つ値は null か？
         /// </summary>
         public virtual bool IsNull { get => Value is null; }
+
+        /// <summary>
+        /// null許容型か？
+        /// </summary>
+        public bool IsNullable { get; set; } = false;
 
         public virtual void Set(ICbValue n)
         {
@@ -1460,6 +1486,7 @@ namespace CapybaraVS.Script
         public bool IsReadOnlyValue { get; set; } = true;
 
         public bool IsVisibleValue => false;
+
         public bool IsStringableValue => true;
 
         public bool IsAssignment(ICbValue obj, bool isCast)
@@ -1471,6 +1498,8 @@ namespace CapybaraVS.Script
         public string ErrorMessage { get; set; } = "";
 
         public bool IsNull { get => false; }
+
+        public bool IsNullable { get; set; } = false;
 
         public object Data 
         { 

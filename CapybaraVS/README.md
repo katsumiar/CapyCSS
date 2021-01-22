@@ -80,30 +80,32 @@ public static System.IO.StreamReader GetReadStream(string path, string encoding 
 
 ## スクリプトが対応するメソッドの引数の型（及び修飾子）
 * Type: int, string, double, byte, sbyte, long, short, ushort, uint, ulong, char, float, decimal, bool, object
-* Array
+* 配列
 * Class
 * Struct
 * Interface
 * Enum
 * Generics
-* Default arguments
-* ref
-* out
-* in
-* params
+* デフォルト値
+* ref修飾子
+* out修飾子
+* in修飾子
+* paramsキーワード
+* null許容型
 
 ※リテラルノードのみ独自のtext型を用意しています。string型とobject型へ代入可能です。
 ※オーバーロードに対応しています。
 
 ## スクリプトが対応するメソッドの戻り値の型
 * Type: int, string, double, byte, sbyte, long, short, ushort, uint, ulong, char, float, decimal, bool, object
-* Array
+* 配列
 * Class
 * Struct
 * Interface
 * Enum
 * Generics
 * void
+* null許容型
 
 ## メソッドからのメソッド呼び出し
 Func<> および Action<> タイプの引数は、ノードを外部プロセスとして呼び出すことができます。Func<> の場合、ノード型と戻り値型が一致した場合に接続できます。Action だと無条件に接続できます。
