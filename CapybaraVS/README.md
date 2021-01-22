@@ -94,7 +94,7 @@ public static System.IO.StreamReader GetReadStream(string path, string encoding 
 * null許容型
 
 ※リテラルノードのみ独自のtext型を用意しています。string型とobject型へ代入可能です。
-※オーバーロードに対応しています。
+<br>※オーバーロードに対応しています。
 
 ## スクリプトが対応するメソッドの戻り値の型
 * Type: int, string, double, byte, sbyte, long, short, ushort, uint, ulong, char, float, decimal, bool, object
