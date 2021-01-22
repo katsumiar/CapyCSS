@@ -29,6 +29,11 @@ namespace CbVS.Script
 
         ObservableCollection<LinkConnector> LinkConnectors { get; }
 
+        /// <summary>
+        /// 配列型か？
+        /// </summary>
+        bool IsArrayType { get; set; }
+
         List<ICbValue> Value { get; set; }
 
         string ItemName { get; }
@@ -217,9 +222,19 @@ namespace CbVS.Script
             }
         }
 
+        public bool IsArrayType { get; set; } = false;
+
         public override Type OriginalReturnType => typeof(T);
 
-        public override Type OriginalType => typeof(List<>).MakeGenericType(typeof(T));
+        public override Type OriginalType
+        {
+            get
+            {
+                if (IsArrayType)
+                    return Type.GetType(OriginalReturnType.FullName + "[]");
+                return typeof(List<>).MakeGenericType(typeof(T));
+            }
+        }
 
         /// <summary>
         /// ノードの型名
@@ -234,6 +249,17 @@ namespace CbVS.Script
         {
             get
             {
+                if (IsArrayType)
+                {
+                    if (NodeTF is null)
+                    {
+                        return $"[]";
+                    }
+                    else
+                    {
+                        return $"{ItemName}[]";
+                    }
+                }
                 if (NodeTF is null)
                 {
                     return $"{CbSTUtils.CbTypeNameList[nameof(CbList)]}<>";
@@ -453,6 +479,13 @@ namespace CbVS.Script
                         addMethod.Invoke(instanct, new Object[] { node.Data });
                     }
                 }
+                if (IsArrayType)
+                {
+                    // 配列に変換する
+
+                    MethodInfo toArrayMethod = genericType.GetMethod("ToArray");
+                    instanct = toArrayMethod.Invoke(instanct, null);
+                }
             }
 
             return instanct;
@@ -465,10 +498,24 @@ namespace CbVS.Script
         public void CopyFrom(object list)
         {
             Clear();
+
+            if (IsArrayType)
+            {
+                // 配列から内容をコピーします。
+
+                foreach (var p in (Array)list)
+                {
+                    ICbValue val = NodeTF();
+                    val.Data = p; 
+                    Append(val);
+                }
+                return;
+            }
+
             var genericType = typeof(List<>).MakeGenericType(typeof(T));
             var instanct = Activator.CreateInstance(genericType);
-            PropertyInfo countProp = genericType.GetProperty("Count");
 
+            PropertyInfo countProp = genericType.GetProperty("Count");
             int count = (int)countProp.GetValue(list, null);
             for (int i = 0; i < count; i++)
             {

@@ -504,6 +504,17 @@ namespace CapybaraVS.Script
                     break;
             }
 
+            if (type.IsArray)
+            {
+                // 配列は、List<>に置き換える
+
+                Type element = Type.GetType(type.FullName.Replace("[]", ""));
+                var ret = CbList.Create(element, name);
+                if (ret is ICbList cbList)
+                    cbList.IsArrayType = true;
+                return ret;
+            }
+
             if (type.IsEnum)
             {
                 return CbEnumTools.EnumValue(type, name);
