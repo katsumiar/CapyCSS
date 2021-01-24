@@ -654,6 +654,19 @@ namespace CapyCSS.Controls
             }
         }
 
+        private void HelpButton_Click(object sender, RoutedEventArgs e)
+        {
+            ShowHelpWindow();
+        }
+
+        /// <summary>
+        /// ヘルプウィンドウを表示します。
+        /// </summary>
+        private static void ShowHelpWindow()
+        {
+            var helpWindow = HelpWindow.Create();
+            helpWindow.ShowDialog();
+        }
 
         [ScriptMethod("System.Application." + nameof(SetWorkCanvasBG), "",
             "RS=>SA_SetWorkCanvasBG"

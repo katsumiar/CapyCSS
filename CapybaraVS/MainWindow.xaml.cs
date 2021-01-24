@@ -93,9 +93,22 @@ namespace CapybaraVS
         }
 
         /// <summary>
+        /// アプリ名を参照します。
+        /// </summary>
+        static public string AppName
+        {
+            get
+            {
+                var assm = Assembly.GetExecutingAssembly();
+                var name = assm.GetName();
+                return name.Name;
+            }
+        }
+
+        /// <summary>
         /// アプリバージョンを参照します。
         /// </summary>
-        public string AppVersion
+        static public string AppVersion
         {
             get
             {
