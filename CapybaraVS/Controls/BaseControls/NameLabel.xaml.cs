@@ -61,7 +61,7 @@ namespace CapybaraVS.Controls.BaseControls
                 (self, getValue) =>
                 {
                     self.EditControl.Text = getValue(self);
-                    self.LabelControl.Content = getValue(self);
+                    self.LabelControl.Text = getValue(self);
                 });
 
         public static readonly DependencyProperty LabelStringProperty = impLabelString.Regist("(none)");
@@ -234,6 +234,16 @@ namespace CapybaraVS.Controls.BaseControls
             LabelControl.Visibility = Visibility.Visible;
             LabelString = EditControl.Text;
             UpdateEvent?.Invoke();
+        }
+
+        private void LabelControl_MouseEnter(object sender, MouseEventArgs e)
+        {
+            Cursor = Cursors.Hand;
+        }
+
+        private void LabelControl_MouseLeave(object sender, MouseEventArgs e)
+        {
+            Cursor = null;
         }
     }
 }

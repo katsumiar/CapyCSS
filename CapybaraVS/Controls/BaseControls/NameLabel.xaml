@@ -7,7 +7,7 @@
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800" FocusVisualStyle="{x:Null}">
     <Grid HorizontalAlignment="Center" VerticalAlignment="Center">
-        <Label x:Name="LabelControl" Content="" MouseDoubleClick="LabelControl_MouseDoubleClick" VerticalAlignment="Center" HorizontalAlignment="Center" />
+        <TextBlock x:Name="LabelControl" Text="" MouseDown="LabelControl_MouseDoubleClick" VerticalAlignment="Center" HorizontalAlignment="Center" MouseEnter="LabelControl_MouseEnter" MouseLeave="LabelControl_MouseLeave" />
         <TextBox x:Name="EditControl" Visibility="Hidden" Text="" KeyDown="EditControl_KeyDown" VerticalAlignment="Center" HorizontalAlignment="Center" />
     </Grid>
 </UserControl>
