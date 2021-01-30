@@ -169,7 +169,6 @@ namespace CapybaraVS.Script
                 DllNode = CreateGroup(ProgramNode, "Import");
             }
             string name = ScriptImplement.ImportScriptMethodsFromModule(OwnerCommandCanvas, DllNode, moduleName, classList);
-            ModulueNameList.Add(moduleName);
             if (name != null)
             {
                 ModulueNameList.Add(name);

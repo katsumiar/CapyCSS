@@ -170,8 +170,9 @@ namespace CapybaraVS.Script
         /// <param name="OwnerCommandCanvas">オーナーキャンバス</param>
         /// <param name="node">登録先のノード</param>
         /// <param name="asm">対象Assembly</param>
+        /// <param name="module">モジュール</param>
         /// <param name="classList">取り込み対象クラスリスト</param>
-        public async static void ImportScriptMethods(
+        public static void ImportScriptMethods(
             CommandCanvas OwnerCommandCanvas,
             TreeMenuNode node,
             Assembly asm,
@@ -189,6 +190,34 @@ namespace CapybaraVS.Script
                 CbST.AddModule(module);
             }
 
+            List<Task<List<AutoImplementFunctionInfo>>> tasks = CreateMakeInportFunctionInfoTasks(module, classList, types);
+
+            // ノード化
+            foreach (var task in tasks)
+            {
+                var classInfos = task.Result;
+                if (classInfos is null)
+                    continue;
+
+                foreach (var info in classInfos)
+                {
+                    if (info is null)
+                        continue;
+
+                    CreateMethodNode(OwnerCommandCanvas, node, info);
+                }
+            }
+        }
+
+        /// <summary>
+        /// メソッド取り込み用情報収集タスクリストを作成します。
+        /// </summary>
+        /// <param name="module">モジュール</param>
+        /// <param name="classList">取り込み対象クラスリスト</param>
+        /// <param name="types">モジュールの情報</param>
+        /// <returns>タスクリスト</returns>
+        private static List<Task<List<AutoImplementFunctionInfo>>> CreateMakeInportFunctionInfoTasks(Module module, List<string> classList, Type[] types)
+        {
             var tasks = new List<Task<List<AutoImplementFunctionInfo>>>();
             foreach (Type classType in types)
             {
@@ -210,7 +239,7 @@ namespace CapybaraVS.Script
 
                         try
                         {
-                            var functionInfo = MakeImplementFunctionInfo(classType, constructorInfo, null, null, module);
+                            var functionInfo = MakeInportFunctionInfo(classType, constructorInfo, null, null, module);
                             if (functionInfo != null)
                             {
                                 importFuncInfoList.Add(functionInfo);
@@ -236,7 +265,7 @@ namespace CapybaraVS.Script
 
                         try
                         {
-                            var functionInfo = MakeImplementFunctionInfo(classType, methodInfo, methodInfo.ReturnType, null, module);
+                            var functionInfo = MakeInportFunctionInfo(classType, methodInfo, methodInfo.ReturnType, null, module);
                             if (functionInfo != null)
                             {
                                 importFuncInfoList.Add(functionInfo);
@@ -251,22 +280,8 @@ namespace CapybaraVS.Script
                 });
                 tasks.Add(importMethodTask);
             }
-            List<AutoImplementFunctionInfo>[] importClassFuncInfoList = await Task.WhenAll<List<AutoImplementFunctionInfo>>(tasks);
 
-            // ノード化
-            foreach (var classInfo in importClassFuncInfoList)
-            {
-                if (classInfo is null)
-                    continue;
-
-                foreach (var info in classInfo)
-                {
-                    if (info is null)
-                        continue;
-
-                    CreateMethodNode(OwnerCommandCanvas, node, info);
-                }
-            }
+            return tasks;
         }
 
         /// <summary>
@@ -328,12 +343,33 @@ namespace CapybaraVS.Script
         /// <param name="classType">クラスの型情報</param>
         /// <param name="methodInfo">メソッド情報</param>
         /// <param name="returnType">メソッドの返り値の型情報</param>
-        private async static void importScriptMethodAttributeMethods(
+        private static void importScriptMethodAttributeMethods(
             CommandCanvas OwnerCommandCanvas, 
             TreeMenuNode node, 
             Type classType,
             MethodBase methodInfo,
             Type returnType)
+        {
+            List<Task<AutoImplementFunctionInfo>> tasks = CreateMakeInportFunctionInfoTasks(classType, methodInfo, returnType);
+
+            // ノード化
+            foreach (var info in tasks)
+            {
+                if (info is null)
+                    continue;
+
+                CreateMethodNode(OwnerCommandCanvas, node, info.Result);
+            }
+        }
+
+        /// <summary>
+        /// メソッド取り込み用情報収集タスクリストを作成します。
+        /// </summary>
+        /// <param name="classType">クラスの型情報</param>
+        /// <param name="methodInfo">メソッド情報</param>
+        /// <param name="returnType">メソッドの返り値の型情報</param>
+        /// <returns>タスクリスト</returns>
+        private static List<Task<AutoImplementFunctionInfo>> CreateMakeInportFunctionInfoTasks(Type classType, MethodBase methodInfo, Type returnType)
         {
             var tasks = new List<Task<AutoImplementFunctionInfo>>();
             var methods = methodInfo.GetCustomAttributes(typeof(ScriptMethodAttribute));
@@ -344,21 +380,12 @@ namespace CapybaraVS.Script
                 {
                     Task<AutoImplementFunctionInfo> task = Task.Run(() =>
                     {
-                        return MakeImplementFunctionInfo(classType, methodInfo, returnType, methodAttr);
+                        return MakeInportFunctionInfo(classType, methodInfo, returnType, methodAttr);
                     });
                     tasks.Add(task);
                 }
             }
-            AutoImplementFunctionInfo[] importFuncInfo = await Task.WhenAll<AutoImplementFunctionInfo>(tasks);
-
-            // ノード化
-            foreach (var info in importFuncInfo)
-            {
-                if (info is null)
-                    continue;
-
-                CreateMethodNode(OwnerCommandCanvas, node, info);
-            }
+            return tasks;
         }
 
         /// <summary>
@@ -372,7 +399,7 @@ namespace CapybaraVS.Script
         /// <param name="methodAttr">ScriptMethodAttribute情報(or null)</param>
         /// <param name="module">DLLモジュール(or null)</param>
         /// <returns>スクリプト用メソッド情報</returns>
-        private static AutoImplementFunctionInfo MakeImplementFunctionInfo(
+        private static AutoImplementFunctionInfo MakeInportFunctionInfo(
             Type classType,
             MethodBase methodInfo, 
             Type returnType,
@@ -414,10 +441,10 @@ namespace CapybaraVS.Script
                     {
                         retType = TryGetCbType(returnType);
                     }
-
-                    if (retType is null)
-                        return null; // 返り値の型が対象外
                 }
+
+                if (retType is null)
+                    return null; // 返り値の型が対象外
 
                 // メニュー用の名前を作成
                 string menuName = methodInfo.Name;
@@ -437,6 +464,15 @@ namespace CapybaraVS.Script
                     }
                     else
                     {
+                        if (methodInfo.IsStatic)
+                        {
+                            menuName = "[s] " + menuName;
+                        }
+                        if (methodInfo.IsVirtual)
+                        {
+                            menuName = "[v] " + menuName;
+                        }
+
                         menuName = classType.Name + "." + menuName + "." + menuName;
                     }
                     if (classType.Namespace != null)
@@ -448,6 +484,9 @@ namespace CapybaraVS.Script
 
                     // 引数情報を追加する
                     menuName += MakeParamsString(methodInfo);
+
+                    // 返り値の型名を追加する
+                    menuName += " : " + retType("").TypeName;
                 }
 
                 // ノード用の名前を作成

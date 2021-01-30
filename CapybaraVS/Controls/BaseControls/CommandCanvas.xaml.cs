@@ -106,49 +106,55 @@ namespace CapybaraVS.Controls.BaseControls
                     self._inportModule = ImportModule;
                     self._inportDllModule = ImportDllModule;
                     self.ImportModule();
-                    self.WorkCanvas.OwnerCommandCanvas = self;
-                    self.WorkCanvas.AssetXML = WorkCanvas;
-                    self.WorkCanvas.AssetXML.ReadAction?.Invoke(self.WorkCanvas);
-
-                    self.Dispatcher.BeginInvoke(new Action(() =>
-                    {
-                        // モジュールのインポートが終わるのを待つ
-
-                        if (WorkStack != null)
-                        {
-                            self.WorkStack.OwnerCommandCanvas = self;
-                            self.WorkStack.AssetXML = WorkStack;
-                            self.WorkStack.AssetXML.ReadAction?.Invoke(self.WorkStack);
-                        }
-                        foreach (var node in WorkCanvasAssetList)
-                        {
-                            try
-                            {
-                                Movable movableNode = new Movable();
-                                self.WorkCanvas.Add(movableNode);
-
-                                movableNode.OwnerCommandCanvas = self;
-                                movableNode.AssetXML = node;
-                                movableNode.AssetXML.ReadAction?.Invoke(movableNode);
-
-                                // レイヤー設定
-                                if (movableNode.ControlObject is IDisplayPriority dp)
-                                {
-                                    Canvas.SetZIndex(movableNode, dp.Priority);
-                                }
-                            }
-                            catch (Exception ex)
-                            {
-                                System.Diagnostics.Debug.WriteLine(nameof(CommandCanvas) + "._AssetXML(ReadAction): " + ex.Message);
-                            }
-                        }
-
-                    }), DispatcherPriority.ApplicationIdle);
+                    SetupCanvas(self);
 
                     // 次回の為の初期化
                     self.AssetXML = new _AssetXML<CommandCanvas>(self);
                 };
             }
+
+            private void SetupCanvas(OwnerClass self)
+            {
+                self.WorkCanvas.OwnerCommandCanvas = self;
+                self.WorkCanvas.AssetXML = WorkCanvas;
+                self.WorkCanvas.AssetXML.ReadAction?.Invoke(self.WorkCanvas);
+
+                self.Dispatcher.BeginInvoke(new Action(() =>
+                {
+                    // モジュールのインポートが終わるのを待つ
+
+                    if (WorkStack != null)
+                    {
+                        self.WorkStack.OwnerCommandCanvas = self;
+                        self.WorkStack.AssetXML = WorkStack;
+                        self.WorkStack.AssetXML.ReadAction?.Invoke(self.WorkStack);
+                    }
+                    foreach (var node in WorkCanvasAssetList)
+                    {
+                        try
+                        {
+                            Movable movableNode = new Movable();
+                            self.WorkCanvas.Add(movableNode);
+
+                            movableNode.OwnerCommandCanvas = self;
+                            movableNode.AssetXML = node;
+                            movableNode.AssetXML.ReadAction?.Invoke(movableNode);
+
+                            // レイヤー設定
+                            if (movableNode.ControlObject is IDisplayPriority dp)
+                            {
+                                Canvas.SetZIndex(movableNode, dp.Priority);
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            System.Diagnostics.Debug.WriteLine(nameof(CommandCanvas) + "._AssetXML(ReadAction): " + ex.Message);
+                        }
+                    }
+
+                }), DispatcherPriority.ApplicationIdle);
+            }
+
             public _AssetXML(OwnerClass self)
             {
                 WriteAction = () =>
