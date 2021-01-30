@@ -1058,6 +1058,16 @@ namespace CapybaraVS.Controls.BaseControls
 
         #endregion
 
+        private void EllipseType_MouseEnter(object sender, MouseEventArgs e)
+        {
+            Cursor = Cursors.Hand;
+        }
+
+        private void EllipseType_MouseLeave(object sender, MouseEventArgs e)
+        {
+            Cursor = null;
+        }
+
         //-----------------------------------------------------------------------------------
         #region IDisposable Support
         private bool disposedValue = false; // 重複する呼び出しを検出するには

@@ -6,7 +6,7 @@
              xmlns:local="clr-namespace:CapybaraVS.Controls"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="450" FocusVisualStyle="{x:Null}">
-    <Grid RenderTransformOrigin="0.5,0.5" MouseDown="Grid_MouseDown">
+    <Grid RenderTransformOrigin="0.5,0.5" MouseDown="Grid_MouseDown" MouseEnter="Grid_MouseEnter" MouseLeave="Grid_MouseLeave">
         <Ellipse Fill="#FF546BBB" />
         <Rectangle x:Name="Peke1" Fill="Black" Width="45" RenderTransformOrigin="0.5,0.5" >
             <Rectangle.RenderTransform>

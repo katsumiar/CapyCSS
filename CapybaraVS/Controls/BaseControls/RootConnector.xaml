@@ -12,7 +12,7 @@
             <StackPanel x:Name="RootLinkMainPanel" HorizontalAlignment="Center" VerticalAlignment="Center" MouseLeftButtonDown="Grid_MouseLeftButtonDown" Orientation="Horizontal">
                 <CheckBox x:Name="Forced" Content="Forced" Click="Forced_Click" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,0,6,0" FontStyle="Italic" />
                 <local:UIParam x:Name="NameText" />
-                <Ellipse x:Name="EllipseType" Width="22" Height="22" Stroke="#FF0017FF" Fill="#7F78D862" StrokeThickness="2" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                <Ellipse x:Name="EllipseType" Width="22" Height="22" Stroke="#FF0017FF" Fill="#7F78D862" StrokeThickness="2" HorizontalAlignment="Center" VerticalAlignment="Center" MouseEnter="EllipseType_MouseEnter" MouseLeave="EllipseType_MouseLeave" />
                 <Rectangle x:Name="RectangleType" Visibility="Collapsed" Width="20" Height="20" Stroke="#FF0017FF" Fill="#7F78D862" StrokeThickness="2" HorizontalAlignment="Center" VerticalAlignment="Center" />
             </StackPanel>
         </Grid>

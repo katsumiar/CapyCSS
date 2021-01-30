@@ -59,5 +59,15 @@ namespace CapybaraVS.Controls
         {
             ClickEvent?.Invoke();
         }
+
+        private void Grid_MouseEnter(object sender, MouseEventArgs e)
+        {
+            Cursor = Cursors.Hand;
+        }
+
+        private void Grid_MouseLeave(object sender, MouseEventArgs e)
+        {
+            Cursor = null;
+        }
     }
 }
