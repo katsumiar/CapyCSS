@@ -6,7 +6,7 @@
              xmlns:local="clr-namespace:CapybaraVS.Controls.BaseControls"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800" FocusVisualStyle="{x:Null}">
-    <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Orientation="Horizontal">
+    <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Orientation="Horizontal" MouseEnter="StackPanel_MouseEnter" MouseLeave="StackPanel_MouseLeave">
         <Grid HorizontalAlignment="Center" VerticalAlignment="Center">
             <Ellipse x:Name="ellipse" Width="17" Height="17" Stroke="Black" Fill="#00000000" />
             <Rectangle Width="{Binding ActualWidth, ElementName=ellipse, Mode=OneWay}" Height="3" Fill="Black" />

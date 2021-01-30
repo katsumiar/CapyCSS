@@ -5,7 +5,7 @@ using System.Text;
 
 namespace CapybaraVS.Script.Lib
 {
-    class MathLib
+    public class MathLib
     {
         [ScriptMethod("Math.Literal." + nameof(PI), "",
             "RS=>MathLib_PI"//"円周率を参照します。"

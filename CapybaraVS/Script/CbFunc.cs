@@ -411,13 +411,17 @@ namespace CbVS.Script
         /// <returns>CbFunc<type> 型の変数</returns>
         public static ICbValue FuncValue(Type type, Type retType, string name)
         {
+            if (type is null)
+            {
+                return null;
+            }
             string typeName = type.FullName;
             if (type.IsByRef)
             {
                 // リファレンス（スクリプト変数接続）
 
                 typeName = typeName.Replace("&", "");
-                type = Type.GetType(typeName);
+                type = CbST.GetTypeEx(typeName);
             }
 
             foreach (var arg in type.GenericTypeArguments)

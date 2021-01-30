@@ -4,7 +4,7 @@ using System.Text;
 
 namespace CapybaraVS.Script.Lib
 {
-    class Analyze
+    public class Analyze
     {
         public enum MetropolisMethodOption
         {

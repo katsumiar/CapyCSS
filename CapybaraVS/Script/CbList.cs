@@ -89,6 +89,10 @@ namespace CbVS.Script
         /// <returns>型</returns>
         public static Type GetCbType(Type original)
         {
+            if (original is null)
+            {
+                return null;
+            }
             return typeof(CbList<>).MakeGenericType(original);
         }
 
@@ -231,7 +235,11 @@ namespace CbVS.Script
             get
             {
                 if (IsArrayType)
-                    return Type.GetType(OriginalReturnType.FullName + "[]");
+                {
+                    // 配列として振る舞う
+
+                    return CbST.GetTypeEx(OriginalReturnType.FullName + "[]");
+                }
                 return typeof(List<>).MakeGenericType(typeof(T));
             }
         }
@@ -251,6 +259,8 @@ namespace CbVS.Script
             {
                 if (IsArrayType)
                 {
+                    // 配列として振る舞う
+
                     if (NodeTF is null)
                     {
                         return $"[]";
@@ -431,19 +441,17 @@ namespace CbVS.Script
         public object ConvertOriginalTypeList(DummyArgumentsControl dummyArgumentsControl, DummyArgumentsStack cagt, MultiRootConnector col = null)
         {
             var listNodeType = NodeTF();
-            object instanct = null;
+
+            var genericType = typeof(List<>).MakeGenericType(typeof(T));
+            List<T> originalCopyList = (List<T>)Activator.CreateInstance(genericType);
+
             if (listNodeType is ICbEvent)
             {
                 // CbFunc のノードを持つ CbList を Func<> 及び Action<> 用の List に変換する 
                 Debug.Assert(listNodeType.CbType.LiteralType == CapybaraVS.Script.CbType.Func);
 
                 // 仮引数用の型を作成
-                MethodInfo addMethod = null;
-
                 // Func<> 及び Action<> 用の変換
-                var genericType = typeof(List<>).MakeGenericType(typeof(T));
-                instanct = Activator.CreateInstance(genericType);
-                addMethod = genericType.GetMethod("Add");
 
                 // 仮引数コントロールを作成
                 dummyArgumentsControl ??= new DummyArgumentsControl(col);
@@ -452,43 +460,34 @@ namespace CbVS.Script
                 {
                     ICbEvent cbEvent2 = node as ICbEvent;
                     if (cbEvent2.CallBack is null)
-                        addMethod.Invoke(instanct, new Object[] { null });
+                        ((dynamic)originalCopyList).Add(null);
                     else
-                        addMethod.Invoke(instanct, new Object[]
-                        {
-                            cbEvent2.GetCallBackOriginalType(dummyArgumentsControl, cagt)
-                        });
+                        originalCopyList.Add((T)cbEvent2.GetCallBackOriginalType(dummyArgumentsControl, cagt));
                 }
             }
             else
             {
                 // CbList を List に変換する
-
-                var genericType = typeof(List<>).MakeGenericType(typeof(T));
-                instanct = Activator.CreateInstance(genericType);
-                MethodInfo addMethod = genericType.GetMethod("Add");
                 foreach (var node in Value)
                 {
                     if (node is CbObject cbObject)
                     {
                         ICbValue cbValue = cbObject.Data as ICbValue;
-                        addMethod.Invoke(instanct, new Object[] { cbValue.Data });
+                        originalCopyList.Add((T)cbValue.Data);
                     }
                     else
                     {
-                        addMethod.Invoke(instanct, new Object[] { node.Data });
+                        originalCopyList.Add((T)node.Data);
                     }
                 }
-                if (IsArrayType)
-                {
-                    // 配列に変換する
-
-                    MethodInfo toArrayMethod = genericType.GetMethod("ToArray");
-                    instanct = toArrayMethod.Invoke(instanct, null);
-                }
             }
+            if (IsArrayType)
+            {
+                // 配列に変換する
 
-            return instanct;
+                return originalCopyList.ToArray();
+            }
+            return originalCopyList;
         }
 
         /// <summary>
@@ -503,25 +502,19 @@ namespace CbVS.Script
             {
                 // 配列から内容をコピーします。
 
-                foreach (var p in (Array)list)
+                foreach (var nd in (Array)list)
                 {
                     ICbValue val = NodeTF();
-                    val.Data = p; 
+                    val.Data = nd; 
                     Append(val);
                 }
                 return;
             }
 
-            var genericType = typeof(List<>).MakeGenericType(typeof(T));
-            var instanct = Activator.CreateInstance(genericType);
-
-            PropertyInfo countProp = genericType.GetProperty("Count");
-            int count = (int)countProp.GetValue(list, null);
-            for (int i = 0; i < count; i++)
+            foreach (var nd in (List<T>)list)
             {
-                PropertyInfo indexer = genericType.GetProperty("Item");
                 ICbValue val = NodeTF();
-                val.Data = indexer.GetValue(list, new Object[] { i });
+                val.Data = nd;
                 Append(val);
             }
         }

@@ -29,7 +29,7 @@ namespace CapybaraVS.Script
         /// <param name="node">親のグループ</param>
         /// <param name="name">グループ名</param>
         /// <returns>作成したグループ</returns>
-        protected static TreeMenuNode CreateGroup(TreeMenuNode node, string name)
+        public static TreeMenuNode CreateGroup(TreeMenuNode node, string name)
         {
             var newNode = new TreeMenuNode(name);
             node.AddChild(newNode);

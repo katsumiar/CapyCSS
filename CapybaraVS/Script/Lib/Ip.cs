@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace CapybaraVS.Script.Lib
 {
-    class Ip
+    public class Ip
     {
         public enum WebMethod
         {

@@ -3,123 +3,192 @@ using CapybaraVS.Controls.BaseControls;
 using CbVS.Script;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Text;
 using static CapybaraVS.Controls.MultiRootConnector;
 
 namespace CapybaraVS.Script
 {
     /// <summary>
-    /// 基本的なファンクションアセットをアセットリストに追加する
+    /// スクリプトの機能をインポートしメニューに登録するクラスです。
     /// </summary>
-    class ImplementBaseAsset : ImplementAsset
+    public class ApiImporter : ImplementAsset
     {
-        public ImplementBaseAsset(CommandCanvas OwnerCommandCanvas)
-        {
-            var assetNode = CreateGroup(OwnerCommandCanvas, "Program");
+        private TreeMenuNode ProgramNode = null;
+        private TreeMenuNode DllNode = null;
+        private CommandCanvas OwnerCommandCanvas = null;
+        public ObservableCollection<string> ModulueNameList = new ObservableCollection<string>();
+        public List<string> ModulePathList = new List<string>();
+        public List<string> ModuleList = new List<string>();
 
-            CreateAssetMenu(OwnerCommandCanvas, assetNode, new Subroutine());
+        public ApiImporter(CommandCanvas ownerCommandCanvas)
+        {
+            OwnerCommandCanvas = ownerCommandCanvas;
+            ProgramNode = CreateGroup(ownerCommandCanvas, "Program");
+
+            CreateAssetMenu(ownerCommandCanvas, ProgramNode, new Subroutine());
 
             {
-                var literalNode = CreateGroup(assetNode, "Literal");
-                CreateAssetMenu(OwnerCommandCanvas, literalNode, new LiteralType());
-                CreateAssetMenu(OwnerCommandCanvas, literalNode, new LiteralListType());
+                var literalNode = CreateGroup(ProgramNode, "Literal");
+                CreateAssetMenu(ownerCommandCanvas, literalNode, new LiteralType());
+                CreateAssetMenu(ownerCommandCanvas, literalNode, new LiteralListType());
             }
 
             {
-                var variableNode = CreateGroup(assetNode, "Variable");
-                CreateAssetMenu(OwnerCommandCanvas, variableNode, new CreateVariable());
-                CreateAssetMenu(OwnerCommandCanvas, variableNode, new CreateVariableFunc());
-                CreateAssetMenu(OwnerCommandCanvas, variableNode, new GetVariable());
-                CreateAssetMenu(OwnerCommandCanvas, variableNode, new SetVariable());
+                var variableNode = CreateGroup(ProgramNode, "Variable");
+                CreateAssetMenu(ownerCommandCanvas, variableNode, new CreateVariable());
+                CreateAssetMenu(ownerCommandCanvas, variableNode, new CreateVariableFunc());
+                CreateAssetMenu(ownerCommandCanvas, variableNode, new GetVariable());
+                CreateAssetMenu(ownerCommandCanvas, variableNode, new SetVariable());
 
                 {
                     var variableListNode = CreateGroup(variableNode, "Variable List");
-                    CreateAssetMenu(OwnerCommandCanvas, variableListNode, new CreateVariableList());
-                    CreateAssetMenu(OwnerCommandCanvas, variableListNode, new GetVariableFromIndex());
-                    CreateAssetMenu(OwnerCommandCanvas, variableListNode, new SetVariableToIndex());
-                    CreateAssetMenu(OwnerCommandCanvas, variableListNode, new AppendVariableList());
+                    CreateAssetMenu(ownerCommandCanvas, variableListNode, new CreateVariableList());
+                    CreateAssetMenu(ownerCommandCanvas, variableListNode, new GetVariableFromIndex());
+                    CreateAssetMenu(ownerCommandCanvas, variableListNode, new SetVariableToIndex());
+                    CreateAssetMenu(ownerCommandCanvas, variableListNode, new AppendVariableList());
                 }
             }
 
             {
-                var flowOperation = CreateGroup(assetNode, "Flow");
-                CreateAssetMenu(OwnerCommandCanvas, flowOperation, new If());
-                CreateAssetMenu(OwnerCommandCanvas, flowOperation, new If_Func());
-                CreateAssetMenu(OwnerCommandCanvas, flowOperation, new If_Action());
-                CreateAssetMenu(OwnerCommandCanvas, flowOperation, new For());
-                CreateAssetMenu(OwnerCommandCanvas, flowOperation, new Foreach());
+                var flowOperation = CreateGroup(ProgramNode, "Flow");
+                CreateAssetMenu(ownerCommandCanvas, flowOperation, new If());
+                CreateAssetMenu(ownerCommandCanvas, flowOperation, new If_Func());
+                CreateAssetMenu(ownerCommandCanvas, flowOperation, new If_Action());
+                CreateAssetMenu(ownerCommandCanvas, flowOperation, new For());
+                CreateAssetMenu(ownerCommandCanvas, flowOperation, new Foreach());
             }
 
             {
-                var listNode = CreateGroup(assetNode, "List");
-                CreateAssetMenu(OwnerCommandCanvas, listNode, new Count());
-                CreateAssetMenu(OwnerCommandCanvas, listNode, new Contains());
-                CreateAssetMenu(OwnerCommandCanvas, listNode, new GetListIndex());
-                CreateAssetMenu(OwnerCommandCanvas, listNode, new GetListLast());
-                CreateAssetMenu(OwnerCommandCanvas, listNode, new SetListIndex());
-                CreateAssetMenu(OwnerCommandCanvas, listNode, new Append());
+                var listNode = CreateGroup(ProgramNode, "List");
+                CreateAssetMenu(ownerCommandCanvas, listNode, new Count());
+                CreateAssetMenu(ownerCommandCanvas, listNode, new Contains());
+                CreateAssetMenu(ownerCommandCanvas, listNode, new GetListIndex());
+                CreateAssetMenu(ownerCommandCanvas, listNode, new GetListLast());
+                CreateAssetMenu(ownerCommandCanvas, listNode, new SetListIndex());
+                CreateAssetMenu(ownerCommandCanvas, listNode, new Append());
             }
 
             {
-                var funcNode = CreateGroup(assetNode, "f(x)");
-                CreateAssetMenu(OwnerCommandCanvas, funcNode, new CallerArgument());
-                CreateAssetMenu(OwnerCommandCanvas, funcNode, new CallerArguments());
-                CreateAssetMenu(OwnerCommandCanvas, funcNode, new Invoke());
-                CreateAssetMenu(OwnerCommandCanvas, funcNode, new InvokeWithArg());
-                CreateAssetMenu(OwnerCommandCanvas, funcNode, new InvokeAction());
-                CreateAssetMenu(OwnerCommandCanvas, funcNode, new InvokeActionWithArg());
+                var funcNode = CreateGroup(ProgramNode, "f(x)");
+                CreateAssetMenu(ownerCommandCanvas, funcNode, new CallerArgument());
+                CreateAssetMenu(ownerCommandCanvas, funcNode, new CallerArguments());
+                CreateAssetMenu(ownerCommandCanvas, funcNode, new Invoke());
+                CreateAssetMenu(ownerCommandCanvas, funcNode, new InvokeWithArg());
+                CreateAssetMenu(ownerCommandCanvas, funcNode, new InvokeAction());
+                CreateAssetMenu(ownerCommandCanvas, funcNode, new InvokeActionWithArg());
             }
 
             {
-                var embeddedNode = CreateGroup(assetNode, "Function");
+                var embeddedNode = CreateGroup(ProgramNode, "Function");
 
                 {
                     var mathNode = CreateGroup(embeddedNode, "Math");
-                    CreateAssetMenu(OwnerCommandCanvas, mathNode, new Abs());
-                    CreateAssetMenu(OwnerCommandCanvas, mathNode, new Inc());
-                    CreateAssetMenu(OwnerCommandCanvas, mathNode, new Dec());
-                    CreateAssetMenu(OwnerCommandCanvas, mathNode, new Sum());
-                    CreateAssetMenu(OwnerCommandCanvas, mathNode, new Sum_Func());
-                    CreateAssetMenu(OwnerCommandCanvas, mathNode, new Sub());
-                    CreateAssetMenu(OwnerCommandCanvas, mathNode, new Mul());
-                    CreateAssetMenu(OwnerCommandCanvas, mathNode, new Div());
-                    CreateAssetMenu(OwnerCommandCanvas, mathNode, new Pow());
-                    CreateAssetMenu(OwnerCommandCanvas, mathNode, new Mod());
-                    CreateAssetMenu(OwnerCommandCanvas, mathNode, new Rand());
+                    CreateAssetMenu(ownerCommandCanvas, mathNode, new Abs());
+                    CreateAssetMenu(ownerCommandCanvas, mathNode, new Inc());
+                    CreateAssetMenu(ownerCommandCanvas, mathNode, new Dec());
+                    CreateAssetMenu(ownerCommandCanvas, mathNode, new Sum());
+                    CreateAssetMenu(ownerCommandCanvas, mathNode, new Sum_Func());
+                    CreateAssetMenu(ownerCommandCanvas, mathNode, new Sub());
+                    CreateAssetMenu(ownerCommandCanvas, mathNode, new Mul());
+                    CreateAssetMenu(ownerCommandCanvas, mathNode, new Div());
+                    CreateAssetMenu(ownerCommandCanvas, mathNode, new Pow());
+                    CreateAssetMenu(ownerCommandCanvas, mathNode, new Mod());
+                    CreateAssetMenu(ownerCommandCanvas, mathNode, new Rand());
                 }
 
                 {
                     var logicalOperation = CreateGroup(embeddedNode, "Logical operation");
-                    CreateAssetMenu(OwnerCommandCanvas, logicalOperation, new And());
-                    CreateAssetMenu(OwnerCommandCanvas, logicalOperation, new Or());
-                    CreateAssetMenu(OwnerCommandCanvas, logicalOperation, new Not());
+                    CreateAssetMenu(ownerCommandCanvas, logicalOperation, new And());
+                    CreateAssetMenu(ownerCommandCanvas, logicalOperation, new Or());
+                    CreateAssetMenu(ownerCommandCanvas, logicalOperation, new Not());
                 }
 
                 {
                     var comparisonNode = CreateGroup(embeddedNode, "Comparison");
-                    CreateAssetMenu(OwnerCommandCanvas, comparisonNode, new Eq());
-                    CreateAssetMenu(OwnerCommandCanvas, comparisonNode, new Gt());
-                    CreateAssetMenu(OwnerCommandCanvas, comparisonNode, new Ge());
-                    CreateAssetMenu(OwnerCommandCanvas, comparisonNode, new Lt());
-                    CreateAssetMenu(OwnerCommandCanvas, comparisonNode, new Le());
+                    CreateAssetMenu(ownerCommandCanvas, comparisonNode, new Eq());
+                    CreateAssetMenu(ownerCommandCanvas, comparisonNode, new Gt());
+                    CreateAssetMenu(ownerCommandCanvas, comparisonNode, new Ge());
+                    CreateAssetMenu(ownerCommandCanvas, comparisonNode, new Lt());
+                    CreateAssetMenu(ownerCommandCanvas, comparisonNode, new Le());
                 }
             }
 
             {
-                var functionNode = CreateGroup(assetNode, ".Net Function");
+                var functionNode = CreateGroup(ProgramNode, ".Net Function");
 
                 {
                     var io = CreateGroup(functionNode, "Input/Output");
                     var conOut = CreateGroup(io, "ConsoleOut");
-                    CreateAssetMenu(OwnerCommandCanvas, conOut, new ConsoleOut());
+                    CreateAssetMenu(ownerCommandCanvas, conOut, new ConsoleOut());
                 }
 
                 {
                     var tools = CreateGroup(functionNode, "Exec");
-                    CreateAssetMenu(OwnerCommandCanvas, tools, new CallFile());
+                    CreateAssetMenu(ownerCommandCanvas, tools, new CallFile());
                 }
 
-                ScriptImplement.ImplemantScriptMethods(OwnerCommandCanvas, functionNode);
+                ScriptImplement.ImportScriptMethods(ownerCommandCanvas, functionNode);
+            }
+        }
+
+        /// <summary>
+        /// 外部DLLを読み込んでメソッドを取り込みます。
+        /// </summary>
+        /// <param name="path">DLLファイルのパス</param>
+        public void LoadDll(string path, List<string> classList = null)
+        {
+            if (ModulePathList.Contains(path))
+            {
+                return;
+            }
+            if (DllNode is null)
+            {
+                DllNode = CreateGroup(ProgramNode, "Import");
+            }
+            string name = ScriptImplement.ImportScriptMethodsFromDllFile(OwnerCommandCanvas, DllNode, path, classList);
+            if (name != null)
+            {
+                ModulueNameList.Add(name);
+                ModulePathList.Add(path);
+            }
+        }
+
+        /// <summary>
+        /// DLLのメソッドを取り込みます。
+        /// </summary>
+        /// <param name="moduleName">DLL名</param>
+        public void SetModule(string moduleName, List<string> classList = null)
+        {
+            if (ModuleList.Contains(moduleName))
+            {
+                return;
+            }
+            if (DllNode is null)
+            {
+                DllNode = CreateGroup(ProgramNode, "Import");
+            }
+            string name = ScriptImplement.ImportScriptMethodsFromModule(OwnerCommandCanvas, DllNode, moduleName, classList);
+            ModulueNameList.Add(moduleName);
+            if (name != null)
+            {
+                ModulueNameList.Add(name);
+                ModuleList.Add(moduleName);
+            }
+        }
+
+        /// <summary>
+        /// モジュールの登録を削除します。
+        /// </summary>
+        public void ClearModule()
+        {
+            ModulueNameList.Clear();
+            ModulePathList.Clear();
+            ModuleList.Clear();
+            if (DllNode != null)
+            {
+                ProgramNode.Child.Remove(DllNode);
+                DllNode = null;
             }
         }
     }

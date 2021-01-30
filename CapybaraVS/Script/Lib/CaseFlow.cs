@@ -4,7 +4,7 @@ using System.Text;
 
 namespace CapybaraVS.Script.Lib
 {
-    class CaseFlow
+    public class CaseFlow
     {
         //------------------------------------------------------------------
         // Dictionary<int, Func<object, int>>

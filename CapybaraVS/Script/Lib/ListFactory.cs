@@ -4,7 +4,7 @@ using System.Text;
 
 namespace CapybaraVS.Script.Lib
 {
-    class ListFactory
+    public class ListFactory
     {
         [ScriptMethod(nameof(ListFactory) + "." + nameof(MakeListDouble), "",
             "RS=>ListFactory_MakeListDouble"//"<value> を開始値に <num> の数だけ <step> を加算した要素を持った配列を作成します。"

@@ -6,7 +6,7 @@ using System.Windows.Media;
 
 namespace CbVS.Script.Lib
 {
-    class Graphics
+    public class Graphics
     {
         public enum BrushColors
         {

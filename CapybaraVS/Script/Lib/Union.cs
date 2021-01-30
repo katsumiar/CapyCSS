@@ -4,7 +4,7 @@ using System.Text;
 
 namespace CapybaraVS.Script.Lib
 {
-    class Union
+    public class Union
     {
         [ScriptMethod("Union." + "∩", "",
             "RS=>Union_And"//"集合 A と集合 B の積集合を求めます。"

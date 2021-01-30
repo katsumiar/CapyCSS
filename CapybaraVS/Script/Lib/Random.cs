@@ -4,7 +4,7 @@ using System.Text;
 
 namespace CapybaraVS.Script.Lib
 {
-    class RandomLib
+    public class RandomLib
     {
         //------------------------------------------------------------------
         [ScriptMethod("Random" + "." + "* Random Sign", "",

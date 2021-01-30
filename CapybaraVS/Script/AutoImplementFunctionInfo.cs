@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Reflection;
 using static CapybaraVS.Script.ScriptImplement;
 
 namespace CapybaraVS.Script
 {
     /// <summary>
-    /// アセット情報
+    /// スクリプト用メソッド情報
     /// </summary>
     public class AutoImplementFunctionInfo
     {
@@ -41,5 +42,13 @@ namespace CapybaraVS.Script
         /// 引数型の定義リスト
         /// </summary>
         public List<ArgumentInfoNode> argumentTypeList;
+        /// <summary>
+        /// モジュール（DLL）
+        /// </summary>
+        public Module dllModule;
+        /// <summary>
+        /// コンストラクターか？
+        /// </summary>
+        public bool isConstructor;
     }
 }

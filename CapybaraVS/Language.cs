@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CapyCSS.Controls;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Resources;
@@ -63,7 +64,7 @@ namespace CapybaraVS
                 }
                 catch (Exception ex)
                 {
-                    App.ErrorLog += nameof(Language) + $".this[\"{index}\"]: " + ex.Message + Environment.NewLine + Environment.NewLine;
+                    CommandCanvasList.ErrorLog += nameof(Language) + $".this[\"{index}\"]: " + ex.Message + Environment.NewLine + Environment.NewLine;
                 }
                 return text;
             }

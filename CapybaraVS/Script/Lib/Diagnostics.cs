@@ -4,7 +4,7 @@ using System.Text;
 
 namespace CapybaraVS.Script.Lib
 {
-    class DiagnosticsLib
+    public class DiagnosticsLib
     {
         [ScriptMethod("Diagnostics" + "." + nameof(GetListOfRunningProcesses), "",
             "RS=>DiagnosticsLib_GetListOfRunningProcesses"//"実行中のプロセス名一覧を参照します。\n<distinct> を True にすると同名をまとめます。"

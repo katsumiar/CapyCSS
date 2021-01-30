@@ -29,6 +29,8 @@ namespace CapybaraVS.Script
                 ClassType = info.classType,
                 ReturnType = info.returnType,
                 ArgumentTypeList = info.argumentTypeList,
+                DllModule = info.dllModule,
+                IsConstructor = info.isConstructor
             };
             return ret;
         }
@@ -75,6 +77,16 @@ namespace CapybaraVS.Script
         public List<ArgumentInfoNode> ArgumentTypeList { get; set; } = null;
 
         public Func<ICbValue> ReturnType { get; set; } = null;
+
+        /// <summary>
+        /// モジュール（DLL）
+        /// </summary>
+        public Module DllModule = null;
+
+        /// <summary>
+        /// コンストラクターか？
+        /// </summary>
+        public bool IsConstructor = false;
 
         public virtual bool ImplAsset(MultiRootConnector col, bool noThreadMode = false)
         {
@@ -172,7 +184,7 @@ namespace CapybaraVS.Script
         {
             try
             {
-                bool isClassInstanceMethod = ArgumentTypeList != null && ArgumentTypeList[0].IsSelf;
+                bool isClassInstanceMethod = ArgumentTypeList != null && ArgumentTypeList[0].IsSelf && !IsConstructor;
                 List<object> methodArguments = null;
 
                 methodArguments = SetArguments(
@@ -335,7 +347,21 @@ namespace CapybaraVS.Script
             }
 
             object result = null;
-            if (methodArguments is null)
+            if (IsConstructor)
+            {
+                // new されたコンストラクタとして振る舞う
+
+                if (methodArguments is null)
+                {
+                    result = Activator.CreateInstance(ClassType);
+                }
+                else
+                {
+                    object[] args = methodArguments.ToArray();
+                    result = Activator.CreateInstance(ClassType, args);
+                }
+            }
+            else if (methodArguments is null)
             {
                 // 引数のないメソッド
 

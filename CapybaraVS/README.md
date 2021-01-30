@@ -4,6 +4,7 @@
 ## 特徴
 * ビジュアルなスクリプトを作成することができます。
 * c#で書かれたソースを修正してメソッドを追加することでノードとして使用できるようにインポートする機能があります（属性の指定とビルドが必要です）。
+* dllをインポートしてメソッドをスクリプトで使えるように取り込む機能があります。
 
 ## ターゲット環境
 * .Net 5.0
@@ -78,7 +79,11 @@ public static System.IO.StreamReader GetReadStream(string path, string encoding 
 * Static method
 * Class method(thisを受け取る引数が追加されます)
 
-## スクリプトが対応するメソッドの引数の型（及び修飾子）
+※メソッドの所属するクラスは、パブリックである必要があります。
+<br>※メソッドはパブリックである必要があります。
+<br>※象徴クラスやジェネリッククラスのメソッド及びジェネリックなメソッドは、対象外です。
+
+## スクリプトが対応するメソッドの引数の型（及び修飾子など）
 * Type: int, string, double, byte, sbyte, long, short, ushort, uint, ulong, char, float, decimal, bool, object
 * 配列
 * Class
@@ -87,10 +92,10 @@ public static System.IO.StreamReader GetReadStream(string path, string encoding 
 * Enum
 * Generics
 * デフォルト値
-* ref修飾子
-* out修飾子
-* in修飾子
-* paramsキーワード
+* ref（リファレンス）
+* outパラメーター修飾子
+* inパラメーター修飾子
+* paramsパラメータ配列
 * null許容型
 
 ※リテラルノードのみ独自のtext型を用意しています。string型とobject型へ代入可能です。

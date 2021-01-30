@@ -21,6 +21,8 @@ namespace CapybaraVS.Script
                 ClassType = info.classType,
                 ReturnType = info.returnType,
                 ArgumentTypeList = info.argumentTypeList,
+                DllModule = info.dllModule,
+                IsConstructor = info.isConstructor
             };
             return ret;
         }

@@ -84,13 +84,13 @@ namespace CapybaraVS.Script
                         // 型情報を元に型を再現する。
                         // 将来的にこちらにまとめる予定。
 
-                        self.Value = CbCreate(Type.GetType(ClassName));
+                        self.Value = CbCreate(CbST.GetTypeEx(ClassName));
                         self.LiteralTypeForCbTypeFunc = ClassName;
                     }
                     else if (ObjectType == CbCType.Class)
                     {
                         Type openedType = typeof(CbClass<>); //CapybaraVS.Script.CbClass`1
-                        Type argType = Type.GetType(ClassName);
+                        Type argType = CbST.GetTypeEx(ClassName);
                         Type cbClassType = openedType.MakeGenericType(argType);
 
                         self.Value = cbClassType.InvokeMember("Create", BindingFlags.InvokeMethod,
@@ -99,7 +99,7 @@ namespace CapybaraVS.Script
                     else if (ObjectType == CbCType.Struct)
                     {
                         Type openedType = typeof(CbStruct<>); //CapybaraVS.Script.CbStruct`1
-                        Type argType = Type.GetType(ClassName);
+                        Type argType = CbST.GetTypeEx(ClassName);
                         Type cbClassType = openedType.MakeGenericType(argType);
 
                         self.Value = cbClassType.InvokeMember("Create", BindingFlags.InvokeMethod,
@@ -108,7 +108,7 @@ namespace CapybaraVS.Script
                     else if (self.ObjectType == CbCType.Enum)
                     {
                         Type openedType = typeof(CbEnum<>); //CapybaraVS.Script.CbEnum`1
-                        Type argType = Type.GetType(ClassName);
+                        Type argType = CbST.GetTypeEx(ClassName);
                         Type cbEnumType = openedType.MakeGenericType(argType);
 
                         self.Value = cbEnumType.InvokeMember("Create", BindingFlags.InvokeMethod,
@@ -120,7 +120,7 @@ namespace CapybaraVS.Script
                             () =>
                             {
                                 Type openedType = typeof(CbClass<>); //CapybaraVS.Script.CbClass`1
-                                Type argType = Type.GetType(ClassName);
+                                Type argType = CbST.GetTypeEx(ClassName);
                                 Type cbClassType = openedType.MakeGenericType(argType);
 
                                 return cbClassType.InvokeMember("Create", BindingFlags.InvokeMethod,
@@ -273,6 +273,32 @@ namespace CapybaraVS.Script
                 return null;
 
             return CbEnumTools.EnumValue(Value, name);
+        }
+
+        private static List<Module> moduleList = new List<Module>();
+        public static void AddModule(Module module)
+        {
+            if (!moduleList.Contains(module))
+            {
+                moduleList.Add(module);
+            }
+        }
+
+        public static Type GetTypeEx(string name)
+        {
+            var type = Type.GetType(name);
+            if (type is null)
+            {
+                // 異なるアセンブリを参照する
+
+                foreach (var module in moduleList)
+                {
+                    type = module.GetType(name);
+                    if (type != null)
+                        break;
+                }
+            }
+            return type;
         }
 
         /// <summary>
@@ -508,11 +534,19 @@ namespace CapybaraVS.Script
             {
                 // 配列は、List<>に置き換える
 
-                Type element = Type.GetType(type.FullName.Replace("[]", ""));
-                var ret = CbList.Create(element, name);
-                if (ret is ICbList cbList)
-                    cbList.IsArrayType = true;
-                return ret;
+                string _mame = "xxx";
+                if (type.FullName != null)
+                    _mame = type.FullName;
+                else if (type.Name != null)
+                    _mame = type.Name;
+                Type element = CbST.GetTypeEx(_mame.Replace("[]", ""));
+                if (element != null)
+                {
+                    var ret = CbList.Create(element, name);
+                    if (ret is ICbList cbList)
+                        cbList.IsArrayType = true;
+                    return ret;
+                }
             }
 
             if (type.IsEnum)
@@ -764,7 +798,7 @@ namespace CapybaraVS.Script
                 case CbType.Decimal: return typeof(decimal);
                 case CbType.Bool: return typeof(bool);
                 case CbType.Object: return typeof(object);
-                case CbType.Func: return Type.GetType(cbTypeInfo.LiteralTypeForCbTypeFunc);
+                case CbType.Func: return CbST.GetTypeEx(cbTypeInfo.LiteralTypeForCbTypeFunc);
             }
             
             if (cbTypeInfo.Value is ICbValue cbVSValue)
@@ -805,7 +839,7 @@ namespace CapybaraVS.Script
             {
                 // Func タイプは、そのままの値が Value に入っている
 
-                return CbCreate(Type.GetType(cbTypeInfo.LiteralTypeForCbTypeFunc), name);
+                return CbCreate(CbST.GetTypeEx(cbTypeInfo.LiteralTypeForCbTypeFunc), name);
             }
 
             if (cbTypeInfo.ObjectType == CbCType.none)
@@ -861,7 +895,7 @@ namespace CapybaraVS.Script
                         if (cbTypeInfo.Value is ICbClass cbClass)
                         {
                             Type openedCbClass = typeof(CbClass<>); //CapybaraVS.Script.CbClass`1
-                            Type classType = Type.GetType(cbClass.ItemName);
+                            Type classType = CbST.GetTypeEx(cbClass.ItemName);
                             Type cbClassType = openedCbClass.MakeGenericType(classType);
 
                             if (classType == typeof(CbVoid))

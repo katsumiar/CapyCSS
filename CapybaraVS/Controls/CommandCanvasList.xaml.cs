@@ -93,6 +93,8 @@ namespace CapyCSS.Controls
         public bool IsAutoExecute = false;   // スクリプトの自動実行
         public bool IsAutoExit = false;      // スクリプトの自動実行後自動終了
 
+        public static string ErrorLog = "";
+
         public Action<string> SetTitleFunc = null;
 
         private int CurrentTabIndex = -1;
@@ -110,7 +112,6 @@ namespace CapyCSS.Controls
         }
 
         private CommandCanvas CurrentScriptCanvas = null;
-
         public CommandCanvasList()
         {
             InitializeComponent();
@@ -121,10 +122,47 @@ namespace CapyCSS.Controls
             Tab.Items.Clear();
             Dispatcher.BeginInvoke(new Action(() =>
             {
-                // アイドル状態になってから作成する
+                // アイドル状態になってから新規シートを作成する
 
                 AddNewContents();
+                if (reserveLoadCbsFilePath != null)
+                {
+                    // 起動読み込みをキックする（タイミングが不安…）
+
+                    KickLoadCbsFile();
+                }
             }), DispatcherPriority.ApplicationIdle);
+        }
+
+        /// <summary>
+        /// セットアップ処理です。
+        /// </summary>
+        /// <param name="settingFile">セッティングファイルパス</param>
+        /// <param name="setTitleFunc">タイトル表示処理（func(filename)）</param>
+        /// <param name="autoLoadCbsFile">起動時読み込みcbsファイル</param>
+        /// <param name="isAutoExecute">起動時実行</param>
+        /// <param name="isAutoExit">自動終了</param>
+        public void Setup(
+            string settingFile,
+            Action<string> setTitleFunc = null,
+            string autoLoadCbsFile = null,
+            bool isAutoExecute = false,
+            bool isAutoExit = false)
+        {
+            SetTitleFunc = setTitleFunc;
+            SetTitleFunc(null);
+            if (autoLoadCbsFile != null)
+            {
+                SetLoadCbsFile(autoLoadCbsFile);
+            }
+            if (!File.Exists(settingFile))
+            {
+                SaveInfo(settingFile);
+            }
+            LoadInfo(settingFile);
+            IsAutoExecute = isAutoExecute;
+            IsAutoExit = isAutoExit;
+            ShowSystemErrorLog();
         }
 
         /// <summary>
@@ -208,14 +246,37 @@ namespace CapyCSS.Controls
         }
 
         /// <summary>
-        /// CBS ファイルを読み込みます。
+        /// 読み込み予約cbsファイルです。
         /// </summary>
-        /// <param name="filename">ファイル名</param>
-        public void LoadCbsFile(string filename = null)
+        private string reserveLoadCbsFilePath = null;
+
+        /// <summary>
+        /// CBS ファイル読み込みを予約します。
+        /// </summary>
+        /// <param name="path">CBSファイルのパス</param>
+        public void SetLoadCbsFile(string path = null)
         {
-            Dispatcher.BeginInvoke(new Action(() =>
+            reserveLoadCbsFilePath = path;
+        }
+
+        /// <summary>
+        /// CBS ファイルを読み込み
+        /// </summary>
+        /// <param name="path">CBSファイルのパス</param>
+        public void LoadCbsFile(string path = null)
+        {
+            reserveLoadCbsFilePath = path;
+            KickLoadCbsFile();
+        }
+
+        /// <summary>
+        /// 予約された CBS ファイルを読み込みます。
+        /// </summary>
+        public void KickLoadCbsFile()
+        {
+            CurrentScriptCanvas?.Dispatcher.BeginInvoke(new Action(() =>
             {
-                if (filename is null)
+                if (reserveLoadCbsFilePath is null)
                 {
                     CurrentScriptCanvas.LoadXML();
                     if (CurrentScriptCanvas.OpenFileName != null && CurrentScriptCanvas.OpenFileName != "")
@@ -225,12 +286,13 @@ namespace CapyCSS.Controls
                 }
                 else
                 {
-                    CurrentScriptCanvas.LoadXML(System.IO.Path.GetFullPath(filename));
+                    CurrentScriptCanvas.LoadXML(System.IO.Path.GetFullPath(reserveLoadCbsFilePath));
                     if (CurrentScriptCanvas.OpenFileName != null && CurrentScriptCanvas.OpenFileName != "")
                     {
-                        CurrentTabItem.Header = System.IO.Path.GetFileNameWithoutExtension(filename);
+                        CurrentTabItem.Header = System.IO.Path.GetFileNameWithoutExtension(reserveLoadCbsFilePath);
                     }
                 }
+                reserveLoadCbsFilePath = null;
             }), DispatcherPriority.ApplicationIdle);
         }
 
@@ -242,11 +304,12 @@ namespace CapyCSS.Controls
         private void AddNewContents()
         {
             string newName = $"New{newNumbering++}";
+            CurrentScriptCanvas = CreateCanvas();
             Tab.Items.Add(
                 new TabItem()
                 {
                     Header = newName,
-                    Content = CurrentScriptCanvas = CreateCanvas()
+                    Content = CurrentScriptCanvas
                 }
                 );
             if (CurrentTabIndex == -1)
@@ -688,6 +751,23 @@ namespace CapyCSS.Controls
         {
             canvas.ScriptWorkCanvas.BGImage.Stretch = stretch;
             canvas.ScriptWorkCanvas.BGImage.Source = new BitmapImage(new Uri(path));
+        }
+
+
+        /// <summary>
+        /// システムエラーを出力します。
+        /// </summary>
+        public static void ShowSystemErrorLog()
+        {
+            if (ErrorLog.Length != 0)
+            {
+                OutputWindow outputWindow = new OutputWindow();
+                outputWindow.Title = "SystemError";
+                outputWindow.Owner = MainWindow.Instance;
+                outputWindow.Show();
+
+                outputWindow.AddBindText = ErrorLog;
+            }
         }
 
         public void Dispose()

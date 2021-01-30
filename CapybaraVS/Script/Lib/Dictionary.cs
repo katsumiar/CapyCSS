@@ -4,7 +4,7 @@ using System.Text;
 
 namespace CapybaraVS.Script.Lib
 {
-    class Dictionary
+    public class Dictionary
     {
         [ScriptMethod(nameof(Dictionary) + ".string.string.CreateDictionary")]
         public static Dictionary<string, string> CreateDictionaryStringString()

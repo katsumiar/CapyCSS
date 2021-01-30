@@ -1,4 +1,4 @@
-﻿<UserControl xmlns:Controls="clr-namespace:CapybaraVS.Controls"  xmlns:BaseControls="clr-namespace:CapybaraVS.Control.BaseControls"  x:Class="CapybaraVS.Controls.BaseControls.CommandCanvas"
+﻿<UserControl xmlns:BaseControls1="clr-namespace:CapyCSS.Controls.BaseControls"  xmlns:Controls="clr-namespace:CapybaraVS.Controls"  xmlns:BaseControls="clr-namespace:CapybaraVS.Control.BaseControls"  x:Class="CapybaraVS.Controls.BaseControls.CommandCanvas"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
@@ -14,8 +14,10 @@
         <Grid Grid.Column="0">
             <BaseControls:BaseWorkCanvas x:Name="WorkCanvas" />
         </Grid>
-        <Expander IsExpanded="True"  ExpandDirection="Left" HorizontalAlignment="Right" VerticalAlignment="Top" Background="Bisque">
+        <Expander IsExpanded="True"  ExpandDirection="Right" HorizontalAlignment="Right" VerticalAlignment="Top" Background="Bisque">
             <Controls:Stack x:Name="WorkStack" HorizontalAlignment="Center" VerticalAlignment="Top" />
+        </Expander>
+        <Expander x:Name="moduleView" IsExpanded="True"  ExpandDirection="Left" HorizontalAlignment="Left" VerticalAlignment="Top" Background="Bisque">
         </Expander>
     </Grid>
 </UserControl>

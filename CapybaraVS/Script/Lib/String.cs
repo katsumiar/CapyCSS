@@ -5,7 +5,7 @@ using System.Text.RegularExpressions;
 
 namespace CapybaraVS.Script.Lib
 {
-    class String
+    public class String
     {
         [ScriptMethod(nameof(String) + ".Parse." + nameof(ToInt), "",
             "RS=>String_ToInt"//"値へ変換：\n文字列を int 型の値に変換します。"

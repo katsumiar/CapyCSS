@@ -8,7 +8,7 @@ using System.Windows.Media.Imaging;
 
 namespace CapybaraVS.Script.Lib
 {
-    class FileLib
+    public class FileLib
     {
         [ScriptMethod("Input/Output" + ".ConsoleOut.List." + "Out String List", "",
             "RS=>FileLib_ConsoleOutStringList"//"文字列リストをコンソールに出力します。"

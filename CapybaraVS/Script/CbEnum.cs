@@ -27,7 +27,7 @@ namespace CapybaraVS.Script
         {
             if (value is ICbEnum cbEnum)
             {
-                return EnumValue(Type.GetType(cbEnum.ItemName), name);
+                return EnumValue(CbST.GetTypeEx(cbEnum.ItemName), name);
             }
             return null;
         }
@@ -40,13 +40,23 @@ namespace CapybaraVS.Script
         /// <returns>CbEnum<type>型の変数</returns>
         public static ICbValue EnumValue(Type type, string name)
         {
+            if (type is null)
+            {
+                return null;
+            }
+            if (type.IsByRefLike)
+            {
+                // ref-like型構造体は、ジェネリック型引数にできない（不要だろうけど…）
+
+                return null;
+            }
             string typeName = type.FullName;
             if (type.IsByRef)
             {
                 // リファレンス（スクリプト変数接続）
 
                 typeName = typeName.Replace("&", "");
-                type = Type.GetType(typeName);
+                type = CbST.GetTypeEx(typeName);
             }
             Type openedType = typeof(CbEnum<>); //CapybaraVS.Script.CbEnum`1
             Type cbEnumType = openedType.MakeGenericType(type);

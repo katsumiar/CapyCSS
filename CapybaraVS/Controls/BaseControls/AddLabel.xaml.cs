@@ -46,5 +46,14 @@ namespace CapybaraVS.Controls.BaseControls
             }
         }
 
+        private void StackPanel_MouseEnter(object sender, MouseEventArgs e)
+        {
+            Cursor = Cursors.Hand;
+        }
+
+        private void StackPanel_MouseLeave(object sender, MouseEventArgs e)
+        {
+            Cursor = null;
+        }
     }
 }

@@ -57,7 +57,6 @@ namespace CapybaraVS
 
         public static string APP_INFO_NAME = @"app.xml";
         public static string CAPYCSS_INFO_NAME = @"CapyCSS.xml";
-        public static string ErrorLog = "";
         public static string EntryLoadFile = null;  // スクリプトの起動後読み込み
         public static bool IsAutoExecute = false;   // スクリプトの自動実行
         public static bool IsAutoExit = false;      // スクリプトの自動実行後自動終了

@@ -103,37 +103,47 @@ namespace CapybaraVS.Controls.BaseControls
                 ReadAction = (self) =>
                 {
                     self.AssetId = AssetId;
+                    self._inportModule = ImportModule;
+                    self._inportDllModule = ImportDllModule;
+                    self.ImportModule();
                     self.WorkCanvas.OwnerCommandCanvas = self;
                     self.WorkCanvas.AssetXML = WorkCanvas;
                     self.WorkCanvas.AssetXML.ReadAction?.Invoke(self.WorkCanvas);
-                    if (WorkStack != null)
+
+                    self.Dispatcher.BeginInvoke(new Action(() =>
                     {
-                        self.WorkStack.OwnerCommandCanvas = self;
-                        self.WorkStack.AssetXML = WorkStack;
-                        self.WorkStack.AssetXML.ReadAction?.Invoke(self.WorkStack);
-                    }
-                    foreach (var node in WorkCanvasAssetList)
-                    {
-                        try
+                        // モジュールのインポートが終わるのを待つ
+
+                        if (WorkStack != null)
                         {
-                            Movable movableNode = new Movable();
-                            self.WorkCanvas.Add(movableNode);
-
-                            movableNode.OwnerCommandCanvas = self;
-                            movableNode.AssetXML = node;
-                            movableNode.AssetXML.ReadAction?.Invoke(movableNode);
-
-                            // レイヤー設定
-                            if (movableNode.ControlObject is IDisplayPriority dp)
+                            self.WorkStack.OwnerCommandCanvas = self;
+                            self.WorkStack.AssetXML = WorkStack;
+                            self.WorkStack.AssetXML.ReadAction?.Invoke(self.WorkStack);
+                        }
+                        foreach (var node in WorkCanvasAssetList)
+                        {
+                            try
                             {
-                                Canvas.SetZIndex(movableNode, dp.Priority);
+                                Movable movableNode = new Movable();
+                                self.WorkCanvas.Add(movableNode);
+
+                                movableNode.OwnerCommandCanvas = self;
+                                movableNode.AssetXML = node;
+                                movableNode.AssetXML.ReadAction?.Invoke(movableNode);
+
+                                // レイヤー設定
+                                if (movableNode.ControlObject is IDisplayPriority dp)
+                                {
+                                    Canvas.SetZIndex(movableNode, dp.Priority);
+                                }
+                            }
+                            catch (Exception ex)
+                            {
+                                System.Diagnostics.Debug.WriteLine(nameof(CommandCanvas) + "._AssetXML(ReadAction): " + ex.Message);
                             }
                         }
-                        catch (Exception ex)
-                        {
-                            System.Diagnostics.Debug.WriteLine(nameof(CommandCanvas) + "._AssetXML(ReadAction): " + ex.Message);
-                        }
-                    }
+
+                    }), DispatcherPriority.ApplicationIdle);
 
                     // 次回の為の初期化
                     self.AssetXML = new _AssetXML<CommandCanvas>(self);
@@ -144,6 +154,8 @@ namespace CapybaraVS.Controls.BaseControls
                 WriteAction = () =>
                 {
                     AssetId = self.AssetId;
+                    ImportModule = self.ApiImporter.ModuleList;
+                    ImportDllModule = self.ApiImporter.ModulePathList;
                     self.WorkCanvas.AssetXML.WriteAction?.Invoke();
                     WorkCanvas = self.WorkCanvas.AssetXML;
                     self.WorkStack.AssetXML.WriteAction?.Invoke();
@@ -164,6 +176,8 @@ namespace CapybaraVS.Controls.BaseControls
             public int AssetId { get; set; } = 0;
             #region 固有定義
             public BaseWorkCanvas._AssetXML<BaseWorkCanvas> WorkCanvas { get; set; } = null;
+            public List<string> ImportModule { get; set; } = null;
+            public List<string> ImportDllModule { get; set; } = null;
             public Stack._AssetXML<Stack> WorkStack { get; set; } = null;
             [XmlArrayItem("Asset")]
             public List<Movable._AssetXML<Movable>> WorkCanvasAssetList { get; set; } = null;
@@ -211,7 +225,9 @@ namespace CapybaraVS.Controls.BaseControls
 
         //----------------------------------------------------------------------
         #region スクリプト内共有
-
+        public List<string> _inportModule = null;
+        public List<string> _inportDllModule = null;
+        public ApiImporter ApiImporter = null;
         public CommandWindow CommandMenuWindow = null;
         public CommandCanvasList CommandCanvasControl = null;
         public TreeViewCommand CommandMenu => CommandMenuWindow.treeViewCommand;
@@ -331,10 +347,40 @@ namespace CapybaraVS.Controls.BaseControls
             }
 
             // 基本的なアセットを追加
-            new ImplementBaseAsset(this);
+            ApiImporter = new ApiImporter(this);
+            moduleView.Content = new ModuleControler(ApiImporter);
+            ImportModule();
 
             // デバッグ用アセットを追加
             AddTestTreeAsset(treeViewCommand);
+        }
+
+        /// <summary>
+        /// モジュールを読み込みます。
+        /// </summary>
+        public void ImportModule()
+        {
+            ApiImporter.ClearModule();
+            if (_inportModule != null)
+            {
+                // モジュールインポートの復元
+
+                foreach (var imp in _inportModule)
+                {
+                    ApiImporter.SetModule(imp, null);
+                }
+                _inportModule = null;
+            }
+            if (_inportDllModule != null)
+            {
+                // DLL インポートの復元
+
+                foreach (var imp in _inportDllModule)
+                {
+                    ApiImporter.LoadDll(imp, null);
+                }
+                _inportModule = null;
+            }
         }
 
         [Conditional("DEBUG")]

@@ -10,7 +10,7 @@ namespace CapybaraVS
     /// <summary>
     /// イージング関数
     /// </summary>
-    class EasingFunction
+    public class EasingFunction
     {
         /// <summary>
         /// イージング関数

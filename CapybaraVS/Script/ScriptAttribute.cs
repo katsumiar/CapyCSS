@@ -1,10 +1,13 @@
 ﻿using CapybaraVS.Controls.BaseControls;
+using CapyCSS.Controls;
 using CbVS.Script;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using System.Threading.Tasks;
 using System.Windows.Controls;
 
 namespace CapybaraVS.Script
@@ -13,7 +16,7 @@ namespace CapybaraVS.Script
     /// リフレクションによるメソッドのスクリプトノード化用のメソッド用属性です。
     /// </summary>
     [AttributeUsage(AttributeTargets.Method, AllowMultiple = true, Inherited = false)]
-    class ScriptMethodAttribute : Attribute
+    public class ScriptMethodAttribute : Attribute
     {
         private string menuName;    // メニュー用のメソッド名
         private string funcName;    // ノード用のメソッド名
@@ -41,7 +44,7 @@ namespace CapybaraVS.Script
     /// リフレクションによるメソッドのスクリプトノード化用の引数用属性です。
     /// </summary>
     [AttributeUsage(AttributeTargets.Parameter)]
-    class ScriptParamAttribute : Attribute
+    public class ScriptParamAttribute : Attribute
     {
         private string name;    // 引数名
         public string ParamName => name;
@@ -66,148 +69,529 @@ namespace CapybaraVS.Script
         }
 
         /// <summary>
-        /// リフレクションでメソッドを取り込み、ノード化します。
+        /// リフレクションで本アプリ内のメソッドを取り込み、ノード化します。
         /// </summary>
-        /// <param name="node"></param>
-        static public void ImplemantScriptMethods(CommandCanvas OwnerCommandCanvas, TreeMenuNode node)
+        /// <param name="OwnerCommandCanvas">オーナーキャンバス</param>
+        /// <param name="node">登録先のノード</param>
+        public static void ImportScriptMethods(
+            CommandCanvas OwnerCommandCanvas,
+            TreeMenuNode node)
         {
             // 現在のコードを実行しているアセンブリを取得する
             Assembly asm = Assembly.GetExecutingAssembly();
+            GetApiFromAssemblyForScriptMethodAttribute(OwnerCommandCanvas, node, asm);
+        }
 
-            // アセンブリで定義されている型をすべて取得する
-            Type[] ts = asm.GetTypes();
-            foreach (Type classType in ts)
+        /// <summary>
+        /// DLLからメソッドをスクリプトで使えるように取り込みます。
+        /// </summary>
+        /// <param name="OwnerCommandCanvas">オーナーキャンバス</param>
+        /// <param name="node">登録先のノード</param>
+        /// <param name="name">DLL名</param>
+        /// <param name="classList">取り込み対象クラスリスト</param>
+        /// <returns>インポートしたモジュール名</returns>
+        public static string ImportScriptMethodsFromModule(
+            CommandCanvas OwnerCommandCanvas,
+            TreeMenuNode node,
+            string name,
+            List<string> classList)
+        {
+            var asm = Assembly.Load(name);
+            var functionNode = ImplementAsset.CreateGroup(node, name);
+            ImportScriptMethods(OwnerCommandCanvas, functionNode, asm, null, classList);
+            return name;
+        }
+
+        /// <summary>
+        /// DLLファイルを読み込んでメソッドをスクリプトで使えるように取り込みます。
+        /// </summary>
+        /// <param name="OwnerCommandCanvas">オーナーキャンバス</param>
+        /// <param name="node">登録先のノード</param>
+        /// <param name="path"></param>
+        /// <param name="classList">取り込み対象クラスリスト</param>
+        /// <returns>インポートしたモジュール名</returns>
+        public static string ImportScriptMethodsFromDllFile(
+            CommandCanvas OwnerCommandCanvas,
+            TreeMenuNode node,
+            string path,
+            List<string> classList)
+        {
+            var asm = Assembly.LoadFrom(path);
+            Module mod = asm.GetModule(path);
+            string name = Path.GetFileName(path);
+            ImportScriptMethods(OwnerCommandCanvas, node, asm, mod, classList);
+            return name;
+        }
+
+        /// <summary>
+        /// 受け入れられるメソッドか判定します。
+        /// </summary>
+        /// <param name="methodInfo">メソッド情報</param>
+        /// <returns>true==受け入れられる</returns>
+        private static bool IsAcceptMethod(MethodBase methodInfo)
+        {
+            if (methodInfo.IsGenericMethod || methodInfo.IsGenericMethodDefinition)
+                return false;   // ジェネリックメソッドは現在未対応
+
+            if (methodInfo.IsAbstract)
+                return false;   // 象徴メソッドは呼べない
+
+            return true;
+        }
+
+        /// <summary>
+        /// 受け入れられるクラスか判定します。
+        /// </summary>
+        /// <param name="classType">クラスの型</param>
+        /// <returns>true==受け入れられる</returns>
+        private static bool IsAcceptClass(Type classType)
+        {
+            if (!classType.IsClass)
+                return false;   // クラス以外は、扱わない
+
+            if (classType.IsAbstract)
+                return false;   // 象徴クラスは、扱えない
+
+            if (classType.IsGenericType || classType.IsGenericTypeDefinition)
+                return false;   // ジェネリックなクラスには未対応
+
+            if (classType.IsNestedPrivate)
+                return false;   // 扱えない
+
+            if (classType.IsNotPublic)
+                return false;   // 扱えない
+
+            return true;
+        }
+
+        /// <summary>
+        /// Assemblyからメソッドをスクリプトで使えるように取り込みます。
+        /// </summary>
+        /// <param name="OwnerCommandCanvas">オーナーキャンバス</param>
+        /// <param name="node">登録先のノード</param>
+        /// <param name="asm">対象Assembly</param>
+        /// <param name="classList">取り込み対象クラスリスト</param>
+        public async static void ImportScriptMethods(
+            CommandCanvas OwnerCommandCanvas,
+            TreeMenuNode node,
+            Assembly asm,
+            Module module,
+            List<string> classList)
+        {
+            Type[] types = null;
+            if (module is null)
             {
-                foreach (MethodInfo info in classType.GetMethods())
+                types = asm.GetTypes();
+            }
+            else
+            {
+                types = module.GetTypes();
+                CbST.AddModule(module);
+            }
+
+            var tasks = new List<Task<List<AutoImplementFunctionInfo>>>();
+            foreach (Type classType in types)
+            {
+                if (!IsAcceptClass(classType))
+                    continue;   // 扱えない
+
+                if (classList != null && !classList.Contains(classType.Name))
+                    continue;
+
+                // コンストラクタをインポートする
+                Task<List<AutoImplementFunctionInfo>> importConstructorTask = Task.Run(() =>
                 {
-                    try 
+                    List<AutoImplementFunctionInfo> importFuncInfoList = new List<AutoImplementFunctionInfo>();
+
+                    foreach (ConstructorInfo constructorInfo in classType.GetConstructors())
                     {
-                        _implementScriptMethods(OwnerCommandCanvas, node, classType, info);
+                        if (!IsAcceptMethod(constructorInfo))
+                            continue;   // 未対応
+
+                        try
+                        {
+                            var functionInfo = MakeImplementFunctionInfo(classType, constructorInfo, null, null, module);
+                            if (functionInfo != null)
+                            {
+                                importFuncInfoList.Add(functionInfo);
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            CommandCanvasList.ErrorLog += nameof(ScriptImplement) + "." + nameof(ImportScriptMethods) + ": " + ex.Message + Environment.NewLine + Environment.NewLine;
+                        }
                     }
-                    catch (Exception ex) 
+                    return importFuncInfoList;
+                });
+                tasks.Add(importConstructorTask);
+
+                // メソッドをインポートする
+                Task<List<AutoImplementFunctionInfo>> importMethodTask = Task.Run(() =>
+                {
+                    List<AutoImplementFunctionInfo> importFuncInfoList = new List<AutoImplementFunctionInfo>();
+                    foreach (MethodInfo methodInfo in classType.GetMethods())
                     {
-                        App.ErrorLog += nameof(ScriptImplement) + "." + nameof(ImplemantScriptMethods) + ": " + ex.Message + Environment.NewLine + Environment.NewLine;
+                        if (!IsAcceptMethod(methodInfo))
+                            continue;   // 未対応
+
+                        try
+                        {
+                            var functionInfo = MakeImplementFunctionInfo(classType, methodInfo, methodInfo.ReturnType, null, module);
+                            if (functionInfo != null)
+                            {
+                                importFuncInfoList.Add(functionInfo);
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            CommandCanvasList.ErrorLog += nameof(ScriptImplement) + "." + nameof(ImportScriptMethods) + ": " + ex.Message + Environment.NewLine + Environment.NewLine;
+                        }
                     }
+                    return importFuncInfoList;
+                });
+                tasks.Add(importMethodTask);
+            }
+            List<AutoImplementFunctionInfo>[] importClassFuncInfoList = await Task.WhenAll<List<AutoImplementFunctionInfo>>(tasks);
+
+            // ノード化
+            foreach (var classInfo in importClassFuncInfoList)
+            {
+                if (classInfo is null)
+                    continue;
+
+                foreach (var info in classInfo)
+                {
+                    if (info is null)
+                        continue;
+
+                    CreateMethodNode(OwnerCommandCanvas, node, info);
                 }
             }
         }
 
-        private static void _implementScriptMethods(CommandCanvas OwnerCommandCanvas, TreeMenuNode node, Type classType, MethodInfo info)
+        /// <summary>
+        /// リフレクションでAssemblyからScriptMethodAttribute属性を持つメソッドをスクリプトで使えるように取り込みます。
+        /// </summary>
+        /// <param name="OwnerCommandCanvas">オーナーキャンバス</param>
+        /// <param name="node">登録先のノード</param>
+        /// <param name="asm">対象Assembly</param>
+        public static void GetApiFromAssemblyForScriptMethodAttribute(
+            CommandCanvas OwnerCommandCanvas,
+            TreeMenuNode node,
+            Assembly asm)
         {
-            var methods = info.GetCustomAttributes(typeof(ScriptMethodAttribute));
-            foreach (Attribute att in methods)
+            Type[] types = asm.GetTypes();
+            foreach (Type classType in types)
             {
-                ScriptMethodAttribute method = att as ScriptMethodAttribute;
-                if (method != null)
+                if (!IsAcceptClass(classType))
+                    continue;   // 扱えない
+
+                // コンストラクタをインポートする
+                foreach (ConstructorInfo constructorInfo in classType.GetConstructors())
                 {
-                    List<ArgumentInfoNode> argumentList = null;
-
-                    if (!info.IsStatic)
+                    try
                     {
-                        // 静的メソッドでは無いので所属するクラスの情報を取得
+                        if (!IsAcceptMethod(constructorInfo))
+                            continue;   // 未対応
 
-                        var selfType = TryGetCbType(info.ReflectedType);
-                        if (selfType is null)
-                            return;
-                        argumentList = MakeSelfTypeForClassMethod(info, argumentList, selfType);
+                        importScriptMethodAttributeMethods(OwnerCommandCanvas, node, classType, constructorInfo, null);
                     }
-
-                    if (GetArgumentList(info, ref argumentList))
+                    catch (Exception ex)
                     {
-                        Func<string, ICbValue> retType;
+                        CommandCanvasList.ErrorLog += nameof(ScriptImplement) + "." + nameof(ImportScriptMethods) + ": " + ex.Message + Environment.NewLine + Environment.NewLine;
+                    }
+                }
 
-                        // 返り値の型を準備
-                        if (info.ReturnType.FullName == "System.Void")
-                        {
-                            // void 型は専用のクラスを利用する
+                // メソッドをインポートする
+                foreach (MethodInfo methodInfo in classType.GetMethods())
+                {
+                    try
+                    {
+                        if (!IsAcceptMethod(methodInfo))
+                            continue;   // 未対応
 
-                            retType = TryGetCbType(CbVoid.T);
-                        }
-                        else
-                        {
-                            retType = TryGetCbType(info.ReturnType);
-                        }
-
-                        if (retType is null)
-                            return; // 返り値の型が対象外
-                        
-                        // メソッド名を取得
-                        string funcName = method.MenuName;
-                        if (funcName == "")
-                            funcName = info.Name;
-
-                        // オーバーロード用の名前保管情報を作成（同名にならないようにする）
-                        string addArg = "#";
-                        ParameterInfo[] paramsinfo = info.GetParameters();
-                        foreach (ParameterInfo para in paramsinfo)
-                        {
-                            addArg = addArg + "_" + CbSTUtils._GetTypeName(para.ParameterType);
-                        }
-
-                        // スクリプトノード用のヒント
-                        string nodeHint = method.NodeHint.Trim();
-                        if (nodeHint.StartsWith("RS=>"))
-                        {
-                            // ノード用ヒントをリソースから取得
-
-                            string id = nodeHint.Split("=>")[1];
-                            nodeHint = Language.GetInstance[id];
-                        }
-                        // メニュー用のヒント
-                        string hint = method.Hint.Trim();
-                        if (hint.StartsWith("RS=>"))
-                        {
-                            // メニュー用ヒントをリソースから取得
-
-                            string id = hint.Split("=>")[1];
-                            hint = Language.GetInstance[id];
-                        }
-
-                        // ノード化依頼用の情報をセット
-                        AutoImplementFunctionInfo autoImplementFunctionInfo = new AutoImplementFunctionInfo()
-                        {
-                            assetCode = info.ReflectedType.Namespace + "." + info.ReflectedType.Name + "." + info.Name + addArg,
-                            menuTitle = funcName,
-                            funcTitle = MakeScriptNodeName(method.FuncName != "" ? method.FuncName : funcName),
-                            hint = hint,
-                            nodeHint = $"【{(method.MenuName != "" ? method.MenuName : funcName)}】"
-                                + (nodeHint != "" ? Environment.NewLine : "") + nodeHint,
-                            classType = classType,
-                            returnType = () => retType(""),
-                            argumentTypeList = argumentList,
-                        };
-
-                        // ノード化を依頼
-                        if (CbFunc.ContainsEvent(argumentList))
-                        {
-                            // Func<> 引数を持つノードを作成
-
-                            ImplementAsset.CreateAssetMenu(
-                                OwnerCommandCanvas,
-                                node,
-                                AutoImplementEventFunction.Create(autoImplementFunctionInfo)
-                            );
-                        }
-                        else
-                        {
-                            // 通常のノードを作成
-
-                            ImplementAsset.CreateAssetMenu(
-                                OwnerCommandCanvas,
-                                node,
-                                AutoImplementFunction.Create(autoImplementFunctionInfo)
-                            );
-                        }
+                        importScriptMethodAttributeMethods(OwnerCommandCanvas, node, classType, methodInfo, methodInfo.ReturnType);
+                    }
+                    catch (Exception ex)
+                    {
+                        CommandCanvasList.ErrorLog += nameof(ScriptImplement) + "." + nameof(ImportScriptMethods) + ": " + ex.Message + Environment.NewLine + Environment.NewLine;
                     }
                 }
             }
         }
 
         /// <summary>
+        /// クラスとメソッド情報からScriptMethodAttribute属性を持つメソッドをスクリプトで使えるように取り込みます。
+        /// </summary>
+        /// <param name="OwnerCommandCanvas">オーナーキャンバス</param>
+        /// <param name="node">登録先のノード</param>
+        /// <param name="classType">クラスの型情報</param>
+        /// <param name="methodInfo">メソッド情報</param>
+        /// <param name="returnType">メソッドの返り値の型情報</param>
+        private async static void importScriptMethodAttributeMethods(
+            CommandCanvas OwnerCommandCanvas, 
+            TreeMenuNode node, 
+            Type classType,
+            MethodBase methodInfo,
+            Type returnType)
+        {
+            var tasks = new List<Task<AutoImplementFunctionInfo>>();
+            var methods = methodInfo.GetCustomAttributes(typeof(ScriptMethodAttribute));
+            foreach (Attribute att in methods)
+            {
+                ScriptMethodAttribute methodAttr = att as ScriptMethodAttribute;
+                if (methodAttr != null)
+                {
+                    Task<AutoImplementFunctionInfo> task = Task.Run(() =>
+                    {
+                        return MakeImplementFunctionInfo(classType, methodInfo, returnType, methodAttr);
+                    });
+                    tasks.Add(task);
+                }
+            }
+            AutoImplementFunctionInfo[] importFuncInfo = await Task.WhenAll<AutoImplementFunctionInfo>(tasks);
+
+            // ノード化
+            foreach (var info in importFuncInfo)
+            {
+                if (info is null)
+                    continue;
+
+                CreateMethodNode(OwnerCommandCanvas, node, info);
+            }
+        }
+
+        /// <summary>
+        /// クラスとメソッド情報からスクリプトで使えるように取り込みます。
+        /// </summary>
+        /// <param name="OwnerCommandCanvas">オーナーキャンバス</param>
+        /// <param name="node">登録先のノード</param>
+        /// <param name="classType">クラスの型情報</param>
+        /// <param name="methodInfo">メソッド情報</param>
+        /// <param name="returnType">メソッドの返り値の型情報</param>
+        /// <param name="methodAttr">ScriptMethodAttribute情報(or null)</param>
+        /// <param name="module">DLLモジュール(or null)</param>
+        /// <returns>スクリプト用メソッド情報</returns>
+        private static AutoImplementFunctionInfo MakeImplementFunctionInfo(
+            Type classType,
+            MethodBase methodInfo, 
+            Type returnType,
+            ScriptMethodAttribute methodAttr = null,
+            Module module = null)
+        {
+            List<ArgumentInfoNode> argumentList = null;
+
+            if (!methodInfo.IsStatic && !methodInfo.IsConstructor)
+            {
+                // 静的メソッドでは無いので所属するクラスの情報を取得
+
+                var selfType = TryGetCbType(methodInfo.ReflectedType);
+                if (selfType is null)
+                    return null;
+                argumentList = MakeSelfTypeForClassMethod(methodInfo, argumentList, selfType);
+            }
+
+            if (GetArgumentList(methodInfo, ref argumentList))
+            {
+                Func<string, ICbValue> retType;
+
+                if (methodInfo.IsConstructor)
+                {
+                    // コンストラクタ
+
+                    retType = TryGetCbType(classType);
+                }
+                else
+                {
+                    // 返り値の型を準備
+                    if (returnType.FullName == "System.Void")
+                    {
+                        // void 型は専用のクラスを利用する
+
+                        retType = TryGetCbType(CbVoid.T);
+                    }
+                    else
+                    {
+                        retType = TryGetCbType(returnType);
+                    }
+
+                    if (retType is null)
+                        return null; // 返り値の型が対象外
+                }
+
+                // メニュー用の名前を作成
+                string menuName = methodInfo.Name;
+                if (methodAttr != null && methodAttr.MenuName != "")
+                {
+                    // 指定の名前を採用する
+
+                    menuName = methodAttr.MenuName;
+                }
+                else if (methodAttr is null)
+                {
+                    // 名前を作成する
+
+                    if (methodInfo.IsConstructor)
+                    {
+                        menuName = classType.Name + ".new." + classType.Name;
+                    }
+                    else
+                    {
+                        menuName = classType.Name + "." + menuName + "." + menuName;
+                    }
+                    if (classType.Namespace != null)
+                    {
+                        // ネームスペースを付ける
+
+                        menuName = classType.Namespace + "." + menuName;
+                    }
+
+                    // 引数情報を追加する
+                    menuName += MakeParamsString(methodInfo);
+                }
+
+                // ノード用の名前を作成
+                string nodeName = MakeScriptNodeName(menuName);
+                if (methodAttr != null && methodAttr.FuncName != "")
+                {
+                    // 指定の名前を採用する
+
+                    nodeName = methodAttr.FuncName;
+                }
+                else if (methodAttr is null)
+                {
+                    if (methodInfo.IsConstructor)
+                    {
+                        nodeName = "new " + classType.Name;
+                    }
+                    else
+                    {
+                        nodeName = methodInfo.Name;
+                    }
+                }
+
+                // スクリプトノード用のヒント
+                string nodeHint = "";
+                string nodeHintTitle = menuName;
+                if (methodAttr != null)
+                {
+                    nodeHint = methodAttr.NodeHint.Trim();
+                    if (nodeHint.StartsWith("RS=>"))
+                    {
+                        // ノード用ヒントをリソースから取得
+
+                        string id = nodeHint.Split("=>")[1];
+                        nodeHint = Language.GetInstance[id];
+                    }
+                }
+                nodeHint = $"【{nodeHintTitle}】" + (nodeHint != "" ? Environment.NewLine : "") + nodeHint;
+
+                // メニュー用のヒント
+                string hint = "";
+                if (methodAttr != null)
+                {
+                    hint = methodAttr.Hint.Trim();
+                    if (hint.StartsWith("RS=>"))
+                    {
+                        // メニュー用ヒントをリソースから取得
+
+                        string id = hint.Split("=>")[1];
+                        hint = Language.GetInstance[id];
+                    }
+                }
+
+                // オーバーロード用の名前保管情報を作成（同名にならないようにする）
+                string addArg = "#";
+                ParameterInfo[] paramsinfo = methodInfo.GetParameters();
+                foreach (ParameterInfo para in paramsinfo)
+                {
+                    addArg += "_" + CbSTUtils._GetTypeName(para.ParameterType);
+                }
+
+                // ノード化依頼用の情報をセット
+                AutoImplementFunctionInfo autoImplementFunctionInfo = new AutoImplementFunctionInfo()
+                {
+                    assetCode = methodInfo.ReflectedType.Namespace + "." + methodInfo.ReflectedType.Name + "." + methodInfo.Name + addArg,
+                    menuTitle = menuName,
+                    funcTitle = nodeName,
+                    hint = hint,
+                    nodeHint = nodeHint,
+                    classType = classType,
+                    returnType = () => retType(""),
+                    argumentTypeList = argumentList,
+                    dllModule = module,
+                    isConstructor = methodInfo.IsConstructor,
+                };
+
+                return autoImplementFunctionInfo;
+            }
+            return null;
+        }
+
+        /// <summary>
+        /// スクリプト用メソッド情報を基にメソッドをノード化してメニューに紐付けます。
+        /// </summary>
+        /// <param name="OwnerCommandCanvas">オーナーキャンバス</param>
+        /// <param name="node">登録先のノード</param>
+        /// <param name="autoImplementFunctionInfo">スクリプト用メソッド情報</param>
+        private static void CreateMethodNode(CommandCanvas OwnerCommandCanvas, TreeMenuNode node, AutoImplementFunctionInfo autoImplementFunctionInfo)
+        {
+            if (CbFunc.ContainsEvent(autoImplementFunctionInfo.argumentTypeList))
+            {
+                // Func<> 引数を持つノードを作成
+
+                ImplementAsset.CreateAssetMenu(
+                    OwnerCommandCanvas,
+                    node,
+                    AutoImplementEventFunction.Create(autoImplementFunctionInfo)
+                );
+            }
+            else
+            {
+                // 通常のノードを作成
+
+                ImplementAsset.CreateAssetMenu(
+                    OwnerCommandCanvas,
+                    node,
+                    AutoImplementFunction.Create(autoImplementFunctionInfo)
+                );
+            }
+        }
+
+        /// <summary>
+        /// 引数情報を文字列化します。
+        /// </summary>
+        /// <param name="methodInfo">メソッド情報</param>
+        /// <returns>文字列化した引数情報</returns>
+        private static string MakeParamsString(MethodBase methodInfo)
+        {
+            string paramsStr = "()";
+            ParameterInfo[] paramss = methodInfo.GetParameters();
+            if (paramss.Length != 0)
+            {
+                paramsStr = "(";
+                bool isFirst = true;
+                foreach (ParameterInfo para in paramss)
+                {
+                    if (!isFirst)
+                    {
+                        paramsStr += ",";
+                    }
+
+                    paramsStr += CbSTUtils._GetTypeName(para.ParameterType);
+
+                    isFirst = false;
+                }
+                paramsStr += ")";
+            }
+            return paramsStr;
+        }
+
+        /// <summary>
         /// スクリプトノード名を作成します。
         /// </summary>
-        /// <param name="name"></param>
-        /// <returns></returns>
+        /// <param name="name">ネームスペース付きの名前</param>
+        /// <returns>スクリプトノード名</returns>
         private static string MakeScriptNodeName(string name)
         {
             if (name.Contains("."))
@@ -222,18 +606,18 @@ namespace CapybaraVS.Script
         /// <summary>
         /// クラスメソッド用に第一引数用のクラス型の self 引数を作成します。
         /// </summary>
-        /// <param name="info"></param>
-        /// <param name="argumentList"></param>
+        /// <param name="methodInfo">メソッド情報</param>
+        /// <param name="argumentList">引数リスト</param>
         /// <param name="selfType"></param>
         /// <returns></returns>
         private static List<ArgumentInfoNode> MakeSelfTypeForClassMethod(
-            MethodInfo info,
+            MethodBase methodInfo,
             List<ArgumentInfoNode> argumentList,
             Func<string, ICbValue> selfType)
         {
             ArgumentInfoNode argNode = new ArgumentInfoNode();
             string name = "self";// info.ReflectedType.Name;
-            foreach (var attrNode in info.ReflectedType.GetCustomAttributes())
+            foreach (var attrNode in methodInfo.ReflectedType.GetCustomAttributes())
             {
                 if (attrNode is ScriptParamAttribute scriptParam)
                     name = scriptParam.ParamName;
@@ -259,7 +643,7 @@ namespace CapybaraVS.Script
         /// <param name="argumentList"></param>
         /// <returns></returns>
         private static bool GetArgumentList(
-            MethodInfo info,
+            MethodBase info,
             ref List<ArgumentInfoNode> argumentList)
         {
             if (info is null)

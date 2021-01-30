@@ -4,7 +4,7 @@ using System.Text;
 
 namespace CapybaraVS.Script.Lib
 {
-    class StatisticsLib
+    public class StatisticsLib
     {
         [ScriptMethod("Statistics" + "." + "Normalize width of value", "",
             "RS=>StatisticsLib_NormalizeWidthOfValue"//"値の幅のノーマライズ：\n<sample>リストの要素の値の幅を求め、比率を維持したまま0～1.0の間に収めます。"

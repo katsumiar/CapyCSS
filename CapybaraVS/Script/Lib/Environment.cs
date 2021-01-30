@@ -5,7 +5,7 @@ using System.Text.RegularExpressions;
 
 namespace CapybaraVS.Script.Lib
 {
-    class EnvironmentLib
+    public class EnvironmentLib
     {
         [ScriptMethod("Environment" + "." + nameof(MachineName), "",
             "RS=>EnvironmentLib_MachineName"//"マシン名：\nマシン名を参照します。"

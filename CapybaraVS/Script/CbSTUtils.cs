@@ -136,6 +136,18 @@ namespace CapybaraVS.Script
 
         static public string _GetTypeName(Type type)
         {
+            string ret = __GetTypeName(type);
+            if (type.IsArray)
+            {
+                // 外した配列を付け直す
+
+                ret += "[]";
+            }
+            return ret;
+        }
+
+        static public string __GetTypeName(Type type)
+        {
             bool isNotGeneName = false;
             if (type.IsGenericType)
             {
@@ -152,12 +164,21 @@ namespace CapybaraVS.Script
             string typeName = type.FullName;
             string geneString = "";
 
+            if (type.IsArray)
+            {
+                // 配列は一先ず外す
+
+                typeName = typeName.Replace("[]", "");
+            }
+
             if (CbTypeNameList.ContainsKey(typeName))
             {
                 return CbTypeNameList[typeName];
             }
 
-            if (type.IsGenericType)
+            if (type.IsGenericType ||
+                typeName.Contains("`")  // IsClass だと思われる
+                )
             {
                 // ジェネリック引数文字以降を削除
                 typeName = typeName.Substring(0, typeName.IndexOf("`"));
@@ -166,11 +187,24 @@ namespace CapybaraVS.Script
                 {
                     string newName = _GetTypeName(arg);
                     if (geneString.Length != 0)
+                    {
                         geneString += ",";
+                    }
                     geneString += newName;
                 }
                 if (!isNotGeneName)
-                    geneString = "<" + geneString + ">";
+                {
+                    if (geneString == "")
+                    {
+                        // IsClass だと思われる
+
+                        // TODO 詳細を調べる
+                    }
+                    else
+                    {
+                        geneString = "<" + geneString + ">";
+                    }
+                }
             }
 
             // ネームスペースを省略できるかチェックをここで行い、省略できるなら省略する

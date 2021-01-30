@@ -51,13 +51,23 @@ namespace CapybaraVS.Script
         /// <returns>CbStruct<T>型の変数</returns>
         public static ICbValue StructValue(Type type, string name)
         {
+            if (type is null)
+            {
+                return null;
+            }
+            if (type.IsByRefLike)
+            {
+                // ref-like型構造体は、ジェネリック型引数にできない
+
+                return null;
+            }
             string typeName = type.FullName;
             if (type.IsByRef)
             {
                 // リファレンス（スクリプト変数接続）
 
                 typeName = typeName.Replace("&", "");
-                type = Type.GetType(typeName);
+                type = CbST.GetTypeEx(typeName);
             }
             Type openedType = typeof(CbStruct<>); //CapybaraVS.Script.CbStruct`1
             Type cbStructType = openedType.MakeGenericType(type);

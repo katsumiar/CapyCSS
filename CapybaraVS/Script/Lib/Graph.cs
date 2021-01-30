@@ -7,7 +7,7 @@ using static CbVS.Script.Lib.Graphics;
 
 namespace CapybaraVS.Script.Lib
 {
-    class Graph
+    public class Graph
     {
         const double TickGraph = 1.0 / 20.0;
 

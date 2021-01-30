@@ -1,5 +1,6 @@
 ﻿using CapybaraVS.Controls.BaseControls;
 using CapybaraVS.Script;
+using CapyCSS.Controls;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -42,54 +43,19 @@ namespace CapybaraVS
             InitializeComponent();
             instance = this;
             Closing += MainWindow_Closing;
-            
-            if (!File.Exists(App.CAPYCSS_INFO_NAME))
-            {
-                CommandControl.SaveInfo(App.CAPYCSS_INFO_NAME);
-            }
-            CommandControl.LoadInfo(App.CAPYCSS_INFO_NAME);
 
-            CommandControl.IsAutoExecute = App.IsAutoExecute;
-            CommandControl.IsAutoExit = App.IsAutoExit;
-
-            CommandControl.SetTitleFunc = (filename) =>
-            {
-                // タイトルをセットします。
-
-                var assm = Assembly.GetExecutingAssembly();
-                var name = assm.GetName();
-                Title = name.Name + " ver " + AppVersion;
-                if (filename != null && filename != "")
-                    Title += $" [{filename}]";
-            };
-            CommandControl.SetTitleFunc(null);
-
-            if (App.EntryLoadFile != null)
-            {
-                Dispatcher.BeginInvoke(new Action(() =>
+            CommandControl.Setup(
+                App.CAPYCSS_INFO_NAME,
+                (filename) =>
                 {
-                    // アイドル状態になってから読み込む
+                    // タイトルをセットします。
 
-                    ShowSystemErrorLog();
-                    CommandControl.LoadCbsFile(App.EntryLoadFile);
-                }), DispatcherPriority.ApplicationIdle);
-            }
-        }
-
-        /// <summary>
-        /// システムエラーを出力します。
-        /// </summary>
-        private static void ShowSystemErrorLog()
-        {
-            if (App.ErrorLog.Length != 0)
-            {
-                OutputWindow outputWindow = new OutputWindow();
-                outputWindow.Title = "SystemError";
-                outputWindow.Owner = MainWindow.Instance;
-                outputWindow.Show();
-
-                outputWindow.AddBindText = App.ErrorLog;
-            }
+                    var assm = Assembly.GetExecutingAssembly();
+                    var name = assm.GetName();
+                    Title = name.Name + " ver " + AppVersion;
+                    if (filename != null && filename != "")
+                        Title += $" [{filename}]";
+                }, App.EntryLoadFile, App.IsAutoExecute, App.IsAutoExit);
         }
 
         /// <summary>
