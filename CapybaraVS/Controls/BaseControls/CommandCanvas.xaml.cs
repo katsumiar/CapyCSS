@@ -105,8 +105,10 @@ namespace CapybaraVS.Controls.BaseControls
                     self.AssetId = AssetId;
                     self._inportModule = ImportModule;
                     self._inportDllModule = ImportDllModule;
-                    self.ImportModule();
-                    SetupCanvas(self);
+                    if (self.ImportModule())
+                    {
+                        SetupCanvas(self);
+                    }
 
                     // 次回の為の初期化
                     self.AssetXML = new _AssetXML<CommandCanvas>(self);
@@ -234,6 +236,7 @@ namespace CapybaraVS.Controls.BaseControls
         public List<string> _inportModule = null;
         public List<string> _inportDllModule = null;
         public ApiImporter ApiImporter = null;
+        private ModuleControler moduleControler = null;
         public CommandWindow CommandMenuWindow = null;
         public CommandCanvasList CommandCanvasControl = null;
         public TreeViewCommand CommandMenu => CommandMenuWindow.treeViewCommand;
@@ -354,7 +357,8 @@ namespace CapybaraVS.Controls.BaseControls
 
             // 基本的なアセットを追加
             ApiImporter = new ApiImporter(this);
-            moduleView.Content = new ModuleControler(ApiImporter);
+            moduleView.Content =
+                moduleControler = new ModuleControler(ApiImporter, CommandCanvasControl.DllDir);
             ImportModule();
 
             // デバッグ用アセットを追加
@@ -364,7 +368,8 @@ namespace CapybaraVS.Controls.BaseControls
         /// <summary>
         /// モジュールを読み込みます。
         /// </summary>
-        public void ImportModule()
+        /// <returns>成功したらtrue</returns>
+        public bool ImportModule()
         {
             ApiImporter.ClearModule();
             if (_inportModule != null)
@@ -383,10 +388,17 @@ namespace CapybaraVS.Controls.BaseControls
 
                 foreach (var imp in _inportDllModule)
                 {
+                    if (!moduleControler.CheckImportable(imp))
+                    {
+                        // dll のインポートに失敗
+
+                        return false;
+                    }
                     ApiImporter.LoadDll(imp, null);
                 }
                 _inportModule = null;
             }
+            return true;
         }
 
         [Conditional("DEBUG")]

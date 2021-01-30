@@ -816,6 +816,18 @@
   <data name="Mod" xml:space="preserve">
     <value>&lt;n1&gt; の &lt;n2&gt; による剰余を参照します。</value>
   </data>
+  <data name="ModuleControler_01" xml:space="preserve">
+    <value>{0} を上書きインポートしますか？\n上書きした場合、アプリケーションの再起動が必要です。</value>
+  </data>
+  <data name="ModuleControler_02" xml:space="preserve">
+    <value>{0} のインポートに成功しました。\nアプリケーションを終了して宜しいでしょうか？</value>
+  </data>
+  <data name="ModuleControler_03" xml:space="preserve">
+    <value>{0} のインポートに成功しました。</value>
+  </data>
+  <data name="ModuleControler_04" xml:space="preserve">
+    <value>{0} が見つかりませんでした。</value>
+  </data>
   <data name="Mul" xml:space="preserve">
     <value>&lt;base&gt;を&lt;sample&gt;リストの値だけ積算します。</value>
   </data>

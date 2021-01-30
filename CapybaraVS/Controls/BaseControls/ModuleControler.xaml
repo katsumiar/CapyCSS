@@ -8,6 +8,7 @@
              d:DesignHeight="450" d:DesignWidth="800">
     <Grid>
         <StackPanel>
+            <ComboBox x:Name="InstallDllList" DropDownOpened="ComboBox_DropDownOpened" />
             <BaseControls:AddLabel Caption="Import" HorizontalAlignment="Left" MouseDown="AddLabel_MouseDown" />
             <ListView x:Name="ImportList" />
         </StackPanel>

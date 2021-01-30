@@ -55,8 +55,9 @@ namespace CapybaraVS
         public _AssetXML<App> AssetXML { get; set; } = null;
         #endregion
 
-        public static string APP_INFO_NAME = @"app.xml";
-        public static string CAPYCSS_INFO_NAME = @"CapyCSS.xml";
+        public static string APP_INFO_PATH = @"app.xml";
+        public static string CAPYCSS_INFO_PATH = @"CapyCSS.xml";
+        public static string CAPYCSS_DLL_DIR_PATH = @"dll"; // DLL保存用ディレクトリ
         public static string EntryLoadFile = null;  // スクリプトの起動後読み込み
         public static bool IsAutoExecute = false;   // スクリプトの自動実行
         public static bool IsAutoExit = false;      // スクリプトの自動実行後自動終了
@@ -84,8 +85,13 @@ namespace CapybaraVS
                 {
                     Directory.CreateDirectory(path);
                 }
-                APP_INFO_NAME = Path.Combine(path, APP_INFO_NAME);
-                CAPYCSS_INFO_NAME = Path.Combine(path, CAPYCSS_INFO_NAME);
+                APP_INFO_PATH = Path.Combine(path, APP_INFO_PATH);
+                CAPYCSS_INFO_PATH = Path.Combine(path, CAPYCSS_INFO_PATH);
+                CAPYCSS_DLL_DIR_PATH = Path.Combine(path, CAPYCSS_DLL_DIR_PATH);
+                if (!Directory.Exists(CAPYCSS_DLL_DIR_PATH))
+                {
+                    Directory.CreateDirectory(CAPYCSS_DLL_DIR_PATH);
+                }
             }
 
             // ツールチップの表示時間を設定
@@ -94,7 +100,7 @@ namespace CapybaraVS
                 new FrameworkPropertyMetadata(4000));
 
             AssetXML = new _AssetXML<App>(this);
-            if (!File.Exists(APP_INFO_NAME))
+            if (!File.Exists(APP_INFO_PATH))
             {
                 SaveAppInfo();
             }
@@ -149,7 +155,7 @@ namespace CapybaraVS
                 namespaces.Add(string.Empty, string.Empty);
                 AssetXML.WriteAction();
                 serializer.Serialize(writer, AssetXML, namespaces);
-                StreamWriter swriter = new StreamWriter(APP_INFO_NAME, false);
+                StreamWriter swriter = new StreamWriter(APP_INFO_PATH, false);
                 swriter.WriteLine(writer.ToString());
                 swriter.Close();
             }
@@ -161,7 +167,7 @@ namespace CapybaraVS
 
         public void LoadAppInfo()
         {
-            StreamReader reader = new StreamReader(APP_INFO_NAME);
+            StreamReader reader = new StreamReader(APP_INFO_PATH);
             XmlSerializer serializer = new XmlSerializer(AssetXML.GetType());
 
             XmlDocument doc = new XmlDocument();

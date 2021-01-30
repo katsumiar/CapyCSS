@@ -816,6 +816,18 @@
   <data name="Mod" xml:space="preserve">
     <value>Reference the remainder of &lt;n1&gt; by &lt;n2&gt;.</value>
   </data>
+  <data name="ModuleControler_01" xml:space="preserve">
+    <value>Do you want to overwrite and import {0}?\nIf you overwrite it, you need to restart the application.</value>
+  </data>
+  <data name="ModuleControler_02" xml:space="preserve">
+    <value>The import of {0} was successful.\nAre you sure you want to quit the application?</value>
+  </data>
+  <data name="ModuleControler_03" xml:space="preserve">
+    <value>The import of {0} was successful.</value>
+  </data>
+  <data name="ModuleControler_04" xml:space="preserve">
+    <value>Not Found {0}.</value>
+  </data>
   <data name="Mul" xml:space="preserve">
     <value>&lt;base&gt; accumulates only the values in the &lt;sample&gt; list.</value>
   </data>

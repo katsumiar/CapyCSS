@@ -46,7 +46,8 @@ namespace CapybaraVS
 
             CommandControl.Setup(
                 this,
-                App.CAPYCSS_INFO_NAME,
+                App.CAPYCSS_INFO_PATH,
+                App.CAPYCSS_DLL_DIR_PATH,
                 (filename) =>
                 {
                     // タイトルをセットします。
@@ -95,7 +96,7 @@ namespace CapybaraVS
 
         private void MainWindow_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            CommandControl.SaveInfo(App.CAPYCSS_INFO_NAME);
+            CommandControl.SaveInfo(App.CAPYCSS_INFO_PATH);
             CommandControl.Dispose();
             App.Instance.SaveAppInfo();
         }
