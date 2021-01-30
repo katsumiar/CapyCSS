@@ -1,4 +1,5 @@
 ﻿using CapybaraVS.Script;
+using CapyCSS.Controls;
 using CbVS;
 using CbVS.Script;
 using System;
@@ -328,10 +329,10 @@ namespace CapybaraVS.Controls.BaseControls
 
         private void OpenAccordion()
         {
-            MainWindow.Instance.Cursor = Cursors.Wait;
+            CommandCanvasList.OwnerWindow.Cursor = Cursors.Wait;
             Dispatcher.BeginInvoke(new Action(() =>
                 {
-                    MainWindow.Instance.Cursor = null;
+                    CommandCanvasList.OwnerWindow.Cursor = null;
                 }),
                 DispatcherPriority.ApplicationIdle
             );

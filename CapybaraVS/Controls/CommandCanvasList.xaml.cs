@@ -97,9 +97,15 @@ namespace CapyCSS.Controls
 
         public Action<string> SetTitleFunc = null;
 
+        public Action CallClosing = null;
+
         private int CurrentTabIndex = -1;
 
         private List<string> scriptWorkRecentList = new List<string>();
+
+        private static Window ownerWindow = null;
+
+        public static Window OwnerWindow => ownerWindow;
 
         private TabItem CurrentTabItem
         {
@@ -137,19 +143,25 @@ namespace CapyCSS.Controls
         /// <summary>
         /// セットアップ処理です。
         /// </summary>
+        /// <param name="owner">オーナーウインドウ</param>
         /// <param name="settingFile">セッティングファイルパス</param>
         /// <param name="setTitleFunc">タイトル表示処理（func(filename)）</param>
+        /// <param name="closingFunc">終了処理</param>
         /// <param name="autoLoadCbsFile">起動時読み込みcbsファイル</param>
         /// <param name="isAutoExecute">起動時実行</param>
         /// <param name="isAutoExit">自動終了</param>
         public void Setup(
+            Window owner,
             string settingFile,
             Action<string> setTitleFunc = null,
+            Action closingFunc = null,
             string autoLoadCbsFile = null,
             bool isAutoExecute = false,
             bool isAutoExit = false)
         {
+            ownerWindow = owner;
             SetTitleFunc = setTitleFunc;
+            CallClosing = closingFunc;
             SetTitleFunc(null);
             if (autoLoadCbsFile != null)
             {
@@ -502,7 +514,7 @@ namespace CapyCSS.Controls
                 {
                     // スクリプト実行後自動終了
 
-                    MainWindow.Instance.CallClosing();
+                    CallClosing?.Invoke();
                 }
             }), DispatcherPriority.ApplicationIdle);
         }
@@ -763,7 +775,7 @@ namespace CapyCSS.Controls
             {
                 OutputWindow outputWindow = new OutputWindow();
                 outputWindow.Title = "SystemError";
-                outputWindow.Owner = MainWindow.Instance;
+                outputWindow.Owner = CommandCanvasList.OwnerWindow;
                 outputWindow.Show();
 
                 outputWindow.AddBindText = ErrorLog;

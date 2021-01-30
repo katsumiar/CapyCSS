@@ -1,4 +1,5 @@
 ﻿using CapybaraVS;
+using CapyCSS.Controls;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -37,7 +38,7 @@ namespace CapyCSS
         public static HelpWindow Create()
         {
             HelpWindow helpWindow = new HelpWindow();
-            helpWindow.Owner = MainWindow.Instance;
+            helpWindow.Owner = CommandCanvasList.OwnerWindow;
             return helpWindow;
         }
     }

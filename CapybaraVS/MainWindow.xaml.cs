@@ -45,6 +45,7 @@ namespace CapybaraVS
             Closing += MainWindow_Closing;
 
             CommandControl.Setup(
+                this,
                 App.CAPYCSS_INFO_NAME,
                 (filename) =>
                 {
@@ -55,7 +56,7 @@ namespace CapybaraVS
                     Title = name.Name + " ver " + AppVersion;
                     if (filename != null && filename != "")
                         Title += $" [{filename}]";
-                }, App.EntryLoadFile, App.IsAutoExecute, App.IsAutoExit);
+                }, CallClosing, App.EntryLoadFile, App.IsAutoExecute, App.IsAutoExit);
         }
 
         /// <summary>

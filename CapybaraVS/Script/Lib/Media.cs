@@ -1,5 +1,6 @@
 ﻿using CapybaraVS;
 using CapybaraVS.Script;
+using CapyCSS.Controls;
 using CbVS.Controls;
 using System;
 using System.Collections.Generic;
@@ -81,7 +82,7 @@ namespace CbVS.Script.Lib
             }
             var window = new MediaWindow();
             window.MediaOption = mediaOption;
-            window.Owner = MainWindow.Instance;
+            window.Owner = CommandCanvasList.OwnerWindow;
             window.MediaSource = media;
             window.Caption = title;
             window.Show();

@@ -1,6 +1,7 @@
 ﻿using CapybaraVS.Controls;
 using CapybaraVS.Controls.BaseControls;
 using CapybaraVS.Script;
+using CapyCSS.Controls;
 using CbVS.Script;
 using System;
 using System.Collections.Generic;
@@ -54,21 +55,21 @@ namespace CapybaraVS
         {
             ListSelectWindow selectWindow = new ListSelectWindow();
             selectWindow.Caption = caption;
-            selectWindow.Owner = MainWindow.Instance;
+            selectWindow.Owner = CommandCanvasList.OwnerWindow;
             if (pos.HasValue)
             {
                 selectWindow.Left = pos.Value.X;
                 selectWindow.Top = pos.Value.Y;
-                if (MainWindow.Instance.WindowState != WindowState.Maximized)
+                if (CommandCanvasList.OwnerWindow.WindowState != WindowState.Maximized)
                 {
                     // ウインドウが最大化されても元のサイズが帰ってくるようなので、最大化していないときだけ相対位置にする
 
-                    selectWindow.Left += MainWindow.Instance.Left;
-                    selectWindow.Top += MainWindow.Instance.Top;
+                    selectWindow.Left += CommandCanvasList.OwnerWindow.Left;
+                    selectWindow.Top += CommandCanvasList.OwnerWindow.Top;
                 }
                 else
                 {
-                    if (MainWindow.Instance.Left > SystemParameters.PrimaryScreenWidth)
+                    if (CommandCanvasList.OwnerWindow.Left > SystemParameters.PrimaryScreenWidth)
                     {
                         // セカンダリディスプレイでクリックされた
 

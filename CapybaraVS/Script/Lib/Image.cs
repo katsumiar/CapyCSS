@@ -1,6 +1,7 @@
 ﻿using CapybaraVS;
 using CapybaraVS.Script;
 using CapybaraVS.Script.Lib;
+using CapyCSS.Controls;
 using CbVS.Controls;
 using MathNet.Numerics;
 using System;
@@ -233,7 +234,7 @@ namespace CbVS.Script.Lib
             }
             var window = new MediaWindow();
             window.MediaOption = mediaOption;
-            window.Owner = MainWindow.Instance;
+            window.Owner = CommandCanvasList.OwnerWindow;
             window.ImageSource = image;
             window.Caption = title;
             window.Show();
@@ -691,13 +692,13 @@ namespace CbVS.Script.Lib
         {
             if (hideAndCapture)
             {
-                MainWindow.Instance.WindowState = WindowState.Minimized;
+                CommandCanvasList.OwnerWindow.WindowState = WindowState.Minimized;
                 Thread.Sleep(500);
             }
             BitmapSource bitmap = getScreenImage();
             if (hideAndCapture)
             {
-                MainWindow.Instance.WindowState = WindowState.Normal;
+                CommandCanvasList.OwnerWindow.WindowState = WindowState.Normal;
             }
             return bitmap;
         }

@@ -1,5 +1,6 @@
 ﻿using CapybaraVS.Controls.BaseControls;
 using CapybaraVS.Script.Lib;
+using CapyCSS.Controls;
 using System;
 using System.Collections.Generic;
 using System.Reflection.PortableExecutable;
@@ -237,7 +238,7 @@ namespace CapybaraVS.Controls
             }
 
             PlotWindow plotWindow = new PlotWindow();
-            plotWindow.Owner = MainWindow.Instance;
+            plotWindow.Owner = CommandCanvasList.OwnerWindow;
             plotWindow.Title = "Plot";
             if (msg != null && msg.Trim() != "")
                 plotWindow.Title += ": " + msg;

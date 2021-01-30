@@ -1,5 +1,6 @@
 ﻿using CapybaraVS.Controls.BaseControls;
 using CapybaraVS.Script;
+using CapyCSS.Controls;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -81,21 +82,21 @@ namespace CapybaraVS
             EnumWindow enumWindow = new EnumWindow();
             enumWindow.EnumItem = enumClass;
             enumWindow.Caption = enumWindow.EnumItem.TypeName;
-            enumWindow.Owner = MainWindow.Instance;
+            enumWindow.Owner = CommandCanvasList.OwnerWindow;
             if (pos.HasValue)
             {
                 enumWindow.Left = pos.Value.X;
                 enumWindow.Top = pos.Value.Y;
-                if (MainWindow.Instance.WindowState != WindowState.Maximized)
+                if (CommandCanvasList.OwnerWindow.WindowState != WindowState.Maximized)
                 {
                     // ウインドウが最大化されても元のサイズが帰ってくるようなので、最大化していないときだけ相対位置にする
 
-                    enumWindow.Left += MainWindow.Instance.Left;
-                    enumWindow.Top += MainWindow.Instance.Top;
+                    enumWindow.Left += CommandCanvasList.OwnerWindow.Left;
+                    enumWindow.Top += CommandCanvasList.OwnerWindow.Top;
                 }
                 else
                 {
-                    if (MainWindow.Instance.Left > SystemParameters.PrimaryScreenWidth)
+                    if (CommandCanvasList.OwnerWindow.Left > SystemParameters.PrimaryScreenWidth)
                     {
                         // セカンダリディスプレイでクリックされた
 

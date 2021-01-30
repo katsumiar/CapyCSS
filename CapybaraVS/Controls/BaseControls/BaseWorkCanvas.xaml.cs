@@ -755,7 +755,7 @@ namespace CapybaraVS.Control.BaseControls
 
         private void Grid_MouseDown(object sender, MouseButtonEventArgs e)
         {
-            if (MainWindow.Instance.Cursor == Cursors.Wait)
+            if (CommandCanvasList.OwnerWindow.Cursor == Cursors.Wait)
                 return; // 処理中は禁止
 
             InfoCanvas.Focus();    // キーイベントを拾うためにフォーカスを当てる
@@ -1342,7 +1342,8 @@ namespace CapybaraVS.Control.BaseControls
             {
                 if (disposing)
                 {
-                    MainWindow.Instance.KeyDown -= CanvasBase_KeyDown;
+                    // ???
+                    // MainWindow.Instance.KeyDown -= CanvasBase_KeyDown;
                 }
                 disposedValue = true;
             }

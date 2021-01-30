@@ -33,7 +33,7 @@ namespace CapyCSS.Controls
         public static CommandWindow Create(Point? pos = null)
         {
             CommandWindow commandWindow = new CommandWindow();
-            commandWindow.Owner = MainWindow.Instance;
+            commandWindow.Owner = CommandCanvasList.OwnerWindow;
             commandWindow.SetPos(pos);
             return commandWindow;
         }
@@ -44,16 +44,16 @@ namespace CapyCSS.Controls
             {
                 Left = pos.Value.X;
                 Top = pos.Value.Y;
-                if (MainWindow.Instance.WindowState != WindowState.Maximized)
+                if (CommandCanvasList.OwnerWindow.WindowState != WindowState.Maximized)
                 {
                     // ウインドウが最大化されても元のサイズが帰ってくるようなので、最大化していないときだけ相対位置にする
 
-                    Left += MainWindow.Instance.Left;
-                    Top += MainWindow.Instance.Top;
+                    Left += CommandCanvasList.OwnerWindow.Left;
+                    Top += CommandCanvasList.OwnerWindow.Top;
                 }
                 else
                 {
-                    if (MainWindow.Instance.Left > SystemParameters.PrimaryScreenWidth)
+                    if (CommandCanvasList.OwnerWindow.Left > SystemParameters.PrimaryScreenWidth)
                     {
                         // セカンダリディスプレイでクリックされた
 

@@ -311,7 +311,7 @@ namespace CapybaraVS.Controls.BaseControls
         {
             return new TreeMenuNodeCommand(vm, (a) =>
                 {
-                    if (MainWindow.Instance.Cursor == Cursors.Wait)
+                    if (CommandCanvasList.OwnerWindow.Cursor == Cursors.Wait)
                         return; // 処理中は禁止
 
                     CommandMenuWindow.CloseWindow();
@@ -466,7 +466,7 @@ namespace CapybaraVS.Controls.BaseControls
         {
             var outputWindow = new OutputWindow();
             outputWindow.Title = "Contorl List <Output[" + ScriptWorkCanvas.Name + "]>";
-            outputWindow.Owner = MainWindow.Instance;
+            outputWindow.Owner = CommandCanvasList.OwnerWindow;
             outputWindow.Show();
 
             var writer = new StringWriter();
@@ -483,7 +483,7 @@ namespace CapybaraVS.Controls.BaseControls
         /// </summary>
         public void OverwriteSaveXML()
         {
-            if (MainWindow.Instance.Cursor == Cursors.Wait)
+            if (CommandCanvasList.OwnerWindow.Cursor == Cursors.Wait)
                 return;
 
             if (OpenFileName == "")
@@ -523,7 +523,7 @@ namespace CapybaraVS.Controls.BaseControls
         /// </summary>
         public void SaveXML()
         {
-            if (MainWindow.Instance.Cursor == Cursors.Wait)
+            if (CommandCanvasList.OwnerWindow.Cursor == Cursors.Wait)
                 return;
 
             string path = ShowSaveDialog();
@@ -543,10 +543,10 @@ namespace CapybaraVS.Controls.BaseControls
             if (path is null)
                 return;
 
-            if (MainWindow.Instance.Cursor == Cursors.Wait)
+            if (CommandCanvasList.OwnerWindow.Cursor == Cursors.Wait)
                 return;
 
-            MainWindow.Instance.Cursor = Cursors.Wait;
+            CommandCanvasList.OwnerWindow.Cursor = Cursors.Wait;
 
             try
             {
@@ -567,8 +567,8 @@ namespace CapybaraVS.Controls.BaseControls
             {
                 MessageBox.Show(ex.Message);
             }
-            
-            MainWindow.Instance.Cursor = Cursors.Arrow;
+
+            CommandCanvasList.OwnerWindow.Cursor = Cursors.Arrow;
         }
 
         /// <summary>
@@ -576,7 +576,7 @@ namespace CapybaraVS.Controls.BaseControls
         /// </summary>
         public void LoadXML()
         {
-            if (MainWindow.Instance.Cursor == Cursors.Wait)
+            if (CommandCanvasList.OwnerWindow.Cursor == Cursors.Wait)
                 return;
 
             string path = ShowLoadDialog();
@@ -592,11 +592,11 @@ namespace CapybaraVS.Controls.BaseControls
         /// <param name="path">ファイルのパス</param>
         public void LoadXML(string path)
         {
-            if (MainWindow.Instance.Cursor == Cursors.Wait)
+            if (CommandCanvasList.OwnerWindow.Cursor == Cursors.Wait)
                 return;
 
             OpenFileName = path;
-            MainWindow.Instance.Cursor = Cursors.Wait;
+            CommandCanvasList.OwnerWindow.Cursor = Cursors.Wait;
             ScriptWorkCanvas.Dispatcher.BeginInvoke(new Action(() =>
             {
                 StreamReader reader = null;
@@ -632,7 +632,7 @@ namespace CapybaraVS.Controls.BaseControls
                     // アイドル状態になってから戻す
 
                     GC.Collect();
-                    MainWindow.Instance.Cursor = Cursors.Arrow;
+                    CommandCanvasList.OwnerWindow.Cursor = Cursors.Arrow;
                     if (CommandCanvasControl.IsAutoExecute)
                     {
                         CommandCanvasControl.CallPublicExecuteEntryPoint();
@@ -779,7 +779,7 @@ namespace CapybaraVS.Controls.BaseControls
                         CapybaraVS.Language.GetInstance["Confirmation"],
                         MessageBoxButton.OKCancel) == MessageBoxResult.OK)
             {
-                MainWindow.Instance.Cursor = Cursors.Wait;
+                CommandCanvasList.OwnerWindow.Cursor = Cursors.Wait;
                 ScriptWorkCanvas.Dispatcher.BeginInvoke(new Action(() =>
                 {
                     ClearWorkCanvas();
@@ -788,7 +788,7 @@ namespace CapybaraVS.Controls.BaseControls
                         // アイドル状態になってから戻す
 
                         GC.Collect();
-                        MainWindow.Instance.Cursor = Cursors.Arrow;
+                        CommandCanvasList.OwnerWindow.Cursor = Cursors.Arrow;
 
                     }), DispatcherPriority.ApplicationIdle);
                 }), DispatcherPriority.ApplicationIdle);

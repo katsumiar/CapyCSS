@@ -1,4 +1,5 @@
 ﻿using CapybaraVS.Script;
+using CapyCSS.Controls;
 using CbVS.Script;
 using System;
 using System.Collections.Generic;
@@ -347,7 +348,7 @@ namespace CapybaraVS.Controls.BaseControls
             if (IsLockExecute)
                 return; // 再入を禁止する
 
-            MainWindow.Instance.Cursor = Cursors.Wait;
+            CommandCanvasList.OwnerWindow.Cursor = Cursors.Wait;
             IsLockExecute = true;
 
             OwnerCommandCanvas.ScriptWorkCanvas.Dispatcher.BeginInvoke(new Action(() =>
@@ -380,7 +381,7 @@ namespace CapybaraVS.Controls.BaseControls
                     IsLockExecute = false;
                     OwnerCommandCanvas.CommandCanvasControl.CallAllExecuteEntryPointEnable(true);
                     GC.Collect();
-                    MainWindow.Instance.Cursor = null;
+                    CommandCanvasList.OwnerWindow.Cursor = null;
 
                 }), DispatcherPriority.ApplicationIdle);
 
