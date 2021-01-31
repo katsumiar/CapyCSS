@@ -387,6 +387,7 @@ namespace CapyCSS.Controls
             SaveButton.IsEnabled = enable;
             CommandMenuButton.IsEnabled = enable;
             AddButton.IsEnabled = enable;
+            DeleteButton.IsEnabled = enable;
         }
 
         public bool IsLockExecute = false;
