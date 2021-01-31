@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:CapybaraVS"
         xmlns:BaseControl="clr-namespace:CapybaraVS.Control.BaseControls" x:Class="CapybaraVS.MainWindow"
         mc:Ignorable="d"
-        Title="" Height="649" Width="1046">
+        Title="" Height="740" Width="1253">
     <Window.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
