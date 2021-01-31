@@ -52,6 +52,8 @@ public static System.IO.StreamReader GetReadStream(string path, string encoding 
 * ノード名を左クリックしてノードをドラッグ移動できます（Ctrlキーを押下した状態だと、ガイドに沿って移動します）。
 * 画面を左クリックして画面全体をドラッグ移動できます（選択されたノードがある場合、選択されているノードが移動します）。
 * ホイールボタンの回転で表示を拡大もしくは縮小できます。
+* Ctrl + Aで全選択
+* Ctrl + Spaceで選択解除
 * Ctrl + Cで選択したノードをコピーできます。
 * Ctrl + Vでコピーされているノードを貼り付けられます。
 * Ctrl + Sでスクリプトを上書き保存できます。

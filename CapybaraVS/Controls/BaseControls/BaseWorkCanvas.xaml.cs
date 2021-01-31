@@ -965,6 +965,21 @@ namespace CapybaraVS.Control.BaseControls
         }
 
         /// <summary>
+        /// 全選択します。
+        /// </summary>
+        public void SelectAll()
+        {
+            foreach (var obj in ControlsCanvas.Children)
+            {
+                if (obj is Movable movable)
+                {
+                    movable.SelectedObject = true;
+                    SelectedNodes.Add(movable);
+                }
+            }
+        }
+
+        /// <summary>
         /// 選択中アセットを解除します。
         /// </summary>
         public void ClearSelectedContorls()
@@ -993,6 +1008,14 @@ namespace CapybaraVS.Control.BaseControls
 
                 switch (e.Key)
                 {
+                    case Key.A: // 全選択
+                        SelectAll();
+                        break;
+
+                    case Key.Space: // 選択解除
+                        ClearSelectedContorls();
+                        break;
+
                     case Key.C:
                         try
                         {
