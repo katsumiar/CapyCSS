@@ -83,23 +83,49 @@ namespace CapybaraVS.Script
         }
 
         /// <summary>
-        /// DLLからメソッドをスクリプトで使えるように取り込みます。
+        /// パッケージ名からメソッドをスクリプトで使えるように取り込みます。
         /// </summary>
         /// <param name="OwnerCommandCanvas">オーナーキャンバス</param>
         /// <param name="node">登録先のノード</param>
-        /// <param name="name">DLL名</param>
-        /// <param name="classList">取り込み対象クラスリスト</param>
-        /// <returns>インポートしたモジュール名</returns>
-        public static string ImportScriptMethodsFromModule(
+        /// <param name="name">パッケージ名</param>
+        /// <param name="ignoreClassList">無視するクラスリスト</param>
+        /// <returns>インポートしたパッケージ名</returns>
+        public static string ImportScriptMethodsFromPackage(
             CommandCanvas OwnerCommandCanvas,
             TreeMenuNode node,
             string name,
-            List<string> classList)
+            List<string> ignoreClassList)
         {
             var asm = Assembly.Load(name);
-            var functionNode = ImplementAsset.CreateGroup(node, name);
-            ImportScriptMethods(OwnerCommandCanvas, functionNode, asm, null, classList);
-            return name;
+            string outputName = "Package " + name;
+            var functionNode = ImplementAsset.CreateGroup(node, outputName);
+            ImportScriptMethods(OwnerCommandCanvas, functionNode, asm, null, ignoreClassList);
+            return outputName;
+        }
+
+        /// <summary>
+        /// クラス名からメソッドをスクリプトで使えるように取り込みます。
+        /// </summary>
+        /// <param name="OwnerCommandCanvas">オーナーキャンバス</param>
+        /// <param name="node">登録先のノード</param>
+        /// <param name="name">クラス名</param>
+        /// <param name="ignoreClassList">無視するクラスリスト</param>
+        /// <returns>インポートしたクラス名</returns>
+        public static string ImportScriptMethodsFromClass(
+            CommandCanvas OwnerCommandCanvas,
+            TreeMenuNode node,
+            string name)
+        {
+            Type classType = CbST.GetTypeEx(name);
+            if (classType is null)
+            {
+                return null;
+            }
+            var asm = classType.GetTypeInfo().Assembly;
+            string outputName = "Class " + name;
+            var functionNode = ImplementAsset.CreateGroup(node, outputName);
+            ImportScriptMethods(OwnerCommandCanvas, functionNode, asm, null, null);
+            return outputName;
         }
 
         /// <summary>
@@ -108,18 +134,18 @@ namespace CapybaraVS.Script
         /// <param name="OwnerCommandCanvas">オーナーキャンバス</param>
         /// <param name="node">登録先のノード</param>
         /// <param name="path"></param>
-        /// <param name="classList">取り込み対象クラスリスト</param>
+        /// <param name="ignoreClassList">無視するクラスリスト</param>
         /// <returns>インポートしたモジュール名</returns>
         public static string ImportScriptMethodsFromDllFile(
             CommandCanvas OwnerCommandCanvas,
             TreeMenuNode node,
             string path,
-            List<string> classList)
+            List<string> ignoreClassList)
         {
             var asm = Assembly.LoadFrom(path);
             Module mod = asm.GetModule(path);
             string name = Path.GetFileName(path);
-            ImportScriptMethods(OwnerCommandCanvas, node, asm, mod, classList);
+            ImportScriptMethods(OwnerCommandCanvas, node, asm, mod, ignoreClassList);
             return name;
         }
 
@@ -149,6 +175,9 @@ namespace CapybaraVS.Script
             if (!classType.IsClass)
                 return false;   // クラス以外は、扱わない
 
+            if (classType.IsInterface)
+                return true;    // インターフェイスは扱う
+
             if (classType.IsAbstract)
                 return false;   // 象徴クラスは、扱えない
 
@@ -171,13 +200,13 @@ namespace CapybaraVS.Script
         /// <param name="node">登録先のノード</param>
         /// <param name="asm">対象Assembly</param>
         /// <param name="module">モジュール</param>
-        /// <param name="classList">取り込み対象クラスリスト</param>
+        /// <param name="ignoreClassList">無視するクラスリスト</param>
         public static void ImportScriptMethods(
             CommandCanvas OwnerCommandCanvas,
             TreeMenuNode node,
             Assembly asm,
             Module module,
-            List<string> classList)
+            List<string> ignoreClassList)
         {
             Type[] types = null;
             if (module is null)
@@ -190,7 +219,28 @@ namespace CapybaraVS.Script
                 CbST.AddModule(module);
             }
 
-            List<Task<List<AutoImplementFunctionInfo>>> tasks = CreateMakeInportFunctionInfoTasks(module, classList, types);
+#if false    // テスト用
+            foreach (Type classType in types)
+            {
+                if (!IsAcceptClass(classType))
+                    continue;   // 扱えない
+
+                if (ignoreClassList != null && !ignoreClassList.Contains(classType.Name))
+                    continue;
+
+                if (!classType.IsAbstract)
+                {
+                    // コンストラクタをインポートする
+
+                    CreateMakeInportConstructorInfoTasks(module, classType);
+                }
+
+                // メソッドをインポートする
+                CreateMakeInportMethodInfoTasks(module, classType);
+            }
+#endif
+
+            List<Task<List<AutoImplementFunctionInfo>>> tasks = CreateMakeInportFunctionInfoTasks(module, ignoreClassList, types);
 
             // ノード化
             foreach (var task in tasks)
@@ -213,10 +263,10 @@ namespace CapybaraVS.Script
         /// メソッド取り込み用情報収集タスクリストを作成します。
         /// </summary>
         /// <param name="module">モジュール</param>
-        /// <param name="classList">取り込み対象クラスリスト</param>
+        /// <param name="ignoreClassList">無視するクラスリスト</param>
         /// <param name="types">モジュールの情報</param>
         /// <returns>タスクリスト</returns>
-        private static List<Task<List<AutoImplementFunctionInfo>>> CreateMakeInportFunctionInfoTasks(Module module, List<string> classList, Type[] types)
+        private static List<Task<List<AutoImplementFunctionInfo>>> CreateMakeInportFunctionInfoTasks(Module module, List<string> ignoreClassList, Type[] types)
         {
             var tasks = new List<Task<List<AutoImplementFunctionInfo>>>();
             foreach (Type classType in types)
@@ -224,64 +274,77 @@ namespace CapybaraVS.Script
                 if (!IsAcceptClass(classType))
                     continue;   // 扱えない
 
-                if (classList != null && !classList.Contains(classType.Name))
+                if (ignoreClassList != null && !ignoreClassList.Contains(classType.Name))
                     continue;
 
-                // コンストラクタをインポートする
-                Task<List<AutoImplementFunctionInfo>> importConstructorTask = Task.Run(() =>
+                if (!classType.IsAbstract)
                 {
-                    List<AutoImplementFunctionInfo> importFuncInfoList = new List<AutoImplementFunctionInfo>();
+                    // コンストラクタをインポートする
 
-                    foreach (ConstructorInfo constructorInfo in classType.GetConstructors())
+                    Task<List<AutoImplementFunctionInfo>> importConstructorTask = Task.Run(() =>
                     {
-                        if (!IsAcceptMethod(constructorInfo))
-                            continue;   // 未対応
-
-                        try
-                        {
-                            var functionInfo = MakeInportFunctionInfo(classType, constructorInfo, null, null, module);
-                            if (functionInfo != null)
-                            {
-                                importFuncInfoList.Add(functionInfo);
-                            }
-                        }
-                        catch (Exception ex)
-                        {
-                            CommandCanvasList.ErrorLog += nameof(ScriptImplement) + "." + nameof(ImportScriptMethods) + ": " + ex.Message + Environment.NewLine + Environment.NewLine;
-                        }
-                    }
-                    return importFuncInfoList;
-                });
-                tasks.Add(importConstructorTask);
+                        return CreateMakeInportConstructorInfoTasks(module, classType);
+                    });
+                    tasks.Add(importConstructorTask);
+                }
 
                 // メソッドをインポートする
                 Task<List<AutoImplementFunctionInfo>> importMethodTask = Task.Run(() =>
                 {
-                    List<AutoImplementFunctionInfo> importFuncInfoList = new List<AutoImplementFunctionInfo>();
-                    foreach (MethodInfo methodInfo in classType.GetMethods())
-                    {
-                        if (!IsAcceptMethod(methodInfo))
-                            continue;   // 未対応
-
-                        try
-                        {
-                            var functionInfo = MakeInportFunctionInfo(classType, methodInfo, methodInfo.ReturnType, null, module);
-                            if (functionInfo != null)
-                            {
-                                importFuncInfoList.Add(functionInfo);
-                            }
-                        }
-                        catch (Exception ex)
-                        {
-                            CommandCanvasList.ErrorLog += nameof(ScriptImplement) + "." + nameof(ImportScriptMethods) + ": " + ex.Message + Environment.NewLine + Environment.NewLine;
-                        }
-                    }
-                    return importFuncInfoList;
+                    return CreateMakeInportMethodInfoTasks(module, classType);
                 });
                 tasks.Add(importMethodTask);
             }
 
             return tasks;
+        }
+
+        private static List<AutoImplementFunctionInfo> CreateMakeInportConstructorInfoTasks(Module module, Type classType)
+        {
+            List<AutoImplementFunctionInfo> importFuncInfoList = new List<AutoImplementFunctionInfo>();
+            foreach (ConstructorInfo constructorInfo in classType.GetConstructors())
+            {
+                if (!IsAcceptMethod(constructorInfo))
+                    continue;   // 未対応
+
+                try
+                {
+                    var functionInfo = MakeInportFunctionInfo(classType, constructorInfo, null, null, module);
+                    if (functionInfo != null)
+                    {
+                        importFuncInfoList.Add(functionInfo);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    CommandCanvasList.ErrorLog += nameof(ScriptImplement) + "." + nameof(ImportScriptMethods) + ": " + ex.Message + Environment.NewLine + Environment.NewLine;
+                }
+            }
+            return importFuncInfoList;
+        }
+
+        private static List<AutoImplementFunctionInfo> CreateMakeInportMethodInfoTasks(Module module, Type classType)
+        {
+            List<AutoImplementFunctionInfo> importFuncInfoList = new List<AutoImplementFunctionInfo>();
+            foreach (MethodInfo methodInfo in classType.GetMethods())
+            {
+                if (!IsAcceptMethod(methodInfo))
+                    continue;   // 未対応
+
+                try
+                {
+                    var functionInfo = MakeInportFunctionInfo(classType, methodInfo, methodInfo.ReturnType, null, module);
+                    if (functionInfo != null)
+                    {
+                        importFuncInfoList.Add(functionInfo);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    CommandCanvasList.ErrorLog += nameof(ScriptImplement) + "." + nameof(ImportScriptMethods) + ": " + ex.Message + Environment.NewLine + Environment.NewLine;
+                }
+            }
+            return importFuncInfoList;
         }
 
         /// <summary>
@@ -301,19 +364,23 @@ namespace CapybaraVS.Script
                 if (!IsAcceptClass(classType))
                     continue;   // 扱えない
 
-                // コンストラクタをインポートする
-                foreach (ConstructorInfo constructorInfo in classType.GetConstructors())
+                if (!classType.IsAbstract)
                 {
-                    try
-                    {
-                        if (!IsAcceptMethod(constructorInfo))
-                            continue;   // 未対応
+                    // コンストラクタをインポートする
 
-                        importScriptMethodAttributeMethods(OwnerCommandCanvas, node, classType, constructorInfo, null);
-                    }
-                    catch (Exception ex)
+                    foreach (ConstructorInfo constructorInfo in classType.GetConstructors())
                     {
-                        CommandCanvasList.ErrorLog += nameof(ScriptImplement) + "." + nameof(ImportScriptMethods) + ": " + ex.Message + Environment.NewLine + Environment.NewLine;
+                        try
+                        {
+                            if (!IsAcceptMethod(constructorInfo))
+                                continue;   // 未対応
+
+                            importScriptMethodAttributeMethods(OwnerCommandCanvas, node, classType, constructorInfo, null);
+                        }
+                        catch (Exception ex)
+                        {
+                            CommandCanvasList.ErrorLog += nameof(ScriptImplement) + "." + nameof(ImportScriptMethods) + ": " + ex.Message + Environment.NewLine + Environment.NewLine;
+                        }
                     }
                 }
 
@@ -444,6 +511,9 @@ namespace CapybaraVS.Script
                 }
 
                 if (retType is null)
+                    return null; // 返り値の型が対象外
+
+                if (retType("") is null)
                     return null; // 返り値の型が対象外
 
                 // メニュー用の名前を作成

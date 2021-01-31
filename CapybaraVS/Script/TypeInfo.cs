@@ -385,18 +385,26 @@ namespace CapybaraVS.Script
                 return cbEnumType;
             }
 
-            if (type.IsClass || type.IsInterface)
-            {
-                Type openedType = typeof(CbClass<>);
-                Type cbClassType = openedType.MakeGenericType(type);
-                return cbClassType;
-            }
-
             if (CbStruct.IsStruct(type))
             {
                 Type openedType = typeof(CbStruct<>);
                 Type cbStructType = openedType.MakeGenericType(type);
                 return cbStructType;
+            }
+
+            if (type.IsValueType)
+            {
+                // IsEnumとIsStructを抜けてきた未知の値型（今の所、対応する予定は無い）
+                // IntPtr 型など
+
+                return null;
+            }
+
+            if (type.IsClass || type.IsInterface)
+            {
+                Type openedType = typeof(CbClass<>);
+                Type cbClassType = openedType.MakeGenericType(type);
+                return cbClassType;
             }
 
             if (type.GetGenericTypeDefinition() == typeof(List<>))
@@ -592,19 +600,10 @@ namespace CapybaraVS.Script
                     return CbFunc.FuncValue(type, type.GenericTypeArguments.Last(), name);
                 }
 
-                // その他のジェネリックは、クラスとして扱う
-                return CbClass.ClassValue(type, name);
-            }
-
-            if (type.IsClass || type.IsInterface)
-            {
-                if (!isCancelClass)
+                // その他のジェネリックは、構造体かクラスとして扱う
+                if (CbStruct.IsStruct(type))
                 {
-                    var ret = CbClass.ClassValue(type, name);
-                    if (ret != null && ret is ICbClass cbClass)
-                    {
-                        return _CbCreate(cbClass.OriginalReturnType, name, true);
-                    }
+                    return CbStruct.StructValue(type, name);
                 }
                 return CbClass.ClassValue(type, name);
             }
@@ -620,6 +619,19 @@ namespace CapybaraVS.Script
                     }
                 }
                 return CbStruct.StructValue(type, name);
+            }
+
+            if (type.IsClass || type.IsInterface)
+            {
+                if (!isCancelClass)
+                {
+                    var ret = CbClass.ClassValue(type, name);
+                    if (ret != null && ret is ICbClass cbClass)
+                    {
+                        return _CbCreate(cbClass.OriginalReturnType, name, true);
+                    }
+                }
+                return CbClass.ClassValue(type, name);
             }
 
             return null;

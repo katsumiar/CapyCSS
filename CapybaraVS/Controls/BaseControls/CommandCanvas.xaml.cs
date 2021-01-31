@@ -103,7 +103,8 @@ namespace CapybaraVS.Controls.BaseControls
                 ReadAction = (self) =>
                 {
                     self.AssetId = AssetId;
-                    self._inportModule = ImportModule;
+                    self._inportClassModule = ImportClassModule;
+                    self._inportPackageModule = ImportPackageModule;
                     self._inportDllModule = ImportDllModule;
                     if (self.ImportModule())
                     {
@@ -123,8 +124,6 @@ namespace CapybaraVS.Controls.BaseControls
 
                 self.Dispatcher.BeginInvoke(new Action(() =>
                 {
-                    // モジュールのインポートが終わるのを待つ
-
                     if (WorkStack != null)
                     {
                         self.WorkStack.OwnerCommandCanvas = self;
@@ -162,8 +161,9 @@ namespace CapybaraVS.Controls.BaseControls
                 WriteAction = () =>
                 {
                     AssetId = self.AssetId;
-                    ImportModule = self.ApiImporter.ModuleList;
-                    ImportDllModule = self.ApiImporter.ModulePathList;
+                    ImportClassModule = self.ApiImporter.ClassModuleList;
+                    ImportPackageModule = self.ApiImporter.PackageModuleList;
+                    ImportDllModule = self.ApiImporter.DllModulePathList;
                     self.WorkCanvas.AssetXML.WriteAction?.Invoke();
                     WorkCanvas = self.WorkCanvas.AssetXML;
                     self.WorkStack.AssetXML.WriteAction?.Invoke();
@@ -184,7 +184,8 @@ namespace CapybaraVS.Controls.BaseControls
             public int AssetId { get; set; } = 0;
             #region 固有定義
             public BaseWorkCanvas._AssetXML<BaseWorkCanvas> WorkCanvas { get; set; } = null;
-            public List<string> ImportModule { get; set; } = null;
+            public List<string> ImportClassModule { get; set; } = null;
+            public List<string> ImportPackageModule { get; set; } = null;
             public List<string> ImportDllModule { get; set; } = null;
             public Stack._AssetXML<Stack> WorkStack { get; set; } = null;
             [XmlArrayItem("Asset")]
@@ -233,7 +234,8 @@ namespace CapybaraVS.Controls.BaseControls
 
         //----------------------------------------------------------------------
         #region スクリプト内共有
-        public List<string> _inportModule = null;
+        public List<string> _inportClassModule = null;
+        public List<string> _inportPackageModule = null;
         public List<string> _inportDllModule = null;
         public ApiImporter ApiImporter = null;
         private ModuleControler moduleControler = null;
@@ -372,15 +374,25 @@ namespace CapybaraVS.Controls.BaseControls
         public bool ImportModule()
         {
             ApiImporter.ClearModule();
-            if (_inportModule != null)
+            if (_inportClassModule != null)
             {
-                // モジュールインポートの復元
+                // クラスインポートの復元
 
-                foreach (var imp in _inportModule)
+                foreach (var imp in _inportClassModule)
                 {
-                    ApiImporter.SetModule(imp, null);
+                    ApiImporter.ImportClass(imp);
                 }
-                _inportModule = null;
+                _inportClassModule = null;
+            }
+            if (_inportPackageModule != null)
+            {
+                // パッケージインポートの復元
+
+                foreach (var imp in _inportPackageModule)
+                {
+                    ApiImporter.ImportPackage(imp, null);
+                }
+                _inportPackageModule = null;
             }
             if (_inportDllModule != null)
             {
@@ -394,9 +406,9 @@ namespace CapybaraVS.Controls.BaseControls
 
                         return false;
                     }
-                    ApiImporter.LoadDll(imp, null);
+                    ApiImporter.ImportDll(imp, null);
                 }
-                _inportModule = null;
+                _inportDllModule = null;
             }
             return true;
         }

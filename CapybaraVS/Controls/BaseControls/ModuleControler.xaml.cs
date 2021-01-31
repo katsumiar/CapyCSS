@@ -28,6 +28,12 @@ namespace CapyCSS.Controls.BaseControls
 
         private const string MESSAGE_TITLE = "Dll Import";
 
+        private const string HEADER_PACKAGE = "Package ";
+        private const string HEADER_CLASS = "Class ";
+
+        private const int SELECT_INSTALL_DLL = 0;
+        private const int SELECT_IMPORT_CLASS = 1;
+
         public ModuleControler(ApiImporter apiImporter, string installDllDirectory)
         {
             ApiImporter = apiImporter;
@@ -74,7 +80,7 @@ namespace CapyCSS.Controls.BaseControls
         private void AddLabel_MouseDown(object sender, MouseButtonEventArgs e)
         {
             string dllPath;
-            if (InstallDllList.SelectedIndex == 0)
+            if (InstallDllList.SelectedIndex == SELECT_INSTALL_DLL)
             {
                 // 新規にdllをインストールしてからインポートする
 
@@ -86,12 +92,53 @@ namespace CapyCSS.Controls.BaseControls
                     return;
                 }
             }
-            else
+            else if (InstallDllList.SelectedIndex == SELECT_IMPORT_CLASS)
             {
-                // インストール済みのdllをインポートする
+                // クラス指定でインポートする
 
+                string imputText = ClassName.Text.Trim();
+                if (imputText == "")
+                    return;
+
+                // 入力が正しいか調べる
+                Type classType = CbST.GetTypeEx(imputText);
+                if (classType is null)
+                {
+                    // クラスが見つからない
+
+                    backupBackground = ClassName.Background;
+                    ClassName.BorderBrush = Brushes.Red;
+                    return;
+                }
+
+                closeInputClassName();
+
+                // dllをインポートする
+                ApiImporter.ImportClass(imputText);
+                return;
+            }
+            {
+                string selected = (string)InstallDllList.SelectedItem;
+
+                if (IsPackage(selected))
+                {
+                    // パッケージをインポートする
+
+                    ApiImporter.ImportPackage(selected.Split(" ")[1]);
+                    return;
+                }
+                if (IsClass(selected))
+                {
+                    // クラスをインポートする
+
+                    ApiImporter.ImportClass(selected.Split(" ")[1]);
+                    return;
+                }
+
+                // インストール済みのdllをインポートする
                 dllPath = System.IO.Path.Combine(InstallDllDirectory, (string)InstallDllList.SelectedItem);
             }
+
             if (!File.Exists(dllPath))
             {
                 string msg = string.Format(CapybaraVS.Language.GetInstance["ModuleControler_04"], dllPath);
@@ -100,21 +147,56 @@ namespace CapyCSS.Controls.BaseControls
             }
 
             // dllをインポートする
-            ApiImporter.LoadDll(dllPath);
+            ApiImporter.ImportDll(dllPath);
+        }
+
+        /// <summary>
+        /// パッケージを判定します。
+        /// </summary>
+        /// <param name="selected">名前</param>
+        /// <returns>true==パッケージ</returns>
+        private static bool IsPackage(string selected)
+        {
+            return selected.StartsWith(HEADER_PACKAGE);
+        }
+
+        /// <summary>
+        /// クラスを判定します。
+        /// </summary>
+        /// <param name="selected">名前</param>
+        /// <returns>true==クラス</returns>
+        private static bool IsClass(string selected)
+        {
+            return selected.StartsWith(HEADER_CLASS);
+        }
+
+        /// <summary>
+        /// Dllを判定します。
+        /// </summary>
+        /// <param name="selected">名前</param>
+        /// <returns>true==Dll</returns>
+        private static bool IsDll(string selected)
+        {
+            return System.IO.Path.GetExtension(selected) == ".dll";
         }
 
         /// <summary>
         /// dllがインポート可能かを調査します。
         /// </summary>
-        /// <param name="importDllPath">インポート対象のdllファイル</param>
+        /// <param name="importItem">インポート対象の名前</param>
         /// <returns>可能ならtrue</returns>
-        public bool CheckImportable(string importDllPath)
+        public bool CheckImportable(string importItem)
         {
-            if (!File.Exists(importDllPath))
+            if (!IsDll(importItem))
+            {
+                return true;
+            }
+            
+            if (!File.Exists(importItem))
             {
                 // dllのインストールを要求する
 
-                if (InstallDll(System.IO.Path.GetFileName(importDllPath)) == null)
+                if (InstallDll(System.IO.Path.GetFileName(importItem)) == null)
                 {
                     // dllのインストールに失敗
 
@@ -186,7 +268,10 @@ namespace CapyCSS.Controls.BaseControls
         {
             InstallDllList.Items.Clear();
             InstallDllList.Items.Add("[ Install dll ]");
-            InstallDllList.SelectedIndex = 0;
+            InstallDllList.Items.Add("[ Import class ]");
+            InstallDllList.Items.Add(HEADER_PACKAGE + "MathNet.Numerics");
+            InstallDllList.Items.Add(HEADER_CLASS + "System.IO.StreamReader");
+            InstallDllList.SelectedIndex = SELECT_INSTALL_DLL;
             string[] paths = Directory.GetFiles(InstallDllDirectory, "*.dll");
             foreach (string path in paths)
             {
@@ -197,6 +282,37 @@ namespace CapyCSS.Controls.BaseControls
         private void ComboBox_DropDownOpened(object sender, EventArgs e)
         {
             ListFetchInstallDll();
+        }
+
+        private Brush backupBackground = null;
+
+        /// <summary>
+        /// クラス名入力欄を閉じます。
+        /// </summary>
+        private void closeInputClassName()
+        {
+            InstallDllList.SelectedIndex = SELECT_INSTALL_DLL;
+            imputClassName.Visibility = Visibility.Collapsed;
+            if (backupBackground != null)
+            {
+                ClassName.Background = backupBackground;
+            }
+        }
+
+        private void InstallDllList_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (InstallDllList.SelectedIndex == SELECT_IMPORT_CLASS)
+            {
+                // クラス名入力欄を表示する
+
+                imputClassName.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                // クラス名入力欄を閉じる
+
+                closeInputClassName();
+            }
         }
     }
 }

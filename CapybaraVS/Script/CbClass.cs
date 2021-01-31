@@ -57,12 +57,7 @@ namespace CapybaraVS.Script
             {
                 return null;
             }
-            if (type.IsByRefLike)
-            {
-                // ref-like型構造体は、ジェネリック型引数にできない
 
-                return null;
-            }
             string typeName = type.FullName;
             if (type.IsByRef)
             {
@@ -75,6 +70,32 @@ namespace CapybaraVS.Script
                     return null;
                 }
             }
+            if (type.IsByRefLike)
+            {
+                // ref-like型構造体は、ジェネリック型引数にできない
+
+                return null;
+            }
+            if (!type.IsVisible && !type.IsTypeDefinition)
+            {
+                // 理由はわからないがこの条件は MakeGenericType が通らない
+
+                return null;
+            }
+            if (type.IsPointer)
+            {
+                // ポインタ型は、対象外
+
+                return null;
+            }
+            if (type.IsValueType)
+            {
+                // 未知の値型（今の所、対応する予定は無い）
+                // IntPtr 型など
+
+                return null;
+            }
+
             Type openedType = typeof(CbClass<>); //CapybaraVS.Script.CbClass`1
             Type cbClassType = openedType.MakeGenericType(type);
 

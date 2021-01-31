@@ -18,8 +18,9 @@ namespace CapybaraVS.Script
         private TreeMenuNode DllNode = null;
         private CommandCanvas OwnerCommandCanvas = null;
         public ObservableCollection<string> ModulueNameList = new ObservableCollection<string>();
-        public List<string> ModulePathList = new List<string>();
-        public List<string> ModuleList = new List<string>();
+        public List<string> DllModulePathList = new List<string>();
+        public List<string> PackageModuleList = new List<string>();
+        public List<string> ClassModuleList = new List<string>();
 
         public ApiImporter(CommandCanvas ownerCommandCanvas)
         {
@@ -133,12 +134,13 @@ namespace CapybaraVS.Script
         }
 
         /// <summary>
-        /// 外部DLLを読み込んでメソッドを取り込みます。
+        /// スクリプトにDLLをインポートします。
         /// </summary>
         /// <param name="path">DLLファイルのパス</param>
-        public void LoadDll(string path, List<string> classList = null)
+        /// <param name="ignoreClassList">拒否するクラスのリスト</param>
+        public void ImportDll(string path, List<string> ignoreClassList = null)
         {
-            if (ModulePathList.Contains(path))
+            if (DllModulePathList.Contains(path))
             {
                 return;
             }
@@ -146,21 +148,22 @@ namespace CapybaraVS.Script
             {
                 DllNode = CreateGroup(ProgramNode, "Import");
             }
-            string name = ScriptImplement.ImportScriptMethodsFromDllFile(OwnerCommandCanvas, DllNode, path, classList);
+            string name = ScriptImplement.ImportScriptMethodsFromDllFile(OwnerCommandCanvas, DllNode, path, ignoreClassList);
             if (name != null)
             {
                 ModulueNameList.Add(name);
-                ModulePathList.Add(path);
+                DllModulePathList.Add(path);
             }
         }
 
         /// <summary>
-        /// DLLのメソッドを取り込みます。
+        /// スクリプトにパッケージをインポートします。
         /// </summary>
-        /// <param name="moduleName">DLL名</param>
-        public void SetModule(string moduleName, List<string> classList = null)
+        /// <param name="packageName">パッケージ名</param>
+        /// <param name="ignoreClassList">拒否するクラスのリスト</param>
+        public void ImportPackage(string packageName, List<string> ignoreClassList = null)
         {
-            if (ModuleList.Contains(moduleName))
+            if (PackageModuleList.Contains(packageName))
             {
                 return;
             }
@@ -168,11 +171,33 @@ namespace CapybaraVS.Script
             {
                 DllNode = CreateGroup(ProgramNode, "Import");
             }
-            string name = ScriptImplement.ImportScriptMethodsFromModule(OwnerCommandCanvas, DllNode, moduleName, classList);
+            string name = ScriptImplement.ImportScriptMethodsFromPackage(OwnerCommandCanvas, DllNode, packageName, ignoreClassList);
             if (name != null)
             {
                 ModulueNameList.Add(name);
-                ModuleList.Add(moduleName);
+                PackageModuleList.Add(packageName);
+            }
+        }
+
+        /// <summary>
+        /// スクリプトにクラスをインポートします。
+        /// </summary>
+        /// <param name="className">クラス名</param>
+        public void ImportClass(string className)
+        {
+            if (ClassModuleList.Contains(className))
+            {
+                return;
+            }
+            if (DllNode is null)
+            {
+                DllNode = CreateGroup(ProgramNode, "Import");
+            }
+            string name = ScriptImplement.ImportScriptMethodsFromClass(OwnerCommandCanvas, DllNode, className);
+            if (name != null)
+            {
+                ModulueNameList.Add(name);
+                ClassModuleList.Add(className);
             }
         }
 
@@ -182,8 +207,9 @@ namespace CapybaraVS.Script
         public void ClearModule()
         {
             ModulueNameList.Clear();
-            ModulePathList.Clear();
-            ModuleList.Clear();
+            DllModulePathList.Clear();
+            PackageModuleList.Clear();
+            ClassModuleList.Clear();
             if (DllNode != null)
             {
                 ProgramNode.Child.Remove(DllNode);

@@ -55,12 +55,6 @@ namespace CapybaraVS.Script
             {
                 return null;
             }
-            if (type.IsByRefLike)
-            {
-                // ref-like型構造体は、ジェネリック型引数にできない
-
-                return null;
-            }
             string typeName = type.FullName;
             if (type.IsByRef)
             {
@@ -69,6 +63,13 @@ namespace CapybaraVS.Script
                 typeName = typeName.Replace("&", "");
                 type = CbST.GetTypeEx(typeName);
             }
+            if (type.IsByRefLike)
+            {
+                // ref-like型構造体は、ジェネリック型引数にできない
+
+                return null;
+            }
+
             Type openedType = typeof(CbStruct<>); //CapybaraVS.Script.CbStruct`1
             Type cbStructType = openedType.MakeGenericType(type);
 
@@ -84,6 +85,12 @@ namespace CapybaraVS.Script
         /// <returns></returns>
         public static bool IsStruct(System.Type type)
         {
+            if (type.IsByRef)
+            {
+                // リファレンスの場合は、リファレンスで無い場合の型情報を評価する（スクリプトの仕組み上の条件）
+
+                return IsStruct(CbST.GetTypeEx(type.FullName.Replace("&", "")));
+            }
             return type.IsValueType && !type.IsPrimitive && !type.IsEnum;
         }
     }

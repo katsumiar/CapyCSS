@@ -44,12 +44,6 @@ namespace CapybaraVS.Script
             {
                 return null;
             }
-            if (type.IsByRefLike)
-            {
-                // ref-like型構造体は、ジェネリック型引数にできない（不要だろうけど…）
-
-                return null;
-            }
             string typeName = type.FullName;
             if (type.IsByRef)
             {
@@ -57,6 +51,12 @@ namespace CapybaraVS.Script
 
                 typeName = typeName.Replace("&", "");
                 type = CbST.GetTypeEx(typeName);
+            }
+            if (type.IsByRefLike)
+            {
+                // ref-like型構造体は、ジェネリック型引数にできない（不要だろうけど…）
+
+                return null;
             }
             Type openedType = typeof(CbEnum<>); //CapybaraVS.Script.CbEnum`1
             Type cbEnumType = openedType.MakeGenericType(type);
