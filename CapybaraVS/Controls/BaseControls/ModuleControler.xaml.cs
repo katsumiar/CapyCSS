@@ -111,6 +111,7 @@ namespace CapyCSS.Controls.BaseControls
                     return;
                 }
 
+                InstallDllList.SelectedIndex = SELECT_INSTALL_DLL;
                 closeInputClassName();
 
                 // dllをインポートする
@@ -270,7 +271,6 @@ namespace CapyCSS.Controls.BaseControls
             InstallDllList.Items.Add("[ Install dll ]");
             InstallDllList.Items.Add("[ Import class ]");
             InstallDllList.Items.Add(HEADER_PACKAGE + "MathNet.Numerics");
-            InstallDllList.Items.Add(HEADER_CLASS + "System.IO.StreamReader");
             InstallDllList.SelectedIndex = SELECT_INSTALL_DLL;
             string[] paths = Directory.GetFiles(InstallDllDirectory, "*.dll");
             foreach (string path in paths)
@@ -291,7 +291,6 @@ namespace CapyCSS.Controls.BaseControls
         /// </summary>
         private void closeInputClassName()
         {
-            InstallDllList.SelectedIndex = SELECT_INSTALL_DLL;
             imputClassName.Visibility = Visibility.Collapsed;
             if (backupBackground != null)
             {

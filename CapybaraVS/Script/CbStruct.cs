@@ -85,6 +85,10 @@ namespace CapybaraVS.Script
         /// <returns></returns>
         public static bool IsStruct(System.Type type)
         {
+            if (type is null)
+            {
+                return false;
+            }
             if (type.IsByRef)
             {
                 // リファレンスの場合は、リファレンスで無い場合の型情報を評価する（スクリプトの仕組み上の条件）
