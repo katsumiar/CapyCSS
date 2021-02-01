@@ -530,10 +530,17 @@ namespace CapybaraVS.Script
 
                     if (methodInfo.IsConstructor)
                     {
-                        menuName = classType.Name + ".new." + classType.Name;
+                        menuName = classType.Name + ".(new)." + classType.Name;
                     }
                     else
                     {
+                        string group = "";
+                        if (methodInfo.Name.Contains("_"))
+                        {
+                            // 最初に見つかった _ までの文字列でグループを分ける
+
+                            group = methodInfo.Name.Split("_")[0] + ".";
+                        }
                         if (methodInfo.IsStatic)
                         {
                             menuName = "[s] " + menuName;
@@ -542,8 +549,34 @@ namespace CapybaraVS.Script
                         {
                             menuName = "[v] " + menuName;
                         }
-
-                        menuName = classType.Name + "." + menuName + "." + menuName;
+                        switch (group)
+                        {
+                            case "get.":
+                                menuName = classType.Name + ".(getter)." + menuName;
+                                break;
+                            case "set.":
+                                menuName = classType.Name + ".(setter)." + menuName;
+                                break;
+                            default:
+                                {
+                                    List<string> baseGroup = new List<string>()
+                                    {
+                                        "ToString",
+                                        "GetType",
+                                        "Equals",
+                                        "GetHashCode"
+                                    };
+                                    if (baseGroup.Contains(methodInfo.Name))
+                                    {
+                                        menuName = classType.Name + ".(base)." + menuName;
+                                    }
+                                    else
+                                    {
+                                        menuName = classType.Name + "." + group + methodInfo.Name + "." + menuName;
+                                    }
+                                }
+                                break;
+                        }
                     }
                     if (classType.Namespace != null)
                     {

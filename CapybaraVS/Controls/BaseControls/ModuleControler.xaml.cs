@@ -79,22 +79,25 @@ namespace CapyCSS.Controls.BaseControls
         /// <param name="e"></param>
         private void AddLabel_MouseDown(object sender, MouseButtonEventArgs e)
         {
-            string dllPath;
             if (InstallDllList.SelectedIndex == SELECT_INSTALL_DLL)
             {
                 // 新規にdllをインストールしてからインポートする
 
-                dllPath = InstallDll();
-                if (dllPath is null)
+                string installDllPath = InstallDll();
+                if (installDllPath is null)
                 {
                     // dll のインストールに失敗
 
                     return;
                 }
+
+                // dllをインポートする
+                ApiImporter.ImportDll(installDllPath);
+                return;
             }
             else if (InstallDllList.SelectedIndex == SELECT_IMPORT_CLASS)
             {
-                // クラス指定でインポートする
+                // 新規にクラス指定でインポートする
 
                 string imputText = ClassName.Text.Trim();
                 if (imputText == "")
@@ -114,40 +117,39 @@ namespace CapyCSS.Controls.BaseControls
                 InstallDllList.SelectedIndex = SELECT_INSTALL_DLL;
                 closeInputClassName();
 
-                // dllをインポートする
+                // クラスをインポートする
                 ApiImporter.ImportClass(imputText);
                 return;
             }
+
+            // 既存のインポート
+
+            string selected = (string)InstallDllList.SelectedItem;
+
+            if (IsPackage(selected))
             {
-                string selected = (string)InstallDllList.SelectedItem;
+                // パッケージをインポートする
 
-                if (IsPackage(selected))
-                {
-                    // パッケージをインポートする
+                ApiImporter.ImportPackage(selected.Split(" ")[1]);
+                return;
+            }
+            if (IsClass(selected))
+            {
+                // クラスをインポートする
 
-                    ApiImporter.ImportPackage(selected.Split(" ")[1]);
-                    return;
-                }
-                if (IsClass(selected))
-                {
-                    // クラスをインポートする
-
-                    ApiImporter.ImportClass(selected.Split(" ")[1]);
-                    return;
-                }
-
-                // インストール済みのdllをインポートする
-                dllPath = System.IO.Path.Combine(InstallDllDirectory, (string)InstallDllList.SelectedItem);
+                ApiImporter.ImportClass(selected.Split(" ")[1]);
+                return;
             }
 
-            if (!File.Exists(dllPath))
+            string dllPath = System.IO.Path.Combine(InstallDllDirectory, selected);
+            if (File.Exists(selected))
             {
                 string msg = string.Format(CapybaraVS.Language.GetInstance["ModuleControler_04"], dllPath);
                 MessageBox.Show(msg, MESSAGE_TITLE);
                 return;
             }
 
-            // dllをインポートする
+            // インストール済みのdllをインポートする
             ApiImporter.ImportDll(dllPath);
         }
 
