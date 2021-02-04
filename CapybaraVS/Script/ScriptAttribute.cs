@@ -152,14 +152,15 @@ namespace CapybaraVS.Script
         /// <summary>
         /// 受け入れられるメソッドか判定します。
         /// </summary>
+        /// <param name="classType">クラス情報</param>
         /// <param name="methodInfo">メソッド情報</param>
         /// <returns>true==受け入れられる</returns>
-        private static bool IsAcceptMethod(MethodBase methodInfo)
+        private static bool IsAcceptMethod(Type classType, MethodBase methodInfo)
         {
             if (methodInfo.IsGenericMethod || methodInfo.IsGenericMethodDefinition)
                 return false;   // ジェネリックメソッドは現在未対応
 
-            if (methodInfo.IsAbstract)
+            if (!classType.IsInterface && methodInfo.IsAbstract)
                 return false;   // 象徴メソッドは呼べない
 
             return true;
@@ -172,15 +173,6 @@ namespace CapybaraVS.Script
         /// <returns>true==受け入れられる</returns>
         private static bool IsAcceptClass(Type classType)
         {
-            if (!classType.IsClass)
-                return false;   // クラス以外は、扱わない
-
-            if (classType.IsInterface)
-                return true;    // インターフェイスは扱う
-
-            if (classType.IsAbstract)
-                return false;   // 象徴クラスは、扱えない
-
             if (classType.IsGenericType || classType.IsGenericTypeDefinition)
                 return false;   // ジェネリックなクラスには未対応
 
@@ -189,6 +181,15 @@ namespace CapybaraVS.Script
 
             if (classType.IsNotPublic)
                 return false;   // 扱えない
+
+            if (classType.IsInterface)
+                return true;    // インターフェイスは扱う
+
+            if (!classType.IsClass)
+                return false;   // クラス以外は、扱わない
+
+            if (classType.IsAbstract)
+                return false;   // 象徴クラスは、扱えない
 
             return true;
         }
@@ -219,7 +220,7 @@ namespace CapybaraVS.Script
                 CbST.AddModule(module);
             }
 
-#if false    // テスト用
+#if true    // テスト用
             foreach (Type classType in types)
             {
                 if (!IsAcceptClass(classType))
@@ -304,7 +305,7 @@ namespace CapybaraVS.Script
             List<AutoImplementFunctionInfo> importFuncInfoList = new List<AutoImplementFunctionInfo>();
             foreach (ConstructorInfo constructorInfo in classType.GetConstructors())
             {
-                if (!IsAcceptMethod(constructorInfo))
+                if (!IsAcceptMethod(classType, constructorInfo))
                     continue;   // 未対応
 
                 try
@@ -328,7 +329,7 @@ namespace CapybaraVS.Script
             List<AutoImplementFunctionInfo> importFuncInfoList = new List<AutoImplementFunctionInfo>();
             foreach (MethodInfo methodInfo in classType.GetMethods())
             {
-                if (!IsAcceptMethod(methodInfo))
+                if (!IsAcceptMethod(classType, methodInfo))
                     continue;   // 未対応
 
                 try
@@ -372,7 +373,7 @@ namespace CapybaraVS.Script
                     {
                         try
                         {
-                            if (!IsAcceptMethod(constructorInfo))
+                            if (!IsAcceptMethod(classType, constructorInfo))
                                 continue;   // 未対応
 
                             importScriptMethodAttributeMethods(OwnerCommandCanvas, node, classType, constructorInfo, null);
@@ -389,7 +390,7 @@ namespace CapybaraVS.Script
                 {
                     try
                     {
-                        if (!IsAcceptMethod(methodInfo))
+                        if (!IsAcceptMethod(classType, methodInfo))
                             continue;   // 未対応
 
                         importScriptMethodAttributeMethods(OwnerCommandCanvas, node, classType, methodInfo, methodInfo.ReturnType);

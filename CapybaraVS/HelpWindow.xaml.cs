@@ -33,6 +33,11 @@ namespace CapyCSS
             Info.Text += "© 2021 Aradono Katsumi" + Environment.NewLine;
             Info.Text += "All rights reserved." + Environment.NewLine;
             Info.Text += Environment.NewLine;
+            Info.Text += "Included package:" + Environment.NewLine;
+            Info.Text += "  ClosedXML 0.95.4" + Environment.NewLine;
+            Info.Text += "  MaterialDesignThemes 3.2.0" + Environment.NewLine;
+            Info.Text += "  MathNet.Numerics 4.12.0" + Environment.NewLine;
+            Info.Text += "  System.Drawing.Common 5.0.0";
         }
 
         public static HelpWindow Create()

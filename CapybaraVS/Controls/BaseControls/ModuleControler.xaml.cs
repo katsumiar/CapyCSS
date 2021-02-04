@@ -273,6 +273,7 @@ namespace CapyCSS.Controls.BaseControls
             InstallDllList.Items.Add("[ Install dll ]");
             InstallDllList.Items.Add("[ Import class ]");
             InstallDllList.Items.Add(HEADER_PACKAGE + "MathNet.Numerics");
+            InstallDllList.Items.Add(HEADER_PACKAGE + "ClosedXML");
             InstallDllList.SelectedIndex = SELECT_INSTALL_DLL;
             string[] paths = Directory.GetFiles(InstallDllDirectory, "*.dll");
             foreach (string path in paths)

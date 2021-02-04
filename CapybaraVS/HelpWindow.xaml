@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:CapyCSS"
         mc:Ignorable="d"
-        Title="HelpWindow" Height="174" Width="256" WindowStyle="ToolWindow">
+        Title="HelpWindow" Height="219" Width="256" WindowStyle="ToolWindow">
     <Grid>
         <TextBlock x:Name="Info" HorizontalAlignment="Center" VerticalAlignment="Center" />
     </Grid>
