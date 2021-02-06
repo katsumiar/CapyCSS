@@ -1,10 +1,13 @@
 ﻿using CapybaraVS.Controls.BaseControls;
 using CapyCSS.Controls;
+using CapyCSS.Controls.BaseControls;
+using CapyCSS.Script;
 using CbVS.Script;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
@@ -69,7 +72,45 @@ namespace CapybaraVS.Script
         }
 
         /// <summary>
-        /// リフレクションで本アプリ内のメソッドを取り込み、ノード化します。
+        /// NuGetをでインストールしてメソッドを取り込み、ノード化します。
+        /// </summary>
+        /// <param name="OwnerCommandCanvas">オーナーキャンバス</param>
+        /// <param name="node">登録先のノード</param>
+        /// <param name="packageDir"></param>
+        /// <param name="packageName">パッケージ名</param>
+        /// <returns>インポートしたパッケージ名</returns>
+        public static string ImportScriptMethodsFromNuGet(
+            CommandCanvas OwnerCommandCanvas,
+            TreeMenuNode node,
+            string packageDir,
+            string packageName)
+        {
+            string pkgId;
+            try
+            {
+                List<NugetClient.PackageInfo> packageList = CapyCSS.Script.NugetClient.install(packageDir, packageName, out pkgId);
+                foreach (var package in packageList)
+                {
+                    if (package == packageList.Last())
+                    {
+                        ScriptImplement.ImportScriptMethodsFromDllFile(OwnerCommandCanvas, node, package.Path, null);
+                    }
+                    else
+                    {
+                        Assembly.LoadFrom(package.Path);
+                        CommandCanvasList.OutPut.OutLine(nameof(ScriptImplement), $"imported {System.IO.Path.GetFileNameWithoutExtension(package.Path)}({package.Version}) package.");
+                    }
+                }
+            }
+            catch (WebException)
+            {
+                return null;
+            }
+            return ModuleControler.HEADER_NUGET + pkgId + "(" + packageName.Split("(")[1];
+        }
+
+        /// <summary>
+        /// 本アプリ内のメソッドを取り込み、ノード化します。
         /// </summary>
         /// <param name="OwnerCommandCanvas">オーナーキャンバス</param>
         /// <param name="node">登録先のノード</param>
@@ -97,9 +138,10 @@ namespace CapybaraVS.Script
             List<string> ignoreClassList)
         {
             var asm = Assembly.Load(name);
-            string outputName = "Package " + name;
+            string outputName = ModuleControler.HEADER_PACKAGE + name;
             var functionNode = ImplementAsset.CreateGroup(node, outputName);
             ImportScriptMethods(OwnerCommandCanvas, functionNode, asm, null, ignoreClassList);
+            CommandCanvasList.OutPut.OutLine(nameof(ScriptImplement), $"imported {name} package.");
             return outputName;
         }
 
@@ -122,9 +164,10 @@ namespace CapybaraVS.Script
                 return null;
             }
             var asm = classType.GetTypeInfo().Assembly;
-            string outputName = "Class " + name;
+            string outputName = ModuleControler.HEADER_CLASS + name;
             var functionNode = ImplementAsset.CreateGroup(node, outputName);
             ImportScriptMethods(OwnerCommandCanvas, functionNode, asm, null, null);
+            CommandCanvasList.OutPut.OutLine(nameof(ScriptImplement), $"imported {name} class.");
             return outputName;
         }
 
@@ -140,12 +183,21 @@ namespace CapybaraVS.Script
             CommandCanvas OwnerCommandCanvas,
             TreeMenuNode node,
             string path,
-            List<string> ignoreClassList)
+            List<string> ignoreClassList,
+            string version = null)
         {
             var asm = Assembly.LoadFrom(path);
             Module mod = asm.GetModule(path);
             string name = Path.GetFileName(path);
             ImportScriptMethods(OwnerCommandCanvas, node, asm, mod, ignoreClassList);
+            if (version is null)
+            {
+                CommandCanvasList.OutPut.OutLine(nameof(ScriptImplement), $"imported {System.IO.Path.GetFileNameWithoutExtension(name)} package.");
+            }
+            else
+            {
+                CommandCanvasList.OutPut.OutLine(nameof(ScriptImplement), $"imported {System.IO.Path.GetFileNameWithoutExtension(name)}({version}) package.");
+            }
             return name;
         }
 

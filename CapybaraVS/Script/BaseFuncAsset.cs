@@ -1,5 +1,6 @@
 ﻿using CapybaraVS.Controls;
 using CapybaraVS.Controls.BaseControls;
+using CapyCSS.Controls;
 using CbVS.Script;
 using System;
 using System.Collections.Generic;
@@ -16,11 +17,13 @@ namespace CapybaraVS.Script
     {
         private TreeMenuNode ProgramNode = null;
         private TreeMenuNode DllNode = null;
+        private TreeMenuNode NuGetNode = null;
         private CommandCanvas OwnerCommandCanvas = null;
         public ObservableCollection<string> ModulueNameList = new ObservableCollection<string>();
         public List<string> DllModulePathList = new List<string>();
         public List<string> PackageModuleList = new List<string>();
         public List<string> ClassModuleList = new List<string>();
+        public List<string> NuGetModuleList = new List<string>();
 
         public ApiImporter(CommandCanvas ownerCommandCanvas)
         {
@@ -151,7 +154,7 @@ namespace CapybaraVS.Script
             string name = ScriptImplement.ImportScriptMethodsFromDllFile(OwnerCommandCanvas, DllNode, path, ignoreClassList);
             if (name != null)
             {
-                ModulueNameList.Add(name);
+                ModulueNameList.Add(name);  // インポートリストに表示
                 DllModulePathList.Add(path);
             }
         }
@@ -174,7 +177,7 @@ namespace CapybaraVS.Script
             string name = ScriptImplement.ImportScriptMethodsFromPackage(OwnerCommandCanvas, DllNode, packageName, ignoreClassList);
             if (name != null)
             {
-                ModulueNameList.Add(name);
+                ModulueNameList.Add(name);  // インポートリストに表示
                 PackageModuleList.Add(packageName);
             }
         }
@@ -183,11 +186,19 @@ namespace CapybaraVS.Script
         /// スクリプトにクラスをインポートします。
         /// </summary>
         /// <param name="className">クラス名</param>
-        public void ImportClass(string className)
+        /// <returns>true==成功</returns>
+        public bool ImportClass(string className)
         {
             if (ClassModuleList.Contains(className))
             {
-                return;
+                return true;
+            }
+            Type classType = CbST.GetTypeEx(className);
+            if (classType is null)
+            {
+                // クラスが見つからない
+
+                return false;
             }
             if (DllNode is null)
             {
@@ -196,9 +207,51 @@ namespace CapybaraVS.Script
             string name = ScriptImplement.ImportScriptMethodsFromClass(OwnerCommandCanvas, DllNode, className);
             if (name != null)
             {
-                ModulueNameList.Add(name);
+                ModulueNameList.Add(name);  // インポートリストに表示
                 ClassModuleList.Add(className);
+                return true;
             }
+            return false;
+        }
+
+        /// <summary>
+        /// スクリプトにNuGetでインポートします。
+        /// </summary>
+        /// <param name="packageDir">パッケージ格納ディレクトリ</param>
+        /// <param name="pkgName">パッケージ名</param>
+        /// <param name="version">バージョン</param>
+        /// <returns>true==成功</returns>
+        public bool ImportNuGet(string packageDir, string pkgName, string version)
+        {
+            return ImportNuGet(packageDir, pkgName + $"({version})");
+        }
+
+        /// <summary>
+        /// スクリプトにNuGetでインポートします。
+        /// </summary>
+        /// <param name="packageDir">パッケージ格納ディレクトリ</param>
+        /// <param name="pkgName">パッケージ名</param>
+        /// <returns>true==成功</returns>
+        public bool ImportNuGet(string packageDir, string pkgName)
+        {
+            if (NuGetModuleList.Contains(pkgName))
+            {
+                return true;
+            }
+            if (NuGetNode is null)
+            {
+                NuGetNode = CreateGroup(ProgramNode, "NuGet Package");
+            }
+            string name = ScriptImplement.ImportScriptMethodsFromNuGet(OwnerCommandCanvas, NuGetNode, packageDir, pkgName);
+            if (name != null)
+            {
+                ModulueNameList.Add(name);  // インポートリストに表示
+                NuGetModuleList.Add(pkgName);
+                CommandCanvasList.OutPut.OutLine(nameof(ScriptImplement), $"NuGet successed.");
+                return true;
+            }
+            CommandCanvasList.OutPut.OutLine(nameof(ScriptImplement), $"NuGet faild.");
+            return false;
         }
 
         /// <summary>
@@ -210,10 +263,16 @@ namespace CapybaraVS.Script
             DllModulePathList.Clear();
             PackageModuleList.Clear();
             ClassModuleList.Clear();
+            NuGetModuleList.Clear();
             if (DllNode != null)
             {
                 ProgramNode.Child.Remove(DllNode);
                 DllNode = null;
+            }
+            if (NuGetNode != null)
+            {
+                ProgramNode.Child.Remove(NuGetNode);
+                NuGetNode = null;
             }
         }
     }

@@ -48,6 +48,7 @@ namespace CapybaraVS
                 this,
                 App.CAPYCSS_INFO_PATH,
                 App.CAPYCSS_DLL_DIR_PATH,
+                App.CAPYCSS_PACKAGE_DIR_PATH,
                 (filename) =>
                 {
                     // タイトルをセットします。

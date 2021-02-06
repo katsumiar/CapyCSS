@@ -101,6 +101,8 @@ namespace CapyCSS.Controls
 
         public string DllDir = null;
 
+        public string PackageDir = null;
+
         private int CurrentTabIndex = -1;
 
         private List<string> scriptWorkRecentList = new List<string>();
@@ -156,6 +158,7 @@ namespace CapyCSS.Controls
             Window owner,
             string settingFile,
             string dllDir,
+            string packageDir,
             Action<string> setTitleFunc = null,
             Action closingFunc = null,
             string autoLoadCbsFile = null,
@@ -165,6 +168,7 @@ namespace CapyCSS.Controls
             ownerWindow = owner;
             SetTitleFunc = setTitleFunc;
             DllDir = dllDir;
+            PackageDir = packageDir;
             CallClosing = closingFunc;
             SetTitleFunc(null);
             if (autoLoadCbsFile != null)

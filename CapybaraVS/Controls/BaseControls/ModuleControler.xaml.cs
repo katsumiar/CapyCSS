@@ -25,19 +25,23 @@ namespace CapyCSS.Controls.BaseControls
     {
         private ApiImporter ApiImporter = null;
         private string InstallDllDirectory = null;
+        private string InstallNuGetDirectory = null;
 
         private const string MESSAGE_TITLE = "Dll Import";
 
-        private const string HEADER_PACKAGE = "Package ";
-        private const string HEADER_CLASS = "Class ";
+        public const string HEADER_PACKAGE = "Package ";
+        public const string HEADER_CLASS = "Class ";
+        public const string HEADER_NUGET = "NuGet ";
 
         private const int SELECT_INSTALL_DLL = 0;
         private const int SELECT_IMPORT_CLASS = 1;
+        private const int SELECT_INSTALL_NUGET = 2;
 
-        public ModuleControler(ApiImporter apiImporter, string installDllDirectory)
+        public ModuleControler(ApiImporter apiImporter, string installDllDirectory, string installNuGetDirectory)
         {
             ApiImporter = apiImporter;
             InstallDllDirectory = installDllDirectory;
+            InstallNuGetDirectory = installNuGetDirectory;
             InitializeComponent();
             ImportList.ItemsSource = apiImporter.ModulueNameList;
             ListFetchInstallDll();
@@ -79,7 +83,7 @@ namespace CapyCSS.Controls.BaseControls
         /// <param name="e"></param>
         private void AddLabel_MouseDown(object sender, MouseButtonEventArgs e)
         {
-            if (InstallDllList.SelectedIndex == SELECT_INSTALL_DLL)
+            if (InportList.SelectedIndex == SELECT_INSTALL_DLL)
             {
                 // 新規にdllをインストールしてからインポートする
 
@@ -95,7 +99,7 @@ namespace CapyCSS.Controls.BaseControls
                 ApiImporter.ImportDll(installDllPath);
                 return;
             }
-            else if (InstallDllList.SelectedIndex == SELECT_IMPORT_CLASS)
+            else if (InportList.SelectedIndex == SELECT_IMPORT_CLASS)
             {
                 // 新規にクラス指定でインポートする
 
@@ -103,28 +107,47 @@ namespace CapyCSS.Controls.BaseControls
                 if (imputText == "")
                     return;
 
-                // 入力が正しいか調べる
-                Type classType = CbST.GetTypeEx(imputText);
-                if (classType is null)
-                {
-                    // クラスが見つからない
-
-                    backupBackground = ClassName.Background;
-                    ClassName.BorderBrush = Brushes.Red;
-                    return;
-                }
-
-                InstallDllList.SelectedIndex = SELECT_INSTALL_DLL;
-                closeInputClassName();
-
                 // クラスをインポートする
-                ApiImporter.ImportClass(imputText);
+                if (ApiImporter.ImportClass(imputText))
+                {
+                    // 成功
+
+                    InportList.SelectedIndex = SELECT_INSTALL_DLL;
+                    closeInputClassName();
+                }
+                else
+                {
+                    // 失敗
+                }
+                return;
+            }
+            else if (InportList.SelectedIndex == SELECT_INSTALL_NUGET)
+            {
+                string nugetName = PackageName.Text.Trim();
+                if (nugetName == "")
+                    return;
+                string version = Version.Text.Trim();
+                if (version == "")
+                    return;
+
+                // NuGetをインポートする
+                if (ApiImporter.ImportNuGet(InstallNuGetDirectory, nugetName, version))
+                {
+                    // 成功
+
+                    InportList.SelectedIndex = SELECT_INSTALL_DLL;
+                    closeInputNuGet();
+                }
+                else
+                {
+                    // 失敗
+                }
                 return;
             }
 
             // 既存のインポート
 
-            string selected = (string)InstallDllList.SelectedItem;
+            string selected = (string)InportList.SelectedItem;
 
             if (IsPackage(selected))
             {
@@ -138,6 +161,13 @@ namespace CapyCSS.Controls.BaseControls
                 // クラスをインポートする
 
                 ApiImporter.ImportClass(selected.Split(" ")[1]);
+                return;
+            }
+            if (IsNuGet(selected))
+            {
+                // NeGetをインポートする
+
+                ApiImporter.ImportNuGet(InstallDllDirectory, selected.Split(" ")[1]);
                 return;
             }
 
@@ -171,6 +201,16 @@ namespace CapyCSS.Controls.BaseControls
         private static bool IsClass(string selected)
         {
             return selected.StartsWith(HEADER_CLASS);
+        }
+
+        /// <summary>
+        /// NuGetを判定します。
+        /// </summary>
+        /// <param name="selected">名前</param>
+        /// <returns>true==クラス</returns>
+        private static bool IsNuGet(string selected)
+        {
+            return selected.StartsWith(HEADER_NUGET);
         }
 
         /// <summary>
@@ -260,7 +300,7 @@ namespace CapyCSS.Controls.BaseControls
             }
 
             // ドロップダウンリストに登録
-            InstallDllList.Items.Add(dllPath);
+            InportList.Items.Add(dllPath);
             return dllPath;
         }
 
@@ -269,16 +309,16 @@ namespace CapyCSS.Controls.BaseControls
         /// </summary>
         private void ListFetchInstallDll()
         {
-            InstallDllList.Items.Clear();
-            InstallDllList.Items.Add("[ Install dll ]");
-            InstallDllList.Items.Add("[ Import class ]");
-            InstallDllList.Items.Add(HEADER_PACKAGE + "MathNet.Numerics");
-            InstallDllList.Items.Add(HEADER_PACKAGE + "ClosedXML");
-            InstallDllList.SelectedIndex = SELECT_INSTALL_DLL;
+            InportList.Items.Clear();
+            InportList.Items.Add("[ Install dll ]");
+            InportList.Items.Add("[ Import class ]");
+            InportList.Items.Add("[ NuGet ]");
+            InportList.Items.Add(HEADER_PACKAGE + "MathNet.Numerics");
+            InportList.SelectedIndex = SELECT_INSTALL_DLL;
             string[] paths = Directory.GetFiles(InstallDllDirectory, "*.dll");
             foreach (string path in paths)
             {
-                InstallDllList.Items.Add(System.IO.Path.GetFileName(path));
+                InportList.Items.Add(System.IO.Path.GetFileName(path));
             }
         }
 
@@ -287,33 +327,45 @@ namespace CapyCSS.Controls.BaseControls
             ListFetchInstallDll();
         }
 
-        private Brush backupBackground = null;
-
         /// <summary>
         /// クラス名入力欄を閉じます。
         /// </summary>
         private void closeInputClassName()
         {
+            ClassName.Text = "";
             imputClassName.Visibility = Visibility.Collapsed;
-            if (backupBackground != null)
-            {
-                ClassName.Background = backupBackground;
-            }
+        }
+
+        /// <summary>
+        /// NuGet入力欄を閉じます。
+        /// </summary>
+        private void closeInputNuGet()
+        {
+            PackageName.Text = "";
+            Version.Text = "";
+            imputNuGetName.Visibility = Visibility.Collapsed;
         }
 
         private void InstallDllList_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (InstallDllList.SelectedIndex == SELECT_IMPORT_CLASS)
+            if (InportList.SelectedIndex == SELECT_IMPORT_CLASS)
             {
                 // クラス名入力欄を表示する
 
                 imputClassName.Visibility = Visibility.Visible;
             }
+            else if (InportList.SelectedIndex == SELECT_INSTALL_NUGET)
+            {
+                // NuGet入力欄を表示する
+
+                imputNuGetName.Visibility = Visibility.Visible;
+            }
             else
             {
-                // クラス名入力欄を閉じる
+                // 特設入力欄を閉じる
 
                 closeInputClassName();
+                closeInputNuGet();
             }
         }
     }

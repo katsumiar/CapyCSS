@@ -106,6 +106,7 @@ namespace CapybaraVS.Controls.BaseControls
                     self._inportClassModule = ImportClassModule;
                     self._inportPackageModule = ImportPackageModule;
                     self._inportDllModule = ImportDllModule;
+                    self._inportNuGetModule = ImportNuGetModule;
                     if (self.ImportModule())
                     {
                         SetupCanvas(self);
@@ -164,6 +165,7 @@ namespace CapybaraVS.Controls.BaseControls
                     ImportClassModule = self.ApiImporter.ClassModuleList;
                     ImportPackageModule = self.ApiImporter.PackageModuleList;
                     ImportDllModule = self.ApiImporter.DllModulePathList;
+                    ImportNuGetModule = self.ApiImporter.NuGetModuleList;
                     self.WorkCanvas.AssetXML.WriteAction?.Invoke();
                     WorkCanvas = self.WorkCanvas.AssetXML;
                     self.WorkStack.AssetXML.WriteAction?.Invoke();
@@ -187,6 +189,7 @@ namespace CapybaraVS.Controls.BaseControls
             public List<string> ImportClassModule { get; set; } = null;
             public List<string> ImportPackageModule { get; set; } = null;
             public List<string> ImportDllModule { get; set; } = null;
+            public List<string> ImportNuGetModule { get; set; } = null;
             public Stack._AssetXML<Stack> WorkStack { get; set; } = null;
             [XmlArrayItem("Asset")]
             public List<Movable._AssetXML<Movable>> WorkCanvasAssetList { get; set; } = null;
@@ -237,6 +240,7 @@ namespace CapybaraVS.Controls.BaseControls
         public List<string> _inportClassModule = null;
         public List<string> _inportPackageModule = null;
         public List<string> _inportDllModule = null;
+        public List<string> _inportNuGetModule = null;
         public ApiImporter ApiImporter = null;
         private ModuleControler moduleControler = null;
         public CommandWindow CommandMenuWindow = null;
@@ -360,7 +364,11 @@ namespace CapybaraVS.Controls.BaseControls
             // 基本的なアセットを追加
             ApiImporter = new ApiImporter(this);
             moduleView.Content =
-                moduleControler = new ModuleControler(ApiImporter, CommandCanvasControl.DllDir);
+                moduleControler = new ModuleControler(
+                    ApiImporter, 
+                    CommandCanvasControl.DllDir,
+                    CommandCanvasControl.PackageDir
+                );
             ImportModule();
 
             // デバッグ用アセットを追加
@@ -393,6 +401,16 @@ namespace CapybaraVS.Controls.BaseControls
                     ApiImporter.ImportPackage(imp, null);
                 }
                 _inportPackageModule = null;
+            }
+            if (_inportNuGetModule != null)
+            {
+                // NuGetインポートの復元
+
+                foreach (var imp in _inportNuGetModule)
+                {
+                    ApiImporter.ImportNuGet(CommandCanvasControl.PackageDir, imp);
+                }
+                _inportNuGetModule = null;
             }
             if (_inportDllModule != null)
             {
@@ -682,6 +700,7 @@ namespace CapybaraVS.Controls.BaseControls
         public void ClearWorkCanvas(bool full = true)
         {
             CommandCanvasControl.ClearPublicExecuteEntryPoint(this);
+            ApiImporter.ClearModule();
             ScriptWorkCanvas.Clear();
             ScriptWorkStack.Clear();
             ScriptCommandCanvas.HideWorkStack();
