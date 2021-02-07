@@ -96,6 +96,9 @@ namespace CapybaraVS.Script
                 }
                 foreach (var package in packageList)
                 {
+#if false
+                    ScriptImplement.ImportScriptMethodsFromDllFile(OwnerCommandCanvas, node, package.Path, null, $"({package.Version})");
+#else
                     if (package == packageList.Last())
                     {
                         ScriptImplement.ImportScriptMethodsFromDllFile(OwnerCommandCanvas, node, package.Path, null, ver);
@@ -105,6 +108,7 @@ namespace CapybaraVS.Script
                         Assembly.LoadFrom(package.Path);
                         CommandCanvasList.OutPut.OutLine(nameof(ScriptImplement), $"imported {System.IO.Path.GetFileNameWithoutExtension(package.Path)}({package.Version}) package.");
                     }
+#endif
                 }
             }
             catch (WebException)
@@ -277,7 +281,7 @@ namespace CapybaraVS.Script
                 CbST.AddModule(module);
             }
 
-#if true    // テスト用
+#if false    // テスト用
             foreach (Type classType in types)
             {
                 if (!IsAcceptClass(classType))
