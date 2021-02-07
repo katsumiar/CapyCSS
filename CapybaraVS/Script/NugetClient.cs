@@ -68,10 +68,10 @@ namespace CapyCSS.Script
             }
 
             // 依存パッケージを取得
+            pkgId = "";
             IEnumerable<string> packages = GetDependencies(packageName, packageRoot, out string _pkgId, out string net_version);
             if (packages is null)
             {
-                pkgId = "";
                 return null;
             }
             foreach (var package in packages)
@@ -94,11 +94,24 @@ namespace CapyCSS.Script
         /// <returns>パッケージ一覧</returns>
         private static IEnumerable<string> GetDependencies(string packageName, string packageRoot, out string pkgId, out string net_version)
         {
-            List<string> ignoreList = new List<string>() {
+            List<string> ignoreList = new List<string>()
+            {
                 "System",
                 "Microsoft.NETCore",
                 "Microsoft.CSharp",
                 "NETStandard.Library"
+            };
+            List<string> netStandardVerList = new List<string>()
+            {
+                "2.1",
+                "2.0",
+                "1.6",
+                "1.5",
+                "1.4",
+                "1.3",
+                "1.2",
+                "1.1",
+                "1.0"
             };
 
             string nuspecFile = Path.Combine(packageRoot, $"{packageName}.nuspec");
@@ -111,7 +124,17 @@ namespace CapyCSS.Script
             {
                 return null;
             }
-            var groups = dependencies.Elements(xmlNs + "group").Where(n => n.Attribute("targetFramework").Value.StartsWith(".NETStandard"));
+            IEnumerable<XElement> groups = null;
+            foreach (var ver in netStandardVerList)
+            {
+                // .NET Standard の最新バージョンを探す
+
+                groups = dependencies.Elements(xmlNs + "group").Where(n => n.Attribute("targetFramework").Value.StartsWith($".NETStandard{ver}"));
+                if (groups.Count() != 0)
+                {
+                    break;
+                }
+            }
             if (groups.Count() == 0)
             {
                 return null;

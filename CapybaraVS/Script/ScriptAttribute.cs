@@ -86,14 +86,19 @@ namespace CapybaraVS.Script
             string packageName)
         {
             string pkgId;
+            string ver = "(" + packageName.Split("(")[1];
             try
             {
                 List<NugetClient.PackageInfo> packageList = CapyCSS.Script.NugetClient.install(packageDir, packageName, out pkgId);
+                if (packageList is null)
+                {
+                    return null;
+                }
                 foreach (var package in packageList)
                 {
                     if (package == packageList.Last())
                     {
-                        ScriptImplement.ImportScriptMethodsFromDllFile(OwnerCommandCanvas, node, package.Path, null);
+                        ScriptImplement.ImportScriptMethodsFromDllFile(OwnerCommandCanvas, node, package.Path, null, ver);
                     }
                     else
                     {
@@ -106,7 +111,7 @@ namespace CapybaraVS.Script
             {
                 return null;
             }
-            return ModuleControler.HEADER_NUGET + pkgId + "(" + packageName.Split("(")[1];
+            return ModuleControler.HEADER_NUGET + pkgId + ver;
         }
 
         /// <summary>
@@ -196,7 +201,7 @@ namespace CapybaraVS.Script
             }
             else
             {
-                CommandCanvasList.OutPut.OutLine(nameof(ScriptImplement), $"imported {System.IO.Path.GetFileNameWithoutExtension(name)}({version}) package.");
+                CommandCanvasList.OutPut.OutLine(nameof(ScriptImplement), $"imported {System.IO.Path.GetFileNameWithoutExtension(name)}{version} package.");
             }
             return name;
         }
