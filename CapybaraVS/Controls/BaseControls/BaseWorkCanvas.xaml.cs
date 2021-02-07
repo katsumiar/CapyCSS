@@ -1025,7 +1025,7 @@ namespace CapybaraVS.Control.BaseControls
                         }
                         catch (Exception ex)
                         {
-                            MessageBox.Show(nameof(CanvasBase_KeyDown) + ": [Key.C] " + ex.Message);
+                            ControlTools.ShowErrorMessage(nameof(CanvasBase_KeyDown) + ": [Key.C] " + ex.Message);
                         }
                         break;
 
@@ -1049,7 +1049,7 @@ namespace CapybaraVS.Control.BaseControls
                         }
                         catch (Exception ex)
                         {
-                            MessageBox.Show(nameof(CanvasBase_KeyDown) + ": [Key.V] " + ex.Message);
+                            ControlTools.ShowErrorMessage(nameof(CanvasBase_KeyDown) + ": [Key.V] " + ex.Message);
                         }
                         break;
 
@@ -1142,7 +1142,7 @@ namespace CapybaraVS.Control.BaseControls
             }
             catch (Exception ex)
             {
-                MessageBox.Show(nameof(CanvasBase_KeyDown) + ": [Key.C] " + ex.Message);
+                ControlTools.ShowErrorMessage(nameof(CanvasBase_KeyDown) + ": [Key.C] " + ex.Message);
             }
         }
 
@@ -1152,7 +1152,8 @@ namespace CapybaraVS.Control.BaseControls
         public void DeleteSelectedNodes()
         {
             if (SelectedNodes.Count != 0 &&
-                    MessageBox.Show(CapybaraVS.Language.GetInstance["ConfirmationDelete"],
+                    ControlTools.ShowSelectMessage(
+                        CapybaraVS.Language.GetInstance["ConfirmationDelete"],
                         CapybaraVS.Language.GetInstance["Confirmation"],
                         MessageBoxButton.OKCancel) == MessageBoxResult.OK)
             {

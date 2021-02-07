@@ -167,7 +167,7 @@ namespace CapybaraVS
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message);
+                MessageBox.Show(CommandCanvasList.OwnerWindow, ex.Message);
             }
         }
 

@@ -40,27 +40,7 @@ namespace CapyCSS.Controls
 
         public void SetPos(Point? pos = null)
         {
-            if (pos.HasValue)
-            {
-                Left = pos.Value.X;
-                Top = pos.Value.Y;
-                if (CommandCanvasList.OwnerWindow.WindowState != WindowState.Maximized)
-                {
-                    // ウインドウが最大化されても元のサイズが帰ってくるようなので、最大化していないときだけ相対位置にする
-
-                    Left += CommandCanvasList.OwnerWindow.Left;
-                    Top += CommandCanvasList.OwnerWindow.Top;
-                }
-                else
-                {
-                    if (CommandCanvasList.OwnerWindow.Left > SystemParameters.PrimaryScreenWidth)
-                    {
-                        // セカンダリディスプレイでクリックされた
-
-                        Left += SystemParameters.PrimaryScreenWidth;
-                    }
-                }
-            }
+            ControlTools.SetWindowPos(this, pos);
         }
 
         /// <summary>

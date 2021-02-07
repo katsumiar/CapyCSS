@@ -613,7 +613,7 @@ namespace CapybaraVS.Controls.BaseControls
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message);
+                ControlTools.ShowErrorMessage(ex.Message);
             }
 
             CommandCanvasList.OwnerWindow.Cursor = Cursors.Arrow;
@@ -663,7 +663,7 @@ namespace CapybaraVS.Controls.BaseControls
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show(ex.Message);
+                    ControlTools.ShowErrorMessage(ex.Message);
                 }
                 finally
                 {
@@ -824,7 +824,8 @@ namespace CapybaraVS.Controls.BaseControls
         private void ClearWorkCanvasWithConfirmation()
         {
             if (ScriptWorkCanvas.Count != 0 &&
-                    MessageBox.Show(CapybaraVS.Language.GetInstance["ConfirmationDelete"],
+                    ControlTools.ShowSelectMessage(
+                        CapybaraVS.Language.GetInstance["ConfirmationDelete"],
                         CapybaraVS.Language.GetInstance["Confirmation"],
                         MessageBoxButton.OKCancel) == MessageBoxResult.OK)
             {

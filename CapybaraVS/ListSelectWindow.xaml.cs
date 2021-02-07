@@ -56,27 +56,7 @@ namespace CapybaraVS
             ListSelectWindow selectWindow = new ListSelectWindow();
             selectWindow.Caption = caption;
             selectWindow.Owner = CommandCanvasList.OwnerWindow;
-            if (pos.HasValue)
-            {
-                selectWindow.Left = pos.Value.X;
-                selectWindow.Top = pos.Value.Y;
-                if (CommandCanvasList.OwnerWindow.WindowState != WindowState.Maximized)
-                {
-                    // ウインドウが最大化されても元のサイズが帰ってくるようなので、最大化していないときだけ相対位置にする
-
-                    selectWindow.Left += CommandCanvasList.OwnerWindow.Left;
-                    selectWindow.Top += CommandCanvasList.OwnerWindow.Top;
-                }
-                else
-                {
-                    if (CommandCanvasList.OwnerWindow.Left > SystemParameters.PrimaryScreenWidth)
-                    {
-                        // セカンダリディスプレイでクリックされた
-
-                        selectWindow.Left += SystemParameters.PrimaryScreenWidth;
-                    }
-                }
-            }
+            ControlTools.SetWindowPos(selectWindow, pos);
 
             if (DefaultValue != null)
                 selectWindow.Add("[ New ]");

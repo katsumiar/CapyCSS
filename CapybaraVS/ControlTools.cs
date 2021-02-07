@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CapyCSS.Controls;
+using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Windows;
@@ -143,6 +144,58 @@ namespace CapybaraVS
                 target = null;
                 findObject = null;
             }
+        }
+
+        public static void SetWindowPos(Window self, Point? pos)
+        {
+            if (pos.HasValue)
+            {
+                self.Left = pos.Value.X;
+                self.Top = pos.Value.Y;
+                if (CommandCanvasList.OwnerWindow.WindowState != WindowState.Maximized)
+                {
+                    // ウインドウが最大化されても元のサイズが帰ってくるようなので、最大化していないときだけ相対位置にする
+
+                    self.Left += CommandCanvasList.OwnerWindow.Left;
+                    self.Top += CommandCanvasList.OwnerWindow.Top;
+                }
+                else
+                {
+                    if (CommandCanvasList.OwnerWindow.Left > SystemParameters.PrimaryScreenWidth)
+                    {
+                        // セカンダリディスプレイでクリックされた
+
+                        self.Left += SystemParameters.PrimaryScreenWidth;
+                    }
+                }
+            }
+        }
+
+        public static MessageBoxResult ShowMessage(string msg, string title = null)
+        {
+            if (title is null)
+                return MessageBox.Show(CommandCanvasList.OwnerWindow, msg);
+            return MessageBox.Show(CommandCanvasList.OwnerWindow, msg, title);
+        }
+
+        public static MessageBoxResult ShowErrorMessage(string msg)
+        {
+            return ShowErrorMessage(msg, "Error");
+        }
+
+        public static MessageBoxResult ShowErrorMessage(string msg, string title)
+        {
+            return MessageBox.Show(CommandCanvasList.OwnerWindow, msg, title, MessageBoxButton.OK, MessageBoxImage.Error);
+        }
+
+        public static MessageBoxResult ShowSelectMessage(string msg)
+        {
+            return ShowSelectMessage(msg, "Select");
+        }
+
+        public static MessageBoxResult ShowSelectMessage(string msg, string title, MessageBoxButton button = MessageBoxButton.OK)
+        {
+            return MessageBox.Show(CommandCanvasList.OwnerWindow, msg, title, button);
         }
     }
 }

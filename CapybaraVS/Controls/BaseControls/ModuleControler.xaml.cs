@@ -1,4 +1,5 @@
-﻿using CapybaraVS.Script;
+﻿using CapybaraVS;
+using CapybaraVS.Script;
 using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
@@ -59,7 +60,7 @@ namespace CapyCSS.Controls.BaseControls
                 // TODO フォルダを指定してもらいファイルのパスを特定してもらう
 
                 string msg = string.Format(CapybaraVS.Language.GetInstance["ModuleControler_04"], filter);
-                MessageBox.Show(msg, MESSAGE_TITLE);
+                ControlTools.ShowErrorMessage(msg, MESSAGE_TITLE);
                 return null;    // 失敗
             }
 
@@ -175,7 +176,7 @@ namespace CapyCSS.Controls.BaseControls
             if (File.Exists(selected))
             {
                 string msg = string.Format(CapybaraVS.Language.GetInstance["ModuleControler_04"], dllPath);
-                MessageBox.Show(msg, MESSAGE_TITLE);
+                ControlTools.ShowErrorMessage(msg, MESSAGE_TITLE);
                 return;
             }
 
@@ -271,7 +272,7 @@ namespace CapyCSS.Controls.BaseControls
                 // dll は既にインポート済み
 
                 string msg = string.Format(CapybaraVS.Language.GetInstance["ModuleControler_01"], dllFileName);
-                var ret = MessageBox.Show(msg, MESSAGE_TITLE, MessageBoxButton.YesNo);
+                var ret = ControlTools.ShowSelectMessage(msg, MESSAGE_TITLE, MessageBoxButton.YesNo);
                 if (ret == MessageBoxResult.No)
                 {
                     return null;
@@ -286,7 +287,7 @@ namespace CapyCSS.Controls.BaseControls
                 // 上書きインストール成功
 
                 string msg = string.Format(CapybaraVS.Language.GetInstance["ModuleControler_02"], dllFileName);
-                MessageBox.Show(msg, MESSAGE_TITLE);
+                ControlTools.ShowMessage(msg, MESSAGE_TITLE);
 
                 // アプリケーションの終了
                 CommandCanvasList.CallClosing?.Invoke();
@@ -296,7 +297,7 @@ namespace CapyCSS.Controls.BaseControls
                 // インストール成功
 
                 string msg = string.Format(CapybaraVS.Language.GetInstance["ModuleControler_03"], dllFileName);
-                MessageBox.Show(msg, MESSAGE_TITLE);
+                ControlTools.ShowMessage(msg, MESSAGE_TITLE);
             }
 
             // ドロップダウンリストに登録

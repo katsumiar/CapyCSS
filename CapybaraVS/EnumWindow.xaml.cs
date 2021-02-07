@@ -83,27 +83,7 @@ namespace CapybaraVS
             enumWindow.EnumItem = enumClass;
             enumWindow.Caption = enumWindow.EnumItem.TypeName;
             enumWindow.Owner = CommandCanvasList.OwnerWindow;
-            if (pos.HasValue)
-            {
-                enumWindow.Left = pos.Value.X;
-                enumWindow.Top = pos.Value.Y;
-                if (CommandCanvasList.OwnerWindow.WindowState != WindowState.Maximized)
-                {
-                    // ウインドウが最大化されても元のサイズが帰ってくるようなので、最大化していないときだけ相対位置にする
-
-                    enumWindow.Left += CommandCanvasList.OwnerWindow.Left;
-                    enumWindow.Top += CommandCanvasList.OwnerWindow.Top;
-                }
-                else
-                {
-                    if (CommandCanvasList.OwnerWindow.Left > SystemParameters.PrimaryScreenWidth)
-                    {
-                        // セカンダリディスプレイでクリックされた
-
-                        enumWindow.Left += SystemParameters.PrimaryScreenWidth;
-                    }
-                }
-            }
+            ControlTools.SetWindowPos(enumWindow, pos);
             return enumWindow;
         }
 

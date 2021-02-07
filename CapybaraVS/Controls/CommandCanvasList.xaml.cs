@@ -205,7 +205,7 @@ namespace CapyCSS.Controls
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message);
+                ControlTools.ShowErrorMessage(ex.Message);
             }
         }
 
@@ -232,7 +232,7 @@ namespace CapyCSS.Controls
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message);
+                ControlTools.ShowErrorMessage(ex.Message);
             }
         }
 
