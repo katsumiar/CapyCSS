@@ -361,44 +361,37 @@ namespace CapybaraVS.Controls.BaseControls
         }
 
         /// <summary>
-        /// コマンドのフィルタリングを解除します。
-        /// </summary>
-        public void ClearFilter()
-        {
-            TreeView.ItemsSource = AssetTreeData;
-        }
-
-        /// <summary>
         /// コマンドをフィルタリングします。
         /// </summary>
         /// <param name="name">メニュー名</param>
-        public void SetFilter(string name)
+        public void SetFilter(TreeViewCommand viewer, string name)
         {
-            var findData = new ObservableCollection<TreeMenuNode>();
+            ObservableCollection<TreeMenuNode> treeView = viewer.TreeView.ItemsSource as ObservableCollection<TreeMenuNode>;
+            treeView.Clear();   // これを起因にバインド系のエラーが出るが…無視して良い...
             foreach (var node in AssetTreeData)
             {
                 if (node.Path == RecentName)
                 {
                     continue;
                 }
-                SetFilter(findData, node, name.ToUpper());
+                SetFilter(viewer, node, name.ToUpper());
             }
-            TreeView.ItemsSource = findData;
         }
 
         /// <summary>
         /// コマンドをフィルタリングします。
         /// </summary>
-        /// <param name="findData">結果登録用リスト</param>
+        /// <param name="viewer">結果登録用リスト</param>
         /// <param name="node">メニューノード</param>
         /// <param name="name">メニュー名</param>
-        private void SetFilter(ObservableCollection<TreeMenuNode> findData, TreeMenuNode node, string name)
+        private void SetFilter(TreeViewCommand viewer, TreeMenuNode node, string name)
         {
+            ObservableCollection<TreeMenuNode> treeView = viewer.TreeView.ItemsSource as ObservableCollection<TreeMenuNode>;
             if (node.Name.ToUpper().Contains(name))
             {
                 if (node.LeftClickCommand.CanExecute(null))
                 {
-                    findData.Add(new TreeMenuNode(node.Path, OwnerCommandCanvas.CreateImmediateExecutionCanvasCommand(() =>
+                    treeView.Add(new TreeMenuNode(node.Path, OwnerCommandCanvas.CreateImmediateExecutionCanvasCommand(() =>
                     {
                         ExecuteFindCommand(node.Path);
                     })));
@@ -406,7 +399,7 @@ namespace CapybaraVS.Controls.BaseControls
             }
             foreach (var child in node.Child)
             {
-                SetFilter(findData, child, name);
+                SetFilter(viewer, child, name);
             }
         }
 

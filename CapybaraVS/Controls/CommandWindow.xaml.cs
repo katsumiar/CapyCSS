@@ -2,6 +2,7 @@
 using CapybaraVS.Controls.BaseControls;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
@@ -23,8 +24,6 @@ namespace CapyCSS.Controls
         : Window
         , IDisposable
     {
-        public TreeViewCommand treeViewCommand = new TreeViewCommand();
-
         /// <summary>
         /// コマンドウインドウを表示します。
         /// </summary>
@@ -54,8 +53,18 @@ namespace CapyCSS.Controls
         public CommandWindow()
         {
             InitializeComponent();
+            filterProcTimer.Tick += EventHandler;
+        }
 
-            (OpenListContents as IAddChild).AddChild(treeViewCommand);
+        void EventHandler(object sender, EventArgs e)
+        {
+            filterProcTimer.Stop();
+
+            // 待機後の処理
+            treeViewCommand.SetFilter(
+                findTreeViewCommand,
+                FilterText.Text);
+            filterProcTimer.IsEnabled = false;
         }
 
         bool trueCloseing = false;
@@ -85,19 +94,14 @@ namespace CapyCSS.Controls
 
                 filterProcTimer.IsEnabled = true;
                 filterProcTimer.Start();
-                filterProcTimer.Tick += (s, args) =>
-                {
-                    filterProcTimer.Stop();
-
-                    // 待機後の処理
-                    treeViewCommand.SetFilter(FilterText.Text);
-                    filterProcTimer.IsEnabled = false;
-                };
+                treeViewCommand.Visibility = Visibility.Collapsed;
+                findTreeViewCommand.Visibility = Visibility.Visible;
             }
             else
             {
                 filterProcTimer.IsEnabled = false;
-                treeViewCommand.ClearFilter();
+                treeViewCommand.Visibility = Visibility.Visible;
+                findTreeViewCommand.Visibility = Visibility.Collapsed;
             }
         }
 
@@ -105,6 +109,7 @@ namespace CapyCSS.Controls
         {
             trueCloseing = true;
             Close();
+            filterProcTimer.Tick -= EventHandler;
         }
     }
 }

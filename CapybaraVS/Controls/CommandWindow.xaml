@@ -1,4 +1,4 @@
-﻿<Window x:Name="window" x:Class="CapyCSS.Controls.CommandWindow"
+﻿<Window xmlns:BaseControls="clr-namespace:CapybaraVS.Controls.BaseControls"  x:Name="window" x:Class="CapyCSS.Controls.CommandWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -18,10 +18,14 @@
         </ResourceDictionary>
     </Window.Resources>
     <ScrollViewer x:Name="scrollViewer" VerticalScrollBarVisibility="Auto" VerticalAlignment="Top" HorizontalAlignment="Stretch" FocusVisualStyle="{x:Null}">
-        <StackPanel x:Name="OpenListContents" HorizontalAlignment="Stretch" FocusVisualStyle="{x:Null}">
+        <StackPanel>
             <StackPanel Orientation="Horizontal" FocusVisualStyle="{x:Null}">
                 <Label Content="Filter :" />
                 <TextBox x:Name="FilterText" KeyUp="FilterText_KeyUp" Width="385" />
+            </StackPanel>
+            <StackPanel x:Name="OpenListContents" HorizontalAlignment="Stretch" FocusVisualStyle="{x:Null}">
+                <BaseControls:TreeViewCommand x:Name="treeViewCommand"/>
+                <BaseControls:TreeViewCommand x:Name="findTreeViewCommand" Visibility="Collapsed" />
             </StackPanel>
         </StackPanel>
     </ScrollViewer>
