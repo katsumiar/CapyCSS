@@ -250,7 +250,7 @@ namespace CapybaraVS.Script
                 CommandCanvasList.OutPut.OutLine(nameof(ScriptImplement), $"NuGet successed.");
                 return true;
             }
-            CommandCanvasList.OutPut.OutLine(nameof(ScriptImplement), $"NuGet faild.");
+            CommandCanvasList.OutPut.OutLine(nameof(ScriptImplement), $"faild.");
             return false;
         }
 

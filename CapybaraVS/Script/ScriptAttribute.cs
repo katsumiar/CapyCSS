@@ -87,6 +87,7 @@ namespace CapybaraVS.Script
         {
             string pkgId;
             string ver = "(" + packageName.Split("(")[1];
+            CommandCanvasList.OutPut.OutLine(nameof(ScriptImplement), $"NuGet {packageName}.");
             try
             {
                 List<NugetClient.PackageInfo> packageList = CapyCSS.Script.NugetClient.install(packageDir, packageName, out pkgId);
@@ -96,23 +97,24 @@ namespace CapybaraVS.Script
                 }
                 foreach (var package in packageList)
                 {
-#if false
-                    ScriptImplement.ImportScriptMethodsFromDllFile(OwnerCommandCanvas, node, package.Path, null, $"({package.Version})");
+#if true
+                    ScriptImplement.ImportScriptMethodsFromDllFile(OwnerCommandCanvas, node, package.Path, null, $"{package.Name}({package.Version})");
 #else
                     if (package == packageList.Last())
                     {
-                        ScriptImplement.ImportScriptMethodsFromDllFile(OwnerCommandCanvas, node, package.Path, null, ver);
+                        ScriptImplement.ImportScriptMethodsFromDllFile(OwnerCommandCanvas, node, package.Path, null, $"{package.Name}({package.Version})");
                     }
                     else
                     {
                         Assembly.LoadFrom(package.Path);
-                        CommandCanvasList.OutPut.OutLine(nameof(ScriptImplement), $"imported {System.IO.Path.GetFileNameWithoutExtension(package.Path)}({package.Version}) package.");
+                        CommandCanvasList.OutPut.OutLine(nameof(ScriptImplement), $"imported {package.Name}({package.Version}) package.");
                     }
 #endif
                 }
             }
             catch (WebException)
             {
+                CommandCanvasList.OutPut.OutLine(nameof(ScriptImplement), $"NG.");
                 return null;
             }
             return ModuleControler.HEADER_NUGET + pkgId + ver;
@@ -205,7 +207,7 @@ namespace CapybaraVS.Script
             }
             else
             {
-                CommandCanvasList.OutPut.OutLine(nameof(ScriptImplement), $"imported {System.IO.Path.GetFileNameWithoutExtension(name)}{version} package.");
+                CommandCanvasList.OutPut.OutLine(nameof(ScriptImplement), $"imported {version} package.");
             }
             return name;
         }
