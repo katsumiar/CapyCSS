@@ -43,6 +43,7 @@ namespace CapybaraVS.Controls.BaseControls
         public class _AssetXML<OwnerClass>
             where OwnerClass : RootConnector
         {
+            private static int queueCounter = 0;
             [XmlIgnore]
             public Action WriteAction = null;
             [XmlIgnore]
@@ -75,8 +76,7 @@ namespace CapybaraVS.Controls.BaseControls
                     }
 
                     // レイアウトが変更されるのでレイアウトの変更を待って続きを処理する必要がある
-                    RoutedEventHandler routedEventHandler = null;
-                    routedEventHandler = (a, b) =>
+                    self.Dispatcher.BeginInvoke(new Action(() =>
                     {
                         // ↓この中で CurveCanvas が取得されるがデザインがある程度整うまで取得できない
                         self.ChangeConnectorStyle(self.SingleLinkMode);
@@ -87,12 +87,17 @@ namespace CapybaraVS.Controls.BaseControls
                         self.rootCurveLinks.AssetXML = Connector;
                         self.rootCurveLinks.AssetXML.ReadAction?.Invoke(self.rootCurveLinks);
 
-                        // このタイミングでリンクを貼ることに不安を拭えない……（貼り漏れが発生するかも）
-                        PointIdProvider.CheckRequestStart();
+                        queueCounter++;
+                        self.Dispatcher.BeginInvoke(new Action(() =>
+                        {
+                            // このタイミングでリンクを貼ることに不安を拭えない……（貼り漏れが発生するかも）
+                            if (--queueCounter == 0)
+                            {
+                                PointIdProvider.CheckRequestStart();
+                            }
+                        }), DispatcherPriority.ApplicationIdle);
 
-                        self.Loaded -= routedEventHandler;
-                    };
-                    self.Loaded += routedEventHandler;
+                    }), DispatcherPriority.ApplicationIdle);
 
                     // 次回の為の初期化
                     self.AssetXML = new _AssetXML<RootConnector>(self);
