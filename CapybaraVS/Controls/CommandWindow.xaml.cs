@@ -37,6 +37,35 @@ namespace CapyCSS.Controls
             return commandWindow;
         }
 
+        #region Message プロパティ実装
+
+        private static ImplementWindowDependencyProperty<CommandWindow, string> impCaption =
+            new ImplementWindowDependencyProperty<CommandWindow, string>(
+                nameof(Message),
+                (self, getValue) =>
+                {
+                    string value = getValue(self);
+                    if (value != null && value.Trim() != "")
+                    {
+                        self.MessageBox.Text = value;
+                        self.MessageBox.Visibility = Visibility.Visible;
+                    }
+                    else
+                    {
+                        self.MessageBox.Visibility = Visibility.Collapsed;
+                    }
+                });
+
+        public static readonly DependencyProperty CaptionProperty = impCaption.Regist(null);
+
+        public string Message
+        {
+            get { return impCaption.GetValue(this); }
+            set { impCaption.SetValue(this, value); }
+        }
+
+        #endregion
+
         public void SetPos(Point? pos = null)
         {
             ControlTools.SetWindowPos(this, pos);

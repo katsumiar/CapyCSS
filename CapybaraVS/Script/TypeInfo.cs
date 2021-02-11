@@ -68,6 +68,9 @@ namespace CapybaraVS.Script
         public class _AssetXML<OwnerClass>
             where OwnerClass : CbST
         {
+            // この定義は無くなる予定
+
+
             [XmlIgnore]
             public Action WriteAction = null;
             [XmlIgnore]
@@ -87,47 +90,11 @@ namespace CapybaraVS.Script
                         self.Value = CbCreate(CbST.GetTypeEx(ClassName));
                         self.LiteralTypeForCbTypeFunc = ClassName;
                     }
-                    else if (ObjectType == CbCType.Class)
+                    else
                     {
-                        Type openedType = typeof(CbClass<>); //CapybaraVS.Script.CbClass`1
-                        Type argType = CbST.GetTypeEx(ClassName);
-                        Type cbClassType = openedType.MakeGenericType(argType);
-
-                        self.Value = cbClassType.InvokeMember("Create", BindingFlags.InvokeMethod,
-                                  null, null, new object[] { "" }) as ICbValue;
-                    }
-                    else if (ObjectType == CbCType.Struct)
-                    {
-                        Type openedType = typeof(CbStruct<>); //CapybaraVS.Script.CbStruct`1
-                        Type argType = CbST.GetTypeEx(ClassName);
-                        Type cbClassType = openedType.MakeGenericType(argType);
-
-                        self.Value = cbClassType.InvokeMember("Create", BindingFlags.InvokeMethod,
-                                  null, null, new object[] { "" }) as ICbValue;
-                    }
-                    else if (self.ObjectType == CbCType.Enum)
-                    {
-                        Type openedType = typeof(CbEnum<>); //CapybaraVS.Script.CbEnum`1
-                        Type argType = CbST.GetTypeEx(ClassName);
-                        Type cbEnumType = openedType.MakeGenericType(argType);
-
-                        self.Value = cbEnumType.InvokeMember("Create", BindingFlags.InvokeMethod,
-                                  null, null, new object[] { "" }) as ICbValue;
-                    }
-                    else if (ObjectType == CbCType.List && LiteralType == CbType.Class)
-                    {
-                        Func<ICbValue> listNodeType =
-                            () =>
-                            {
-                                Type openedType = typeof(CbClass<>); //CapybaraVS.Script.CbClass`1
-                                Type argType = CbST.GetTypeEx(ClassName);
-                                Type cbClassType = openedType.MakeGenericType(argType);
-
-                                return cbClassType.InvokeMember("Create", BindingFlags.InvokeMethod,
-                                          null, null, new object[] { "" }) as ICbValue;
-                            };
-
-                        self.Value = listNodeType();
+                        self.Value = CbST.Create(self);
+                        self.LiteralTypeForCbTypeFunc = self.Value.OriginalType.FullName;
+                        self.ObjectType = CbCType.Func;
                     }
 
                     // 次回の為の初期化
@@ -203,28 +170,28 @@ namespace CapybaraVS.Script
         /// <summary>
         /// 型の指定を自由にする
         /// </summary>
-        public static CbST FreeType => new CbST(CbType.none);
+        //public static CbST FreeType => new CbST(CbType.none);
 
         /// <summary>
         /// 型の指定をイベント型にする
         /// </summary>
-        public static CbST FreeFuncType => new CbST(CbType.none, CbCType.Func);
+        //public static CbST FreeFuncType => new CbST(CbType.none, CbCType.Func);
 
         /// <summary>
         /// 型の指定をリスト型にする
         /// </summary>
-        public static CbST FreeListType => new CbST(CbType.none, CbCType.List);
+        //public static CbST FreeListType => new CbST(CbType.none, CbCType.List);
 
-        public static CbST Int => new CbST(CbType.Int);
-        public static CbST Bool => new CbST(CbType.Bool);
-        public static CbST String => new CbST(CbType.String);
-        public static CbST Double => new CbST(CbType.Double);
-        public static CbST Object => new CbST(CbType.Object);
+        //public static CbST Int => new CbST(CbType.Int);
+        //public static CbST Bool => new CbST(CbType.Bool);
+        //public static CbST String => new CbST(CbType.String);
+        //public static CbST Double => new CbST(CbType.Double);
+        //public static CbST Object => new CbST(CbType.Object);
 
         /// <summary>
         /// 型の指定を enum 型にする
         /// </summary>
-        public static CbST Enum => new CbST(CbType.none, CbCType.Enum);
+        //public static CbST Enum => new CbST(CbType.none, CbCType.Enum);
 
         public CbST()
         {
@@ -1040,6 +1007,10 @@ namespace CapybaraVS.Script
         /// </summary>
         string ValueString { get; set; }
         /// <summary>
+        /// デリゲート型かどうか？
+        /// </summary>
+        bool IsDelegate { get; }
+        /// <summary>
         /// 変数の値は変更不可か？
         /// </summary>
         bool IsReadOnlyValue { get; set; }
@@ -1241,6 +1212,11 @@ namespace CapybaraVS.Script
         /// オリジナルの型（Func, Action, List 以外は OriginalReturnType と同じ）を参照します。
         /// </summary>
         public virtual Type OriginalType => typeof(T);
+
+        /// <summary>
+        /// デリゲート型かどうか？
+        /// </summary>
+        public virtual bool IsDelegate => false;
 
         /// <summary>
         /// 変数名を参照します。
@@ -1526,6 +1502,8 @@ namespace CapybaraVS.Script
         public string Name { get => name; set { name = value; } }
 
         public bool IsReadOnlyName { get; set; } = false;
+
+        public virtual bool IsDelegate => false;
 
         public string ValueString { get => name; set { name = value; } }
 

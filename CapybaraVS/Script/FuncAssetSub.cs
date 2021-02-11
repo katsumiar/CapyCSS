@@ -51,9 +51,11 @@ namespace CapybaraVS.Script
         string MenuTitle { get; }
 
         /// <summary>
-        /// 型選択
+        /// 型名
         /// </summary>
-        CbST TargetType { get; }
+        //CbST TargetType { get; }
+
+        string ValueType { get; }
 
         /// <summary>
         /// 型選択リストの除外項目
@@ -74,9 +76,11 @@ namespace CapybaraVS.Script
         string MenuTitle { get; }
 
         /// <summary>
-        /// 型指定
+        /// 型名
         /// </summary>
-        CbST TargetType { get; }
+        //CbST TargetType { get; }
+
+        string ValueType { get; }
     }
 
     /// <summary>
@@ -90,9 +94,11 @@ namespace CapybaraVS.Script
         string MenuTitle { get; }
 
         /// <summary>
-        /// 型指定
+        /// 型名
         /// </summary>
-        ICbValue TargetType { get; }
+        //CbST TargetType { get; }
+
+        string ValueType { get; }
 
         /// <summary>
         /// 型選択リストの除外項目
@@ -112,9 +118,11 @@ namespace CapybaraVS.Script
         string MenuTitle { get; }
 
         /// <summary>
-        /// 型選択
+        /// 型名
         /// </summary>
-        CbST TargetType { get; }
+        //CbST TargetType { get; }
+
+        string ValueType { get; }
 
         /// <summary>
         /// 型選択リストの除外項目
@@ -139,9 +147,11 @@ namespace CapybaraVS.Script
         string MenuTitle { get; }
 
         /// <summary>
-        /// 型選択
+        /// 型名
         /// </summary>
-        CbST TargetType { get; }
+        //CbST TargetType { get; }
+
+        string ValueType { get; }
 
         /// <summary>
         /// 型選択リストの除外項目

@@ -3,7 +3,7 @@
   <WorkCanvas Id="1">
     <EnabelGridLine>false</EnabelGridLine>
     <EnableInfo>false</EnableInfo>
-    <CanvasScale>0.7835261664684589</CanvasScale>
+    <CanvasScale>1</CanvasScale>
     <CanvasRenderTransform>
       <M11>0.7835261664684589</M11>
       <M12>0</M12>
@@ -13,6 +13,10 @@
       <OffsetY>-86.87034037600928</OffsetY>
     </CanvasRenderTransform>
   </WorkCanvas>
+  <ImportClassModule />
+  <ImportPackageModule />
+  <ImportDllModule />
+  <ImportNuGetModule />
   <WorkStack>
     <StackList />
   </WorkStack>
@@ -22,11 +26,8 @@
         <RootFunc AssetType="FuncType" AssetFuncType="Sum_Func">
           <AttachVariableIds />
           <AttachVariableId>0</AttachVariableId>
-          <AssetLiteralType>
-            <LiteralType>Int</LiteralType>
-            <ObjectType>none</ObjectType>
-          </AssetLiteralType>
-          <RootConnector PointId="1236">
+          <AssetValueType>System.Int32</AssetValueType>
+          <RootConnector PointId="867">
             <Caption>
               <LabelString>Sum Func&lt;int,int&gt;.Invoke</LabelString>
             </Caption>
@@ -34,11 +35,11 @@
             <ForcedChecked>false</ForcedChecked>
             <Connector>
               <LinkList>
-                <PointID>1248</PointID>
+                <PointID>879</PointID>
               </LinkList>
             </Connector>
             <Arguments>
-              <LinkConnector PointId="1237">
+              <LinkConnector PointId="868">
                 <Value>1</Value>
                 <CastConnect>false</CastConnect>
                 <ParamInfo>
@@ -52,7 +53,7 @@
                   <List />
                 </LinkConnectorList>
               </LinkConnector>
-              <LinkConnector PointId="1238">
+              <LinkConnector PointId="869">
                 <CastConnect>false</CastConnect>
                 <ParamInfo>
                   <ParamName> </ParamName>
@@ -63,7 +64,7 @@
                 </ParamInfo>
                 <LinkConnectorList>
                   <List>
-                    <LinkConnector PointId="1240">
+                    <LinkConnector PointId="871">
                       <Value>[Func&lt;int, int&gt;()]&lt;null&gt;</Value>
                       <CastConnect>false</CastConnect>
                       <ParamInfo>
@@ -77,7 +78,7 @@
                         <List />
                       </LinkConnectorList>
                     </LinkConnector>
-                    <LinkConnector PointId="1242">
+                    <LinkConnector PointId="873">
                       <Value>[Func&lt;int, int&gt;()]&lt;null&gt;</Value>
                       <CastConnect>false</CastConnect>
                       <ParamInfo>
@@ -105,11 +106,8 @@
         <RootFunc AssetType="FuncType" AssetFuncType="Subroutine">
           <AttachVariableIds />
           <AttachVariableId>0</AttachVariableId>
-          <AssetLiteralType>
-            <LiteralType>Object</LiteralType>
-            <ObjectType>none</ObjectType>
-          </AssetLiteralType>
-          <RootConnector PointId="1245">
+          <AssetValueType>System.Object</AssetValueType>
+          <RootConnector PointId="876">
             <Caption>
               <LabelString>Sequence</LabelString>
             </Caption>
@@ -119,7 +117,7 @@
               <LinkList />
             </Connector>
             <Arguments>
-              <LinkConnector PointId="1246">
+              <LinkConnector PointId="877">
                 <CastConnect>false</CastConnect>
                 <ParamInfo>
                   <ParamName>call list</ParamName>
@@ -130,7 +128,7 @@
                 </ParamInfo>
                 <LinkConnectorList>
                   <List>
-                    <LinkConnector PointId="1248">
+                    <LinkConnector PointId="879">
                       <Value>[object]&lt;null&gt;</Value>
                       <CastConnect>false</CastConnect>
                       <ParamInfo>
@@ -158,11 +156,8 @@
         <RootFunc AssetType="FuncType" AssetFuncType="Sum">
           <AttachVariableIds />
           <AttachVariableId>0</AttachVariableId>
-          <AssetLiteralType>
-            <LiteralType>Int</LiteralType>
-            <ObjectType>none</ObjectType>
-          </AssetLiteralType>
-          <RootConnector PointId="1251">
+          <AssetValueType>System.Int32</AssetValueType>
+          <RootConnector PointId="882">
             <Caption>
               <LabelString>Sum</LabelString>
             </Caption>
@@ -170,11 +165,11 @@
             <ForcedChecked>false</ForcedChecked>
             <Connector>
               <LinkList>
-                <PointID>1240</PointID>
+                <PointID>871</PointID>
               </LinkList>
             </Connector>
             <Arguments>
-              <LinkConnector PointId="1252">
+              <LinkConnector PointId="883">
                 <CastConnect>false</CastConnect>
                 <ParamInfo>
                   <ParamName>sample</ParamName>
@@ -185,7 +180,7 @@
                 </ParamInfo>
                 <LinkConnectorList>
                   <List>
-                    <LinkConnector PointId="1254">
+                    <LinkConnector PointId="885">
                       <Value>0</Value>
                       <CastConnect>false</CastConnect>
                       <ParamInfo>
@@ -199,7 +194,7 @@
                         <List />
                       </LinkConnectorList>
                     </LinkConnector>
-                    <LinkConnector PointId="1256">
+                    <LinkConnector PointId="887">
                       <Value>0</Value>
                       <CastConnect>false</CastConnect>
                       <ParamInfo>
@@ -227,11 +222,8 @@
         <RootFunc AssetType="FuncType" AssetFuncType="Mul">
           <AttachVariableIds />
           <AttachVariableId>0</AttachVariableId>
-          <AssetLiteralType>
-            <LiteralType>Int</LiteralType>
-            <ObjectType>none</ObjectType>
-          </AssetLiteralType>
-          <RootConnector PointId="1260">
+          <AssetValueType>System.Int32</AssetValueType>
+          <RootConnector PointId="891">
             <Caption>
               <LabelString>Multiply</LabelString>
             </Caption>
@@ -239,11 +231,11 @@
             <ForcedChecked>false</ForcedChecked>
             <Connector>
               <LinkList>
-                <PointID>1242</PointID>
+                <PointID>873</PointID>
               </LinkList>
             </Connector>
             <Arguments>
-              <LinkConnector PointId="1261">
+              <LinkConnector PointId="892">
                 <Value>0</Value>
                 <CastConnect>false</CastConnect>
                 <ParamInfo>
@@ -257,7 +249,7 @@
                   <List />
                 </LinkConnectorList>
               </LinkConnector>
-              <LinkConnector PointId="1262">
+              <LinkConnector PointId="893">
                 <CastConnect>false</CastConnect>
                 <ParamInfo>
                   <ParamName>sample</ParamName>
@@ -268,7 +260,7 @@
                 </ParamInfo>
                 <LinkConnectorList>
                   <List>
-                    <LinkConnector PointId="1264">
+                    <LinkConnector PointId="895">
                       <Value>0</Value>
                       <CastConnect>false</CastConnect>
                       <ParamInfo>
@@ -296,11 +288,8 @@
         <RootFunc AssetType="FuncType" AssetFuncType="CallerArguments">
           <AttachVariableIds />
           <AttachVariableId>0</AttachVariableId>
-          <AssetLiteralType>
-            <LiteralType>Int</LiteralType>
-            <ObjectType>none</ObjectType>
-          </AssetLiteralType>
-          <RootConnector PointId="1267">
+          <AssetValueType>System.Int32</AssetValueType>
+          <RootConnector PointId="898">
             <Caption>
               <LabelString>DummyArguments&lt;int&gt;</LabelString>
             </Caption>
@@ -308,14 +297,14 @@
             <ForcedChecked>false</ForcedChecked>
             <Connector>
               <LinkList>
-                <PointID>1254</PointID>
-                <PointID>1256</PointID>
-                <PointID>1261</PointID>
-                <PointID>1264</PointID>
+                <PointID>885</PointID>
+                <PointID>887</PointID>
+                <PointID>892</PointID>
+                <PointID>895</PointID>
               </LinkList>
             </Connector>
             <Arguments>
-              <LinkConnector PointId="1268">
+              <LinkConnector PointId="899">
                 <Value>INDEX.ARG_1</Value>
                 <CastConnect>false</CastConnect>
                 <ParamInfo>

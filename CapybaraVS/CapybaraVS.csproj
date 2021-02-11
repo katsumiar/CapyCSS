@@ -6,13 +6,13 @@
     <UseWPF>true</UseWPF>
     <ApplicationIcon>Image\cpbvs_mUG_icon.ico</ApplicationIcon>
     <Copyright>Copyright (c) 2020 Katsumi Aradono</Copyright>
-    <Version>0.2.3.0</Version>
-    <AssemblyVersion>0.2.3.0</AssemblyVersion>
+    <Version>0.3.0.0</Version>
+    <AssemblyVersion>0.3.0.0</AssemblyVersion>
     <Authors>Katsumi Aradono</Authors>
     <PackageId>CapyCSS</PackageId>
     <AssemblyName>CapyCSS</AssemblyName>
     <RootNamespace>CapyCSS</RootNamespace>
-    <FileVersion>0.2.3.0</FileVersion>
+    <FileVersion>0.3.0.0</FileVersion>
     <Product>CapyCSS</Product>
     <StartupObject>CapybaraVS.App</StartupObject>
     <PackageProjectUrl>https://katsumiar.github.io/CapyCSS/</PackageProjectUrl>

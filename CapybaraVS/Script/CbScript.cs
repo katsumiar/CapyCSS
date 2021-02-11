@@ -59,39 +59,52 @@ namespace CbVS.Script
         /// <summary>
         /// 変数の型を選択します。
         /// </summary>
-        /// <param name="cbType">選択された型の格納先</param>
+        /// <param name="typeName">選択された型の格納先</param>
         /// <param name="ignoreTypes">>選択除外の型を指定</param>
         /// <returns>true = 有効</returns>
-        private static bool _SelectVariableType(CbST cbType, CbType[] ignoreTypes)
+        private static bool _SelectVariableType(CommandCanvas OwnerCommandCanvas, ref string typeName, CbType[] ignoreTypes)
         {
-            if (cbType.LiteralType == CbType.none)
+            if (typeName == CbSTUtils.FREE_ENUM_TYPE_STR)
             {
-                EnumWindow enumWindow = EnumWindow.Create(CbEnum<CbType>.Create(),
-                    new Point(Mouse.GetPosition(null).X, Mouse.GetPosition(null).Y));
-
-                if (ignoreTypes != null)
-                {
-                    foreach (var item in ignoreTypes)
-                    {
-                        enumWindow.RemoveItem(CbSTUtils.EnumCbTypeToString(item));
-                    }
-                }
-
-                enumWindow.ShowDialog();
-                ICbValueEnumClass<Enum> selectItem = enumWindow.EnumItem;
-
-                if (selectItem != null)
-                {
-                    cbType.LiteralType = (CbType)selectItem.Value;
-                }
-                else
-                {
-                    return false;
-                }
+                typeName = OwnerCommandCanvas.RequestTypeString();
             }
-            if (cbType.LiteralType == CbType.none)
-                return false;
-            return true;
+            if (typeName == CbSTUtils.FREE_TYPE_STR)
+            {
+                typeName = OwnerCommandCanvas.RequestTypeString();
+            }
+            else
+            {
+                typeName = OwnerCommandCanvas.RequestGenericTypeName(typeName);
+            }
+
+            //if (cbType.LiteralType == CbType.none)
+            //{
+            //    EnumWindow enumWindow = EnumWindow.Create(CbEnum<CbType>.Create(),
+            //        new Point(Mouse.GetPosition(null).X, Mouse.GetPosition(null).Y));
+
+            //    if (ignoreTypes != null)
+            //    {
+            //        foreach (var item in ignoreTypes)
+            //        {
+            //            enumWindow.RemoveItem(CbSTUtils.EnumCbTypeToString(item));
+            //        }
+            //    }
+
+            //    enumWindow.ShowDialog();
+            //    ICbValueEnumClass<Enum> selectItem = enumWindow.EnumItem;
+
+            //    if (selectItem != null)
+            //    {
+            //        cbType.LiteralType = (CbType)selectItem.Value;
+            //    }
+            //    else
+            //    {
+            //        return false;
+            //    }
+            //}
+            //if (cbType.LiteralType == CbType.none)
+            //    return false;
+            return typeName != null;
         }
 
         /// <summary>
@@ -118,7 +131,7 @@ namespace CbVS.Script
 
                 multiRootConnector = new MultiRootConnector();
                 multiRootConnector.OwnerCommandCanvas = OwnerCommandCanvas;
-                multiRootConnector.AssetLiteralType = stackNode.ValueData.CbType;
+                multiRootConnector.AssetValueType = stackNode.ValueData.OriginalType.FullName;
                 multiRootConnector.AssetFuncType = assetCode;
             }
 
@@ -136,20 +149,20 @@ namespace CbVS.Script
         /// <param name="ignoreTypes">選択除外の型を指定</param>
         /// <param name="forcedListTypeSelect">リスト型を選択するか？</param>
         /// <returns>ノード</returns>
-        public static MultiRootConnector CreateFreeTypeVariableFunction(CommandCanvas OwnerCommandCanvas, string assetCode, CbST cbType, CbType[] ignoreTypes = null, bool forcedListTypeSelect = false)
+        public static MultiRootConnector CreateFreeTypeVariableFunction(CommandCanvas OwnerCommandCanvas, string assetCode, string valueType, CbType[] ignoreTypes = null, bool forcedListTypeSelect = false)
         {
             MultiRootConnector multiRootConnector = null;
             StackNode stackNode = null;
 
             if (ignoreTypes != null)
             {
-                if (!_SelectVariableType(cbType, ignoreTypes))
+                if (!_SelectVariableType(OwnerCommandCanvas, ref valueType, ignoreTypes))
                     return null;
 
-                stackNode = OwnerCommandCanvas.ScriptWorkStack.Append(CbST.Create(cbType, "variable" + (OwnerCommandCanvas.ScriptWorkStack.StackData.Count + 1))).stackNode;
+                stackNode = OwnerCommandCanvas.ScriptWorkStack.Append(CbST.CbCreate(CbST.GetTypeEx(valueType), "variable" + (OwnerCommandCanvas.ScriptWorkStack.StackData.Count + 1))).stackNode;
                 multiRootConnector = new MultiRootConnector();
                 multiRootConnector.OwnerCommandCanvas = OwnerCommandCanvas;
-                multiRootConnector.AssetLiteralType = cbType;
+                multiRootConnector.AssetValueType = valueType;
                 multiRootConnector.AssetFuncType = assetCode;
             }
 
@@ -168,7 +181,7 @@ namespace CbVS.Script
             StackNode stackNode = OwnerCommandCanvas.ScriptWorkStack.Append(cbVSValue).stackNode;
             MultiRootConnector multiRootConnector = new MultiRootConnector();
             multiRootConnector.OwnerCommandCanvas = OwnerCommandCanvas;
-            multiRootConnector.AssetLiteralType = cbVSValue.CbType;
+            multiRootConnector.AssetValueType = cbVSValue.CbType.Value.OriginalType.FullName;
             multiRootConnector.AssetFuncType = assetCode;
 
             return _CreateFreeTypeVariableFunction(OwnerCommandCanvas, assetCode, multiRootConnector, stackNode, false);
@@ -181,14 +194,14 @@ namespace CbVS.Script
         /// <param name="cbType">選択された型の格納先</param>
         /// <param name="ignoreTypes">選択除外の型を指定</param>
         /// <returns>ノード</returns>
-        public static MultiRootConnector CreateFreeTypeFunction(CommandCanvas OwnerCommandCanvas, string assetCode, CbST cbType, CbType[] ignoreTypes = null)
+        public static MultiRootConnector CreateFreeTypeFunction(CommandCanvas OwnerCommandCanvas, string assetCode, string valueType, CbType[] ignoreTypes = null)
         {
-            if (!_SelectVariableType(cbType, ignoreTypes))
+            if (!_SelectVariableType(OwnerCommandCanvas, ref valueType, ignoreTypes))
                 return null;
 
             var ret = new MultiRootConnector();
             ret.OwnerCommandCanvas = OwnerCommandCanvas;
-            ret.AssetLiteralType = cbType;
+            ret.AssetValueType = valueType;
             ret.AssetFuncType = assetCode;
             ret.AssetType = FunctionType.FuncType;
             return ret;
@@ -200,20 +213,21 @@ namespace CbVS.Script
         /// <param name="cbType">選択された型の格納先</param>
         /// <param name="ignoreTypes">選択除外の型を指定</param>
         /// <returns>ノード</returns>
-        public static MultiRootConnector SelectVariableType(CommandCanvas OwnerCommandCanvas, CbST cbType, CbType[] ignoreTypes = null)
+        public static MultiRootConnector SelectVariableType(CommandCanvas OwnerCommandCanvas, string valueType, CbType[] ignoreTypes = null)
         {
-            if (!_SelectVariableType(cbType, ignoreTypes))
+            if (!_SelectVariableType(OwnerCommandCanvas, ref valueType, ignoreTypes))
                 return null;
 
             var ret = new MultiRootConnector();
             ret.OwnerCommandCanvas = OwnerCommandCanvas;
-            ret.AssetLiteralType = cbType;
-            if (cbType.ObjectType == CbCType.List) // この切替は無くす予定
-                ret.AssetType = FunctionType.ListType;
-            else
-                ret.AssetType = FunctionType.LiteralType;
-            if (ret.AssetLiteralType.LiteralType == CbType.none)
-                return null;    // 型が確定しなかったら異常
+            ret.AssetValueType = valueType;
+            ret.AssetType = FunctionType.LiteralType;
+            //if (cbType.ObjectType == CbCType.List) // この切替は無くす予定
+            //    ret.AssetType = FunctionType.ListType;
+            //else
+            //    ret.AssetType = FunctionType.LiteralType;
+            //if (ret.AssetLiteralType.LiteralType == CbType.none)
+            //    return null;    // 型が確定しなかったら異常
             return ret;
         }
 

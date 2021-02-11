@@ -178,8 +178,9 @@ namespace CbVS.Script
     }
 
     /// <summary>
-    /// リスト型
+    /// List<>型
     /// </summary>
+    /// <typeparam name="T">オリジナルの型</typeparam>
     public class CbList<T> : BaseCbValueClass<List<ICbValue>>, ICbValueListClass<List<ICbValue>>, ICbShowValue, ICbList
     {
         private bool nullFlg = true;
@@ -312,6 +313,8 @@ namespace CbVS.Script
             }
             set => new NotImplementedException();
         }
+
+        public override bool IsDelegate => NodeTF() is ICbEvent;
 
         public override bool IsReadOnlyValue { get; set; } = true;
 

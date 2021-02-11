@@ -13,6 +13,10 @@
       <OffsetY>387.7528706540234</OffsetY>
     </CanvasRenderTransform>
   </WorkCanvas>
+  <ImportClassModule />
+  <ImportPackageModule />
+  <ImportDllModule />
+  <ImportNuGetModule />
   <WorkStack>
     <StackList />
   </WorkStack>
@@ -22,11 +26,8 @@
         <RootFunc AssetType="FuncType" AssetFuncType="Foreach">
           <AttachVariableIds />
           <AttachVariableId>0</AttachVariableId>
-          <AssetLiteralType>
-            <LiteralType>String</LiteralType>
-            <ObjectType>none</ObjectType>
-          </AssetLiteralType>
-          <RootConnector PointId="28">
+          <AssetValueType>System.String</AssetValueType>
+          <RootConnector PointId="52">
             <Caption>
               <LabelString>Foreach Func&lt;string,string&gt;.Invoke</LabelString>
             </Caption>
@@ -34,11 +35,11 @@
             <ForcedChecked>false</ForcedChecked>
             <Connector>
               <LinkList>
-                <PointID>48</PointID>
+                <PointID>72</PointID>
               </LinkList>
             </Connector>
             <Arguments>
-              <LinkConnector PointId="29">
+              <LinkConnector PointId="53">
                 <CastConnect>false</CastConnect>
                 <ParamInfo>
                   <ParamName>sample</ParamName>
@@ -49,7 +50,7 @@
                 </ParamInfo>
                 <LinkConnectorList>
                   <List>
-                    <LinkConnector PointId="31">
+                    <LinkConnector PointId="55">
                       <Value>AB</Value>
                       <CastConnect>false</CastConnect>
                       <ParamInfo>
@@ -63,7 +64,7 @@
                         <List />
                       </LinkConnectorList>
                     </LinkConnector>
-                    <LinkConnector PointId="33">
+                    <LinkConnector PointId="57">
                       <Value>123</Value>
                       <CastConnect>false</CastConnect>
                       <ParamInfo>
@@ -77,7 +78,7 @@
                         <List />
                       </LinkConnectorList>
                     </LinkConnector>
-                    <LinkConnector PointId="35">
+                    <LinkConnector PointId="59">
                       <Value>def</Value>
                       <CastConnect>false</CastConnect>
                       <ParamInfo>
@@ -94,7 +95,7 @@
                   </List>
                 </LinkConnectorList>
               </LinkConnector>
-              <LinkConnector PointId="36">
+              <LinkConnector PointId="60">
                 <Value>[Action&lt;string&gt;()]&lt;null&gt;</Value>
                 <CastConnect>false</CastConnect>
                 <ParamInfo>
@@ -119,11 +120,8 @@
         <RootFunc AssetType="FuncType" AssetFuncType="CallerArgument">
           <AttachVariableIds />
           <AttachVariableId>0</AttachVariableId>
-          <AssetLiteralType>
-            <LiteralType>String</LiteralType>
-            <ObjectType>none</ObjectType>
-          </AssetLiteralType>
-          <RootConnector PointId="38">
+          <AssetValueType>System.String</AssetValueType>
+          <RootConnector PointId="62">
             <Caption>
               <LabelString>DummyArgument&lt;string&gt;</LabelString>
             </Caption>
@@ -131,7 +129,7 @@
             <ForcedChecked>false</ForcedChecked>
             <Connector>
               <LinkList>
-                <PointID>42</PointID>
+                <PointID>66</PointID>
               </LinkList>
             </Connector>
             <Arguments />
@@ -145,11 +143,8 @@
         <RootFunc AssetType="FuncType" AssetFuncType="ConsoleOut">
           <AttachVariableIds />
           <AttachVariableId>0</AttachVariableId>
-          <AssetLiteralType>
-            <LiteralType>String</LiteralType>
-            <ObjectType>none</ObjectType>
-          </AssetLiteralType>
-          <RootConnector PointId="41">
+          <AssetValueType>System.String</AssetValueType>
+          <RootConnector PointId="65">
             <Caption>
               <LabelString>ConsoleOut</LabelString>
             </Caption>
@@ -157,11 +152,11 @@
             <ForcedChecked>false</ForcedChecked>
             <Connector>
               <LinkList>
-                <PointID>36</PointID>
+                <PointID>60</PointID>
               </LinkList>
             </Connector>
             <Arguments>
-              <LinkConnector PointId="42">
+              <LinkConnector PointId="66">
                 <Value />
                 <CastConnect>false</CastConnect>
                 <ParamInfo>
@@ -186,11 +181,8 @@
         <RootFunc AssetType="FuncType" AssetFuncType="Subroutine">
           <AttachVariableIds />
           <AttachVariableId>0</AttachVariableId>
-          <AssetLiteralType>
-            <LiteralType>Object</LiteralType>
-            <ObjectType>none</ObjectType>
-          </AssetLiteralType>
-          <RootConnector PointId="45">
+          <AssetValueType>System.Object</AssetValueType>
+          <RootConnector PointId="69">
             <Caption>
               <LabelString>Sequence</LabelString>
             </Caption>
@@ -200,7 +192,7 @@
               <LinkList />
             </Connector>
             <Arguments>
-              <LinkConnector PointId="46">
+              <LinkConnector PointId="70">
                 <CastConnect>false</CastConnect>
                 <ParamInfo>
                   <ParamName>call list</ParamName>
@@ -211,7 +203,7 @@
                 </ParamInfo>
                 <LinkConnectorList>
                   <List>
-                    <LinkConnector PointId="48">
+                    <LinkConnector PointId="72">
                       <Value>[object]&lt;null&gt;</Value>
                       <CastConnect>false</CastConnect>
                       <ParamInfo>

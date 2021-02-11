@@ -19,6 +19,7 @@
     </Window.Resources>
     <ScrollViewer x:Name="scrollViewer" VerticalScrollBarVisibility="Auto" VerticalAlignment="Top" HorizontalAlignment="Stretch" FocusVisualStyle="{x:Null}">
         <StackPanel>
+            <TextBlock x:Name="MessageBox" Visibility="Collapsed" FontSize="20" FontWeight="Bold" />
             <StackPanel Orientation="Horizontal" FocusVisualStyle="{x:Null}">
                 <Label Content="Filter :" />
                 <TextBox x:Name="FilterText" KeyUp="FilterText_KeyUp" Width="385" />

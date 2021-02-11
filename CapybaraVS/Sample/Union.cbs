@@ -3,7 +3,7 @@
   <WorkCanvas Id="1">
     <EnabelGridLine>false</EnabelGridLine>
     <EnableInfo>false</EnableInfo>
-    <CanvasScale>0.556837418177559</CanvasScale>
+    <CanvasScale>1</CanvasScale>
     <CanvasRenderTransform>
       <M11>0.556837418177559</M11>
       <M12>0</M12>
@@ -13,6 +13,10 @@
       <OffsetY>-29.348842364938896</OffsetY>
     </CanvasRenderTransform>
   </WorkCanvas>
+  <ImportClassModule />
+  <ImportPackageModule />
+  <ImportDllModule />
+  <ImportNuGetModule />
   <WorkStack>
     <StackList />
   </WorkStack>
@@ -22,11 +26,8 @@
         <RootFunc AssetType="FuncType" AssetFuncType="CapybaraVS.Script.Lib.Union.Jaccard#_List&lt;string&gt;_List&lt;string&gt;">
           <AttachVariableIds />
           <AttachVariableId>0</AttachVariableId>
-          <AssetLiteralType>
-            <LiteralType>Double</LiteralType>
-            <ObjectType>none</ObjectType>
-          </AssetLiteralType>
-          <RootConnector PointId="1336">
+          <AssetValueType>System.Double</AssetValueType>
+          <RootConnector PointId="967">
             <Caption>
               <LabelString>Jaccard</LabelString>
             </Caption>
@@ -34,11 +35,11 @@
             <ForcedChecked>false</ForcedChecked>
             <Connector>
               <LinkList>
-                <PointID>1370</PointID>
+                <PointID>1001</PointID>
               </LinkList>
             </Connector>
             <Arguments>
-              <LinkConnector PointId="1337">
+              <LinkConnector PointId="968">
                 <CastConnect>false</CastConnect>
                 <ParamInfo>
                   <ParamName>A</ParamName>
@@ -51,7 +52,7 @@
                   <List />
                 </LinkConnectorList>
               </LinkConnector>
-              <LinkConnector PointId="1338">
+              <LinkConnector PointId="969">
                 <CastConnect>false</CastConnect>
                 <ParamInfo>
                   <ParamName>B</ParamName>
@@ -72,27 +73,24 @@
     </Asset>
     <Asset Id="4" X="450" Y="60">
       <MultiRootConnector>
-        <RootFunc AssetType="ListType" AssetFuncType="none">
+        <RootFunc AssetType="LiteralType" AssetFuncType="none">
           <AttachVariableIds />
           <AttachVariableId>0</AttachVariableId>
-          <AssetLiteralType>
-            <LiteralType>String</LiteralType>
-            <ObjectType>List</ObjectType>
-          </AssetLiteralType>
-          <RootConnector PointId="1341">
+          <AssetValueType>System.Collections.Generic.List`1[[System.String, System.Private.CoreLib, Version=5.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]</AssetValueType>
+          <RootConnector PointId="972">
             <Caption>
               <LabelString>list&lt;string&gt;</LabelString>
             </Caption>
             <ForcedChecked>false</ForcedChecked>
             <Connector>
               <LinkList>
-                <PointID>1337</PointID>
-                <PointID>1379</PointID>
-                <PointID>1385</PointID>
+                <PointID>968</PointID>
+                <PointID>1010</PointID>
+                <PointID>1016</PointID>
               </LinkList>
             </Connector>
             <Arguments>
-              <LinkConnector PointId="1342">
+              <LinkConnector PointId="973">
                 <CastConnect>false</CastConnect>
                 <ParamInfo>
                   <ParamName> </ParamName>
@@ -103,7 +101,7 @@
                 </ParamInfo>
                 <LinkConnectorList>
                   <List>
-                    <LinkConnector PointId="1344">
+                    <LinkConnector PointId="975">
                       <Value>rrr</Value>
                       <CastConnect>false</CastConnect>
                       <ParamInfo>
@@ -117,7 +115,7 @@
                         <List />
                       </LinkConnectorList>
                     </LinkConnector>
-                    <LinkConnector PointId="1346">
+                    <LinkConnector PointId="977">
                       <Value>tfg</Value>
                       <CastConnect>false</CastConnect>
                       <ParamInfo>
@@ -131,7 +129,7 @@
                         <List />
                       </LinkConnectorList>
                     </LinkConnector>
-                    <LinkConnector PointId="1348">
+                    <LinkConnector PointId="979">
                       <Value>a</Value>
                       <CastConnect>false</CastConnect>
                       <ParamInfo>
@@ -145,7 +143,7 @@
                         <List />
                       </LinkConnectorList>
                     </LinkConnector>
-                    <LinkConnector PointId="1350">
+                    <LinkConnector PointId="981">
                       <Value>aaa</Value>
                       <CastConnect>false</CastConnect>
                       <ParamInfo>
@@ -159,7 +157,7 @@
                         <List />
                       </LinkConnectorList>
                     </LinkConnector>
-                    <LinkConnector PointId="1352">
+                    <LinkConnector PointId="983">
                       <Value>ddd</Value>
                       <CastConnect>false</CastConnect>
                       <ParamInfo>
@@ -184,14 +182,11 @@
     </Asset>
     <Asset Id="4" X="450" Y="360">
       <MultiRootConnector>
-        <RootFunc AssetType="ListType" AssetFuncType="none">
+        <RootFunc AssetType="LiteralType" AssetFuncType="none">
           <AttachVariableIds />
           <AttachVariableId>0</AttachVariableId>
-          <AssetLiteralType>
-            <LiteralType>String</LiteralType>
-            <ObjectType>List</ObjectType>
-          </AssetLiteralType>
-          <RootConnector PointId="1355">
+          <AssetValueType>System.Collections.Generic.List`1[[System.String, System.Private.CoreLib, Version=5.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]</AssetValueType>
+          <RootConnector PointId="986">
             <Caption>
               <LabelString>list&lt;string&gt;</LabelString>
             </Caption>
@@ -200,7 +195,7 @@
               <LinkList />
             </Connector>
             <Arguments>
-              <LinkConnector PointId="1356">
+              <LinkConnector PointId="987">
                 <CastConnect>false</CastConnect>
                 <ParamInfo>
                   <ParamName> </ParamName>
@@ -211,7 +206,7 @@
                 </ParamInfo>
                 <LinkConnectorList>
                   <List>
-                    <LinkConnector PointId="1358">
+                    <LinkConnector PointId="989">
                       <Value>erd</Value>
                       <CastConnect>false</CastConnect>
                       <ParamInfo>
@@ -225,7 +220,7 @@
                         <List />
                       </LinkConnectorList>
                     </LinkConnector>
-                    <LinkConnector PointId="1360">
+                    <LinkConnector PointId="991">
                       <Value>aaa</Value>
                       <CastConnect>false</CastConnect>
                       <ParamInfo>
@@ -239,7 +234,7 @@
                         <List />
                       </LinkConnectorList>
                     </LinkConnector>
-                    <LinkConnector PointId="1362">
+                    <LinkConnector PointId="993">
                       <Value>aaa</Value>
                       <CastConnect>false</CastConnect>
                       <ParamInfo>
@@ -253,7 +248,7 @@
                         <List />
                       </LinkConnectorList>
                     </LinkConnector>
-                    <LinkConnector PointId="1364">
+                    <LinkConnector PointId="995">
                       <Value>ddd</Value>
                       <CastConnect>false</CastConnect>
                       <ParamInfo>
@@ -281,11 +276,8 @@
         <RootFunc AssetType="FuncType" AssetFuncType="Subroutine">
           <AttachVariableIds />
           <AttachVariableId>0</AttachVariableId>
-          <AssetLiteralType>
-            <LiteralType>Object</LiteralType>
-            <ObjectType>none</ObjectType>
-          </AssetLiteralType>
-          <RootConnector PointId="1367">
+          <AssetValueType>System.Object</AssetValueType>
+          <RootConnector PointId="998">
             <Caption>
               <LabelString>Sequence</LabelString>
             </Caption>
@@ -295,7 +287,7 @@
               <LinkList />
             </Connector>
             <Arguments>
-              <LinkConnector PointId="1368">
+              <LinkConnector PointId="999">
                 <CastConnect>false</CastConnect>
                 <ParamInfo>
                   <ParamName>call list</ParamName>
@@ -306,7 +298,7 @@
                 </ParamInfo>
                 <LinkConnectorList>
                   <List>
-                    <LinkConnector PointId="1370">
+                    <LinkConnector PointId="1001">
                       <Value>[object]&lt;null&gt;</Value>
                       <CastConnect>false</CastConnect>
                       <ParamInfo>
@@ -320,7 +312,7 @@
                         <List />
                       </LinkConnectorList>
                     </LinkConnector>
-                    <LinkConnector PointId="1372">
+                    <LinkConnector PointId="1003">
                       <Value>[object]&lt;null&gt;</Value>
                       <CastConnect>false</CastConnect>
                       <ParamInfo>
@@ -334,7 +326,7 @@
                         <List />
                       </LinkConnectorList>
                     </LinkConnector>
-                    <LinkConnector PointId="1374">
+                    <LinkConnector PointId="1005">
                       <Value>[object]&lt;null&gt;</Value>
                       <CastConnect>false</CastConnect>
                       <ParamInfo>
@@ -362,11 +354,8 @@
         <RootFunc AssetType="FuncType" AssetFuncType="CapybaraVS.Script.Lib.Union.Dice#_List&lt;string&gt;_List&lt;string&gt;">
           <AttachVariableIds />
           <AttachVariableId>0</AttachVariableId>
-          <AssetLiteralType>
-            <LiteralType>Double</LiteralType>
-            <ObjectType>none</ObjectType>
-          </AssetLiteralType>
-          <RootConnector PointId="1378">
+          <AssetValueType>System.Double</AssetValueType>
+          <RootConnector PointId="1009">
             <Caption>
               <LabelString>Dice</LabelString>
             </Caption>
@@ -374,11 +363,11 @@
             <ForcedChecked>false</ForcedChecked>
             <Connector>
               <LinkList>
-                <PointID>1372</PointID>
+                <PointID>1003</PointID>
               </LinkList>
             </Connector>
             <Arguments>
-              <LinkConnector PointId="1379">
+              <LinkConnector PointId="1010">
                 <CastConnect>false</CastConnect>
                 <ParamInfo>
                   <ParamName>A</ParamName>
@@ -391,7 +380,7 @@
                   <List />
                 </LinkConnectorList>
               </LinkConnector>
-              <LinkConnector PointId="1380">
+              <LinkConnector PointId="1011">
                 <CastConnect>false</CastConnect>
                 <ParamInfo>
                   <ParamName>B</ParamName>
@@ -415,11 +404,8 @@
         <RootFunc AssetType="FuncType" AssetFuncType="CapybaraVS.Script.Lib.Union.Simpson#_List&lt;string&gt;_List&lt;string&gt;">
           <AttachVariableIds />
           <AttachVariableId>0</AttachVariableId>
-          <AssetLiteralType>
-            <LiteralType>Double</LiteralType>
-            <ObjectType>none</ObjectType>
-          </AssetLiteralType>
-          <RootConnector PointId="1384">
+          <AssetValueType>System.Double</AssetValueType>
+          <RootConnector PointId="1015">
             <Caption>
               <LabelString>Simpson</LabelString>
             </Caption>
@@ -427,11 +413,11 @@
             <ForcedChecked>false</ForcedChecked>
             <Connector>
               <LinkList>
-                <PointID>1374</PointID>
+                <PointID>1005</PointID>
               </LinkList>
             </Connector>
             <Arguments>
-              <LinkConnector PointId="1385">
+              <LinkConnector PointId="1016">
                 <CastConnect>false</CastConnect>
                 <ParamInfo>
                   <ParamName>A</ParamName>
@@ -444,7 +430,7 @@
                   <List />
                 </LinkConnectorList>
               </LinkConnector>
-              <LinkConnector PointId="1386">
+              <LinkConnector PointId="1017">
                 <CastConnect>false</CastConnect>
                 <ParamInfo>
                   <ParamName>B</ParamName>
@@ -465,27 +451,24 @@
     </Asset>
     <Asset Id="10" X="450" Y="630">
       <MultiRootConnector>
-        <RootFunc AssetType="ListType" AssetFuncType="none">
+        <RootFunc AssetType="LiteralType" AssetFuncType="none">
           <AttachVariableIds />
           <AttachVariableId>0</AttachVariableId>
-          <AssetLiteralType>
-            <LiteralType>String</LiteralType>
-            <ObjectType>List</ObjectType>
-          </AssetLiteralType>
-          <RootConnector PointId="1389">
+          <AssetValueType>System.Collections.Generic.List`1[[System.String, System.Private.CoreLib, Version=5.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]</AssetValueType>
+          <RootConnector PointId="1020">
             <Caption>
               <LabelString>list&lt;string&gt;</LabelString>
             </Caption>
             <ForcedChecked>false</ForcedChecked>
             <Connector>
               <LinkList>
-                <PointID>1386</PointID>
-                <PointID>1380</PointID>
-                <PointID>1338</PointID>
+                <PointID>1017</PointID>
+                <PointID>1011</PointID>
+                <PointID>969</PointID>
               </LinkList>
             </Connector>
             <Arguments>
-              <LinkConnector PointId="1390">
+              <LinkConnector PointId="1021">
                 <CastConnect>false</CastConnect>
                 <ParamInfo>
                   <ParamName> </ParamName>
@@ -496,7 +479,7 @@
                 </ParamInfo>
                 <LinkConnectorList>
                   <List>
-                    <LinkConnector PointId="1392">
+                    <LinkConnector PointId="1023">
                       <Value>eeee</Value>
                       <CastConnect>false</CastConnect>
                       <ParamInfo>
@@ -510,7 +493,7 @@
                         <List />
                       </LinkConnectorList>
                     </LinkConnector>
-                    <LinkConnector PointId="1394">
+                    <LinkConnector PointId="1025">
                       <Value>uuu</Value>
                       <CastConnect>false</CastConnect>
                       <ParamInfo>
@@ -524,7 +507,7 @@
                         <List />
                       </LinkConnectorList>
                     </LinkConnector>
-                    <LinkConnector PointId="1396">
+                    <LinkConnector PointId="1027">
                       <Value>rrr</Value>
                       <CastConnect>false</CastConnect>
                       <ParamInfo>
@@ -538,7 +521,7 @@
                         <List />
                       </LinkConnectorList>
                     </LinkConnector>
-                    <LinkConnector PointId="1398">
+                    <LinkConnector PointId="1029">
                       <Value>erd</Value>
                       <CastConnect>false</CastConnect>
                       <ParamInfo>

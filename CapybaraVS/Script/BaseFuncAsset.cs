@@ -284,7 +284,7 @@ namespace CapybaraVS.Script
 
         public string HelpText { get; } = Language.GetInstance["LiteralType"];
 
-        public CbST TargetType => CbST.FreeType;    // 型の選択を要求する
+        public string ValueType { get; } = CbSTUtils.FREE_TYPE_STR;
 
         public CbType[] DeleteSelectItems => CbScript.BaseDeleteCbTypes2;
     }
@@ -296,7 +296,7 @@ namespace CapybaraVS.Script
 
         public string HelpText { get; } = Language.GetInstance["LiteralListType"];
 
-        public CbST TargetType => CbST.FreeListType;
+        public string ValueType { get; } = CbSTUtils.FREE_LIST_TYPE_STR;
 
         public CbType[] DeleteSelectItems => CbScript.BaseDeleteCbTypes;
     }
@@ -310,7 +310,7 @@ namespace CapybaraVS.Script
 
         public string MenuTitle => AssetCode;
 
-        public CbST TargetType => CbST.FreeType;    // 型の選択を要求する
+        public string ValueType { get; } = CbSTUtils.FREE_TYPE_STR;
 
         public CbType[] DeleteSelectItems => CbScript.MathDeleteNotCbAddableTypes;
 
@@ -358,7 +358,7 @@ namespace CapybaraVS.Script
 
         public string MenuTitle => "Sum<Func>";
 
-        public CbST TargetType => CbST.FreeType;    // 型の選択を要求する
+        public string ValueType { get; } = CbSTUtils.FREE_TYPE_STR;
 
         public CbType[] DeleteSelectItems => CbScript.MathDeleteNotCbAddableTypes;
 
@@ -423,7 +423,7 @@ namespace CapybaraVS.Script
 
         public string MenuTitle => "Sequence";
 
-        public CbST TargetType => CbST.FreeType;    // 型の選択を要求する
+        public string ValueType { get; } = CbSTUtils.FREE_TYPE_STR;
 
         public CbType[] DeleteSelectItems => CbScript.BaseDeleteCbTypes;
 
@@ -481,7 +481,7 @@ namespace CapybaraVS.Script
 
         public string MenuTitle => AssetCode;
 
-        public CbST TargetType => CbST.FreeType;    // 型の選択を要求する
+        public string ValueType { get; } = CbSTUtils.FREE_TYPE_STR;
 
         public CbType[] DeleteSelectItems => CbScript.MathDeleteNotCbCalcableTypes;
 
@@ -526,7 +526,7 @@ namespace CapybaraVS.Script
 
         public string MenuTitle => AssetCode;
 
-        public CbST TargetType => CbST.FreeType;    // 型の選択を要求する
+        public string ValueType { get; } = CbSTUtils.FREE_TYPE_STR;
 
         public CbType[] DeleteSelectItems => CbScript.MathDeleteNotCbCalcableTypes;
 
@@ -571,7 +571,7 @@ namespace CapybaraVS.Script
 
         public string MenuTitle => AssetCode;
 
-        public CbST TargetType => CbST.FreeType;    // 型の選択を要求する
+        public string ValueType { get; } = CbSTUtils.FREE_TYPE_STR;
 
         public CbType[] DeleteSelectItems => CbScript.MathDeleteNotCbCalcableTypes;
 
@@ -617,7 +617,7 @@ namespace CapybaraVS.Script
 
         public string MenuTitle => "==";
 
-        public CbST TargetType => CbST.FreeType;    // 型の選択を要求する
+        public string ValueType { get; } = CbSTUtils.FREE_TYPE_STR;
 
         public CbType[] DeleteSelectItems => CbScript.BaseDeleteCbTypes;
 
@@ -664,7 +664,7 @@ namespace CapybaraVS.Script
 
         public string MenuTitle => ">=";
 
-        public CbST TargetType => CbST.FreeType;    // 型の選択を要求する
+        public string ValueType { get; } = CbSTUtils.FREE_TYPE_STR;
 
         public CbType[] DeleteSelectItems => CbScript.BaseDeleteCbTypes;
 
@@ -711,7 +711,7 @@ namespace CapybaraVS.Script
 
         public string MenuTitle => ">";
 
-        public CbST TargetType => CbST.FreeType;    // 型の選択を要求する
+        public string ValueType { get; } = CbSTUtils.FREE_TYPE_STR;
 
         public CbType[] DeleteSelectItems => CbScript.BaseDeleteCbTypes;
 
@@ -758,7 +758,7 @@ namespace CapybaraVS.Script
 
         public string MenuTitle => "<=";
 
-        public CbST TargetType => CbST.FreeType;    // 型の選択を要求する
+        public string ValueType { get; } = CbSTUtils.FREE_TYPE_STR;
 
         public CbType[] DeleteSelectItems => CbScript.BaseDeleteCbTypes;
 
@@ -805,7 +805,7 @@ namespace CapybaraVS.Script
 
         public string MenuTitle => "<";
 
-        public CbST TargetType => CbST.FreeType;    // 型の選択を要求する
+        public string ValueType { get; } = CbSTUtils.FREE_TYPE_STR;
 
         public CbType[] DeleteSelectItems => CbScript.BaseDeleteCbTypes;
 
@@ -852,7 +852,7 @@ namespace CapybaraVS.Script
 
         public string MenuTitle => AssetCode;
 
-        public CbST TargetType => CbST.Bool;
+        public string ValueType { get; } = typeof(bool).FullName;
 
         public CbType[] DeleteSelectItems => null;
 
@@ -903,7 +903,7 @@ namespace CapybaraVS.Script
 
         public string MenuTitle => AssetCode;
 
-        public CbST TargetType => CbST.Bool;
+        public string ValueType { get; } = typeof(bool).FullName;
 
         public CbType[] DeleteSelectItems => null;
 
@@ -954,7 +954,7 @@ namespace CapybaraVS.Script
 
         public string MenuTitle => AssetCode;
 
-        public CbST TargetType => CbST.Bool;
+        public string ValueType { get; } = typeof(bool).FullName;
 
         public CbType[] DeleteSelectItems => null;
 
@@ -998,7 +998,7 @@ namespace CapybaraVS.Script
 
         public string MenuTitle => AssetCode;
 
-        public CbST TargetType => CbST.FreeType;    // 型の選択を要求する
+        public string ValueType { get; } = CbSTUtils.FREE_TYPE_STR;
 
         public CbType[] DeleteSelectItems => CbScript.MathDeleteNotCbCalcableTypes;
 
@@ -1049,7 +1049,7 @@ namespace CapybaraVS.Script
 
         public string MenuTitle => AssetCode;
 
-        public CbST TargetType => CbST.FreeType;    // 型の選択を要求する
+        public string ValueType { get; } = CbSTUtils.FREE_TYPE_STR;
 
         public CbType[] DeleteSelectItems => CbScript.MathDeleteNotCbCalcableTypes;
 
@@ -1099,7 +1099,7 @@ namespace CapybaraVS.Script
 
         public string MenuTitle => AssetCode;
 
-        public CbST TargetType => CbST.FreeType;    // 型の選択を要求する
+        public string ValueType { get; } = CbSTUtils.FREE_TYPE_STR;
 
         public CbType[] DeleteSelectItems => CbScript.MathDeleteNotCbCalcableTypes;
 
@@ -1150,7 +1150,7 @@ namespace CapybaraVS.Script
 
         public string MenuTitle => "Call File";
 
-        public CbST TargetType => CbST.String;
+        public string ValueType { get; } = typeof(string).FullName;
 
         public CbType[] DeleteSelectItems => null;
 
@@ -1210,7 +1210,7 @@ namespace CapybaraVS.Script
 
         public string MenuTitle => $"If<{CbSTUtils.FUNC_STR}>";
 
-        public CbST TargetType => CbST.FreeType;    // 型の選択を要求する
+        public string ValueType { get; } = CbSTUtils.FREE_TYPE_STR;
 
         public CbType[] DeleteSelectItems => CbScript.BaseDeleteCbTypes;
 
@@ -1265,7 +1265,7 @@ namespace CapybaraVS.Script
 
         public string MenuTitle => $"If<{CbSTUtils.ACTION_STR}>";
 
-        public CbST TargetType => CbST.Int;    // dummy
+        public string ValueType { get; } = CbSTUtils.DUMMY_TYPE_STR;
 
         public CbType[] DeleteSelectItems => CbScript.BaseDeleteCbTypes;
 
@@ -1319,7 +1319,7 @@ namespace CapybaraVS.Script
 
         public string MenuTitle => AssetCode;
 
-        public CbST TargetType => CbST.FreeType;    // 型の選択を要求する
+        public string ValueType { get; } = CbSTUtils.FREE_TYPE_STR;
 
         public CbType[] DeleteSelectItems => CbScript.BaseDeleteCbTypes;
 
@@ -1372,7 +1372,7 @@ namespace CapybaraVS.Script
 
         public string MenuTitle => AssetCode;
 
-        public CbST TargetType => CbST.FreeType;    // 型の選択を要求する
+        public string ValueType { get; } = CbSTUtils.FREE_TYPE_STR;
 
         public CbType[] DeleteSelectItems => CbScript.BaseDeleteCbTypes;
 
@@ -1420,7 +1420,7 @@ namespace CapybaraVS.Script
 
         public string MenuTitle => "Invoke Func With Argument";
 
-        public CbST TargetType => CbST.FreeType;    // 型の選択を要求する
+        public string ValueType { get; } = CbSTUtils.FREE_TYPE_STR;
 
         public CbType[] DeleteSelectItems => CbScript.BaseDeleteCbTypes;
 
@@ -1479,7 +1479,7 @@ namespace CapybaraVS.Script
 
         public string MenuTitle => AssetCode;
 
-        public CbST TargetType => CbST.Int; // dummy
+        public string ValueType { get; } = CbSTUtils.DUMMY_TYPE_STR;
 
         public CbType[] DeleteSelectItems => CbScript.BaseDeleteCbTypes;
 
@@ -1526,7 +1526,7 @@ namespace CapybaraVS.Script
 
         public string MenuTitle => "Invoke Action With Argument";
 
-        public CbST TargetType => CbST.FreeType;    // 型の選択を要求する
+        public string ValueType { get; } = CbSTUtils.FREE_TYPE_STR;
 
         public CbType[] DeleteSelectItems => CbScript.BaseDeleteCbTypes;
 
@@ -1584,7 +1584,7 @@ namespace CapybaraVS.Script
 
         public string MenuTitle => $"For<{CbSTUtils.ACTION_STR}>";
 
-        public CbST TargetType => CbST.Int;    // dummy
+        public string ValueType { get; } = CbSTUtils.DUMMY_TYPE_STR;
 
         public CbType[] DeleteSelectItems => CbScript.MathDeleteNotCbCalcableTypes;
 
@@ -1691,7 +1691,7 @@ namespace CapybaraVS.Script
 
         public new string HelpText { get; } = Language.GetInstance["CreateVariable"];
 
-        public CbST TargetType => CbST.FreeType;    // 型の選択を要求する
+        public string ValueType { get; } = CbSTUtils.FREE_TYPE_STR;
 
         public CbType[] DeleteSelectItems => CbScript.BaseDeleteCbTypes;
     }
@@ -1703,7 +1703,7 @@ namespace CapybaraVS.Script
 
         public new string HelpText { get; } = Language.GetInstance["CreateVariableList"];
 
-        public CbST TargetType => CbST.FreeListType;
+        public string ValueType { get; } = CbSTUtils.FREE_LIST_TYPE_STR;
 
         public CbType[] DeleteSelectItems => CbScript.BaseDeleteCbTypes;
     }
@@ -1711,7 +1711,7 @@ namespace CapybaraVS.Script
     //-----------------------------------------------------------------
     class CreateVariableFunc : _GetVariable, IFuncCreateVariableAssetDef
     {
-        public CbST TargetType => CbST.FreeFuncType;
+        public string ValueType { get; } = CbSTUtils.FREE_FUNC_TYPE_STR;
 
         public new string HelpText { get; } = Language.GetInstance["CreateVariableFunc"];
 
@@ -1727,7 +1727,7 @@ namespace CapybaraVS.Script
 
         public new string HelpText { get; } = Language.GetInstance["GetVariable"];
 
-        public CbST TargetType => CbST.FreeType;    // 型の選択を要求する
+        public string ValueType { get; } = CbSTUtils.FREE_TYPE_STR;
 
         public CbType[] DeleteSelectItems => null;
     }
@@ -1741,7 +1741,7 @@ namespace CapybaraVS.Script
 
         public string MenuTitle => "Set Variable";
 
-        public CbST TargetType => CbST.FreeFuncType;
+        public string ValueType { get; } = CbSTUtils.FREE_FUNC_TYPE_STR;
 
         public CbType[] DeleteSelectItems => null;
 
@@ -1805,7 +1805,7 @@ namespace CapybaraVS.Script
 
         public string MenuTitle => "DummyArgument";
 
-        public CbST TargetType => CbST.FreeType;    // 型の選択を要求する
+        public string ValueType { get; } = CbSTUtils.FREE_TYPE_STR;
 
         public CbType[] DeleteSelectItems => CbScript.BaseDeleteCbTypes;
 
@@ -1856,7 +1856,7 @@ namespace CapybaraVS.Script
 
         public string MenuTitle => "DummyArguments";
 
-        public CbST TargetType => CbST.FreeType;    // 型の選択を要求する
+        public string ValueType { get; } = CbSTUtils.FREE_TYPE_STR;
 
         public CbType[] DeleteSelectItems => CbScript.BaseDeleteCbTypes;
 
@@ -1913,7 +1913,7 @@ namespace CapybaraVS.Script
 
         public string MenuTitle => $"Foreach<{CbSTUtils.ACTION_STR}>";
 
-        public CbST TargetType => CbST.FreeType;    // 型の選択を要求する
+        public string ValueType { get; } = CbSTUtils.FREE_TYPE_STR;
 
         public CbType[] DeleteSelectItems => CbScript.BaseDeleteCbTypes;
 
@@ -1971,7 +1971,7 @@ namespace CapybaraVS.Script
 
         public string MenuTitle => "ConsoleOut";
 
-        public CbST TargetType => CbST.FreeType;    // 型の選択を要求する
+        public string ValueType { get; } = CbSTUtils.FREE_TYPE_STR;
 
         public CbType[] DeleteSelectItems => CbScript.ObjectDeleteCbTypes;
 
@@ -2020,7 +2020,7 @@ namespace CapybaraVS.Script
 
         public string MenuTitle => AssetCode;
 
-        public CbST TargetType => CbST.FreeType;    // 型の選択を要求する
+        public string ValueType { get; } = CbSTUtils.FREE_TYPE_STR;
 
         public CbType[] DeleteSelectItems => CbScript.MathDeleteNotCbSignedNumberTypes;
 
@@ -2064,7 +2064,7 @@ namespace CapybaraVS.Script
 
         public string MenuTitle => "Get VariableList[index]";
 
-        public CbST TargetType => CbST.FreeType;    // 型の選択を要求する
+        public string ValueType { get; } = CbSTUtils.FREE_TYPE_STR;
 
         public CbType[] DeleteSelectItems => null;
 
@@ -2077,7 +2077,7 @@ namespace CapybaraVS.Script
             col.MakeFunction(
                variableGetter.MakeName,
                HelpText,
-               CbST.CreateTF(col.AssetLiteralType.GetObjectTypeNone()), // 返し値の型   Func<> 型の場合に返し値の型で接続するために ObjectType を落としている（方法に置き換える予定）
+               col.ReturnValueTypeTF,// CbST.CreateTF(col.AssetLiteralType.GetObjectTypeNone()), // 返し値の型   Func<> 型の場合に返し値の型で接続するために ObjectType を落としている（方法に置き換える予定）
                new List<ICbValue>()       // 引数
                {
                    CbST.CbCreate<int>("index", 0),
@@ -2085,7 +2085,7 @@ namespace CapybaraVS.Script
                new Func<List<ICbValue>, DummyArgumentsStack, ICbValue>(
                    (argument, cagt) =>
                    {
-                       var ret = CbST.Create(col.AssetLiteralType.GetObjectTypeNone());    // 返し値
+                       var ret = col.ReturnValueTypeTF();    // 返し値
                        try
                        {
                            int index = GetArgument<int>(argument, 0);
@@ -2118,7 +2118,7 @@ namespace CapybaraVS.Script
 
         public string MenuTitle => "Set VariableList[index]";
 
-        public CbST TargetType => CbST.FreeType;    // 型の選択を要求する
+        public string ValueType { get; } = CbSTUtils.FREE_TYPE_STR;
 
         public CbType[] DeleteSelectItems => null;
 
@@ -2131,16 +2131,16 @@ namespace CapybaraVS.Script
             col.MakeFunction(
                variableGetter.MakeName,
                HelpText,
-               CbST.CreateTF(col.AssetLiteralType.GetObjectTypeNone()), // 返し値の型    Func<> 型の場合に返し値の型で接続するために ObjectType を落としている（方法に置き換える予定）
+               col.ReturnValueTypeTF,
                new List<ICbValue>()       // 引数
                {
                     CbST.CbCreate<int>("index", 0),
-                    CbST.Create(col.AssetLiteralType.GetObjectTypeNone(), "n"),  // Func<> 型の場合に返し値の型で接続するために ObjectType を落としている（方法に置き換える予定）
+                    col.ReturnValueTypeNTF("n")//CbST.Create(col.AssetLiteralType.GetObjectTypeNone(), "n"),  // Func<> 型の場合に返し値の型で接続するために ObjectType を落としている（方法に置き換える予定）
                },
                new Func<List<ICbValue>, DummyArgumentsStack, ICbValue>(
                    (argument, cagt) =>
                    {
-                       var ret = CbST.Create(col.AssetLiteralType.GetObjectTypeNone());    // 返し値
+                       var ret = col.ReturnValueTypeTF();    // 返し値
                        try
                        {
                            int index = GetArgument<int>(argument, 0);
@@ -2176,7 +2176,7 @@ namespace CapybaraVS.Script
 
         public string MenuTitle => "Append VariableList";
 
-        public CbST TargetType => CbST.FreeType;    // 型の選択を要求する
+        public string ValueType { get; } = CbSTUtils.FREE_TYPE_STR;
 
         public CbType[] DeleteSelectItems => null;
 
@@ -2192,7 +2192,7 @@ namespace CapybaraVS.Script
                CbST.CbCreateTF(col.SelectedVariableType[0]),   // 返し値の型
                new List<ICbValue>()   // 引数
                {
-                    CbST.Create(col.AssetLiteralType.GetObjectTypeNone(), "n"), // Func<> 型の場合に返し値の型で接続するために ObjectType を落としている（方法に置き換える予定）
+                    col.ReturnValueTypeNTF("n")//CbST.Create(col.AssetLiteralType.GetObjectTypeNone(), "n"), // Func<> 型の場合に返し値の型で接続するために ObjectType を落としている（方法に置き換える予定）
                },
                new Func<List<ICbValue>, DummyArgumentsStack, ICbValue>(
                    (argument, cagt) =>
@@ -2230,7 +2230,7 @@ namespace CapybaraVS.Script
 
         public string MenuTitle => AssetCode;
 
-        public CbST TargetType => CbST.FreeType;    // 型の選択を要求する
+        public string ValueType { get; } = CbSTUtils.FREE_TYPE_STR;
 
         public CbType[] DeleteSelectItems => CbScript.BaseDeleteCbTypes;
 
@@ -2274,7 +2274,7 @@ namespace CapybaraVS.Script
 
         public string MenuTitle => AssetCode;
 
-        public CbST TargetType => CbST.FreeType;    // 型の選択を要求する
+        public string ValueType { get; } = CbSTUtils.FREE_TYPE_STR;
 
         public CbType[] DeleteSelectItems => CbScript.BaseDeleteCbTypes;
 
@@ -2319,7 +2319,7 @@ namespace CapybaraVS.Script
 
         public string MenuTitle => "Get List[index]";
 
-        public CbST TargetType => CbST.FreeType;    // 型の選択を要求する
+        public string ValueType { get; } = CbSTUtils.FREE_TYPE_STR;
 
         public CbType[] DeleteSelectItems => CbScript.BaseDeleteCbTypes;
 
@@ -2365,7 +2365,7 @@ namespace CapybaraVS.Script
 
         public string MenuTitle => "Get List[last]";
 
-        public CbST TargetType => CbST.FreeType;    // 型の選択を要求する
+        public string ValueType { get; } = CbSTUtils.FREE_TYPE_STR;
 
         public CbType[] DeleteSelectItems => CbScript.BaseDeleteCbTypes;
 
@@ -2410,7 +2410,7 @@ namespace CapybaraVS.Script
 
         public string MenuTitle => "Set List[index]";
 
-        public CbST TargetType => CbST.FreeType;    // 型の選択を要求する
+        public string ValueType { get; } = CbSTUtils.FREE_TYPE_STR;
 
         public CbType[] DeleteSelectItems => CbScript.BaseDeleteCbTypes;
 
@@ -2457,7 +2457,7 @@ namespace CapybaraVS.Script
 
         public string MenuTitle => AssetCode;
 
-        public CbST TargetType => CbST.FreeType;    // 型の選択を要求する
+        public string ValueType { get; } = CbSTUtils.FREE_TYPE_STR;
 
         public CbType[] DeleteSelectItems => CbScript.BaseDeleteCbTypes;
 
@@ -2470,7 +2470,7 @@ namespace CapybaraVS.Script
                new List<ICbValue>()   // 引数
                {
                     CbList.Create(col.SelectedVariableType[0], "list"),
-                    CbST.Create(col.AssetLiteralType.GetObjectTypeNone(), "n"), // Func<> 型の場合に返し値の型で接続するために ObjectType を落としている（方法に置き換える予定）
+                    col.ReturnValueTypeNTF("n")//CbST.Create(col.AssetLiteralType.GetObjectTypeNone(), "n"), // Func<> 型の場合に返し値の型で接続するために ObjectType を落としている（方法に置き換える予定）
                },
                new Func<List<ICbValue>, DummyArgumentsStack, ICbValue>(
                    (argument, cagt) =>
@@ -2506,7 +2506,7 @@ namespace CapybaraVS.Script
 
         public string MenuTitle => AssetCode;
 
-        public CbST TargetType => CbST.Double;
+        public string ValueType { get; } = typeof(double).FullName;
 
         public CbType[] DeleteSelectItems => null;
 
@@ -2554,7 +2554,7 @@ namespace CapybaraVS.Script
 
         public string MenuTitle => AssetCode;
 
-        public CbST TargetType => CbST.Int;
+        public string ValueType { get; } = typeof(int).FullName;
 
         public CbType[] DeleteSelectItems => null;
 

@@ -44,7 +44,7 @@ namespace CapybaraVS.Controls
     /// <summary>
     /// MultiRootConnector.xaml の相互作用ロジック
     /// </summary>
-    public partial class MultiRootConnector 
+    public partial class MultiRootConnector
         : UserControl
         , ICbExecutable
         , IDisposable
@@ -72,14 +72,33 @@ namespace CapybaraVS.Controls
 
                     if (RootFunc.AssetLiteralType != null)
                     {
+                        // 旧形式互換用
+
                         var valueType = new CbST();
                         RootFunc.AssetLiteralType.ReadAction?.Invoke(valueType);
-                        self.AssetLiteralType = valueType;
+                        if (RootFunc.AssetValueType == null)
+                        {
+                            self.AssetValueType = valueType.Value.OriginalType.FullName;
+
+                            // AssetLiteralType は、この世から無くす予定
+                            //self.AssetLiteralType = valueType;
+                        }
+                    }
+                    else
+                    {
+                        self.AssetValueType = RootFunc.AssetValueType;
                     }
 
                     self.notheradMode = true;
 
                     self.AssetFuncType = RootFunc.AssetFuncType;
+                    
+                    if (RootFunc.AssetType == FunctionType.ListType)
+                    {
+                        // FunctionType.LiteralType は、この世から無くす予定
+
+                        RootFunc.AssetType = FunctionType.LiteralType;
+                    }
                     self.AssetType = RootFunc.AssetType;
 
                     self.LinkConnectorControl.AssetXML = RootFunc.RootConnector;
@@ -111,11 +130,13 @@ namespace CapybaraVS.Controls
                     info.AssetType = self.AssetType;
                     info.AssetFuncType = self.AssetFuncType;
 
-                    if (self.AssetLiteralType != null)
-                    {
-                        self.AssetLiteralType.AssetXML.WriteAction?.Invoke();
-                        info.AssetLiteralType = self.AssetLiteralType.AssetXML;
-                    }
+                    // FunctionType.LiteralType は、この世から無くす予定
+                    //if (self.AssetLiteralType != null)
+                    //{
+                    //    self.AssetLiteralType.AssetXML.WriteAction?.Invoke();
+                    //    info.AssetLiteralType = self.AssetLiteralType.AssetXML;
+                    //}
+                    info.AssetValueType = self.AssetValueType;
 
                     self.LinkConnectorControl.AssetXML.WriteAction?.Invoke();
                     info.RootConnector = self.LinkConnectorControl.AssetXML;
@@ -131,7 +152,8 @@ namespace CapybaraVS.Controls
                 public int AttachVariableId { get; set; }
                 [XmlAttribute(nameof(AssetType))]
                 public FunctionType AssetType { get; set; }
-                public CbST._AssetXML<CbST> AssetLiteralType { get; set; }
+                public CbST._AssetXML<CbST> AssetLiteralType { get; set; }  // FunctionType.LiteralType は、この世から無くす予定
+                public string AssetValueType { get; set; }
                 [XmlAttribute(nameof(AssetFuncType))]
                 public string AssetFuncType { get; set; }
                 public RootConnector._AssetXML<RootConnector> RootConnector { get; set; }
@@ -235,28 +257,25 @@ namespace CapybaraVS.Controls
                         }
                         else if (int.TryParse(text, out int intNum))
                         {
-                            self.AssetLiteralType = new CbST(CbType.Int);
                             setValue = CbInt.Create(intNum);
                         }
                         else if (long.TryParse(text, out long longNum))
                         {
-                            self.AssetLiteralType = new CbST(CbType.Long);
                             setValue = CbLong.Create(longNum);
                         }
                         else if (double.TryParse(text, out double doubleNum))
                         {
-                            self.AssetLiteralType = new CbST(CbType.Double);
                             setValue = CbDouble.Create(doubleNum);
                         }
                         else if (bool.TryParse(text, out bool boolNum))
                         {
-                            self.AssetLiteralType = new CbST(CbType.Bool);
                             setValue = CbBool.Create(boolNum);
                         }
                         else
                         {
                             setValue = toStringNode(self, ref text);
                         }
+                        self.AssetValueType = setValue.OriginalType.FullName;
                         self.AssetType = FunctionType.LiteralType;
                         if (self.LinkConnectorControl.ValueData != null && setValue != null)
                         {
@@ -279,13 +298,11 @@ namespace CapybaraVS.Controls
             ICbValue setValue;
             if (text.Contains(Environment.NewLine))
             {
-                self.AssetLiteralType = new CbST(CbType.Text);
                 setValue = CbText.Create(text, "");
                 text = text.Split(Environment.NewLine)[0];
             }
             else
             {
-                self.AssetLiteralType = new CbST(CbType.String);
                 setValue = CbString.Create(text, "");
             }
             if (text.Length > 20)
@@ -412,23 +429,54 @@ namespace CapybaraVS.Controls
 
         #region AssetLiteralType 添付プロパティ実装
 
-        private static ImplementDependencyProperty<MultiRootConnector, CbST> impAssetLiteralType =
-            new ImplementDependencyProperty<MultiRootConnector, CbST>(
-                nameof(AssetLiteralType),
+        //private static ImplementDependencyProperty<MultiRootConnector, CbST> impAssetLiteralType =
+        //    new ImplementDependencyProperty<MultiRootConnector, CbST>(
+        //        nameof(AssetLiteralType),
+        //        (self, getValue) =>
+        //        {
+        //            CbST value = getValue(self);
+        //            var variable = CbST.Create(value, "");
+        //            self.SelectedVariableType[0] = variable.OriginalType;
+        //            self.SelectedVariableTypeName[0] = variable.TypeName;
+        //        });
+
+        //public static readonly DependencyProperty AssetLiteralTypeProperty = impAssetLiteralType.Regist(null);
+
+        //public CbST AssetLiteralType
+        //{
+        //    get { return impAssetLiteralType.GetValue(this); }
+        //    set { impAssetLiteralType.SetValue(this, value); }
+        //}
+
+        #endregion
+
+        /// <summary>
+        /// Func や Action であれば、OriginalReturnType の型で NTF を返す
+        /// </summary>
+        public Func<ICbValue> ReturnValueTypeTF => CbST.CbCreateTF(originalReturnType);
+        public Func<string, ICbValue> ReturnValueTypeNTF => CbST.CbCreateNTF(originalReturnType);
+        private Type originalReturnType = null;
+
+        #region AssetValueType 添付プロパティ実装
+
+        private static ImplementDependencyProperty<MultiRootConnector, string> impAssetValueType =
+            new ImplementDependencyProperty<MultiRootConnector, string>(
+                nameof(AssetValueType),
                 (self, getValue) =>
                 {
-                    CbST value = getValue(self);
-                    var variable = CbST.Create(value, "");
-                    self.SelectedVariableType[0] = variable.OriginalType;
-                    self.SelectedVariableTypeName[0] = variable.TypeName;
+                    string value = getValue(self);
+                    var typeValue = CbST.CbCreate(CbST.GetTypeEx(value));
+                    self.SelectedVariableType[0] = typeValue.OriginalType;
+                    self.SelectedVariableTypeName[0] = typeValue.TypeName;
+                    self.originalReturnType = typeValue.OriginalReturnType;
                 });
 
-        public static readonly DependencyProperty AssetLiteralTypeProperty = impAssetLiteralType.Regist(null);
+        public static readonly DependencyProperty AssetValueTypeProperty = impAssetValueType.Regist("none");
 
-        public CbST AssetLiteralType
+        public string AssetValueType
         {
-            get { return impAssetLiteralType.GetValue(this); }
-            set { impAssetLiteralType.SetValue(this, value); }
+            get { return impAssetValueType.GetValue(this); }
+            set { impAssetValueType.SetValue(this, value); }
         }
 
         #endregion
@@ -528,27 +576,32 @@ namespace CapybaraVS.Controls
         {
             if (literalType != null)
             {
+                var listType = literalType();
                 LinkConnectorControl.OwnerCommandCanvas = OwnerCommandCanvas;
                 LinkConnectorControl.Caption = literalType().TypeName;
-                LinkConnectorControl.ValueData = literalType();
+                LinkConnectorControl.ValueData = listType;
+                if (listType is ICbList cbList)
+                {
+                    AppendToBox(cbList, true);
+                }
                 return true;
             }
             return false;
         }
 
-        private bool MakeLiteralList(Func<ICbValue> literalType)
-        {
-            if (literalType != null)
-            {
-                var listType = literalType();
-                LinkConnectorControl.OwnerCommandCanvas = OwnerCommandCanvas;
-                LinkConnectorControl.Caption = literalType().TypeName;
-                LinkConnectorControl.ValueData = listType;
-                AppendToBox(listType as ICbList, true);
-                return true;
-            }
-            return false;
-        }
+        //private bool MakeLiteralList(Func<ICbValue> literalType)
+        //{
+        //    if (literalType != null)
+        //    {
+        //        var listType = literalType();
+        //        LinkConnectorControl.OwnerCommandCanvas = OwnerCommandCanvas;
+        //        LinkConnectorControl.Caption = literalType().TypeName;
+        //        LinkConnectorControl.ValueData = listType;
+        //        AppendToBox(listType as ICbList, true);
+        //        return true;
+        //    }
+        //    return false;
+        //}
 
         private void MakeMultiRootConnector(string name = "Root")
         {
@@ -568,13 +621,19 @@ namespace CapybaraVS.Controls
 
             if (AssetType == FunctionType.LiteralType)
             {
-                MakeLiteral(CbST.CreateTF(AssetLiteralType));
+                Func<ICbValue> tf = CbST.CbCreateTF(CbST.GetTypeEx(AssetValueType));
+                MakeLiteral(tf);
+
+                //MakeLiteral(CbST.CreateTF(AssetLiteralType));
             }
 
             if (AssetType == FunctionType.ListType)
             {
-                Debug.Assert(AssetLiteralType.ObjectType == CbCType.List);
-                MakeLiteralList(CbST.CreateTF(AssetLiteralType));
+                // 無くす
+
+                //Debug.Assert(AssetLiteralType.ObjectType == CbCType.List);
+                Debug.Assert(false);    // AssetType == FunctionType.LiteralType に流れるようにする
+                //MakeLiteralList(CbST.CreateTF(AssetLiteralType));
             }
 
             if (AssetType == FunctionType.FuncType)

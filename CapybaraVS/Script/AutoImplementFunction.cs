@@ -68,7 +68,8 @@ namespace CapybaraVS.Script
 
         public string FuncTitle { get; set; } = "";
 
-        public CbST TargetType { get; set; } = CbST.Double; // dummy
+        //public CbST TargetType { get; set; } = CbST.Double; // dummy
+        public string ValueType { get; } = typeof(double).FullName;    // Dummy
 
         public CbType[] DeleteSelectItems => null;
 

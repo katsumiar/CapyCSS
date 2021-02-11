@@ -3,7 +3,7 @@
   <WorkCanvas Id="1">
     <EnabelGridLine>false</EnabelGridLine>
     <EnableInfo>false</EnableInfo>
-    <CanvasScale>0.5846792890864372</CanvasScale>
+    <CanvasScale>1</CanvasScale>
     <CanvasRenderTransform>
       <M11>0.5846792890864372</M11>
       <M12>0</M12>
@@ -13,6 +13,10 @@
       <OffsetY>29.47676295282539</OffsetY>
     </CanvasRenderTransform>
   </WorkCanvas>
+  <ImportClassModule />
+  <ImportPackageModule />
+  <ImportDllModule />
+  <ImportNuGetModule />
   <WorkStack>
     <StackList />
   </WorkStack>
@@ -22,11 +26,8 @@
         <RootFunc AssetType="FuncType" AssetFuncType="CapybaraVS.Script.Lib.CaseFlow.AddList#_Dictionary&lt;int,Action&lt;object&gt;&gt;_List&lt;int&gt;_List&lt;Action&lt;object&gt;&gt;">
           <AttachVariableIds />
           <AttachVariableId>0</AttachVariableId>
-          <AssetLiteralType>
-            <LiteralType>Double</LiteralType>
-            <ObjectType>none</ObjectType>
-          </AssetLiteralType>
-          <RootConnector PointId="61">
+          <AssetValueType>System.Double</AssetValueType>
+          <RootConnector PointId="5">
             <Caption>
               <LabelString>AddFromList</LabelString>
             </Caption>
@@ -34,11 +35,11 @@
             <ForcedChecked>false</ForcedChecked>
             <Connector>
               <LinkList>
-                <PointID>77</PointID>
+                <PointID>21</PointID>
               </LinkList>
             </Connector>
             <Arguments>
-              <LinkConnector PointId="62">
+              <LinkConnector PointId="6">
                 <Value>[Dictionary&lt;int,Action&lt;object&gt;&gt;]&lt;null&gt;</Value>
                 <CastConnect>false</CastConnect>
                 <ParamInfo>
@@ -52,7 +53,7 @@
                   <List />
                 </LinkConnectorList>
               </LinkConnector>
-              <LinkConnector PointId="63">
+              <LinkConnector PointId="7">
                 <CastConnect>false</CastConnect>
                 <ParamInfo>
                   <ParamName>keyList</ParamName>
@@ -63,7 +64,7 @@
                 </ParamInfo>
                 <LinkConnectorList>
                   <List>
-                    <LinkConnector PointId="65">
+                    <LinkConnector PointId="9">
                       <Value>0</Value>
                       <CastConnect>false</CastConnect>
                       <ParamInfo>
@@ -77,7 +78,7 @@
                         <List />
                       </LinkConnectorList>
                     </LinkConnector>
-                    <LinkConnector PointId="67">
+                    <LinkConnector PointId="11">
                       <Value>1</Value>
                       <CastConnect>false</CastConnect>
                       <ParamInfo>
@@ -94,7 +95,7 @@
                   </List>
                 </LinkConnectorList>
               </LinkConnector>
-              <LinkConnector PointId="68">
+              <LinkConnector PointId="12">
                 <CastConnect>false</CastConnect>
                 <ParamInfo>
                   <ParamName>valueList</ParamName>
@@ -105,7 +106,7 @@
                 </ParamInfo>
                 <LinkConnectorList>
                   <List>
-                    <LinkConnector PointId="70">
+                    <LinkConnector PointId="14">
                       <Value>[Action&lt;object&gt;()]&lt;null&gt;</Value>
                       <CastConnect>false</CastConnect>
                       <ParamInfo>
@@ -119,7 +120,7 @@
                         <List />
                       </LinkConnectorList>
                     </LinkConnector>
-                    <LinkConnector PointId="72">
+                    <LinkConnector PointId="16">
                       <Value>[Action&lt;object&gt;()]&lt;null&gt;</Value>
                       <CastConnect>false</CastConnect>
                       <ParamInfo>
@@ -147,11 +148,8 @@
         <RootFunc AssetType="FuncType" AssetFuncType="CapybaraVS.Script.Lib.CaseFlow.GetFromDictionary#_Dictionary&lt;int,Action&lt;object&gt;&gt;_int">
           <AttachVariableIds />
           <AttachVariableId>0</AttachVariableId>
-          <AssetLiteralType>
-            <LiteralType>Double</LiteralType>
-            <ObjectType>none</ObjectType>
-          </AssetLiteralType>
-          <RootConnector PointId="76">
+          <AssetValueType>System.Double</AssetValueType>
+          <RootConnector PointId="20">
             <Caption>
               <LabelString>GetFromDictionary</LabelString>
             </Caption>
@@ -159,11 +157,11 @@
             <ForcedChecked>false</ForcedChecked>
             <Connector>
               <LinkList>
-                <PointID>92</PointID>
+                <PointID>36</PointID>
               </LinkList>
             </Connector>
             <Arguments>
-              <LinkConnector PointId="77">
+              <LinkConnector PointId="21">
                 <Value>[Dictionary&lt;int,Action&lt;object&gt;&gt;]&lt;null&gt;</Value>
                 <CastConnect>false</CastConnect>
                 <ParamInfo>
@@ -177,7 +175,7 @@
                   <List />
                 </LinkConnectorList>
               </LinkConnector>
-              <LinkConnector PointId="78">
+              <LinkConnector PointId="22">
                 <Value>0</Value>
                 <CastConnect>false</CastConnect>
                 <ParamInfo>
@@ -202,11 +200,8 @@
         <RootFunc AssetType="FuncType" AssetFuncType="ConsoleOut">
           <AttachVariableIds />
           <AttachVariableId>0</AttachVariableId>
-          <AssetLiteralType>
-            <LiteralType>String</LiteralType>
-            <ObjectType>none</ObjectType>
-          </AssetLiteralType>
-          <RootConnector PointId="81">
+          <AssetValueType>System.String</AssetValueType>
+          <RootConnector PointId="25">
             <Caption>
               <LabelString>ConsoleOut</LabelString>
             </Caption>
@@ -214,11 +209,11 @@
             <ForcedChecked>false</ForcedChecked>
             <Connector>
               <LinkList>
-                <PointID>70</PointID>
+                <PointID>14</PointID>
               </LinkList>
             </Connector>
             <Arguments>
-              <LinkConnector PointId="82">
+              <LinkConnector PointId="26">
                 <Value>Key 0 Action</Value>
                 <CastConnect>false</CastConnect>
                 <ParamInfo>
@@ -243,11 +238,8 @@
         <RootFunc AssetType="FuncType" AssetFuncType="ConsoleOut">
           <AttachVariableIds />
           <AttachVariableId>0</AttachVariableId>
-          <AssetLiteralType>
-            <LiteralType>String</LiteralType>
-            <ObjectType>none</ObjectType>
-          </AssetLiteralType>
-          <RootConnector PointId="85">
+          <AssetValueType>System.String</AssetValueType>
+          <RootConnector PointId="29">
             <Caption>
               <LabelString>ConsoleOut</LabelString>
             </Caption>
@@ -255,11 +247,11 @@
             <ForcedChecked>false</ForcedChecked>
             <Connector>
               <LinkList>
-                <PointID>72</PointID>
+                <PointID>16</PointID>
               </LinkList>
             </Connector>
             <Arguments>
-              <LinkConnector PointId="86">
+              <LinkConnector PointId="30">
                 <Value>Key 1 Action</Value>
                 <CastConnect>false</CastConnect>
                 <ParamInfo>
@@ -284,11 +276,8 @@
         <RootFunc AssetType="FuncType" AssetFuncType="InvokeActionWithArg">
           <AttachVariableIds />
           <AttachVariableId>0</AttachVariableId>
-          <AssetLiteralType>
-            <LiteralType>Object</LiteralType>
-            <ObjectType>none</ObjectType>
-          </AssetLiteralType>
-          <RootConnector PointId="90">
+          <AssetValueType>System.Object</AssetValueType>
+          <RootConnector PointId="34">
             <Caption>
               <LabelString>Action&lt;object&gt;.Invoke</LabelString>
             </Caption>
@@ -298,7 +287,7 @@
               <LinkList />
             </Connector>
             <Arguments>
-              <LinkConnector PointId="91">
+              <LinkConnector PointId="35">
                 <Value>[object]&lt;null&gt;</Value>
                 <CastConnect>false</CastConnect>
                 <ParamInfo>
@@ -312,7 +301,7 @@
                   <List />
                 </LinkConnectorList>
               </LinkConnector>
-              <LinkConnector PointId="92">
+              <LinkConnector PointId="36">
                 <Value>[Action&lt;object&gt;()]&lt;null&gt;</Value>
                 <CastConnect>false</CastConnect>
                 <ParamInfo>
@@ -337,11 +326,8 @@
         <RootFunc AssetType="FuncType" AssetFuncType="CallerArguments">
           <AttachVariableIds />
           <AttachVariableId>0</AttachVariableId>
-          <AssetLiteralType>
-            <LiteralType>Int</LiteralType>
-            <ObjectType>none</ObjectType>
-          </AssetLiteralType>
-          <RootConnector PointId="95">
+          <AssetValueType>System.Int32</AssetValueType>
+          <RootConnector PointId="39">
             <Caption>
               <LabelString>DummyArguments&lt;int&gt;</LabelString>
             </Caption>
@@ -349,11 +335,11 @@
             <ForcedChecked>false</ForcedChecked>
             <Connector>
               <LinkList>
-                <PointID>78</PointID>
+                <PointID>22</PointID>
               </LinkList>
             </Connector>
             <Arguments>
-              <LinkConnector PointId="96">
+              <LinkConnector PointId="40">
                 <Value>INDEX.ARG_1</Value>
                 <CastConnect>false</CastConnect>
                 <ParamInfo>
@@ -378,11 +364,8 @@
         <RootFunc AssetType="LiteralType" AssetFuncType="none">
           <AttachVariableIds />
           <AttachVariableId>0</AttachVariableId>
-          <AssetLiteralType>
-            <LiteralType>Int</LiteralType>
-            <ObjectType>none</ObjectType>
-          </AssetLiteralType>
-          <RootConnector PointId="98">
+          <AssetValueType>System.Int32</AssetValueType>
+          <RootConnector PointId="42">
             <Caption>
               <LabelString>int</LabelString>
             </Caption>
@@ -390,7 +373,7 @@
             <ForcedChecked>false</ForcedChecked>
             <Connector>
               <LinkList>
-                <PointID>91</PointID>
+                <PointID>35</PointID>
               </LinkList>
             </Connector>
             <Arguments />

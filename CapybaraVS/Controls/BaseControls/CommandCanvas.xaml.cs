@@ -449,7 +449,7 @@ namespace CapybaraVS.Controls.BaseControls
                 TypeMenuWindow.AddChild(new TreeMenuNode("TypeMenuWindow()", CreateImmediateExecutionCanvasCommand(
                     () =>
                     {
-                        string ret = GetTypeString();
+                        string ret = RequestTypeString();
                         if (ret != null)
                         {
                             CommandCanvasList.OutPut.OutLine(nameof(CommandCanvas), $"Type Name: {ret}");
@@ -786,6 +786,11 @@ namespace CapybaraVS.Controls.BaseControls
         private TreeMenuNode typeWindow_structMenu = null;
         private TreeMenuNode typeWindow_interfaceMenu = null;
         private TreeMenuNode typeWindow_import = null;
+
+        /// <summary>
+        /// 組み込み型の型情報を型メニューにセットします。
+        /// </summary>
+        /// <param name="treeViewCommand">登録先</param>
         private void MakeTypeMenu(TreeViewCommand treeViewCommand)
         {
             // コマンドを追加
@@ -814,6 +819,10 @@ namespace CapybaraVS.Controls.BaseControls
             }
         }
 
+        /// <summary>
+        /// 型情報を型メニューに取り込みます。
+        /// </summary>
+        /// <param name="type">型情報</param>
         public void AddTypeMenu(Type type)
         {
             TreeMenuNode targetNode = null;
@@ -838,19 +847,22 @@ namespace CapybaraVS.Controls.BaseControls
             {
                 return;
             }
-            string name = CbSTUtils.MakeGroupedTypeName(type);
             TreeViewCommand.AddGroupedMenu(
                 targetNode,
-                name,
+                CbSTUtils.MakeGroupedTypeName(type),
                 null,
                 (a) =>
                 {
-                    CommandCanvas.SelectType = name;
+                    CommandCanvas.SelectType = type.FullName;
                     TypeMenuWindow.Close();
                 }
                 );
         }
 
+        /// <summary>
+        /// 型情報を型メニューインポートします。
+        /// </summary>
+        /// <param name="type">型情報</param>
         public void AddImportTypeMenu(Type type)
         {
             string group = CbSTUtils.GetTypeGroupName(type);
@@ -858,51 +870,162 @@ namespace CapybaraVS.Controls.BaseControls
             {
                 return;
             }
-            string typeName = CbSTUtils.MakeGroupedTypeName(type);
             TreeViewCommand.AddGroupedMenu(
                 typeWindow_import,
-                group + "." + typeName,
+                group + "." + CbSTUtils.MakeGroupedTypeName(type),
                 null,
                 (a) =>
                 {
-                    CommandCanvas.SelectType = typeName;
+                    CommandCanvas.SelectType = type.FullName;
                     TypeMenuWindow.Close();
                 }
                 );
         }
 
         /// <summary>
-        /// UIを用いて型を作成します。
+        /// ユーザーに型の指定を要求します。
         /// </summary>
         /// <returns>型名</returns>
-        public string GetTypeString()
+        public string RequestTypeString()
         {
-            string resultString;
+            TypeMenuWindow.Message = "";
+            string ret = null;
+            try
+            {
+                Type type = RequestType();
+                if (type is null)
+                {
+                    return null;
+                }
+                ret = type.FullName;
+            }
+            catch (Exception ex)
+            {
+                CommandCanvasControl.MainLog.OutLine("System", nameof(CommandCanvas) + ":" + ex.Message);
+            }
+            return ret;
+        }
+
+        /// <summary>
+        /// ユーザーに型の指定を要求します。
+        /// </summary>
+        /// <returns>型情報</returns>
+        public Type RequestType()
+        {
             SelectType = null;
+            ControlTools.SetWindowPos(TypeMenuWindow, new Point(Mouse.GetPosition(null).X, Mouse.GetPosition(null).Y));
             TypeMenuWindow.ShowDialog();
             if (SelectType is null)
             {
                 return null;
             }
-            resultString = SelectType;
-            if (resultString.Contains('<'))
-            {
-                var args = new List<string>();
 
-                resultString = SelectType.Split('<')[0];
-                string cmc = SelectType.Split('<')[1].TrimEnd('>');
-                for (int i = 0; i < cmc.Length + 1; ++i)
+            Type type = CbST.GetTypeEx(SelectType);
+
+            string name = type.Name.Split('`')[0];
+            if (CbSTUtils.CbTypeNameList.ContainsKey(name))
+            {
+                TypeMenuWindow.Message += CbSTUtils.CbTypeNameList[name];
+            }
+            else
+            {
+                TypeMenuWindow.Message += name;
+            }
+
+            if (type is null)
+            {
+                return null;
+            }
+            return RequestGenericType(type);
+        }
+
+        /// <summary>
+        /// ユーザーにジェネリック型の引数の型の指定を要求します。
+        /// </summary>
+        /// <param name="genericTypeName">ジェネリック型の型名</param>
+        /// <returns>型名（ジェネリック型でない場合はそのままの型名）</returns>
+        public string RequestGenericTypeName(string genericTypeName)
+        {
+            string ret = null;
+            try
+            {
+                ret = RequestGenericTypeName(CbST.GetTypeEx(genericTypeName));
+            }
+            catch (Exception ex)
+            {
+                CommandCanvasControl.MainLog.OutLine("System", nameof(CommandCanvas) + ":" + ex.Message);
+            }
+            return ret;
+        }
+
+        /// <summary>
+        /// ユーザーにジェネリック型の引数の型の指定を要求します。
+        /// </summary>
+        /// <param name="genericType">ジェネリック型の型情報</param>
+        /// <returns>型名（ジェネリック型でない場合はそのままの型名）</returns>
+        public string RequestGenericTypeName(Type genericType)
+        {
+            if (genericType is null)
+            {
+                return null;
+            }
+
+            string name = genericType.Name.Split('`')[0];
+            if (CbSTUtils.CbTypeNameList.ContainsKey(name))
+            {
+                TypeMenuWindow.Message = CbSTUtils.CbTypeNameList[name];
+            }
+            else
+            {
+                TypeMenuWindow.Message = name;
+            }
+
+            Type type = RequestGenericType(genericType);
+            if (type is null)
+            {
+                return null;
+            }
+            return type.FullName;
+        }
+
+        /// <summary>
+        /// ユーザーにジェネリック型の引数の型の指定を要求します。
+        /// </summary>
+        /// <param name="genericType">ジェネリック型の型情報</param>
+        /// <returns>型情報（ジェネリック型でない場合はそのままの型情報）</returns>
+        private Type RequestGenericType(Type genericType)
+        {
+            if (genericType is null)
+            {
+                return null;
+            }
+            if (genericType.IsGenericType)
+            {
+                TypeMenuWindow.Message += "<";
+
+                var args = new List<Type>();
+
+                string cmc = genericType.FullName.Split('`')[1];
+                int argCount = Int32.Parse(cmc);
+                for (int i = 0; i < argCount; ++i)
                 {
-                    string arg = GetTypeString();
+                    Type arg = RequestType();
                     if (arg is null)
                     {
                         return null;
                     }
                     args.Add(arg);
+
+                    if (i < argCount - 1)
+                    {
+                        TypeMenuWindow.Message += ", ";
+                    }
                 }
-                resultString += "<" + String.Join(',', args) + ">";
+
+                TypeMenuWindow.Message += ">";
+                return genericType.MakeGenericType(args.ToArray());
             }
-            return resultString;
+            return genericType;
         }
 
         /// <summary>

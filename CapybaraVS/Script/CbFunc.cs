@@ -638,6 +638,8 @@ namespace CbVS.Script
             set => new NotImplementedException();
         }
 
+        public override bool IsDelegate => true;
+
         public override bool IsReadOnlyValue { get; set; } = true;
 
         public override bool IsStringableValue => false;

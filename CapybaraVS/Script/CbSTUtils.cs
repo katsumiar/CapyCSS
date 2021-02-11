@@ -10,6 +10,7 @@ namespace CapybaraVS.Script
     public class CbSTUtils
     {
         // 文字列部分を変更すると型名が全体的に適用されます。
+
         public const string VOID_STR = "void";
         public const string FUNC_STR = "Func";
         public const string ACTION_STR = "Action";
@@ -39,17 +40,47 @@ namespace CapybaraVS.Script
         public const string GENELICS_STR = "genelics.";
         public const string SIGNED_STR = "signed.";
         public const string UNSIGNED_STR = "unsigned.";
+        public const string DELEGATE_ACTION_STR = "delegate.action.";
+        public const string DELEGATE_FUNC_STR = "delegate.func.";
+
+        public static string FREE_LIST_TYPE_STR = typeof(List<>).FullName;
+        public static string FREE_FUNC_TYPE_STR = typeof(Func<>).FullName;
+
+        public const string FREE_ENUM_TYPE_STR = "<ENUM>";  // Enum型を要求する（未対応）
+
+        public const string FREE_TYPE_STR = "<FREE>";   // 型選択を要求する
+        public static string DUMMY_TYPE_STR = typeof(int).FullName; // ダミー
 
         /// <summary>
         /// ユーザーによる型作成時に組み込み型選択肢に出てくる型情報です。
         /// </summary>
         public static Dictionary<string, string> BuiltInTypeList = new Dictionary<string, string>()
         {
-            { MakeGroupedTypeName(typeof(List<>)), GENELICS_STR + "List<>" },
-            { MakeGroupedTypeName(typeof(IList<>)), GENELICS_STR + "IList<>" },
-            { MakeGroupedTypeName(typeof(ICollection<>)), GENELICS_STR + "ICollection<>" },
-            { MakeGroupedTypeName(typeof(IEnumerable<>)), GENELICS_STR + "IEnumerable<>" },
-            { MakeGroupedTypeName(typeof(IDictionary<,>)), GENELICS_STR + "IDictionary<,>" },
+            { typeof(List<>).FullName, GENELICS_STR + "List<>" },
+            { typeof(IList<>).FullName, GENELICS_STR + "IList<>" },
+            { typeof(ICollection<>).FullName, GENELICS_STR + "ICollection<>" },
+            { typeof(IEnumerable<>).FullName, GENELICS_STR + "IEnumerable<>" },
+            { typeof(IDictionary<,>).FullName, GENELICS_STR + "IDictionary<,>" },
+
+            { typeof(Action).FullName, DELEGATE_ACTION_STR + "Action" },
+            { typeof(Action<>).FullName, DELEGATE_ACTION_STR + "Action<>" },
+            { typeof(Action<,>).FullName, DELEGATE_ACTION_STR + "Action<,>" },
+            { typeof(Action<,,>).FullName, DELEGATE_ACTION_STR + "Action<,,>" },
+            { typeof(Action<,,,>).FullName, DELEGATE_ACTION_STR + "Action<,,,>" },
+            { typeof(Action<,,,,>).FullName, DELEGATE_ACTION_STR + "Action<,,,,>" },
+            { typeof(Action<,,,,,>).FullName, DELEGATE_ACTION_STR + "Action<,,,,,>" },
+            { typeof(Action<,,,,,,>).FullName, DELEGATE_ACTION_STR + "Action<,,,,,,>" },
+            { typeof(Action<,,,,,,,>).FullName, DELEGATE_ACTION_STR + "Action<,,,,,,,>" },
+
+            { typeof(Func<>).FullName, DELEGATE_FUNC_STR + "Func<>" },
+            { typeof(Func<,>).FullName, DELEGATE_FUNC_STR + "Func<,>" },
+            { typeof(Func<,,>).FullName, DELEGATE_FUNC_STR + "Func<,,>" },
+            { typeof(Func<,,,>).FullName, DELEGATE_FUNC_STR + "Func<,,,>" },
+            { typeof(Func<,,,,>).FullName, DELEGATE_FUNC_STR + "Func<,,,,>" },
+            { typeof(Func<,,,,,>).FullName, DELEGATE_FUNC_STR + "Func<,,,,,>" },
+            { typeof(Func<,,,,,,>).FullName, DELEGATE_FUNC_STR + "Func<,,,,,,>" },
+            { typeof(Func<,,,,,,,>).FullName, DELEGATE_FUNC_STR + "Func<,,,,,,,>" },
+            { typeof(Func<,,,,,,,,>).FullName, DELEGATE_FUNC_STR + "Func<,,,,,,,,>" },
 
             { typeof(Byte).FullName, UNSIGNED_STR + BYTE_STR },
             { typeof(SByte).FullName, SIGNED_STR + SBYTE_STR },

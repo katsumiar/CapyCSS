@@ -13,6 +13,10 @@
       <OffsetY>166.01767093779915</OffsetY>
     </CanvasRenderTransform>
   </WorkCanvas>
+  <ImportClassModule />
+  <ImportPackageModule />
+  <ImportDllModule />
+  <ImportNuGetModule />
   <WorkStack>
     <StackList />
   </WorkStack>
@@ -23,11 +27,8 @@
           <AttachVariableIds />
           <AttachFileName>D:\Download</AttachFileName>
           <AttachVariableId>0</AttachVariableId>
-          <AssetLiteralType>
-            <LiteralType>String</LiteralType>
-            <ObjectType>none</ObjectType>
-          </AssetLiteralType>
-          <RootConnector PointId="50">
+          <AssetValueType>System.String</AssetValueType>
+          <RootConnector PointId="2">
             <Caption>
               <LabelString>D:\Download</LabelString>
             </Caption>
@@ -35,7 +36,7 @@
             <ForcedChecked>false</ForcedChecked>
             <Connector>
               <LinkList>
-                <PointID>92</PointID>
+                <PointID>44</PointID>
               </LinkList>
             </Connector>
             <Arguments />
@@ -49,11 +50,8 @@
         <RootFunc AssetType="FuncType" AssetFuncType="CallerArgument">
           <AttachVariableIds />
           <AttachVariableId>0</AttachVariableId>
-          <AssetLiteralType>
-            <LiteralType>String</LiteralType>
-            <ObjectType>none</ObjectType>
-          </AssetLiteralType>
-          <RootConnector PointId="52">
+          <AssetValueType>System.String</AssetValueType>
+          <RootConnector PointId="4">
             <Caption>
               <LabelString>DummyArgument&lt;string&gt;</LabelString>
             </Caption>
@@ -61,8 +59,8 @@
             <ForcedChecked>false</ForcedChecked>
             <Connector>
               <LinkList>
-                <PointID>56</PointID>
-                <PointID>70</PointID>
+                <PointID>8</PointID>
+                <PointID>22</PointID>
               </LinkList>
             </Connector>
             <Arguments />
@@ -76,11 +74,8 @@
         <RootFunc AssetType="FuncType" AssetFuncType="CapybaraVS.Script.Lib.FileLib.GetExtension#_string">
           <AttachVariableIds />
           <AttachVariableId>0</AttachVariableId>
-          <AssetLiteralType>
-            <LiteralType>Double</LiteralType>
-            <ObjectType>none</ObjectType>
-          </AssetLiteralType>
-          <RootConnector PointId="55">
+          <AssetValueType>System.Double</AssetValueType>
+          <RootConnector PointId="7">
             <Caption>
               <LabelString>GetExtension</LabelString>
             </Caption>
@@ -88,11 +83,11 @@
             <ForcedChecked>false</ForcedChecked>
             <Connector>
               <LinkList>
-                <PointID>66</PointID>
+                <PointID>18</PointID>
               </LinkList>
             </Connector>
             <Arguments>
-              <LinkConnector PointId="56">
+              <LinkConnector PointId="8">
                 <Value />
                 <CastConnect>false</CastConnect>
                 <ParamInfo>
@@ -117,11 +112,8 @@
         <RootFunc AssetType="FuncType" AssetFuncType="Contains">
           <AttachVariableIds />
           <AttachVariableId>0</AttachVariableId>
-          <AssetLiteralType>
-            <LiteralType>String</LiteralType>
-            <ObjectType>none</ObjectType>
-          </AssetLiteralType>
-          <RootConnector PointId="60">
+          <AssetValueType>System.String</AssetValueType>
+          <RootConnector PointId="12">
             <Caption>
               <LabelString>Contains</LabelString>
             </Caption>
@@ -129,11 +121,11 @@
             <ForcedChecked>false</ForcedChecked>
             <Connector>
               <LinkList>
-                <PointID>76</PointID>
+                <PointID>28</PointID>
               </LinkList>
             </Connector>
             <Arguments>
-              <LinkConnector PointId="61">
+              <LinkConnector PointId="13">
                 <CastConnect>false</CastConnect>
                 <ParamInfo>
                   <ParamName>sample</ParamName>
@@ -144,7 +136,7 @@
                 </ParamInfo>
                 <LinkConnectorList>
                   <List>
-                    <LinkConnector PointId="63">
+                    <LinkConnector PointId="15">
                       <Value>.txt</Value>
                       <CastConnect>false</CastConnect>
                       <ParamInfo>
@@ -158,7 +150,7 @@
                         <List />
                       </LinkConnectorList>
                     </LinkConnector>
-                    <LinkConnector PointId="65">
+                    <LinkConnector PointId="17">
                       <Value>.bat</Value>
                       <CastConnect>false</CastConnect>
                       <ParamInfo>
@@ -175,7 +167,7 @@
                   </List>
                 </LinkConnectorList>
               </LinkConnector>
-              <LinkConnector PointId="66">
+              <LinkConnector PointId="18">
                 <Value />
                 <CastConnect>false</CastConnect>
                 <ParamInfo>
@@ -200,11 +192,8 @@
         <RootFunc AssetType="FuncType" AssetFuncType="ConsoleOut">
           <AttachVariableIds />
           <AttachVariableId>0</AttachVariableId>
-          <AssetLiteralType>
-            <LiteralType>String</LiteralType>
-            <ObjectType>none</ObjectType>
-          </AssetLiteralType>
-          <RootConnector PointId="69">
+          <AssetValueType>System.String</AssetValueType>
+          <RootConnector PointId="21">
             <Caption>
               <LabelString>ConsoleOut</LabelString>
             </Caption>
@@ -212,11 +201,11 @@
             <ForcedChecked>false</ForcedChecked>
             <Connector>
               <LinkList>
-                <PointID>77</PointID>
+                <PointID>29</PointID>
               </LinkList>
             </Connector>
             <Arguments>
-              <LinkConnector PointId="70">
+              <LinkConnector PointId="22">
                 <Value />
                 <CastConnect>false</CastConnect>
                 <ParamInfo>
@@ -241,11 +230,8 @@
         <RootFunc AssetType="FuncType" AssetFuncType="If_Func">
           <AttachVariableIds />
           <AttachVariableId>0</AttachVariableId>
-          <AssetLiteralType>
-            <LiteralType>Object</LiteralType>
-            <ObjectType>none</ObjectType>
-          </AssetLiteralType>
-          <RootConnector PointId="75">
+          <AssetValueType>System.Object</AssetValueType>
+          <RootConnector PointId="27">
             <Caption>
               <LabelString>If Func&lt;object&gt;.Invoke</LabelString>
             </Caption>
@@ -253,11 +239,11 @@
             <ForcedChecked>false</ForcedChecked>
             <Connector>
               <LinkList>
-                <PointID>93</PointID>
+                <PointID>45</PointID>
               </LinkList>
             </Connector>
             <Arguments>
-              <LinkConnector PointId="76">
+              <LinkConnector PointId="28">
                 <Value>False</Value>
                 <CastConnect>false</CastConnect>
                 <ParamInfo>
@@ -271,7 +257,7 @@
                   <List />
                 </LinkConnectorList>
               </LinkConnector>
-              <LinkConnector PointId="77">
+              <LinkConnector PointId="29">
                 <Value>[Func&lt;object&gt;()]&lt;null&gt;</Value>
                 <CastConnect>false</CastConnect>
                 <ParamInfo>
@@ -285,7 +271,7 @@
                   <List />
                 </LinkConnectorList>
               </LinkConnector>
-              <LinkConnector PointId="78">
+              <LinkConnector PointId="30">
                 <Value>[Func&lt;object&gt;()]&lt;null&gt;</Value>
                 <CastConnect>false</CastConnect>
                 <ParamInfo>
@@ -310,11 +296,8 @@
         <RootFunc AssetType="FuncType" AssetFuncType="Subroutine">
           <AttachVariableIds />
           <AttachVariableId>0</AttachVariableId>
-          <AssetLiteralType>
-            <LiteralType>Object</LiteralType>
-            <ObjectType>none</ObjectType>
-          </AssetLiteralType>
-          <RootConnector PointId="81">
+          <AssetValueType>System.Object</AssetValueType>
+          <RootConnector PointId="33">
             <Caption>
               <LabelString>Sequence</LabelString>
             </Caption>
@@ -324,7 +307,7 @@
               <LinkList />
             </Connector>
             <Arguments>
-              <LinkConnector PointId="82">
+              <LinkConnector PointId="34">
                 <CastConnect>false</CastConnect>
                 <ParamInfo>
                   <ParamName>call list</ParamName>
@@ -335,7 +318,7 @@
                 </ParamInfo>
                 <LinkConnectorList>
                   <List>
-                    <LinkConnector PointId="84">
+                    <LinkConnector PointId="36">
                       <Value>[object]&lt;null&gt;</Value>
                       <CastConnect>false</CastConnect>
                       <ParamInfo>
@@ -363,11 +346,8 @@
         <RootFunc AssetType="FuncType" AssetFuncType="CapybaraVS.Script.Lib.FileLib.ForeachFilesInvoke#_string_Action&lt;string&gt;_string_bool_bool">
           <AttachVariableIds />
           <AttachVariableId>0</AttachVariableId>
-          <AssetLiteralType>
-            <LiteralType>Double</LiteralType>
-            <ObjectType>none</ObjectType>
-          </AssetLiteralType>
-          <RootConnector PointId="91">
+          <AssetValueType>System.Double</AssetValueType>
+          <RootConnector PointId="43">
             <Caption>
               <LabelString>ForeachFiles Invoke</LabelString>
             </Caption>
@@ -375,11 +355,11 @@
             <ForcedChecked>false</ForcedChecked>
             <Connector>
               <LinkList>
-                <PointID>84</PointID>
+                <PointID>36</PointID>
               </LinkList>
             </Connector>
             <Arguments>
-              <LinkConnector PointId="92">
+              <LinkConnector PointId="44">
                 <Value />
                 <CastConnect>false</CastConnect>
                 <ParamInfo>
@@ -393,7 +373,7 @@
                   <List />
                 </LinkConnectorList>
               </LinkConnector>
-              <LinkConnector PointId="93">
+              <LinkConnector PointId="45">
                 <Value>[Action&lt;string&gt;()]&lt;null&gt;</Value>
                 <CastConnect>false</CastConnect>
                 <ParamInfo>
@@ -407,7 +387,7 @@
                   <List />
                 </LinkConnectorList>
               </LinkConnector>
-              <LinkConnector PointId="94">
+              <LinkConnector PointId="46">
                 <Value />
                 <CastConnect>false</CastConnect>
                 <ParamInfo>
@@ -421,7 +401,7 @@
                   <List />
                 </LinkConnectorList>
               </LinkConnector>
-              <LinkConnector PointId="95">
+              <LinkConnector PointId="47">
                 <Value>False</Value>
                 <CastConnect>false</CastConnect>
                 <ParamInfo>
@@ -435,7 +415,7 @@
                   <List />
                 </LinkConnectorList>
               </LinkConnector>
-              <LinkConnector PointId="96">
+              <LinkConnector PointId="48">
                 <Value>False</Value>
                 <CastConnect>false</CastConnect>
                 <ParamInfo>
