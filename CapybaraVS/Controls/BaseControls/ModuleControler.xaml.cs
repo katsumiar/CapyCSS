@@ -291,6 +291,7 @@ namespace CapyCSS.Controls.BaseControls
 
                 // アプリケーションの終了
                 CommandCanvasList.CallClosing?.Invoke();
+                return null;
             }
             else
             {

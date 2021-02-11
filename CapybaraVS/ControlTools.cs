@@ -146,12 +146,19 @@ namespace CapybaraVS
             }
         }
 
+        /// <summary>
+        /// 同じディスプレイに表示するように位置を調整します。
+        /// </summary>
+        /// <param name="self">調整対象のウインドウ</param>
+        /// <param name="pos">表示位置指定</param>
         public static void SetWindowPos(Window self, Point? pos)
         {
             if (pos.HasValue)
             {
                 self.Left = pos.Value.X;
                 self.Top = pos.Value.Y;
+
+
                 if (CommandCanvasList.OwnerWindow.WindowState != WindowState.Maximized)
                 {
                     // ウインドウが最大化されても元のサイズが帰ってくるようなので、最大化していないときだけ相対位置にする
@@ -168,6 +175,37 @@ namespace CapybaraVS
                         self.Left += SystemParameters.PrimaryScreenWidth;
                     }
                 }
+            }
+            else
+            {
+                // 位置指定なし
+
+                positionAdjustment(self);
+            }
+        }
+
+        /// <summary>
+        /// 同じディスプレイに表示するように位置を調整します。
+        /// </summary>
+        /// <param name="self">調整対象のウインドウ</param>
+        private static void positionAdjustment(Window self)
+        {
+            if (CommandCanvasList.OwnerWindow.Left > SystemParameters.PrimaryScreenWidth)
+            {
+                // セカンダリディスプレイでクリックされた
+
+                if (self.Left < SystemParameters.PrimaryScreenWidth)
+                {
+                    // プライマリディスプレイでクリックされたがセカンダリディスプレイに表示された
+
+                    self.Left += SystemParameters.PrimaryScreenWidth;
+                }
+            }
+            else if (self.Left > SystemParameters.PrimaryScreenWidth)
+            {
+                // プライマリディスプレイでクリックされたがセカンダリディスプレイに表示された
+
+                self.Left -= SystemParameters.PrimaryScreenWidth;
             }
         }
 

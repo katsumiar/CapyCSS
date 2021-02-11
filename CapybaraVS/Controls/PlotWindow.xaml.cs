@@ -239,6 +239,12 @@ namespace CapybaraVS.Controls
 
             PlotWindow plotWindow = new PlotWindow();
             plotWindow.Owner = CommandCanvasList.OwnerWindow;
+
+            plotWindow.Dispatcher.BeginInvoke(new Action(() =>
+            {
+                ControlTools.SetWindowPos(plotWindow, null);
+            }), DispatcherPriority.Loaded);
+
             plotWindow.Title = "Plot";
             if (msg != null && msg.Trim() != "")
                 plotWindow.Title += ": " + msg;

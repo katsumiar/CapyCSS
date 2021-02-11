@@ -2,6 +2,7 @@
 using CapybaraVS.Script;
 using CapyCSS.Controls;
 using CapyCSS.Controls.BaseControls;
+using CapyCSS.Script;
 using CbVS;
 using MathNet.Numerics.RootFinding;
 using Microsoft.Win32;
@@ -211,10 +212,16 @@ namespace CapybaraVS.Controls.BaseControls
             ScriptWorkCanvas = WorkCanvas;
             ScriptWorkStack = WorkStack;
 
+            TypeMenuWindow = CommandWindow.Create();
+            TypeMenuWindow.Title = "Type";
+            TypeMenuWindow.treeViewCommand.OwnerCommandCanvas = this;
+            TypeMenuWindow.treeViewCommand.AssetTreeData = new ObservableCollection<TreeMenuNode>();
+            MakeTypeMenu(TypeMenuWindow.treeViewCommand);
+
             CommandMenuWindow = CommandWindow.Create();
             CommandMenuWindow.treeViewCommand.OwnerCommandCanvas = this;
             CommandMenuWindow.treeViewCommand.AssetTreeData = new ObservableCollection<TreeMenuNode>();
-            AddTreeCommandAsset(CommandMenuWindow.treeViewCommand);
+            MakeCommandMenu(CommandMenuWindow.treeViewCommand);
 
             ClickEntryEvent = new Action(() =>
             {
@@ -244,7 +251,10 @@ namespace CapybaraVS.Controls.BaseControls
         public ApiImporter ApiImporter = null;
         private ModuleControler moduleControler = null;
         public CommandWindow CommandMenuWindow = null;
+        public CommandWindow TypeMenuWindow = null;
+        public static String SelectType = null;
         public CommandCanvasList CommandCanvasControl = null;
+        public TreeViewCommand TypeMenu => TypeMenuWindow.treeViewCommand;
         public TreeViewCommand CommandMenu => CommandMenuWindow.treeViewCommand;
         public CommandCanvas ScriptCommandCanvas = null;
         public BaseWorkCanvas ScriptWorkCanvas = null;
@@ -304,9 +314,9 @@ namespace CapybaraVS.Controls.BaseControls
         /// <param name="action">実行されるイベント</param>
         /// <param name="vm"></param>
         /// <returns>コマンド</returns>
-        public TreeMenuNodeCommand CreateEventCanvasCommand(string path, Func<object> action, TreeMenuNode vm = null)
+        public TreeMenuNodeCommand CreateEventCanvasCommand(string path, Func<object> action)
         {
-            return new TreeMenuNodeCommand(vm, (a) =>
+            return new TreeMenuNodeCommand((a) =>
                 {
                     ClickEvent = action;
                     ScriptWorkCanvas.ObjectSetCommand = ClickEvent;
@@ -322,9 +332,9 @@ namespace CapybaraVS.Controls.BaseControls
         /// <param name="vm"></param>
         /// <param name="action"></param>
         /// <returns></returns>
-        public TreeMenuNodeCommand CreateImmediateExecutionCanvasCommand(Action action, TreeMenuNode vm = null)
+        public TreeMenuNodeCommand CreateImmediateExecutionCanvasCommand(Action action)
         {
-            return new TreeMenuNodeCommand(vm, (a) =>
+            return new TreeMenuNodeCommand((a) =>
                 {
                     if (CommandCanvasList.OwnerWindow.Cursor == Cursors.Wait)
                         return; // 処理中は禁止
@@ -341,7 +351,7 @@ namespace CapybaraVS.Controls.BaseControls
         //----------------------------------------------------------------------
         #region アセットリストを実装
 
-        private void AddTreeCommandAsset(TreeViewCommand treeViewCommand)
+        private void MakeCommandMenu(TreeViewCommand treeViewCommand)
         {
             // コマンドを追加
             {
@@ -434,6 +444,20 @@ namespace CapybaraVS.Controls.BaseControls
         [Conditional("DEBUG")]
         private void AddTestTreeAsset(TreeViewCommand treeViewCommand)
         {
+            {
+                var TypeMenuWindow = new TreeMenuNode("TypeMenuWindow");
+                TypeMenuWindow.AddChild(new TreeMenuNode("TypeMenuWindow()", CreateImmediateExecutionCanvasCommand(
+                    () =>
+                    {
+                        string ret = GetTypeString();
+                        if (ret != null)
+                        {
+                            CommandCanvasList.OutPut.OutLine(nameof(CommandCanvas), $"Type Name: {ret}");
+                        }
+                    })));
+                treeViewCommand.AssetTreeData.Add(TypeMenuWindow);
+            }
+
             {
                 var testCommandNode = new TreeMenuNode("TestCommand");
                 testCommandNode.AddChild(new TreeMenuNode("OutputControlXML()", CreateImmediateExecutionCanvasCommand(() => OutputControlXML())));
@@ -703,6 +727,7 @@ namespace CapybaraVS.Controls.BaseControls
             ApiImporter.ClearModule();
             ScriptWorkCanvas.Clear();
             ScriptWorkStack.Clear();
+            ClearTypeImportMenu();
             ScriptCommandCanvas.HideWorkStack();
             if (full)
             {
@@ -753,7 +778,141 @@ namespace CapybaraVS.Controls.BaseControls
             }
             return null;
         }
-#endregion
+        #endregion
+
+        #region タイプリストを実装
+        private TreeMenuNode typeWindow_classMenu = null;
+        private TreeMenuNode typeWindow_enumMenu = null;
+        private TreeMenuNode typeWindow_structMenu = null;
+        private TreeMenuNode typeWindow_interfaceMenu = null;
+        private TreeMenuNode typeWindow_import = null;
+        private void MakeTypeMenu(TreeViewCommand treeViewCommand)
+        {
+            // コマンドを追加
+            {
+                var builtInGroup = new TreeMenuNode("Built-in type");
+                foreach (var typeName in CbSTUtils.BuiltInTypeList)
+                {
+                    TreeViewCommand.AddGroupedMenu(
+                        builtInGroup,
+                        typeName.Value,
+                        null,
+                        (a) =>
+                        {
+                            CommandCanvas.SelectType = typeName.Key;
+                            TypeMenuWindow.Close();
+                        }
+                        );
+
+                }
+                treeViewCommand.AssetTreeData.Add(builtInGroup);
+                treeViewCommand.AssetTreeData.Add(typeWindow_classMenu = new TreeMenuNode(CbSTUtils.CLASS_STR));
+                treeViewCommand.AssetTreeData.Add(typeWindow_interfaceMenu = new TreeMenuNode(CbSTUtils.INTERFACE_STR));
+                treeViewCommand.AssetTreeData.Add(typeWindow_structMenu = new TreeMenuNode(CbSTUtils.STRUCT_STR));
+                treeViewCommand.AssetTreeData.Add(typeWindow_enumMenu = new TreeMenuNode(CbSTUtils.ENUM_STR));
+                treeViewCommand.AssetTreeData.Add(typeWindow_import = new TreeMenuNode("Import"));
+            }
+        }
+
+        public void AddTypeMenu(Type type)
+        {
+            TreeMenuNode targetNode = null;
+
+            if (type.IsEnum)
+            {
+                targetNode = typeWindow_enumMenu;
+            }
+            else if (type.IsInterface)
+            {
+                targetNode = typeWindow_interfaceMenu;
+            }
+            else if (CbStruct.IsStruct(type))
+            {
+                targetNode = typeWindow_structMenu;
+            }
+            else if (type.IsClass)
+            {
+                targetNode = typeWindow_classMenu;
+            }
+            if (targetNode is null)
+            {
+                return;
+            }
+            string name = CbSTUtils.MakeGroupedTypeName(type);
+            TreeViewCommand.AddGroupedMenu(
+                targetNode,
+                name,
+                null,
+                (a) =>
+                {
+                    CommandCanvas.SelectType = name;
+                    TypeMenuWindow.Close();
+                }
+                );
+        }
+
+        public void AddImportTypeMenu(Type type)
+        {
+            string group = CbSTUtils.GetTypeGroupName(type);
+            if (group is null)
+            {
+                return;
+            }
+            string typeName = CbSTUtils.MakeGroupedTypeName(type);
+            TreeViewCommand.AddGroupedMenu(
+                typeWindow_import,
+                group + "." + typeName,
+                null,
+                (a) =>
+                {
+                    CommandCanvas.SelectType = typeName;
+                    TypeMenuWindow.Close();
+                }
+                );
+        }
+
+        /// <summary>
+        /// UIを用いて型を作成します。
+        /// </summary>
+        /// <returns>型名</returns>
+        public string GetTypeString()
+        {
+            string resultString;
+            SelectType = null;
+            TypeMenuWindow.ShowDialog();
+            if (SelectType is null)
+            {
+                return null;
+            }
+            resultString = SelectType;
+            if (resultString.Contains('<'))
+            {
+                var args = new List<string>();
+
+                resultString = SelectType.Split('<')[0];
+                string cmc = SelectType.Split('<')[1].TrimEnd('>');
+                for (int i = 0; i < cmc.Length + 1; ++i)
+                {
+                    string arg = GetTypeString();
+                    if (arg is null)
+                    {
+                        return null;
+                    }
+                    args.Add(arg);
+                }
+                resultString += "<" + String.Join(',', args) + ">";
+            }
+            return resultString;
+        }
+
+        /// <summary>
+        /// インポートされている型情報を削除します。
+        /// </summary>
+        void ClearTypeImportMenu()
+        {
+            typeWindow_import?.Child.Clear();
+        }
+        #endregion
 
         public void ToggleGridLine()
         {
@@ -823,8 +982,7 @@ namespace CapybaraVS.Controls.BaseControls
 
         private void ClearWorkCanvasWithConfirmation()
         {
-            if (ScriptWorkCanvas.Count != 0 &&
-                    ControlTools.ShowSelectMessage(
+            if (ControlTools.ShowSelectMessage(
                         CapybaraVS.Language.GetInstance["ConfirmationDelete"],
                         CapybaraVS.Language.GetInstance["Confirmation"],
                         MessageBoxButton.OKCancel) == MessageBoxResult.OK)
@@ -855,13 +1013,28 @@ namespace CapybaraVS.Controls.BaseControls
             CommandMenuWindow.ShowDialog();
         }
 
+        #region IDisposable Support
+        private bool disposedValue = false; // 重複する呼び出しを検出するには
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!disposedValue)
+            {
+                if (disposing)
+                {
+                    CommandMenuWindow.Dispose();
+                    CommandMenuWindow = null;
+                    TypeMenuWindow.Dispose();
+                    TypeMenuWindow = null;
+                }
+                disposedValue = true;
+            }
+        }
         public void Dispose()
         {
-            if (CommandMenuWindow is null)
-                return;
-
-            CommandMenuWindow.Dispose();
-            CommandMenuWindow = null;
+            Dispose(true);
         }
+        #endregion
+
     }
 }

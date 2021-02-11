@@ -13,7 +13,7 @@ namespace CapyCSS.Script
 {
     class NugetClient
     {
-        private static List<string> loadedPackage = new List<string>();
+        private static List<string> loadedPackages = new List<string>();
 
         public class PackageInfo
         {
@@ -104,13 +104,13 @@ namespace CapyCSS.Script
                     string name = libPath.Replace(basePass, "");
                     name = name.Replace(@"\", "/").TrimStart('/');
 
-                    if (loadedPackage.Contains(libPath))
+                    if (loadedPackages.Contains(libPath))
                     {
                         // 一度取り込んでいるdllは無視する
 
                         continue;
                     }
-                    loadedPackage.Add(libPath);
+                    loadedPackages.Add(libPath);
                     packageList.Add(new PackageInfo(libPath, name, version));
                 }
             }

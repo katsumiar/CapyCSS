@@ -10,7 +10,7 @@ namespace CapyCSS.Script
     /// <summary>
     /// text型（独自）
     /// </summary>
-    class CbText : CbString
+    public class CbText : CbString
     {
         public override Type MyType => typeof(CbText);
 

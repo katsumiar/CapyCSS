@@ -151,7 +151,14 @@ namespace CapybaraVS.Script
             var asm = Assembly.Load(name);
             string outputName = ModuleControler.HEADER_PACKAGE + name;
             var functionNode = ImplementAsset.CreateGroup(node, outputName);
-            ImportScriptMethods(OwnerCommandCanvas, functionNode, asm, null, ignoreClassList);
+            ImportScriptMethods(
+                OwnerCommandCanvas, 
+                functionNode, 
+                asm, 
+                null, 
+                ignoreClassList,
+                (t) => OwnerCommandCanvas.AddImportTypeMenu(t)
+                );
             CommandCanvasList.OutPut.OutLine(nameof(ScriptImplement), $"imported {name} package.");
             return outputName;
         }
@@ -177,7 +184,14 @@ namespace CapybaraVS.Script
             var asm = classType.GetTypeInfo().Assembly;
             string outputName = ModuleControler.HEADER_CLASS + name;
             var functionNode = ImplementAsset.CreateGroup(node, outputName);
-            ImportScriptMethods(OwnerCommandCanvas, functionNode, asm, null, null);
+            ImportScriptMethods(
+                OwnerCommandCanvas, 
+                functionNode, 
+                asm, 
+                null, 
+                null,
+                (t) => OwnerCommandCanvas.AddImportTypeMenu(t)
+                );
             CommandCanvasList.OutPut.OutLine(nameof(ScriptImplement), $"imported {name} class.");
             return outputName;
         }
@@ -200,7 +214,14 @@ namespace CapybaraVS.Script
             var asm = Assembly.LoadFrom(path);
             Module mod = asm.GetModule(path);
             string name = Path.GetFileName(path);
-            ImportScriptMethods(OwnerCommandCanvas, node, asm, mod, ignoreClassList);
+            ImportScriptMethods(
+                OwnerCommandCanvas, 
+                node, 
+                asm, 
+                mod, 
+                ignoreClassList,
+                (t) => OwnerCommandCanvas.AddImportTypeMenu(t)
+                );
             if (version is null)
             {
                 CommandCanvasList.OutPut.OutLine(nameof(ScriptImplement), $"imported {System.IO.Path.GetFileNameWithoutExtension(name)} package.");
@@ -257,6 +278,39 @@ namespace CapybaraVS.Script
             return true;
         }
 
+        private static bool IsAcceptTypeMenuType(Type type)
+        {
+            if (type.IsNestedPrivate)
+                return false;   // 扱えない
+
+            if (type.IsNotPublic)
+                return false;   // 扱えない
+
+            if (type.IsPointer)
+                return false;   // 扱えない
+
+            if (type.IsByRefLike)
+            {
+                // ref-like型構造体は、ジェネリック型引数にできない
+
+                return false;
+            }
+
+            if (type.IsEnum)
+                return true;
+
+            if (type.IsInterface)
+                return true;
+
+            if (CbStruct.IsStruct(type))
+                return true;
+
+            if (type.IsClass)
+                return true;
+
+            return false;
+        }
+
         /// <summary>
         /// Assemblyからメソッドをスクリプトで使えるように取り込みます。
         /// </summary>
@@ -270,7 +324,8 @@ namespace CapybaraVS.Script
             TreeMenuNode node,
             Assembly asm,
             Module module,
-            List<string> ignoreClassList)
+            List<string> ignoreClassList,
+            Action<Type> inportTypeMenu)
         {
             Type[] types = null;
             if (module is null)
@@ -281,6 +336,28 @@ namespace CapybaraVS.Script
             {
                 types = module.GetTypes();
                 CbST.AddModule(module);
+            }
+
+            Task<List<Type>> tcTask = null;
+            if (inportTypeMenu != null)
+            {
+                // 型情報を収集する
+
+                tcTask = Task.Run(() =>
+                {
+                    List<Type> resultTypes = new List<Type>();
+                    foreach (Type type in types)
+                    {
+                        if (ignoreClassList != null && !ignoreClassList.Contains(type.Name))
+                            continue;
+
+                        if (!IsAcceptTypeMenuType(type))
+                            continue;
+
+                        resultTypes.Add(type);
+                    }
+                    return resultTypes;
+                });
             }
 
 #if false    // テスト用
@@ -321,6 +398,16 @@ namespace CapybaraVS.Script
                     CreateMethodNode(OwnerCommandCanvas, node, info);
                 }
             }
+
+            // 型情報をメニューに登録する
+            if (tcTask != null)
+            {
+                var typeList = tcTask.Result;
+                foreach (var type in typeList)
+                {
+                    inportTypeMenu(type);
+                }
+            }
         }
 
         /// <summary>
@@ -335,11 +422,11 @@ namespace CapybaraVS.Script
             var tasks = new List<Task<List<AutoImplementFunctionInfo>>>();
             foreach (Type classType in types)
             {
-                if (!IsAcceptClass(classType))
-                    continue;   // 扱えない
-
                 if (ignoreClassList != null && !ignoreClassList.Contains(classType.Name))
                     continue;
+
+                if (!IsAcceptClass(classType))
+                    continue;   // 扱えない
 
                 if (!classType.IsAbstract)
                 {
@@ -423,6 +510,19 @@ namespace CapybaraVS.Script
             Assembly asm)
         {
             Type[] types = asm.GetTypes();
+
+            // 型情報を収集する
+            var task = Task.Run(()=>
+            {
+                foreach (Type type in types)
+                {
+                    if (!IsAcceptTypeMenuType(type))
+                        return;   // 扱えない
+
+                    OwnerCommandCanvas.AddTypeMenu(type);
+                }
+            });
+
             foreach (Type classType in types)
             {
                 if (!IsAcceptClass(classType))

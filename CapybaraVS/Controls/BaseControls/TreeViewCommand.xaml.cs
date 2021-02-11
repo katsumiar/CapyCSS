@@ -22,8 +22,6 @@ namespace CapybaraVS.Controls.BaseControls
     /// </summary>
     public class TreeMenuNodeCommand : ICommand
     {
-        private TreeMenuNode vm;
-
         //-----------------------------------------------------------------------------------
         /// <summary>
         /// 
@@ -44,11 +42,9 @@ namespace CapybaraVS.Controls.BaseControls
         /// <param name="executeEvent"></param>
         /// <param name="canExecuteEvent"></param>
         public TreeMenuNodeCommand(
-            TreeMenuNode viewmodel,
             Action<object> executeEvent = null,
             Func<object, bool> canExecuteEvent = null)
         {
-            vm = viewmodel;
             if (executeEvent != null)
             {
                 this.executeEvent = executeEvent;
@@ -114,7 +110,7 @@ namespace CapybaraVS.Controls.BaseControls
             Path = name;
             if (personCommand is null)
             {
-                LeftClickCommand = new TreeMenuNodeCommand(this);
+                LeftClickCommand = new TreeMenuNodeCommand();
             }
             else
             {
@@ -137,7 +133,7 @@ namespace CapybaraVS.Controls.BaseControls
             }
             if (personCommand is null)
             {
-                LeftClickCommand = new TreeMenuNodeCommand(this);
+                LeftClickCommand = new TreeMenuNodeCommand();
             }
             else
             {
@@ -478,6 +474,62 @@ namespace CapybaraVS.Controls.BaseControls
                 var parent = ((System.Windows.Controls.Control)sender).Parent as UIElement;
                 parent.RaiseEvent(eventArg);
             }
+        }
+
+        /// <summary>
+        /// .区切りで階層を作成する
+        /// </summary>
+        /// <param name="group"></param>
+        /// <param name="title"></param>
+        /// <returns></returns>
+        public static string MakeGroup(ref TreeMenuNode group, string title)
+        {
+            string[] arr = title.Split('.');
+            if (arr.Length > 1)
+            {
+                title = arr[arr.Length - 1];
+                for (int i = 0; i < arr.Length - 1; ++i)
+                {
+                    TreeMenuNode temp = null;
+                    foreach (var child in group.Child)
+                    {
+                        if (child.Name == arr[i])
+                        {
+                            temp = child;
+                            break;
+                        }
+                    }
+                    if (temp == null)
+                    {
+                        temp = new TreeMenuNode(arr[i]);
+                        group.AddChild(temp);
+                    }
+                    group = temp;
+                }
+            }
+            return title;
+        }
+
+        public static void AddGroupedMenu(
+            TreeMenuNode node,
+            string name,
+            string help = null,
+            Action<object> executeEvent = null,
+            Func<object, bool> canExecuteEvent = null)
+        {
+            TreeMenuNode group = node;
+            string title = TreeViewCommand.MakeGroup(ref group, name);
+            TreeMenuNode menu;
+            if (help is null)
+            {
+                menu = new TreeMenuNode(title, "");
+            }
+            else
+            {
+                menu = new TreeMenuNode(title, help);
+            }
+            group.AddChild(menu);
+            menu.LeftClickCommand = new TreeMenuNodeCommand(executeEvent, canExecuteEvent);
         }
     }
 }

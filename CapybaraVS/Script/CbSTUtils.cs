@@ -16,6 +16,8 @@ namespace CapybaraVS.Script
         public const string LIST_STR = "List";
         public const string CLASS_STR = "Class";
         public const string ENUM_STR = "Enum";
+        public const string STRUCT_STR = "Struct";
+        public const string INTERFACE_STR = "Interface";
 
         public const string OBJECT_STR = "object";
         public const string INT_STR = "int";
@@ -33,7 +35,38 @@ namespace CapybaraVS.Script
         public const string BOOL_STR = "bool";
         public const string STRING_STR = "string";
         public const string TEXT_STR = "text";
-        public const string STRUCT_STR = "text";
+
+        public const string GENELICS_STR = "genelics.";
+        public const string SIGNED_STR = "signed.";
+        public const string UNSIGNED_STR = "unsigned.";
+
+        /// <summary>
+        /// ユーザーによる型作成時に組み込み型選択肢に出てくる型情報です。
+        /// </summary>
+        public static Dictionary<string, string> BuiltInTypeList = new Dictionary<string, string>()
+        {
+            { MakeGroupedTypeName(typeof(List<>)), GENELICS_STR + "List<>" },
+            { MakeGroupedTypeName(typeof(IList<>)), GENELICS_STR + "IList<>" },
+            { MakeGroupedTypeName(typeof(ICollection<>)), GENELICS_STR + "ICollection<>" },
+            { MakeGroupedTypeName(typeof(IEnumerable<>)), GENELICS_STR + "IEnumerable<>" },
+            { MakeGroupedTypeName(typeof(IDictionary<,>)), GENELICS_STR + "IDictionary<,>" },
+
+            { typeof(Byte).FullName, UNSIGNED_STR + BYTE_STR },
+            { typeof(SByte).FullName, SIGNED_STR + SBYTE_STR },
+            { typeof(Int16).FullName, SIGNED_STR + SHORT_STR },
+            { typeof(Int32).FullName, SIGNED_STR + INT_STR },
+            { typeof(Int64).FullName, SIGNED_STR + LONG_STR },
+            { typeof(UInt16).FullName, UNSIGNED_STR + USHORT_STR },
+            { typeof(UInt32).FullName, UNSIGNED_STR + UINT_STR },
+            { typeof(UInt64).FullName, UNSIGNED_STR + ULONG_STR },
+            { typeof(Char).FullName, CHAR_STR },
+            { typeof(Single).FullName, FLOAT_STR },
+            { typeof(Double).FullName, DOUBLE_STR },
+            { typeof(Decimal).FullName, DECIMAL_STR },
+            { typeof(Boolean).FullName, BOOL_STR },
+            { typeof(String).FullName, STRING_STR },
+            { typeof(Object).FullName, OBJECT_STR },
+        };
 
         static public string EnumCbTypeToString(CbType cbType)
         {
@@ -402,6 +435,62 @@ namespace CapybaraVS.Script
                 return false;
 
             return true;
+        }
+
+        /// <summary>
+        /// 型カテゴリの名前を返します。
+        /// </summary>
+        /// <param name="type">型情報</param>
+        /// <returns>グループ名</returns>
+        public static string GetTypeGroupName(Type type)
+        {
+            if (type.IsEnum)
+            {
+                return CbSTUtils.ENUM_STR;
+            }
+            else if (type.IsInterface)
+            {
+                return CbSTUtils.INTERFACE_STR;
+            }
+            else if (CbStruct.IsStruct(type))
+            {
+                return CbSTUtils.STRUCT_STR;
+            }
+            else if (type.IsClass)
+            {
+                return CbSTUtils.CLASS_STR;
+            }
+            return null;
+        }
+
+        /// <summary>
+        /// 型情報から名前を作成します。
+        /// </summary>
+        /// <param name="type">型情報</param>
+        /// <returns>名前</returns>
+        public static string MakeGroupedTypeName(Type type)
+        {
+            string name = type.FullName.Replace('+', '.');
+            string[] nss = name.Split('.');
+
+            List<string> outNodes = new List<string>();
+            foreach (var node in nss)
+            {
+                string outNode = node;
+                if (node.Contains('`'))
+                {
+                    string gs = node.Split('`')[1];
+                    outNode = node.Split('`')[0];
+                    outNode += "<";
+                    for (int i = 1; i < Int16.Parse(gs); ++i)
+                    {
+                        outNode += ",";
+                    }
+                    outNode += ">";
+                }
+                outNodes.Add(outNode);
+            }
+            return String.Join(".", outNodes);
         }
     }
 }
