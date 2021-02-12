@@ -187,17 +187,6 @@ namespace CbVS.Script
 
         public override Type MyType => typeof(CbList<T>);
 
-        public override CbST CbType
-        {
-            get
-            {
-                return new CbST(
-                    CapybaraVS.Script.CbType.Func,
-                    OriginalType.FullName   // 型名を持っていないとスクリプト読み込み時に再現できない
-                    );
-            }
-        }
-
         public CbList()
         {
             _ListNodeType = CbST.CbCreateTF(typeof(T));
@@ -451,7 +440,6 @@ namespace CbVS.Script
             if (listNodeType is ICbEvent)
             {
                 // CbFunc のノードを持つ CbList を Func<> 及び Action<> 用の List に変換する 
-                Debug.Assert(listNodeType.CbType.LiteralType == CapybaraVS.Script.CbType.Func);
 
                 // 仮引数用の型を作成
                 // Func<> 及び Action<> 用の変換

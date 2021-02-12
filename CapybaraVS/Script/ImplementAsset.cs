@@ -47,7 +47,10 @@ namespace CapybaraVS.Script
             string title = TreeViewCommand.MakeGroup(ref group, funcAssetDef.MenuTitle);
             var menu = new TreeMenuNode(title, funcAssetDef.HelpText);
             group.AddChild(menu);
-            menu.LeftClickCommand = OwnerCommandCanvas.CreateEventCanvasCommand(menu.Path, () => CbScript.CreateFunction(OwnerCommandCanvas, funcAssetDef.AssetCode));
+            menu.LeftClickCommand = OwnerCommandCanvas.CreateEventCanvasCommand(
+                menu.Path, 
+                () => CbScript.CreateFunction(OwnerCommandCanvas, funcAssetDef.AssetCode)
+                );
         }
 
         /// <summary>
@@ -61,7 +64,10 @@ namespace CapybaraVS.Script
             string title = TreeViewCommand.MakeGroup(ref group, funcAssetDef.MenuTitle);
             var menu = new TreeMenuNode(title, funcAssetDef.HelpText);
             group.AddChild(menu);
-            menu.LeftClickCommand = OwnerCommandCanvas.CreateEventCanvasCommand(menu.Path, () => CbScript.CreateFreeTypeVariableFunction(OwnerCommandCanvas, funcAssetDef.AssetCode, funcAssetDef.ValueType, funcAssetDef.DeleteSelectItems));
+            menu.LeftClickCommand = OwnerCommandCanvas.CreateEventCanvasCommand(
+                menu.Path,
+                () => CbScript.CreateFreeTypeVariableFunction(OwnerCommandCanvas, funcAssetDef.AssetCode, funcAssetDef.ValueType, funcAssetDef.IsAccept)
+                );
         }
 
         /// <summary>
@@ -75,21 +81,10 @@ namespace CapybaraVS.Script
             string title = TreeViewCommand.MakeGroup(ref group, funcAssetDef.MenuTitle);
             var menu = new TreeMenuNode(title, funcAssetDef.HelpText);
             group.AddChild(menu);
-            menu.LeftClickCommand = OwnerCommandCanvas.CreateEventCanvasCommand(menu.Path, () => CbScript.CreateFreeTypeVariableFunction(OwnerCommandCanvas, funcAssetDef.AssetCode, funcAssetDef.ValueType, null, true));
-        }
-
-        /// <summary>
-        /// グループにアセットを登録する
-        /// </summary>
-        /// <param name="group">登録するグループ</param>
-        /// <param name="funcAssetDef">アセット</param>
-        public static void CreateAssetMenu(CommandCanvas OwnerCommandCanvas, TreeMenuNode group, IFuncCreateClassVariableAssetDef funcAssetDef)
-        {
-            AddAsset(funcAssetDef);
-            string title = TreeViewCommand.MakeGroup(ref group, funcAssetDef.MenuTitle);
-            var menu = new TreeMenuNode(title, funcAssetDef.HelpText);
-            group.AddChild(menu);
-            menu.LeftClickCommand = OwnerCommandCanvas.CreateEventCanvasCommand(menu.Path, () => CbScript.CreateFreeTypeVariableFunction(OwnerCommandCanvas, funcAssetDef.AssetCode, funcAssetDef.ValueType));
+            menu.LeftClickCommand = OwnerCommandCanvas.CreateEventCanvasCommand(
+                menu.Path,
+                () => CbScript.CreateFreeTypeVariableFunction(OwnerCommandCanvas, funcAssetDef.AssetCode, funcAssetDef.ValueType, null, true)
+                );
         }
 
         /// <summary>
@@ -103,7 +98,10 @@ namespace CapybaraVS.Script
             string title = TreeViewCommand.MakeGroup(ref group, funcAssetDef.MenuTitle);
             var menu = new TreeMenuNode(title, funcAssetDef.HelpText);
             group.AddChild(menu);
-            menu.LeftClickCommand = OwnerCommandCanvas.CreateEventCanvasCommand(menu.Path, () => CbScript.CreateFreeTypeFunction(OwnerCommandCanvas, funcAssetDef.AssetCode, funcAssetDef.ValueType, funcAssetDef.DeleteSelectItems));
+            menu.LeftClickCommand = OwnerCommandCanvas.CreateEventCanvasCommand(
+                menu.Path, 
+                () => CbScript.CreateFreeTypeFunction(OwnerCommandCanvas, funcAssetDef.AssetCode, funcAssetDef.ValueType, funcAssetDef.IsAccept)
+                );
         }
 
         /// <summary>
@@ -117,7 +115,10 @@ namespace CapybaraVS.Script
             string title = TreeViewCommand.MakeGroup(ref group, funcAssetDef.MenuTitle);
             var menu = new TreeMenuNode(title, funcAssetDef.HelpText);
             group.AddChild(menu);
-            menu.LeftClickCommand = OwnerCommandCanvas.CreateEventCanvasCommand(menu.Path, () => CbScript.SelectVariableType(OwnerCommandCanvas, funcAssetDef.ValueType, funcAssetDef.DeleteSelectItems));
+            menu.LeftClickCommand = OwnerCommandCanvas.CreateEventCanvasCommand(
+                menu.Path,
+                () => CbScript.SelectVariableType(OwnerCommandCanvas, funcAssetDef.ValueType, funcAssetDef.IsAccept)
+                );
         }
     }
 }

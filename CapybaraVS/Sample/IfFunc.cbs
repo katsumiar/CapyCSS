@@ -27,7 +27,7 @@
           <AttachVariableIds />
           <AttachVariableId>0</AttachVariableId>
           <AssetValueType>System.Object</AssetValueType>
-          <RootConnector PointId="237">
+          <RootConnector PointId="675">
             <Caption>
               <LabelString>Sequence</LabelString>
             </Caption>
@@ -37,7 +37,7 @@
               <LinkList />
             </Connector>
             <Arguments>
-              <LinkConnector PointId="238">
+              <LinkConnector PointId="676">
                 <CastConnect>false</CastConnect>
                 <ParamInfo>
                   <ParamName>call list</ParamName>
@@ -48,7 +48,7 @@
                 </ParamInfo>
                 <LinkConnectorList>
                   <List>
-                    <LinkConnector PointId="240">
+                    <LinkConnector PointId="678">
                       <Value>[object]&lt;null&gt;</Value>
                       <CastConnect>false</CastConnect>
                       <ParamInfo>
@@ -62,7 +62,7 @@
                         <List />
                       </LinkConnectorList>
                     </LinkConnector>
-                    <LinkConnector PointId="242">
+                    <LinkConnector PointId="680">
                       <Value>[object]&lt;null&gt;</Value>
                       <CastConnect>false</CastConnect>
                       <ParamInfo>
@@ -91,7 +91,7 @@
           <AttachVariableIds />
           <AttachVariableId>0</AttachVariableId>
           <AssetValueType>System.String</AssetValueType>
-          <RootConnector PointId="245">
+          <RootConnector PointId="683">
             <Caption>
               <LabelString>ConsoleOut</LabelString>
             </Caption>
@@ -99,12 +99,12 @@
             <ForcedChecked>false</ForcedChecked>
             <Connector>
               <LinkList>
-                <PointID>257</PointID>
-                <PointID>265</PointID>
+                <PointID>695</PointID>
+                <PointID>703</PointID>
               </LinkList>
             </Connector>
             <Arguments>
-              <LinkConnector PointId="246">
+              <LinkConnector PointId="684">
                 <Value>OK</Value>
                 <CastConnect>false</CastConnect>
                 <ParamInfo>
@@ -130,7 +130,7 @@
           <AttachVariableIds />
           <AttachVariableId>0</AttachVariableId>
           <AssetValueType>System.String</AssetValueType>
-          <RootConnector PointId="249">
+          <RootConnector PointId="687">
             <Caption>
               <LabelString>ConsoleOut</LabelString>
             </Caption>
@@ -138,12 +138,12 @@
             <ForcedChecked>false</ForcedChecked>
             <Connector>
               <LinkList>
-                <PointID>266</PointID>
-                <PointID>258</PointID>
+                <PointID>704</PointID>
+                <PointID>696</PointID>
               </LinkList>
             </Connector>
             <Arguments>
-              <LinkConnector PointId="250">
+              <LinkConnector PointId="688">
                 <Value>NG</Value>
                 <CastConnect>false</CastConnect>
                 <ParamInfo>
@@ -169,7 +169,7 @@
           <AttachVariableIds />
           <AttachVariableId>0</AttachVariableId>
           <AssetValueType>System.Int32</AssetValueType>
-          <RootConnector PointId="255">
+          <RootConnector PointId="693">
             <Caption>
               <LabelString>If Action.Invoke</LabelString>
             </Caption>
@@ -177,11 +177,11 @@
             <ForcedChecked>false</ForcedChecked>
             <Connector>
               <LinkList>
-                <PointID>240</PointID>
+                <PointID>678</PointID>
               </LinkList>
             </Connector>
             <Arguments>
-              <LinkConnector PointId="256">
+              <LinkConnector PointId="694">
                 <Value>True</Value>
                 <CastConnect>false</CastConnect>
                 <ParamInfo>
@@ -195,7 +195,7 @@
                   <List />
                 </LinkConnectorList>
               </LinkConnector>
-              <LinkConnector PointId="257">
+              <LinkConnector PointId="695">
                 <Value>[Action()]&lt;null&gt;</Value>
                 <CastConnect>false</CastConnect>
                 <ParamInfo>
@@ -209,7 +209,7 @@
                   <List />
                 </LinkConnectorList>
               </LinkConnector>
-              <LinkConnector PointId="258">
+              <LinkConnector PointId="696">
                 <Value>[Action()]&lt;null&gt;</Value>
                 <CastConnect>false</CastConnect>
                 <ParamInfo>
@@ -235,7 +235,7 @@
           <AttachVariableIds />
           <AttachVariableId>0</AttachVariableId>
           <AssetValueType>System.String</AssetValueType>
-          <RootConnector PointId="263">
+          <RootConnector PointId="701">
             <Caption>
               <LabelString>If Func&lt;string&gt;.Invoke</LabelString>
             </Caption>
@@ -243,11 +243,11 @@
             <ForcedChecked>false</ForcedChecked>
             <Connector>
               <LinkList>
-                <PointID>242</PointID>
+                <PointID>680</PointID>
               </LinkList>
             </Connector>
             <Arguments>
-              <LinkConnector PointId="264">
+              <LinkConnector PointId="702">
                 <Value>False</Value>
                 <CastConnect>false</CastConnect>
                 <ParamInfo>
@@ -261,7 +261,7 @@
                   <List />
                 </LinkConnectorList>
               </LinkConnector>
-              <LinkConnector PointId="265">
+              <LinkConnector PointId="703">
                 <Value>[Func&lt;string&gt;()]&lt;null&gt;</Value>
                 <CastConnect>false</CastConnect>
                 <ParamInfo>
@@ -275,7 +275,7 @@
                   <List />
                 </LinkConnectorList>
               </LinkConnector>
-              <LinkConnector PointId="266">
+              <LinkConnector PointId="704">
                 <Value>[Func&lt;string&gt;()]&lt;null&gt;</Value>
                 <CastConnect>false</CastConnect>
                 <ParamInfo>

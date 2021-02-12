@@ -37,11 +37,12 @@ namespace CapybaraVS.Script
         public const string STRING_STR = "string";
         public const string TEXT_STR = "text";
 
-        public const string GENELICS_STR = "genelics.";
-        public const string SIGNED_STR = "signed.";
-        public const string UNSIGNED_STR = "unsigned.";
-        public const string DELEGATE_ACTION_STR = "delegate.action.";
-        public const string DELEGATE_FUNC_STR = "delegate.func.";
+        public const string GENELICS_GROUP_STR = "genelics.";
+        public const string INTERFACE_GROUP_STR = "interface.";
+        public const string SIGNED_GROUP_STR = "signed.";
+        public const string UNSIGNED_GROUP_STR = "unsigned.";
+        public const string ACTION_GROUP_STR = "action.";
+        public const string FUNC_GROUP_STR = "func.";
 
         public static string FREE_LIST_TYPE_STR = typeof(List<>).FullName;
         public static string FREE_FUNC_TYPE_STR = typeof(Func<>).FullName;
@@ -56,40 +57,56 @@ namespace CapybaraVS.Script
         /// </summary>
         public static Dictionary<string, string> BuiltInTypeList = new Dictionary<string, string>()
         {
-            { typeof(List<>).FullName, GENELICS_STR + "List<>" },
-            { typeof(IList<>).FullName, GENELICS_STR + "IList<>" },
-            { typeof(ICollection<>).FullName, GENELICS_STR + "ICollection<>" },
-            { typeof(IEnumerable<>).FullName, GENELICS_STR + "IEnumerable<>" },
-            { typeof(IDictionary<,>).FullName, GENELICS_STR + "IDictionary<,>" },
+            { typeof(List<>).FullName, GENELICS_GROUP_STR + "List<>" },
+            { typeof(IList<>).FullName, INTERFACE_GROUP_STR + "IList<>" },
+            { typeof(ICollection<>).FullName, INTERFACE_GROUP_STR + "ICollection<>" },
+            { typeof(IEnumerable<>).FullName, INTERFACE_GROUP_STR + "IEnumerable<>" },
+            { typeof(IDictionary<,>).FullName, INTERFACE_GROUP_STR + "IDictionary<,>" },
 
-            { typeof(Action).FullName, DELEGATE_ACTION_STR + "Action" },
-            { typeof(Action<>).FullName, DELEGATE_ACTION_STR + "Action<>" },
-            { typeof(Action<,>).FullName, DELEGATE_ACTION_STR + "Action<,>" },
-            { typeof(Action<,,>).FullName, DELEGATE_ACTION_STR + "Action<,,>" },
-            { typeof(Action<,,,>).FullName, DELEGATE_ACTION_STR + "Action<,,,>" },
-            { typeof(Action<,,,,>).FullName, DELEGATE_ACTION_STR + "Action<,,,,>" },
-            { typeof(Action<,,,,,>).FullName, DELEGATE_ACTION_STR + "Action<,,,,,>" },
-            { typeof(Action<,,,,,,>).FullName, DELEGATE_ACTION_STR + "Action<,,,,,,>" },
-            { typeof(Action<,,,,,,,>).FullName, DELEGATE_ACTION_STR + "Action<,,,,,,,>" },
+            { typeof(Action).FullName, ACTION_GROUP_STR + "Action" },
+            { typeof(Action<>).FullName, ACTION_GROUP_STR + "Action<>" },
+            { typeof(Action<,>).FullName, ACTION_GROUP_STR + "Action<,>" },
+            { typeof(Action<,,>).FullName, ACTION_GROUP_STR + "Action<,,>" },
+            { typeof(Action<,,,>).FullName, ACTION_GROUP_STR + "Action<,,,>" },
+            { typeof(Action<,,,,>).FullName, ACTION_GROUP_STR + "Action<,,,,>" },
+            { typeof(Action<,,,,,>).FullName, ACTION_GROUP_STR + "Action<,,,,,>" },
+            { typeof(Action<,,,,,,>).FullName, ACTION_GROUP_STR + "Action<,,,,,,>" },
+            { typeof(Action<,,,,,,,>).FullName, ACTION_GROUP_STR + "Action<,,,,,,,>" },
+            { typeof(Action<,,,,,,,,>).FullName, ACTION_GROUP_STR + "Action<,,,,,,,,>" },
+            { typeof(Action<,,,,,,,,,>).FullName, ACTION_GROUP_STR + "Action<,,,,,,,,,>" },
+            { typeof(Action<,,,,,,,,,,>).FullName, ACTION_GROUP_STR + "Action<,,,,,,,,,,>" },
+            { typeof(Action<,,,,,,,,,,,>).FullName, ACTION_GROUP_STR + "Action<,,,,,,,,,,,>" },
+            { typeof(Action<,,,,,,,,,,,,>).FullName, ACTION_GROUP_STR + "Action<,,,,,,,,,,,,>" },
+            { typeof(Action<,,,,,,,,,,,,,>).FullName, ACTION_GROUP_STR + "Action<,,,,,,,,,,,,,>" },
+            { typeof(Action<,,,,,,,,,,,,,,>).FullName, ACTION_GROUP_STR + "Action<,,,,,,,,,,,,,,>" },
+            { typeof(Action<,,,,,,,,,,,,,,,>).FullName, ACTION_GROUP_STR + "Action<,,,,,,,,,,,,,,,>" },
 
-            { typeof(Func<>).FullName, DELEGATE_FUNC_STR + "Func<>" },
-            { typeof(Func<,>).FullName, DELEGATE_FUNC_STR + "Func<,>" },
-            { typeof(Func<,,>).FullName, DELEGATE_FUNC_STR + "Func<,,>" },
-            { typeof(Func<,,,>).FullName, DELEGATE_FUNC_STR + "Func<,,,>" },
-            { typeof(Func<,,,,>).FullName, DELEGATE_FUNC_STR + "Func<,,,,>" },
-            { typeof(Func<,,,,,>).FullName, DELEGATE_FUNC_STR + "Func<,,,,,>" },
-            { typeof(Func<,,,,,,>).FullName, DELEGATE_FUNC_STR + "Func<,,,,,,>" },
-            { typeof(Func<,,,,,,,>).FullName, DELEGATE_FUNC_STR + "Func<,,,,,,,>" },
-            { typeof(Func<,,,,,,,,>).FullName, DELEGATE_FUNC_STR + "Func<,,,,,,,,>" },
+            { typeof(Func<>).FullName, FUNC_GROUP_STR + "Func<>" },
+            { typeof(Func<,>).FullName, FUNC_GROUP_STR + "Func<,>" },
+            { typeof(Func<,,>).FullName, FUNC_GROUP_STR + "Func<,,>" },
+            { typeof(Func<,,,>).FullName, FUNC_GROUP_STR + "Func<,,,>" },
+            { typeof(Func<,,,,>).FullName, FUNC_GROUP_STR + "Func<,,,,>" },
+            { typeof(Func<,,,,,>).FullName, FUNC_GROUP_STR + "Func<,,,,,>" },
+            { typeof(Func<,,,,,,>).FullName, FUNC_GROUP_STR + "Func<,,,,,,>" },
+            { typeof(Func<,,,,,,,>).FullName, FUNC_GROUP_STR + "Func<,,,,,,,>" },
+            { typeof(Func<,,,,,,,,>).FullName, FUNC_GROUP_STR + "Func<,,,,,,,,>" },
+            { typeof(Func<,,,,,,,,,>).FullName, FUNC_GROUP_STR + "Func<,,,,,,,,,,>" },
+            { typeof(Func<,,,,,,,,,,>).FullName, FUNC_GROUP_STR + "Func<,,,,,,,,,,,>" },
+            { typeof(Func<,,,,,,,,,,,>).FullName, FUNC_GROUP_STR + "Func<,,,,,,,,,,,>" },
+            { typeof(Func<,,,,,,,,,,,,>).FullName, FUNC_GROUP_STR + "Func<,,,,,,,,,,,,>" },
+            { typeof(Func<,,,,,,,,,,,,,>).FullName, FUNC_GROUP_STR + "Func<,,,,,,,,,,,,,>" },
+            { typeof(Func<,,,,,,,,,,,,,,>).FullName, FUNC_GROUP_STR + "Func<,,,,,,,,,,,,,,>" },
+            { typeof(Func<,,,,,,,,,,,,,,,>).FullName, FUNC_GROUP_STR + "Func<,,,,,,,,,,,,,,,>" },
+            { typeof(Func<,,,,,,,,,,,,,,,,>).FullName, FUNC_GROUP_STR + "Func<,,,,,,,,,,,,,,,,>" },
 
-            { typeof(Byte).FullName, UNSIGNED_STR + BYTE_STR },
-            { typeof(SByte).FullName, SIGNED_STR + SBYTE_STR },
-            { typeof(Int16).FullName, SIGNED_STR + SHORT_STR },
-            { typeof(Int32).FullName, SIGNED_STR + INT_STR },
-            { typeof(Int64).FullName, SIGNED_STR + LONG_STR },
-            { typeof(UInt16).FullName, UNSIGNED_STR + USHORT_STR },
-            { typeof(UInt32).FullName, UNSIGNED_STR + UINT_STR },
-            { typeof(UInt64).FullName, UNSIGNED_STR + ULONG_STR },
+            { typeof(Byte).FullName, UNSIGNED_GROUP_STR + BYTE_STR },
+            { typeof(SByte).FullName, SIGNED_GROUP_STR + SBYTE_STR },
+            { typeof(Int16).FullName, SIGNED_GROUP_STR + SHORT_STR },
+            { typeof(Int32).FullName, SIGNED_GROUP_STR + INT_STR },
+            { typeof(Int64).FullName, SIGNED_GROUP_STR + LONG_STR },
+            { typeof(UInt16).FullName, UNSIGNED_GROUP_STR + USHORT_STR },
+            { typeof(UInt32).FullName, UNSIGNED_GROUP_STR + UINT_STR },
+            { typeof(UInt64).FullName, UNSIGNED_GROUP_STR + ULONG_STR },
             { typeof(Char).FullName, CHAR_STR },
             { typeof(Single).FullName, FLOAT_STR },
             { typeof(Double).FullName, DOUBLE_STR },
@@ -98,38 +115,6 @@ namespace CapybaraVS.Script
             { typeof(String).FullName, STRING_STR },
             { typeof(Object).FullName, OBJECT_STR },
         };
-
-        static public string EnumCbTypeToString(CbType cbType)
-        {
-            switch (cbType)
-            {
-                case CbType.none: return cbType.ToString();
-                case CbType.Int: return INT_STR;
-                case CbType.String: return STRING_STR;
-                case CbType.Text: return TEXT_STR;
-                case CbType.Double: return DOUBLE_STR;
-                case CbType.Byte: return BYTE_STR;
-                case CbType.Sbyte: return SBYTE_STR;
-                case CbType.Long: return LONG_STR;
-                case CbType.Short: return SHORT_STR;
-                case CbType.UShort: return USHORT_STR;
-                case CbType.UInt: return UINT_STR;
-                case CbType.ULong: return ULONG_STR;
-                case CbType.Char: return CHAR_STR;
-                case CbType.Float: return FLOAT_STR;
-                case CbType.Decimal: return DECIMAL_STR;
-                case CbType.Bool: return BOOL_STR;
-                case CbType.Object: return OBJECT_STR;
-                case CbType.Class: return CLASS_STR;
-                case CbType.Func: return FUNC_STR;
-                case CbType.Struct: return STRUCT_STR;
-                default:
-                    Debug.Assert(false);
-                    break;
-            }
-
-            return "";
-        }
 
         static public Dictionary<string, string> CbTypeNameList = new Dictionary<string, string>()
         {

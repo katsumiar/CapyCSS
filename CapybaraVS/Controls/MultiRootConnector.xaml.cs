@@ -34,7 +34,7 @@ namespace CapybaraVS.Controls
         /// <summary>
         /// List or Enum or Class
         /// </summary>
-        ListType,
+        ListType,   // 無くす予定
         /// <summary>
         /// アセットのタイプ
         /// </summary>
@@ -70,24 +70,7 @@ namespace CapybaraVS.Controls
                     if (RootFunc.AttachVariableId != 0)
                         self.AttachParam = new AttachVariableId(RootFunc.AttachVariableId);
 
-                    if (RootFunc.AssetLiteralType != null)
-                    {
-                        // 旧形式互換用
-
-                        var valueType = new CbST();
-                        RootFunc.AssetLiteralType.ReadAction?.Invoke(valueType);
-                        if (RootFunc.AssetValueType == null)
-                        {
-                            self.AssetValueType = valueType.Value.OriginalType.FullName;
-
-                            // AssetLiteralType は、この世から無くす予定
-                            //self.AssetLiteralType = valueType;
-                        }
-                    }
-                    else
-                    {
-                        self.AssetValueType = RootFunc.AssetValueType;
-                    }
+                    self.AssetValueType = RootFunc.AssetValueType;
 
                     self.notheradMode = true;
 
@@ -95,8 +78,8 @@ namespace CapybaraVS.Controls
                     
                     if (RootFunc.AssetType == FunctionType.ListType)
                     {
-                        // FunctionType.LiteralType は、この世から無くす予定
-
+                        // FunctionType.ListType は、この世から無くす予定
+                        Debug.Assert(false);    // AssetType == FunctionType.LiteralType に流れるようにする
                         RootFunc.AssetType = FunctionType.LiteralType;
                     }
                     self.AssetType = RootFunc.AssetType;
@@ -129,13 +112,6 @@ namespace CapybaraVS.Controls
 
                     info.AssetType = self.AssetType;
                     info.AssetFuncType = self.AssetFuncType;
-
-                    // FunctionType.LiteralType は、この世から無くす予定
-                    //if (self.AssetLiteralType != null)
-                    //{
-                    //    self.AssetLiteralType.AssetXML.WriteAction?.Invoke();
-                    //    info.AssetLiteralType = self.AssetLiteralType.AssetXML;
-                    //}
                     info.AssetValueType = self.AssetValueType;
 
                     self.LinkConnectorControl.AssetXML.WriteAction?.Invoke();
@@ -152,7 +128,6 @@ namespace CapybaraVS.Controls
                 public int AttachVariableId { get; set; }
                 [XmlAttribute(nameof(AssetType))]
                 public FunctionType AssetType { get; set; }
-                public CbST._AssetXML<CbST> AssetLiteralType { get; set; }  // FunctionType.LiteralType は、この世から無くす予定
                 public string AssetValueType { get; set; }
                 [XmlAttribute(nameof(AssetFuncType))]
                 public string AssetFuncType { get; set; }

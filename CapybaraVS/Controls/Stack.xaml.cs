@@ -76,9 +76,7 @@ namespace CapybaraVS.Controls
                 ReadAction = (self) =>
                 {
                     self.Id = Id;
-                    var valueType = new CbST();
-                    VariableType.ReadAction?.Invoke(valueType);
-                    self.ValueData = CbST.Create(valueType, Name);
+                    self.ValueData = CbST.CbCreate(Type.GetType(AssetValueType));
                     if (Value != "[ERROR]")
                     {
                         if (self.ValueData != null && self.ValueData.IsStringableValue)
@@ -97,13 +95,8 @@ namespace CapybaraVS.Controls
                 WriteAction = () =>
                 {
                     Id = self.Id;
-
-                    // 直接作ろうとすると失敗することがあるようなのでコピーしてから作成
-                    var valueType = new CbST(self.ValueData);
-                    valueType.AssetXML.WriteAction?.Invoke();
-                    VariableType = valueType.AssetXML;
-
-                    if (valueType.ObjectType != CbCType.Func && valueType.LiteralType != CbType.Func)
+                    AssetValueType = self.ValueData.OriginalType.FullName;
+                    if (!self.ValueData.IsDelegate)
                     {
                         // イベント系以外の値は保存対象
 
@@ -114,7 +107,7 @@ namespace CapybaraVS.Controls
             }
             #region 固有定義
             public int Id { get; set; } = 0;
-            public CbST._AssetXML<CbST> VariableType { get; set; } = null;
+            public string AssetValueType { get; set; } = null;
             public string Value { get; set; } = null;
             public string Name { get; set; } = null;
             #endregion
@@ -157,24 +150,6 @@ namespace CapybaraVS.Controls
                         stackAsset.AssetXML = node;
                         stackAsset.AssetXML.ReadAction?.Invoke(stackAsset);
                         StackGroup sg = self.Append(stackAsset);
-
-                        if (node.VariableType.ListNodeValue != null)
-                        {
-                            if (stackAsset.ValueData is ICbList cbList)
-                            {
-                                foreach (var vs in node.VariableType.ListNodeValue)
-                                {
-                                    var insertValue = cbList.NodeTF();
-                                    insertValue.ValueString = vs;
-                                    cbList.Value.Add(insertValue);
-                                    var sn = new StackNode(self.OwnerCommandCanvas)
-                                    {
-                                        ValueData = insertValue
-                                    };
-                                    sg.AddListNode(sn);
-                                }
-                            }
-                        }
                     }
 
                     // 次回の為の初期化

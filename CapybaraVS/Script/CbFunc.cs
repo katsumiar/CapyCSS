@@ -216,22 +216,6 @@ namespace CbVS.Script
         }
 
         /// <summary>
-        /// CbXXX型の Func<> 型の変数を作成します。
-        /// </summary>
-        /// <param name="arg">引数１の型情報</param>
-        /// <param name="ret">CbXXX型の返し値の型</param>
-        /// <returns>CbFunc<original, CbXXX型のret型>の変数</returns>
-        public static ICbValue CreateFunc(CbST arg, ICbValue ret, string name = "")
-        {
-            Type originalType = typeof(Func<,>).MakeGenericType(
-                CbST.GetOriginalType(arg),
-                ret.OriginalReturnType
-                );
-
-            return CallGetCbFunc(ret, name, originalType);
-        }
-
-        /// <summary>
         /// Func 及び Action のノード接続の可否判定を行います。
         /// </summary>
         /// <param name="toName">接続先の型名</param>
@@ -461,20 +445,6 @@ namespace CbVS.Script
          where RT : class, ICbValue
     {
         public override Type MyType => typeof(CbFunc<T, RT>);
-
-        /// <summary>
-        /// 型情報
-        /// </summary>
-        public override CbST CbType
-        {
-            get
-            {
-                return new CbST(
-                    CapybaraVS.Script.CbType.Func,
-                    OriginalType.FullName   // 型名を持っていないとスクリプト読み込み時に再現できない
-                    );
-            }
-        }
 
         public override Type OriginalReturnType => typeof(RT);
 

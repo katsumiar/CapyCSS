@@ -9,20 +9,6 @@ namespace CapybaraVS.Script
     {
         public override Type MyType => typeof(CbInt);
 
-        /// <summary>
-        /// 型情報
-        /// </summary>
-        public override CbST CbType
-        {
-            get
-            {
-                return new CbST(
-                    Script.CbType.Func,
-                    base.OriginalType.FullName   // 型名を持っていないとスクリプト読み込み時に再現できない
-                    );
-            }
-        }
-
         public CbInt(int n = 0, string name = "")
         {
             Value = n;

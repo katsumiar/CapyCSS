@@ -44,6 +44,10 @@ namespace CapybaraVS
 
         #endregion
 
+        /// <summary>
+        /// 指定付き選択指定
+        /// ※参照指定で強制的に変数を作成もしくは選択するときに設定されます。
+        /// </summary>
         public static ICbValue DefaultValue { get; set; } = null;
 
         public static StackNode Create(

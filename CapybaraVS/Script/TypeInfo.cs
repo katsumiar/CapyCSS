@@ -23,226 +23,14 @@ using CapyCSS.Script;
 
 namespace CapybaraVS.Script
 {
-    public enum CbType // この定義は将来的に不要になる予定
-    {
-        none,
-        Int,
-        Double,
-        String,
-        Text,
-        Byte,
-        Sbyte,
-        Long,
-        Short,
-        UShort,
-        UInt,
-        ULong,
-        Char,
-        Float,
-        Decimal,
-        Bool,
-        Object,
-        Class,
-        Func,
-        Struct,
-    }
-
-    public enum CbCType // この定義は将来的に不要になる予定
-    {
-        none,
-        List,
-        Enum,
-        Func,
-        Class,
-        Struct,
-    }
-
     /// <summary>
     /// 型を管理する
     /// ※管理している型の復元及び複製機能を持っている
     /// </summary>
     public class CbST
     {
-        #region XML定義
-        [XmlRoot(nameof(CbST))]
-        public class _AssetXML<OwnerClass>
-            where OwnerClass : CbST
-        {
-            // この定義は無くなる予定
-
-
-            [XmlIgnore]
-            public Action WriteAction = null;
-            [XmlIgnore]
-            public Action<OwnerClass> ReadAction = null;
-            public _AssetXML()
-            {
-                ReadAction = (self) =>
-                {
-                    self.LiteralType = LiteralType;
-                    self.ObjectType = ObjectType;
-
-                    if (LiteralType == CbType.Func)
-                    {
-                        // 型情報を元に型を再現する。
-                        // 将来的にこちらにまとめる予定。
-
-                        self.Value = CbCreate(CbST.GetTypeEx(ClassName));
-                        self.LiteralTypeForCbTypeFunc = ClassName;
-                    }
-                    else
-                    {
-                        self.Value = CbST.Create(self);
-                        self.LiteralTypeForCbTypeFunc = self.Value.OriginalType.FullName;
-                        self.ObjectType = CbCType.Func;
-                    }
-
-                    // 次回の為の初期化
-                    self.AssetXML = new _AssetXML<CbST>(self);
-                };
-            }
-            public _AssetXML(OwnerClass self)
-            {
-                WriteAction = () =>
-                {
-                    LiteralType = self.LiteralType;
-                    ObjectType = self.ObjectType;
-                    if (LiteralType == CbType.Func)
-                    {
-                        // 型名を保存する
-
-                        ClassName = self.LiteralTypeForCbTypeFunc;
-
-                        if (self.Value is ICbList cbList)
-                        {
-                            ListNodeValue = new List<string>();
-                            if (LiteralType == CbType.Class)
-                            {
-                                // ノードがクラスタイプなので型名を保存する
-
-                                //ClassName = cbList.ItemName;
-                            }
-                            foreach (var nd in cbList.Value)
-                            {
-                                ListNodeValue.Add(nd.ValueString);
-                            }
-                        }
-                    }
-                    else if (self.Value != null)
-                    {
-                        if (self.ObjectType == CbCType.Class)
-                        {
-                            ClassName = (self.Value as ICbClass).ItemName;
-                        }
-                        else if (self.ObjectType == CbCType.Enum)
-                        {
-                            ClassName = (self.Value as ICbEnum).ItemName;
-                        }
-                        else if (self.Value is ICbList cbList)
-                        {
-                            Debug.Assert(false);    // ここは使用しない
-
-                            ListNodeValue = new List<string>();
-                            if (LiteralType == CbType.Class)
-                            {
-                                // ノードがクラスタイプなので型名を保存する
-
-                                ClassName = cbList.ItemName;
-                            }
-                            foreach (var nd in cbList.Value)
-                            {
-                                ListNodeValue.Add(nd.ValueString);
-                            }
-                        }
-                    }
-                };
-            }
-#region 固有定義
-            public CbType LiteralType { get; set; } = CbType.none;
-            public CbCType ObjectType { get; set; } = CbCType.none;
-            public List<string> ListNodeValue { get; set; } = null;
-            public string ClassName = null;
-#endregion
-        }
-        public _AssetXML<CbST> AssetXML { get; set; } = null;
-#endregion
-
-        /// <summary>
-        /// 型の指定を自由にする
-        /// </summary>
-        //public static CbST FreeType => new CbST(CbType.none);
-
-        /// <summary>
-        /// 型の指定をイベント型にする
-        /// </summary>
-        //public static CbST FreeFuncType => new CbST(CbType.none, CbCType.Func);
-
-        /// <summary>
-        /// 型の指定をリスト型にする
-        /// </summary>
-        //public static CbST FreeListType => new CbST(CbType.none, CbCType.List);
-
-        //public static CbST Int => new CbST(CbType.Int);
-        //public static CbST Bool => new CbST(CbType.Bool);
-        //public static CbST String => new CbST(CbType.String);
-        //public static CbST Double => new CbST(CbType.Double);
-        //public static CbST Object => new CbST(CbType.Object);
-
-        /// <summary>
-        /// 型の指定を enum 型にする
-        /// </summary>
-        //public static CbST Enum => new CbST(CbType.none, CbCType.Enum);
-
-        public CbST()
-        {
-            AssetXML = new _AssetXML<CbST>(this);
-        }
-
-        /// <summary>
-        /// LiteralType が CbType.Func のときに変わりに参照する値の型 
-        /// </summary>
-        public string LiteralTypeForCbTypeFunc { get; set; } = null;
-
-        /// <summary>
-        /// Value を参考にクラスの変数を返します。
-        /// </summary>
-        /// <param name="name">変数名</param>
-        /// <returns>CbClass<T>型の変数</returns>
-        private ICbValue ClassValue(string name)
-        {
-            if (ObjectType != CbCType.Class)
-                return null;
-
-            return CbClass.ClassValue(Value, name);
-        }
-
-        /// <summary>
-        /// Value を参考に構造体の変数を返します。
-        /// </summary>
-        /// <param name="name">変数名</param>
-        /// <returns>CbStruct<T>型の変数</returns>
-        private ICbValue StructValue(string name)
-        {
-            if (ObjectType != CbCType.Struct)
-                return null;
-
-            return CbStruct.StructValue(Value, name);
-        }
-
-        /// <summary>
-        /// Value を参考に共用体の変数を返します。
-        /// </summary>
-        /// <param name="name">変数名</param>
-        /// <returns>CbEnum<T>型の変数</returns>
-        private ICbValue EnumValue(string name)
-        {
-            if (ObjectType != CbCType.Enum)
-                return null;
-
-            return CbEnumTools.EnumValue(Value, name);
-        }
-
         private static List<Module> moduleList = new List<Module>();
+        private static Dictionary<string, Type> typeDictionary = new Dictionary<string, Type>();
         public static void AddModule(Module module)
         {
             if (!moduleList.Contains(module))
@@ -251,12 +39,36 @@ namespace CapybaraVS.Script
             }
         }
 
+        /// <summary>
+        /// 型情報を辞書に登録します。
+        /// ※CbST.GetTypeEx(name) で参照できるようになります。
+        /// </summary>
+        /// <param name="name">型名</param>
+        /// <param name="type">型情報</param>
+        public static void TypeDictionary(string name, Type type)
+        {
+            typeDictionary.Add(name, type);
+        }
+
+        /// <summary>
+        /// 型情報を参照します。
+        /// ※インポートしたモジュールの型情報も参照できます。
+        /// </summary>
+        /// <param name="name">型名</param>
+        /// <returns>型情報</returns>
         public static Type GetTypeEx(string name)
         {
             var type = Type.GetType(name);
             if (type is null)
             {
-                // 異なるアセンブリを参照する
+                // インポートしたアセンブリを参照する
+
+                if (typeDictionary.TryGetValue(name, out type))
+                {
+                    // インポート時に辞書に登録済み
+
+                    return type;
+                }
 
                 foreach (var module in moduleList)
                 {
@@ -269,59 +81,10 @@ namespace CapybaraVS.Script
         }
 
         /// <summary>
-        /// CbXXX 型からオリジナルの型を求めます。
+        /// 対応するCbXXX型を求めます。
         /// </summary>
-        /// <param name="type">CbXXX の型</param>
-        /// <returns>オリジナルの型</returns>
-        public static Type ConvertOriginalType(Type type)
-        {
-            switch (type.Name)
-            {
-                case nameof(CbByte): return typeof(Byte);
-                case nameof(CbSByte): return typeof(SByte);
-                case nameof(CbShort): return typeof(Int16);
-                case nameof(CbInt): return typeof(Int32);
-                case nameof(CbLong): return typeof(Int64);
-                case nameof(CbUShort): return typeof(UInt16);
-                case nameof(CbUInt): return typeof(UInt32);
-                case nameof(CbULong): return typeof(UInt64);
-                case nameof(CbChar): return typeof(Char);
-                case nameof(CbFloat): return typeof(Single);
-                case nameof(CbDouble): return typeof(Double);
-                case nameof(CbDecimal): return typeof(Decimal);
-                case nameof(CbBool): return typeof(Boolean);
-                case nameof(CbString): return typeof(String);
-                case nameof(CbObject): return typeof(Object);
-                case nameof(CbVoid): return typeof(CbVoid);
-                default:
-                    break;
-            }
-
-            if (type.GetGenericTypeDefinition() == typeof(CbFunc<,>))
-            {
-                return type.GetGenericArguments()[0];
-            }
-            if (type.GetGenericTypeDefinition() == typeof(CbEnum<>))
-            {
-                return type.GetGenericArguments()[0];
-            }
-            if (type.GetGenericTypeDefinition() == typeof(CbClass<>))
-            {
-                return type.GetGenericArguments()[0];
-            }
-            if (type.GetGenericTypeDefinition() == typeof(CbStruct<>))
-            {
-                return type.GetGenericArguments()[0];
-            }
-
-            return null;
-        }
-
-        /// <summary>
-        /// 対応する CbXXX 型を求めます。
-        /// </summary>
-        /// <param name="type"></param>
-        /// <returns></returns>
+        /// <param name="type">オリジナルの型情報</param>
+        /// <returns>CbXXX型の型情報</returns>
         public static Type ConvertCbType(Type type)
         {
             switch (type.Name)
@@ -526,11 +289,15 @@ namespace CapybaraVS.Script
 
             if (type.IsEnum)
             {
+                // 列挙型
+
                 return CbEnumTools.EnumValue(type, name);
             }
 
             if (type == typeof(Action))
             {
+                // Action
+
                 if (CbFunc.IsActionType(type))
                 {
                     return CbFunc.FuncValue(type, typeof(CbVoid), name);
@@ -539,8 +306,12 @@ namespace CapybaraVS.Script
 
             if (type.IsGenericType)
             {
+                // ジェネリック
+
                 if (type.GetGenericTypeDefinition() == typeof(Nullable<>))
                 {
+                    // Null許容型
+
                     if (type.GenericTypeArguments.Length > 1)
                         return null;
 
@@ -577,6 +348,8 @@ namespace CapybaraVS.Script
 
             if (CbStruct.IsStruct(type))
             {
+                // 構造体
+
                 if (!isCancelClass)
                 {
                     var ret = CbStruct.StructValue(type, name);
@@ -590,6 +363,8 @@ namespace CapybaraVS.Script
 
             if (type.IsClass || type.IsInterface)
             {
+                // クラス
+
                 if (!isCancelClass)
                 {
                     var ret = CbClass.ClassValue(type, name);
@@ -602,359 +377,6 @@ namespace CapybaraVS.Script
             }
 
             return null;
-        }
-
-
-
-        //================================================================================================
-        // 以下は、将来的に無くす（型情報をベタに持つ予定）
-        //================================================================================================
-
-        /// <summary>
-        /// 値の型
-        /// </summary>
-        public CbType LiteralType { get; set; } = CbType.none;
-
-        /// <summary>
-        /// 値の種類
-        /// </summary>
-        public CbCType ObjectType { get; set; } = CbCType.none;
-
-        /// <summary>
-        /// 型復元の為の参照値
-        /// </summary>
-        public ICbValue Value = null;
-
-        public CbST(CbType LiteralType, CbCType ObjectType = CbCType.none)
-        {
-            AssetXML = new _AssetXML<CbST>(this);
-            this.LiteralType = LiteralType;
-            this.ObjectType = ObjectType;
-        }
-
-        public CbST(CbST cbTypeInfo)
-        {
-            AssetXML = new _AssetXML<CbST>(this);
-            LiteralType = cbTypeInfo.LiteralType;
-            ObjectType = cbTypeInfo.ObjectType;
-            Value = cbTypeInfo.Value;
-            LiteralTypeForCbTypeFunc = cbTypeInfo.LiteralTypeForCbTypeFunc;
-        }
-
-        public CbST(CbType type, string typeName)
-        {
-            AssetXML = new _AssetXML<CbST>(this);
-            LiteralType = type;
-            LiteralTypeForCbTypeFunc = typeName; // LiteralType の失われた情報を補完する
-        }
-
-        /// <summary>
-        /// 型情報の一致を判定します。
-        /// </summary>
-        /// <param name="target"></param>
-        /// <returns></returns>
-        public bool Eq(CbST target)
-        {
-            if (ObjectType == CbCType.Class && target.ObjectType == CbCType.Class)
-            {
-                if (Value.TypeName == target.Value.TypeName)
-                    return true;
-                return false;
-            }
-            return LiteralType == target.LiteralType && ObjectType == target.ObjectType;
-        }
-
-        /// <summary>
-        /// 変数から CbXXX 型の変数生成用型情報を作成します。
-        /// </summary>
-        /// <param name="value"></param>
-        public CbST(ICbValue value)
-        {
-            AssetXML = new _AssetXML<CbST>(this);
-            if (value is ICbList)
-            {
-                Value = value;
-                LiteralType = Value.CbType.LiteralType;
-                ObjectType = Value.CbType.ObjectType;
-                LiteralTypeForCbTypeFunc = value.CbType.LiteralTypeForCbTypeFunc;
-            }
-            else if (value is ICbEnum)
-            {
-                Value = value;
-                LiteralType = CbType.Object;
-                ObjectType = CbCType.Enum;
-            }
-            else if (value is ICbClass)
-            {
-                Value = value;
-                LiteralType = CbType.Class;
-                ObjectType = CbCType.Class;
-            }
-            else if (value is ICbStruct)
-            {
-                Value = value;
-                LiteralType = CbType.Struct;
-                ObjectType = CbCType.Struct;
-            }
-            else
-            {
-                Value = value;
-                LiteralType = value.CbType.LiteralType;
-                ObjectType = Value.CbType.ObjectType;
-                LiteralTypeForCbTypeFunc = value.CbType.LiteralTypeForCbTypeFunc;
-            }
-        }
-
-        /// <summary>
-        /// 対応する CbType 型を求めます。
-        /// </summary>
-        /// <param name="type"></param>
-        /// <returns></returns>
-        public static CbType ConvertEnumCbType(Type type)
-        {
-            switch (type.Name)
-            {
-                case nameof(Byte): return CbType.Byte;
-                case nameof(SByte): return CbType.Sbyte;
-                case nameof(Int16): return CbType.Short;
-                case nameof(Int32): return CbType.Int;
-                case nameof(Int64): return CbType.Long;
-                case nameof(UInt16): return CbType.UShort;
-                case nameof(UInt32): return CbType.UInt;
-                case nameof(UInt64): return CbType.ULong;
-                case nameof(Char): return CbType.Char;
-                case nameof(Single): return CbType.Float;
-                case nameof(Double): return CbType.Double;
-                case nameof(Decimal): return CbType.Decimal;
-                case nameof(Boolean): return CbType.Bool;
-                case nameof(String): return CbType.String;
-                case nameof(Object): return CbType.Object;
-                default:
-                    break;
-            }
-
-            if (type.IsEnum)
-            {
-                return CbType.Object;
-            }
-
-            if (type.IsClass)
-            {
-                return CbType.Object;
-            }
-
-            if (CbStruct.IsStruct(type))
-            {
-                return CbType.Object;
-            }
-
-            Debug.Assert(false);
-            return CbType.none;
-        }
-
-        /// <summary>
-        /// CbXXX 型の変数生成用型情報からオリジナルの型を求めます。
-        /// </summary>
-        /// <param name="cbTypeInfo">CbXXX 型の変数生成用型情報</param>
-        /// <returns>オリジナルの型</returns>
-        public static Type GetOriginalType(CbST cbTypeInfo)
-        {
-            switch (cbTypeInfo.LiteralType)
-            {
-                case CbType.Int: return typeof(int);
-                case CbType.String: return typeof(string);
-                case CbType.Text: return typeof(string);
-                case CbType.Double: return typeof(double);
-                case CbType.Byte: return typeof(byte);
-                case CbType.Sbyte: return typeof(sbyte);
-                case CbType.Long: return typeof(long);
-                case CbType.Short: return typeof(short);
-                case CbType.UShort: return typeof(ushort);
-                case CbType.UInt: return typeof(uint);
-                case CbType.ULong: return typeof(ulong);
-                case CbType.Char: return typeof(char);
-                case CbType.Float: return typeof(float);
-                case CbType.Decimal: return typeof(decimal);
-                case CbType.Bool: return typeof(bool);
-                case CbType.Object: return typeof(object);
-                case CbType.Func: return CbST.GetTypeEx(cbTypeInfo.LiteralTypeForCbTypeFunc);
-            }
-            
-            if (cbTypeInfo.Value is ICbValue cbVSValue)
-            {
-                return cbVSValue.OriginalType;
-            }
-
-            return null;
-        }
-
-        /// <summary>
-        /// ObjectType を無効にしたCbXXX 型の変数作成用型情報を参照します。
-        /// </summary>
-        /// <returns></returns>
-        public CbST GetObjectTypeNone()
-        {
-            var newInfo = new CbST(this);
-            newInfo.ObjectType = CbCType.none;
-            return newInfo;
-        }
-
-        /// <summary>
-        /// 対応する CbXXX 型の変数を作成します。
-        /// </summary>
-        /// <param name="cbTypeInfo">CbXXX 型の変数作成用型情報</param>
-        /// <param name="name">変数名</param>
-        /// <param name="forcedLiteral">true なら Func型の場合でも変数を返します。</param>
-        /// <returns>CbXXX 型の変数</returns>
-        public static ICbValue Create(
-            CbST cbTypeInfo, 
-            string name = ""
-            )
-        {
-            if (cbTypeInfo.LiteralType == CbType.none)
-                return null;
-
-            if (cbTypeInfo.LiteralType == CbType.Func)
-            {
-                // Func タイプは、そのままの値が Value に入っている
-
-                return CbCreate(CbST.GetTypeEx(cbTypeInfo.LiteralTypeForCbTypeFunc), name);
-            }
-
-            if (cbTypeInfo.ObjectType == CbCType.none)
-            {
-                return Create(cbTypeInfo.LiteralType, name, cbTypeInfo.Value);
-            }
-            else if (cbTypeInfo.ObjectType == CbCType.Class)
-            {
-                return cbTypeInfo.ClassValue(name);
-            }
-            else if (cbTypeInfo.ObjectType == CbCType.Struct)
-            {
-                return cbTypeInfo.StructValue(name);
-            }
-            else if (cbTypeInfo.ObjectType == CbCType.Enum)
-            {
-                return cbTypeInfo.EnumValue(name);
-            }
-            else if (cbTypeInfo.ObjectType == CbCType.List)
-            {
-                return CbList.Create(GetOriginalType(cbTypeInfo), name);
-            }
-            else if (cbTypeInfo.ObjectType == CbCType.Func)
-            {
-                if (cbTypeInfo.Value != null)
-                {
-                    // 完全な型の変数を持っている
-
-                    return cbTypeInfo.Value;
-                }
-
-                // 以下、システム実装ファンクションノードのための処理
-
-                switch (cbTypeInfo.LiteralType)
-                {
-                    case CbType.Int: return CbFunc<Func<object, int>, CbInt>.Create(name);
-                    case CbType.String: return CbFunc<Func<object, string>, CbString>.Create(name);
-                    case CbType.Text: return CbFunc<Func<object, string>, CbText>.Create(name);
-                    case CbType.Double: return CbFunc<Func<object, double>, CbDouble>.Create(name);
-                    case CbType.Byte: return CbFunc<Func<object, byte>, CbByte>.Create(name);
-                    case CbType.Sbyte: return CbFunc<Func<object, sbyte>, CbSByte>.Create(name);
-                    case CbType.Long: return CbFunc<Func<object, long>, CbLong>.Create(name);
-                    case CbType.Short: return CbFunc<Func<object, short>, CbShort>.Create(name);
-                    case CbType.UShort: return CbFunc<Func<object, ushort>, CbUShort>.Create(name);
-                    case CbType.UInt: return CbFunc<Func<object, uint>, CbUInt>.Create(name);
-                    case CbType.ULong: return CbFunc<Func<object, ulong>, CbULong>.Create(name);
-                    case CbType.Char: return CbFunc<Func<object, char>, CbChar>.Create(name);
-                    case CbType.Float: return CbFunc<Func<object, float>, CbFloat>.Create(name);
-                    case CbType.Decimal: return CbFunc<Func<object, decimal>, CbDecimal>.Create(name);
-                    case CbType.Bool: return CbFunc<Func<object, bool>, CbBool>.Create(name);
-                    case CbType.Object: return CbFunc<Func<object, object>, CbObject>.Create(name);
-                    case CbType.Class:
-                        if (cbTypeInfo.Value is ICbClass cbClass)
-                        {
-                            Type openedCbClass = typeof(CbClass<>); //CapybaraVS.Script.CbClass`1
-                            Type classType = CbST.GetTypeEx(cbClass.ItemName);
-                            Type cbClassType = openedCbClass.MakeGenericType(classType);
-
-                            if (classType == typeof(CbVoid))
-                            {
-                                Type cbFuncType2 =
-                                    typeof(CbFunc<,>).MakeGenericType(
-                                        typeof(Func<>).MakeGenericType(new Type[] { typeof(Func<object>) }),
-                                        cbClassType
-                                        );
-                                return cbFuncType2.InvokeMember("Create", BindingFlags.InvokeMethod,
-                                            null, null, new object[] { name }) as ICbValue;
-                            }
-
-                            Type cbFuncType =
-                                typeof(CbFunc<,>).MakeGenericType(
-                                    typeof(Func<,>).MakeGenericType(new Type[] { typeof(Func<object>), cbClassType }),
-                                    cbClassType
-                                    );
-                            return cbFuncType.InvokeMember("Create", BindingFlags.InvokeMethod,
-                                        null, null, new object[] { name }) as ICbValue;
-                        }
-                        break;
-                    default:
-                        break;
-                }
-            }
-            return null;
-        }
-
-        /// <summary>
-        /// 対応する CbXXX 型の変数を返します。
-        /// CbType.Class の場合は、init を参考に復元します。
-        /// </summary>
-        /// <param name="cbType">型の種類</param>
-        /// <param name="name">変数名</param>
-        /// <param name="init">CbType.Class 用の参考変数</param>
-        /// <returns>CbXXX 型の変数</returns>
-        private static ICbValue Create(CbType cbType, string name = "", ICbValue init = null)
-        {
-            switch (cbType)
-            {
-                case CbType.Int: return CbInt.Create(name);
-                case CbType.String: return CbString.Create("", name);
-                case CbType.Text: return CbText.Create("", name);
-                case CbType.Double: return CbDouble.Create(name);
-                case CbType.Byte: return CbByte.Create(name);
-                case CbType.Sbyte: return CbSByte.Create(name);
-                case CbType.Long: return CbLong.Create(name);
-                case CbType.Short: return CbShort.Create(name);
-                case CbType.UShort: return CbUShort.Create(name);
-                case CbType.UInt: return CbUInt.Create(name);
-                case CbType.ULong: return CbULong.Create(name);
-                case CbType.Char: return CbChar.Create(name);
-                case CbType.Float: return CbFloat.Create(name);
-                case CbType.Decimal: return CbDecimal.Create(name);
-                case CbType.Bool: return CbBool.Create(name);
-                case CbType.Object: return CbObject.Create(name);
-                case CbType.Class: return CbClass.ClassValue(init, name);
-                case CbType.Struct: return CbStruct.StructValue(init, name);
-                default:
-                    break;
-            }
-            return null;
-        }
-
-        /// <summary>
-        /// 対応する CbXXX 型の変数生成用型情報を返します。
-        /// </summary>
-        /// <param name="cbTypeInfo">CbXXX 型の変数作成用型情報</param>
-        /// <param name="name">変数名</param>
-        /// <param name="forcedLiteral">true なら Func型の場合でも変数を返します。</param>
-        /// <returns>対応する CbXXX 型の変数生成用型情報</returns>
-        public static Func<ICbValue> CreateTF(
-            CbST cbTypeInfo, 
-            string name = ""
-            )
-        {
-            if (cbTypeInfo.LiteralType == CbType.none)
-                return null;
-            return () => Create(cbTypeInfo, name);
         }
     }
 
@@ -982,10 +404,6 @@ namespace CapybaraVS.Script
     /// </summary>
     public interface ICbValue : ICbVSValueBase
     {
-        /// <summary>
-        /// CbST型情報を参照します。
-        /// </summary>
-        CbST CbType { get; }
         /// <summary>
         /// 変数生成用型情報
         /// </summary>
@@ -1138,21 +556,7 @@ namespace CapybaraVS.Script
         protected const string ERROR_STR = "[ERROR]";
         protected const string NULL_STR = "<null>";
 
-        /// <summary>
-        /// CbST型情報を参照します。
-        /// </summary>
-        public virtual CbST CbType
-        {
-            get
-            {
-                return new CbST(
-                    Script.CbType.Func,
-                    typeof(T).FullName   // 型名を持っていないとスクリプト読み込み時に再現できない
-                    );
-            }
-        }
-
-        public virtual Func<ICbValue> NodeTF => () => CbST.Create(CbType);
+        public virtual Func<ICbValue> NodeTF => () => CbST.CbCreate(OriginalType);// CbST.Create(CbType);
 
         protected T _value;
         
@@ -1486,8 +890,6 @@ namespace CapybaraVS.Script
     /// </summary>
     public class ParamNameOnly : ICbValue
     {
-        public CbST CbType { get => throw new NotImplementedException(); }
-
         public Func<ICbValue> NodeTF { get => throw new NotImplementedException(); }
 
         public virtual string TypeName => "";

@@ -286,7 +286,7 @@ namespace CapybaraVS.Script
 
         public string ValueType { get; } = CbSTUtils.FREE_TYPE_STR;
 
-        public CbType[] DeleteSelectItems => CbScript.BaseDeleteCbTypes2;
+        public Func<Type, bool> IsAccept => null;
     }
 
     //-----------------------------------------------------------------
@@ -298,7 +298,7 @@ namespace CapybaraVS.Script
 
         public string ValueType { get; } = CbSTUtils.FREE_LIST_TYPE_STR;
 
-        public CbType[] DeleteSelectItems => CbScript.BaseDeleteCbTypes;
+        public Func<Type, bool> IsAccept => null;
     }
 
     //-----------------------------------------------------------------
@@ -312,7 +312,7 @@ namespace CapybaraVS.Script
 
         public string ValueType { get; } = CbSTUtils.FREE_TYPE_STR;
 
-        public CbType[] DeleteSelectItems => CbScript.MathDeleteNotCbAddableTypes;
+        public Func<Type, bool> IsAccept => (t) => t.IsValueType && !t.IsEnum && t.IsPrimitive;
 
         public bool ImplAsset(MultiRootConnector col, bool notheradMode = false)
         {
@@ -360,7 +360,7 @@ namespace CapybaraVS.Script
 
         public string ValueType { get; } = CbSTUtils.FREE_TYPE_STR;
 
-        public CbType[] DeleteSelectItems => CbScript.MathDeleteNotCbAddableTypes;
+        public Func<Type, bool> IsAccept => (t) => CbScript.IsValueType(t);
 
         public bool ImplAsset(MultiRootConnector col, bool notheradMode = false)
         {
@@ -425,7 +425,7 @@ namespace CapybaraVS.Script
 
         public string ValueType { get; } = CbSTUtils.FREE_TYPE_STR;
 
-        public CbType[] DeleteSelectItems => CbScript.BaseDeleteCbTypes;
+        public Func<Type, bool> IsAccept => null;
 
         public bool ImplAsset(MultiRootConnector col, bool notheradMode = false)
         {
@@ -483,7 +483,7 @@ namespace CapybaraVS.Script
 
         public string ValueType { get; } = CbSTUtils.FREE_TYPE_STR;
 
-        public CbType[] DeleteSelectItems => CbScript.MathDeleteNotCbCalcableTypes;
+        public Func<Type, bool> IsAccept => (t) => CbScript.IsValueType(t);
 
         public bool ImplAsset(MultiRootConnector col, bool notheradMode = false)
         {
@@ -528,7 +528,7 @@ namespace CapybaraVS.Script
 
         public string ValueType { get; } = CbSTUtils.FREE_TYPE_STR;
 
-        public CbType[] DeleteSelectItems => CbScript.MathDeleteNotCbCalcableTypes;
+        public Func<Type, bool> IsAccept => (t) => CbScript.IsValueType(t);
 
         public bool ImplAsset(MultiRootConnector col, bool notheradMode = false)
         {
@@ -573,7 +573,7 @@ namespace CapybaraVS.Script
 
         public string ValueType { get; } = CbSTUtils.FREE_TYPE_STR;
 
-        public CbType[] DeleteSelectItems => CbScript.MathDeleteNotCbCalcableTypes;
+        public Func<Type, bool> IsAccept => (t) => CbScript.IsValueType(t);
 
         public bool ImplAsset(MultiRootConnector col, bool notheradMode = false)
         {
@@ -619,7 +619,7 @@ namespace CapybaraVS.Script
 
         public string ValueType { get; } = CbSTUtils.FREE_TYPE_STR;
 
-        public CbType[] DeleteSelectItems => CbScript.BaseDeleteCbTypes;
+        public Func<Type, bool> IsAccept => null;
 
         public bool ImplAsset(MultiRootConnector col, bool notheradMode = false)
         {
@@ -666,7 +666,7 @@ namespace CapybaraVS.Script
 
         public string ValueType { get; } = CbSTUtils.FREE_TYPE_STR;
 
-        public CbType[] DeleteSelectItems => CbScript.BaseDeleteCbTypes;
+        public Func<Type, bool> IsAccept => null;
 
         public bool ImplAsset(MultiRootConnector col, bool notheradMode = false)
         {
@@ -713,7 +713,7 @@ namespace CapybaraVS.Script
 
         public string ValueType { get; } = CbSTUtils.FREE_TYPE_STR;
 
-        public CbType[] DeleteSelectItems => CbScript.BaseDeleteCbTypes;
+        public Func<Type, bool> IsAccept => null;
 
         public bool ImplAsset(MultiRootConnector col, bool notheradMode = false)
         {
@@ -760,7 +760,7 @@ namespace CapybaraVS.Script
 
         public string ValueType { get; } = CbSTUtils.FREE_TYPE_STR;
 
-        public CbType[] DeleteSelectItems => CbScript.BaseDeleteCbTypes;
+        public Func<Type, bool> IsAccept => null;
 
         public bool ImplAsset(MultiRootConnector col, bool notheradMode = false)
         {
@@ -807,7 +807,7 @@ namespace CapybaraVS.Script
 
         public string ValueType { get; } = CbSTUtils.FREE_TYPE_STR;
 
-        public CbType[] DeleteSelectItems => CbScript.BaseDeleteCbTypes;
+        public Func<Type, bool> IsAccept => null;
 
         public bool ImplAsset(MultiRootConnector col, bool notheradMode = false)
         {
@@ -854,7 +854,7 @@ namespace CapybaraVS.Script
 
         public string ValueType { get; } = typeof(bool).FullName;
 
-        public CbType[] DeleteSelectItems => null;
+        public Func<Type, bool> IsAccept => null;
 
         public bool ImplAsset(MultiRootConnector col, bool notheradMode = false)
         {
@@ -905,7 +905,7 @@ namespace CapybaraVS.Script
 
         public string ValueType { get; } = typeof(bool).FullName;
 
-        public CbType[] DeleteSelectItems => null;
+        public Func<Type, bool> IsAccept => null;
 
         public bool ImplAsset(MultiRootConnector col, bool notheradMode = false)
         {
@@ -956,7 +956,7 @@ namespace CapybaraVS.Script
 
         public string ValueType { get; } = typeof(bool).FullName;
 
-        public CbType[] DeleteSelectItems => null;
+        public Func<Type, bool> IsAccept => null;
 
         public bool ImplAsset(MultiRootConnector col, bool notheradMode = false)
         {
@@ -1000,7 +1000,7 @@ namespace CapybaraVS.Script
 
         public string ValueType { get; } = CbSTUtils.FREE_TYPE_STR;
 
-        public CbType[] DeleteSelectItems => CbScript.MathDeleteNotCbCalcableTypes;
+        public Func<Type, bool> IsAccept => (t) => CbScript.IsValueType(t);
 
         public bool ImplAsset(MultiRootConnector col, bool notheradMode = false)
         {
@@ -1051,7 +1051,7 @@ namespace CapybaraVS.Script
 
         public string ValueType { get; } = CbSTUtils.FREE_TYPE_STR;
 
-        public CbType[] DeleteSelectItems => CbScript.MathDeleteNotCbCalcableTypes;
+        public Func<Type, bool> IsAccept => (t) => CbScript.IsValueType(t);
 
         public bool ImplAsset(MultiRootConnector col, bool notheradMode = false)
         {
@@ -1101,7 +1101,7 @@ namespace CapybaraVS.Script
 
         public string ValueType { get; } = CbSTUtils.FREE_TYPE_STR;
 
-        public CbType[] DeleteSelectItems => CbScript.MathDeleteNotCbCalcableTypes;
+        public Func<Type, bool> IsAccept => (t) => CbScript.IsValueType(t);
 
         public bool ImplAsset(MultiRootConnector col, bool notheradMode = false)
         {
@@ -1152,7 +1152,7 @@ namespace CapybaraVS.Script
 
         public string ValueType { get; } = typeof(string).FullName;
 
-        public CbType[] DeleteSelectItems => null;
+        public Func<Type, bool> IsAccept => null;
 
         public bool ImplAsset(MultiRootConnector col, bool notheradMode = false)
         {
@@ -1212,7 +1212,7 @@ namespace CapybaraVS.Script
 
         public string ValueType { get; } = CbSTUtils.FREE_TYPE_STR;
 
-        public CbType[] DeleteSelectItems => CbScript.BaseDeleteCbTypes;
+        public Func<Type, bool> IsAccept => null;
 
         public bool ImplAsset(MultiRootConnector col, bool notheradMode = false)
         {
@@ -1267,7 +1267,7 @@ namespace CapybaraVS.Script
 
         public string ValueType { get; } = CbSTUtils.DUMMY_TYPE_STR;
 
-        public CbType[] DeleteSelectItems => CbScript.BaseDeleteCbTypes;
+        public Func<Type, bool> IsAccept => null;
 
         public bool ImplAsset(MultiRootConnector col, bool notheradMode = false)
         {
@@ -1321,7 +1321,7 @@ namespace CapybaraVS.Script
 
         public string ValueType { get; } = CbSTUtils.FREE_TYPE_STR;
 
-        public CbType[] DeleteSelectItems => CbScript.BaseDeleteCbTypes;
+        public Func<Type, bool> IsAccept => null;
 
         public bool ImplAsset(MultiRootConnector col, bool notheradMode = false)
         {
@@ -1374,7 +1374,7 @@ namespace CapybaraVS.Script
 
         public string ValueType { get; } = CbSTUtils.FREE_TYPE_STR;
 
-        public CbType[] DeleteSelectItems => CbScript.BaseDeleteCbTypes;
+        public Func<Type, bool> IsAccept => null;
 
         public bool ImplAsset(MultiRootConnector col, bool notheradMode = false)
         {
@@ -1422,7 +1422,7 @@ namespace CapybaraVS.Script
 
         public string ValueType { get; } = CbSTUtils.FREE_TYPE_STR;
 
-        public CbType[] DeleteSelectItems => CbScript.BaseDeleteCbTypes;
+        public Func<Type, bool> IsAccept => null;
 
         public bool ImplAsset(MultiRootConnector col, bool notheradMode = false)
         {
@@ -1481,7 +1481,7 @@ namespace CapybaraVS.Script
 
         public string ValueType { get; } = CbSTUtils.DUMMY_TYPE_STR;
 
-        public CbType[] DeleteSelectItems => CbScript.BaseDeleteCbTypes;
+        public Func<Type, bool> IsAccept => null;
 
         public bool ImplAsset(MultiRootConnector col, bool notheradMode = false)
         {
@@ -1528,7 +1528,7 @@ namespace CapybaraVS.Script
 
         public string ValueType { get; } = CbSTUtils.FREE_TYPE_STR;
 
-        public CbType[] DeleteSelectItems => CbScript.BaseDeleteCbTypes;
+        public Func<Type, bool> IsAccept => null;
 
         public bool ImplAsset(MultiRootConnector col, bool notheradMode = false)
         {
@@ -1586,7 +1586,7 @@ namespace CapybaraVS.Script
 
         public string ValueType { get; } = CbSTUtils.DUMMY_TYPE_STR;
 
-        public CbType[] DeleteSelectItems => CbScript.MathDeleteNotCbCalcableTypes;
+        public Func<Type, bool> IsAccept => (t) => CbScript.IsValueType(t);
 
         public bool ImplAsset(MultiRootConnector col, bool notheradMode = false)
         {
@@ -1693,7 +1693,7 @@ namespace CapybaraVS.Script
 
         public string ValueType { get; } = CbSTUtils.FREE_TYPE_STR;
 
-        public CbType[] DeleteSelectItems => CbScript.BaseDeleteCbTypes;
+        public Func<Type, bool> IsAccept => (t) => true;    // 新規作成を意味する
     }
 
     //-----------------------------------------------------------------
@@ -1705,7 +1705,7 @@ namespace CapybaraVS.Script
 
         public string ValueType { get; } = CbSTUtils.FREE_LIST_TYPE_STR;
 
-        public CbType[] DeleteSelectItems => CbScript.BaseDeleteCbTypes;
+        public Func<Type, bool> IsAccept => (t) => true;    // 新規作成を意味する
     }
 
     //-----------------------------------------------------------------
@@ -1717,7 +1717,7 @@ namespace CapybaraVS.Script
 
         public string MenuTitle => $"Create Variable<{CbSTUtils.FUNC_STR}>";
 
-        public CbType[] DeleteSelectItems => CbScript.BaseDeleteCbTypes;
+        public Func<Type, bool> IsAccept => (t) => true;    // 新規作成を意味する
     }
 
     //-----------------------------------------------------------------
@@ -1729,7 +1729,7 @@ namespace CapybaraVS.Script
 
         public string ValueType { get; } = CbSTUtils.FREE_TYPE_STR;
 
-        public CbType[] DeleteSelectItems => null;
+        public Func<Type, bool> IsAccept => null;    // 選択を意味する
     }
 
     //-----------------------------------------------------------------
@@ -1743,7 +1743,7 @@ namespace CapybaraVS.Script
 
         public string ValueType { get; } = CbSTUtils.FREE_FUNC_TYPE_STR;
 
-        public CbType[] DeleteSelectItems => null;
+        public Func<Type, bool> IsAccept => null;    // 選択を意味する
 
         public bool ImplAsset(MultiRootConnector col, bool notheradMode = false)
         {
@@ -1807,7 +1807,7 @@ namespace CapybaraVS.Script
 
         public string ValueType { get; } = CbSTUtils.FREE_TYPE_STR;
 
-        public CbType[] DeleteSelectItems => CbScript.BaseDeleteCbTypes;
+        public Func<Type, bool> IsAccept => null;
 
         public bool ImplAsset(MultiRootConnector col, bool notheradMode = false)
         {
@@ -1858,7 +1858,7 @@ namespace CapybaraVS.Script
 
         public string ValueType { get; } = CbSTUtils.FREE_TYPE_STR;
 
-        public CbType[] DeleteSelectItems => CbScript.BaseDeleteCbTypes;
+        public Func<Type, bool> IsAccept => null;
 
         public bool ImplAsset(MultiRootConnector col, bool notheradMode = false)
         {
@@ -1915,7 +1915,7 @@ namespace CapybaraVS.Script
 
         public string ValueType { get; } = CbSTUtils.FREE_TYPE_STR;
 
-        public CbType[] DeleteSelectItems => CbScript.BaseDeleteCbTypes;
+        public Func<Type, bool> IsAccept => null;
 
         public bool ImplAsset(MultiRootConnector col, bool notheradMode = false)
         {
@@ -1973,7 +1973,7 @@ namespace CapybaraVS.Script
 
         public string ValueType { get; } = CbSTUtils.FREE_TYPE_STR;
 
-        public CbType[] DeleteSelectItems => CbScript.ObjectDeleteCbTypes;
+        public Func<Type, bool> IsAccept => (t) => CbScript.IsNotObject(t);
 
         public bool ImplAsset(MultiRootConnector col, bool notheradMode = false)
         {
@@ -2022,7 +2022,7 @@ namespace CapybaraVS.Script
 
         public string ValueType { get; } = CbSTUtils.FREE_TYPE_STR;
 
-        public CbType[] DeleteSelectItems => CbScript.MathDeleteNotCbSignedNumberTypes;
+        public Func<Type, bool> IsAccept => (t) => CbScript.IsSigned(t);
 
         public bool ImplAsset(MultiRootConnector col, bool notheradMode = false)
         {
@@ -2066,7 +2066,7 @@ namespace CapybaraVS.Script
 
         public string ValueType { get; } = CbSTUtils.FREE_TYPE_STR;
 
-        public CbType[] DeleteSelectItems => null;
+        public Func<Type, bool> IsAccept => null;
 
         public bool ImplAsset(MultiRootConnector col, bool notheradMode = false)
         {
@@ -2120,7 +2120,7 @@ namespace CapybaraVS.Script
 
         public string ValueType { get; } = CbSTUtils.FREE_TYPE_STR;
 
-        public CbType[] DeleteSelectItems => null;
+        public Func<Type, bool> IsAccept => null;
 
         public bool ImplAsset(MultiRootConnector col, bool notheradMode = false)
         {
@@ -2178,7 +2178,7 @@ namespace CapybaraVS.Script
 
         public string ValueType { get; } = CbSTUtils.FREE_TYPE_STR;
 
-        public CbType[] DeleteSelectItems => null;
+        public Func<Type, bool> IsAccept => null;
 
         public bool ImplAsset(MultiRootConnector col, bool notheradMode = false)
         {
@@ -2232,7 +2232,7 @@ namespace CapybaraVS.Script
 
         public string ValueType { get; } = CbSTUtils.FREE_TYPE_STR;
 
-        public CbType[] DeleteSelectItems => CbScript.BaseDeleteCbTypes;
+        public Func<Type, bool> IsAccept => null;
 
         public bool ImplAsset(MultiRootConnector col, bool notheradMode = false)
         {
@@ -2276,7 +2276,7 @@ namespace CapybaraVS.Script
 
         public string ValueType { get; } = CbSTUtils.FREE_TYPE_STR;
 
-        public CbType[] DeleteSelectItems => CbScript.BaseDeleteCbTypes;
+        public Func<Type, bool> IsAccept => null;
 
         public bool ImplAsset(MultiRootConnector col, bool notheradMode = false)
         {
@@ -2321,7 +2321,7 @@ namespace CapybaraVS.Script
 
         public string ValueType { get; } = CbSTUtils.FREE_TYPE_STR;
 
-        public CbType[] DeleteSelectItems => CbScript.BaseDeleteCbTypes;
+        public Func<Type, bool> IsAccept => null;
 
         public bool ImplAsset(MultiRootConnector col, bool notheradMode = false)
         {
@@ -2367,7 +2367,7 @@ namespace CapybaraVS.Script
 
         public string ValueType { get; } = CbSTUtils.FREE_TYPE_STR;
 
-        public CbType[] DeleteSelectItems => CbScript.BaseDeleteCbTypes;
+        public Func<Type, bool> IsAccept => null;
 
         public bool ImplAsset(MultiRootConnector col, bool notheradMode = false)
         {
@@ -2412,7 +2412,7 @@ namespace CapybaraVS.Script
 
         public string ValueType { get; } = CbSTUtils.FREE_TYPE_STR;
 
-        public CbType[] DeleteSelectItems => CbScript.BaseDeleteCbTypes;
+        public Func<Type, bool> IsAccept => null;
 
         public bool ImplAsset(MultiRootConnector col, bool notheradMode = false)
         {
@@ -2459,7 +2459,7 @@ namespace CapybaraVS.Script
 
         public string ValueType { get; } = CbSTUtils.FREE_TYPE_STR;
 
-        public CbType[] DeleteSelectItems => CbScript.BaseDeleteCbTypes;
+        public Func<Type, bool> IsAccept => null;
 
         public bool ImplAsset(MultiRootConnector col, bool notheradMode = false)
         {
@@ -2508,7 +2508,7 @@ namespace CapybaraVS.Script
 
         public string ValueType { get; } = typeof(double).FullName;
 
-        public CbType[] DeleteSelectItems => null;
+        public Func<Type, bool> IsAccept => null;
 
         public bool ImplAsset(MultiRootConnector col, bool notheradMode = false)
         {
@@ -2556,7 +2556,7 @@ namespace CapybaraVS.Script
 
         public string ValueType { get; } = typeof(int).FullName;
 
-        public CbType[] DeleteSelectItems => null;
+        public Func<Type, bool> IsAccept => null;
 
         public bool ImplAsset(MultiRootConnector col, bool notheradMode = false)
         {

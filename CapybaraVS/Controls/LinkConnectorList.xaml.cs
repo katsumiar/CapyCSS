@@ -270,7 +270,7 @@ namespace CapybaraVS.Controls
 
                 bool isEmpty = ListData.Count == 0;
 
-                if (ListData.Count > 0 && list.Count > 0 && ListData[0].ValueData.CbType.Eq(list[0].CbType))
+                if (ListData.Count > 0 && list.Count > 0 && ListData[0].ValueData.OriginalType == list[0].OriginalType)
                 {
                     // 差分のコピー
 

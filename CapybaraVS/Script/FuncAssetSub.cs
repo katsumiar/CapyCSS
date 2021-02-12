@@ -53,15 +53,13 @@ namespace CapybaraVS.Script
         /// <summary>
         /// 型名
         /// </summary>
-        //CbST TargetType { get; }
-
         string ValueType { get; }
 
         /// <summary>
-        /// 型選択リストの除外項目
+        /// 型選択リストの受け入れ項目
         /// ※必要がないなら null にする
         /// </summary>
-        CbType[] DeleteSelectItems { get; }
+        Func<Type, bool> IsAccept { get; }
     }
 
     /// <summary>
@@ -78,33 +76,13 @@ namespace CapybaraVS.Script
         /// <summary>
         /// 型名
         /// </summary>
-        //CbST TargetType { get; }
-
-        string ValueType { get; }
-    }
-
-    /// <summary>
-    /// クラス変数対応型ファンクションアセット
-    /// </summary>
-    public interface IFuncCreateClassVariableAssetDef : IFuncAssetDef
-    {
-        /// <summary>
-        /// アセットツリー上の名前
-        /// </summary>
-        string MenuTitle { get; }
-
-        /// <summary>
-        /// 型名
-        /// </summary>
-        //CbST TargetType { get; }
-
         string ValueType { get; }
 
         /// <summary>
-        /// 型選択リストの除外項目
+        /// 型選択リストの受け入れ項目
         /// ※必要がないなら null にする
         /// </summary>
-        CbType[] DeleteSelectItems { get; }
+        Func<Type, bool> IsAccept { get; }
     }
 
     /// <summary>
@@ -120,15 +98,13 @@ namespace CapybaraVS.Script
         /// <summary>
         /// 型名
         /// </summary>
-        //CbST TargetType { get; }
-
         string ValueType { get; }
 
         /// <summary>
-        /// 型選択リストの除外項目
+        /// 型選択リストの受け入れ項目
         /// ※必要がないなら null にする
         /// </summary>
-        CbType[] DeleteSelectItems { get; }
+        Func<Type, bool> IsAccept { get; }
     }
 
     /// <summary>
@@ -149,15 +125,13 @@ namespace CapybaraVS.Script
         /// <summary>
         /// 型名
         /// </summary>
-        //CbST TargetType { get; }
-
         string ValueType { get; }
 
         /// <summary>
-        /// 型選択リストの除外項目
+        /// 型選択リストの受け入れ項目
         /// ※必要がないなら null にする
         /// </summary>
-        CbType[] DeleteSelectItems { get; }
+        Func<Type, bool> IsAccept { get; }
     }
 
     public class FuncAssetSub

@@ -5,12 +5,12 @@
     <EnableInfo>false</EnableInfo>
     <CanvasScale>1</CanvasScale>
     <CanvasRenderTransform>
-      <M11>0.7835261664684587</M11>
+      <M11>1.371217331499312</M11>
       <M12>0</M12>
       <M21>0</M21>
-      <M22>0.7835261664684587</M22>
-      <OffsetX>-243.90250635243837</OffsetX>
-      <OffsetY>93.36849256646012</OffsetY>
+      <M22>1.371217331499312</M22>
+      <OffsetX>-312.63755158184296</OffsetX>
+      <OffsetY>163.64695376465582</OffsetY>
     </CanvasRenderTransform>
   </WorkCanvas>
   <ImportClassModule />
@@ -176,7 +176,7 @@
             <Caption>
               <LabelString>GetValue</LabelString>
             </Caption>
-            <Value>DEF</Value>
+            <Value>ABC</Value>
             <ForcedChecked>false</ForcedChecked>
             <Connector>
               <LinkList>
@@ -199,7 +199,7 @@
                 </LinkConnectorList>
               </LinkConnector>
               <LinkConnector PointId="67">
-                <Value>1</Value>
+                <Value>0</Value>
                 <CastConnect>false</CastConnect>
                 <ParamInfo>
                   <ParamName>key</ParamName>

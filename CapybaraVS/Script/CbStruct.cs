@@ -107,15 +107,6 @@ namespace CapybaraVS.Script
     {
         public override Type MyType => typeof(CbStruct<T>);
 
-        public override CbST CbType
-        {
-            get
-            {
-                CbST ret = new CbST(NodeTF());
-                return ret;
-            }
-        }
-
         public string ItemName => typeof(T).FullName;
 
         public static Type GetItemType() { return typeof(T); }

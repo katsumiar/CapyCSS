@@ -870,6 +870,7 @@ namespace CapybaraVS.Controls.BaseControls
             {
                 return;
             }
+            CbST.TypeDictionary(type.FullName, type);
             TreeViewCommand.AddGroupedMenu(
                 typeWindow_import,
                 group + "." + CbSTUtils.MakeGroupedTypeName(type),
@@ -921,6 +922,11 @@ namespace CapybaraVS.Controls.BaseControls
             }
 
             Type type = CbST.GetTypeEx(SelectType);
+            if (type is null)
+            {
+                CommandCanvasControl.MainLog.OutLine("System", nameof(CommandCanvas) + $": {SelectType} was an unsupportable type.");
+                return null;
+            }
 
             string name = type.Name.Split('`')[0];
             if (CbSTUtils.CbTypeNameList.ContainsKey(name))
@@ -930,11 +936,6 @@ namespace CapybaraVS.Controls.BaseControls
             else
             {
                 TypeMenuWindow.Message += name;
-            }
-
-            if (type is null)
-            {
-                return null;
             }
             return RequestGenericType(type);
         }

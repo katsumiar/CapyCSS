@@ -27,7 +27,7 @@
           <AttachVariableIds />
           <AttachVariableId>0</AttachVariableId>
           <AssetValueType>System.Double</AssetValueType>
-          <RootConnector PointId="269">
+          <RootConnector PointId="707">
             <Caption>
               <LabelString>OpenImage</LabelString>
             </Caption>
@@ -37,7 +37,7 @@
               <LinkList />
             </Connector>
             <Arguments>
-              <LinkConnector PointId="270">
+              <LinkConnector PointId="708">
                 <Value />
                 <CastConnect>false</CastConnect>
                 <ParamInfo>
@@ -63,7 +63,7 @@
           <AttachVariableIds />
           <AttachVariableId>0</AttachVariableId>
           <AssetValueType>System.Double</AssetValueType>
-          <RootConnector PointId="275">
+          <RootConnector PointId="713">
             <Caption>
               <LabelString>OutImageWindow</LabelString>
             </Caption>
@@ -71,11 +71,11 @@
             <ForcedChecked>false</ForcedChecked>
             <Connector>
               <LinkList>
-                <PointID>283</PointID>
+                <PointID>722</PointID>
               </LinkList>
             </Connector>
             <Arguments>
-              <LinkConnector PointId="276">
+              <LinkConnector PointId="714">
                 <Value />
                 <CastConnect>false</CastConnect>
                 <ParamInfo>
@@ -89,7 +89,7 @@
                   <List />
                 </LinkConnectorList>
               </LinkConnector>
-              <LinkConnector PointId="277">
+              <LinkConnector PointId="715">
                 <Value>[BitmapSource]&lt;null&gt;</Value>
                 <CastConnect>false</CastConnect>
                 <ParamInfo>
@@ -103,7 +103,7 @@
                   <List />
                 </LinkConnectorList>
               </LinkConnector>
-              <LinkConnector PointId="274">
+              <LinkConnector PointId="716">
                 <Value>[MediaOption]&lt;null&gt;</Value>
                 <CastConnect>false</CastConnect>
                 <ParamInfo>
@@ -129,7 +129,7 @@
           <AttachVariableIds />
           <AttachVariableId>0</AttachVariableId>
           <AssetValueType>System.Object</AssetValueType>
-          <RootConnector PointId="280">
+          <RootConnector PointId="719">
             <Caption>
               <LabelString>Sequence</LabelString>
             </Caption>
@@ -139,7 +139,7 @@
               <LinkList />
             </Connector>
             <Arguments>
-              <LinkConnector PointId="281">
+              <LinkConnector PointId="720">
                 <CastConnect>false</CastConnect>
                 <ParamInfo>
                   <ParamName>call list</ParamName>
@@ -150,7 +150,7 @@
                 </ParamInfo>
                 <LinkConnectorList>
                   <List>
-                    <LinkConnector PointId="283">
+                    <LinkConnector PointId="722">
                       <Value>[object]&lt;null&gt;</Value>
                       <CastConnect>false</CastConnect>
                       <ParamInfo>
@@ -179,7 +179,7 @@
           <AttachVariableIds />
           <AttachVariableId>0</AttachVariableId>
           <AssetValueType>System.Double</AssetValueType>
-          <RootConnector PointId="287">
+          <RootConnector PointId="726">
             <Caption>
               <LabelString>CreateRGBAGlayScaleFilter</LabelString>
             </Caption>
@@ -187,11 +187,11 @@
             <ForcedChecked>false</ForcedChecked>
             <Connector>
               <LinkList>
-                <PointID>319</PointID>
+                <PointID>758</PointID>
               </LinkList>
             </Connector>
             <Arguments>
-              <LinkConnector PointId="288">
+              <LinkConnector PointId="727">
                 <Value>GlayScaleType.BT_709</Value>
                 <CastConnect>false</CastConnect>
                 <ParamInfo>
@@ -205,7 +205,7 @@
                   <List />
                 </LinkConnectorList>
               </LinkConnector>
-              <LinkConnector PointId="289">
+              <LinkConnector PointId="728">
                 <Value>[IRGBAFilter]&lt;null&gt;</Value>
                 <CastConnect>false</CastConnect>
                 <ParamInfo>
@@ -231,7 +231,7 @@
           <AttachVariableIds />
           <AttachVariableId>0</AttachVariableId>
           <AssetValueType>System.Double</AssetValueType>
-          <RootConnector PointId="291">
+          <RootConnector PointId="730">
             <Caption>
               <LabelString>CreateRGBA3x3DilationFilter</LabelString>
             </Caption>
@@ -239,7 +239,7 @@
             <ForcedChecked>false</ForcedChecked>
             <Connector>
               <LinkList>
-                <PointID>335</PointID>
+                <PointID>774</PointID>
               </LinkList>
             </Connector>
             <Arguments />
@@ -254,7 +254,7 @@
           <AttachVariableIds />
           <AttachVariableId>0</AttachVariableId>
           <AssetValueType>System.Double</AssetValueType>
-          <RootConnector PointId="293">
+          <RootConnector PointId="732">
             <Caption>
               <LabelString>CreateRGBANegativePositiveReversalFilter</LabelString>
             </Caption>
@@ -262,7 +262,7 @@
             <ForcedChecked>false</ForcedChecked>
             <Connector>
               <LinkList>
-                <PointID>326</PointID>
+                <PointID>765</PointID>
               </LinkList>
             </Connector>
             <Arguments />
@@ -277,7 +277,7 @@
           <AttachVariableIds />
           <AttachVariableId>0</AttachVariableId>
           <AssetValueType>System.Double</AssetValueType>
-          <RootConnector PointId="296">
+          <RootConnector PointId="735">
             <Caption>
               <LabelString>CreateRGBAContrastFilter</LabelString>
             </Caption>
@@ -285,11 +285,11 @@
             <ForcedChecked>false</ForcedChecked>
             <Connector>
               <LinkList>
-                <PointID>327</PointID>
+                <PointID>766</PointID>
               </LinkList>
             </Connector>
             <Arguments>
-              <LinkConnector PointId="297">
+              <LinkConnector PointId="736">
                 <Value>ContrastType.InOutSine</Value>
                 <CastConnect>false</CastConnect>
                 <ParamInfo>
@@ -315,7 +315,7 @@
           <AttachVariableIds />
           <AttachVariableId>0</AttachVariableId>
           <AssetValueType>System.Double</AssetValueType>
-          <RootConnector PointId="302">
+          <RootConnector PointId="741">
             <Caption>
               <LabelString>CreateRGBAMulRateFilter</LabelString>
             </Caption>
@@ -323,11 +323,11 @@
             <ForcedChecked>false</ForcedChecked>
             <Connector>
               <LinkList>
-                <PointID>324</PointID>
+                <PointID>763</PointID>
               </LinkList>
             </Connector>
             <Arguments>
-              <LinkConnector PointId="303">
+              <LinkConnector PointId="742">
                 <Value>5</Value>
                 <CastConnect>false</CastConnect>
                 <ParamInfo>
@@ -341,7 +341,7 @@
                   <List />
                 </LinkConnectorList>
               </LinkConnector>
-              <LinkConnector PointId="304">
+              <LinkConnector PointId="743">
                 <Value>5</Value>
                 <CastConnect>false</CastConnect>
                 <ParamInfo>
@@ -355,7 +355,7 @@
                   <List />
                 </LinkConnectorList>
               </LinkConnector>
-              <LinkConnector PointId="305">
+              <LinkConnector PointId="744">
                 <Value>5</Value>
                 <CastConnect>false</CastConnect>
                 <ParamInfo>
@@ -381,7 +381,7 @@
           <AttachVariableIds />
           <AttachVariableId>0</AttachVariableId>
           <AssetValueType>System.Double</AssetValueType>
-          <RootConnector PointId="308">
+          <RootConnector PointId="747">
             <Caption>
               <LabelString>ScreenCapture</LabelString>
             </Caption>
@@ -389,11 +389,11 @@
             <ForcedChecked>false</ForcedChecked>
             <Connector>
               <LinkList>
-                <PointID>318</PointID>
+                <PointID>757</PointID>
               </LinkList>
             </Connector>
             <Arguments>
-              <LinkConnector PointId="309">
+              <LinkConnector PointId="748">
                 <Value>True</Value>
                 <CastConnect>false</CastConnect>
                 <ParamInfo>
@@ -419,7 +419,7 @@
           <AttachVariableIds />
           <AttachVariableId>0</AttachVariableId>
           <AssetValueType>System.Double</AssetValueType>
-          <RootConnector PointId="317">
+          <RootConnector PointId="756">
             <Caption>
               <LabelString>RGBA3x3FilteringProc</LabelString>
             </Caption>
@@ -427,11 +427,11 @@
             <ForcedChecked>false</ForcedChecked>
             <Connector>
               <LinkList>
-                <PointID>277</PointID>
+                <PointID>715</PointID>
               </LinkList>
             </Connector>
             <Arguments>
-              <LinkConnector PointId="318">
+              <LinkConnector PointId="757">
                 <Value>[BitmapSource]&lt;null&gt;</Value>
                 <CastConnect>false</CastConnect>
                 <ParamInfo>
@@ -445,7 +445,7 @@
                   <List />
                 </LinkConnectorList>
               </LinkConnector>
-              <LinkConnector PointId="319">
+              <LinkConnector PointId="758">
                 <Value>[IRGBAFilter]&lt;null&gt;</Value>
                 <CastConnect>false</CastConnect>
                 <ParamInfo>
@@ -459,7 +459,7 @@
                   <List />
                 </LinkConnectorList>
               </LinkConnector>
-              <LinkConnector PointId="320">
+              <LinkConnector PointId="759">
                 <CastConnect>false</CastConnect>
                 <ParamInfo>
                   <ParamName>imageProcList</ParamName>
@@ -470,7 +470,7 @@
                 </ParamInfo>
                 <LinkConnectorList>
                   <List>
-                    <LinkConnector PointId="322">
+                    <LinkConnector PointId="761">
                       <Value>[IRGBA3x3Filter]&lt;null&gt;</Value>
                       <CastConnect>false</CastConnect>
                       <ParamInfo>
@@ -484,7 +484,7 @@
                         <List />
                       </LinkConnectorList>
                     </LinkConnector>
-                    <LinkConnector PointId="324">
+                    <LinkConnector PointId="763">
                       <Value>[IRGBA3x3Filter]&lt;null&gt;</Value>
                       <CastConnect>false</CastConnect>
                       <ParamInfo>
@@ -498,7 +498,7 @@
                         <List />
                       </LinkConnectorList>
                     </LinkConnector>
-                    <LinkConnector PointId="326">
+                    <LinkConnector PointId="765">
                       <Value>[IRGBA3x3Filter]&lt;null&gt;</Value>
                       <CastConnect>false</CastConnect>
                       <ParamInfo>
@@ -515,7 +515,7 @@
                   </List>
                 </LinkConnectorList>
               </LinkConnector>
-              <LinkConnector PointId="327">
+              <LinkConnector PointId="766">
                 <Value>[IRGBAFilter]&lt;null&gt;</Value>
                 <CastConnect>false</CastConnect>
                 <ParamInfo>
@@ -529,7 +529,7 @@
                   <List />
                 </LinkConnectorList>
               </LinkConnector>
-              <LinkConnector PointId="328">
+              <LinkConnector PointId="767">
                 <Value>True</Value>
                 <CastConnect>false</CastConnect>
                 <ParamInfo>
@@ -543,7 +543,7 @@
                   <List />
                 </LinkConnectorList>
               </LinkConnector>
-              <LinkConnector PointId="329">
+              <LinkConnector PointId="768">
                 <Value>96</Value>
                 <CastConnect>false</CastConnect>
                 <ParamInfo>
@@ -569,7 +569,7 @@
           <AttachVariableIds />
           <AttachVariableId>0</AttachVariableId>
           <AssetValueType>System.Double</AssetValueType>
-          <RootConnector PointId="332">
+          <RootConnector PointId="771">
             <Caption>
               <LabelString>CreateRGBA3x3DiffFilter</LabelString>
             </Caption>
@@ -577,11 +577,11 @@
             <ForcedChecked>false</ForcedChecked>
             <Connector>
               <LinkList>
-                <PointID>322</PointID>
+                <PointID>761</PointID>
               </LinkList>
             </Connector>
             <Arguments>
-              <LinkConnector PointId="333">
+              <LinkConnector PointId="772">
                 <CastConnect>false</CastConnect>
                 <ParamInfo>
                   <ParamName>filters</ParamName>
@@ -592,7 +592,7 @@
                 </ParamInfo>
                 <LinkConnectorList>
                   <List>
-                    <LinkConnector PointId="335">
+                    <LinkConnector PointId="774">
                       <Value>[IRGBA3x3Filter]&lt;null&gt;</Value>
                       <CastConnect>false</CastConnect>
                       <ParamInfo>

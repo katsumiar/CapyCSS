@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Reflection;
 
 namespace CapybaraVS.Script
@@ -75,15 +76,6 @@ namespace CapybaraVS.Script
     {
         public override Type MyType => typeof(CbEnum<T>);
 
-        public override CbST CbType
-        {
-            get
-            {
-                CbST ret = new CbST(NodeTF());
-                return ret;
-            }
-        }
-
         public string ItemName => typeof(T).FullName;
 
         public static Type GetItemType() { return typeof(T); }  // ※リフレクションから参照されている
@@ -104,24 +96,7 @@ namespace CapybaraVS.Script
 
         public override string TypeName => CbSTUtils._GetTypeName(typeof(T));
 
-        public string[] ElementList
-        {
-            get
-            {
-                if (typeof(T) == typeof(CbType))
-                {
-                    // CbType のときは名前を変換する
-
-                    List<string> list = new List<string>();
-                    foreach (CbType value in Enum.GetValues(typeof(CbType)))
-                    {
-                        list.Add(CbSTUtils.EnumCbTypeToString(value));
-                    }
-                    return list.ToArray();
-                }
-                return Enum.GetNames(typeof(T));
-            }
-        }
+        public string[] ElementList => Enum.GetNames(typeof(T));
 
         public override string ValueString
         {
@@ -136,25 +111,16 @@ namespace CapybaraVS.Script
                 if (value.Contains("."))
                     value = value.Substring(value.IndexOf(".") + 1, value.Length - value.IndexOf(".") - 1);
 
-                if (typeof(T) == typeof(CbType))
+                int num;
+                if (int.TryParse(value, out num))
                 {
-                    // CbType のときは名前を変換する
+                    // 数字を要素へ変換する
 
-                    Value = Enum.ToObject(typeof(T), Array.IndexOf(ElementList, value)) as Enum;
+                    Value = Enum.ToObject(typeof(T), num) as Enum;
                 }
                 else
                 {
-                    int num;
-                    if (int.TryParse(value, out num))
-                    {
-                        // 数字を要素へ変換する
-
-                        Value = Enum.ToObject(typeof(T), num) as Enum;
-                    }
-                    else
-                    {
-                        Value = Enum.Parse(typeof(T), value) as Enum;
-                    }
+                    Value = Enum.Parse(typeof(T), value) as Enum;
                 }
             }
         }

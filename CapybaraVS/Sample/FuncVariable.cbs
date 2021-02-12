@@ -21,12 +21,8 @@
     <StackList>
       <Asset>
         <Id>1</Id>
-        <VariableType>
-          <ClassName>System.Func`2[[System.Object, System.Private.CoreLib, Version=5.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.Int32, System.Private.CoreLib, Version=5.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]</ClassName>
-          <LiteralType>Func</LiteralType>
-          <ObjectType>none</ObjectType>
-        </VariableType>
-        <Name>func</Name>
+        <AssetValueType>System.Func`2[[System.Object, System.Private.CoreLib, Version=5.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.Int32, System.Private.CoreLib, Version=5.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]</AssetValueType>
+        <Name> </Name>
       </Asset>
     </StackList>
   </WorkStack>

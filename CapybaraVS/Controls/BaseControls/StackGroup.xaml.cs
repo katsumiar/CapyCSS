@@ -184,7 +184,7 @@ namespace CapybaraVS.Controls.BaseControls
             if (CbListValue != null && CbListValue.ValueData is ICbList target)
             {
                 if (ListData.Count > 0 && target.Count > 0 &&
-                    ListData[0].stackNode.ValueData.CbType.Eq(target[0].CbType))
+                    ListData[0].stackNode.ValueData.OriginalType == target[0].OriginalType)
                 {
                     // 差分のコピー
                     int len = Math.Min(ListData.Count, target.Count);
