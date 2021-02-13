@@ -47,7 +47,10 @@ namespace CapybaraVS.Script
         /// <param name="type">型情報</param>
         public static void TypeDictionary(string name, Type type)
         {
-            typeDictionary.Add(name, type);
+            if (!typeDictionary.ContainsKey(name))
+            {
+                typeDictionary.Add(name, type);
+            }
         }
 
         /// <summary>
