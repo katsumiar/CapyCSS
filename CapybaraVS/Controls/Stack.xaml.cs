@@ -76,7 +76,7 @@ namespace CapybaraVS.Controls
                 ReadAction = (self) =>
                 {
                     self.Id = Id;
-                    self.ValueData = CbST.CbCreate(Type.GetType(AssetValueType));
+                    self.ValueData = CbST.CbCreate(Type.GetType(AssetValueType), Name);
                     if (Value != "[ERROR]")
                     {
                         if (self.ValueData != null && self.ValueData.IsStringableValue)
