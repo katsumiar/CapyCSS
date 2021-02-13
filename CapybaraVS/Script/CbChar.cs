@@ -21,12 +21,35 @@ namespace CapybaraVS.Script
             {
                 if (IsError)
                     return ERROR_STR;
+                if (Value == '\n') return "\\n";
+                if (Value == '\0') return "\\0";
+                if (Value == '\a') return "\\a";
+                if (Value == '\b') return "\\b";
+                if (Value == '\f') return "\\f";
+                if (Value == '\n') return "\\n";
+                if (Value == '\r') return "\\r";
+                if (Value == '\t') return "\\t";
+                if (Value == '\v') return "\\v";
                 return Value.ToString();
             }
             set
             {
                 if (value != null)
+                {
+                    if (value.Contains('\\'))
+                    {
+                        value = value.Replace("\\", "\\");
+                        value = value.Replace("\\0", "\0");
+                        value = value.Replace("\\a", "\a");
+                        value = value.Replace("\\b", "\b");
+                        value = value.Replace("\\f", "\f");
+                        value = value.Replace("\\n", "\n");
+                        value = value.Replace("\\r", "\r");
+                        value = value.Replace("\\t", "\t");
+                        value = value.Replace("\\v", "\v");
+                    }
                     Value = char.Parse(value);
+                }
             }
         }
 
