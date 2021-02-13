@@ -449,7 +449,7 @@ namespace CapybaraVS.Controls.BaseControls
                 TypeMenuWindow.AddChild(new TreeMenuNode("TypeMenuWindow()", CreateImmediateExecutionCanvasCommand(
                     () =>
                     {
-                        string ret = RequestTypeString();
+                        string ret = RequestTypeString(null);
                         if (ret != null)
                         {
                             CommandCanvasList.OutPut.OutLine(nameof(CommandCanvas), $"Type Name: {ret}");
@@ -802,10 +802,14 @@ namespace CapybaraVS.Controls.BaseControls
                         builtInGroup,
                         typeName.Value,
                         null,
-                        (a) =>
+                        (p) =>
                         {
                             CommandCanvas.SelectType = typeName.Key;
                             TypeMenuWindow.Close();
+                        },
+                        (p) =>
+                        {
+                            return CanTypeMenuExecuteEvent(Type.GetType(typeName.Key));
                         }
                         );
 
@@ -851,10 +855,14 @@ namespace CapybaraVS.Controls.BaseControls
                 targetNode,
                 CbSTUtils.MakeGroupedTypeName(type),
                 null,
-                (a) =>
+                (p) =>
                 {
                     CommandCanvas.SelectType = type.FullName;
                     TypeMenuWindow.Close();
+                },
+                (p) =>
+                {
+                    return CanTypeMenuExecuteEvent(type);
                 }
                 );
         }
@@ -875,21 +883,42 @@ namespace CapybaraVS.Controls.BaseControls
                 typeWindow_import,
                 group + "." + CbSTUtils.MakeGroupedTypeName(type),
                 null,
-                (a) =>
+                (p) =>
                 {
                     CommandCanvas.SelectType = type.FullName;
                     TypeMenuWindow.Close();
+                },
+                (p) =>
+                {
+                    return CanTypeMenuExecuteEvent(type);
                 }
                 );
+        }
+
+        /// <summary>
+        /// メニューの有効無効判定イベントを登録します。
+        /// </summary>
+        private Func<Type, bool> _CanTypeMenuExecuteEvent = null;
+        
+        /// <summary>
+        /// メニューの有効無効判定イベントを呼び出します。
+        /// </summary>
+        private bool CanTypeMenuExecuteEvent(Type type)
+        {
+            if (_CanTypeMenuExecuteEvent is null)
+                return true;
+            return _CanTypeMenuExecuteEvent(type);
         }
 
         /// <summary>
         /// ユーザーに型の指定を要求します。
         /// </summary>
         /// <returns>型名</returns>
-        public string RequestTypeString()
+        public string RequestTypeString(Func<Type, bool> isAccept)
         {
             TypeMenuWindow.Message = "";
+            _CanTypeMenuExecuteEvent = isAccept;
+            TypeMenu.RefreshItem();
             string ret = null;
             try
             {
@@ -945,8 +974,9 @@ namespace CapybaraVS.Controls.BaseControls
         /// </summary>
         /// <param name="genericTypeName">ジェネリック型の型名</param>
         /// <returns>型名（ジェネリック型でない場合はそのままの型名）</returns>
-        public string RequestGenericTypeName(string genericTypeName)
+        public string RequestGenericTypeName(string genericTypeName, Func<Type, bool> isAccept)
         {
+            _CanTypeMenuExecuteEvent = isAccept;
             string ret = null;
             try
             {

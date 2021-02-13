@@ -13,6 +13,10 @@ namespace CbVS.Script
 {
     public class CbScript
     {
+        /// <summary>
+        /// object 型を除く
+        /// </summary>
+        public static Func<Type, bool> AcceptAll => (t) => true;
 
         /// <summary>
         /// object 型を除く
@@ -22,7 +26,7 @@ namespace CbVS.Script
         /// <summary>
         // 演算可能な型
         /// </summary>
-        public static Func<Type, bool> IsValueType => (t) => t.IsValueType && !t.IsEnum && t.IsPrimitive;
+        public static Func<Type, bool> IsValueType => (t) => t.IsValueType && !t.IsEnum && t.IsPrimitive || t == typeof(decimal);
 
         /// <summary>
         /// signed型
@@ -53,15 +57,15 @@ namespace CbVS.Script
         {
             if (typeName == CbSTUtils.FREE_ENUM_TYPE_STR)
             {
-                typeName = OwnerCommandCanvas.RequestTypeString();
+                typeName = OwnerCommandCanvas.RequestTypeString(isAccept);
             }
             if (typeName == CbSTUtils.FREE_TYPE_STR)
             {
-                typeName = OwnerCommandCanvas.RequestTypeString();
+                typeName = OwnerCommandCanvas.RequestTypeString(isAccept);
             }
             else
             {
-                typeName = OwnerCommandCanvas.RequestGenericTypeName(typeName);
+                typeName = OwnerCommandCanvas.RequestGenericTypeName(typeName, isAccept);
             }
             if (typeName is null)
             {
@@ -71,34 +75,6 @@ namespace CbVS.Script
             {
                 return false;
             }
-
-            //if (cbType.LiteralType == CbType.none)
-            //{
-            //    EnumWindow enumWindow = EnumWindow.Create(CbEnum<CbType>.Create(),
-            //        new Point(Mouse.GetPosition(null).X, Mouse.GetPosition(null).Y));
-
-            //    if (ignoreTypes != null)
-            //    {
-            //        foreach (var item in ignoreTypes)
-            //        {
-            //            enumWindow.RemoveItem(CbSTUtils.EnumCbTypeToString(item));
-            //        }
-            //    }
-
-            //    enumWindow.ShowDialog();
-            //    ICbValueEnumClass<Enum> selectItem = enumWindow.EnumItem;
-
-            //    if (selectItem != null)
-            //    {
-            //        cbType.LiteralType = (CbType)selectItem.Value;
-            //    }
-            //    else
-            //    {
-            //        return false;
-            //    }
-            //}
-            //if (cbType.LiteralType == CbType.none)
-            //    return false;
             return true;
         }
 

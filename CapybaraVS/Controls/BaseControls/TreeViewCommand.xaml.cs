@@ -3,6 +3,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
@@ -26,13 +27,13 @@ namespace CapybaraVS.Controls.BaseControls
         /// <summary>
         /// 
         /// </summary>
-        public Func<object, bool> canExecuteEvent { get; set; } = null;
+        public Func<object, bool> CanExecuteEvent { get; set; } = null;
 
         //-----------------------------------------------------------------------------------
         /// <summary>
         /// 
         /// </summary>
-        public Action<object> executeEvent { get; set; } = null;
+        public Action<object> ExecuteEvent { get; set; } = null;
 
         //-----------------------------------------------------------------------------------
         /// <summary>
@@ -47,18 +48,8 @@ namespace CapybaraVS.Controls.BaseControls
         {
             if (executeEvent != null)
             {
-                this.executeEvent = executeEvent;
-            }
-            if (canExecuteEvent is null)
-            {
-                if (this.executeEvent != null)
-                {
-                    this.canExecuteEvent = (a) => { return true; };
-                }
-            }
-            else
-            {
-                this.canExecuteEvent = canExecuteEvent;
+                ExecuteEvent = executeEvent;
+                CanExecuteEvent = canExecuteEvent;
             }
         }
 
@@ -70,9 +61,9 @@ namespace CapybaraVS.Controls.BaseControls
         /// <returns></returns>
         public bool CanExecute(object parameter)
         {
-            if (canExecuteEvent is null)
-                return false;
-            return canExecuteEvent(parameter);
+            if (CanExecuteEvent is null)
+                return true;
+            return CanExecuteEvent(parameter);
         }
 
         //-----------------------------------------------------------------------------------
@@ -89,7 +80,7 @@ namespace CapybaraVS.Controls.BaseControls
         /// <param name="parameter"></param>
         public void Execute(object parameter)
         {
-            executeEvent?.Invoke(parameter);
+            ExecuteEvent?.Invoke(parameter);
         }
     }
 
@@ -97,7 +88,7 @@ namespace CapybaraVS.Controls.BaseControls
     /// <summary>
     /// ツリーメニューを構成するノードクラスです。
     /// </summary>
-    public sealed class TreeMenuNode
+    public sealed class TreeMenuNode : INotifyPropertyChanged
     {
         /// <summary>
         /// コンストラクタです。
@@ -110,7 +101,7 @@ namespace CapybaraVS.Controls.BaseControls
             Path = name;
             if (personCommand is null)
             {
-                LeftClickCommand = new TreeMenuNodeCommand();
+                LeftClickCommand = null;
             }
             else
             {
@@ -139,6 +130,13 @@ namespace CapybaraVS.Controls.BaseControls
             {
                 LeftClickCommand = personCommand;
             }
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+        private void OnPropertyChanged(string name)
+        {
+            if (null == this.PropertyChanged) return;
+            this.PropertyChanged(this, new PropertyChangedEventArgs(name));
         }
 
         //-----------------------------------------------------------------------------------
@@ -191,24 +189,44 @@ namespace CapybaraVS.Controls.BaseControls
         /// </summary>
         public ICommand LeftClickCommand { get; set; }
 
-        //-----------------------------------------------------------------------------------
-        /// <summary>
-        /// 子メニューの有るノードの表示状態（ボタン側）を参照します。
-        /// </summary>
-        public Visibility GroupNodeView
+        public Brush Foreground
         {
-            get { return (Child.Count == 0) ? Visibility.Visible : Visibility.Collapsed; }
-            set { }
+            get
+            {
+                if (LeftClickCommand is null)
+                {
+                    return Brushes.Gray;
+                }
+                if (!LeftClickCommand.CanExecute(null))
+                {
+                    return Brushes.Silver;
+                }
+                return Brushes.Blue;
+            }
+            set {
+                OnPropertyChanged(nameof(Foreground));
+                OnPropertyChanged(nameof(IsEnabled));
+            }
         }
 
         //-----------------------------------------------------------------------------------
         /// <summary>
-        /// 子メニューの無いノードの表示状態（テキストBOX側）を参照します。
+        /// 子メニューの無いノードの表示状態（ボタン側）を参照します。
         /// </summary>
         public Visibility MenuNodeView
         {
-            get { return (Child.Count != 0) ? Visibility.Visible : Visibility.Collapsed; }
-            set { }
+            get => (Child.Count == 0) ? Visibility.Visible : Visibility.Collapsed;
+            set {}
+        }
+
+        //-----------------------------------------------------------------------------------
+        /// <summary>
+        /// 子メニューの有るノードの表示状態（テキストBOX側）を参照します。
+        /// </summary>
+        public Visibility GroupNodeView
+        {
+            get => (Child.Count != 0) ? Visibility.Visible : Visibility.Collapsed;
+            set {}
         }
 
         //-----------------------------------------------------------------------------------
@@ -217,8 +235,15 @@ namespace CapybaraVS.Controls.BaseControls
         /// </summary>
         public bool IsEnabled
         {
-            get => LeftClickCommand.CanExecute(null) && (Child.Count == 0);
-            set { }
+            get
+            {
+                if (LeftClickCommand is null)
+                {
+                    return true;
+                }
+                return LeftClickCommand.CanExecute(null) && (Child.Count == 0);
+            }
+            set {}
         }
     }
 
@@ -354,6 +379,30 @@ namespace CapybaraVS.Controls.BaseControls
                 }
             }
             return null;
+        }
+
+        /// <summary>
+        /// 項目の状態を更新します。
+        /// </summary>
+        public void RefreshItem()
+        {
+            ObservableCollection<TreeMenuNode> treeView = TreeView.ItemsSource as ObservableCollection<TreeMenuNode>;
+            _RefreshItem(TreeView.ItemsSource as ObservableCollection<TreeMenuNode>);
+        }
+
+        private void _RefreshItem(ObservableCollection<TreeMenuNode> treeView)
+        {
+            foreach (var node in treeView)
+            {
+                if (node.Child.Count != 0)
+                {
+                    _RefreshItem(node.Child);
+                }
+                else
+                {
+                    node.Foreground = Brushes.Black;    // ダミー（更新目的）
+                }
+            }
         }
 
         /// <summary>
@@ -519,17 +568,17 @@ namespace CapybaraVS.Controls.BaseControls
         {
             TreeMenuNode group = node;
             string title = TreeViewCommand.MakeGroup(ref group, name);
+            var command = new TreeMenuNodeCommand(executeEvent, canExecuteEvent);
             TreeMenuNode menu;
             if (help is null)
             {
-                menu = new TreeMenuNode(title, "");
+                menu = new TreeMenuNode(title, "", command);
             }
             else
             {
-                menu = new TreeMenuNode(title, help);
+                menu = new TreeMenuNode(title, help, command);
             }
             group.AddChild(menu);
-            menu.LeftClickCommand = new TreeMenuNodeCommand(executeEvent, canExecuteEvent);
         }
     }
 }

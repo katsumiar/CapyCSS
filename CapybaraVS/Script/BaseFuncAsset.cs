@@ -286,7 +286,7 @@ namespace CapybaraVS.Script
 
         public string ValueType { get; } = CbSTUtils.FREE_TYPE_STR;
 
-        public Func<Type, bool> IsAccept => null;
+        public Func<Type, bool> IsAccept => (t) => CbScript.AcceptAll(t);
     }
 
     //-----------------------------------------------------------------
@@ -298,7 +298,7 @@ namespace CapybaraVS.Script
 
         public string ValueType { get; } = CbSTUtils.FREE_LIST_TYPE_STR;
 
-        public Func<Type, bool> IsAccept => null;
+        public Func<Type, bool> IsAccept => (t) => CbScript.AcceptAll(t);
     }
 
     //-----------------------------------------------------------------
@@ -312,7 +312,7 @@ namespace CapybaraVS.Script
 
         public string ValueType { get; } = CbSTUtils.FREE_TYPE_STR;
 
-        public Func<Type, bool> IsAccept => (t) => t.IsValueType && !t.IsEnum && t.IsPrimitive;
+        public Func<Type, bool> IsAccept => (t) => CbScript.IsValueType(t) || t == typeof(string);
 
         public bool ImplAsset(MultiRootConnector col, bool notheradMode = false)
         {
@@ -360,7 +360,7 @@ namespace CapybaraVS.Script
 
         public string ValueType { get; } = CbSTUtils.FREE_TYPE_STR;
 
-        public Func<Type, bool> IsAccept => (t) => CbScript.IsValueType(t);
+        public Func<Type, bool> IsAccept => (t) => CbScript.IsValueType(t) || t == typeof(string);
 
         public bool ImplAsset(MultiRootConnector col, bool notheradMode = false)
         {
@@ -425,7 +425,7 @@ namespace CapybaraVS.Script
 
         public string ValueType { get; } = CbSTUtils.FREE_TYPE_STR;
 
-        public Func<Type, bool> IsAccept => null;
+        public Func<Type, bool> IsAccept => (t) => CbScript.AcceptAll(t);
 
         public bool ImplAsset(MultiRootConnector col, bool notheradMode = false)
         {
@@ -619,7 +619,7 @@ namespace CapybaraVS.Script
 
         public string ValueType { get; } = CbSTUtils.FREE_TYPE_STR;
 
-        public Func<Type, bool> IsAccept => null;
+        public Func<Type, bool> IsAccept => (t) => CbScript.AcceptAll(t);
 
         public bool ImplAsset(MultiRootConnector col, bool notheradMode = false)
         {
@@ -666,7 +666,7 @@ namespace CapybaraVS.Script
 
         public string ValueType { get; } = CbSTUtils.FREE_TYPE_STR;
 
-        public Func<Type, bool> IsAccept => null;
+        public Func<Type, bool> IsAccept => (t) => CbScript.AcceptAll(t);
 
         public bool ImplAsset(MultiRootConnector col, bool notheradMode = false)
         {
@@ -713,7 +713,7 @@ namespace CapybaraVS.Script
 
         public string ValueType { get; } = CbSTUtils.FREE_TYPE_STR;
 
-        public Func<Type, bool> IsAccept => null;
+        public Func<Type, bool> IsAccept => (t) => CbScript.AcceptAll(t);
 
         public bool ImplAsset(MultiRootConnector col, bool notheradMode = false)
         {
@@ -760,7 +760,7 @@ namespace CapybaraVS.Script
 
         public string ValueType { get; } = CbSTUtils.FREE_TYPE_STR;
 
-        public Func<Type, bool> IsAccept => null;
+        public Func<Type, bool> IsAccept => (t) => CbScript.AcceptAll(t);
 
         public bool ImplAsset(MultiRootConnector col, bool notheradMode = false)
         {
@@ -807,7 +807,7 @@ namespace CapybaraVS.Script
 
         public string ValueType { get; } = CbSTUtils.FREE_TYPE_STR;
 
-        public Func<Type, bool> IsAccept => null;
+        public Func<Type, bool> IsAccept => (t) => CbScript.AcceptAll(t);
 
         public bool ImplAsset(MultiRootConnector col, bool notheradMode = false)
         {
@@ -854,7 +854,7 @@ namespace CapybaraVS.Script
 
         public string ValueType { get; } = typeof(bool).FullName;
 
-        public Func<Type, bool> IsAccept => null;
+        public Func<Type, bool> IsAccept => (t) => CbScript.AcceptAll(t);
 
         public bool ImplAsset(MultiRootConnector col, bool notheradMode = false)
         {
@@ -905,7 +905,7 @@ namespace CapybaraVS.Script
 
         public string ValueType { get; } = typeof(bool).FullName;
 
-        public Func<Type, bool> IsAccept => null;
+        public Func<Type, bool> IsAccept => (t) => CbScript.AcceptAll(t);
 
         public bool ImplAsset(MultiRootConnector col, bool notheradMode = false)
         {
@@ -956,7 +956,7 @@ namespace CapybaraVS.Script
 
         public string ValueType { get; } = typeof(bool).FullName;
 
-        public Func<Type, bool> IsAccept => null;
+        public Func<Type, bool> IsAccept => (t) => CbScript.AcceptAll(t);
 
         public bool ImplAsset(MultiRootConnector col, bool notheradMode = false)
         {
@@ -1152,7 +1152,7 @@ namespace CapybaraVS.Script
 
         public string ValueType { get; } = typeof(string).FullName;
 
-        public Func<Type, bool> IsAccept => null;
+        public Func<Type, bool> IsAccept => (t) => CbScript.AcceptAll(t);
 
         public bool ImplAsset(MultiRootConnector col, bool notheradMode = false)
         {
@@ -1212,7 +1212,7 @@ namespace CapybaraVS.Script
 
         public string ValueType { get; } = CbSTUtils.FREE_TYPE_STR;
 
-        public Func<Type, bool> IsAccept => null;
+        public Func<Type, bool> IsAccept => (t) => CbScript.AcceptAll(t);
 
         public bool ImplAsset(MultiRootConnector col, bool notheradMode = false)
         {
@@ -1267,7 +1267,7 @@ namespace CapybaraVS.Script
 
         public string ValueType { get; } = CbSTUtils.DUMMY_TYPE_STR;
 
-        public Func<Type, bool> IsAccept => null;
+        public Func<Type, bool> IsAccept => (t) => CbScript.AcceptAll(t);
 
         public bool ImplAsset(MultiRootConnector col, bool notheradMode = false)
         {
@@ -1321,7 +1321,7 @@ namespace CapybaraVS.Script
 
         public string ValueType { get; } = CbSTUtils.FREE_TYPE_STR;
 
-        public Func<Type, bool> IsAccept => null;
+        public Func<Type, bool> IsAccept => (t) => CbScript.AcceptAll(t);
 
         public bool ImplAsset(MultiRootConnector col, bool notheradMode = false)
         {
@@ -1374,7 +1374,7 @@ namespace CapybaraVS.Script
 
         public string ValueType { get; } = CbSTUtils.FREE_TYPE_STR;
 
-        public Func<Type, bool> IsAccept => null;
+        public Func<Type, bool> IsAccept => (t) => CbScript.AcceptAll(t);
 
         public bool ImplAsset(MultiRootConnector col, bool notheradMode = false)
         {
@@ -1422,7 +1422,7 @@ namespace CapybaraVS.Script
 
         public string ValueType { get; } = CbSTUtils.FREE_TYPE_STR;
 
-        public Func<Type, bool> IsAccept => null;
+        public Func<Type, bool> IsAccept => (t) => CbScript.AcceptAll(t);
 
         public bool ImplAsset(MultiRootConnector col, bool notheradMode = false)
         {
@@ -1481,7 +1481,7 @@ namespace CapybaraVS.Script
 
         public string ValueType { get; } = CbSTUtils.DUMMY_TYPE_STR;
 
-        public Func<Type, bool> IsAccept => null;
+        public Func<Type, bool> IsAccept => (t) => CbScript.AcceptAll(t);
 
         public bool ImplAsset(MultiRootConnector col, bool notheradMode = false)
         {
@@ -1528,7 +1528,7 @@ namespace CapybaraVS.Script
 
         public string ValueType { get; } = CbSTUtils.FREE_TYPE_STR;
 
-        public Func<Type, bool> IsAccept => null;
+        public Func<Type, bool> IsAccept => (t) => CbScript.AcceptAll(t);
 
         public bool ImplAsset(MultiRootConnector col, bool notheradMode = false)
         {
@@ -1807,7 +1807,7 @@ namespace CapybaraVS.Script
 
         public string ValueType { get; } = CbSTUtils.FREE_TYPE_STR;
 
-        public Func<Type, bool> IsAccept => null;
+        public Func<Type, bool> IsAccept => (t) => CbScript.AcceptAll(t);
 
         public bool ImplAsset(MultiRootConnector col, bool notheradMode = false)
         {
@@ -1858,7 +1858,7 @@ namespace CapybaraVS.Script
 
         public string ValueType { get; } = CbSTUtils.FREE_TYPE_STR;
 
-        public Func<Type, bool> IsAccept => null;
+        public Func<Type, bool> IsAccept => (t) => CbScript.AcceptAll(t);
 
         public bool ImplAsset(MultiRootConnector col, bool notheradMode = false)
         {
@@ -1915,7 +1915,7 @@ namespace CapybaraVS.Script
 
         public string ValueType { get; } = CbSTUtils.FREE_TYPE_STR;
 
-        public Func<Type, bool> IsAccept => null;
+        public Func<Type, bool> IsAccept => (t) => CbScript.AcceptAll(t);
 
         public bool ImplAsset(MultiRootConnector col, bool notheradMode = false)
         {
@@ -2066,7 +2066,7 @@ namespace CapybaraVS.Script
 
         public string ValueType { get; } = CbSTUtils.FREE_TYPE_STR;
 
-        public Func<Type, bool> IsAccept => null;
+        public Func<Type, bool> IsAccept => (t) => CbScript.AcceptAll(t);
 
         public bool ImplAsset(MultiRootConnector col, bool notheradMode = false)
         {
@@ -2120,7 +2120,7 @@ namespace CapybaraVS.Script
 
         public string ValueType { get; } = CbSTUtils.FREE_TYPE_STR;
 
-        public Func<Type, bool> IsAccept => null;
+        public Func<Type, bool> IsAccept => (t) => CbScript.AcceptAll(t);
 
         public bool ImplAsset(MultiRootConnector col, bool notheradMode = false)
         {
@@ -2178,7 +2178,7 @@ namespace CapybaraVS.Script
 
         public string ValueType { get; } = CbSTUtils.FREE_TYPE_STR;
 
-        public Func<Type, bool> IsAccept => null;
+        public Func<Type, bool> IsAccept => (t) => CbScript.AcceptAll(t);
 
         public bool ImplAsset(MultiRootConnector col, bool notheradMode = false)
         {
@@ -2232,7 +2232,7 @@ namespace CapybaraVS.Script
 
         public string ValueType { get; } = CbSTUtils.FREE_TYPE_STR;
 
-        public Func<Type, bool> IsAccept => null;
+        public Func<Type, bool> IsAccept => (t) => CbScript.AcceptAll(t);
 
         public bool ImplAsset(MultiRootConnector col, bool notheradMode = false)
         {
@@ -2276,7 +2276,7 @@ namespace CapybaraVS.Script
 
         public string ValueType { get; } = CbSTUtils.FREE_TYPE_STR;
 
-        public Func<Type, bool> IsAccept => null;
+        public Func<Type, bool> IsAccept => (t) => CbScript.AcceptAll(t);
 
         public bool ImplAsset(MultiRootConnector col, bool notheradMode = false)
         {
@@ -2321,7 +2321,7 @@ namespace CapybaraVS.Script
 
         public string ValueType { get; } = CbSTUtils.FREE_TYPE_STR;
 
-        public Func<Type, bool> IsAccept => null;
+        public Func<Type, bool> IsAccept => (t) => CbScript.AcceptAll(t);
 
         public bool ImplAsset(MultiRootConnector col, bool notheradMode = false)
         {
@@ -2367,7 +2367,7 @@ namespace CapybaraVS.Script
 
         public string ValueType { get; } = CbSTUtils.FREE_TYPE_STR;
 
-        public Func<Type, bool> IsAccept => null;
+        public Func<Type, bool> IsAccept => (t) => CbScript.AcceptAll(t);
 
         public bool ImplAsset(MultiRootConnector col, bool notheradMode = false)
         {
@@ -2412,7 +2412,7 @@ namespace CapybaraVS.Script
 
         public string ValueType { get; } = CbSTUtils.FREE_TYPE_STR;
 
-        public Func<Type, bool> IsAccept => null;
+        public Func<Type, bool> IsAccept => (t) => CbScript.AcceptAll(t);
 
         public bool ImplAsset(MultiRootConnector col, bool notheradMode = false)
         {
@@ -2459,7 +2459,7 @@ namespace CapybaraVS.Script
 
         public string ValueType { get; } = CbSTUtils.FREE_TYPE_STR;
 
-        public Func<Type, bool> IsAccept => null;
+        public Func<Type, bool> IsAccept => (t) => CbScript.AcceptAll(t);
 
         public bool ImplAsset(MultiRootConnector col, bool notheradMode = false)
         {
@@ -2508,7 +2508,7 @@ namespace CapybaraVS.Script
 
         public string ValueType { get; } = typeof(double).FullName;
 
-        public Func<Type, bool> IsAccept => null;
+        public Func<Type, bool> IsAccept => (t) => typeof(double) == t;
 
         public bool ImplAsset(MultiRootConnector col, bool notheradMode = false)
         {
@@ -2556,7 +2556,7 @@ namespace CapybaraVS.Script
 
         public string ValueType { get; } = typeof(int).FullName;
 
-        public Func<Type, bool> IsAccept => null;
+        public Func<Type, bool> IsAccept => (t) => typeof(int) == t;
 
         public bool ImplAsset(MultiRootConnector col, bool notheradMode = false)
         {

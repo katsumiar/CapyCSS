@@ -10,12 +10,12 @@
         <TreeView.ItemTemplate>
             <HierarchicalDataTemplate DataType= "local:TreeMenuNode" ItemsSource="{Binding Child}">
                 <Grid>
-                    <TextBlock x:Name="commandButton" Text="{Binding Name}" ToolTip="{Binding HintText}" Visibility="{Binding GroupNodeView, Mode=OneWay}" IsEnabled="{Binding IsEnabled, Mode=OneWay}">
+                    <TextBlock x:Name="commandButton" Text="{Binding Name}" ToolTip="{Binding HintText}" Visibility="{Binding MenuNodeView, Mode=OneWay}" IsEnabled="{Binding IsEnabled, Mode=TwoWay}" Foreground="{Binding Foreground, Mode=TwoWay}">
                         <TextBlock.InputBindings>
                             <MouseBinding Command="{Binding LeftClickCommand}" MouseAction="LeftClick" />
                         </TextBlock.InputBindings>
                     </TextBlock>
-                    <TextBlock x:Name="textBlock" Text="{Binding Name}" ToolTip="{Binding HintText}" Visibility="{Binding MenuNodeView, Mode=OneWay}" IsEnabled="{Binding IsEnabled, Mode=OneWay}">
+                    <TextBlock x:Name="textBlock" Text="{Binding Name}" ToolTip="{Binding HintText}" Visibility="{Binding GroupNodeView, Mode=OneWay}" IsEnabled="{Binding IsEnabled, Mode=OneWay}">
                         <TextBlock.InputBindings>
                             <MouseBinding CommandParameter="{Binding ElementName=textBlock}" MouseAction="LeftClick"/>
                         </TextBlock.InputBindings>
