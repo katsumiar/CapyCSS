@@ -664,11 +664,14 @@ namespace CapybaraVS.Controls
         static public void ExceptionFunc(ICbValue variable, Exception ex, RootConnector rootConnectorControl)
         {
             ExceptionFunc(ex, rootConnectorControl);
-            variable.IsError = true;
-            if (ex.InnerException != null)
-                variable.ErrorMessage = ex.InnerException.Message;
-            else
-                variable.ErrorMessage = ex.Message;
+            if (variable != null)
+            {
+                variable.IsError = true;
+                if (ex.InnerException != null)
+                    variable.ErrorMessage = ex.InnerException.Message;
+                else
+                    variable.ErrorMessage = ex.Message;
+            }
         }
 
         /// <summary>

@@ -201,7 +201,7 @@ namespace CapybaraVS.Controls.BaseControls
                 {
                     return Brushes.Silver;
                 }
-                return Brushes.Blue;
+                return Brushes.Black;
             }
             set {
                 OnPropertyChanged(nameof(Foreground));
@@ -434,7 +434,7 @@ namespace CapybaraVS.Controls.BaseControls
             ObservableCollection<TreeMenuNode> treeView = viewer.TreeView.ItemsSource as ObservableCollection<TreeMenuNode>;
             if (node.Name.ToUpper().Contains(name))
             {
-                if (node.LeftClickCommand.CanExecute(null))
+                if (node.LeftClickCommand != null && node.LeftClickCommand.CanExecute(null))
                 {
                     treeView.Add(new TreeMenuNode(node.Path, OwnerCommandCanvas.CreateImmediateExecutionCanvasCommand(() =>
                     {

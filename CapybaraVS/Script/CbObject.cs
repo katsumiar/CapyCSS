@@ -36,31 +36,12 @@ namespace CapybaraVS.Script
                         newValue = cbList.CreateTF();
                     else
                         newValue = cbVSValue.NodeTF();
-
-                    newValue.Data = cbVSValue.Data;
-
-                    newValue.IsError = cbVSValue.IsError;
-                    newValue.ErrorMessage = cbVSValue.ErrorMessage;
-                    newValue.IsReadOnlyValue = cbVSValue.IsReadOnlyValue;
+                    newValue.Set(cbVSValue);
 
                     return newValue;
                 }
                 return this;
             }
-        }
-
-        public override void CopyValue(ICbValue cbVSValue)
-        {
-            if (cbVSValue is CbObject)
-            {
-                Value = cbVSValue.Data;
-            }
-            else
-            {
-                Value = cbVSValue;
-            }
-            IsError = cbVSValue.IsError;
-            ErrorMessage = cbVSValue.ErrorMessage;
         }
 
         public override void Set(ICbValue n)
@@ -69,7 +50,12 @@ namespace CapybaraVS.Script
             {
                 if (n.IsError)
                     throw new Exception(n.ErrorMessage);
-                if (n is CbObject cbObject)
+
+                if (n is ICbEvent cbEvent)
+                {
+                    Value = n;
+                }
+                else if (n is CbObject)
                 {
                     Value = n.Data;
                 }
@@ -77,8 +63,13 @@ namespace CapybaraVS.Script
                 {
                     Value = n;
                 }
-                IsError = n.IsError;
-                ErrorMessage = n.ErrorMessage;
+                if (IsError)
+                {
+                    // エラーからの復帰
+
+                    IsError = false;
+                    ErrorMessage = "";
+                }
             }
             catch (Exception ex)
             {

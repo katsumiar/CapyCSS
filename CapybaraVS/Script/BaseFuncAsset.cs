@@ -60,6 +60,7 @@ namespace CapybaraVS.Script
                 CreateAssetMenu(ownerCommandCanvas, flowOperation, new If_Func());
                 CreateAssetMenu(ownerCommandCanvas, flowOperation, new If_Action());
                 CreateAssetMenu(ownerCommandCanvas, flowOperation, new For());
+                CreateAssetMenu(ownerCommandCanvas, flowOperation, new For_Until());
                 CreateAssetMenu(ownerCommandCanvas, flowOperation, new Foreach());
             }
 
@@ -395,7 +396,7 @@ namespace CapybaraVS.Script
                                 {
                                     dummyArgumentsControl.Enable(cagt, ret.Data);    // 仮引数に引数を登録
 
-                                    if (IsCallBack(valueData))
+                                    if (CanCallBack(valueData))
                                         ret.Add(CallEvent(valueData, cagt));
 
                                     dummyArgumentsControl.Invalidated(cagt);    // 仮引数後処理
@@ -1234,13 +1235,11 @@ namespace CapybaraVS.Script
                         {
                             if (GetArgument<bool>(argument, 0))
                             {
-                                if (IsCallBack(argument[1]))
-                                    ret.Set(CallEvent(argument[1], cagt));
+                                ret = GetCallBackResult(cagt, argument[1], ret);
                             }
                             else
                             {
-                                if (IsCallBack(argument[2]))
-                                    ret.Set(CallEvent(argument[2], cagt));
+                                ret = GetCallBackResult(cagt, argument[2], ret);
                             }
                         }
                         catch (Exception ex)
@@ -1288,13 +1287,11 @@ namespace CapybaraVS.Script
                         {
                             if (GetArgument<bool>(argument, 0))
                             {
-                                if (IsCallBack(argument[1]))
-                                    CallEvent(argument[1], cagt);
+                                TryCallCallBack(cagt, argument[1]);
                             }
                             else
                             {
-                                if (IsCallBack(argument[2]))
-                                    CallEvent(argument[2], cagt);
+                                TryCallCallBack(cagt, argument[2]);
                             }
                         }
                         catch (Exception ex)
@@ -1343,11 +1340,11 @@ namespace CapybaraVS.Script
                         {
                             if (GetArgument<bool>(argument, 0))
                             {
-                                ret.Set(argument[1]);
+                                ret = argument[1];
                             }
                             else
                             {
-                                ret.Set(argument[2]);
+                                ret = argument[2];
                             }
                         }
                         catch (Exception ex)
@@ -1392,8 +1389,7 @@ namespace CapybaraVS.Script
                         var ret = CbST.CbCreate(col.SelectedVariableType[0]);    // 返し値
                         try
                         {
-                            if (IsCallBack(argument[0]))
-                                ret.Set(CallEvent(argument[0], cagt));
+                            ret = GetCallBackResult(cagt, argument[0], ret);
                         }
                         catch (Exception ex)
                         {
@@ -1447,12 +1443,7 @@ namespace CapybaraVS.Script
 
                         try
                         {
-                            dummyArgumentsControl.EnableCbValue(cagt, argument[0]);    // 仮引数に引数を登録
-
-                            if (IsCallBack(argument[1]))
-                                ret.Set(CallEvent(argument[1], cagt));
-
-                            dummyArgumentsControl.Invalidated(cagt);    // 仮引数後処理
+                            ret = GetCallBackResult(dummyArgumentsControl, cagt, argument[1], argument[0], ret);
                         }
                         catch (Exception ex)
                         {
@@ -1498,8 +1489,7 @@ namespace CapybaraVS.Script
                     {
                         try
                         {
-                            if (IsCallBack(argument[0]))
-                                CallEvent(argument[0], cagt);
+                            TryCallCallBack(cagt, argument[0]);
                         }
                         catch (Exception ex)
                         {
@@ -1552,12 +1542,7 @@ namespace CapybaraVS.Script
 
                         try
                         {
-                            dummyArgumentsControl.EnableCbValue(cagt, argument[0]);    // 仮引数に引数を登録
-
-                            if (IsCallBack(argument[1]))
-                                CallEvent(argument[1], cagt);
-
-                            dummyArgumentsControl.Invalidated(cagt);    // 仮引数後処理
+                            TryCallCallBack(dummyArgumentsControl, cagt, argument[1], argument[0]);
                         }
                         catch (Exception ex)
                         {
@@ -1582,7 +1567,7 @@ namespace CapybaraVS.Script
 
         public string HelpText { get; } = Language.GetInstance["For"];
 
-        public string MenuTitle => $"For<{CbSTUtils.ACTION_STR}>";
+        public string MenuTitle => $"{nameof(For)}<{CbSTUtils.ACTION_STR}>";
 
         public string ValueType { get; } = CbSTUtils.DUMMY_TYPE_STR;
 
@@ -1594,7 +1579,7 @@ namespace CapybaraVS.Script
             DummyArgumentsControl dummyArgumentsControl = new DummyArgumentsControl(col);
 
             col.MakeFunction(
-                $"For {CbSTUtils.ACTION_STR}<{CbSTUtils.INT_STR}>.Invoke",
+                $"{nameof(For)} {CbSTUtils.ACTION_STR}<{CbSTUtils.INT_STR}>.Invoke",
                 HelpText,
                 CbVoid.TF,        // 返し値の型
                 new List<ICbValue>()  // 引数
@@ -1612,22 +1597,75 @@ namespace CapybaraVS.Script
 
                         try
                         {
-                            int n1 = GetArgument<int>(argument, 0);
-                            int n2 = GetArgument<int>(argument, 1);
+                            int begin = GetArgument<int>(argument, 0);
+                            int end = GetArgument<int>(argument, 1);
                             int step = GetArgument<int>(argument, 2);
-                            for (int i = n1; i < n2; i += step)
+                            for (int i = begin; i < end; i += step)
                             {
-                                if (argument[3] is ICbEvent cbEvent && cbEvent.CallBack is null)
-                                {
+                                TryCallCallBack(dummyArgumentsControl, cagt, argument[3], i);
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            col.ExceptionFunc(null, ex);
+                        }
+                        return null;
+                    }
+                    )
+                );
 
-                                }
-                                else
-                                {
-                                    dummyArgumentsControl.Enable(cagt, i);    // 仮引数に引数を登録
-                                    if (IsCallBack(argument[3]))
-                                        CallEvent(argument[3], cagt);
-                                    dummyArgumentsControl.Invalidated(cagt);    // 仮引数後処理
-                                }
+            return true;
+        }
+    }
+
+    //-----------------------------------------------------------------
+    class For_Until : FuncAssetSub, IFuncAssetWithArgumentDef
+    {
+        public string AssetCode => nameof(For_Until);
+
+        public string HelpText { get; } = Language.GetInstance["For"];
+
+        public string MenuTitle => $"{nameof(For_Until)}<{CbSTUtils.ACTION_STR}>";
+
+        public string ValueType { get; } = CbSTUtils.FREE_TYPE_STR;
+
+        public Func<Type, bool> IsAccept => (t) => CbScript.IsValueType(t) && t != typeof(bool);
+
+        public bool ImplAsset(MultiRootConnector col, bool notheradMode = false)
+        {
+            // 仮引数コントロールを作成
+            DummyArgumentsControl dummyArgumentsControl = new DummyArgumentsControl(col);
+
+            col.MakeFunction(
+                $"{nameof(For_Until)} {CbSTUtils.ACTION_STR}<{col.SelectedVariableTypeName[0]}>.Invoke",
+                HelpText,
+                CbVoid.TF,        // 返し値の型
+                new List<ICbValue>()  // 引数
+                {
+                    CbST.CbCreate(col.SelectedVariableType[0], "[from", 0),
+                    CbFunc.CreateFunc(col.SelectedVariableType[0], typeof(bool), "until(index)"),
+                    CbST.CbCreate(col.SelectedVariableType[0], "step", 1),
+                    CbFunc.CreateAction(col.SelectedVariableType[0], "func f(index)"),
+                },
+                new Func<List<ICbValue>, DummyArgumentsStack, ICbValue>(
+                    (argument, cagt) =>
+                    {
+                        if (dummyArgumentsControl.IsInvalid(cagt))
+                            return null; // 実行環境が有効でない
+
+                        try
+                        {
+                            dynamic begin = argument[0].Data;
+                            dynamic step = argument[2].Data;
+
+                            Func<dynamic, bool> until = (n) =>
+                            {
+                                return GetCallBackResult(dummyArgumentsControl, cagt, argument[1], n, false);
+                            };
+
+                            for (dynamic i = begin; until(i); i += step)
+                            {
+                                TryCallCallBack(dummyArgumentsControl, cagt, argument[3], i);
                             }
                         }
                         catch (Exception ex)
@@ -1668,7 +1706,7 @@ namespace CapybaraVS.Script
                         try
                         {
                             ICbValue cbVSValue = col.OwnerCommandCanvas.ScriptWorkStack.Find(variableGetter.Id);
-                            ret.CopyValue(cbVSValue);
+                            ret.Set(cbVSValue);
                             col.LinkConnectorControl.UpdateValueData();
                         }
                         catch (Exception ex)
@@ -1777,7 +1815,7 @@ namespace CapybaraVS.Script
                             {
                                 // 値のコピー
 
-                                cbVSValue.CopyValue(argument[0]);
+                                cbVSValue.Set(argument[0]);
                             }
                             col.OwnerCommandCanvas.ScriptWorkStack.UpdateValueData(variableGetter.Id);
                             ret.Set(argument[0]);
@@ -1925,7 +1963,7 @@ namespace CapybaraVS.Script
             col.MakeFunction(
                 $"Foreach {CbSTUtils.ACTION_STR}<{col.SelectedVariableTypeName[0]}>.Invoke",
                 HelpText,
-                CbVoid.TF,        // 返し値の型
+                CbVoid.TF,  // 返し値の型
                 new List<ICbValue>()  // 引数
                 {
                     CbList.Create(col.SelectedVariableType[0], "sample"),
@@ -1942,10 +1980,7 @@ namespace CapybaraVS.Script
                             var sample = GetArgumentList(argument, 0);
                             foreach (var node in sample)
                             {
-                                dummyArgumentsControl.Enable(cagt, node.Data);    // 仮引数に引数を登録
-                                if (IsCallBack(argument[1]))
-                                    CallEvent(argument[1], cagt);
-                                dummyArgumentsControl.Invalidated(cagt);    // 仮引数後処理
+                                TryCallCallBack(dummyArgumentsControl, cagt, argument[1], node);
                             }
                         }
                         catch (Exception ex)
@@ -2077,7 +2112,7 @@ namespace CapybaraVS.Script
             col.MakeFunction(
                variableGetter.MakeName,
                HelpText,
-               col.ReturnValueTypeTF,// CbST.CreateTF(col.AssetLiteralType.GetObjectTypeNone()), // 返し値の型   Func<> 型の場合に返し値の型で接続するために ObjectType を落としている（方法に置き換える予定）
+               col.ReturnValueTypeTF,  // 返し値の型
                new List<ICbValue>()       // 引数
                {
                    CbST.CbCreate<int>("index", 0),
@@ -2093,7 +2128,7 @@ namespace CapybaraVS.Script
                            ICbValue cbVSValue = col.OwnerCommandCanvas.ScriptWorkStack.Find(variableGetter.Id);
                            var argList = (cbVSValue as ICbList).Value;
 
-                           ret.CopyValue(argList[index]);
+                           ret.Set(argList[index]);
                            col.LinkConnectorControl.UpdateValueData();
                        }
                        catch (Exception ex)
@@ -2131,11 +2166,11 @@ namespace CapybaraVS.Script
             col.MakeFunction(
                variableGetter.MakeName,
                HelpText,
-               col.ReturnValueTypeTF,
+               col.ReturnValueTypeTF,  // 返し値の型
                new List<ICbValue>()       // 引数
                {
                     CbST.CbCreate<int>("index", 0),
-                    col.ReturnValueTypeNTF("n")//CbST.Create(col.AssetLiteralType.GetObjectTypeNone(), "n"),  // Func<> 型の場合に返し値の型で接続するために ObjectType を落としている（方法に置き換える予定）
+                    col.ReturnValueTypeNTF("n")
                },
                new Func<List<ICbValue>, DummyArgumentsStack, ICbValue>(
                    (argument, cagt) =>
@@ -2148,7 +2183,7 @@ namespace CapybaraVS.Script
                            ICbValue cbVSValue = col.OwnerCommandCanvas.ScriptWorkStack.Find(variableGetter.Id);
                            var argList = (cbVSValue as ICbList).Value;
 
-                           argList[index].CopyValue(argument[1]);
+                           argList[index].Set(argument[1]);
                            col.OwnerCommandCanvas.ScriptWorkStack.UpdateValueData(variableGetter.Id);
                            ret.Set(argument[1]);
                            col.LinkConnectorControl.UpdateValueData();
@@ -2192,7 +2227,7 @@ namespace CapybaraVS.Script
                CbST.CbCreateTF(col.SelectedVariableType[0]),   // 返し値の型
                new List<ICbValue>()   // 引数
                {
-                    col.ReturnValueTypeNTF("n")//CbST.Create(col.AssetLiteralType.GetObjectTypeNone(), "n"), // Func<> 型の場合に返し値の型で接続するために ObjectType を落としている（方法に置き換える予定）
+                    col.ReturnValueTypeNTF("n")
                },
                new Func<List<ICbValue>, DummyArgumentsStack, ICbValue>(
                    (argument, cagt) =>
@@ -2230,7 +2265,7 @@ namespace CapybaraVS.Script
 
         public string MenuTitle => AssetCode;
 
-        public string ValueType { get; } = CbSTUtils.FREE_TYPE_STR;
+        public string ValueType { get; } = CbSTUtils.FREE_LIST_TYPE_STR;
 
         public Func<Type, bool> IsAccept => (t) => CbScript.AcceptAll(t);
 
@@ -2240,23 +2275,23 @@ namespace CapybaraVS.Script
                 MenuTitle,
                 HelpText,
                 CbST.CbCreateTF<int>(),   // 返し値の型
-                new List<ICbValue>()          // 引数
+                new List<ICbValue>()      // 引数
                 {
-                    CbList.Create(col.SelectedVariableType[0], "sample"),
+                    CbST.CbCreate(col.SelectedVariableType[0], "sample"),
                 },
                 new Func<List<ICbValue>, DummyArgumentsStack, ICbValue>(
                     (argument, cagt) =>
                     {
-                        var ret = CbST.CbCreate<int>();    // 返し値
                         try
                         {
-                            ret.Data = (argument[0] as ICbList).Count;
+                            return CbInt.Create((argument[0] as ICbList).Count);
                         }
                         catch (Exception ex)
                         {
+                            var ret = CbST.CbCreate<int>();    // 返し値
                             col.ExceptionFunc(ret, ex);
+                            return ret;
                         }
-                        return ret;
                     }
                     )
                 );
@@ -2274,7 +2309,7 @@ namespace CapybaraVS.Script
 
         public string MenuTitle => AssetCode;
 
-        public string ValueType { get; } = CbSTUtils.FREE_TYPE_STR;
+        public string ValueType { get; } = CbSTUtils.FREE_LIST_TYPE_STR;
 
         public Func<Type, bool> IsAccept => (t) => CbScript.AcceptAll(t);
 
@@ -2284,24 +2319,24 @@ namespace CapybaraVS.Script
                 MenuTitle,
                 HelpText,
                 CbST.CbCreateTF<bool>(),  // 返し値の型
-                new List<ICbValue>()          // 引数
+                new List<ICbValue>()      // 引数
                 {
-                    CbList.Create(col.SelectedVariableType[0], "sample"),
-                    CbST.CbCreate(col.SelectedVariableType[0], "n"),
+                    CbST.CbCreate(col.SelectedVariableType[0], "sample"),
+                    CbST.CbCreate(col.SelectedVariableType[0].GetGenericArguments()[0], "n"),
                 },
                 new Func<List<ICbValue>, DummyArgumentsStack, ICbValue>(
                     (argument, cagt) =>
                     {
-                        var ret = CbBool.Create(false);    // 返し値
                         try
                         {
-                            ret.Data = (argument[0] as ICbList).Contains(argument[1]);
+                            return CbBool.Create((argument[0] as ICbList).Contains(argument[1]));
                         }
                         catch (Exception ex)
                         {
+                            var ret = CbBool.Create(false);    // 返し値
                             col.ExceptionFunc(ret, ex);
+                            return ret;
                         }
-                        return ret;
                     }
                     )
                 );
@@ -2319,7 +2354,7 @@ namespace CapybaraVS.Script
 
         public string MenuTitle => "Get List[index]";
 
-        public string ValueType { get; } = CbSTUtils.FREE_TYPE_STR;
+        public string ValueType { get; } = CbSTUtils.FREE_LIST_TYPE_STR;
 
         public Func<Type, bool> IsAccept => (t) => CbScript.AcceptAll(t);
 
@@ -2328,26 +2363,26 @@ namespace CapybaraVS.Script
             col.MakeFunction(
                 MenuTitle,
                 HelpText,
-                CbST.CbCreateTF(col.SelectedVariableType[0]),    // 返し値の型
+                CbST.CbCreateTF(col.SelectedVariableType[0].GetGenericArguments()[0]),    // 返し値の型
                 new List<ICbValue>()  // 引数
                 {
-                    CbList.Create(col.SelectedVariableType[0], "sample"),
+                    CbST.CbCreate(col.SelectedVariableType[0], "sample"),
                     CbST.CbCreate<int>("index"),
                 },
                 new Func<List<ICbValue>, DummyArgumentsStack, ICbValue>(
                     (argument, cagt) =>
                     {
-                        var ret = CbST.CbCreate(col.SelectedVariableType[0]);    // 返し値
                         try
                         {
                             int index = GetArgument<int>(argument, 1);
-                            ret.Data = (argument[0] as ICbList)[index].Data;
+                            return (argument[0] as ICbList)[index];
                         }
                         catch (Exception ex)
                         {
+                            var ret = CbST.CbCreate(col.SelectedVariableType[0].GetGenericArguments()[0]);    // 返し値
                             col.ExceptionFunc(ret, ex);
+                            return ret;
                         }
-                        return ret;
                     }
                     )
                 );
@@ -2365,7 +2400,7 @@ namespace CapybaraVS.Script
 
         public string MenuTitle => "Get List[last]";
 
-        public string ValueType { get; } = CbSTUtils.FREE_TYPE_STR;
+        public string ValueType { get; } = CbSTUtils.FREE_LIST_TYPE_STR;
 
         public Func<Type, bool> IsAccept => (t) => CbScript.AcceptAll(t);
 
@@ -2374,25 +2409,25 @@ namespace CapybaraVS.Script
             col.MakeFunction(
                 MenuTitle,
                 HelpText,
-                CbST.CbCreateTF(col.SelectedVariableType[0]),  // 返し値の型
+                CbST.CbCreateTF(col.SelectedVariableType[0].GetGenericArguments()[0]),  // 返し値の型
                 new List<ICbValue>()  // 引数
                 {
-                    CbList.Create(col.SelectedVariableType[0], "sample"),
+                    CbST.CbCreate(col.SelectedVariableType[0], "sample"),
                 },
                 new Func<List<ICbValue>, DummyArgumentsStack, ICbValue>(
                     (argument, cagt) =>
                     {
-                        var ret = CbST.CbCreate(col.SelectedVariableType[0]);    // 返し値
                         try
                         {
                             var argList = argument[0] as ICbList;
-                            ret.Data = argList[argList.Count - 1].Data;
+                            return argList[argList.Count - 1];
                         }
                         catch (Exception ex)
                         {
+                            var ret = CbST.CbCreate(col.SelectedVariableType[0].GetGenericArguments()[0]);    // 返し値
                             col.ExceptionFunc(ret, ex);
+                            return ret;
                         }
-                        return ret;
                     }
                     )
                 );
@@ -2410,7 +2445,7 @@ namespace CapybaraVS.Script
 
         public string MenuTitle => "Set List[index]";
 
-        public string ValueType { get; } = CbSTUtils.FREE_TYPE_STR;
+        public string ValueType { get; } = CbSTUtils.FREE_LIST_TYPE_STR;
 
         public Func<Type, bool> IsAccept => (t) => CbScript.AcceptAll(t);
 
@@ -2422,18 +2457,19 @@ namespace CapybaraVS.Script
                 CbST.CbCreateTF(col.SelectedVariableType[0]),  // 返し値の型
                 new List<ICbValue>()  // 引数
                 {
-                    CbList.Create(col.SelectedVariableType[0], "sample"),
+                    CbST.CbCreate(col.SelectedVariableType[0], "sample"),
                     CbST.CbCreate<int>("index"),
-                    CbST.CbCreate(col.SelectedVariableType[0], "n"),
+                    CbST.CbCreate(col.SelectedVariableType[0].GetGenericArguments()[0], "n"),
                 },
                 new Func<List<ICbValue>, DummyArgumentsStack, ICbValue>(
                     (argument, cagt) =>
                     {
-                        var ret = CbST.CbCreate(col.SelectedVariableType[0]);    // 返し値
+                        var ret = CbST.CbCreate(col.SelectedVariableType[0]) as ICbList;    // 返し値
                         try
                         {
+                            (argument[0] as ICbList).CopyTo(ret);
                             int index = GetArgument<int>(argument, 1);
-                            (argument[0] as ICbList)[index].Data = argument[2].Data;
+                            ret[index] = argument[2];
                         }
                         catch (Exception ex)
                         {
@@ -2457,7 +2493,7 @@ namespace CapybaraVS.Script
 
         public string MenuTitle => AssetCode;
 
-        public string ValueType { get; } = CbSTUtils.FREE_TYPE_STR;
+        public string ValueType { get; } = CbSTUtils.FREE_LIST_TYPE_STR;
 
         public Func<Type, bool> IsAccept => (t) => CbScript.AcceptAll(t);
 
@@ -2466,22 +2502,20 @@ namespace CapybaraVS.Script
             col.MakeFunction(
                MenuTitle,
                HelpText,
-               CbList.CreateTF(col.SelectedVariableType[0]),  // 返し値の型
+               CbST.CbCreateTF(col.SelectedVariableType[0]),  // 返し値の型
                new List<ICbValue>()   // 引数
                {
-                    CbList.Create(col.SelectedVariableType[0], "list"),
-                    col.ReturnValueTypeNTF("n")//CbST.Create(col.AssetLiteralType.GetObjectTypeNone(), "n"), // Func<> 型の場合に返し値の型で接続するために ObjectType を落としている（方法に置き換える予定）
+                    CbST.CbCreate(col.SelectedVariableType[0], "list"),
+                    CbST.CbCreate(col.SelectedVariableType[0].GetGenericArguments()[0], "n")
                },
                new Func<List<ICbValue>, DummyArgumentsStack, ICbValue>(
                    (argument, cagt) =>
                    {
-                       var ret = CbList.Create(col.SelectedVariableType[0]);    // 返し値
+                       var ret = CbST.CbCreate(col.SelectedVariableType[0]) as ICbList;    // 返し値
                        try
                        {
-                           var argList = argument[0] as ICbList;
-                           argList.CopyTo(ret as ICbList);
-                           (ret as ICbList).Append(argument[1]);
-
+                           (argument[0] as ICbList).CopyTo(ret);
+                           ret.Append(argument[1]);
                            col.LinkConnectorControl.UpdateValueData();
                        }
                        catch (Exception ex)

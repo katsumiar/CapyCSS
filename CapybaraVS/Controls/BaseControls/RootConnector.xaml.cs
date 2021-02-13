@@ -470,7 +470,7 @@ namespace CapybaraVS.Controls.BaseControls
                         // ValueData = ret;
                         // ↑管理情報まで上書きするのでまるごと上書きしてはダメ
 
-                        ValueData.CopyValue(ret);
+                        ValueData.Set(ret);
                     }
                     else
                     {

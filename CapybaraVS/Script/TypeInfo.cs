@@ -443,7 +443,6 @@ namespace CapybaraVS.Script
         /// 変数の値
         /// </summary>
         object Data { get; set; }
-        void CopyValue(ICbValue cbVSValue);
         /// <summary>
         /// 変数の値は文字列表示が可能か？
         /// </summary>
@@ -654,41 +653,22 @@ namespace CapybaraVS.Script
         /// 変数の持つ値を object として参照します。
         /// ※ 型を厳密に扱う場合は Value を参照します。
         /// </summary>
-        public virtual object Data { get => Value as object; set { Value = (T)value; } }
-
-        /// <summary>
-        /// 変数の持つ値をコピーします（ディープコピーではない）。
-        /// </summary>
-        /// <param name="cbVSValue"></param>
-        public virtual void CopyValue(ICbValue cbVSValue)
-        {
-            try
+        public virtual object Data {
+            get => Value as object;
+            set
             {
-                if (cbVSValue.IsError)
+                if (CbScript.IsValueType(typeof(T)))
                 {
-                    IsError = cbVSValue.IsError;
-                    ErrorMessage = cbVSValue.ErrorMessage;
-                    return;
-                }
+                    // ただのキャストでは sbyte から int への変換などで例外が出るので ChangeType を使って変換する
 
-                if (!(this is ICbList) && cbVSValue is ICbList cbList)
-                {
-                    // リストはオリジナルの型にしないと代入できない
-
-                    Value = (T)cbList.ConvertOriginalTypeList(null, null);
+                    Value = (T)Convert.ChangeType(value, typeof(T));
                 }
                 else
                 {
-                    Data = cbVSValue.Data;
-                }
+                    // 複雑なものは dynamic に処理する
 
-                IsError = cbVSValue.IsError;
-                ErrorMessage = cbVSValue.ErrorMessage;
-            }
-            catch (Exception ex)
-            {
-                IsError = true;
-                ErrorMessage = ex.Message;
+                    Value = (dynamic)value;
+                }
             }
         }
 
@@ -717,6 +697,12 @@ namespace CapybaraVS.Script
                 if (n is CbObject cbObject)
                 {
                     Value = (dynamic)cbObject.ValueTypeObject.Data;
+                }
+                else if (!(this is ICbList) && n is ICbList cbList)
+                {
+                    // リストはオリジナルの型にしないと代入できない
+
+                    Value = (T)cbList.ConvertOriginalTypeList(null, null);
                 }
                 else
                 {
@@ -939,17 +925,6 @@ namespace CapybaraVS.Script
                     name = str;
                 else
                     throw new NotImplementedException();
-            }
-        }
-
-        public virtual void CopyValue(ICbValue cbVSValue)
-        {
-            Data = cbVSValue.Data;
-            IsError = cbVSValue.IsError;
-            ErrorMessage = cbVSValue.ErrorMessage;
-            if (this is ICbEvent cbEvent && cbVSValue is ICbEvent cbEven2)
-            {
-                cbEvent.CallBack = cbEven2.CallBack;
             }
         }
 

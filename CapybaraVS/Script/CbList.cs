@@ -341,7 +341,7 @@ namespace CbVS.Script
                 int i = 0;
                 for (; i < len; ++i)
                 {
-                    toList[i].CopyValue(Value[i]);
+                    toList[i].Set(Value[i]);
                 }
                 int remaining = toList.Count - Value.Count;
                 if (remaining != 0)
@@ -363,7 +363,7 @@ namespace CbVS.Script
                         for (int j = 0; j < remaining; ++j)
                         {
                             var addNode = NodeTF();
-                            addNode.CopyValue(Value[i + j]);
+                            addNode.Set(Value[i + j]);
                             toList.Append(addNode);
                         }
                     }
@@ -382,7 +382,7 @@ namespace CbVS.Script
         public void Append(ICbValue cbVSValue)  // CbList.Append にリフレクションとして参照されている
         {
             var addData = NodeTF();
-            addData.CopyValue(cbVSValue);
+            addData.Set(cbVSValue);
             Value.Add(addData);
         }
 

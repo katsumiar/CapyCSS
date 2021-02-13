@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using CbVS.Script;
 
 namespace CapybaraVS.Script
@@ -30,21 +31,36 @@ namespace CapybaraVS.Script
             }
         }
 
-        public override void CopyValue(ICbValue cbVSValue)
+        public override void Set(ICbValue n)
         {
-            if (cbVSValue.Data is string)
+            try
             {
-                Data = cbVSValue.Data;
+                if (n.IsError)
+                    throw new Exception(n.ErrorMessage);
+
+                if (n is CbObject)
+                {
+                    Data = n.Data;
+                }
+                else
+                {
+                    // 値を文字列にしてコピーする
+
+                    ValueString = n.ValueString;
+                }
+                if (IsError)
+                {
+                    // エラーからの復帰
+
+                    IsError = false;
+                    ErrorMessage = "";
+                }
             }
-            else
+            catch (Exception ex)
             {
-                ValueString = cbVSValue.ValueString;
-            }
-            IsError = cbVSValue.IsError;
-            ErrorMessage = cbVSValue.ErrorMessage;
-            if (this is ICbEvent cbEvent && cbVSValue is ICbEvent cbEven2)
-            {
-                cbEvent.CallBack = cbEven2.CallBack;
+                IsError = true;
+                ErrorMessage = ex.Message;
+                throw;
             }
         }
 

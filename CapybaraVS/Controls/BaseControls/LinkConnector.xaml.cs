@@ -480,7 +480,7 @@ namespace CapybaraVS.Controls.BaseControls
                     // もともとの接続情報を保存して新規接続する
 
                     backupValueData = CbST.CbCreate(ValueData.OriginalType);   //CbST.Create(ValueData.CbType);
-                    backupValueData.CopyValue(ValueData);
+                    backupValueData.Set(ValueData);
                     ReadOnly = true;
                 }
 
@@ -589,7 +589,7 @@ namespace CapybaraVS.Controls.BaseControls
                 }
                 else
                 {
-                    ValueData.CopyValue(connectValueData);
+                    ValueData.Set(connectValueData);
                 }
             }
             catch (Exception ex)
@@ -697,7 +697,7 @@ namespace CapybaraVS.Controls.BaseControls
             linkCurveLinks?.RequestRemoveCurveLinkPoint(root);
             if (backupValueData != null)
             {
-                ValueData.CopyValue(backupValueData);
+                ValueData.Set(backupValueData);
                 UpdateEvent?.Invoke();
                 backupValueData = null;
                 ConnectorList.ClearSetList();

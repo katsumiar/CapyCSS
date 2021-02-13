@@ -467,8 +467,6 @@ namespace CbVS.Script
 
         public string ItemName => typeof(RT).FullName;
 
-        private bool nullFlg = true;
-
         /// <summary>
         /// Func<> もしくは Action<> を内包したコールバックを参照します。
         /// </summary>
@@ -493,12 +491,23 @@ namespace CbVS.Script
                 if (n.IsError)
                     throw new Exception(n.ErrorMessage);
 
-                Debug.Assert(n is ICbEvent);
+                //Debug.Assert(n is ICbEvent);
 
-                if (n is ICbEvent cbEvent)
+                if (n is CbObject)
                 {
-                    CallBack = (dynamic)cbEvent.CallBack;
-                    Value = (dynamic)n.Data;
+                    Data = n.Data;
+                }
+                else if (n is ICbEvent cbEvent)
+                {
+                    CallBack = cbEvent.CallBack;
+                    //Data = n.Data;
+                }
+                if (IsError)
+                {
+                    // エラーからの復帰
+
+                    IsError = false;
+                    ErrorMessage = "";
                 }
             }
             catch (Exception ex)
@@ -561,17 +570,6 @@ namespace CbVS.Script
             }
         }
 
-        public override void CopyValue(ICbValue cbVSValue)
-        {
-            Data = cbVSValue.Data;
-            IsError = cbVSValue.IsError;
-            ErrorMessage = cbVSValue.ErrorMessage;
-            if (this is ICbEvent cbEvent && cbVSValue is ICbEvent cbEven2)
-            {
-                cbEvent.CallBack = cbEven2.CallBack;
-            }
-        }
-
         public override ICbValue Value
         {
             get
@@ -582,14 +580,6 @@ namespace CbVS.Script
             }
             set
             {
-                if (value is null)
-                {
-                    nullFlg = true;
-                }
-                else
-                {
-                    nullFlg = false;
-                }
                 _value = value;
             }
         }
@@ -601,7 +591,7 @@ namespace CbVS.Script
                 string baseName = "[" + TypeName + "()]";
                 if (IsError)
                     return ERROR_STR;
-                if (IsNull && CallBack is null)
+                if (IsNull)
                     return baseName + NULL_STR;
                 return baseName;
             }
@@ -1093,7 +1083,7 @@ namespace CbVS.Script
         /// <summary>
         /// イベントの返り値が null か？
         /// </summary>
-        public override bool IsNull => nullFlg;
+        public override bool IsNull => CallBack is null;
 
         public static Func<ICbValue> TF = () => CbFunc<T, RT>.Create();
         public static Func<string, ICbValue> NTF = (name) => CbFunc<T, RT>.Create(name);

@@ -211,26 +211,34 @@ namespace CapybaraVS.Script
             List<string> ignoreClassList,
             string version = null)
         {
-            var asm = Assembly.LoadFrom(path);
-            Module mod = asm.GetModule(path);
-            string name = Path.GetFileName(path);
-            ImportScriptMethods(
-                OwnerCommandCanvas, 
-                node, 
-                asm, 
-                mod, 
-                ignoreClassList,
-                (t) => OwnerCommandCanvas.AddImportTypeMenu(t)
-                );
-            if (version is null)
+            try
             {
-                CommandCanvasList.OutPut.OutLine(nameof(ScriptImplement), $"imported {System.IO.Path.GetFileNameWithoutExtension(name)} package.");
+                var asm = Assembly.LoadFrom(path);
+                Module mod = asm.GetModule(path);
+                string name = Path.GetFileName(path);
+                ImportScriptMethods(
+                    OwnerCommandCanvas,
+                    node,
+                    asm,
+                    mod,
+                    ignoreClassList,
+                    (t) => OwnerCommandCanvas.AddImportTypeMenu(t)
+                    );
+                if (version is null)
+                {
+                    CommandCanvasList.OutPut.OutLine(nameof(ScriptImplement), $"imported {System.IO.Path.GetFileNameWithoutExtension(name)} package.");
+                }
+                else
+                {
+                    CommandCanvasList.OutPut.OutLine(nameof(ScriptImplement), $"imported {version} package.");
+                }
+                return name;
             }
-            else
+            catch (Exception ex)
             {
-                CommandCanvasList.OutPut.OutLine(nameof(ScriptImplement), $"imported {version} package.");
+                CommandCanvasList.OutPut.OutLine(nameof(ScriptImplement), $"Import Dll Error: {ex.Message}.");
             }
-            return name;
+            return null;
         }
 
         /// <summary>
