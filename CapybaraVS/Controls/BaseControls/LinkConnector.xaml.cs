@@ -479,7 +479,7 @@ namespace CapybaraVS.Controls.BaseControls
                 {
                     // もともとの接続情報を保存して新規接続する
 
-                    backupValueData = CbST.CbCreate(ValueData.OriginalType);   //CbST.Create(ValueData.CbType);
+                    backupValueData = CbST.CbCreate(ValueData.OriginalType);
                     backupValueData.Set(ValueData);
                     ReadOnly = true;
                 }
@@ -493,7 +493,7 @@ namespace CapybaraVS.Controls.BaseControls
                     ConnectorList.SetList(list.Value);
                 }
 
-                ValueData = CbST.CbCreate(backupValueData.OriginalType);// CbST.Create(backupValueData.CbType);
+                ValueData = CbST.CbCreate(backupValueData.OriginalType);
                 connectValueData = value;
                 eventLinkRootConnector = root as RootConnector;
 
