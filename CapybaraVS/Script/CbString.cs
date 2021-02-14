@@ -35,10 +35,7 @@ namespace CapybaraVS.Script
         {
             try
             {
-                if (n.IsError)
-                    throw new Exception(n.ErrorMessage);
-
-                if (n is CbObject)
+                if (n is CbObject || n is ICbClass)
                 {
                     Data = n.Data;
                 }

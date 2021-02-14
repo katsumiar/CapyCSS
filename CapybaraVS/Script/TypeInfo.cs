@@ -691,12 +691,15 @@ namespace CapybaraVS.Script
         {
             try
             {
-                if (n.IsError)
-                    throw new Exception(n.ErrorMessage);
-
                 if (n is CbObject cbObject)
                 {
-                    Value = (dynamic)cbObject.ValueTypeObject.Data;
+                    n = (dynamic)cbObject.ValueTypeObject;
+                }
+                if (CbScript.IsValueType(typeof(T)))
+                {
+                    // ただのキャストでは sbyte から int への変換などで例外が出るので ChangeType を使って変換する
+
+                    Value = (T)Convert.ChangeType(n.Data, typeof(T));
                 }
                 else if (!(this is ICbList) && n is ICbList cbList)
                 {

@@ -1,5 +1,6 @@
 ﻿//#define SHOW_LINK_ARRAY   // リスト型を接続したときにリストの要素をコピーして表示する
 
+using CbVS.Script;
 using System;
 using System.Reflection;
 
@@ -169,19 +170,21 @@ namespace CapybaraVS.Script
         {
             get
             {
-                if (CbVoid.Is(typeof(T)))
-                    return CbSTUtils.VOID_STR;
-                string baseName = "[" + TypeName + "]";
                 if (IsError)
                     return ERROR_STR;
+                if (CbVoid.Is(typeof(T)))
+                    return CbSTUtils.VOID_STR;
+                string baseName = $"[{TypeName}]";
                 if (IsNull)
+                {
                     return baseName + NULL_STR;
+                }
                 return baseName;
             }
             set => new NotImplementedException();
         }
 
-        public override bool IsStringableValue => false;
+        public override bool IsStringableValue => true;
 
         public override bool IsReadOnlyValue { get; set; } = true;
 

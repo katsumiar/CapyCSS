@@ -81,24 +81,9 @@ namespace CapybaraVS.Controls.BaseControls
                     string backup = self.ValueData.ValueString;
                     try
                     {
-                        if (self.ValueData is CbObject cbObject)
-                        {
-                            // CbObject は中身を表示する
-
-                            self.Edit.Text = cbObject.ValueTypeObject.ValueString.Trim('\r', '\n');
-                        }
-                        else if (self.ValueData is ICbClass cbClass && cbClass.Data != null)
-                        {
-                            // ICbClass は中身の型を表示する
-
-                            self.Edit.Text = $"[{CbSTUtils._GetTypeName(cbClass.Data.GetType())}]";
-                        }
-                        else
-                        {
-                            if (self.ValueData.IsStringableValue)
-                                self.ValueData.ValueString = text;
-                            self.Edit.Text = self.ValueData.ValueString.Trim('\r', '\n');
-                        }
+                        if (self.ValueData.IsStringableValue)
+                            self.ValueData.ValueString = text;
+                        self.Edit.Text = self.ValueData.ValueString.Trim('\r', '\n');
                         self.ToolTipUpdate();
                     }
                     catch (Exception ex)
@@ -201,28 +186,14 @@ namespace CapybaraVS.Controls.BaseControls
 
         private void _UpdateValueData(ICbValue valueData)
         {
-            string typeName = valueData.TypeName;
-            if (valueData is CbObject cbObject)
-            {
-                // CbObject は中身を表示する
-
-                _UpdateValueData(cbObject.ValueTypeObject, typeName);
-                return;
-            }
-
-            _UpdateValueData(valueData, typeName);
-        }
-
-        private void _UpdateValueData(ICbValue valueData, string typeName)
-        {
             if (valueData is null)
                 return;
 
-            if (typeName.Length != 0)
+            if (valueData.TypeName.Length != 0)
             {
                 // 型名
 
-                TypeName = typeName;
+                TypeName = valueData.TypeName;
             }
             if (valueData.Name.Length != 0)
             {
@@ -379,9 +350,9 @@ namespace CapybaraVS.Controls.BaseControls
             else
                 Select.Foreground = Brushes.Black;
         }
-        #endregion
+#endregion
 
-        #region UpdateEvent 添付プロパティ実装
+#region UpdateEvent 添付プロパティ実装
 
         private static ImplementDependencyProperty<UIParam, Action> impUpdateEvent =
             new ImplementDependencyProperty<UIParam, Action>(
@@ -401,7 +372,7 @@ namespace CapybaraVS.Controls.BaseControls
 
 #endregion
 
-        #region ReadOnly 添付プロパティ実装
+#region ReadOnly 添付プロパティ実装
 
         private static ImplementDependencyProperty<UIParam, bool> impReadOnly =
             new ImplementDependencyProperty<UIParam, bool>(
@@ -420,9 +391,9 @@ namespace CapybaraVS.Controls.BaseControls
             set { impReadOnly.SetValue(this, value); }
         }
 
-        #endregion
+#endregion
 
-        #region ParamNameLabelOverlap 添付プロパティ実装
+#region ParamNameLabelOverlap 添付プロパティ実装
         private static ImplementDependencyProperty<UIParam, string> impParamNameLabelOverlap =
             new ImplementDependencyProperty<UIParam, string>(
                 nameof(ParamNameLabelOverlap),
@@ -439,9 +410,9 @@ namespace CapybaraVS.Controls.BaseControls
             get { return impParamNameLabelOverlap.GetValue(this); }
             set { impParamNameLabelOverlap.SetValue(this, value); }
         }
-        #endregion
+#endregion
 
-        #region TypeNameLabelOverlap 添付プロパティ実装
+#region TypeNameLabelOverlap 添付プロパティ実装
         private static ImplementDependencyProperty<UIParam, string> impTypeNameLabelOverlap =
             new ImplementDependencyProperty<UIParam, string>(
                 nameof(TypeNameLabelOverlap),
@@ -458,9 +429,9 @@ namespace CapybaraVS.Controls.BaseControls
             get { return impTypeNameLabelOverlap.GetValue(this); }
             set { impTypeNameLabelOverlap.SetValue(this, value); }
         }
-        #endregion
+#endregion
 
-        #region CastType 添付プロパティ実装
+#region CastType 添付プロパティ実装
         private static ImplementDependencyProperty<UIParam, bool> impCastType =
             new ImplementDependencyProperty<UIParam, bool>(
                 nameof(CastType),
@@ -477,7 +448,7 @@ namespace CapybaraVS.Controls.BaseControls
             get { return impCastType.GetValue(this); }
             set { impCastType.SetValue(this, value); }
         }
-        #endregion
+#endregion
 
         private CommandCanvas _OwnerCommandCanvas = null;
 
@@ -531,9 +502,9 @@ namespace CapybaraVS.Controls.BaseControls
                     }
                     else
                     {
-                        Edit.ToolTip = cbClass.Data.ToString().Trim('\r', '\n');
-                        return;
+                        Edit.ToolTip = cbClass.ValueString.Trim('\r', '\n');
                     }
+                    return;
                 }
             }
 #if !SHOW_LINK_ARRAY

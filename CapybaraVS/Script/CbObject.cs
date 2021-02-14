@@ -31,12 +31,13 @@ namespace CapybaraVS.Script
                 if (Value is ICbValue cbVSValue)
                 {
                     ICbValue newValue = null;
-                    
+
                     if (cbVSValue is ICbList cbList)
                         newValue = cbList.CreateTF();
                     else
                         newValue = cbVSValue.NodeTF();
                     newValue.Set(cbVSValue);
+                    // 型情報を復元
 
                     return newValue;
                 }
@@ -44,25 +45,23 @@ namespace CapybaraVS.Script
             }
         }
 
+        private ICbValue copyOriginal = null;
+
         public override void Set(ICbValue n)
         {
             try
             {
-                if (n.IsError)
-                    throw new Exception(n.ErrorMessage);
-
+                // 型情報を残す
+                copyOriginal = n;
                 if (n is ICbEvent cbEvent)
                 {
                     Value = n;
                 }
-                else if (n is CbObject)
+                else
                 {
                     Value = n.Data;
                 }
-                else
-                {
-                    Value = n;
-                }
+
                 if (IsError)
                 {
                     // エラーからの復帰
@@ -102,12 +101,17 @@ namespace CapybaraVS.Script
         {
             get 
             {
-                string baseName = $"[{CbSTUtils.OBJECT_STR}]";
                 if (IsError)
                     return ERROR_STR;
                 if (IsNull)
-                    return baseName + NULL_STR;
-                return baseName;
+                {
+                    return $"[{CbSTUtils.OBJECT_STR}]" + NULL_STR;
+                }
+                else if (Value is ICbEvent cbEvent)
+                {
+                    return $"{cbEvent.TypeName}()";
+                }
+                return copyOriginal.ValueString;
             }
             set => new NotImplementedException();
         }
