@@ -691,6 +691,9 @@ namespace CapybaraVS.Script
         {
             try
             {
+                if (n.IsError)
+                    throw new Exception(n.ErrorMessage);
+
                 if (n is CbObject cbObject)
                 {
                     n = (dynamic)cbObject.ValueTypeObject;
@@ -721,7 +724,6 @@ namespace CapybaraVS.Script
             {
                 IsError = true;
                 ErrorMessage = ex.Message;
-                throw;
             }
         }
         public virtual void Add(ICbValue n)

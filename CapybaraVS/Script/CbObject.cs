@@ -51,6 +51,9 @@ namespace CapybaraVS.Script
         {
             try
             {
+                if (n.IsError)
+                    throw new Exception(n.ErrorMessage);
+
                 // 型情報を残す
                 copyOriginal = n;
                 if (n is ICbEvent cbEvent)
@@ -74,7 +77,6 @@ namespace CapybaraVS.Script
             {
                 IsError = true;
                 ErrorMessage = ex.Message;
-                throw;
             }
         }
 
