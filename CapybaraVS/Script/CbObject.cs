@@ -77,6 +77,7 @@ namespace CapybaraVS.Script
             {
                 IsError = true;
                 ErrorMessage = ex.Message;
+                throw;
             }
         }
 
@@ -112,6 +113,10 @@ namespace CapybaraVS.Script
                 else if (Value is ICbEvent cbEvent)
                 {
                     return $"{cbEvent.TypeName}()";
+                }
+                if (copyOriginal is null)
+                {
+                    return Value.ToString();
                 }
                 return copyOriginal.ValueString;
             }

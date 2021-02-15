@@ -71,7 +71,7 @@ namespace CbVS.Script
             {
                 return false;
             }
-            if (isAccept != null && !isAccept(Type.GetType(typeName)))
+            if (isAccept != null && !isAccept(CbST.GetTypeEx(typeName)))
             {
                 return false;
             }
@@ -114,7 +114,7 @@ namespace CbVS.Script
                         return null;
 
                     string name = "variable" + (OwnerCommandCanvas.ScriptWorkStack.StackData.Count + 1);
-                    ListSelectWindow.DefaultValue = CbST.CbCreate(Type.GetType(valueType), name);
+                    ListSelectWindow.DefaultValue = CbST.CbCreate(CbST.GetTypeEx(valueType), name);
                     stackNode = OwnerCommandCanvas.ScriptWorkStack.Append(ListSelectWindow.DefaultValue).stackNode;
                     ListSelectWindow.DefaultValue = null;
                 }

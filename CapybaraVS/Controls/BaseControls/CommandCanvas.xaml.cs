@@ -809,7 +809,7 @@ namespace CapybaraVS.Controls.BaseControls
                         },
                         (p) =>
                         {
-                            return CanTypeMenuExecuteEvent(Type.GetType(typeName.Key));
+                            return CanTypeMenuExecuteEvent(CbST.GetTypeEx(typeName.Key));
                         }
                         );
 

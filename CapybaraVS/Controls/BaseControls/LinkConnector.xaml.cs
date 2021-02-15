@@ -611,14 +611,7 @@ namespace CapybaraVS.Controls.BaseControls
                     if (cbObject.Data is null)
                         return; // 保険
 
-                    if (cbObject.Data is ICbValue cbValue)
-                    {
-                        ValueData.Data = cbValue.Data;
-                    }
-                    else
-                    {
-                        ValueData.Data = cbObject.Data;
-                    }
+                    ValueData.Set(cbObject);
                 }
                 else
                 {

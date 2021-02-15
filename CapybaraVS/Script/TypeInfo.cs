@@ -724,6 +724,7 @@ namespace CapybaraVS.Script
             {
                 IsError = true;
                 ErrorMessage = ex.Message;
+                throw;
             }
         }
         public virtual void Add(ICbValue n)

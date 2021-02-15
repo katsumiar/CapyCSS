@@ -38,16 +38,10 @@ namespace CapybaraVS.Script
                 if (n.IsError)
                     throw new Exception(n.ErrorMessage);
 
-                if (n is CbObject || n is ICbClass)
-                {
-                    Data = n.Data;
-                }
-                else
-                {
-                    // 値を文字列にしてコピーする
+                // 値を文字列にしてコピーする
 
-                    ValueString = n.ValueString;
-                }
+                ValueString = n.ValueString;
+
                 if (IsError)
                 {
                     // エラーからの復帰
@@ -60,6 +54,7 @@ namespace CapybaraVS.Script
             {
                 IsError = true;
                 ErrorMessage = ex.Message;
+                throw;
             }
         }
 
