@@ -242,7 +242,7 @@ namespace CapybaraVS.Controls.BaseControls
         public void SetListNodeType(Func<ICbValue> nodeType)
         {
             BoxMainPanel.Visibility = Visibility.Visible;
-            ConnectorList.AddFunc = new Func<ObservableCollection<LinkConnector>, ICbValue>(
+            ConnectorList.CreateNodeEvent = new Func<ObservableCollection<LinkConnector>, ICbValue>(
                 (ListData) => 
                 {
                     return nodeType();
@@ -485,12 +485,11 @@ namespace CapybaraVS.Controls.BaseControls
                 }
 
                 if (BoxMainPanel.Visibility == Visibility.Visible &&
-                    value is ICbList list)
+                    value.IsList)
                 {
-                    // リンクコネクターリストが開いている（リスト接続可能）
-                    // かつ接続されたリンクがリストデータを持っている場合は、リストを展開する
+                    // 接続可能かつリスト型の場合は、ノードを展開する
 
-                    ConnectorList.SetList(list.Value);
+                    ConnectorList.Connect(value);
                 }
 
                 ValueData = CbST.CbCreate(backupValueData.OriginalType);
@@ -509,7 +508,10 @@ namespace CapybaraVS.Controls.BaseControls
             return ret;
         }
 
-        public void UpdateParam()
+        /// <summary>
+        /// 表示を更新します。
+        /// </summary>
+        public void UpdateValueData()
         {
             ParamTextBox.UpdateValueData();
         }
@@ -527,7 +529,8 @@ namespace CapybaraVS.Controls.BaseControls
         {
             if (ValueData is ICbList cbList)
             {
-                return cbList.ItemName.StartsWith(CbSTUtils.FUNC_STR) || cbList.ItemName.StartsWith(CbSTUtils.ACTION_STR);
+                return cbList.ItemName.StartsWith(CbSTUtils.FUNC_STR)
+                    || cbList.ItemName.StartsWith(CbSTUtils.ACTION_STR);
             }
             return ValueData is ICbEvent;
         }
@@ -643,7 +646,7 @@ namespace CapybaraVS.Controls.BaseControls
         {
             SetupValue();
             ParamTextBox.UpdateValueData();
-            UpdateLinkedList();
+            UpdateConnectedList();
             UpdateEvent?.Invoke();
         }
 
@@ -666,23 +669,17 @@ namespace CapybaraVS.Controls.BaseControls
         }
 
         /// <summary>
-        /// リンクされているリストを表示に再反映します。
+        /// 接続されているリストを表示に再反映します。
         /// </summary>
-        private void UpdateLinkedList()
+        private void UpdateConnectedList()
         {
             if (BoxMainPanel.Visibility == Visibility.Visible &&
-                ValueData is ICbList list)
+                ValueData.IsList)
             {
-                // リンクされているリストを表示に再反映する
+                // 接続されているリストを表示に再反映する
 
-                ConnectorList.UpdateListData(list.Value);
+                ConnectorList.UpdateListData(ValueData);
             }
-        }
-
-        public Action ConnectorListUpdateListEvent
-        {
-            get => ConnectorList.UpdateListEvent;
-            set { ConnectorList.UpdateListEvent = value; }
         }
 
         public void RequestRemoveCurveLinkPoint(ICurveLinkRoot root)
@@ -693,7 +690,7 @@ namespace CapybaraVS.Controls.BaseControls
                 ValueData.Set(backupValueData);
                 UpdateEvent?.Invoke();
                 backupValueData = null;
-                ConnectorList.ClearSetList();
+                ConnectorList.Disconnect();
             }
             if (!ClearLock)
                 RemoveQurveUpdate();
@@ -718,7 +715,7 @@ namespace CapybaraVS.Controls.BaseControls
                 ValueData = backupValueData;
                 UpdateEvent?.Invoke();
                 backupValueData = null;
-                ConnectorList.ClearSetList();
+                ConnectorList.Disconnect();
             }
             RemoveQurveUpdate();
             ChangeLinkConnectorStroke();

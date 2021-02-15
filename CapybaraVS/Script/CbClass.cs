@@ -24,7 +24,7 @@ namespace CapybaraVS.Script
         Type OriginalReturnType { get; }
 
         /// <summary>
-        /// 値を文字列で参照します。
+        /// UI接続上の表示を文字列で参照します。
         /// </summary>
         string ValueString { get; }
     }

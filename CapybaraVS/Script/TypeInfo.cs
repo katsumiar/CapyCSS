@@ -402,10 +402,18 @@ namespace CapybaraVS.Script
         Type OriginalType { get; }
     }
 
+    public interface IUIShowValue
+    {
+        /// <summary>
+        /// 値の文字列表現
+        /// </summary>
+        string ValueString { get; set; }
+    }
+
     /// <summary>
     /// CbVSValue機能インターフェイス
     /// </summary>
-    public interface ICbValue : ICbVSValueBase
+    public interface ICbValue : ICbVSValueBase, IUIShowValue
     {
         /// <summary>
         /// 変数生成用型情報
@@ -424,13 +432,13 @@ namespace CapybaraVS.Script
         /// </summary>
         bool IsReadOnlyName { get; }
         /// <summary>
-        /// 値の文字列表現
-        /// </summary>
-        string ValueString { get; set; }
-        /// <summary>
         /// デリゲート型かどうか？
         /// </summary>
         bool IsDelegate { get; }
+        /// <summary>
+        /// リストか否か？（ToArray も含めるので ICollection ではない）
+        /// </summary>
+        bool IsList { get; }
         /// <summary>
         /// 変数の値は変更不可か？
         /// </summary>
@@ -526,7 +534,7 @@ namespace CapybaraVS.Script
     }
 
     /// <summary>
-    /// データ表示インターフェイス
+    /// データ表示インターフェイス（※TODO 実装を見直す）
     /// </summary>
     public interface ICbShowValue
     {
@@ -623,6 +631,11 @@ namespace CapybaraVS.Script
         /// デリゲート型かどうか？
         /// </summary>
         public virtual bool IsDelegate => false;
+
+        /// <summary>
+        /// リストか否か？（ToArray も含めるので ICollection ではない）
+        /// </summary>
+        public virtual bool IsList => false;
 
         /// <summary>
         /// 変数名を参照します。
@@ -901,6 +914,8 @@ namespace CapybaraVS.Script
         public bool IsReadOnlyName { get; set; } = false;
 
         public virtual bool IsDelegate => false;
+
+        public virtual bool IsList => false;
 
         public string ValueString { get => name; set { name = value; } }
 

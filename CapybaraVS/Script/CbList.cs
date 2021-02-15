@@ -27,8 +27,6 @@ namespace CbVS.Script
         /// <returns></returns>
         object ConvertOriginalTypeList(DummyArgumentsControl dummyArgumentsControl, DummyArgumentsStack cagt, MultiRootConnector col = null);
 
-        ObservableCollection<LinkConnector> LinkConnectors { get; }
-
         /// <summary>
         /// 配列型か？
         /// </summary>
@@ -157,16 +155,6 @@ namespace CbVS.Script
             return (name) => CbList.Create(original, name);
         }
 
-        public static LinkConnector ConvertLinkConnector(CommandCanvas ownerCommandCanvas, ICbValue cbVSValue)
-        {
-            var linkConnector = new LinkConnector()
-            {
-                OwnerCommandCanvas = ownerCommandCanvas,
-                ValueData = cbVSValue
-            };
-            return linkConnector;
-        }
-
         public static StackNode ConvertStackNode(CommandCanvas ownerCommandCanvas, ICbValue cbVSValue)
         {
             var stackNode = new StackNode(ownerCommandCanvas)
@@ -215,6 +203,8 @@ namespace CbVS.Script
                 return text;
             }
         }
+
+        public override bool IsList => true;
 
         public bool IsArrayType { get; set; } = false;
 
@@ -384,19 +374,6 @@ namespace CbVS.Script
             var addData = NodeTF();
             addData.Set(cbVSValue);
             Value.Add(addData);
-        }
-
-        public ObservableCollection<LinkConnector> LinkConnectors
-        {
-            get
-            {
-                ObservableCollection<LinkConnector> ret = new ObservableCollection<LinkConnector>();
-                foreach (var node in Value)
-                {
-                    ret.Add(CbList.ConvertLinkConnector(null, node));
-                }
-                return ret;
-            }
         }
 
         /// <summary>

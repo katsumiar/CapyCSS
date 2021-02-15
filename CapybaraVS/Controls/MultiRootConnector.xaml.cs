@@ -324,15 +324,9 @@ namespace CapybaraVS.Controls
             AssetXML = new _AssetXML<MultiRootConnector>(this);
         }
 
-        public MultiRootConnector AppendToBox(ICbList obj, bool hideLinkConnector = false)
+        public MultiRootConnector AppendArgument(ICbValue variable, bool literalType = false)
         {
-            LinkConnectorControl.AppendToBox(obj, hideLinkConnector);
-            return this;
-        }
-
-        public MultiRootConnector AppendToBox(ICbValue obj)
-        {
-            LinkConnectorControl.AppendToBox(obj);
+            LinkConnectorControl.AppendArgument(variable, literalType);
             return this;
         }
 
@@ -386,29 +380,6 @@ namespace CapybaraVS.Controls
             get { return impAssetType.GetValue(this); }
             set { impAssetType.SetValue(this, value); }
         }
-
-        #endregion
-
-        #region AssetLiteralType 添付プロパティ実装
-
-        //private static ImplementDependencyProperty<MultiRootConnector, CbST> impAssetLiteralType =
-        //    new ImplementDependencyProperty<MultiRootConnector, CbST>(
-        //        nameof(AssetLiteralType),
-        //        (self, getValue) =>
-        //        {
-        //            CbST value = getValue(self);
-        //            var variable = CbST.Create(value, "");
-        //            self.SelectedVariableType[0] = variable.OriginalType;
-        //            self.SelectedVariableTypeName[0] = variable.TypeName;
-        //        });
-
-        //public static readonly DependencyProperty AssetLiteralTypeProperty = impAssetLiteralType.Regist(null);
-
-        //public CbST AssetLiteralType
-        //{
-        //    get { return impAssetLiteralType.GetValue(this); }
-        //    set { impAssetLiteralType.SetValue(this, value); }
-        //}
 
         #endregion
 
@@ -517,57 +488,28 @@ namespace CapybaraVS.Controls
             {
                 foreach (var node in argumentList)
                 {
-                    if (node is ICbList cpbList)
-                    {
-                        AppendToBox(cpbList);
-                    }
-                    else
-                    {
-                        AppendToBox(node);
-                    }
+                    // 引数を追加する
+
+                    AppendArgument(node);
                 }
             }
-
-#if false
-            // リスト型の変数にリストを表示する
-            if (AssetFuncType == FuncType.CreateVariable)
-            {
-                if (returnType is CbList cbList)
-                    AppendToBox(cbList, true);
-            }
-#endif
         }
 
         private bool MakeLiteral(Func<ICbValue> literalType)
         {
             if (literalType != null)
             {
-                var listType = literalType();
+                var value = literalType();
                 LinkConnectorControl.OwnerCommandCanvas = OwnerCommandCanvas;
                 LinkConnectorControl.Caption = literalType().TypeName;
-                LinkConnectorControl.ValueData = listType;
-                if (listType is ICbList cbList)
-                {
-                    AppendToBox(cbList, true);
-                }
+                LinkConnectorControl.ValueData = value;
+
+                // 引数を追加する
+                AppendArgument(value, true);
                 return true;
             }
             return false;
         }
-
-        //private bool MakeLiteralList(Func<ICbValue> literalType)
-        //{
-        //    if (literalType != null)
-        //    {
-        //        var listType = literalType();
-        //        LinkConnectorControl.OwnerCommandCanvas = OwnerCommandCanvas;
-        //        LinkConnectorControl.Caption = literalType().TypeName;
-        //        LinkConnectorControl.ValueData = listType;
-        //        AppendToBox(listType as ICbList, true);
-        //        return true;
-        //    }
-        //    return false;
-        //}
 
         private void MakeMultiRootConnector(string name = "Root")
         {

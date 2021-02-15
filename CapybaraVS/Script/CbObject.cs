@@ -56,7 +56,7 @@ namespace CapybaraVS.Script
 
                 // 型情報を残す
                 copyOriginal = n;
-                if (n is ICbEvent cbEvent)
+                if (n is ICbEvent || n is ICbClass)
                 {
                     Value = n;
                 }
@@ -114,7 +114,11 @@ namespace CapybaraVS.Script
                 {
                     return $"{cbEvent.TypeName}()";
                 }
-                if (copyOriginal is null)
+                else if (Value is ICbClass cbClass)
+                {
+                    return $"{cbClass.ValueString}";
+                }
+                else if (copyOriginal is null)
                 {
                     return Value.ToString();
                 }

@@ -520,7 +520,9 @@ namespace CapybaraVS.Controls.BaseControls
                         // 接続時にイベントとして処理している。
                     }
                     else
+                    {
                         connector.RequestExecute(functionStack, preArgument);
+                    }
                     arguments.Add(connector.ValueData);
                 }
             }
@@ -626,48 +628,90 @@ namespace CapybaraVS.Controls.BaseControls
             }
         }
 
-        public void AppendToBox(ICbList obj, bool hideLinkConnector = false)
+        /// <summary>
+        /// 引数を追加します。
+        /// </summary>
+        /// <param name="variable">リンクする変数</param>
+        /// <param name="literalType">リテラルタイプか？</param>
+        public void AppendArgument(ICbValue variable, bool literalType = false)
         {
-            // リストをリンクする為のリンクコネクターを作成する
+            // 引数とリンクしたリンクコネクターを作成する
             var linkConnector = new LinkConnector()
             {
                 OwnerCommandCanvas = this.OwnerCommandCanvas,
-                ValueData = obj
+                ValueData = variable
             };
-            // リンクコネクターにリストを追加する
-            linkConnector.SetListNodeType(obj.NodeTF);
-            // リストを返し値と同期させる
-            linkConnector.ConnectorList.LinkToList(obj);
-            if (hideLinkConnector)
+            if (variable.IsList)
             {
-                linkConnector.ConnectorListUpdateListEvent = new Action(
-                        () =>
-                        {
-                            // リストの変更を接続先に伝える
+                // リスト型の引数を追加する
 
-                            rootCurveLinks?.RequestUpdateRootValue();
-                        });
+                AppendListArgument(linkConnector, variable, literalType);
+            }
+            else
+            {
+                if (literalType)
+                {
+                    // 引数にしない（ルートのみ）
 
-                // 接続を禁止する
+                    return;
+                }
+
+                // 引数UIを追加する
+                AppendUIArgument(linkConnector);
+            }
+        }
+
+        /// <summary>
+        /// リスト型引数の為のノードリストを用意します。
+        /// </summary>
+        /// <param name="linkConnector">コネクター</param>
+        /// <param name="variable">リンクする変数</param>
+        /// <param name="literalType">リテラルタイプか？</param>
+        private void AppendListArgument(LinkConnector linkConnector, ICbValue variable, bool literalType = false)
+        {
+            // リンクコネクターにリストを追加する
+            linkConnector.SetListNodeType(variable.NodeTF);
+            // リストを返し値と同期させる
+            if (literalType)
+            {
+                // 更新時処理を登録する
+                linkConnector.ConnectorList.UpdateListEvent =
+                    () =>
+                    {
+                        // 変更したら自身（ルート）の表示を更新する
+                        UpdateValueData();
+
+                        // 変更をルートの接続先に伝える
+                        rootCurveLinks?.RequestUpdateRootValue();
+                    };
+
+                // 引数の親に対してのコネクターへの接続を禁止する
                 linkConnector.HideLinkConnector();
             }
-
-            AppendBox(linkConnector);
-        }
-
-        public void AppendToBox(ICbValue obj)
-        {
-            var linkConnector = new LinkConnector()
+            else
             {
-                OwnerCommandCanvas = this.OwnerCommandCanvas,
-                ValueData = obj
-            };
-            AppendBox(linkConnector);
+                // 更新時処理を登録する
+                linkConnector.ConnectorList.UpdateListEvent =
+                    () =>
+                    {
+                        linkConnector.UpdateValueData();
+                    };
+            }
+
+            // 変数をコネクターに登録する
+            linkConnector.ConnectorList.LinkListTypeVariable(variable);
+
+            // 引数UIを追加する
+            AppendUIArgument(linkConnector);
         }
 
-        public void AppendBox(LinkConnector obj)
+        /// <summary>
+        /// 引数UIを追加します。
+        /// </summary>
+        /// <param name="linkConnector">コネクター</param>
+        private void AppendUIArgument(LinkConnector linkConnector)
         {
-            ListData.Add(obj);
+            ListData.Add(linkConnector);
             CheckBoxVisibility();
         }
 
