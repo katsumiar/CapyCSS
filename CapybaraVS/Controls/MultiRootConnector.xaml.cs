@@ -32,10 +32,6 @@ namespace CapybaraVS.Controls
         /// </summary>
         LiteralType,
         /// <summary>
-        /// List or Enum or Class
-        /// </summary>
-        ListType,   // 無くす予定
-        /// <summary>
         /// アセットのタイプ
         /// </summary>
         FuncType,
@@ -71,17 +67,8 @@ namespace CapybaraVS.Controls
                         self.AttachParam = new AttachVariableId(RootFunc.AttachVariableId);
 
                     self.AssetValueType = RootFunc.AssetValueType;
-
                     self.notheradMode = true;
-
                     self.AssetFuncType = RootFunc.AssetFuncType;
-                    
-                    if (RootFunc.AssetType == FunctionType.ListType)
-                    {
-                        // FunctionType.ListType は、この世から無くす予定
-                        Debug.Assert(false);    // AssetType == FunctionType.LiteralType に流れるようにする
-                        RootFunc.AssetType = FunctionType.LiteralType;
-                    }
                     self.AssetType = RootFunc.AssetType;
 
                     self.LinkConnectorControl.AssetXML = RootFunc.RootConnector;
@@ -531,9 +518,13 @@ namespace CapybaraVS.Controls
                 foreach (var node in argumentList)
                 {
                     if (node is ICbList cpbList)
+                    {
                         AppendToBox(cpbList);
+                    }
                     else
+                    {
                         AppendToBox(node);
+                    }
                 }
             }
 
@@ -598,17 +589,6 @@ namespace CapybaraVS.Controls
             {
                 Func<ICbValue> tf = CbST.CbCreateTF(CbST.GetTypeEx(AssetValueType));
                 MakeLiteral(tf);
-
-                //MakeLiteral(CbST.CreateTF(AssetLiteralType));
-            }
-
-            if (AssetType == FunctionType.ListType)
-            {
-                // 無くす
-
-                //Debug.Assert(AssetLiteralType.ObjectType == CbCType.List);
-                Debug.Assert(false);    // AssetType == FunctionType.LiteralType に流れるようにする
-                //MakeLiteralList(CbST.CreateTF(AssetLiteralType));
             }
 
             if (AssetType == FunctionType.FuncType)
