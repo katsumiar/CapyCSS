@@ -566,17 +566,25 @@ namespace CapybaraVS.Script
         protected const string ERROR_STR = "[ERROR]";
         protected const string NULL_STR = "<null>";
 
-        public virtual Func<ICbValue> NodeTF => () => CbST.CbCreate(OriginalType);// CbST.Create(CbType);
+        public virtual Func<ICbValue> NodeTF => () => CbST.CbCreate(OriginalType);
 
         protected T _value;
-        
+
         public virtual bool IsAssignment(ICbValue obj, bool isCast)
         {
             if (obj is ParamNameOnly)
                 return false;
-            if (this is ICbList)
+            if (this is ICbList cbList)
+            {
+                if (isCast && cbList.IsArrayType && obj is ICbList)
+                    return true;    // ToArrya() を行う特殊なキャスト
+
+                if (isCast && obj is ICbList ListObj && ListObj.IsArrayType)
+                    return true;    // List<>(array) を行う特殊なキャスト
+
                 if (TypeName != obj.TypeName)
                     return false;
+            }
             return CbSTUtils.IsAssignment(TypeName, obj.TypeName, OriginalType, obj.OriginalType, isCast);
         }
 
@@ -722,6 +730,13 @@ namespace CapybaraVS.Script
                     // リストはオリジナルの型にしないと代入できない
 
                     Value = (T)cbList.ConvertOriginalTypeList(null, null);
+
+                    if (this is ICbClass cbClass)
+                    {
+                        // List は、参照型なので Value の値が更新されると cbList に戻す必要がある。
+
+                        cbClass.ReturnAction = (val) => cbList.CopyFrom(val);
+                    }
                 }
                 else
                 {

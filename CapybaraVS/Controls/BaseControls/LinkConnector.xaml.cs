@@ -182,6 +182,24 @@ namespace CapybaraVS.Controls.BaseControls
 
         #endregion
 
+        #region OwnerLinkConnector 添付プロパティ実装
+        private static ImplementDependencyProperty<LinkConnector, LinkConnector> impOwnerLinkConnector =
+            new ImplementDependencyProperty<LinkConnector, LinkConnector>(
+                nameof(OwnerLinkConnector),
+                (self, getValue) =>
+                {
+                    //LinkConnector value = getValue(self);
+                });
+
+        public static readonly DependencyProperty OwnerLinkConnectorProperty = impOwnerLinkConnector.Regist(null);
+
+        public LinkConnector OwnerLinkConnector
+        {
+            get { return impOwnerLinkConnector.GetValue(this); }
+            set { impOwnerLinkConnector.SetValue(this, value); }
+        }
+        #endregion
+
         private CommandCanvas _OwnerCommandCanvas = null;
 
         public CommandCanvas OwnerCommandCanvas
@@ -202,6 +220,7 @@ namespace CapybaraVS.Controls.BaseControls
         public LinkConnector()
         {
             InitializeComponent();
+            ConnectorList.OwnerLinkConnector = this;
             pointIdProvider = new PointIdProvider(this);
             AssetXML = new _AssetXML<LinkConnector>(this);
             DataContext = this;
@@ -412,14 +431,36 @@ namespace CapybaraVS.Controls.BaseControls
         /// <param name="e"></param>
         private void _LayoutUpdated(object sender, EventArgs e)
         {
+            if (IsLoaded)
+            {
+                ForcedLayoutUpdated(IsOpenList);
+            }
+        }
+
+        private bool IsOpenList = true;
+
+        /// <summary>
+        /// 接続線のレイアウトを正しく更新します。
+        /// </summary>
+        public void ForcedLayoutUpdated(bool isOpenList)
+        {
+            IsOpenList = isOpenList;
             if (linkCurveLinks != null && linkCurveLinks.Count != 0 && IsLoaded)
             {
                 try
                 {
-                    Point pos = TargetPoint;
+                    Point pos;
+                    if (OwnerLinkConnector != null && !IsOpenList)
+                    {
+                        pos = OwnerLinkConnector.TargetPoint;
+                    }
+                    else
+                    {
+                        pos = TargetPoint;
+                    }
                     if (backupPos != pos)
                     {
-                        linkCurveLinks?.RequestBuildCurve();
+                        linkCurveLinks?.RequestBuildCurve(this, pos);
                         backupPos = pos;
                     }
                 }
@@ -609,7 +650,13 @@ namespace CapybaraVS.Controls.BaseControls
         {
             try
             {
-                if (connectValueData is CbObject cbObject)
+                if (connectValueData.IsList && connectValueData.IsList)
+                {
+                    // ToArray() によるキャスト
+
+                    ValueData.Set(connectValueData);
+                }
+                else if (connectValueData is CbObject cbObject)
                 {
                     if (cbObject.Data is null)
                         return; // 保険

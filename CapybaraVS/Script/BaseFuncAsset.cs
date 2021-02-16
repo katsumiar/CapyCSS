@@ -279,8 +279,10 @@ namespace CapybaraVS.Script
     }
 
     //-----------------------------------------------------------------
-    class LiteralType : IFuncAssetLiteralDef
+    class LiteralType : FuncAssetSub, IFuncAssetWithArgumentDef
     {
+        public string AssetCode => nameof(LiteralType);
+
         public string MenuTitle => "Literal";
 
         public string HelpText { get; } = Language.GetInstance["LiteralType"];
@@ -288,18 +290,63 @@ namespace CapybaraVS.Script
         public string ValueType { get; } = CbSTUtils.FREE_TYPE_STR;
 
         public Func<Type, bool> IsAccept => (t) => CbScript.AcceptAll(t);
+
+        public bool ImplAsset(MultiRootConnector col, bool notheradMode = false)
+        {
+            col.MakeFunction(
+                MenuTitle,
+                HelpText,
+                CbST.CbCreateTF(col.SelectedVariableType[0]),  // 返し値の型
+                new List<ICbValue>()  // 引数
+                {
+                    CbST.CbCreate(col.SelectedVariableType[0], "sample"),
+                },
+                new Func<List<ICbValue>, DummyArgumentsStack, ICbValue>(
+                    (argument, cagt) =>
+                    {
+                        var ret = CbST.CbCreate(col.SelectedVariableType[0]);    // 返し値
+                        try
+                        {
+                            // リテラルなのでコピーを作成する
+                            if (ret is ICbList cbList)
+                            {
+                                if (argument[0] is ICbList fromList && fromList.Count != 0)
+                                {
+                                    // リストを初期化する
+
+                                    cbList.CopyFrom(fromList.ConvertOriginalTypeList(col, cagt));
+                                }
+                            }
+                            else
+                            {
+                                ret.Set(argument[0]);
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            col.ExceptionFunc(ret, ex);
+                        }
+                        return ret;
+                    }
+                    )
+                );
+
+            return true;
+        }
     }
 
     //-----------------------------------------------------------------
-    class LiteralListType : IFuncAssetLiteralDef
+    class LiteralListType : LiteralType, IFuncAssetWithArgumentDef
     {
-        public string MenuTitle => "Literal List";
+        public new string AssetCode => nameof(LiteralListType);
 
-        public string HelpText { get; } = Language.GetInstance["LiteralListType"];
+        public new string MenuTitle => "Literal List";
 
-        public string ValueType { get; } = CbSTUtils.FREE_LIST_TYPE_STR;
+        public new string HelpText { get; } = Language.GetInstance["LiteralListType"];
 
-        public Func<Type, bool> IsAccept => (t) => CbScript.AcceptAll(t);
+        public new string ValueType { get; } = CbSTUtils.FREE_LIST_TYPE_STR;
+
+        public new Func<Type, bool> IsAccept => (t) => CbScript.AcceptAll(t);
     }
 
     //-----------------------------------------------------------------
@@ -1708,6 +1755,9 @@ namespace CapybaraVS.Script
                             ICbValue cbVSValue = col.OwnerCommandCanvas.ScriptWorkStack.Find(variableGetter.Id);
                             ret.Set(cbVSValue);
                             col.LinkConnectorControl.UpdateValueData();
+
+                            // スクリプト処理後に変数の値変化を反映する（参照渡し対応）
+                            col.OwnerCommandCanvas.ScriptWorkStack.UpdateValueData(variableGetter.Id);
                         }
                         catch (Exception ex)
                         {

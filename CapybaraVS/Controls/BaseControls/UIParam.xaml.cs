@@ -484,27 +484,34 @@ namespace CapybaraVS.Controls.BaseControls
 
         private void ToolTipUpdate()
         {
+            string valueString = null;
             if (ValueData is CbObject cbObject)
             {
                 if (!cbObject.ValueTypeObject.IsNull && cbObject.ValueTypeObject.Data is ICbShowValue cbVSShow)
                 {
-                    Edit.ToolTip = cbVSShow.DataString.Trim('\r', '\n');
-                    return;
+                    valueString = cbVSShow.DataString;
+                }
+                else
+                {
+                    valueString = cbObject.ValueString;
                 }
             }
-            if (ValueData is ICbClass cbClass)
+            else if (ValueData is ICbClass cbClass)
             {
                 if (cbClass.Data != null)
                 {
                     if (cbClass.Data is ICbShowValue cbVSShow)
                     {
-                        Edit.ToolTip = cbVSShow.DataString.Trim('\r', '\n');
+                        valueString = cbVSShow.DataString;
                     }
                     else
                     {
-                        Edit.ToolTip = cbClass.ValueString.Trim('\r', '\n');
+                        valueString = cbClass.Data.ToString();
                     }
-                    return;
+                }
+                else
+                {
+                    valueString = cbClass.ValueString;
                 }
             }
 #if !SHOW_LINK_ARRAY
@@ -512,8 +519,11 @@ namespace CapybaraVS.Controls.BaseControls
             {
                 if (!cbList.IsNull && cbList is ICbShowValue cbVSShow)
                 {
-                    Edit.ToolTip = cbVSShow.DataString.Trim('\r', '\n');
-                    return;
+                    valueString = cbVSShow.DataString;
+                }
+                else
+                {
+                    valueString = cbList.ValueString;
                 }
             }
 #endif
@@ -521,11 +531,21 @@ namespace CapybaraVS.Controls.BaseControls
             {
                 if (!ValueData.IsNull && ValueData.Data is ICbShowValue cbVSShow)
                 {
-                    Edit.ToolTip = cbVSShow.DataString.Trim('\r', '\n');
-                    return;
+                    valueString = cbVSShow.DataString;
+                }
+                else
+                {
+                    valueString = ValueData.ValueString;
                 }
             }
-            Edit.ToolTip = Edit.Text.Trim('\r', '\n');
+            if (valueString is null)
+            {
+                Edit.ToolTip = Edit.Text.Trim('\r', '\n');
+            }
+            else
+            {
+                Edit.ToolTip = valueString.Trim('\r', '\n');
+            }
         }
 
         private void Edit_KeyDown(object sender, KeyEventArgs e)

@@ -810,6 +810,15 @@ namespace CapybaraVS.Controls.BaseControls
             set { curveCanvas = value; }
         }
 
+        public bool RequestBuildCurve(ICurveLinkPoint target, Point? endPos)
+        {
+            if (rootCurveLinks is null)
+                return false;
+            var ret = rootCurveLinks.RequestBuildCurve(target, endPos);
+            ChangeLinkConnectorStroke();
+            return ret;
+        }
+
         public bool RequestBuildCurve()
         {
             if (rootCurveLinks is null)

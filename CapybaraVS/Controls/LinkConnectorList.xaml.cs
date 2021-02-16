@@ -17,6 +17,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.Windows.Threading;
 using System.Xml.Serialization;
 
 namespace CapybaraVS.Controls
@@ -50,6 +51,19 @@ namespace CapybaraVS.Controls
                         connector.AssetXML.ReadAction?.Invoke(connector);
                     }
                     self.UpdateListEvent?.Invoke();
+                    self.Dispatcher.BeginInvoke(
+                        new Action(() =>
+                        {
+                            if (IsOpenList)
+                            {
+                                self.OpenAccordion();
+                            }
+                            else
+                            {
+                                self.CloseAccordion();
+                            }
+                        }
+                        ), DispatcherPriority.Loaded);
 
                     // 次回の為の初期化
                     self.AssetXML = new _AssetXML<LinkConnectorList>(self);
@@ -59,6 +73,7 @@ namespace CapybaraVS.Controls
             {
                 WriteAction = () =>
                 {
+                    IsOpenList = self.IsOpenList;
                     List = new List<LinkConnector._AssetXML<LinkConnector>>();
                     ObservableCollection<LinkConnector> target = self.noneConnectedListData;
                     if (target != null)
@@ -74,6 +89,7 @@ namespace CapybaraVS.Controls
             #region 固有定義
             [XmlArrayItem("LinkConnector")]
             public List<LinkConnector._AssetXML<LinkConnector>> List { get; set; } = null;
+            public bool IsOpenList { get; set; } = true;
             #endregion
         }
         public _AssetXML<LinkConnectorList> AssetXML { get; set; } = null;
@@ -130,7 +146,24 @@ namespace CapybaraVS.Controls
             get { return impUpdateListEvent.GetValue(this); }
             set { impUpdateListEvent.SetValue(this, value); }
         }
+        #endregion
 
+        #region OwnerLinkConnector 添付プロパティ実装
+        private static ImplementDependencyProperty<LinkConnectorList, LinkConnector> impOwnerLinkConnector =
+            new ImplementDependencyProperty<LinkConnectorList, LinkConnector>(
+                nameof(OwnerLinkConnector),
+                (self, getValue) =>
+                {
+                    //Action value = getValue(self);
+                });
+
+        public static readonly DependencyProperty OwnerLinkConnectorProperty = impOwnerLinkConnector.Regist(null);
+
+        public LinkConnector OwnerLinkConnector
+        {
+            get { return impOwnerLinkConnector.GetValue(this); }
+            set { impOwnerLinkConnector.SetValue(this, value); }
+        }
         #endregion
 
         private CommandCanvas _OwnerCommandCanvas = null;
@@ -198,8 +231,8 @@ namespace CapybaraVS.Controls
 
             BuildConnectorList((variable as ICbList).Value);
 
-            // 接続されたらリスト表示を閉じる
-            CloseList();
+            // 接続されたらリスト表示を無くす
+            DisenableList();
             EnableAdd = false;  // ノード追加機能を無効化
         }
 
@@ -212,10 +245,6 @@ namespace CapybaraVS.Controls
             foreach (var variable in variableList)
             {
                 AppendList(variable);
-            }
-            if (ListData == noneConnectedListData)
-            {
-                ConnectorBackground.Visibility = ListData.Count != 0 ? Visibility.Visible : Visibility.Collapsed;
             }
         }
 
@@ -234,6 +263,7 @@ namespace CapybaraVS.Controls
             {
                 OwnerCommandCanvas = this.OwnerCommandCanvas,
                 ValueData = variable,
+                OwnerLinkConnector = OwnerLinkConnector,
                 HideLinkPoint = false    // 接続できるようにする
             };
             //linkConnector.ReadOnly = true;
@@ -276,7 +306,7 @@ namespace CapybaraVS.Controls
                 // リストの要素を作成したコネクターに登録し、バインディングリストに登録する
                 AppendList(listTypeVariable[i]);
             }
-            ConnectorBackground.Visibility = ListData.Count != 0 ? Visibility.Visible : Visibility.Collapsed;
+            OpenAccordion();
             UpdateListEvent?.Invoke();
         }
 
@@ -343,10 +373,7 @@ namespace CapybaraVS.Controls
                 BuildConnectorList(listTypeVariable.Value);
             }
 
-            if (ListData == noneConnectedListData)
-            {
-                ConnectorBackground.Visibility = ListData.Count != 0 ? Visibility.Visible : Visibility.Collapsed;
-            }
+            SetConnectorBackground();
         }
 
         /// <summary>
@@ -370,8 +397,8 @@ namespace CapybaraVS.Controls
                 ListData = noneConnectedListData;
             }
             ListView.ItemsSource = ListData;
-            DisenableAccordion();
-            ConnectorBackground.Visibility = ListData.Count != 0 ? Visibility.Visible : Visibility.Collapsed;
+            EnableList();
+            
             EnableAdd = true;  // ノード追加機能を有効化
         }
 
@@ -484,15 +511,14 @@ namespace CapybaraVS.Controls
                         linkedListTypeVariable.Remove(addVariable);
                         linkConnector.Dispose();
                         noneConnectedListData.Remove(linkConnector);
-                        if (noneConnectedListData.Count == 0)
-                            ConnectorBackground.Visibility = Visibility.Collapsed;
+                        SetConnectorBackground();
 
                         // リストの変更を所有者に伝える
                         UpdateListEvent?.Invoke();
                     }
                     );
 
-            ConnectorBackground.Visibility = Visibility.Visible;
+            SetConnectorBackground();
 
             // リストの変更を所有者に伝える
             UpdateListEvent?.Invoke();
@@ -500,23 +526,75 @@ namespace CapybaraVS.Controls
         }
 
         /// <summary>
-        /// リストを閉じます。
+        /// ノードリストは開いているか？
         /// </summary>
-        private void CloseList()
+        public bool IsOpenList => ListPanel.Visibility == Visibility.Visible;
+
+        /// <summary>
+        /// ノードリストを開きます。
+        /// </summary>
+        private void OpenList()
         {
-            AccordionOpenIcon.Visibility = Visibility.Collapsed;
-            AccordionCloseIcon.Visibility = Visibility.Collapsed;
-            ListPanel.Visibility = Visibility.Collapsed;
+            ListPanel.Visibility = Visibility.Visible;
+            SetConnectorBackground();
+
+            foreach (var node in ListData)
+            {
+                node.ForcedLayoutUpdated(true);
+            }
+        }
+
+        private void SetConnectorBackground()
+        {
+            ConnectorBackground.Visibility = ListData.Count != 0 ? Visibility.Visible : Visibility.Collapsed;
         }
 
         /// <summary>
-        /// アコーディオンを閉じます。
+        /// ノードリストを閉じます。
+        /// </summary>
+        private void CloseList()
+        {
+            ListPanel.Visibility = Visibility.Collapsed;
+
+            foreach (var node in ListData)
+            {
+                node.ForcedLayoutUpdated(false);
+            }
+        }
+
+        /// <summary>
+        /// アコーディオンモードで開きます。
+        /// </summary>
+        private void OpenAccordion()
+        {
+            AccordionOpenIcon.Visibility = Visibility.Collapsed;
+            AccordionCloseIcon.Visibility = Visibility.Visible;
+            OpenList();
+        }
+
+        /// <summary>
+        /// アコーディオンモードで閉じます。
         /// </summary>
         private void CloseAccordion()
         {
             AccordionOpenIcon.Visibility = Visibility.Visible;
             AccordionCloseIcon.Visibility = Visibility.Collapsed;
-            ListPanel.Visibility = Visibility.Collapsed;
+            CloseList();
+        }
+
+        /// <summary>
+        /// アコーディオンモードを有効にします。
+        /// </summary>
+        private void EnableAccordion()
+        {
+            if (IsOpenList)
+            {
+                OpenAccordion();
+            }
+            else
+            {
+                CloseAccordion();
+            }
         }
 
         /// <summary>
@@ -526,7 +604,23 @@ namespace CapybaraVS.Controls
         {
             AccordionOpenIcon.Visibility = Visibility.Collapsed;
             AccordionCloseIcon.Visibility = Visibility.Collapsed;
-            ListPanel.Visibility = Visibility.Visible;
+        }
+
+        /// <summary>
+        /// ノードリストを無効にします。
+        /// </summary>
+        private void EnableList()
+        {
+            EnableAccordion();
+        }
+
+        /// <summary>
+        /// ノードリストを無効にします。
+        /// </summary>
+        private void DisenableList()
+        {
+            DisenableAccordion();
+            ListPanel.Visibility = Visibility.Collapsed;
         }
 
         /// <summary>
@@ -536,16 +630,13 @@ namespace CapybaraVS.Controls
         /// <param name="e"></param>
         private void Accordion_MouseDown(object sender, MouseButtonEventArgs e)
         {
-            ListPanel.Visibility = (ListPanel.Visibility == Visibility.Visible) ? Visibility.Collapsed : Visibility.Visible;
-            if (ListPanel.Visibility == Visibility.Visible)
+            if (IsOpenList)
             {
-                AccordionOpenIcon.Visibility = Visibility.Collapsed;
-                AccordionCloseIcon.Visibility = Visibility.Visible;
+                CloseAccordion();
             }
             else
             {
-                AccordionOpenIcon.Visibility = Visibility.Visible;
-                AccordionCloseIcon.Visibility = Visibility.Collapsed;
+                OpenAccordion();
             }
         }
 
@@ -594,6 +685,16 @@ namespace CapybaraVS.Controls
             // TODO: 上のファイナライザーがオーバーライドされる場合は、次の行のコメントを解除してください。
             // GC.SuppressFinalize(this);
         }
-#endregion
+        #endregion
+
+        private void AccordionOpenIcon_MouseEnter(object sender, MouseEventArgs e)
+        {
+            Cursor = Cursors.Hand;
+        }
+
+        private void AccordionOpenIcon_MouseLeave(object sender, MouseEventArgs e)
+        {
+            Cursor = null;
+        }
     }
 }

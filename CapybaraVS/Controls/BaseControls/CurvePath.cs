@@ -163,6 +163,12 @@ namespace CapybaraVS
         /// 曲線の再描画依頼
         /// </summary>
         /// <returns></returns>
+        bool RequestBuildCurve(ICurveLinkPoint target, Point? endPos);
+
+        /// <summary>
+        /// 曲線の再描画依頼
+        /// </summary>
+        /// <returns></returns>
         bool RequestBuildCurve();
 
         /// <summary>
@@ -177,12 +183,6 @@ namespace CapybaraVS
         /// </summary>
         /// <param name="point">削除を要求している接続先</param>
         void RequestRemoveCurveLinkRoot(ICurveLinkPoint point);
-
-        /// <summary>
-        /// 保持しているICurveLinkRootの実行依頼
-        /// </summary>
-        /// <param name="functionStack"></param>
-        //void RequestExecute(List<object> functionStack, CbPushList preArgument);
     }
 
     /// <summary>
@@ -207,12 +207,6 @@ namespace CapybaraVS
         /// </summary>
         /// <param name="root">削除を要求している接続元</param>
         void RequestRemoveCurveLinkPoint(ICurveLinkRoot root);
-
-        /// <summary>
-        /// 保持しているICurveLinkRootの実行依頼
-        /// </summary>
-        /// <param name="functionStack"></param>
-        //void RequestExecute(List<object> functionStack, CbPushList preArgument);
     }
 
     /// <summary>
@@ -262,7 +256,7 @@ namespace CapybaraVS
             // 仮の終端座標を解除
             curvePath.EndPosition = null;
             // 曲線を構築
-            bool ret = RequestBuildCurve();
+            bool ret = RequestBuildCurve(null, null);
             if (ret)
             {
                 // リンク曲線が描けたので正式にリンクする
@@ -281,6 +275,19 @@ namespace CapybaraVS
         {
             if (curvePath is null)
                 return false;
+            return curvePath.BuildCurve();
+        }
+
+        public bool RequestBuildCurve(ICurveLinkPoint target, Point? endPos)
+        {
+            if (curvePath is null)
+                return false;
+            if (curveLinkPoint == target)
+            {
+                // ターゲットに対して座標を指定する
+
+                curvePath.EndPosition = endPos;
+            }
             return curvePath.BuildCurve();
         }
 
@@ -390,6 +397,15 @@ namespace CapybaraVS
             }
         }
 
+        public bool RequestBuildCurve(ICurveLinkPoint target, Point? endPos)
+        {
+            foreach (var curveLink in CurveLinkData)
+            {
+                curveLink?.RequestBuildCurve(target, endPos);
+            }
+            return true;
+        }
+
         public bool RequestBuildCurve()
         {
             foreach (var curveLink in CurveLinkData)
@@ -484,12 +500,20 @@ namespace CapybaraVS
     public abstract class LinkCurveLinks : IDisposable, ICbExecutable
     {
         protected List<ICurveLinkRoot> CurveLinkRootData { get; set; } = new List<ICurveLinkRoot>();
+
         protected ICurveLinkPoint _self;
         public int Count => CurveLinkRootData.Count;
 
         public LinkCurveLinks(ICurveLinkPoint self)
         {
             _self = self;
+        }
+        public void RequestBuildCurve(ICurveLinkPoint target, Point? endPos)
+        {
+            foreach (var curveLinkRoot in CurveLinkRootData)
+            {
+                curveLinkRoot?.RequestBuildCurve(target, endPos);
+            }
         }
         public void RequestBuildCurve()
         {
@@ -575,7 +599,6 @@ namespace CapybaraVS
     {
         private ITargetPoint startTarget = null;
         private Panel drawControl = null;
-        private Point? endPosition = null;
         private ITargetPoint targetEndPoint = null;
         private bool revert = false;
         private Path ellipsePath = null;
@@ -635,11 +658,7 @@ namespace CapybaraVS
         /// 終点座標を参照します。
         /// <para>※TargetEndPointより優先される</para>
         /// </summary>
-        public Point? EndPosition
-        {
-            get => endPosition;
-            set => endPosition = value;
-        }
+        public Point? EndPosition { get; set; } = null;
 
         //-----------------------------------------------------------------------------------
         /// <summary>
@@ -914,6 +933,8 @@ namespace CapybaraVS
 
             if (!create)
             {
+                if (ellipsePath is null)
+                    return null;    // グループがまるごと消された
                 if (ellipsePath.Stroke == DEFAULT_COLOR && !gradiention)
                     return null;    // 変更不要
                 if (ellipsePath.Stroke != DEFAULT_COLOR && gradiention)

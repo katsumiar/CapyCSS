@@ -27,6 +27,11 @@ namespace CapybaraVS.Script
         /// UI接続上の表示を文字列で参照します。
         /// </summary>
         string ValueString { get; }
+
+        /// <summary>
+        /// 値の変化後に動かす必要のある処理です。
+        /// </summary>
+        Action<object> ReturnAction { set; get; }
     }
 
     public class CbClass
@@ -183,6 +188,8 @@ namespace CapybaraVS.Script
             }
             set => new NotImplementedException();
         }
+
+        public Action<object> ReturnAction { set; get; } = null;
 
         public override bool IsStringableValue => true;
 
