@@ -609,7 +609,13 @@ namespace CapybaraVS.Controls.BaseControls
         {
             try
             {
-                if (connectValueData is CbObject cbObject)
+                if (connectValueData.IsList && connectValueData.IsList)
+                {
+                    // ToArray() によるキャスト
+
+                    ValueData.Set(connectValueData);
+                }
+                else if (connectValueData is CbObject cbObject)
                 {
                     if (cbObject.Data is null)
                         return; // 保険

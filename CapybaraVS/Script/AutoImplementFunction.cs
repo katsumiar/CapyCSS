@@ -294,10 +294,16 @@ namespace CapybaraVS.Script
                     if (dummyArgumentsControl is null)
                     {
                         methodArguments.Add(cbList.ConvertOriginalTypeList(col, dummyArgumentsStack));
+
+                        // TODO: List は、参照型なので Value の値が更新されると cbList に戻す必要がある。
+                        // この処理のインスタンスは、CbClass なのでそこにコールバック処理を実装する。
                     }
                     else
                     {
                         methodArguments.Add(cbList.ConvertOriginalTypeList(dummyArgumentsControl, dummyArgumentsStack));
+
+                        // TODO: List は、参照型なので Value の値が更新されると cbList に戻す必要がある。
+                        // この処理のインスタンスは、CbClass なのでそこにコールバック処理を実装する。
                     }
                 }
                 else if (dummyArgumentsControl != null && node is ICbEvent cbEvent)
@@ -345,6 +351,8 @@ namespace CapybaraVS.Script
                 {
                     throw new Exception($"self(this) is invalid.");
                 }
+
+                // TODO: classInstance が ICollection<> なら classInstance の値を callArguments[0].Data に戻す必要がある。
             }
 
             object result = null;

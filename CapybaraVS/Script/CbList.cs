@@ -412,7 +412,7 @@ namespace CbVS.Script
             var listNodeType = NodeTF();
 
             var genericType = typeof(List<>).MakeGenericType(typeof(T));
-            List<T> originalCopyList = (List<T>)Activator.CreateInstance(genericType);
+            ICollection<T> originalCopyList = (ICollection<T>)Activator.CreateInstance(genericType);
 
             if (listNodeType is ICbEvent)
             {
@@ -452,8 +452,13 @@ namespace CbVS.Script
             if (IsArrayType)
             {
                 // 配列に変換する
-
-                return originalCopyList.ToArray();
+                T[] ts = new T[originalCopyList.Count];
+                int index = 0;
+                foreach (T node in originalCopyList)
+                {
+                    ts[index++] = node;
+                }
+                return ts;// originalCopyList.ToArray();
             }
             return originalCopyList;
         }
@@ -479,7 +484,7 @@ namespace CbVS.Script
                 return;
             }
 
-            foreach (var nd in (List<T>)list)
+            foreach (var nd in (IEnumerable<T>)list)
             {
                 ICbValue val = NodeTF();
                 val.Data = nd;
