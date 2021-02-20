@@ -110,9 +110,21 @@ namespace CapybaraVS.Controls.BaseControls
                 nameof(TypeName),
                 (self, getValue) =>
                 {
-                    self.TypeNameLabel.Content = getValue(self);
+                    string value = getValue(self);
                     if (self.TypeNameLabelOverlap.Length != 0 && !(self.ValueData is ParamNameOnly))
+                    {
                         self.TypeNameLabel.Content = self.TypeNameLabelOverlap;
+                    }
+                    if (self.ValueData.IsByRef)
+                    {
+                        self.TypeNameLabel.FontWeight = FontWeights.UltraBold;
+                        value = $"[ref] {value}";
+                    }
+                    else
+                    {
+                        self.TypeNameLabel.FontWeight = FontWeights.Normal;
+                    }
+                    self.TypeNameLabel.Content = value;
                 });
 
         public static readonly DependencyProperty TypeNameProperty = impTypeName.Regist("TypeName");

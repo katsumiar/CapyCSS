@@ -21,7 +21,7 @@
         <Grid>
             <Rectangle Fill="#668CA6D4" RadiusX="6" RadiusY="6" Margin="0,2,0,2" />
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center">
-                <Label x:Name="TypeNameLabel" Content="" FontStyle="Italic" FontSize="10" />
+                <Label x:Name="TypeNameLabel" Content=""  FontStyle="Italic" FontSize="10" FontWeight="Bold" />
                 <local:NameLabel x:Name="ParamNameLabel" Margin="-3,0,0,0" />
             </StackPanel>
         </Grid>

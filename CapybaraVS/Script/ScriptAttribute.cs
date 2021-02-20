@@ -1003,6 +1003,7 @@ namespace CapybaraVS.Script
                 argNode.CreateArgument = () =>
                 {
                     ICbValue addParam = typeInfo(name);
+                    addParam.IsByRef = argNode.IsByRef;
                     if (para.HasDefaultValue)
                     {
                         if (para.DefaultValue != null)

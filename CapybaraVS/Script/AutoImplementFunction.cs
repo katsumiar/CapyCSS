@@ -68,7 +68,6 @@ namespace CapybaraVS.Script
 
         public string FuncTitle { get; set; } = "";
 
-        //public CbST TargetType { get; set; } = CbST.Double; // dummy
         public string ValueType { get; } = typeof(double).FullName;    // Dummy
 
         public Func<Type, bool> IsAccept => null;
@@ -97,50 +96,14 @@ namespace CapybaraVS.Script
         protected bool ImplAsset(MultiRootConnector col, bool noThreadMode = false, DummyArgumentsControl dummyArgumentsControl = null)
         {
             List<ICbValue> argumentTypeList = new List<ICbValue>();
-            List<int> variableIdList = new List<int>();
-            VariableGetter variableGetter = null;
 
             if (ArgumentTypeList != null)
             {
-                // 引数に変数IDをアサインする
+                // 引数用の変数を用意する
 
-                if (noThreadMode)
+                foreach (var node in ArgumentTypeList)
                 {
-                    variableGetter = AssignedVariableArgumentForNoThread(col, argumentTypeList, variableIdList, variableGetter);
-                }
-                else
-                {
-                    foreach (var node in ArgumentTypeList)
-                    {
-                        if (node.IsByRef)
-                        {
-                            ListSelectWindow.DefaultValue = node.CreateArgument();
-                            StackNode stackNode = ListSelectWindow.Create(
-                                col.OwnerCommandCanvas,
-                                "Variable",
-                                col.OwnerCommandCanvas.ScriptWorkStack.StackData,
-                                false,
-                                new Point(Mouse.GetPosition(null).X, Mouse.GetPosition(null).Y));
-
-                            if (stackNode is null)
-                                return false;
-
-                            col.AddAttachVariableId(stackNode.Id);
-                            variableGetter = CreateVariableGetter(col, FuncTitle, col.GetAttachVariableIdsCount() - 1);
-                            if (variableGetter.IsError)
-                            {
-                                variableIdList.Add(-1);
-                                return false;
-                            }
-
-                            variableIdList.Add(variableGetter.Id);
-
-                            FuncTitle = variableGetter.MakeName;
-                            continue;
-                        }
-                        variableIdList.Add(-1);
-                        argumentTypeList.Add(node.CreateArgument());
-                    }
+                    argumentTypeList.Add(node.CreateArgument());
                 }
             }
 
@@ -156,7 +119,7 @@ namespace CapybaraVS.Script
                         if (dummyArgumentsControl != null && dummyArgumentsControl.IsInvalid(cagt))
                             return ret; // 実行環境が有効でない
 
-                        ImplCallMethod(col, dummyArgumentsControl, argument, cagt, variableIdList, ret);
+                        ImplCallMethod(col, dummyArgumentsControl, argument, cagt, ret);
                         return ret;
                     }
                 )
@@ -172,14 +135,12 @@ namespace CapybaraVS.Script
         /// <param name="dummyArgumentsControl">仮引数管理オブジェクト</param>
         /// <param name="callArguments">引数リスト</param>
         /// <param name="dummyArgumentsStack">仮引数スタック</param>
-        /// <param name="variableIds">スクリプト変数IDリスト</param>
         /// <param name="returnValue">返り値</param>
         private void ImplCallMethod(
             MultiRootConnector col, 
             DummyArgumentsControl dummyArgumentsControl, 
             List<ICbValue> callArguments, 
             DummyArgumentsStack dummyArgumentsStack, 
-            List<int> variableIds, 
             ICbValue returnValue
             )
         {
@@ -193,7 +154,6 @@ namespace CapybaraVS.Script
                     dummyArgumentsControl,
                     callArguments,
                     dummyArgumentsStack,
-                    variableIds,
                     isClassInstanceMethod,
                     methodArguments
                     );
@@ -201,7 +161,6 @@ namespace CapybaraVS.Script
                 object result = CallMethod(
                     col,
                     callArguments,
-                    variableIds,
                     isClassInstanceMethod, 
                     methodArguments);
 
@@ -211,38 +170,6 @@ namespace CapybaraVS.Script
             {
                 col.ExceptionFunc(returnValue, ex);
             }
-        }
-
-        /// <summary>
-        /// 引数に変数IDをアサインします。
-        /// </summary>
-        /// <param name="col">スクリプトのルートノード</param>
-        /// <param name="argumentTypeList"></param>
-        /// <param name="variableIds">スクリプト変数IDリスト</param>
-        /// <param name="variableGetter">スクリプト変数参照オブジェクト</param>
-        /// <returns>スクリプト変数参照オブジェクト</returns>
-        private VariableGetter AssignedVariableArgumentForNoThread(
-            MultiRootConnector col, 
-            List<ICbValue> argumentTypeList, 
-            List<int> variableIds, 
-            VariableGetter variableGetter
-            )
-        {
-            int variableIdIndex = 0;
-            foreach (var node in ArgumentTypeList)
-            {
-                if (node.IsByRef)
-                {
-                    variableGetter = CreateVariableGetter(col, FuncTitle, variableIdIndex++);
-                    variableIds.Add(variableGetter.Id);
-                    MenuTitle = variableGetter.MakeName;
-                    continue;
-                }
-                variableIds.Add(-1);
-                argumentTypeList.Add(node.CreateArgument());
-            }
-
-            return variableGetter;
         }
 
         /// <summary>
@@ -261,23 +188,14 @@ namespace CapybaraVS.Script
             DummyArgumentsControl dummyArgumentsControl, 
             List<ICbValue> callArguments, 
             DummyArgumentsStack dummyArgumentsStack, 
-            List<int> variableIds, 
             bool isClassInstanceMethod,
             List<object> methodArguments
             )
         {
             int argumentIndex = 0;
-            for (int i = 0; i < variableIds.Count; ++i)
+            for (int i = 0; i < callArguments.Count; ++i)
             {
                 methodArguments ??= new List<object>();
-                if (variableIds[i] != -1)
-                {
-                    // アサインされている変数の値を引数用に取り込む
-
-                    ICbValue cbVSValue = col.OwnerCommandCanvas.ScriptWorkStack.Find(variableIds[i]);
-                    methodArguments.Add(cbVSValue.Data);
-                    continue;
-                }
 
                 var node = callArguments[argumentIndex++];
                 CheckArgument(node);
@@ -291,6 +209,8 @@ namespace CapybaraVS.Script
 
                 if (node is ICbList cbList)
                 {
+                    // リストは、オリジナルの型のインスタンスに差し替える
+
                     if (dummyArgumentsControl is null)
                     {
                         methodArguments.Add(cbList.ConvertOriginalTypeList(col, dummyArgumentsStack));
@@ -302,6 +222,8 @@ namespace CapybaraVS.Script
                 }
                 else if (dummyArgumentsControl != null && node is ICbEvent cbEvent)
                 {
+                    // Func<> 及び Action<> は、オリジナルの型のインスタンスに置き換える
+
                     if (cbEvent.CallBack is null)
                     {
                         methodArguments.Add(null);
@@ -330,7 +252,6 @@ namespace CapybaraVS.Script
         private object CallMethod(
             MultiRootConnector col,
             List<ICbValue> callArguments, 
-            List<int> variableIds, 
             bool isClassInstanceMethod, 
             List<object> methodArguments
             )
@@ -362,15 +283,20 @@ namespace CapybaraVS.Script
                     object[] args = methodArguments.ToArray();
                     result = Activator.CreateInstance(ClassType, args);
 
-                    ReturnArgumentsValue(col, callArguments, variableIds, isClassInstanceMethod, args);
+                    ReturnArgumentsValue(callArguments, isClassInstanceMethod, args);
                 }
             }
             else if (methodArguments is null)
             {
                 // 引数のないメソッド
 
-                result = ClassType.InvokeMember(FuncCode, BindingFlags.InvokeMethod,
-                                null, classInstance, new object[] { });
+                result = ClassType.InvokeMember(
+                                FuncCode,
+                                BindingFlags.InvokeMethod,
+                                null,
+                                classInstance,
+                                new object[] { }
+                                );
             }
             else
             {
@@ -378,14 +304,25 @@ namespace CapybaraVS.Script
 
                 object[] args = methodArguments.ToArray();
 
-                result = ClassType.InvokeMember(FuncCode, BindingFlags.InvokeMethod,
-                                null, classInstance, args);
+                result = ClassType.InvokeMember(
+                                FuncCode,
+                                BindingFlags.InvokeMethod,
+                                null,
+                                classInstance,
+                                args
+                                );
 
-                ReturnArgumentsValue(col, callArguments, variableIds, isClassInstanceMethod, args);
+                ReturnArgumentsValue(callArguments, isClassInstanceMethod, args);
             }
-            if (isClassInstanceMethod && callArguments[0] is ICbClass cbClass)
+            if (isClassInstanceMethod)
             {
-                if (callArguments[0] is ICbValue cbValue && cbValue.IsLiteral)
+                var scrArg = callArguments[0];
+                if (scrArg.IsDelegate)
+                {
+                    // デリゲートは無条件で更新値を捨てる
+                    Debug.Assert(callArguments[0].ReturnAction is null);
+                }
+                else if (callArguments[0].IsLiteral)
                 {
                     // リレラルは更新情報を捨てる
                 }
@@ -393,7 +330,7 @@ namespace CapybaraVS.Script
                 {
                     // 変更後の値を戻す
 
-                    cbClass.ReturnAction?.Invoke(classInstance);
+                    callArguments[0].ReturnAction?.Invoke(classInstance);
                 }
             }
 
@@ -409,29 +346,29 @@ namespace CapybaraVS.Script
         /// <param name="isClassInstanceMethod">インスタンスメソッドか？</param>
         /// <param name="args">実際にメソッド呼び出しで渡した引数配列</param>
         private static void ReturnArgumentsValue(
-            MultiRootConnector col, 
-            List<ICbValue> callArguments, 
-            List<int> variableIds, 
-            bool isClassInstanceMethod, 
+            List<ICbValue> callArguments,
+            bool isClassInstanceMethod,
             object[] args)
         {
             for (int i = (isClassInstanceMethod ? 1 : 0); i < callArguments.Count; ++i)
             {
-                if (callArguments[i] is ICbValue cbValue && cbValue.IsLiteral)
-                    continue;   // リレラルは更新情報を捨てる
+                var scrArg = callArguments[i];
+                if (scrArg.IsDelegate)
+                {
+                    // デリゲートは更新情報を捨てる
+
+                    Debug.Assert(callArguments[i].ReturnAction is null);
+                    continue;
+                }
+                else if (scrArg.IsLiteral)
+                {
+                    // リレラルは更新情報を捨てる
+
+                    continue;
+                }
 
                 // 参照渡しのため変更後の値を戻す
-
-                var scrArg = callArguments[i];
-
-                if (scrArg is ICbClass classArg)
-                {
-                    classArg.ReturnAction?.Invoke(args[i]);
-                }
-                else if (scrArg.IsList)
-                {
-                    (scrArg as ICbList).CopyFrom(args[i]);
-                }
+                scrArg.ReturnAction?.Invoke(args[i]);
             }
         }
 

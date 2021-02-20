@@ -1702,21 +1702,35 @@ namespace CapybaraVS.Script
                 new Func<List<ICbValue>, DummyArgumentsStack, ICbValue>(
                     (argument, cagt) =>
                     {
-                        ICbValue ret = CbST.CbCreate(col.SelectedVariableType[0]);    // 返し値
                         try
                         {
                             ICbValue cbVSValue = col.OwnerCommandCanvas.ScriptWorkStack.Find(variableGetter.Id);
-                            ret.Set(cbVSValue);
                             col.LinkConnectorControl.UpdateValueData();
+                            if (!(cbVSValue is ICbClass))
+                            {
+                                cbVSValue.ReturnAction = (value) =>
+                                {
+                                    cbVSValue.Data = value;
+                                };
+                            }
+                            else if (cbVSValue is ICbList cbList)
+                            {
+                                cbVSValue.ReturnAction = (value) =>
+                                {
+                                    cbList.CopyFrom(value);
+                                };
+                            }
 
                             // スクリプト処理後に変数の値変化を反映する（参照渡し対応）
                             col.OwnerCommandCanvas.ScriptWorkStack.UpdateValueData(variableGetter.Id);
+                            return cbVSValue;
                         }
                         catch (Exception ex)
                         {
+                            ICbValue ret = CbST.CbCreate(col.SelectedVariableType[0]);    // 返し値
                             col.ExceptionFunc(ret, ex);
+                            return ret;
                         }
-                        return ret;
                     }
                     )
                 );
@@ -2476,7 +2490,7 @@ namespace CapybaraVS.Script
                                 ret = temp;
                             }
                             int index = GetArgument<int>(argument, 1);
-                            ret[index] = argument[2];
+                            ret[index].Set(argument[2]);
                         }
                         catch (Exception ex)
                         {

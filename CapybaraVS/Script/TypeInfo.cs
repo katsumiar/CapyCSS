@@ -432,6 +432,10 @@ namespace CapybaraVS.Script
         /// </summary>
         bool IsReadOnlyName { get; }
         /// <summary>
+        /// 引数時参照修飾されているか？
+        /// </summary>
+        bool IsByRef { get; set; }
+        /// <summary>
         /// リテラルかどうか？
         /// </summary>
         bool IsLiteral { get; set; }
@@ -451,6 +455,10 @@ namespace CapybaraVS.Script
         /// UIで変数の値を表示するか？
         /// </summary>
         bool IsVisibleValue { get; }
+        /// <summary>
+        /// 値の変化後に動かす必要のある処理です。
+        /// </summary>
+        Action<object> ReturnAction { set; get; }
         /// <summary>
         /// 変数の値
         /// </summary>
@@ -618,8 +626,10 @@ namespace CapybaraVS.Script
                 {
                     typeName = CbSTUtils.GetTypeName(Value as object);
                 }
+                //if (IsByRef)
+                //    typeName = "ref " + typeName; // UIで付加される
                 if (IsNullable)
-                    return typeName + "?";
+                    typeName += "?";
                 return typeName;
             }
         }
@@ -638,6 +648,10 @@ namespace CapybaraVS.Script
         /// オリジナルの型（Func, Action, List 以外は OriginalReturnType と同じ）を参照します。
         /// </summary>
         public virtual Type OriginalType => typeof(T);
+        /// <summary>
+        /// 引数時参照修飾されているか？
+        /// </summary>
+        public bool IsByRef { get; set; } = false;
         /// <summary>
         /// リテラルかどうか？
         /// ※変数以外は、原則リテラル
@@ -667,6 +681,11 @@ namespace CapybaraVS.Script
         /// 変数の持つ値を文字列として参照します。
         /// </summary>
         public virtual string ValueString { get; set; }
+
+        /// <summary>
+        /// 値の変化後に動かす必要のある処理です。
+        /// </summary>
+        public Action<object> ReturnAction { set; get; } = null;
 
         /// <summary>
         /// 変数の持つ値は変更禁止か？
@@ -723,6 +742,7 @@ namespace CapybaraVS.Script
                 if (n.IsError)
                     throw new Exception(n.ErrorMessage);
 
+                ReturnAction = null;
                 if (n is CbObject cbObject)
                 {
                     n = (dynamic)cbObject.ValueTypeObject;
@@ -732,6 +752,9 @@ namespace CapybaraVS.Script
                     // ただのキャストでは sbyte から int への変換などで例外が出るので ChangeType を使って変換する
 
                     Value = (T)Convert.ChangeType(n.Data, typeof(T));
+
+                    // 参照渡しの為のリアクションのコピー
+                    ReturnAction = n.ReturnAction;
                 }
                 else if (!(this is ICbList) && n is ICbList cbList)
                 {
@@ -939,11 +962,15 @@ namespace CapybaraVS.Script
 
         public bool IsLiteral { get; set; } = false;
 
+        public bool IsByRef { get; set; } = false;
+
         public virtual bool IsDelegate => false;
 
         public virtual bool IsList => false;
 
         public string ValueString { get => name; set { name = value; } }
+
+        public Action<object> ReturnAction { set; get; } = null;
 
         public bool IsReadOnlyValue { get; set; } = true;
 

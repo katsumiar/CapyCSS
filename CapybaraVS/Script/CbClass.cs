@@ -189,8 +189,6 @@ namespace CapybaraVS.Script
             set => new NotImplementedException();
         }
 
-        public Action<object> ReturnAction { set; get; } = null;
-
         public override bool IsStringableValue => true;
 
         public override bool IsReadOnlyValue { get; set; } = true;
