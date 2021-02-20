@@ -115,10 +115,17 @@ namespace CapybaraVS.Controls.BaseControls
                     {
                         self.TypeNameLabel.Content = self.TypeNameLabelOverlap;
                     }
-                    if (self.ValueData.IsByRef)
+                    if (self.ValueData.IsByRef || self.ValueData.IsNullable)
                     {
                         self.TypeNameLabel.FontWeight = FontWeights.UltraBold;
-                        value = $"[ref] {value}";
+                        if (self.ValueData.IsByRef)
+                        {
+                            value = $"[ref] {value}";
+                        }
+                        if (self.ValueData.IsNullable)
+                        {
+                            value = $"{value}?";
+                        }
                     }
                     else
                     {

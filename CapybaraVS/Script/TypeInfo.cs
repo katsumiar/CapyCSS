@@ -626,10 +626,6 @@ namespace CapybaraVS.Script
                 {
                     typeName = CbSTUtils.GetTypeName(Value as object);
                 }
-                //if (IsByRef)
-                //    typeName = "ref " + typeName; // UIで付加される
-                if (IsNullable)
-                    typeName += "?";
                 return typeName;
             }
         }
