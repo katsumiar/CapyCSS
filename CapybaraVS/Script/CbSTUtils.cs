@@ -274,6 +274,12 @@ namespace CapybaraVS.Script
             if (isNotGeneName)
                 return Optimisation(geneString);
 
+            if (typeName == "Nullable")
+            {
+                typeName = geneString.Substring(1).Split('>')[0] + "?";
+                geneString = "";
+            }
+
             return Optimisation(typeName + geneString);
         }
 
