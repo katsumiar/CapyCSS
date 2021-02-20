@@ -77,6 +77,7 @@ namespace CapybaraVS.Controls
                 {
                     self.Id = Id;
                     self.ValueData = CbST.CbCreate(CbST.GetTypeEx(AssetValueType), Name);
+                    self.ValueData.IsLiteral = false;   // 変数なのでリテラルフラグを落とす
                     if (Value != "[ERROR]")
                     {
                         if (self.ValueData != null && self.ValueData.IsStringableValue)
@@ -228,6 +229,7 @@ namespace CapybaraVS.Controls
         /// <returns></returns>
         public StackGroup Append(ICbValue obj)
         {
+            obj.IsLiteral = false;   // 変数なのでリテラルフラグを落とす
             StackNode stackNode = new StackNode(OwnerCommandCanvas, obj);
             return Append(stackNode);
         }

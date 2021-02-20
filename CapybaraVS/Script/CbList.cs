@@ -168,7 +168,7 @@ namespace CbVS.Script
     /// <summary>
     /// List<>型
     /// </summary>
-    /// <typeparam name="T">オリジナルの型</typeparam>
+    /// <typeparam name="T">オリジナルのList<T>のTの型</typeparam>
     public class CbList<T> : BaseCbValueClass<List<ICbValue>>, ICbValueListClass<List<ICbValue>>, ICbShowValue, ICbList
     {
         private bool nullFlg = true;
@@ -464,12 +464,26 @@ namespace CbVS.Script
         }
 
         /// <summary>
-        /// List<> のインスタンスから内容をコピーします。
+        /// 内容をコピーします。
         /// </summary>
         /// <param name="list"></param>
         public void CopyFrom(object list)
         {
             Clear();
+            if (list is ICbList cbList)
+            {
+                if (cbList.Count == 0)
+                    return;
+                if (cbList[0] is ICbClass)
+                {
+                    // 参照渡し
+
+                    for (int i = 0; i < cbList.Count; ++i)
+                        Value.Add(cbList[i]);
+                    return;
+                }
+                list = cbList.ConvertOriginalTypeList(null, null);
+            }
 
             if (IsArrayType)
             {

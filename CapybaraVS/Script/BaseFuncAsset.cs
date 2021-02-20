@@ -279,10 +279,8 @@ namespace CapybaraVS.Script
     }
 
     //-----------------------------------------------------------------
-    class LiteralType : FuncAssetSub, IFuncAssetWithArgumentDef
+    class LiteralType : IFuncAssetLiteralDef
     {
-        public string AssetCode => nameof(LiteralType);
-
         public string MenuTitle => "Literal";
 
         public string HelpText { get; } = Language.GetInstance["LiteralType"];
@@ -290,63 +288,18 @@ namespace CapybaraVS.Script
         public string ValueType { get; } = CbSTUtils.FREE_TYPE_STR;
 
         public Func<Type, bool> IsAccept => (t) => CbScript.AcceptAll(t);
-
-        public bool ImplAsset(MultiRootConnector col, bool notheradMode = false)
-        {
-            col.MakeFunction(
-                MenuTitle,
-                HelpText,
-                CbST.CbCreateTF(col.SelectedVariableType[0]),  // 返し値の型
-                new List<ICbValue>()  // 引数
-                {
-                    CbST.CbCreate(col.SelectedVariableType[0], "sample"),
-                },
-                new Func<List<ICbValue>, DummyArgumentsStack, ICbValue>(
-                    (argument, cagt) =>
-                    {
-                        var ret = CbST.CbCreate(col.SelectedVariableType[0]);    // 返し値
-                        try
-                        {
-                            // リテラルなのでコピーを作成する
-                            if (ret is ICbList cbList)
-                            {
-                                if (argument[0] is ICbList fromList && fromList.Count != 0)
-                                {
-                                    // リストを初期化する
-
-                                    cbList.CopyFrom(fromList.ConvertOriginalTypeList(col, cagt));
-                                }
-                            }
-                            else
-                            {
-                                ret.Set(argument[0]);
-                            }
-                        }
-                        catch (Exception ex)
-                        {
-                            col.ExceptionFunc(ret, ex);
-                        }
-                        return ret;
-                    }
-                    )
-                );
-
-            return true;
-        }
     }
 
     //-----------------------------------------------------------------
-    class LiteralListType : LiteralType, IFuncAssetWithArgumentDef
+    class LiteralListType : IFuncAssetLiteralDef
     {
-        public new string AssetCode => nameof(LiteralListType);
+        public string MenuTitle => "Literal List";
 
-        public new string MenuTitle => "Literal List";
+        public string HelpText { get; } = Language.GetInstance["LiteralListType"];
 
-        public new string HelpText { get; } = Language.GetInstance["LiteralListType"];
+        public string ValueType { get; } = CbSTUtils.FREE_LIST_TYPE_STR;
 
-        public new string ValueType { get; } = CbSTUtils.FREE_LIST_TYPE_STR;
-
-        public new Func<Type, bool> IsAccept => (t) => CbScript.AcceptAll(t);
+        public Func<Type, bool> IsAccept => (t) => CbScript.AcceptAll(t);
     }
 
     //-----------------------------------------------------------------
@@ -2216,7 +2169,7 @@ namespace CapybaraVS.Script
             col.MakeFunction(
                variableGetter.MakeName,
                HelpText,
-               col.ReturnValueTypeTF,  // 返し値の型
+               CbST.CbCreateTF(col.SelectedVariableType[0]),   // 返し値の型
                new List<ICbValue>()       // 引数
                {
                     CbST.CbCreate<int>("index", 0),
@@ -2225,25 +2178,23 @@ namespace CapybaraVS.Script
                new Func<List<ICbValue>, DummyArgumentsStack, ICbValue>(
                    (argument, cagt) =>
                    {
-                       var ret = col.ReturnValueTypeTF();    // 返し値
                        try
                        {
                            int index = GetArgument<int>(argument, 0);
 
-                           ICbValue cbVSValue = col.OwnerCommandCanvas.ScriptWorkStack.Find(variableGetter.Id);
-                           var argList = (cbVSValue as ICbList).Value;
+                           ICbList cbVSValue = col.OwnerCommandCanvas.ScriptWorkStack.Find(variableGetter.Id) as ICbList;
+                           cbVSValue[index].Set(argument[1]);
 
-                           argList[index].Set(argument[1]);
                            col.OwnerCommandCanvas.ScriptWorkStack.UpdateValueData(variableGetter.Id);
-                           ret.Set(argument[1]);
                            col.LinkConnectorControl.UpdateValueData();
-
+                           return cbVSValue;
                        }
                        catch (Exception ex)
                        {
+                           var ret = CbST.CbCreate(col.SelectedVariableType[0]);    // 返し値
                            col.ExceptionFunc(ret, ex);
+                           return ret;
                        }
-                       return ret;
                    }
                    )
                );
@@ -2282,22 +2233,21 @@ namespace CapybaraVS.Script
                new Func<List<ICbValue>, DummyArgumentsStack, ICbValue>(
                    (argument, cagt) =>
                    {
-                       var ret = CbST.CbCreate(col.SelectedVariableType[0]);    // 返し値
                        try
                        {
-                           ICbValue cbVSValue = col.OwnerCommandCanvas.ScriptWorkStack.Find(variableGetter.Id);
-                           var argList = cbVSValue as ICbList;
-                           argList.Append(argument[0]);
+                           ICbList cbVSValue = col.OwnerCommandCanvas.ScriptWorkStack.Find(variableGetter.Id) as ICbList;
+                           cbVSValue.Append(argument[0]);
 
                            col.OwnerCommandCanvas.ScriptWorkStack.UpdateValueData(variableGetter.Id);
-                           argList.CopyTo(ret as ICbList);
                            col.LinkConnectorControl.UpdateValueData();
+                           return cbVSValue;
                        }
                        catch (Exception ex)
                        {
+                           var ret = CbST.CbCreate(col.SelectedVariableType[0]);    // 返し値
                            col.ExceptionFunc(ret, ex);
+                           return ret;
                        }
-                       return ret;
                    }
                    )
                );
@@ -2514,10 +2464,17 @@ namespace CapybaraVS.Script
                 new Func<List<ICbValue>, DummyArgumentsStack, ICbValue>(
                     (argument, cagt) =>
                     {
-                        var ret = CbST.CbCreate(col.SelectedVariableType[0]) as ICbList;    // 返し値
+                        ICbList ret = argument[0] as ICbList;
                         try
                         {
-                            (argument[0] as ICbList).CopyTo(ret);
+                            if (ret.IsLiteral)
+                            {
+                                // リテラルなのでコピーした返し値を扱う
+
+                                var temp = CbST.CbCreate(col.SelectedVariableType[0]) as ICbList;
+                                temp.CopyFrom(ret);
+                                ret = temp;
+                            }
                             int index = GetArgument<int>(argument, 1);
                             ret[index] = argument[2];
                         }
@@ -2561,18 +2518,26 @@ namespace CapybaraVS.Script
                new Func<List<ICbValue>, DummyArgumentsStack, ICbValue>(
                    (argument, cagt) =>
                    {
-                       var ret = CbST.CbCreate(col.SelectedVariableType[0]) as ICbList;    // 返し値
+                       ICbList ret = argument[0] as ICbList;
                        try
                        {
-                           (argument[0] as ICbList).CopyTo(ret);
+                           if (ret.IsLiteral)
+                           {
+                               // リテラルなのでコピーした返し値を扱う
+
+                               var temp = CbST.CbCreate(col.SelectedVariableType[0]) as ICbList;
+                               temp.CopyFrom(ret);
+                               ret = temp;
+                           }
                            ret.Append(argument[1]);
                            col.LinkConnectorControl.UpdateValueData();
+                           return ret;
                        }
                        catch (Exception ex)
                        {
                            col.ExceptionFunc(ret, ex);
+                           return ret;
                        }
-                       return ret;
                    }
                    )
                );

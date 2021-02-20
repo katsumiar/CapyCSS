@@ -41,7 +41,7 @@ namespace CapybaraVS.Script
                 // 値を文字列にしてコピーする
 
                 ValueString = n.ValueString;
-
+                IsLiteral = n.IsLiteral;
                 if (IsError)
                 {
                     // エラーからの復帰

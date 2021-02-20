@@ -432,6 +432,10 @@ namespace CapybaraVS.Script
         /// </summary>
         bool IsReadOnlyName { get; }
         /// <summary>
+        /// リテラルかどうか？
+        /// </summary>
+        bool IsLiteral { get; set; }
+        /// <summary>
         /// デリゲート型かどうか？
         /// </summary>
         bool IsDelegate { get; }
@@ -634,7 +638,11 @@ namespace CapybaraVS.Script
         /// オリジナルの型（Func, Action, List 以外は OriginalReturnType と同じ）を参照します。
         /// </summary>
         public virtual Type OriginalType => typeof(T);
-
+        /// <summary>
+        /// リテラルかどうか？
+        /// ※変数以外は、原則リテラル
+        /// </summary>
+        public bool IsLiteral { get; set; } = true;
         /// <summary>
         /// デリゲート型かどうか？
         /// </summary>
@@ -742,6 +750,7 @@ namespace CapybaraVS.Script
                 {
                     Value = (dynamic)n.Data;
                 }
+                IsLiteral = n.IsLiteral;
                 if (IsError)
                 {
                     IsError = false;
@@ -927,6 +936,8 @@ namespace CapybaraVS.Script
         public string Name { get => name; set { name = value; } }
 
         public bool IsReadOnlyName { get; set; } = false;
+
+        public bool IsLiteral { get; set; } = false;
 
         public virtual bool IsDelegate => false;
 

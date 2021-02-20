@@ -64,7 +64,7 @@ namespace CapybaraVS.Script
                 {
                     Value = n.Data;
                 }
-
+                IsLiteral = n.IsLiteral;
                 if (IsError)
                 {
                     // エラーからの復帰

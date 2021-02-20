@@ -385,9 +385,16 @@ namespace CapybaraVS.Script
             }
             if (isClassInstanceMethod && callArguments[0] is ICbClass cbClass)
             {
-                // 変更後の値を戻す
+                if (callArguments[0] is ICbValue cbValue && cbValue.IsLiteral)
+                {
+                    // リレラルは更新情報を捨てる
+                }
+                else
+                {
+                    // 変更後の値を戻す
 
-                cbClass.ReturnAction?.Invoke(classInstance);
+                    cbClass.ReturnAction?.Invoke(classInstance);
+                }
             }
 
             return result;
@@ -408,20 +415,22 @@ namespace CapybaraVS.Script
             bool isClassInstanceMethod, 
             object[] args)
         {
-            for (int i = 0; i < args.Length; ++i)
+            for (int i = (isClassInstanceMethod ? 1 : 0); i < callArguments.Count; ++i)
             {
-                foreach (var node in callArguments)
-                {
-                    // 参照渡しのため変更後の値を戻す
+                if (callArguments[i] is ICbValue cbValue && cbValue.IsLiteral)
+                    continue;   // リレラルは更新情報を捨てる
 
-                    if (node is ICbClass classArg)
-                    {
-                        classArg.ReturnAction?.Invoke(args[i]);
-                    }
-                    else if (node.IsList)
-                    {
-                        (node as ICbList).CopyFrom(args[i]);
-                    }
+                // 参照渡しのため変更後の値を戻す
+
+                var scrArg = callArguments[i];
+
+                if (scrArg is ICbClass classArg)
+                {
+                    classArg.ReturnAction?.Invoke(args[i]);
+                }
+                else if (scrArg.IsList)
+                {
+                    (scrArg as ICbList).CopyFrom(args[i]);
                 }
             }
         }
