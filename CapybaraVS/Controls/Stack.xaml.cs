@@ -299,7 +299,10 @@ namespace CapybaraVS.Controls
             {
                 if (node.stackNode.Id == id)
                 {
-                    node.stackNode.ValueData = value;
+                    var stackNode = node.stackNode;
+                    string name = stackNode.ValueData.Name;
+                    stackNode.ValueData = value;
+                    stackNode.ValueData.Name = name;
                     return;
                 }
             }

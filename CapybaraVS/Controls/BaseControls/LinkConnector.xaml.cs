@@ -567,11 +567,6 @@ namespace CapybaraVS.Controls.BaseControls
         /// </summary>
         private void SetIsCallBackLink()
         {
-            //if (ValueData is ICbList cbList)
-            //{
-            //    return cbList.ItemName.StartsWith(CbSTUtils.FUNC_STR)
-            //        || cbList.ItemName.StartsWith(CbSTUtils.ACTION_STR);
-            //}
             IsCallBackLink = ValueData is ICbEvent;
         }
 
