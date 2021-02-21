@@ -542,7 +542,7 @@ namespace CapybaraVS.Controls.BaseControls
 
                 UpdateEvent?.Invoke();
 
-                IsCallBackLink = CheckCallBackLink();
+                SetIsCallBackLink();
             }
 
             ChangeLinkConnectorStroke();
@@ -565,15 +565,14 @@ namespace CapybaraVS.Controls.BaseControls
         /// <summary>
         /// 接続がコールバック呼び出し接続かの判定を残しておきます。
         /// </summary>
-        /// <returns></returns>
-        private bool CheckCallBackLink()
+        private void SetIsCallBackLink()
         {
-            if (ValueData is ICbList cbList)
-            {
-                return cbList.ItemName.StartsWith(CbSTUtils.FUNC_STR)
-                    || cbList.ItemName.StartsWith(CbSTUtils.ACTION_STR);
-            }
-            return ValueData is ICbEvent;
+            //if (ValueData is ICbList cbList)
+            //{
+            //    return cbList.ItemName.StartsWith(CbSTUtils.FUNC_STR)
+            //        || cbList.ItemName.StartsWith(CbSTUtils.ACTION_STR);
+            //}
+            IsCallBackLink = ValueData is ICbEvent;
         }
 
         /// <summary>

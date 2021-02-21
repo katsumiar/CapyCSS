@@ -491,8 +491,6 @@ namespace CbVS.Script
                 if (n.IsError)
                     throw new Exception(n.ErrorMessage);
 
-                //Debug.Assert(n is ICbEvent);
-
                 if (n is CbObject)
                 {
                     Data = n.Data;
@@ -500,7 +498,6 @@ namespace CbVS.Script
                 else if (n is ICbEvent cbEvent)
                 {
                     CallBack = cbEvent.CallBack;
-                    //Data = n.Data;
                 }
                 if (IsError)
                 {

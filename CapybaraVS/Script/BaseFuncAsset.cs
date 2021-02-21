@@ -5,6 +5,7 @@ using CbVS.Script;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Text;
 using static CapybaraVS.Controls.MultiRootConnector;
 
@@ -1706,20 +1707,24 @@ namespace CapybaraVS.Script
                         {
                             ICbValue cbVSValue = col.OwnerCommandCanvas.ScriptWorkStack.Find(variableGetter.Id);
                             col.LinkConnectorControl.UpdateValueData();
-                            if (!(cbVSValue is ICbClass))
+                            if (!cbVSValue.IsDelegate)
                             {
-                                cbVSValue.ReturnAction = (value) =>
+                                if (!(cbVSValue is ICbClass))
                                 {
-                                    cbVSValue.Data = value;
-                                };
-                            }
-                            else if (cbVSValue is ICbList cbList)
-                            {
-                                cbVSValue.ReturnAction = (value) =>
+                                    cbVSValue.ReturnAction = (value) =>
+                                    {
+                                        cbVSValue.Data = value;
+                                    };
+                                }
+                                else if (cbVSValue is ICbList cbList)
                                 {
-                                    cbList.CopyFrom(value);
-                                };
+                                    cbVSValue.ReturnAction = (value) =>
+                                    {
+                                        cbList.CopyFrom(value);
+                                    };
+                                }
                             }
+                            cbVSValue.IsLiteral = false;
 
                             // スクリプト処理後に変数の値変化を反映する（参照渡し対応）
                             col.OwnerCommandCanvas.ScriptWorkStack.UpdateValueData(variableGetter.Id);
@@ -1809,7 +1814,7 @@ namespace CapybaraVS.Script
             col.MakeFunction(
                 variableGetter.MakeName,
                 HelpText,
-                CbST.CbCreateTF(col.SelectedVariableType[0]),  // 返し値の型
+                CbVoid.TF,  // 返し値の型
                 new List<ICbValue>()  // 引数
                 {
                     CbST.CbCreate(col.SelectedVariableType[0], "n"),
@@ -1817,32 +1822,38 @@ namespace CapybaraVS.Script
                 new Func<List<ICbValue>, DummyArgumentsStack, ICbValue>(
                     (argument, cagt) =>
                     {
-                        ICbValue ret = CbST.CbCreate(col.SelectedVariableType[0]);    // 返し値
                         try
                         {
                             ICbValue cbVSValue = col.OwnerCommandCanvas.ScriptWorkStack.Find(variableGetter.Id);
-
-                            if (argument[0] is ICbList cbList && cbVSValue is ICbList toList)
+                            if (argument[0].IsLiteral)
                             {
-                                // リストのコピー
+                                if (argument[0] is ICbList cbList && cbVSValue is ICbList toList)
+                                {
+                                    // リストのコピー
 
-                                cbList.CopyTo(toList);
+                                    cbList.CopyTo(toList);
+                                }
+                                else
+                                {
+                                    // 値のコピー
+
+                                    cbVSValue.Set(argument[0]);
+                                }
                             }
                             else
                             {
-                                // 値のコピー
+                                // 変数の中身を代入
 
-                                cbVSValue.Set(argument[0]);
+                                col.OwnerCommandCanvas.ScriptWorkStack.FindSet(variableGetter.Id, argument[0]);
                             }
                             col.OwnerCommandCanvas.ScriptWorkStack.UpdateValueData(variableGetter.Id);
-                            ret.Set(argument[0]);
                             col.LinkConnectorControl.UpdateValueData();
                         }
                         catch (Exception ex)
                         {
-                            col.ExceptionFunc(ret, ex);
+                            col.ExceptionFunc(null, ex);
                         }
-                        return ret;
+                        return null;
                     }
                     )
                 );

@@ -293,6 +293,19 @@ namespace CapybaraVS.Controls
             return null;
         }
 
+        public void FindSet(int id, ICbValue value)
+        {
+            foreach (var node in OwnerCommandCanvas.ScriptWorkStack.StackData)
+            {
+                if (node.stackNode.Id == id)
+                {
+                    node.stackNode.ValueData = value;
+                    return;
+                }
+            }
+            Debug.Assert(false);    // id が見つからなかった
+        }
+
         /// <summary>
         /// 変数名変更通知
         /// </summary>

@@ -399,7 +399,14 @@ namespace CapybaraVS.Controls.BaseControls
                 (self, getValue) =>
                 {
                     bool value = getValue(self);
-                    self.Edit.IsReadOnly = self.ValueData.IsReadOnlyValue || value;
+                    if (self.ValueData is null)
+                    {
+                        self.Edit.IsReadOnly = true;
+                    }
+                    else
+                    {
+                        self.Edit.IsReadOnly = self.ValueData.IsReadOnlyValue || value;
+                    }
                 });
 
         public static readonly DependencyProperty ReadOnlyProperty = impReadOnly.Regist(false);
