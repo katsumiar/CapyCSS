@@ -48,12 +48,6 @@ namespace CbVS.Script
         int Count { get; }
 
         /// <summary>
-        /// リストのコピー
-        /// </summary>
-        /// <param name="toList"></param>
-        void CopyTo(ICbList toList);
-
-        /// <summary>
         /// リストに要素を追加します。
         /// </summary>
         /// <param name="cbVSValue"></param>
@@ -318,54 +312,6 @@ namespace CbVS.Script
         }
 
         /// <summary>
-        /// リストの内容をtoListに比較的高速にコピーします。
-        /// </summary>
-        /// <param name="toList">コピー先のリスト</param>
-        public void CopyTo(ICbList toList)
-        {
-            if (toList.Count > 0 && Count > 0 && (toList as CbList<T>) != null)
-            {
-                // 差分のコピー
-
-                int len = Math.Min(toList.Count, Value.Count);
-                int i = 0;
-                for (; i < len; ++i)
-                {
-                    toList[i].Set(Value[i]);
-                }
-                int remaining = toList.Count - Value.Count;
-                if (remaining != 0)
-                {
-                    if (remaining > 0)
-                    {
-                        // 多すぎる配列を消す
-
-                        while (remaining-- > 0)
-                        {
-                            toList.RemoveAt(i);
-                        }
-                    }
-                    else
-                    {
-                        // 足りない配列を足す
-
-                        remaining = Math.Abs(remaining);
-                        for (int j = 0; j < remaining; ++j)
-                        {
-                            var addNode = NodeTF();
-                            addNode.Set(Value[i + j]);
-                            toList.Append(addNode);
-                        }
-                    }
-                }
-            }
-            else
-            {
-                (toList as CbList<T>).Value = new List<ICbValue>(Value);
-            }
-        }
-
-        /// <summary>
         /// リストに要素を追加します。
         /// </summary>
         /// <param name="cbVSValue">追加要素</param>
@@ -470,19 +416,27 @@ namespace CbVS.Script
         public void CopyFrom(object list)
         {
             Clear();
+
             if (list is ICbList cbList)
             {
                 if (cbList.Count == 0)
                     return;
                 if (cbList[0] is ICbClass)
                 {
-                    // 参照渡し
+                    // 要素は、参照渡し
 
                     for (int i = 0; i < cbList.Count; ++i)
-                        Value.Add(cbList[i]);
+                    {
+                        Value.Add(cbList[i]);   // ※Append だとコピーになる
+                    }
                     return;
                 }
-                list = cbList.ConvertOriginalTypeList(null, null);
+                // 要素をコピー
+                foreach (var node in (IEnumerable<ICbValue>)cbList.Data)
+                {
+                    Append(node);
+                }
+                return;
             }
 
             if (IsArrayType)

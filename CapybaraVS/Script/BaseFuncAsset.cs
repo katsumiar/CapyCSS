@@ -1831,7 +1831,7 @@ namespace CapybaraVS.Script
                                 {
                                     // リストのコピー
 
-                                    cbList.CopyTo(toList);
+                                    toList.CopyFrom(cbList);
                                 }
                                 else
                                 {
