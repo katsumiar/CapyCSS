@@ -207,8 +207,10 @@ namespace CapybaraVS.Script
                     continue;
                 }
 
-                if (node is ICbList cbList)
+                if (node.IsList)
                 {
+                    ICbList cbList = node.GetListValue;
+
                     // リストは、オリジナルの型のインスタンスに差し替える
 
                     if (dummyArgumentsControl is null)
@@ -380,8 +382,9 @@ namespace CapybaraVS.Script
         /// <param name="result">メソッド呼び出しの返り値</param>
         private static void ProcReturnValue(MultiRootConnector col, ICbValue returnValue, object result)
         {
-            if (returnValue is ICbList retCbList)
+            if (returnValue.IsList)
             {
+                ICbList retCbList = returnValue.GetListValue;
                 retCbList.CopyFrom(result);
                 col.LinkConnectorControl.UpdateValueData();
             }

@@ -181,8 +181,9 @@ namespace CapybaraVS.Controls.BaseControls
             }
 
             stackNode.UpdateValueData();
-            if (CbListValue != null && CbListValue.ValueData is ICbList target)
+            if (CbListValue != null && CbListValue.ValueData.IsList)
             {
+                ICbList target = CbListValue.ValueData.GetListValue;
                 if (ListData.Count > 0 && target.Count > 0 &&
                     ListData[0].stackNode.ValueData.OriginalType == target[0].OriginalType)
                 {
@@ -236,8 +237,9 @@ namespace CapybaraVS.Controls.BaseControls
             if (node is null)
                 return null;
 
-            if (node.ValueData is ICbList cbList)
+            if (node.ValueData.IsList)
             {
+                ICbList cbList = node.ValueData.GetListValue;
                 Debug.Assert(CbListValue is null);
                 CbListValue = node;
                 AddEvent = () =>
@@ -264,8 +266,9 @@ namespace CapybaraVS.Controls.BaseControls
                 grp.MainPanel.Margin = new Thickness();
                 grp.InnerList.Visibility = Visibility.Collapsed;
 
-                if (CbListValue != null && CbListValue.ValueData is ICbList target)
+                if (CbListValue != null && CbListValue.ValueData.IsList)
                 {
+                    ICbList target = CbListValue.ValueData.GetListValue;
                     grp.IsEnableDelete = () => true;
                     grp.DeleteEvent = () =>
                     {

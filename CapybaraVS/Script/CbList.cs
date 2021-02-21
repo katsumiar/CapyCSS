@@ -199,6 +199,7 @@ namespace CbVS.Script
         }
 
         public override bool IsList => true;
+        public override ICbList GetListValue => this;
 
         public bool IsArrayType { get; set; } = false;
 
@@ -417,10 +418,12 @@ namespace CbVS.Script
         {
             Clear();
 
-            if (list is ICbList cbList)
+            if (list is ICbValue cbValue && cbValue.IsList)
             {
+                ICbList cbList = cbValue.GetListValue;
                 if (cbList.Count == 0)
                     return;
+
                 if (cbList[0] is ICbClass)
                 {
                     // 要素は、参照渡し

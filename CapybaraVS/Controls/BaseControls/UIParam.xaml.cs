@@ -541,8 +541,9 @@ namespace CapybaraVS.Controls.BaseControls
                 }
             }
 #if !SHOW_LINK_ARRAY
-            else if (ValueData is ICbList cbList)
+            else if (ValueData.IsList)
             {
+                ICbList cbList = ValueData.GetListValue;
                 if (!cbList.IsNull && cbList is ICbShowValue cbVSShow)
                 {
                     valueString = cbVSShow.DataString;

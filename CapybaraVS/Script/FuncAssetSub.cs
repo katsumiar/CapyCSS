@@ -146,7 +146,7 @@ namespace CapybaraVS.Script
             if (func is null)
                 return;
 
-            var argList = (variable as ICbList).Value;
+            var argList = variable.GetListValue.Value;
             foreach (var node in argList)
             {
                 if (node.IsError)
@@ -161,7 +161,7 @@ namespace CapybaraVS.Script
             if (func is null)
                 return;
 
-            var argList = (variable as ICbList).Value;
+            var argList = variable.GetListValue.Value;
             foreach (var node in argList)
             {
                 if (node.IsError)
@@ -244,7 +244,7 @@ namespace CapybaraVS.Script
         {
             ICbValue valueData = arguments[index];
             CheckArgument(valueData);
-            return (valueData as ICbList).Value;
+            return valueData.GetListValue.Value;
         }
 
         /// <summary>

@@ -698,7 +698,7 @@ namespace CapybaraVS.Controls.BaseControls
         public void TryAddListNode(int count)
         {
             if (BoxMainPanel.Visibility == Visibility.Visible &&
-                ValueData is ICbList list)
+                ValueData.IsList)
             {
                 // リンクされているリストを表示に再反映する
 

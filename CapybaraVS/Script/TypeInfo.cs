@@ -284,8 +284,11 @@ namespace CapybaraVS.Script
                 if (element != null)
                 {
                     var ret = CbList.Create(element, name);
-                    if (ret is ICbList cbList)
+                    if (ret.IsList)
+                    {
+                        ICbList cbList = ret.GetListValue;
                         cbList.IsArrayType = true;
+                    }
                     return ret;
                 }
             }
@@ -448,6 +451,10 @@ namespace CapybaraVS.Script
         /// </summary>
         bool IsList { get; }
         /// <summary>
+        /// リスト形式の値を返します。
+        /// </summary>
+        ICbList GetListValue { get; }
+        /// <summary>
         /// 変数の値は変更不可か？
         /// </summary>
         bool IsReadOnlyValue { get; set; }
@@ -586,13 +593,20 @@ namespace CapybaraVS.Script
         {
             if (obj is ParamNameOnly)
                 return false;
-            if (this is ICbList cbList)
+
+            if (IsList)
             {
-                if (isCast && cbList.IsArrayType && obj is ICbList)
+                ICbList cbList = GetListValue;
+
+                if (isCast && cbList.IsArrayType && obj.IsList)
                     return true;    // ToArrya() を行う特殊なキャスト
 
-                if (isCast && obj is ICbList ListObj && ListObj.IsArrayType)
-                    return true;    // List<>(array) を行う特殊なキャスト
+                if (isCast && obj.IsList)
+                {
+                    ICbList ListObj = obj.GetListValue;
+                    if (ListObj.IsArrayType)
+                        return true;    // List<>(array) を行う特殊なキャスト
+                }
 
                 if (TypeName != obj.TypeName)
                     return false;
@@ -662,6 +676,11 @@ namespace CapybaraVS.Script
         /// リストか否か？（ToArray も含めるので ICollection ではない）
         /// </summary>
         public virtual bool IsList => false;
+
+        /// <summary>
+        /// リスト形式の値を返します。
+        /// </summary>
+        public virtual ICbList GetListValue => this as ICbList;
 
         /// <summary>
         /// 変数名を参照します。
@@ -752,9 +771,11 @@ namespace CapybaraVS.Script
                     // 参照渡しの為のリアクションのコピー
                     ReturnAction = n.ReturnAction;
                 }
-                else if (!(this is ICbList) && n is ICbList cbList)
+                else if (!this.IsList && n.IsList)
                 {
                     // リストはオリジナルの型にしないと代入できない
+
+                    ICbList cbList = n.GetListValue;
 
                     Value = (T)cbList.ConvertOriginalTypeList(null, null);
 
@@ -963,6 +984,8 @@ namespace CapybaraVS.Script
         public virtual bool IsDelegate => false;
 
         public virtual bool IsList => false;
+
+        public virtual ICbList GetListValue => null;
 
         public string ValueString { get => name; set { name = value; } }
 

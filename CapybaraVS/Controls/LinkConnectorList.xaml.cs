@@ -229,7 +229,7 @@ namespace CapybaraVS.Controls
                 ListData = connectedListData;
             }
 
-            BuildConnectorList((variable as ICbList).Value);
+            BuildConnectorList(variable.GetListValue.Value);
 
             // 接続されたらリスト表示を無くす
             DisenableList();
@@ -294,7 +294,7 @@ namespace CapybaraVS.Controls
             if (variable is null)
                 return;
 
-            var listTypeVariable = variable as ICbList;
+            var listTypeVariable = variable.GetListValue;
 
             Disconnect();
 
@@ -316,7 +316,7 @@ namespace CapybaraVS.Controls
         /// <param name="variable"></param>
         public void UpdateListData(ICbValue variable)
         {
-            var listTypeVariable = variable as ICbList;
+            var listTypeVariable = variable.GetListValue;
 
             if (OwnerCommandCanvas.LinkConnectorListHoldAction.Enabled)
             {

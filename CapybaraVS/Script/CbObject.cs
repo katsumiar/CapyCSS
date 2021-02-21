@@ -32,8 +32,11 @@ namespace CapybaraVS.Script
                 {
                     ICbValue newValue = null;
 
-                    if (cbVSValue is ICbList cbList)
+                    if (cbVSValue.IsList)
+                    {
+                        ICbList cbList = cbVSValue.GetListValue;
                         newValue = cbList.CreateTF();
+                    }
                     else
                         newValue = cbVSValue.NodeTF();
                     newValue.Set(cbVSValue);

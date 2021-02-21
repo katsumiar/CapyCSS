@@ -1716,8 +1716,9 @@ namespace CapybaraVS.Script
                                         cbVSValue.Data = value;
                                     };
                                 }
-                                else if (cbVSValue is ICbList cbList)
+                                else if (cbVSValue.IsList)
                                 {
+                                    ICbList cbList = cbVSValue.GetListValue;
                                     cbVSValue.ReturnAction = (value) =>
                                     {
                                         cbList.CopyFrom(value);
@@ -1827,10 +1828,12 @@ namespace CapybaraVS.Script
                             ICbValue cbVSValue = col.OwnerCommandCanvas.ScriptWorkStack.Find(variableGetter.Id);
                             if (argument[0].IsLiteral)
                             {
-                                if (argument[0] is ICbList cbList && cbVSValue is ICbList toList)
+                                if (argument[0].IsList && cbVSValue.IsList)
                                 {
                                     // リストのコピー
 
+                                    ICbList cbList = argument[0].GetListValue;
+                                    ICbList toList = cbVSValue.GetListValue;
                                     toList.CopyFrom(cbList);
                                 }
                                 else
@@ -2154,7 +2157,7 @@ namespace CapybaraVS.Script
                            int index = GetArgument<int>(argument, 0);
 
                            ICbValue cbVSValue = col.OwnerCommandCanvas.ScriptWorkStack.Find(variableGetter.Id);
-                           var argList = (cbVSValue as ICbList).Value;
+                           var argList = cbVSValue.GetListValue.Value;
 
                            ret.Set(argList[index]);
                            col.LinkConnectorControl.UpdateValueData();
@@ -2207,7 +2210,7 @@ namespace CapybaraVS.Script
                        {
                            int index = GetArgument<int>(argument, 0);
 
-                           ICbList cbVSValue = col.OwnerCommandCanvas.ScriptWorkStack.Find(variableGetter.Id) as ICbList;
+                           ICbList cbVSValue = col.OwnerCommandCanvas.ScriptWorkStack.Find(variableGetter.Id).GetListValue;
                            cbVSValue[index].Set(argument[1]);
 
                            col.OwnerCommandCanvas.ScriptWorkStack.UpdateValueData(variableGetter.Id);
@@ -2260,7 +2263,7 @@ namespace CapybaraVS.Script
                    {
                        try
                        {
-                           ICbList cbVSValue = col.OwnerCommandCanvas.ScriptWorkStack.Find(variableGetter.Id) as ICbList;
+                           ICbList cbVSValue = col.OwnerCommandCanvas.ScriptWorkStack.Find(variableGetter.Id).GetListValue;
                            cbVSValue.Append(argument[0]);
 
                            col.OwnerCommandCanvas.ScriptWorkStack.UpdateValueData(variableGetter.Id);
@@ -2309,7 +2312,7 @@ namespace CapybaraVS.Script
                     {
                         try
                         {
-                            return CbInt.Create((argument[0] as ICbList).Count);
+                            return CbInt.Create(argument[0].GetListValue.Count);
                         }
                         catch (Exception ex)
                         {
@@ -2354,7 +2357,7 @@ namespace CapybaraVS.Script
                     {
                         try
                         {
-                            return CbBool.Create((argument[0] as ICbList).Contains(argument[1]));
+                            return CbBool.Create(argument[0].GetListValue.Contains(argument[1]));
                         }
                         catch (Exception ex)
                         {
@@ -2400,7 +2403,7 @@ namespace CapybaraVS.Script
                         try
                         {
                             int index = GetArgument<int>(argument, 1);
-                            return (argument[0] as ICbList)[index];
+                            return argument[0].GetListValue[index];
                         }
                         catch (Exception ex)
                         {
@@ -2444,7 +2447,7 @@ namespace CapybaraVS.Script
                     {
                         try
                         {
-                            var argList = argument[0] as ICbList;
+                            var argList = argument[0].GetListValue;
                             return argList[argList.Count - 1];
                         }
                         catch (Exception ex)
@@ -2489,14 +2492,14 @@ namespace CapybaraVS.Script
                 new Func<List<ICbValue>, DummyArgumentsStack, ICbValue>(
                     (argument, cagt) =>
                     {
-                        ICbList ret = argument[0] as ICbList;
+                        ICbList ret = argument[0].GetListValue;
                         try
                         {
                             if (ret.IsLiteral)
                             {
                                 // リテラルなのでコピーした返し値を扱う
 
-                                var temp = CbST.CbCreate(col.SelectedVariableType[0]) as ICbList;
+                                var temp = CbST.CbCreate(col.SelectedVariableType[0]).GetListValue;
                                 temp.CopyFrom(ret);
                                 ret = temp;
                             }
@@ -2543,14 +2546,14 @@ namespace CapybaraVS.Script
                new Func<List<ICbValue>, DummyArgumentsStack, ICbValue>(
                    (argument, cagt) =>
                    {
-                       ICbList ret = argument[0] as ICbList;
+                       ICbList ret = argument[0].GetListValue;
                        try
                        {
                            if (ret.IsLiteral)
                            {
                                // リテラルなのでコピーした返し値を扱う
 
-                               var temp = CbST.CbCreate(col.SelectedVariableType[0]) as ICbList;
+                               var temp = CbST.CbCreate(col.SelectedVariableType[0]).GetListValue;
                                temp.CopyFrom(ret);
                                ret = temp;
                            }
