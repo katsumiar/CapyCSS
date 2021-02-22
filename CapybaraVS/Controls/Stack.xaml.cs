@@ -283,11 +283,19 @@ namespace CapybaraVS.Controls
 
         public ICbValue Find(int id)
         {
+            StackNode node = FindStackNode(id);
+            if (node != null)
+                return node.ValueData;
+            return null;
+        }
+
+        public StackNode FindStackNode(int id)
+        {
             foreach (var node in OwnerCommandCanvas.ScriptWorkStack.StackData)
             {
                 if (node.stackNode.Id == id)
                 {
-                    return node.stackNode.ValueData;
+                    return node.stackNode;
                 }
             }
             return null;
@@ -321,6 +329,19 @@ namespace CapybaraVS.Controls
             Debug.Assert(false);    // id が見つからなかった
         }
 
+        private bool IsAlreadyUsedName(StackNode self, string name)
+        {
+            foreach (var checkNode in OwnerCommandCanvas.ScriptWorkStack.StackData)
+            {
+                if (self != checkNode.stackNode &&
+                    checkNode.stackNode.ParamName == name)
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
         /// <summary>
         /// 変数名変更通知
         /// </summary>
@@ -328,11 +349,42 @@ namespace CapybaraVS.Controls
         {
             if (linkList.ContainsKey(id))
             {
+                StackNode stackNode = FindStackNode(id);
+                if (stackNode is null)
+                    return;
+
+                CheckAlreadyUsedName(stackNode);
+
                 List<MultiRootConnector> multiRootConnectors = linkList[id];
                 foreach (var node in multiRootConnectors)
                 {
+                    // 関係するノードの表示を更新
+
                     node.VariableUpdate();
                 }
+            }
+        }
+
+        /// <summary>
+        /// 既に使われている名前が設定されたなら名前を変更します。
+        /// </summary>
+        /// <param name="stackNode"></param>
+        private void CheckAlreadyUsedName(StackNode stackNode)
+        {
+            int nameIndex = 1;
+            string name = stackNode.ParamName;
+            while (IsAlreadyUsedName(stackNode, name))
+            {
+                // 新しい名前候補を作成
+
+                name = stackNode.ParamName + nameIndex++;
+            }
+            if (nameIndex != 1)
+            {
+                // 新しい名前に変更
+
+                stackNode.ParamNameLabel.LabelString = name;
+                stackNode.ParamNameLabel.UpdateEvent();
             }
         }
 
