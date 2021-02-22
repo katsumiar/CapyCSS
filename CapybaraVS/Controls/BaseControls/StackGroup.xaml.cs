@@ -408,5 +408,15 @@ namespace CapybaraVS.Controls.BaseControls
                 AddListNode(AddEvent());
             }
         }
+
+        private void Accordion1_MouseEnter(object sender, MouseEventArgs e)
+        {
+            Cursor = Cursors.Hand;
+        }
+
+        private void Accordion1_MouseLeave(object sender, MouseEventArgs e)
+        {
+            Cursor = null;
+        }
     }
 }
