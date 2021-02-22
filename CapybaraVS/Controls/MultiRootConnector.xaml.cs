@@ -67,7 +67,7 @@ namespace CapybaraVS.Controls
                         self.AttachParam = new AttachVariableId(RootFunc.AttachVariableId);
 
                     self.AssetValueType = RootFunc.AssetValueType;
-                    self.notheradMode = true;
+                    self.IsReBuildMode = true;
                     self.AssetFuncType = RootFunc.AssetFuncType;
                     self.AssetType = RootFunc.AssetType;
 
@@ -606,7 +606,10 @@ namespace CapybaraVS.Controls
             ExceptionFunc(variable, ex, LinkConnectorControl);
         }
 
-        private bool notheradMode = false;
+        /// <summary>
+        /// 再構築モードか？
+        /// </summary>
+        private bool IsReBuildMode = false;
 
         private void MakeFunctionType()
         {
@@ -627,11 +630,11 @@ namespace CapybaraVS.Controls
             }
             if (asset != null)
             {
-                if (notheradMode)
+                if (IsReBuildMode)
                 {
                     // スレッドとの絡みでノード間の接続が面倒になっている……
 
-                    if (!asset.ImplAsset(this, notheradMode))
+                    if (!asset.ImplAsset(this, IsReBuildMode))
                     {
                         // 失敗かキャンセル
 
@@ -644,7 +647,7 @@ namespace CapybaraVS.Controls
                     Dispatcher.BeginInvoke(
                         new Action(() =>
                             {
-                                if (!asset.ImplAsset(this, notheradMode))
+                                if (!asset.ImplAsset(this, IsReBuildMode))
                                 {
                                     // 失敗かキャンセル
 

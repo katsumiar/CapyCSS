@@ -25,8 +25,9 @@ namespace CapybaraVS.Script
         /// <summary>
         /// アセット処理を実装する
         /// </summary>
-        /// <param name="col"></param>
-        bool ImplAsset(MultiRootConnector col, bool notheradMode = false);
+        /// <param name="col">スクリプトのルートノード</param>
+        /// <param name="isReBuildMode">再構築か？（保存データからの復帰）</param>
+        bool ImplAsset(MultiRootConnector col, bool isReBuildMode = false);
     }
 
     /// <summary>

@@ -88,12 +88,24 @@ namespace CapybaraVS.Script
         /// </summary>
         public bool IsConstructor = false;
 
-        public virtual bool ImplAsset(MultiRootConnector col, bool noThreadMode = false)
+        /// <summary>
+        /// メソッド呼び出し処理を実装する
+        /// </summary>
+        /// <param name="col">スクリプトのルートノード</param>
+        /// <param name="isReBuildMode">再構築か？（保存データからの復帰）</param>
+        public virtual bool ImplAsset(MultiRootConnector col, bool isReBuildMode = false)
         {
-            return ImplAsset(col, noThreadMode, null);
+            return ImplAsset(col, null);
         }
 
-        protected bool ImplAsset(MultiRootConnector col, bool noThreadMode = false, DummyArgumentsControl dummyArgumentsControl = null)
+        /// <summary>
+        /// メソッド呼び出し処理を実装する
+        /// </summary>
+        /// <param name="col">スクリプトのルートノード</param>
+        /// <param name="dummyArgumentsControl">仮引数管理</param>
+        protected bool ImplAsset(
+            MultiRootConnector col, 
+            DummyArgumentsControl dummyArgumentsControl = null)
         {
             List<ICbValue> argumentTypeList = new List<ICbValue>();
 
@@ -159,7 +171,6 @@ namespace CapybaraVS.Script
                     );
 
                 object result = CallMethod(
-                    col,
                     callArguments,
                     isClassInstanceMethod, 
                     methodArguments);
@@ -252,7 +263,6 @@ namespace CapybaraVS.Script
         /// <param name="methodArguments">メソッド呼び出し引数リスト</param>
         /// <returns>メソッドの返り値</returns>
         private object CallMethod(
-            MultiRootConnector col,
             List<ICbValue> callArguments, 
             bool isClassInstanceMethod, 
             List<object> methodArguments

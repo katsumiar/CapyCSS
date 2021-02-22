@@ -316,7 +316,7 @@ namespace CapybaraVS.Script
 
         public Func<Type, bool> IsAccept => (t) => CbScript.IsValueType(t) || t == typeof(string);
 
-        public bool ImplAsset(MultiRootConnector col, bool notheradMode = false)
+        public bool ImplAsset(MultiRootConnector col, bool isReBuildMode = false)
         {
             col.MakeFunction(
                 MenuTitle,
@@ -364,7 +364,7 @@ namespace CapybaraVS.Script
 
         public Func<Type, bool> IsAccept => (t) => CbScript.IsValueType(t) || t == typeof(string);
 
-        public bool ImplAsset(MultiRootConnector col, bool notheradMode = false)
+        public bool ImplAsset(MultiRootConnector col, bool isReBuildMode = false)
         {
             // 仮引数コントロールを作成
             DummyArgumentsControl dummyArgumentsControl = new DummyArgumentsControl(col);
@@ -429,7 +429,7 @@ namespace CapybaraVS.Script
 
         public Func<Type, bool> IsAccept => (t) => CbScript.AcceptAll(t);
 
-        public bool ImplAsset(MultiRootConnector col, bool notheradMode = false)
+        public bool ImplAsset(MultiRootConnector col, bool isReBuildMode = false)
         {
             col.MakeFunction(
                 MenuTitle,
@@ -463,7 +463,7 @@ namespace CapybaraVS.Script
             // 実行を可能にする
             col.LinkConnectorControl.IsRunable = true;
 
-            if (!notheradMode)
+            if (!isReBuildMode)
             {// 「call list」のリンクコネクターを取得する
                 LinkConnector arg = col.LinkConnectorControl.GetArgument(0);
                 // 要素を1つ増やす
@@ -487,7 +487,7 @@ namespace CapybaraVS.Script
 
         public Func<Type, bool> IsAccept => (t) => CbScript.IsValueType(t);
 
-        public bool ImplAsset(MultiRootConnector col, bool notheradMode = false)
+        public bool ImplAsset(MultiRootConnector col, bool isReBuildMode = false)
         {
             col.MakeFunction(
                 MenuTitle,
@@ -532,7 +532,7 @@ namespace CapybaraVS.Script
 
         public Func<Type, bool> IsAccept => (t) => CbScript.IsValueType(t);
 
-        public bool ImplAsset(MultiRootConnector col, bool notheradMode = false)
+        public bool ImplAsset(MultiRootConnector col, bool isReBuildMode = false)
         {
             col.MakeFunction(
                 MenuTitle,
@@ -577,7 +577,7 @@ namespace CapybaraVS.Script
 
         public Func<Type, bool> IsAccept => (t) => CbScript.IsValueType(t);
 
-        public bool ImplAsset(MultiRootConnector col, bool notheradMode = false)
+        public bool ImplAsset(MultiRootConnector col, bool isReBuildMode = false)
         {
             col.MakeFunction(
                 "Modulo",
@@ -623,7 +623,7 @@ namespace CapybaraVS.Script
 
         public Func<Type, bool> IsAccept => (t) => CbScript.AcceptAll(t);
 
-        public bool ImplAsset(MultiRootConnector col, bool notheradMode = false)
+        public bool ImplAsset(MultiRootConnector col, bool isReBuildMode = false)
         {
             col.MakeFunction(
                 "Comparison ==",
@@ -670,7 +670,7 @@ namespace CapybaraVS.Script
 
         public Func<Type, bool> IsAccept => (t) => CbScript.AcceptAll(t);
 
-        public bool ImplAsset(MultiRootConnector col, bool notheradMode = false)
+        public bool ImplAsset(MultiRootConnector col, bool isReBuildMode = false)
         {
             col.MakeFunction(
                 "Comparison >=",
@@ -717,7 +717,7 @@ namespace CapybaraVS.Script
 
         public Func<Type, bool> IsAccept => (t) => CbScript.AcceptAll(t);
 
-        public bool ImplAsset(MultiRootConnector col, bool notheradMode = false)
+        public bool ImplAsset(MultiRootConnector col, bool isReBuildMode = false)
         {
             col.MakeFunction(
                 "Comparison >",
@@ -764,7 +764,7 @@ namespace CapybaraVS.Script
 
         public Func<Type, bool> IsAccept => (t) => CbScript.AcceptAll(t);
 
-        public bool ImplAsset(MultiRootConnector col, bool notheradMode = false)
+        public bool ImplAsset(MultiRootConnector col, bool isReBuildMode = false)
         {
             col.MakeFunction(
                 "Comparison <=",
@@ -811,7 +811,7 @@ namespace CapybaraVS.Script
 
         public Func<Type, bool> IsAccept => (t) => CbScript.AcceptAll(t);
 
-        public bool ImplAsset(MultiRootConnector col, bool notheradMode = false)
+        public bool ImplAsset(MultiRootConnector col, bool isReBuildMode = false)
         {
             col.MakeFunction(
                 "Comparison <",
@@ -858,7 +858,7 @@ namespace CapybaraVS.Script
 
         public Func<Type, bool> IsAccept => (t) => CbScript.AcceptAll(t);
 
-        public bool ImplAsset(MultiRootConnector col, bool notheradMode = false)
+        public bool ImplAsset(MultiRootConnector col, bool isReBuildMode = false)
         {
             col.MakeFunction(
                 MenuTitle,
@@ -909,7 +909,7 @@ namespace CapybaraVS.Script
 
         public Func<Type, bool> IsAccept => (t) => CbScript.AcceptAll(t);
 
-        public bool ImplAsset(MultiRootConnector col, bool notheradMode = false)
+        public bool ImplAsset(MultiRootConnector col, bool isReBuildMode = false)
         {
             col.MakeFunction(
                 MenuTitle,
@@ -960,7 +960,7 @@ namespace CapybaraVS.Script
 
         public Func<Type, bool> IsAccept => (t) => CbScript.AcceptAll(t);
 
-        public bool ImplAsset(MultiRootConnector col, bool notheradMode = false)
+        public bool ImplAsset(MultiRootConnector col, bool isReBuildMode = false)
         {
             col.MakeFunction(
                 MenuTitle,
@@ -1004,7 +1004,7 @@ namespace CapybaraVS.Script
 
         public Func<Type, bool> IsAccept => (t) => CbScript.IsValueType(t);
 
-        public bool ImplAsset(MultiRootConnector col, bool notheradMode = false)
+        public bool ImplAsset(MultiRootConnector col, bool isReBuildMode = false)
         {
             col.MakeFunction(
                 "Multiply",
@@ -1055,7 +1055,7 @@ namespace CapybaraVS.Script
 
         public Func<Type, bool> IsAccept => (t) => CbScript.IsValueType(t);
 
-        public bool ImplAsset(MultiRootConnector col, bool notheradMode = false)
+        public bool ImplAsset(MultiRootConnector col, bool isReBuildMode = false)
         {
             col.MakeFunction(
                 "Divide",
@@ -1105,7 +1105,7 @@ namespace CapybaraVS.Script
 
         public Func<Type, bool> IsAccept => (t) => CbScript.IsValueType(t);
 
-        public bool ImplAsset(MultiRootConnector col, bool notheradMode = false)
+        public bool ImplAsset(MultiRootConnector col, bool isReBuildMode = false)
         {
             col.MakeFunction(
                 "Subtract",
@@ -1156,7 +1156,7 @@ namespace CapybaraVS.Script
 
         public Func<Type, bool> IsAccept => (t) => CbScript.AcceptAll(t);
 
-        public bool ImplAsset(MultiRootConnector col, bool notheradMode = false)
+        public bool ImplAsset(MultiRootConnector col, bool isReBuildMode = false)
         {
             col.MakeFunction(
                 MenuTitle,
@@ -1216,7 +1216,7 @@ namespace CapybaraVS.Script
 
         public Func<Type, bool> IsAccept => (t) => CbScript.AcceptAll(t);
 
-        public bool ImplAsset(MultiRootConnector col, bool notheradMode = false)
+        public bool ImplAsset(MultiRootConnector col, bool isReBuildMode = false)
         {
             col.MakeFunction(
                 $"If {CbSTUtils.FUNC_STR}<{col.SelectedVariableTypeName[0]}>.Invoke",
@@ -1269,7 +1269,7 @@ namespace CapybaraVS.Script
 
         public Func<Type, bool> IsAccept => (t) => CbScript.AcceptAll(t);
 
-        public bool ImplAsset(MultiRootConnector col, bool notheradMode = false)
+        public bool ImplAsset(MultiRootConnector col, bool isReBuildMode = false)
         {
             col.MakeFunction(
                 $"If {CbSTUtils.ACTION_STR}.Invoke",
@@ -1321,7 +1321,7 @@ namespace CapybaraVS.Script
 
         public Func<Type, bool> IsAccept => (t) => CbScript.AcceptAll(t);
 
-        public bool ImplAsset(MultiRootConnector col, bool notheradMode = false)
+        public bool ImplAsset(MultiRootConnector col, bool isReBuildMode = false)
         {
             col.MakeFunction(
                 "If<" + col.SelectedVariableTypeName[0] + ">",
@@ -1374,7 +1374,7 @@ namespace CapybaraVS.Script
 
         public Func<Type, bool> IsAccept => (t) => CbScript.AcceptAll(t);
 
-        public bool ImplAsset(MultiRootConnector col, bool notheradMode = false)
+        public bool ImplAsset(MultiRootConnector col, bool isReBuildMode = false)
         {
             col.MakeFunction(
                 $"{CbSTUtils.FUNC_STR}<{col.SelectedVariableTypeName[0]}>.Invoke",
@@ -1421,7 +1421,7 @@ namespace CapybaraVS.Script
 
         public Func<Type, bool> IsAccept => (t) => CbScript.AcceptAll(t);
 
-        public bool ImplAsset(MultiRootConnector col, bool notheradMode = false)
+        public bool ImplAsset(MultiRootConnector col, bool isReBuildMode = false)
         {
             // 仮引数コントロールを作成
             DummyArgumentsControl dummyArgumentsControl = new DummyArgumentsControl(col);
@@ -1475,7 +1475,7 @@ namespace CapybaraVS.Script
 
         public Func<Type, bool> IsAccept => (t) => CbScript.AcceptAll(t);
 
-        public bool ImplAsset(MultiRootConnector col, bool notheradMode = false)
+        public bool ImplAsset(MultiRootConnector col, bool isReBuildMode = false)
         {
             col.MakeFunction(
                 $"{CbSTUtils.ACTION_STR}.Invoke",
@@ -1521,7 +1521,7 @@ namespace CapybaraVS.Script
 
         public Func<Type, bool> IsAccept => (t) => CbScript.AcceptAll(t);
 
-        public bool ImplAsset(MultiRootConnector col, bool notheradMode = false)
+        public bool ImplAsset(MultiRootConnector col, bool isReBuildMode = false)
         {
             // 仮引数コントロールを作成
             DummyArgumentsControl dummyArgumentsControl = new DummyArgumentsControl(col);
@@ -1574,7 +1574,7 @@ namespace CapybaraVS.Script
 
         public Func<Type, bool> IsAccept => (t) => CbScript.IsValueType(t);
 
-        public bool ImplAsset(MultiRootConnector col, bool notheradMode = false)
+        public bool ImplAsset(MultiRootConnector col, bool isReBuildMode = false)
         {
             // 仮引数コントロールを作成
             DummyArgumentsControl dummyArgumentsControl = new DummyArgumentsControl(col);
@@ -1632,7 +1632,7 @@ namespace CapybaraVS.Script
 
         public Func<Type, bool> IsAccept => (t) => CbScript.IsValueType(t) && t != typeof(bool);
 
-        public bool ImplAsset(MultiRootConnector col, bool notheradMode = false)
+        public bool ImplAsset(MultiRootConnector col, bool isReBuildMode = false)
         {
             // 仮引数コントロールを作成
             DummyArgumentsControl dummyArgumentsControl = new DummyArgumentsControl(col);
@@ -1689,7 +1689,7 @@ namespace CapybaraVS.Script
 
         public string HelpText { get; } = "";
 
-        public bool ImplAsset(MultiRootConnector col, bool notheradMode = false)
+        public bool ImplAsset(MultiRootConnector col, bool isReBuildMode = false)
         {
             VariableGetter variableGetter = new VariableGetter(col);
             if (variableGetter.IsError)
@@ -1806,7 +1806,7 @@ namespace CapybaraVS.Script
 
         public Func<Type, bool> IsAccept => null;    // 選択を意味する
 
-        public bool ImplAsset(MultiRootConnector col, bool notheradMode = false)
+        public bool ImplAsset(MultiRootConnector col, bool isReBuildMode = false)
         {
             VariableGetter variableGetter = new VariableGetter(col);
             if (variableGetter.IsError)
@@ -1878,7 +1878,7 @@ namespace CapybaraVS.Script
 
         public Func<Type, bool> IsAccept => (t) => CbScript.AcceptAll(t);
 
-        public bool ImplAsset(MultiRootConnector col, bool notheradMode = false)
+        public bool ImplAsset(MultiRootConnector col, bool isReBuildMode = false)
         {
             col.MakeFunction(
                 "DummyArgument<" + col.SelectedVariableTypeName[0] + ">",
@@ -1929,7 +1929,7 @@ namespace CapybaraVS.Script
 
         public Func<Type, bool> IsAccept => (t) => CbScript.AcceptAll(t);
 
-        public bool ImplAsset(MultiRootConnector col, bool notheradMode = false)
+        public bool ImplAsset(MultiRootConnector col, bool isReBuildMode = false)
         {
             col.MakeFunction(
                 "DummyArguments<" + col.SelectedVariableTypeName[0] + ">",
@@ -1986,7 +1986,7 @@ namespace CapybaraVS.Script
 
         public Func<Type, bool> IsAccept => (t) => CbScript.AcceptAll(t);
 
-        public bool ImplAsset(MultiRootConnector col, bool notheradMode = false)
+        public bool ImplAsset(MultiRootConnector col, bool isReBuildMode = false)
         {
             // 仮引数コントロールを作成
             DummyArgumentsControl dummyArgumentsControl = new DummyArgumentsControl(col);
@@ -2041,7 +2041,7 @@ namespace CapybaraVS.Script
 
         public Func<Type, bool> IsAccept => (t) => CbScript.IsNotObject(t);
 
-        public bool ImplAsset(MultiRootConnector col, bool notheradMode = false)
+        public bool ImplAsset(MultiRootConnector col, bool isReBuildMode = false)
         {
             col.MakeFunction(
                 MenuTitle,
@@ -2090,7 +2090,7 @@ namespace CapybaraVS.Script
 
         public Func<Type, bool> IsAccept => (t) => CbScript.IsSigned(t);
 
-        public bool ImplAsset(MultiRootConnector col, bool notheradMode = false)
+        public bool ImplAsset(MultiRootConnector col, bool isReBuildMode = false)
         {
             col.MakeFunction(
                 MenuTitle,
@@ -2134,7 +2134,7 @@ namespace CapybaraVS.Script
 
         public Func<Type, bool> IsAccept => (t) => CbScript.AcceptAll(t);
 
-        public bool ImplAsset(MultiRootConnector col, bool notheradMode = false)
+        public bool ImplAsset(MultiRootConnector col, bool isReBuildMode = false)
         {
             VariableGetter variableGetter = new VariableGetter(col, (name) => "[ " + name + " [index] ]");
             if (variableGetter.IsError)
@@ -2188,7 +2188,7 @@ namespace CapybaraVS.Script
 
         public Func<Type, bool> IsAccept => (t) => CbScript.AcceptAll(t);
 
-        public bool ImplAsset(MultiRootConnector col, bool notheradMode = false)
+        public bool ImplAsset(MultiRootConnector col, bool isReBuildMode = false)
         {
             VariableGetter variableGetter = new VariableGetter(col, (name) => "[ " + name + " [index] ]");
             if (variableGetter.IsError)
@@ -2244,7 +2244,7 @@ namespace CapybaraVS.Script
 
         public Func<Type, bool> IsAccept => (t) => CbScript.AcceptAll(t);
 
-        public bool ImplAsset(MultiRootConnector col, bool notheradMode = false)
+        public bool ImplAsset(MultiRootConnector col, bool isReBuildMode = false)
         {
             VariableGetter variableGetter = new VariableGetter(col, (name) => "Append [ " + name + " ]");
             if (variableGetter.IsError)
@@ -2297,7 +2297,7 @@ namespace CapybaraVS.Script
 
         public Func<Type, bool> IsAccept => (t) => CbScript.AcceptAll(t);
 
-        public bool ImplAsset(MultiRootConnector col, bool notheradMode = false)
+        public bool ImplAsset(MultiRootConnector col, bool isReBuildMode = false)
         {
             col.MakeFunction(
                 MenuTitle,
@@ -2341,7 +2341,7 @@ namespace CapybaraVS.Script
 
         public Func<Type, bool> IsAccept => (t) => CbScript.AcceptAll(t);
 
-        public bool ImplAsset(MultiRootConnector col, bool notheradMode = false)
+        public bool ImplAsset(MultiRootConnector col, bool isReBuildMode = false)
         {
             col.MakeFunction(
                 MenuTitle,
@@ -2386,7 +2386,7 @@ namespace CapybaraVS.Script
 
         public Func<Type, bool> IsAccept => (t) => CbScript.AcceptAll(t);
 
-        public bool ImplAsset(MultiRootConnector col, bool notheradMode = false)
+        public bool ImplAsset(MultiRootConnector col, bool isReBuildMode = false)
         {
             col.MakeFunction(
                 MenuTitle,
@@ -2432,7 +2432,7 @@ namespace CapybaraVS.Script
 
         public Func<Type, bool> IsAccept => (t) => CbScript.AcceptAll(t);
 
-        public bool ImplAsset(MultiRootConnector col, bool notheradMode = false)
+        public bool ImplAsset(MultiRootConnector col, bool isReBuildMode = false)
         {
             col.MakeFunction(
                 MenuTitle,
@@ -2477,7 +2477,7 @@ namespace CapybaraVS.Script
 
         public Func<Type, bool> IsAccept => (t) => CbScript.AcceptAll(t);
 
-        public bool ImplAsset(MultiRootConnector col, bool notheradMode = false)
+        public bool ImplAsset(MultiRootConnector col, bool isReBuildMode = false)
         {
             col.MakeFunction(
                 MenuTitle,
@@ -2532,7 +2532,7 @@ namespace CapybaraVS.Script
 
         public Func<Type, bool> IsAccept => (t) => CbScript.AcceptAll(t);
 
-        public bool ImplAsset(MultiRootConnector col, bool notheradMode = false)
+        public bool ImplAsset(MultiRootConnector col, bool isReBuildMode = false)
         {
             col.MakeFunction(
                MenuTitle,
@@ -2587,7 +2587,7 @@ namespace CapybaraVS.Script
 
         public Func<Type, bool> IsAccept => (t) => typeof(double) == t;
 
-        public bool ImplAsset(MultiRootConnector col, bool notheradMode = false)
+        public bool ImplAsset(MultiRootConnector col, bool isReBuildMode = false)
         {
             col.MakeFunction(
                 MenuTitle,
@@ -2635,7 +2635,7 @@ namespace CapybaraVS.Script
 
         public Func<Type, bool> IsAccept => (t) => typeof(int) == t;
 
-        public bool ImplAsset(MultiRootConnector col, bool notheradMode = false)
+        public bool ImplAsset(MultiRootConnector col, bool isReBuildMode = false)
         {
             col.MakeFunction(
                 MenuTitle,
