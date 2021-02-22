@@ -108,10 +108,10 @@ namespace CapybaraVS.Script
             get 
             {
                 if (IsError)
-                    return ERROR_STR;
+                    return CbSTUtils.ERROR_STR;
                 if (IsNull)
                 {
-                    return $"[{CbSTUtils.OBJECT_STR}]" + NULL_STR;
+                    return $"[{CbSTUtils.OBJECT_STR}]" + CbSTUtils.NULL_STR;
                 }
                 else if (Value is ICbEvent cbEvent)
                 {

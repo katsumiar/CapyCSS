@@ -587,9 +587,9 @@ namespace CbVS.Script
             {
                 string baseName = "[" + TypeName + "()]";
                 if (IsError)
-                    return ERROR_STR;
+                    return CbSTUtils.ERROR_STR;
                 if (IsNull)
-                    return baseName + NULL_STR;
+                    return baseName + CbSTUtils.NULL_STR;
                 return baseName;
             }
             set => new NotImplementedException();

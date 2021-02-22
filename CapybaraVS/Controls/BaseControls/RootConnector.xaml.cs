@@ -57,7 +57,7 @@ namespace CapybaraVS.Controls.BaseControls
                     self.FuncCaption.AssetXML = Caption;
                     self.FuncCaption.AssetXML.ReadAction?.Invoke(self.FuncCaption);
 
-                    if (Value != null && self.ValueData != null && Value != "[ERROR]")
+                    if (Value != null && self.ValueData != null && Value != CbSTUtils.ERROR_STR)
                     {
                         if (self.ValueData.IsStringableValue)
                             self.ValueData.ValueString = Value;

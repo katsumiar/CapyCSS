@@ -151,7 +151,7 @@ namespace CapybaraVS.Script
             {
                 string baseName = "[" + TypeName + "]";
                 if (IsError)
-                    return ERROR_STR;
+                    return CbSTUtils.ERROR_STR;
                 return baseName;
             }
             set => new NotImplementedException();

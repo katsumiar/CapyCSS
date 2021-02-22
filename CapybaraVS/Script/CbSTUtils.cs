@@ -52,6 +52,9 @@ namespace CapybaraVS.Script
         public const string FREE_TYPE_STR = "<FREE>";   // 型選択を要求する
         public static string DUMMY_TYPE_STR = typeof(int).FullName; // ダミー
 
+        public const string ERROR_STR = "[ERROR]";  // エラーの表現
+        public const string NULL_STR = "<null>";    // nullの表現
+
         /// <summary>
         /// ユーザーによる型作成時に組み込み型選択肢に出てくる型情報です。
         /// </summary>

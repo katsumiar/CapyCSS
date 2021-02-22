@@ -176,13 +176,13 @@ namespace CapybaraVS.Script
             get
             {
                 if (IsError)
-                    return ERROR_STR;
+                    return CbSTUtils.ERROR_STR;
                 if (CbVoid.Is(typeof(T)))
                     return CbSTUtils.VOID_STR;
                 string baseName = $"[{TypeName}]";
                 if (IsNull)
                 {
-                    return baseName + NULL_STR;
+                    return baseName + CbSTUtils.NULL_STR;
                 }
                 return baseName;
             }

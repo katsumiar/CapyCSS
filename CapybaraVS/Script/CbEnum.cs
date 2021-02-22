@@ -103,7 +103,7 @@ namespace CapybaraVS.Script
             get
             {
                 if (IsError)
-                    return ERROR_STR;
+                    return CbSTUtils.ERROR_STR;
                 return CbSTUtils._GetTypeName(typeof(T)) + "." + Value.ToString();
             }
             set

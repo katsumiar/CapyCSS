@@ -78,7 +78,7 @@ namespace CapybaraVS.Controls
                     self.Id = Id;
                     self.ValueData = CbST.CbCreate(CbST.GetTypeEx(AssetValueType), Name);
                     self.ValueData.IsLiteral = false;   // 変数なのでリテラルフラグを落とす
-                    if (Value != "[ERROR]")
+                    if (Value != CbSTUtils.ERROR_STR)
                     {
                         if (self.ValueData != null && self.ValueData.IsStringableValue)
                         {

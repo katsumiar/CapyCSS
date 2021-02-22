@@ -582,9 +582,6 @@ namespace CapybaraVS.Script
     /// <typeparam name="T">型</typeparam>
     public class BaseCbValueClass<T>
     {
-        protected const string ERROR_STR = "[ERROR]";
-        protected const string NULL_STR = "<null>";
-
         public virtual Func<ICbValue> NodeTF => () => CbST.CbCreate(OriginalType);
 
         protected T _value;

@@ -20,7 +20,7 @@ namespace CapybaraVS.Script
             get
             {
                 if (IsError)
-                    return ERROR_STR;
+                    return CbSTUtils.ERROR_STR;
                 if (Value == '\n') return "\\n";
                 if (Value == '\0') return "\\0";
                 if (Value == '\a') return "\\a";

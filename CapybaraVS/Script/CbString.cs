@@ -22,7 +22,7 @@ namespace CapybaraVS.Script
             get
             {
                 if (IsError)
-                    return ERROR_STR;
+                    return CbSTUtils.ERROR_STR;
                 return Value;
             }
             set
