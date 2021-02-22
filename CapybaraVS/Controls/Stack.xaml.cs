@@ -223,7 +223,7 @@ namespace CapybaraVS.Controls
         }
 
         /// <summary>
-        /// 変数を追加
+        /// 変数を追加します。
         /// </summary>
         /// <param name="obj"></param>
         /// <returns></returns>

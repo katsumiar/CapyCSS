@@ -140,7 +140,7 @@ namespace CapybaraVS.Controls.BaseControls
 
         private void Accordion_MouseDown(object sender, MouseButtonEventArgs e)
         {
-            if (Accordion1.Visibility == Visibility.Visible)
+            if (!IsOpenList)
             {
                 OpenAccordion();
             }
@@ -248,6 +248,8 @@ namespace CapybaraVS.Controls.BaseControls
                     cbList.Value.Add(listNode);
                     var node = new StackNode(OwnerCommandCanvas, listNode);
                     node.OwnerCommandCanvas = OwnerCommandCanvas;
+                    AccordionCloseIcon.Visibility = Visibility.Collapsed;
+                    AccordionOpenIcon.Visibility = Visibility.Visible;
                     return node;
                 };
                 InnerList.Margin = new Thickness(12, 0, 0, 0);
@@ -301,8 +303,7 @@ namespace CapybaraVS.Controls.BaseControls
                     }
                 }
             }
-            if (ListData.Count > 1)
-                ConnectorBackground.Visibility = Visibility.Visible;
+            SetConnectorBackground();
             return node;
         }
 
@@ -322,14 +323,15 @@ namespace CapybaraVS.Controls.BaseControls
 
             if (ListData.Count == 0)
             {
-                Accordion1.Visibility = Visibility.Collapsed;
-                Accordion2.Visibility = Visibility.Collapsed;
+                IsShowAccordionIcon = false;
             }
 
-            if (ListData.Count <= 1)
-                ConnectorBackground.Visibility = Visibility.Collapsed;
+            SetConnectorBackground();
         }
 
+        /// <summary>
+        /// アコーディオンモードで開きます。
+        /// </summary>
         private void OpenAccordion()
         {
             CommandCanvasList.OwnerWindow.Cursor = Cursors.Wait;
@@ -340,30 +342,90 @@ namespace CapybaraVS.Controls.BaseControls
                 DispatcherPriority.ApplicationIdle
             );
             HoldAction.Enabled = false;
-            Accordion1.Visibility = Visibility.Collapsed;
-            Accordion2.Visibility = Visibility.Visible;
-            if (ListData.Count > 1)
-                ConnectorBackground.Visibility = Visibility.Visible;
-            ListView.Visibility = Visibility.Visible;
-            AddOption.Visibility = Visibility.Visible;
+            AccordionCloseIcon.Visibility = Visibility.Collapsed;
+            AccordionOpenIcon.Visibility = Visibility.Visible;
+            OpenList();
         }
 
+        /// <summary>
+        /// アコーディオンモードで閉じます。
+        /// </summary>
         private void CloseAccordion()
         {
             HoldAction.Enabled = true;
-            Accordion1.Visibility = Visibility.Visible;
-            Accordion2.Visibility = Visibility.Collapsed;
-            ConnectorBackground.Visibility = Visibility.Collapsed;
-            ListView.Visibility = Visibility.Collapsed;
-            AddOption.Visibility = Visibility.Collapsed;
+            AccordionCloseIcon.Visibility = Visibility.Visible;
+            AccordionOpenIcon.Visibility = Visibility.Collapsed;
+            CloseList();
         }
 
+        private void SetConnectorBackground()
+        {
+            ConnectorBackground.Visibility = (ListData.Count > 1) ? Visibility.Visible : Visibility.Collapsed;
+        }
+
+        private bool IsOpenList => ListView.Visibility == Visibility.Visible;
+
+        /// <summary>
+        /// リストを開きます。
+        /// </summary>
+        private void OpenList()
+        {
+            ListView.Visibility = Visibility.Visible;
+            SetConnectorBackground();
+            EnableAddOption = true;
+        }
+
+        /// <summary>
+        /// リストを閉じます。
+        /// </summary>
+        private void CloseList()
+        {
+            ListView.Visibility = Visibility.Collapsed;
+            ConnectorBackground.Visibility = Visibility.Collapsed;
+            EnableAddOption = false;
+        }
+
+        /// <summary>
+        /// UIからの子要素の追加を許可するか？
+        /// </summary>
+        private bool EnableAddOption
+        {
+            get => AddOption.Visibility == Visibility.Visible;
+            set
+            {
+                AddOption.Visibility = value ? Visibility.Visible : Visibility.Collapsed;
+            }
+        }
+
+        /// <summary>
+        /// アコーディオンを無効にします。
+        /// </summary>
         private void HideAccordion()
         {
-            Accordion1.Visibility = Visibility.Collapsed;
-            Accordion2.Visibility = Visibility.Collapsed;
+            IsShowAccordionIcon = false;
             ListView.Visibility = Visibility.Visible;
             ListPanel.Children[0].Visibility = Visibility.Collapsed;
+        }
+
+        /// <summary>
+        /// アコーディオンの有効状態です。
+        /// </summary>
+        private bool IsShowAccordionIcon
+        {
+            get => AccordionCloseIcon.Visibility == Visibility.Visible || AccordionOpenIcon.Visibility == Visibility.Visible;
+            set
+            {
+                if (value)
+                {
+                    AccordionCloseIcon.Visibility = IsOpenList ? Visibility.Visible : Visibility.Collapsed;
+                    AccordionOpenIcon.Visibility = IsOpenList ? Visibility.Collapsed : Visibility.Visible;
+                }
+                else
+                {
+                    AccordionCloseIcon.Visibility = Visibility.Collapsed;
+                    AccordionOpenIcon.Visibility = Visibility.Collapsed;
+                }
+            }
         }
 
         private void AddOption_MouseDown(object sender, MouseButtonEventArgs e)
