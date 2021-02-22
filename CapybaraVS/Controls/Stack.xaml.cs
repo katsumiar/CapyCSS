@@ -293,6 +293,18 @@ namespace CapybaraVS.Controls
             return null;
         }
 
+        public bool NameContains(string name)
+        {
+            foreach (var node in OwnerCommandCanvas.ScriptWorkStack.StackData)
+            {
+                if (node.stackNode.ParamName == name)
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
         public void FindSet(int id, ICbValue value)
         {
             foreach (var node in OwnerCommandCanvas.ScriptWorkStack.StackData)

@@ -113,7 +113,14 @@ namespace CbVS.Script
                     if (!_SelectVariableType(OwnerCommandCanvas, ref valueType, isAccept))
                         return null;
 
-                    string name = "variable" + (OwnerCommandCanvas.ScriptWorkStack.StackData.Count + 1);
+                    int nameIndex = 1;
+                    string name;
+                    do
+                    {
+                        name = "variable" + nameIndex++;
+                    }
+                    while (OwnerCommandCanvas.ScriptWorkStack.NameContains(name));
+
                     ListSelectWindow.DefaultValue = CbST.CbCreate(CbST.GetTypeEx(valueType), name);
                     stackNode = OwnerCommandCanvas.ScriptWorkStack.Append(ListSelectWindow.DefaultValue).stackNode;
                     ListSelectWindow.DefaultValue = null;
