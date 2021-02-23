@@ -248,6 +248,42 @@ namespace CapybaraVS.Script
         /// <summary>
         /// 対応する CbXXX 型の変数を作成します。
         /// </summary>
+        /// <param name="geneType">オリジナルのジェネリック型</param>
+        /// <param name="argType">ジェネリックの引数型</param>
+        /// <param name="name">変数名</param>
+        /// <returns>CbXXX 型の変数</returns>
+        public static ICbValue CbCreate(Type geneType, Type argType, string name = "", object value = null)
+        {
+            Type type = geneType.MakeGenericType(argType);
+            var variable = CbCreate(type, name);
+            if (value != null)
+            {
+                variable.Data = value;
+            }
+            return variable;
+        }
+
+        /// <summary>
+        /// 対応する CbXXX 型の変数を作成します。
+        /// </summary>
+        /// <param name="geneType">オリジナルのジェネリック型</param>
+        /// <param name="argTypes">ジェネリックの引数型</param>
+        /// <param name="name">変数名</param>
+        /// <returns>CbXXX 型の変数</returns>
+        public static ICbValue CbCreate(Type geneType, Type[] argTypes, string name = "", object value = null)
+        {
+            Type type = geneType.MakeGenericType(argTypes);
+            var variable = CbCreate(type, name);
+            if (value != null)
+            {
+                variable.Data = value;
+            }
+            return variable;
+        }
+
+        /// <summary>
+        /// 対応する CbXXX 型の変数を作成します。
+        /// </summary>
         /// <typeparam name="T">オリジナルの型</typeparam>
         /// <param name="name">変数名</param>
         /// <returns>CbXXX 型の変数</returns>

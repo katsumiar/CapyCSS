@@ -46,6 +46,8 @@ namespace CapybaraVS.Script
 
         public static readonly string FREE_LIST_TYPE_STR = typeof(List<>).FullName;
         public static readonly string FREE_FUNC_TYPE_STR = typeof(Func<>).FullName;
+        public static readonly string FREE_FUNC2A_TYPE_STR = typeof(Func<,>).FullName;
+        public static readonly string FREE_ACTION_TYPE_STR = typeof(Action<>).FullName;
 
         public const string FREE_ENUM_TYPE_STR = "<ENUM>";  // Enum型を要求する
 

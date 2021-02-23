@@ -63,6 +63,7 @@ namespace CapybaraVS.Script
                 CreateAssetMenu(ownerCommandCanvas, flowOperation, new For());
                 CreateAssetMenu(ownerCommandCanvas, flowOperation, new For_Until());
                 CreateAssetMenu(ownerCommandCanvas, flowOperation, new Foreach());
+                CreateAssetMenu(ownerCommandCanvas, flowOperation, new ForeachIEnumerable());
                 CreateAssetMenu(ownerCommandCanvas, flowOperation, new SwitchEnum());
             }
 
@@ -78,11 +79,9 @@ namespace CapybaraVS.Script
 
             {
                 var funcNode = CreateGroup(ProgramNode, "f(x)");
-                CreateAssetMenu(ownerCommandCanvas, funcNode, new CallerArgument());
                 CreateAssetMenu(ownerCommandCanvas, funcNode, new CallerArguments());
-                CreateAssetMenu(ownerCommandCanvas, funcNode, new Invoke());
-                CreateAssetMenu(ownerCommandCanvas, funcNode, new InvokeWithArg());
-                CreateAssetMenu(ownerCommandCanvas, funcNode, new InvokeAction());
+                CreateAssetMenu(ownerCommandCanvas, funcNode, new InvokeFuncNoArg());
+                CreateAssetMenu(ownerCommandCanvas, funcNode, new InvokeFuncWithArg());
                 CreateAssetMenu(ownerCommandCanvas, funcNode, new InvokeActionWithArg());
             }
 
@@ -1363,32 +1362,32 @@ namespace CapybaraVS.Script
     }
 
     //-----------------------------------------------------------------
-    class Invoke : FuncAssetSub, IFuncAssetWithArgumentDef
+    class InvokeFuncNoArg : FuncAssetSub, IFuncAssetWithArgumentDef
     {
-        public string AssetCode => "Invoke Func";
+        public string AssetCode => nameof(InvokeFuncNoArg);
 
         public string HelpText { get; } = Language.GetInstance["Invoke"];
 
-        public string MenuTitle => AssetCode;
+        public string MenuTitle => $"{CbSTUtils.FUNC_STR}<T>.Invoke";
 
-        public string ValueType { get; } = CbSTUtils.FREE_TYPE_STR;
+        public string ValueType { get; } = CbSTUtils.FREE_FUNC_TYPE_STR;
 
         public Func<Type, bool> IsAccept => (t) => CbScript.AcceptAll(t);
 
         public bool ImplAsset(MultiRootConnector col, bool isReBuildMode = false)
         {
             col.MakeFunction(
-                $"{CbSTUtils.FUNC_STR}<{col.SelectedVariableTypeName[0]}>.Invoke",
+                $"{col.SelectedVariableTypeName[0]}.Invoke",
                 HelpText,
-                CbST.CbCreateTF(col.SelectedVariableType[0]),  // 返し値の型
+                CbST.CbCreateTF(col.SelectedVariableType[0].GenericTypeArguments[0]),  // 返し値の型
                 new List<ICbValue>()  // 引数
                 {
-                    CbFunc.CreateFunc(col.SelectedVariableType[0], "func"),
+                    CbST.CbCreate(col.SelectedVariableType[0], "func"),
                 },
                 new Func<List<ICbValue>, DummyArgumentsStack, ICbValue>(
                     (argument, cagt) =>
                     {
-                        var ret = CbST.CbCreate(col.SelectedVariableType[0]);    // 返し値
+                        var ret = CbST.CbCreate(col.SelectedVariableType[0].GenericTypeArguments[0]);    // 返し値
                         try
                         {
                             ret = GetCallBackResult(cagt, argument[0], ret);
@@ -1410,15 +1409,15 @@ namespace CapybaraVS.Script
     }
 
     //-----------------------------------------------------------------
-    class InvokeWithArg : FuncAssetSub, IFuncAssetWithArgumentDef
+    class InvokeFuncWithArg : FuncAssetSub, IFuncAssetWithArgumentDef
     {
-        public string AssetCode => nameof(InvokeWithArg);
+        public string AssetCode => nameof(InvokeFuncWithArg);
 
         public string HelpText { get; } = Language.GetInstance["InvokeWithArg"];
 
-        public string MenuTitle => "Invoke Func With Argument";
+        public string MenuTitle => $"{CbSTUtils.FUNC_STR}<T1,T2>.Invoke(n)";
 
-        public string ValueType { get; } = CbSTUtils.FREE_TYPE_STR;
+        public string ValueType { get; } = CbSTUtils.FREE_FUNC2A_TYPE_STR;
 
         public Func<Type, bool> IsAccept => (t) => CbScript.AcceptAll(t);
 
@@ -1428,18 +1427,18 @@ namespace CapybaraVS.Script
             DummyArgumentsControl dummyArgumentsControl = new DummyArgumentsControl(col);
 
             col.MakeFunction(
-                $"{CbSTUtils.FUNC_STR}<{CbSTUtils.OBJECT_STR},{col.SelectedVariableTypeName[0]}>.Invoke",
+                $"{col.SelectedVariableTypeName[0]}.Invoke",
                 HelpText,
-                CbST.CbCreateTF(col.SelectedVariableType[0]),  // 返し値の型
+                CbST.CbCreateTF(col.SelectedVariableType[0].GenericTypeArguments[1]),  // 返し値の型
                 new List<ICbValue>()  // 引数
                 {
-                   CbST.CbCreate(col.SelectedVariableType[0], "argument"),
-                   CbFunc.CreateFunc(typeof(object), col.SelectedVariableType[0], "func"),
+                   CbST.CbCreate(col.SelectedVariableType[0].GenericTypeArguments[0], "argument"),
+                   CbST.CbCreate(col.SelectedVariableType[0], "func")
                 },
                 new Func<List<ICbValue>, DummyArgumentsStack, ICbValue>(
                     (argument, cagt) =>
                     {
-                        var ret = CbST.CbCreate(col.SelectedVariableType[0]);    // 返し値
+                        var ret = CbST.CbCreate(col.SelectedVariableType[0].GenericTypeArguments[1]);    // 返し値
                         if (dummyArgumentsControl.IsInvalid(cagt))
                             return ret; // 実行環境が有効でない
 
@@ -1464,61 +1463,15 @@ namespace CapybaraVS.Script
     }
 
     //-----------------------------------------------------------------
-    class InvokeAction : FuncAssetSub, IFuncAssetWithArgumentDef
-    {
-        public string AssetCode => "Invoke Action";
-
-        public string HelpText { get; } = Language.GetInstance["Invoke"];
-
-        public string MenuTitle => AssetCode;
-
-        public string ValueType { get; } = CbSTUtils.DUMMY_TYPE_STR;
-
-        public Func<Type, bool> IsAccept => (t) => CbScript.AcceptAll(t);
-
-        public bool ImplAsset(MultiRootConnector col, bool isReBuildMode = false)
-        {
-            col.MakeFunction(
-                $"{CbSTUtils.ACTION_STR}.Invoke",
-                HelpText,
-                CbVoid.TF,  // 返し値の型
-                new List<ICbValue>()  // 引数
-                {
-                    CbFunc.CreateAction("func"),
-                },
-                new Func<List<ICbValue>, DummyArgumentsStack, ICbValue>(
-                    (argument, cagt) =>
-                    {
-                        try
-                        {
-                            TryCallCallBack(cagt, argument[0]);
-                        }
-                        catch (Exception ex)
-                        {
-                            col.ExceptionFunc(null, ex);
-                        }
-                        return null;
-                    }
-                    )
-                );
-
-            // 実行を可能にする
-            col.LinkConnectorControl.IsRunable = true;
-
-            return true;
-        }
-    }
-
-    //-----------------------------------------------------------------
     class InvokeActionWithArg : FuncAssetSub, IFuncAssetWithArgumentDef
     {
         public string AssetCode => nameof(InvokeActionWithArg);
 
         public string HelpText { get; } = Language.GetInstance["InvokeWithArg"];
 
-        public string MenuTitle => "Invoke Action With Argument";
+        public string MenuTitle => $"{CbSTUtils.ACTION_STR}<T>.Invoke(n)";
 
-        public string ValueType { get; } = CbSTUtils.FREE_TYPE_STR;
+        public string ValueType { get; } = CbSTUtils.FREE_ACTION_TYPE_STR;
 
         public Func<Type, bool> IsAccept => (t) => CbScript.AcceptAll(t);
 
@@ -1528,13 +1481,13 @@ namespace CapybaraVS.Script
             DummyArgumentsControl dummyArgumentsControl = new DummyArgumentsControl(col);
 
             col.MakeFunction(
-                $"{CbSTUtils.ACTION_STR}<{col.SelectedVariableTypeName[0]}>.Invoke",
+                $"{col.SelectedVariableTypeName[0]}.Invoke",
                 HelpText,
                 CbVoid.TF,    // 返し値の型
                 new List<ICbValue>()          // 引数
                 {
-                   CbST.CbCreate(col.SelectedVariableType[0], "argument"),
-                   CbFunc.CreateAction(col.SelectedVariableType[0], "func"),
+                   CbST.CbCreate(col.SelectedVariableType[0].GenericTypeArguments[0], "argument"),
+                   CbST.CbCreate(col.SelectedVariableType[0], "func")
                 },
                 new Func<List<ICbValue>, DummyArgumentsStack, ICbValue>(
                     (argument, cagt) =>
@@ -1867,57 +1820,6 @@ namespace CapybaraVS.Script
     }
 
     //-----------------------------------------------------------------
-    class CallerArgument : FuncAssetSub, IFuncAssetWithArgumentDef
-    {
-        public string AssetCode => nameof(CallerArgument);
-
-        public string HelpText { get; } = Language.GetInstance["CallerArgument"];
-
-        public string MenuTitle => "DummyArgument";
-
-        public string ValueType { get; } = CbSTUtils.FREE_TYPE_STR;
-
-        public Func<Type, bool> IsAccept => (t) => CbScript.AcceptAll(t);
-
-        public bool ImplAsset(MultiRootConnector col, bool isReBuildMode = false)
-        {
-            col.MakeFunction(
-                "DummyArgument<" + col.SelectedVariableTypeName[0] + ">",
-                HelpText,
-                CbST.CbCreateTF(col.SelectedVariableType[0]),  // 返し値の型
-                null,   // 引数はなし
-                new Func<List<ICbValue>, DummyArgumentsStack, ICbValue>(
-                    (argument, cagt) =>
-                    {
-                        var ret = CbST.CbCreate(col.SelectedVariableType[0]);    // 返し値
-                        if (cagt.IsEmpty())
-                        {
-                            cagt.InvalidReturn();   // 有効でないまま返す
-                            return ret;
-                        }
-                        try
-                        {
-                            // 呼び元引数をセット
-
-                            if (cagt.IsGetValue())
-                                ret.Set(cagt.GetValue());
-                            else
-                                cagt.InvalidReturn();   // 有効でないまま返す
-                        }
-                        catch (Exception ex)
-                        {
-                            col.ExceptionFunc(ret, ex);
-                        }
-                        return ret;
-                    }
-                    )
-                );
-
-            return true;
-        }
-    }
-
-    //-----------------------------------------------------------------
     class CallerArguments : FuncAssetSub, IFuncAssetWithArgumentDef
     {
         public string AssetCode => nameof(CallerArguments);
@@ -1981,7 +1883,7 @@ namespace CapybaraVS.Script
 
         public string HelpText { get; } = Language.GetInstance["Foreach"];
 
-        public string MenuTitle => $"Foreach<{CbSTUtils.ACTION_STR}>";
+        public string MenuTitle => $"Foreach {CbSTUtils.LIST_STR}<{CbSTUtils.ACTION_STR}>";
 
         public string ValueType { get; } = CbSTUtils.FREE_TYPE_STR;
 
@@ -2010,6 +1912,61 @@ namespace CapybaraVS.Script
                         try
                         {
                             var sample = GetArgumentList(argument, 0);
+                            foreach (var node in sample)
+                            {
+                                TryCallCallBack(dummyArgumentsControl, cagt, argument[1], node);
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            col.ExceptionFunc(null, ex);
+                        }
+
+                        return null;
+                    }
+                    )
+                );
+
+            return true;
+        }
+    }
+
+    //-----------------------------------------------------------------
+    class ForeachIEnumerable : FuncAssetSub, IFuncAssetWithArgumentDef
+    {
+        public string AssetCode => nameof(ForeachIEnumerable);
+
+        public string HelpText { get; } = Language.GetInstance["Foreach"];
+
+        public string MenuTitle => $"Foreach IEnumerable<{CbSTUtils.ACTION_STR}>";
+
+        public string ValueType { get; } = CbSTUtils.FREE_TYPE_STR;
+
+        public Func<Type, bool> IsAccept => (t) => CbScript.AcceptAll(t);
+
+        public bool ImplAsset(MultiRootConnector col, bool isReBuildMode = false)
+        {
+            // 仮引数コントロールを作成
+            DummyArgumentsControl dummyArgumentsControl = new DummyArgumentsControl(col);
+
+            col.MakeFunction(
+                $"Foreach {CbSTUtils.ACTION_STR}<{col.SelectedVariableTypeName[0]}>.Invoke",
+                HelpText,
+                CbVoid.TF,  // 返し値の型
+                new List<ICbValue>()  // 引数
+                {
+                    CbST.CbCreate(typeof(IEnumerable<>), col.SelectedVariableType[0], "sample"),
+                    CbFunc.CreateAction(col.SelectedVariableType[0], "func f(node)"),
+                },
+                new Func<List<ICbValue>, DummyArgumentsStack, ICbValue>(
+                    (argument, cagt) =>
+                    {
+                        if (dummyArgumentsControl.IsInvalid(cagt))
+                            return null; // 実行環境が有効でない
+
+                        try
+                        {
+                            dynamic sample = argument[0].Data;
                             foreach (var node in sample)
                             {
                                 TryCallCallBack(dummyArgumentsControl, cagt, argument[1], node);
