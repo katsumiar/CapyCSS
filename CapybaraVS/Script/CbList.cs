@@ -51,7 +51,7 @@ namespace CbVS.Script
         /// リストに要素を追加します。
         /// </summary>
         /// <param name="cbVSValue"></param>
-        void Append(ICbValue cbVSValue);
+        ICbValue Append(ICbValue cbVSValue);
 
         /// <summary>
         /// リストの持つ変数の持つ値に cbVSValue が持つ値が含まれるかを返します。
@@ -97,7 +97,7 @@ namespace CbVS.Script
         public static void Append(ICbValue instance, Type originalNode, ICbValue data)
         {
             var listType = CbList.GetCbType(originalNode);
-            MethodInfo addMethod = listType.GetMethod("Append");
+            MethodInfo addMethod = listType.GetMethod(nameof(ICbList.Append));
             addMethod.Invoke(instance, new Object[] { data });
         }
 
@@ -316,11 +316,12 @@ namespace CbVS.Script
         /// リストに要素を追加します。
         /// </summary>
         /// <param name="cbVSValue">追加要素</param>
-        public void Append(ICbValue cbVSValue)  // CbList.Append にリフレクションとして参照されている
+        public ICbValue Append(ICbValue cbVSValue)
         {
             var addData = NodeTF();
             addData.Set(cbVSValue);
             Value.Add(addData);
+            return addData;
         }
 
         /// <summary>

@@ -14,6 +14,11 @@ namespace CapybaraVS.Script
         /// CbEnum<T> の管理するT型の名前
         /// </summary>
         string ItemName { get; }
+
+        /// <summary>
+        /// 選択されている要素です。
+        /// </summary>
+        string SelectedItemName { get; }
     }
 
     public class CbEnumTools
@@ -76,7 +81,19 @@ namespace CapybaraVS.Script
     {
         public override Type MyType => typeof(CbEnum<T>);
 
+        public override Type OriginalType => typeof(T);
+
         public string ItemName => typeof(T).FullName;
+
+        public string SelectedItemName
+        {
+            get
+            {
+                if (Value is null)
+                    return "";
+                return Value.ToString();
+            }
+        }
 
         public static Type GetItemType() { return typeof(T); }  // ※リフレクションから参照されている
 

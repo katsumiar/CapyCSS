@@ -84,6 +84,28 @@ namespace CapybaraVS.Script
         }
 
         /// <summary>
+        /// 型情報を参照します。
+        /// ※インポートしたモジュールの型情報も参照できます。
+        /// </summary>
+        /// <param name="type">型情報</param>
+        /// <returns>型情報</returns>
+        public static Type GetTypeEx(Type type)
+        {
+            return GetTypeEx(type.FullName);
+        }
+
+        /// <summary>
+        /// 列挙体のメンバの名前を取得します。
+        /// ※インポートしたモジュールの列挙体も参照できます。
+        /// </summary>
+        /// <param name="type">型情報</param>
+        /// <returns>名前</returns>
+        public static string[] GetEnumNames(Type type)
+        {
+            return Enum.GetNames(GetTypeEx(type));
+        }
+
+        /// <summary>
         /// 対応するCbXXX型を求めます。
         /// </summary>
         /// <param name="type">オリジナルの型情報</param>

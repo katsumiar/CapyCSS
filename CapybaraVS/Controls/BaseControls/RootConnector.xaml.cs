@@ -669,7 +669,7 @@ namespace CapybaraVS.Controls.BaseControls
         /// <param name="literalType">リテラルタイプか？</param>
         private void AppendListArgument(LinkConnector linkConnector, ICbValue variable, bool literalType = false)
         {
-            // リンクコネクターにリストを追加する
+            // 要素を増やす場合の型の作成方法を登録
             linkConnector.SetListNodeType(variable.NodeTF);
             // リストを返し値と同期させる
             if (literalType)

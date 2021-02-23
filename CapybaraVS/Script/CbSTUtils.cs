@@ -44,13 +44,13 @@ namespace CapybaraVS.Script
         public const string ACTION_GROUP_STR = "action.";
         public const string FUNC_GROUP_STR = "func.";
 
-        public static string FREE_LIST_TYPE_STR = typeof(List<>).FullName;
-        public static string FREE_FUNC_TYPE_STR = typeof(Func<>).FullName;
+        public static readonly string FREE_LIST_TYPE_STR = typeof(List<>).FullName;
+        public static readonly string FREE_FUNC_TYPE_STR = typeof(Func<>).FullName;
 
-        public const string FREE_ENUM_TYPE_STR = "<ENUM>";  // Enum型を要求する（未対応）
+        public const string FREE_ENUM_TYPE_STR = "<ENUM>";  // Enum型を要求する
 
         public const string FREE_TYPE_STR = "<FREE>";   // 型選択を要求する
-        public static string DUMMY_TYPE_STR = typeof(int).FullName; // ダミー
+        public static readonly string DUMMY_TYPE_STR = typeof(int).FullName; // ダミー
 
         public const string ERROR_STR = "[ERROR]";  // エラーの表現
         public const string NULL_STR = "<null>";    // nullの表現
@@ -58,7 +58,7 @@ namespace CapybaraVS.Script
         /// <summary>
         /// ユーザーによる型作成時に組み込み型選択肢に出てくる型情報です。
         /// </summary>
-        public static Dictionary<string, string> BuiltInTypeList = new Dictionary<string, string>()
+        static public readonly Dictionary<string, string> BuiltInTypeList = new Dictionary<string, string>()
         {
             { typeof(List<>).FullName, GENELICS_GROUP_STR + "List<>" },
             { typeof(IList<>).FullName, INTERFACE_GROUP_STR + "IList<>" },
@@ -119,7 +119,7 @@ namespace CapybaraVS.Script
             { typeof(Object).FullName, OBJECT_STR },
         };
 
-        static public Dictionary<string, string> CbTypeNameList = new Dictionary<string, string>()
+        static public readonly Dictionary<string, string> CbTypeNameList = new Dictionary<string, string>()
         {
             // 型名変換
             { nameof(Byte), BYTE_STR },
@@ -159,7 +159,7 @@ namespace CapybaraVS.Script
             { nameof(CbVoid), VOID_STR },
         };
 
-        static private List<string> eqTypeList = new List<string>()
+        static private readonly List<string> eqTypeList = new List<string>()
         {
             USHORT_STR,
             UINT_STR,

@@ -268,6 +268,8 @@ namespace CapybaraVS.Controls
             };
             //linkConnector.ReadOnly = true;
 
+            AddNodeEvent(linkConnector);
+
             // 変更通知用イベント
             linkConnector.ConnectorList.UpdateListEvent =
                 () => {
@@ -329,8 +331,6 @@ namespace CapybaraVS.Controls
                     );
                 return;
             }
-
-            bool isBeforeEmpty = ListData.Count == 0;
 
             if (ListData.Count > 0 && listTypeVariable.Count > 0 && ListData[0].ValueData.OriginalType == listTypeVariable[0].OriginalType)
             {
@@ -480,6 +480,23 @@ namespace CapybaraVS.Controls
             }
             linkedListTypeVariable.Add(addVariable);
 
+            //AddNodeEvent(linkConnector);
+
+            SetConnectorBackground();
+
+            // リストの変更を所有者に伝える
+            UpdateListEvent?.Invoke();
+            return linkConnector;
+        }
+
+        /// <summary>
+        /// ノードにイベントを登録します。
+        /// </summary>
+        /// <param name="linkConnector">コネクター</param>
+        private void AddNodeEvent(LinkConnector linkConnector)
+        {
+            ICbValue addVariable = linkConnector.ValueData;
+
             // リスト更新イベントを登録
             linkConnector.UpdateEvent = new Action(
                     () =>
@@ -504,7 +521,7 @@ namespace CapybaraVS.Controls
 
             // ノード削除イベントを登録
             linkConnector.DeleteEventIcon.ClickEvent = new Action(
-                    ()=>
+                    () =>
                     {
                         // 削除イベント
 
@@ -517,12 +534,6 @@ namespace CapybaraVS.Controls
                         UpdateListEvent?.Invoke();
                     }
                     );
-
-            SetConnectorBackground();
-
-            // リストの変更を所有者に伝える
-            UpdateListEvent?.Invoke();
-            return linkConnector;
         }
 
         /// <summary>

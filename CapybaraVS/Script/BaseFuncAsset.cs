@@ -63,6 +63,7 @@ namespace CapybaraVS.Script
                 CreateAssetMenu(ownerCommandCanvas, flowOperation, new For());
                 CreateAssetMenu(ownerCommandCanvas, flowOperation, new For_Until());
                 CreateAssetMenu(ownerCommandCanvas, flowOperation, new Foreach());
+                CreateAssetMenu(ownerCommandCanvas, flowOperation, new SwitchEnum());
             }
 
             {
@@ -2013,6 +2014,90 @@ namespace CapybaraVS.Script
                             {
                                 TryCallCallBack(dummyArgumentsControl, cagt, argument[1], node);
                             }
+                        }
+                        catch (Exception ex)
+                        {
+                            col.ExceptionFunc(null, ex);
+                        }
+
+                        return null;
+                    }
+                    )
+                );
+
+            return true;
+        }
+    }
+
+    //-----------------------------------------------------------------
+    class SwitchEnum : FuncAssetSub, IFuncAssetWithArgumentDef
+    {
+        public string AssetCode => nameof(SwitchEnum);
+
+        public string HelpText { get; } = "Switch";
+
+        public string MenuTitle => $"Switch Case<{CbSTUtils.ENUM_STR}>";
+
+        public string ValueType { get; } = CbSTUtils.FREE_TYPE_STR;
+
+        public Func<Type, bool> IsAccept => (t) => CbScript.IsEnum(t);
+
+        public bool ImplAsset(MultiRootConnector col, bool isReBuildMode = false)
+        {
+            // メソッドの引数を作成する
+            var args = new List<ICbValue>();
+            args.Add(
+                CbST.CbCreate(col.SelectedVariableType[0], "target")
+                );
+            var caseList = CbST.CbCreate<List<Action>>("case list") as ICbList;
+            if (!isReBuildMode)
+            {
+                // case 要素を作成する
+                foreach (string name in Enum.GetNames(col.SelectedVariableType[0]))
+                {
+                    caseList.Append(
+                        CbST.CbCreate<Action>("")
+                        ).Name = $":{name}";    // Append では名前がコピーされないので後から設定する
+                }
+            }
+            args.Add(caseList);
+            args.Add(
+                CbST.CbCreate<Action>("default")
+                );
+
+            col.MakeFunction(
+                $"Switch Case<{col.SelectedVariableTypeName[0]}>.Invoke",
+                HelpText,
+                CbVoid.TF,  // 返し値の型
+                args,  // 引数
+                new Func<List<ICbValue>, DummyArgumentsStack, ICbValue>(
+                    (argument, cagt) =>
+                    {
+                        try
+                        {
+                            // 選択した要素名を作成
+                            ICbEnum select = argument[0] as ICbEnum;
+                            string selectName = select.SelectedItemName;
+                            if (selectName.Contains('.'))
+                            {
+                                var tokens = selectName.Split('.');
+                                selectName = tokens[tokens.Length - 1];
+                            }
+                            selectName = $":{selectName}";
+
+                            // 一致する要素のコールバックを呼ぶ
+                            var caseList = GetArgumentList(argument, 1);
+                            foreach (var caseNode in caseList)
+                            {
+                                if (caseNode.Name == selectName)
+                                {
+                                    TryCallCallBack(cagt, caseNode);
+                                    return null;
+                                }
+                            }
+
+                            // どれにも一致しなかった場合のコールバックを呼ぶ
+                            TryCallCallBack(cagt, argument[2]);
                         }
                         catch (Exception ex)
                         {

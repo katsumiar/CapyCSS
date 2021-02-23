@@ -19,6 +19,11 @@ namespace CbVS.Script
         public static Func<Type, bool> AcceptAll => (t) => true;
 
         /// <summary>
+        /// Enum 型
+        /// </summary>
+        public static Func<Type, bool> IsEnum => (t) => t.IsEnum;
+
+        /// <summary>
         /// object 型を除く
         /// </summary>
         public static Func<Type, bool> IsNotObject => (t) => t != typeof(object);

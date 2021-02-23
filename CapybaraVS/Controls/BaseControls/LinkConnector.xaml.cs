@@ -538,6 +538,7 @@ namespace CapybaraVS.Controls.BaseControls
                 eventLinkRootConnector = root as RootConnector;
 
                 SetupValue();
+                ValueData.Name = ParamTextBox.ParamNameLabelOverlap;    // ノードを接続すると名前が消えるので上書きする
                 ParamTextBox.UpdateValueData();
 
                 UpdateEvent?.Invoke();
