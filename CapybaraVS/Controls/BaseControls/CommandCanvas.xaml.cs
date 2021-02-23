@@ -4,7 +4,6 @@ using CapyCSS.Controls;
 using CapyCSS.Controls.BaseControls;
 using CapyCSS.Script;
 using CbVS;
-using MathNet.Numerics.RootFinding;
 using Microsoft.Win32;
 using System;
 using System.Collections.Generic;

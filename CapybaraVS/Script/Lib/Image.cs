@@ -3,7 +3,6 @@ using CapybaraVS.Script;
 using CapybaraVS.Script.Lib;
 using CapyCSS.Controls;
 using CbVS.Controls;
-using MathNet.Numerics;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;

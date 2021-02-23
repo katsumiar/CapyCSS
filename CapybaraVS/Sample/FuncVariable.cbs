@@ -5,12 +5,12 @@
     <EnableInfo>false</EnableInfo>
     <CanvasScale>1</CanvasScale>
     <CanvasRenderTransform>
-      <M11>1.5392057102816665</M11>
+      <M11>1.4609043643159318</M11>
       <M12>0</M12>
       <M21>0</M21>
-      <M22>1.5392057102816665</M22>
-      <OffsetX>-621.5302344041966</OffsetX>
-      <OffsetY>-53.42087667418371</OffsetY>
+      <M22>1.4609043643159318</M22>
+      <OffsetX>-663.8903903041349</OffsetX>
+      <OffsetY>-30.404635650089144</OffsetY>
     </CanvasRenderTransform>
   </WorkCanvas>
   <ImportClassModule />
@@ -33,7 +33,7 @@
           <AttachVariableIds />
           <AttachVariableId>0</AttachVariableId>
           <AssetValueType>System.Int32</AssetValueType>
-          <RootConnector PointId="5">
+          <RootConnector PointId="355">
             <Caption>
               <LabelString>DummyArguments&lt;int&gt;</LabelString>
             </Caption>
@@ -41,11 +41,11 @@
             <ForcedChecked>false</ForcedChecked>
             <Connector>
               <LinkList>
-                <PointID>20</PointID>
+                <PointID>370</PointID>
               </LinkList>
             </Connector>
             <Arguments>
-              <LinkConnector PointId="6">
+              <LinkConnector PointId="356">
                 <Value>INDEX.ARG_1</Value>
                 <CastConnect>false</CastConnect>
                 <ParamInfo>
@@ -66,13 +66,13 @@
         </RootFunc>
       </MultiRootConnector>
     </Asset>
-    <Asset Id="8" X="1262.8192110671812" Y="121.89746158100327">
+    <Asset Id="8" X="1430.7453166516011" Y="145.3242038583355">
       <MultiRootConnector>
         <RootFunc AssetType="FuncType" AssetFuncType="Subroutine">
           <AttachVariableIds />
           <AttachVariableId>0</AttachVariableId>
           <AssetValueType>System.Object</AssetValueType>
-          <RootConnector PointId="9">
+          <RootConnector PointId="359">
             <Caption>
               <LabelString>Sequence</LabelString>
             </Caption>
@@ -82,7 +82,7 @@
               <LinkList />
             </Connector>
             <Arguments>
-              <LinkConnector PointId="10">
+              <LinkConnector PointId="360">
                 <CastConnect>false</CastConnect>
                 <ParamInfo>
                   <ParamName>call list</ParamName>
@@ -93,7 +93,7 @@
                 </ParamInfo>
                 <LinkConnectorList>
                   <List>
-                    <LinkConnector PointId="12">
+                    <LinkConnector PointId="362">
                       <Value>[object]&lt;null&gt;</Value>
                       <CastConnect>false</CastConnect>
                       <ParamInfo>
@@ -108,7 +108,7 @@
                         <IsOpenList>true</IsOpenList>
                       </LinkConnectorList>
                     </LinkConnector>
-                    <LinkConnector PointId="14">
+                    <LinkConnector PointId="364">
                       <Value>[object]&lt;null&gt;</Value>
                       <CastConnect>false</CastConnect>
                       <ParamInfo>
@@ -157,7 +157,7 @@
           </AttachVariableIds>
           <AttachVariableId>3</AttachVariableId>
           <AssetValueType>System.Func`2[[System.Int32, System.Private.CoreLib, Version=5.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.Int32, System.Private.CoreLib, Version=5.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]</AssetValueType>
-          <RootConnector PointId="16">
+          <RootConnector PointId="366">
             <Caption>
               <LabelString>[ func ]</LabelString>
             </Caption>
@@ -165,7 +165,7 @@
             <ForcedChecked>false</ForcedChecked>
             <Connector>
               <LinkList>
-                <PointID>23</PointID>
+                <PointID>376</PointID>
               </LinkList>
             </Connector>
             <Arguments />
@@ -182,7 +182,7 @@
           </AttachVariableIds>
           <AttachVariableId>3</AttachVariableId>
           <AssetValueType>System.Func`2[[System.Int32, System.Private.CoreLib, Version=5.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.Int32, System.Private.CoreLib, Version=5.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]</AssetValueType>
-          <RootConnector PointId="19">
+          <RootConnector PointId="369">
             <Caption>
               <LabelString>[ func ]</LabelString>
             </Caption>
@@ -190,11 +190,11 @@
             <ForcedChecked>false</ForcedChecked>
             <Connector>
               <LinkList>
-                <PointID>12</PointID>
+                <PointID>362</PointID>
               </LinkList>
             </Connector>
             <Arguments>
-              <LinkConnector PointId="20">
+              <LinkConnector PointId="370">
                 <Value>[Func&lt;int, int&gt;()]&lt;null&gt;</Value>
                 <CastConnect>false</CastConnect>
                 <ParamInfo>
@@ -221,7 +221,7 @@
           <AttachVariableIds />
           <AttachVariableId>0</AttachVariableId>
           <AssetValueType>System.Func`2[[System.Int32, System.Private.CoreLib, Version=5.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.Int32, System.Private.CoreLib, Version=5.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]</AssetValueType>
-          <RootConnector PointId="21">
+          <RootConnector PointId="374">
             <Caption>
               <LabelString>Func&lt;int, int&gt;.Invoke</LabelString>
             </Caption>
@@ -229,11 +229,11 @@
             <ForcedChecked>false</ForcedChecked>
             <Connector>
               <LinkList>
-                <PointID>14</PointID>
+                <PointID>378</PointID>
               </LinkList>
             </Connector>
             <Arguments>
-              <LinkConnector PointId="22">
+              <LinkConnector PointId="375">
                 <Value>999</Value>
                 <CastConnect>false</CastConnect>
                 <ParamInfo>
@@ -248,7 +248,7 @@
                   <IsOpenList>true</IsOpenList>
                 </LinkConnectorList>
               </LinkConnector>
-              <LinkConnector PointId="23">
+              <LinkConnector PointId="376">
                 <Value>[Func&lt;int, int&gt;()]&lt;null&gt;</Value>
                 <CastConnect>false</CastConnect>
                 <ParamInfo>
@@ -256,6 +256,45 @@
                   <ParamNameLabelOverlap>func</ParamNameLabelOverlap>
                   <ParamNameLabel>
                     <LabelString>func</LabelString>
+                  </ParamNameLabel>
+                </ParamInfo>
+                <LinkConnectorList>
+                  <List />
+                  <IsOpenList>true</IsOpenList>
+                </LinkConnectorList>
+              </LinkConnector>
+            </Arguments>
+            <IsPublicExecute>false</IsPublicExecute>
+          </RootConnector>
+        </RootFunc>
+      </MultiRootConnector>
+    </Asset>
+    <Asset Id="1201" X="1245.7131973294331" Y="249.58847064766292">
+      <MultiRootConnector>
+        <RootFunc AssetType="FuncType" AssetFuncType="ConsoleOut">
+          <AttachVariableIds />
+          <AttachVariableId>0</AttachVariableId>
+          <AssetValueType>System.Int32</AssetValueType>
+          <RootConnector PointId="377">
+            <Caption>
+              <LabelString>ConsoleOut</LabelString>
+            </Caption>
+            <Value>999</Value>
+            <ForcedChecked>false</ForcedChecked>
+            <Connector>
+              <LinkList>
+                <PointID>364</PointID>
+              </LinkList>
+            </Connector>
+            <Arguments>
+              <LinkConnector PointId="378">
+                <Value>0</Value>
+                <CastConnect>false</CastConnect>
+                <ParamInfo>
+                  <ParamName>n</ParamName>
+                  <ParamNameLabelOverlap>n</ParamNameLabelOverlap>
+                  <ParamNameLabel>
+                    <LabelString>n</LabelString>
                   </ParamNameLabel>
                 </ParamInfo>
                 <LinkConnectorList>

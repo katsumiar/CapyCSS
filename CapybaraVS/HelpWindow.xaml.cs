@@ -35,7 +35,6 @@ namespace CapyCSS
             Info.Text += Environment.NewLine;
             Info.Text += "Included package:" + Environment.NewLine;
             Info.Text += "  MaterialDesignThemes 3.2.0" + Environment.NewLine;
-            Info.Text += "  MathNet.Numerics 4.12.0" + Environment.NewLine;
             Info.Text += "  System.Drawing.Common 5.0.0";
         }
 

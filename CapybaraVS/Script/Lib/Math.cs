@@ -1,5 +1,4 @@
-﻿using MathNet.Numerics;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -240,22 +239,6 @@ namespace CapybaraVS.Script.Lib
         public static double DimFunc3(double x, double m, double d, double n)
         {
             return (m * Math.Pow(x, n)) / d;
-        }
-
-        //------------------------------------------------------------------
-        [ScriptMethod("Math." + "Polynomial", "",
-            "RS=>MathLib_Polynomial"//"多項式の解を求めます。"
-            )]
-        public static double Polynomial(double x, List<double> list)
-        {
-            List<double> order = new List<double>();
-            for (int i = list.Count - 1; i >= 0; --i)
-                order.Add(Math.Pow(x, i));
-
-            Vector listVector = new Vector(list);
-            Vector orderVector = new Vector(order);
-
-            return listVector.mul(orderVector);
         }
 
         //------------------------------------------------------------------

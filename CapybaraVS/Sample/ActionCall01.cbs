@@ -5,12 +5,12 @@
     <EnableInfo>false</EnableInfo>
     <CanvasScale>1</CanvasScale>
     <CanvasRenderTransform>
-      <M11>1.3278313411016958</M11>
+      <M11>1.0730542811610084</M11>
       <M12>0</M12>
       <M21>0</M21>
-      <M22>1.3278313411016958</M22>
-      <OffsetX>-2.655662682203234</OffsetX>
-      <OffsetY>-92.80111489486642</OffsetY>
+      <M22>1.0730542811610084</M22>
+      <OffsetX>279.2453706041843</OffsetX>
+      <OffsetY>8.822380869508546</OffsetY>
     </CanvasRenderTransform>
   </WorkCanvas>
   <ImportClassModule />
@@ -21,24 +21,24 @@
     <StackList />
   </WorkStack>
   <WorkCanvasAssetList>
-    <Asset Id="3" X="369.97651153162235" Y="197.34535008890904">
+    <Asset Id="3" X="233.48931148961043" Y="147.36412190451037">
       <MultiRootConnector>
         <RootFunc AssetType="LiteralType" AssetFuncType="none">
           <AttachVariableIds />
           <AttachVariableId>0</AttachVariableId>
           <AssetValueType>System.Collections.Generic.List`1[[System.Action, System.Private.CoreLib, Version=5.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]</AssetValueType>
-          <RootConnector PointId="43">
+          <RootConnector PointId="75">
             <Caption>
               <LabelString>List&lt;Action&gt;</LabelString>
             </Caption>
             <ForcedChecked>false</ForcedChecked>
             <Connector>
               <LinkList>
-                <PointID>61</PointID>
+                <PointID>93</PointID>
               </LinkList>
             </Connector>
             <Arguments>
-              <LinkConnector PointId="44">
+              <LinkConnector PointId="76">
                 <CastConnect>false</CastConnect>
                 <ParamInfo>
                   <ParamName> </ParamName>
@@ -49,14 +49,14 @@
                 </ParamInfo>
                 <LinkConnectorList>
                   <List>
-                    <LinkConnector PointId="46">
+                    <LinkConnector PointId="78">
                       <Value>[Action()]&lt;null&gt;</Value>
                       <CastConnect>false</CastConnect>
                       <ParamInfo>
-                        <ParamName />
+                        <ParamName> </ParamName>
                         <ParamNameLabelOverlap />
                         <ParamNameLabel>
-                          <LabelString />
+                          <LabelString> </LabelString>
                         </ParamNameLabel>
                       </ParamInfo>
                       <LinkConnectorList>
@@ -64,14 +64,14 @@
                         <IsOpenList>true</IsOpenList>
                       </LinkConnectorList>
                     </LinkConnector>
-                    <LinkConnector PointId="48">
+                    <LinkConnector PointId="80">
                       <Value>[Action()]&lt;null&gt;</Value>
                       <CastConnect>false</CastConnect>
                       <ParamInfo>
-                        <ParamName />
+                        <ParamName> </ParamName>
                         <ParamNameLabelOverlap />
                         <ParamNameLabel>
-                          <LabelString />
+                          <LabelString> </LabelString>
                         </ParamNameLabel>
                       </ParamInfo>
                       <LinkConnectorList>
@@ -89,26 +89,26 @@
         </RootFunc>
       </MultiRootConnector>
     </Asset>
-    <Asset Id="4" X="111" Y="146.04">
+    <Asset Id="4" X="-25.48720004201192" Y="96.05877181560132">
       <MultiRootConnector>
         <RootFunc AssetType="FuncType" AssetFuncType="ConsoleOut">
           <AttachVariableIds />
           <AttachVariableId>0</AttachVariableId>
           <AssetValueType>System.String</AssetValueType>
-          <RootConnector PointId="51">
+          <RootConnector PointId="83">
             <Caption>
               <LabelString>ConsoleOut</LabelString>
             </Caption>
-            <Value>test_1</Value>
+            <Value>dog</Value>
             <ForcedChecked>false</ForcedChecked>
             <Connector>
               <LinkList>
-                <PointID>46</PointID>
+                <PointID>78</PointID>
               </LinkList>
             </Connector>
             <Arguments>
-              <LinkConnector PointId="52">
-                <Value>test_1</Value>
+              <LinkConnector PointId="84">
+                <Value>dog</Value>
                 <CastConnect>false</CastConnect>
                 <ParamInfo>
                   <ParamName>n</ParamName>
@@ -128,26 +128,26 @@
         </RootFunc>
       </MultiRootConnector>
     </Asset>
-    <Asset Id="4" X="102" Y="334.0400000000001">
+    <Asset Id="4" X="-34.48720004201192" Y="284.0587718156014">
       <MultiRootConnector>
         <RootFunc AssetType="FuncType" AssetFuncType="ConsoleOut">
           <AttachVariableIds />
           <AttachVariableId>0</AttachVariableId>
           <AssetValueType>System.String</AssetValueType>
-          <RootConnector PointId="55">
+          <RootConnector PointId="87">
             <Caption>
               <LabelString>ConsoleOut</LabelString>
             </Caption>
-            <Value>test_2</Value>
+            <Value>cat</Value>
             <ForcedChecked>false</ForcedChecked>
             <Connector>
               <LinkList>
-                <PointID>48</PointID>
+                <PointID>80</PointID>
               </LinkList>
             </Connector>
             <Arguments>
-              <LinkConnector PointId="56">
-                <Value>test_2</Value>
+              <LinkConnector PointId="88">
+                <Value>cat</Value>
                 <CastConnect>false</CastConnect>
                 <ParamInfo>
                   <ParamName>n</ParamName>
@@ -167,13 +167,13 @@
         </RootFunc>
       </MultiRootConnector>
     </Asset>
-    <Asset Id="6" X="702.6292309245426" Y="265.4899683676417">
+    <Asset Id="6" X="669.9491971116664" Y="470.2207684306594">
       <MultiRootConnector>
         <RootFunc AssetType="FuncType" AssetFuncType="Foreach">
           <AttachVariableIds />
           <AttachVariableId>0</AttachVariableId>
           <AssetValueType>System.Action</AssetValueType>
-          <RootConnector PointId="60">
+          <RootConnector PointId="92">
             <Caption>
               <LabelString>Foreach Action&lt;Action&gt;.Invoke</LabelString>
             </Caption>
@@ -181,11 +181,11 @@
             <ForcedChecked>false</ForcedChecked>
             <Connector>
               <LinkList>
-                <PointID>72</PointID>
+                <PointID>104</PointID>
               </LinkList>
             </Connector>
             <Arguments>
-              <LinkConnector PointId="61">
+              <LinkConnector PointId="93">
                 <CastConnect>false</CastConnect>
                 <ParamInfo>
                   <ParamName>sample</ParamName>
@@ -199,11 +199,11 @@
                   <IsOpenList>false</IsOpenList>
                 </LinkConnectorList>
               </LinkConnector>
-              <LinkConnector PointId="62">
+              <LinkConnector PointId="94">
                 <Value>[Action&lt;Action&gt;()]&lt;null&gt;</Value>
                 <CastConnect>false</CastConnect>
                 <ParamInfo>
-                  <ParamName />
+                  <ParamName>func f(node)</ParamName>
                   <ParamNameLabelOverlap>func f(node)</ParamNameLabelOverlap>
                   <ParamNameLabel>
                     <LabelString>func f(node)</LabelString>
@@ -220,25 +220,25 @@
         </RootFunc>
       </MultiRootConnector>
     </Asset>
-    <Asset Id="8" X="416.973084055937" Y="481.8285319031626">
+    <Asset Id="8" X="417.93426152102154" Y="554.878019249591">
       <MultiRootConnector>
         <RootFunc AssetType="FuncType" AssetFuncType="CallerArguments">
           <AttachVariableIds />
           <AttachVariableId>0</AttachVariableId>
           <AssetValueType>System.Action</AssetValueType>
-          <RootConnector PointId="65">
+          <RootConnector PointId="97">
             <Caption>
               <LabelString>DummyArguments&lt;Action&gt;</LabelString>
             </Caption>
-            <Value>[Action()]&lt;null&gt;</Value>
+            <Value>[Action()]</Value>
             <ForcedChecked>false</ForcedChecked>
             <Connector>
               <LinkList>
-                <PointID>62</PointID>
+                <PointID>94</PointID>
               </LinkList>
             </Connector>
             <Arguments>
-              <LinkConnector PointId="66">
+              <LinkConnector PointId="98">
                 <Value>INDEX.ARG_1</Value>
                 <CastConnect>false</CastConnect>
                 <ParamInfo>
@@ -259,23 +259,23 @@
         </RootFunc>
       </MultiRootConnector>
     </Asset>
-    <Asset Id="9" X="1095" Y="278.04">
+    <Asset Id="9" X="1060.3976112569546" Y="423.17779722777317">
       <MultiRootConnector>
         <RootFunc AssetType="FuncType" AssetFuncType="Subroutine">
           <AttachVariableIds />
           <AttachVariableId>0</AttachVariableId>
           <AssetValueType>System.Object</AssetValueType>
-          <RootConnector PointId="69">
+          <RootConnector PointId="101">
             <Caption>
               <LabelString>Sequence</LabelString>
             </Caption>
-            <Value>[object]&lt;null&gt;</Value>
+            <Value>void</Value>
             <ForcedChecked>false</ForcedChecked>
             <Connector>
               <LinkList />
             </Connector>
             <Arguments>
-              <LinkConnector PointId="70">
+              <LinkConnector PointId="102">
                 <CastConnect>false</CastConnect>
                 <ParamInfo>
                   <ParamName>call list</ParamName>
@@ -286,14 +286,14 @@
                 </ParamInfo>
                 <LinkConnectorList>
                   <List>
-                    <LinkConnector PointId="72">
+                    <LinkConnector PointId="104">
                       <Value>[object]&lt;null&gt;</Value>
                       <CastConnect>false</CastConnect>
                       <ParamInfo>
-                        <ParamName />
+                        <ParamName> </ParamName>
                         <ParamNameLabelOverlap />
                         <ParamNameLabel>
-                          <LabelString />
+                          <LabelString> </LabelString>
                         </ParamNameLabel>
                       </ParamInfo>
                       <LinkConnectorList>
@@ -311,13 +311,27 @@
         </RootFunc>
       </MultiRootConnector>
     </Asset>
-    <Asset Id="1115" X="1073.6733206355573" Y="221.13818655706464">
+    <Asset Id="1115" X="1039.070931892512" Y="366.2759837848378">
       <GroupAreaControl>
-        <Text>test_1
-test_2
+        <Text>dog
+cat
 と出力されたら正解。</Text>
         <Witdh>269.7748066634732</Witdh>
         <Height>224.66830444306424</Height>
+      </GroupAreaControl>
+    </Asset>
+    <Asset Id="1135" X="-45.62049208940721" Y="41.77825295104087">
+      <GroupAreaControl>
+        <Text>「dog」と「cat」を出力する２つのイベントを登録したリストを作成します。</Text>
+        <Witdh>544.6284319251262</Witdh>
+        <Height>400.78486227302903</Height>
+      </GroupAreaControl>
+    </Asset>
+    <Asset Id="1136" X="380.09405839784927" Y="463.3988252863055">
+      <GroupAreaControl>
+        <Text>リストに登録されているイベントを実行します。</Text>
+        <Witdh>620.9769578914494</Witdh>
+        <Height>222.08830988134375</Height>
       </GroupAreaControl>
     </Asset>
   </WorkCanvasAssetList>
