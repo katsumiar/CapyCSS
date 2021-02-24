@@ -73,10 +73,14 @@ namespace CapybaraVS.Script
             Type openedType = typeof(CbStruct<>); //CapybaraVS.Script.CbStruct`1
             Type cbStructType = openedType.MakeGenericType(type);
 
-            object result = cbStructType.InvokeMember("Create", BindingFlags.InvokeMethod,
+            object result = cbStructType.InvokeMember(
+                        nameof(CbStruct<dummy>.Create),//"Create",
+                        BindingFlags.InvokeMethod,
                         null, null, new object[] { name }) as ICbValue;
             return result as ICbValue;
         }
+
+        private struct dummy {};
 
         /// <summary>
         /// 構造体を判定します。

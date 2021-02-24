@@ -2,6 +2,7 @@
 using CapybaraVS.Controls.BaseControls;
 using CapybaraVS.Script;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
@@ -32,6 +33,16 @@ namespace CbVS.Script
         /// </summary>
         bool IsArrayType { get; set; }
 
+        /// <summary>
+        /// 実際に取り込んだ型の情報
+        /// </summary>
+        Type SourceType { get; set; }
+
+        /// <summary>
+        /// リストの要素を追加できるか？
+        /// </summary>
+        bool HaveAdd { get; }
+
         List<ICbValue> Value { get; set; }
 
         string ItemName { get; }
@@ -61,7 +72,7 @@ namespace CbVS.Script
         bool Contains(ICbValue cbVSValue);
 
         /// <summary>
-        /// List<> のインスタンスから内容をコピーします。
+        /// ICollection<> のインスタンスから内容をコピーします。
         /// </summary>
         /// <param name="list"></param>
         void CopyFrom(object list);
@@ -75,7 +86,7 @@ namespace CbVS.Script
     public class CbList
     {
         /// <summary>
-        /// CbXXX型の List<> 型を作成します。
+        /// CbXXX型の ICollection<> 型を作成します。
         /// </summary>
         /// <param name="original">オリジナルのList<T>のTの型</param>
         /// <returns>型</returns>
@@ -89,64 +100,22 @@ namespace CbVS.Script
         }
 
         /// <summary>
-        /// CbList<T>に要素を追加します。
+        /// CbXXX型の ICollection<> 変数を作成します。
         /// </summary>
-        /// <param name="instance">CbList<T>のインスタンス</param>
-        /// <param name="originalNode">T の型</param>
-        /// <param name="data">追加する要素</param>
-        public static void Append(ICbValue instance, Type originalNode, ICbValue data)
-        {
-            var listType = CbList.GetCbType(originalNode);
-            MethodInfo addMethod = listType.GetMethod(nameof(ICbList.Append));
-            addMethod.Invoke(instance, new Object[] { data });
-        }
-
-        /// <summary>
-        /// CbList<T>に要素を追加します。
-        /// </summary>
-        /// <param name="instance">CbList<T>のインスタンス</param>
-        /// <param name="originalNode">T の型</param>
-        public static void Append(ICbValue instance, Type originalNode)
-        {
-            Append(instance, originalNode, CbST.CbCreate(originalNode));
-        }
-
-        /// <summary>
-        /// CbXXX型の List<> 変数を作成します。
-        /// </summary>
-        /// <param name="original">オリジナルのList<T>のTの型</param>
+        /// <param name="original">オリジナルの型</param>
         /// <param name="name">変数名</param>
-        /// <returns>CbList<original>型の変数</returns>
+        /// <returns>CbList<オリジナルの要素の型>型の変数</returns>
         public static ICbValue Create(Type original, string name = "")
         {
-            object result = CbList.GetCbType(original).InvokeMember(
-                        "GetCbFunc",
+            ICbList result = CbList.GetCbType(original.GenericTypeArguments[0]).InvokeMember(
+                        "GetCbFunc",//nameof(CbList<int>.GetCbFunc),
                         BindingFlags.InvokeMethod,
                         null,
                         null,
                         new object[] { name }
-                        );
-            return result as ICbValue;
-        }
-
-        /// <summary>
-        /// CbXXX型の List<> 変数の型を作成します。
-        /// </summary>
-        /// <param name="original">オリジナルのList<T>のTの型</param>
-        /// <returns>CbList<original>型の型</returns>
-        public static Func<ICbValue> CreateTF(Type original)
-        {
-            return () => CbList.Create(original);
-        }
-
-        /// <summary>
-        /// CbXXX型の List<> 変数の型を作成します。
-        /// </summary>
-        /// <param name="original">オリジナルのList<T>のTの型</param>
-        /// <returns>CbList<original>型の型</returns>
-        public static Func<string, ICbValue> CreateNTF(Type original)
-        {
-            return (name) => CbList.Create(original, name);
+                        ) as ICbList;
+            result.SourceType = original;
+            return result;
         }
 
         public static StackNode ConvertStackNode(CommandCanvas ownerCommandCanvas, ICbValue cbVSValue)
@@ -157,10 +126,21 @@ namespace CbVS.Script
             };
             return stackNode;
         }
+
+        public static bool HaveInterface(Type type, Type interfaceType)
+        {
+            Type arg = type.GenericTypeArguments[0];
+            Type openedType = interfaceType;
+            Type collectionType = openedType.MakeGenericType(arg);
+
+            return collectionType.IsAssignableFrom(type) ||
+               type.GetGenericTypeDefinition() == interfaceType;
+        }
+
     }
 
     /// <summary>
-    /// List<>型
+    /// ICollection<>型
     /// </summary>
     /// <typeparam name="T">オリジナルのList<T>のTの型</typeparam>
     public class CbList<T> : BaseCbValueClass<List<ICbValue>>, ICbValueListClass<List<ICbValue>>, ICbShowValue, ICbList
@@ -203,6 +183,18 @@ namespace CbVS.Script
 
         public bool IsArrayType { get; set; } = false;
 
+        public Type SourceType { get; set; }
+
+        public bool HaveAdd
+        {
+            get
+            {
+                // ICollection<> インターフェイスを持っているか？
+
+                return CbList.HaveInterface(SourceType, typeof(ICollection<>));
+            }
+        }
+
         public override Type OriginalReturnType => typeof(T);
 
         public override Type OriginalType
@@ -215,7 +207,11 @@ namespace CbVS.Script
 
                     return CbST.GetTypeEx(OriginalReturnType.FullName + "[]");
                 }
-                return typeof(List<>).MakeGenericType(typeof(T));
+                else if (SourceType != null)
+                {
+                    return SourceType;
+                }
+                return typeof(ICollection<>).MakeGenericType(typeof(T));
             }
         }
 
@@ -245,13 +241,22 @@ namespace CbVS.Script
                         return $"{ItemName}[]";
                     }
                 }
-                if (NodeTF is null)
+                string typeName;
+                if (SourceType != null)
                 {
-                    return $"{CbSTUtils.CbTypeNameList[nameof(CbList)]}<>";
+                    return CbSTUtils._GetTypeName(SourceType);
                 }
                 else
                 {
-                    return $"{CbSTUtils.CbTypeNameList[nameof(CbList)]}<{ItemName}>";
+                    typeName = CbSTUtils.CbTypeNameList[nameof(CbList)];
+                }
+                if (NodeTF is null)
+                {
+                    return $"{typeName}<>";
+                }
+                else
+                {
+                    return $"{typeName}<{ItemName}>";
                 }
             }
         }

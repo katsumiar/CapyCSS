@@ -20,6 +20,7 @@ using System.Linq;
 using System.Windows.Media;
 using CbVS.Script;
 using CapyCSS.Script;
+using System.Collections;
 
 namespace CapybaraVS.Script
 {
@@ -162,7 +163,7 @@ namespace CapybaraVS.Script
                 return cbClassType;
             }
 
-            if (type.GetGenericTypeDefinition() == typeof(List<>))
+            if (type.GetGenericTypeDefinition() == typeof(ICollection<>))
             {
                 Debug.Assert(false);
             }
@@ -338,10 +339,11 @@ namespace CapybaraVS.Script
                     _mame = type.FullName;
                 else if (type.Name != null)
                     _mame = type.Name;
-                Type element = CbST.GetTypeEx(_mame.Replace("[]", ""));
+                Type element = CbST.GetTypeEx(_mame).GetElementType();
                 if (element != null)
                 {
-                    var ret = CbList.Create(element, name);
+                    Type collectionType = typeof(List<>).MakeGenericType(element);
+                    var ret = CbList.Create(collectionType, name);
                     if (ret.IsList)
                     {
                         ICbList cbList = ret.GetListValue;
@@ -384,12 +386,12 @@ namespace CapybaraVS.Script
                     return ret;
                 }
 
-                if (type.GetGenericTypeDefinition() == typeof(List<>))
+                if (CbList.HaveInterface(type, typeof(IEnumerable<>)))
                 {
                     if (type.GenericTypeArguments.Length > 1)
                         return null;
 
-                    return CbList.Create(type.GenericTypeArguments[0], name);
+                    return CbList.Create(type, name);
                 }
 
                 if (CbFunc.IsActionType(type))
@@ -663,10 +665,10 @@ namespace CapybaraVS.Script
                         return true;    // List<>(array) を行う特殊なキャスト
                 }
 
-                if (TypeName != obj.TypeName)
-                    return false;
+                if (OriginalType.IsAssignableFrom(obj.OriginalType))
+                    return true;
             }
-            return CbSTUtils.IsAssignment(TypeName, obj.TypeName, OriginalType, obj.OriginalType, isCast);
+            return CbSTUtils.IsAssignment(OriginalType, obj.OriginalType, isCast);
         }
 
         public bool IsError { get; set; } = false;

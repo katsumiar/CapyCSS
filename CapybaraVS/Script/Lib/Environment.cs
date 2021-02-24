@@ -7,36 +7,28 @@ namespace CapybaraVS.Script.Lib
 {
     public class EnvironmentLib
     {
-        [ScriptMethod("Environment" + "." + nameof(MachineName), "",
-            "RS=>EnvironmentLib_MachineName"//"マシン名：\nマシン名を参照します。"
-            )]
+        [ScriptMethod("Environment" + "." + nameof(MachineName), "", "RS=>EnvironmentLib_MachineName")]
         public static string MachineName()
         {
             return Environment.MachineName;
         }
 
         //------------------------------------------------------------------
-        [ScriptMethod("Environment" + "." + nameof(UserName), "",
-            "RS=>EnvironmentLib_UserName"//"ユーザー名：\nユーザー名を参照します。"
-            )]
+        [ScriptMethod("Environment" + "." + nameof(UserName), "", "RS=>EnvironmentLib_UserName")]
         public static string UserName()
         {
             return Environment.UserName;
         }
 
         //------------------------------------------------------------------
-        [ScriptMethod("Environment" + "." + nameof(GetEnvironmentVariable), "",
-            "RS=>EnvironmentLib_GetEnvironmentVariable"//"環境変数参照：\n<name>環境変数を参照します。"
-            )]
+        [ScriptMethod("Environment" + "." + nameof(GetEnvironmentVariable), "", "RS=>EnvironmentLib_GetEnvironmentVariable")]
         public static string GetEnvironmentVariable(string name)
         {
             return Environment.GetEnvironmentVariable(name);
         }
 
         //------------------------------------------------------------------
-        [ScriptMethod("Environment" + "." + nameof(ReplaceEnvironmentVariable), "",
-            "RS=>EnvironmentLib_ReplaceEnvironmentVariable"//"環境変数置換：\n文字列中の %環境変数% を環境変数に置換します。"
-            )]
+        [ScriptMethod("Environment" + "." + nameof(ReplaceEnvironmentVariable), "", "RS=>EnvironmentLib_ReplaceEnvironmentVariable")]
         public static string ReplaceEnvironmentVariable(string name)
         {
             string ret = name;
@@ -53,20 +45,18 @@ namespace CapybaraVS.Script.Lib
         }
 
         //------------------------------------------------------------------
-        [ScriptMethod("Input/Output" + "." + nameof(CommandLineArgs), "",
-            "RS=>EnvironmentLib_CommandLineArgs"//"コマンドライン引数：\nコマンドライン引数を参照します。"
-            )]
-        public static List<string> CommandLineArgs()
+        [ScriptMethod("Input/Output" + "." + nameof(CommandLineArgs), "", "RS=>EnvironmentLib_CommandLineArgs")]
+        public static ICollection<string> CommandLineArgs()
         {
             return new List<string>(Environment.GetCommandLineArgs());
         }
 
         //------------------------------------------------------------------
         [ScriptMethod("Input/Output" + "." + nameof(CommandLineParam), "", "RS=>EnvironmentLib_CommandLineParam")]
-        public static List<string> CommandLineParam()
+        public static ICollection<string> CommandLineParam()
         {
-            List<string> arg = CommandLineArgs();
-            List<string> param = new List<string>();
+            ICollection<string> arg = CommandLineArgs();
+            var param = new List<string>();
             int skipCount = 1;
             foreach (var value in arg)
             {
@@ -84,10 +74,10 @@ namespace CapybaraVS.Script.Lib
 
         //------------------------------------------------------------------
         [ScriptMethod("Input/Output" + "." + nameof(CommandLineOption), "", "RS=>EnvironmentLib_CommandLineOption")]
-        public static List<string> CommandLineOption()
+        public static ICollection<string> CommandLineOption()
         {
-            List<string> arg = CommandLineArgs();
-            List<string> option = new List<string>();
+            ICollection<string> arg = CommandLineArgs();
+            var option = new List<string>();
             foreach (var value in arg)
             {
                 if (value.StartsWith("-"))

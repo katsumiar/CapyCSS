@@ -43,18 +43,18 @@ namespace CapybaraVS.Controls
 
         public class PlotInfo
         {
-            public List<double> list;
+            public ICollection<double> list;
             public DrawType drawType;
             public SolidColorBrush solidColorBrush;
-            public PlotInfo(List<double> list, DrawType drawType, SolidColorBrush solidColorBrush = null)
+            public PlotInfo(IEnumerable<double> list, DrawType drawType, SolidColorBrush solidColorBrush = null)
             {
-                this.list = list;
+                this.list = new List<double>(list);
                 this.drawType = drawType;
                 this.solidColorBrush = solidColorBrush;
             }
-            public PlotInfo(List<int> list, DrawType drawType, SolidColorBrush solidColorBrush = null)
+            public PlotInfo(IEnumerable<int> list, DrawType drawType, SolidColorBrush solidColorBrush = null)
             {
-                this.list = list.ConvertAll(new Converter<int, double>((n) => (double)n));
+                this.list = ListFactory.IntToDouble(list);
                 this.drawType = drawType;
                 this.solidColorBrush = solidColorBrush;
             }
@@ -182,9 +182,9 @@ namespace CapybaraVS.Controls
                 );
         }
 
-        public static void Create(CommandCanvas OwnerCommandCanvas, string msg, List<PlotInfo> plotInfos, double baseLine = 0)
+        public static void Create(CommandCanvas OwnerCommandCanvas, string msg, IEnumerable<PlotInfo> plotInfos, double baseLine = 0)
         {
-            List<double> lines = new List<double>() { baseLine };
+            var lines = new List<double>() { baseLine };
 
             if (OwnerCommandCanvas.PlotWindowHoldAction.Enabled)
             {
@@ -195,7 +195,7 @@ namespace CapybaraVS.Controls
             }
             Create(msg, plotInfos, lines);
         }
-        public static Task Create(string msg, List<PlotInfo> plotInfos, List<double> baseLines)
+        public static Task Create(string msg, IEnumerable<PlotInfo> plotInfos, IEnumerable<double> baseLines)
         {
             if (plotInfos is null)
                 return null;
@@ -205,16 +205,20 @@ namespace CapybaraVS.Controls
                 baseLines = new List<double>() { 0 };
             }
 
-            List<double> allList = new List<double>(baseLines);
+            var allList = new List<double>(baseLines);
+            int baseLineCount = allList.Count;
             foreach (var plotInfo in plotInfos)
             {
+                if (plotInfo is null)
+                    continue;
+
                 if (plotInfo.list.Count < 2)
                     continue;
 
                 allList.AddRange(plotInfo.list);
             }
 
-            if (allList.Count == baseLines.Count)
+            if (allList.Count == baseLineCount)
                 return null;
 
 #if false   // あまり意味が無さそう
@@ -229,7 +233,7 @@ namespace CapybaraVS.Controls
             double maxPoint = StatisticsLib.MaxInTheList(allList);
 #endif
 
-            List<double> _baseLines = new List<double>(baseLines);
+            var _baseLines = new List<double>(baseLines);
             if (_baseLines.Count == 0)
             {
                 _baseLines.Add(minPoint);
@@ -255,13 +259,16 @@ namespace CapybaraVS.Controls
             var tasks = new List<Task>();
             foreach (var plotInfo in plotInfos)
             {
+                if (plotInfo is null)
+                    continue;
+
                 var task = Task.Run(() => PlotOut(plotWindow, plotInfo.list, minPoint, maxPoint, plotInfo.drawType, plotInfo.solidColorBrush));
                 tasks.Add(task);
             }
             return Task.WhenAll(tasks);
         }
 
-        private static void DrawGuideLine(PlotWindow plotWindow, List<double> baseLines, double minPoint, double maxPoint)
+        private static void DrawGuideLine(PlotWindow plotWindow, IEnumerable<double> baseLines, double minPoint, double maxPoint)
         {
             double dis = Math.Abs(maxPoint - minPoint);
             double addLine = 0;
@@ -282,30 +289,34 @@ namespace CapybaraVS.Controls
             }
         }
 
-        private static void PlotOut(PlotWindow plotWindow, List<double> list, double minPoint, double maxPoint, DrawType drawType, SolidColorBrush solidColorBrush)
+        private static void PlotOut(PlotWindow plotWindow, IEnumerable<double> list, double minPoint, double maxPoint, DrawType drawType, SolidColorBrush solidColorBrush)
         {
-            List<double> tlist = new List<double>(list);
-            tlist.Add(minPoint);
-            tlist.Add(maxPoint);
-            tlist = StatisticsLib.NormalizeWidthOfValue(tlist);
-            tlist = StatisticsLib.NormalizeAbsWidthOfValue(tlist);
+            IList<double> _list = new List<double>(list);
+            
+            ICollection<double> _listWithMaxMin = new List<double>(list);
+            _listWithMaxMin.Add(minPoint);
+            _listWithMaxMin.Add(maxPoint);
 
-            double count = tlist.Count - 3;
-            for (int i = 0; i < tlist.Count - 2; i++)
+            _listWithMaxMin = StatisticsLib.NormalizeWidthOfValue(_listWithMaxMin);
+            _listWithMaxMin = StatisticsLib.NormalizeAbsWidthOfValue(_listWithMaxMin);
+            IList<double> listWithMaxMin = new List<double>(_listWithMaxMin);
+
+            double count = listWithMaxMin.Count - 3;
+            for (int i = 0; i < listWithMaxMin.Count - 2; i++)
             {
-                double node = tlist[i];
+                double node = listWithMaxMin[i];
                 Pair pair = new Pair(i / count, 1 - node);
                 if (drawType == DrawType.NormalPlot || i == 0)
                 {
-                    plotWindow.AddPlot(pair, list[i], drawType, solidColorBrush);
+                    plotWindow.AddPlot(pair, _list[i], drawType, solidColorBrush);
                 }
                 else if (drawType == DrawType.BarGraph)
                 {
-                    plotWindow.AddPlot(pair, list[i], drawType, solidColorBrush, new Pair(i / count, 1));
+                    plotWindow.AddPlot(pair, _list[i], drawType, solidColorBrush, new Pair(i / count, 1));
                 }
                 else
                 {
-                    plotWindow.AddPlot(pair, list[i], drawType, solidColorBrush, new Pair((i - 1) / count, 1 - tlist[i - 1]));
+                    plotWindow.AddPlot(pair, _list[i], drawType, solidColorBrush, new Pair((i - 1) / count, 1 - listWithMaxMin[i - 1]));
                 }
             }
         }

@@ -105,7 +105,9 @@ namespace CapybaraVS.Controls
         /// </summary>
         private ObservableCollection<LinkConnector> noneConnectedListData = new ObservableCollection<LinkConnector>();
 
-        #region EnableAddOption 添付プロパティ実装
+        #region EnableAdd 添付プロパティ実装
+
+        private bool forcedNotAdd = false;
 
         private static ImplementDependencyProperty<LinkConnectorList, bool> impEnableAdd =
             new ImplementDependencyProperty<LinkConnectorList, bool>(
@@ -298,6 +300,14 @@ namespace CapybaraVS.Controls
 
             var listTypeVariable = variable.GetListValue;
 
+            if (!(variable as ICbList).HaveAdd)
+            {
+                // 追加できないリスト
+
+                forcedNotAdd = true;
+                EnableAdd = false;  // ノード追加機能を無効化
+            }
+
             Disconnect();
 
             // 渡された変数のリストをリンクする
@@ -398,8 +408,11 @@ namespace CapybaraVS.Controls
             }
             ListView.ItemsSource = ListData;
             EnableList();
-            
-            EnableAdd = true;  // ノード追加機能を有効化
+
+            if (!forcedNotAdd)
+            {
+                EnableAdd = true;  // ノード追加機能を有効化
+            }
         }
 
         /// <summary>
@@ -668,6 +681,16 @@ namespace CapybaraVS.Controls
             }
         }
 
+        private void AccordionOpenIcon_MouseEnter(object sender, MouseEventArgs e)
+        {
+            Cursor = Cursors.Hand;
+        }
+
+        private void AccordionOpenIcon_MouseLeave(object sender, MouseEventArgs e)
+        {
+            Cursor = null;
+        }
+
 #region IDisposable Support
         private bool disposedValue = false; // 重複する呼び出しを検出するには
 
@@ -697,15 +720,5 @@ namespace CapybaraVS.Controls
             // GC.SuppressFinalize(this);
         }
         #endregion
-
-        private void AccordionOpenIcon_MouseEnter(object sender, MouseEventArgs e)
-        {
-            Cursor = Cursors.Hand;
-        }
-
-        private void AccordionOpenIcon_MouseLeave(object sender, MouseEventArgs e)
-        {
-            Cursor = null;
-        }
     }
 }

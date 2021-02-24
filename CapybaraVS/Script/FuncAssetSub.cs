@@ -60,7 +60,7 @@ namespace CapybaraVS.Script
         /// 型選択リストの受け入れ項目
         /// ※必要がないなら null にする
         /// </summary>
-        Func<Type, bool> IsAccept { get; }
+        Func<Type, bool>[] IsAccept { get; }
     }
 
     /// <summary>
@@ -83,7 +83,7 @@ namespace CapybaraVS.Script
         /// 型選択リストの受け入れ項目
         /// ※必要がないなら null にする
         /// </summary>
-        Func<Type, bool> IsAccept { get; }
+        Func<Type, bool>[] IsAccept { get; }
     }
 
     /// <summary>
@@ -105,7 +105,7 @@ namespace CapybaraVS.Script
         /// 型選択リストの受け入れ項目
         /// ※必要がないなら null にする
         /// </summary>
-        Func<Type, bool> IsAccept { get; }
+        Func<Type, bool>[] IsAccept { get; }
     }
 
     /// <summary>
@@ -132,7 +132,7 @@ namespace CapybaraVS.Script
         /// 型選択リストの受け入れ項目
         /// ※必要がないなら null にする
         /// </summary>
-        Func<Type, bool> IsAccept { get; }
+        Func<Type, bool>[] IsAccept { get; }
     }
 
     public class FuncAssetSub

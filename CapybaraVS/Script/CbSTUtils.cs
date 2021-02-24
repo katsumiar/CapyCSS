@@ -14,7 +14,8 @@ namespace CapybaraVS.Script
         public const string VOID_STR = "void";
         public const string FUNC_STR = "Func";
         public const string ACTION_STR = "Action";
-        public const string LIST_STR = "List";
+        public const string LITERAL_LIST_STR = "List";
+        public const string LIST_STR = "ICollection";
         public const string CLASS_STR = "Class";
         public const string ENUM_STR = "Enum";
         public const string STRUCT_STR = "Struct";
@@ -45,6 +46,7 @@ namespace CapybaraVS.Script
         public const string FUNC_GROUP_STR = "func.";
 
         public static readonly string FREE_LIST_TYPE_STR = typeof(List<>).FullName;
+        public static readonly string FREE_LIST_INTERFACE_TYPE_STR = typeof(ICollection<>).FullName;
         public static readonly string FREE_FUNC_TYPE_STR = typeof(Func<>).FullName;
         public static readonly string FREE_FUNC2A_TYPE_STR = typeof(Func<,>).FullName;
         public static readonly string FREE_ACTION_TYPE_STR = typeof(Action<>).FullName;
@@ -323,6 +325,36 @@ namespace CapybaraVS.Script
         }
 
         /// <summary>
+        /// キャストを通しての代入の可否を判定します。
+        /// </summary>
+        /// <param name="toType">代入先の型</param>
+        /// <param name="fromType">代入元の型</param>
+        /// <returns></returns>
+        public static bool IsCastAssignment(Type toType, Type fromType)
+        {
+            if (fromType == typeof(object))
+                return true;    // 接続元が object なら無条件でキャスト可能
+
+            if (fromType == typeof(decimal) && toType == typeof(char))
+                return false;
+
+            if (fromType == typeof(char) &&
+                (toType == typeof(decimal) || toType == typeof(float) || toType == typeof(double)))
+                return false;
+
+            if (fromType == typeof(ulong) || fromType == typeof(uint) || fromType == typeof(ushort) || fromType == typeof(byte))
+                return true;
+
+            if (toType == typeof(string) || toType == typeof(bool) || toType == typeof(object))
+                return false;
+
+            if (fromType == typeof(string) || fromType == typeof(bool) || fromType == typeof(object))
+                return false;
+
+            return true;
+        }
+
+        /// <summary>
         /// 代入の可否を判定します。
         /// </summary>
         /// <param name="toName">代入先の型名</param>
@@ -332,136 +364,34 @@ namespace CapybaraVS.Script
         /// <param name="isCast">キャストでの判定なら true</param>
         /// <returns>接続可能なら true</returns>
         static public bool IsAssignment(
-            string toName, 
-            string fromName, 
             Type toType, 
             Type fromType, 
             bool isCast = false
             )
         {
-            if (CbFunc.IsCanConnect(toName, fromName))
-            {
-                // イベント接続
+            if (isCast && IsCastAssignment(toType, fromType))
+                return true;    // Cast接続なら可能
 
-                if (!isCast)
+            if (toType.IsGenericType)
+            {
+                if (CbFunc.IsFuncType(toType))
                 {
-                    if (CbFunc.IsNormalConnect(toName, fromName))
-                        return true;
+                    Type argType = toType.GetGenericArguments()[0]; // Func の返り値の型
 
-                    return false;
+                    if (isCast && IsCastAssignment(argType, fromType))
+                        return true;    // Cast接続なら可能
+
+                    if (argType.IsAssignableFrom(fromType))
+                        return true;    // Func の返り値の型に代入可能なら
                 }
-
-                return CbFunc.IsCastConnect(toName, fromName, toType, fromType);    // キャスト接続
+                if (CbFunc.IsActionType(toType))
+                    return true;    // Action型なら無条件
             }
 
-            if (toName == OBJECT_STR)
-                return true;    // 代入先が object なら無条件で代入可能
-
-            if (toName == VOID_STR)
-                return false;   // 接続先が void なら無条件で代入禁止
-
-            if (toName == fromName)
-                return true;    // 型が同じなら代入可能
-
-            if (toType.IsGenericType || fromType.IsGenericType)
-            {
-                // 一先ず、ジェネリックは完全一致だけ代入可能
-                // TODO 判定方法を模索する
-
-                if (toName == fromName)
-                    return true;
-
-                if (toType.IsAssignableFrom(fromType))
-                    return true;
-
-                return false;
-            }
-
-            if (fromName == OBJECT_STR)
-            {
-                // object からの代入ならキャストで許可
-
-                if (isCast)
-                {
-                    return IsCastAssignment(toName, fromName);
-                }
-                return false;
-            }
-
-            if (toName == STRING_STR || toName == TEXT_STR)
-            {
-                return true;    // 文字列型になら変換可能
-            }
-
-            bool isToBase = CbTypeNameList.ContainsValue(toName);
-            bool isFromBase = CbTypeNameList.ContainsValue(fromName);
-
-            if (isToBase != isFromBase)
-                return false;   // 片方だけが組み込み型の場合は、代入不可
-
-            if (!isToBase)
-            {
-                // 組み込み型でない場合は、クラスやインターフェイスとして判定する
-
-                if (toType.IsAssignableFrom(fromType))
-                    return true;
-
-                return false;
-            }
-
-            if (toName == BOOL_STR && isCast)
-            {
-                if (fromName == SBYTE_STR || fromName == SHORT_STR || fromName == INT_STR ||
-                    fromName == LONG_STR || fromName == USHORT_STR || fromName == UINT_STR ||
-                    fromName == ULONG_STR || fromName == DECIMAL_STR || fromName == BYTE_STR)
-                {
-                    return true;
-                }
-            }
-
-            bool isToEq = eqTypeList.Contains(toName);
-            bool isFromEq = eqTypeList.Contains(fromName);
-
-            if (isToEq != isFromEq)
-                return false;
-
-            if (isCast)
-            {
-                return IsCastAssignment(toName, fromName);
-            }
+            if (toType.IsAssignableFrom(fromType))
+                return true;    // 普通に代入可能
 
             return false;
-        }
-
-        /// <summary>
-        /// キャストを通しての代入の可否を判定します。
-        /// </summary>
-        /// <param name="toName">代入先の型名</param>
-        /// <param name="fromName">代入元の型名</param>
-        /// <returns></returns>
-        public static bool IsCastAssignment(string toName, string fromName)
-        {
-            if (fromName == OBJECT_STR)
-                return true;    // 接続元が object なら無条件でキャスト可能
-
-            if (fromName == DECIMAL_STR && toName == CHAR_STR)
-                return false;
-
-            if (fromName == CHAR_STR &&
-                (toName == DECIMAL_STR || toName == FLOAT_STR || toName == DOUBLE_STR))
-            {
-                return false;
-            }
-
-            if (fromName == ULONG_STR || fromName == UINT_STR || fromName == USHORT_STR || fromName == BYTE_STR)
-                return true;
-
-            if (toName == STRING_STR || toName == BOOL_STR || toName == OBJECT_STR)
-                return false;
-            if (fromName == STRING_STR || fromName == BOOL_STR || fromName == OBJECT_STR)
-                return false;
-
-            return true;
         }
 
         /// <summary>

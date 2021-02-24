@@ -105,7 +105,9 @@ namespace CapybaraVS.Script
             Type openedType = typeof(CbClass<>); //CapybaraVS.Script.CbClass`1
             Type cbClassType = openedType.MakeGenericType(type);
 
-            object result = cbClassType.InvokeMember("Create", BindingFlags.InvokeMethod,
+            object result = cbClassType.InvokeMember(
+                        nameof(CbClass<CbInt>.Create),//"Create",
+                        BindingFlags.InvokeMethod,
                         null, null, new object[] { name }) as ICbValue;
             return result as ICbValue;
         }

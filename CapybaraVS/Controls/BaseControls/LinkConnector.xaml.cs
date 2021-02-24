@@ -693,7 +693,7 @@ namespace CapybaraVS.Controls.BaseControls
         }
 
         /// <summary>
-        /// 管理している値がList<>なら指定要素数だけ増やす
+        /// 管理している値が ICollection<> なら指定要素数だけ増やす
         /// </summary>
         /// <param name="count">増やす要素の数</param>
         public void TryAddListNode(int count)

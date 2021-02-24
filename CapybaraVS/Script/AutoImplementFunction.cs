@@ -70,7 +70,7 @@ namespace CapybaraVS.Script
 
         public string ValueType { get; } = typeof(double).FullName;    // Dummy
 
-        public Func<Type, bool> IsAccept => null;
+        public Func<Type, bool>[] IsAccept => null;
 
         public Type ClassType { get; set; } = null;
 

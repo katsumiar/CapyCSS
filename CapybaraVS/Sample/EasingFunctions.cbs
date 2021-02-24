@@ -5,12 +5,12 @@
     <EnableInfo>false</EnableInfo>
     <CanvasScale>1</CanvasScale>
     <CanvasRenderTransform>
-      <M11>0.643355214426196</M11>
+      <M11>0.681963066458157</M11>
       <M12>0</M12>
       <M21>0</M21>
-      <M22>0.643355214426196</M22>
-      <OffsetX>82.80043380453506</OffsetX>
-      <OffsetY>-25.73420857704784</OffsetY>
+      <M22>0.681963066458157</M22>
+      <OffsetX>-50.95611981878547</OffsetX>
+      <OffsetY>-28.278522658326203</OffsetY>
     </CanvasRenderTransform>
   </WorkCanvas>
   <ImportClassModule />
@@ -27,7 +27,7 @@
           <AttachVariableIds />
           <AttachVariableId>0</AttachVariableId>
           <AssetValueType>System.Double</AssetValueType>
-          <RootConnector PointId="77">
+          <RootConnector PointId="113">
             <Caption>
               <LabelString>OutExp</LabelString>
             </Caption>
@@ -37,11 +37,11 @@
               <LinkList />
             </Connector>
             <Arguments>
-              <LinkConnector PointId="78">
+              <LinkConnector PointId="114">
                 <Value>0</Value>
                 <CastConnect>false</CastConnect>
                 <ParamInfo>
-                  <ParamName />
+                  <ParamName>t</ParamName>
                   <ParamNameLabelOverlap>t</ParamNameLabelOverlap>
                   <ParamNameLabel>
                     <LabelString>t</LabelString>
@@ -49,6 +49,7 @@
                 </ParamInfo>
                 <LinkConnectorList>
                   <List />
+                  <IsOpenList>true</IsOpenList>
                 </LinkConnectorList>
               </LinkConnector>
             </Arguments>
@@ -57,63 +58,13 @@
         </RootFunc>
       </MultiRootConnector>
     </Asset>
-    <Asset Id="332" X="2042.2577381532815" Y="386.62811137185656">
+    <Asset Id="337" X="440.19174224362513" Y="610.8069899077256">
       <MultiRootConnector>
-        <RootFunc AssetType="FuncType" AssetFuncType="Subroutine">
-          <AttachVariableIds />
-          <AttachVariableId>0</AttachVariableId>
-          <AssetValueType>System.Object</AssetValueType>
-          <RootConnector PointId="81">
-            <Caption>
-              <LabelString>Sequence</LabelString>
-            </Caption>
-            <Value>[object]&lt;null&gt;</Value>
-            <ForcedChecked>false</ForcedChecked>
-            <Connector>
-              <LinkList />
-            </Connector>
-            <Arguments>
-              <LinkConnector PointId="82">
-                <CastConnect>false</CastConnect>
-                <ParamInfo>
-                  <ParamName>call list</ParamName>
-                  <ParamNameLabelOverlap>call list</ParamNameLabelOverlap>
-                  <ParamNameLabel>
-                    <LabelString>call list</LabelString>
-                  </ParamNameLabel>
-                </ParamInfo>
-                <LinkConnectorList>
-                  <List>
-                    <LinkConnector PointId="84">
-                      <Value>[object]&lt;null&gt;</Value>
-                      <CastConnect>false</CastConnect>
-                      <ParamInfo>
-                        <ParamName />
-                        <ParamNameLabelOverlap />
-                        <ParamNameLabel>
-                          <LabelString />
-                        </ParamNameLabel>
-                      </ParamInfo>
-                      <LinkConnectorList>
-                        <List />
-                      </LinkConnectorList>
-                    </LinkConnector>
-                  </List>
-                </LinkConnectorList>
-              </LinkConnector>
-            </Arguments>
-            <IsPublicExecute>true</IsPublicExecute>
-          </RootConnector>
-        </RootFunc>
-      </MultiRootConnector>
-    </Asset>
-    <Asset Id="337" X="435.5286884084654" Y="366.7738392010399">
-      <MultiRootConnector>
-        <RootFunc AssetType="FuncType" AssetFuncType="CallerArgument">
+        <RootFunc AssetType="FuncType" AssetFuncType="CallerArguments">
           <AttachVariableIds />
           <AttachVariableId>0</AttachVariableId>
           <AssetValueType>System.Double</AssetValueType>
-          <RootConnector PointId="86">
+          <RootConnector PointId="117">
             <Caption>
               <LabelString>DummyArgument&lt;double&gt;</LabelString>
             </Caption>
@@ -121,18 +72,34 @@
             <ForcedChecked>false</ForcedChecked>
             <Connector>
               <LinkList>
-                <PointID>78</PointID>
-                <PointID>90</PointID>
-                <PointID>94</PointID>
-                <PointID>98</PointID>
-                <PointID>102</PointID>
-                <PointID>106</PointID>
-                <PointID>110</PointID>
                 <PointID>114</PointID>
-                <PointID>118</PointID>
+                <PointID>122</PointID>
+                <PointID>126</PointID>
+                <PointID>130</PointID>
+                <PointID>134</PointID>
+                <PointID>138</PointID>
+                <PointID>142</PointID>
+                <PointID>146</PointID>
+                <PointID>150</PointID>
               </LinkList>
             </Connector>
-            <Arguments />
+            <Arguments>
+              <LinkConnector PointId="118">
+                <Value>INDEX.ARG_1</Value>
+                <CastConnect>false</CastConnect>
+                <ParamInfo>
+                  <ParamName>select</ParamName>
+                  <ParamNameLabelOverlap>select</ParamNameLabelOverlap>
+                  <ParamNameLabel>
+                    <LabelString>select</LabelString>
+                  </ParamNameLabel>
+                </ParamInfo>
+                <LinkConnectorList>
+                  <List />
+                  <IsOpenList>true</IsOpenList>
+                </LinkConnectorList>
+              </LinkConnector>
+            </Arguments>
             <IsPublicExecute>false</IsPublicExecute>
           </RootConnector>
         </RootFunc>
@@ -144,7 +111,7 @@
           <AttachVariableIds />
           <AttachVariableId>0</AttachVariableId>
           <AssetValueType>System.Double</AssetValueType>
-          <RootConnector PointId="89">
+          <RootConnector PointId="121">
             <Caption>
               <LabelString>OutCirc</LabelString>
             </Caption>
@@ -154,11 +121,11 @@
               <LinkList />
             </Connector>
             <Arguments>
-              <LinkConnector PointId="90">
+              <LinkConnector PointId="122">
                 <Value>0</Value>
                 <CastConnect>false</CastConnect>
                 <ParamInfo>
-                  <ParamName />
+                  <ParamName>t</ParamName>
                   <ParamNameLabelOverlap>t</ParamNameLabelOverlap>
                   <ParamNameLabel>
                     <LabelString>t</LabelString>
@@ -166,6 +133,7 @@
                 </ParamInfo>
                 <LinkConnectorList>
                   <List />
+                  <IsOpenList>true</IsOpenList>
                 </LinkConnectorList>
               </LinkConnector>
             </Arguments>
@@ -180,7 +148,7 @@
           <AttachVariableIds />
           <AttachVariableId>0</AttachVariableId>
           <AssetValueType>System.Double</AssetValueType>
-          <RootConnector PointId="93">
+          <RootConnector PointId="125">
             <Caption>
               <LabelString>OutCubic</LabelString>
             </Caption>
@@ -190,11 +158,11 @@
               <LinkList />
             </Connector>
             <Arguments>
-              <LinkConnector PointId="94">
+              <LinkConnector PointId="126">
                 <Value>0</Value>
                 <CastConnect>false</CastConnect>
                 <ParamInfo>
-                  <ParamName />
+                  <ParamName>t</ParamName>
                   <ParamNameLabelOverlap>t</ParamNameLabelOverlap>
                   <ParamNameLabel>
                     <LabelString>t</LabelString>
@@ -202,6 +170,7 @@
                 </ParamInfo>
                 <LinkConnectorList>
                   <List />
+                  <IsOpenList>true</IsOpenList>
                 </LinkConnectorList>
               </LinkConnector>
             </Arguments>
@@ -216,7 +185,7 @@
           <AttachVariableIds />
           <AttachVariableId>0</AttachVariableId>
           <AssetValueType>System.Double</AssetValueType>
-          <RootConnector PointId="97">
+          <RootConnector PointId="129">
             <Caption>
               <LabelString>OutSine</LabelString>
             </Caption>
@@ -226,11 +195,11 @@
               <LinkList />
             </Connector>
             <Arguments>
-              <LinkConnector PointId="98">
+              <LinkConnector PointId="130">
                 <Value>0</Value>
                 <CastConnect>false</CastConnect>
                 <ParamInfo>
-                  <ParamName />
+                  <ParamName>t</ParamName>
                   <ParamNameLabelOverlap>t</ParamNameLabelOverlap>
                   <ParamNameLabel>
                     <LabelString>t</LabelString>
@@ -238,6 +207,7 @@
                 </ParamInfo>
                 <LinkConnectorList>
                   <List />
+                  <IsOpenList>true</IsOpenList>
                 </LinkConnectorList>
               </LinkConnector>
             </Arguments>
@@ -252,7 +222,7 @@
           <AttachVariableIds />
           <AttachVariableId>0</AttachVariableId>
           <AssetValueType>System.Double</AssetValueType>
-          <RootConnector PointId="101">
+          <RootConnector PointId="133">
             <Caption>
               <LabelString>InCubic</LabelString>
             </Caption>
@@ -262,11 +232,11 @@
               <LinkList />
             </Connector>
             <Arguments>
-              <LinkConnector PointId="102">
+              <LinkConnector PointId="134">
                 <Value>0</Value>
                 <CastConnect>false</CastConnect>
                 <ParamInfo>
-                  <ParamName />
+                  <ParamName>t</ParamName>
                   <ParamNameLabelOverlap>t</ParamNameLabelOverlap>
                   <ParamNameLabel>
                     <LabelString>t</LabelString>
@@ -274,6 +244,7 @@
                 </ParamInfo>
                 <LinkConnectorList>
                   <List />
+                  <IsOpenList>true</IsOpenList>
                 </LinkConnectorList>
               </LinkConnector>
             </Arguments>
@@ -288,7 +259,7 @@
           <AttachVariableIds />
           <AttachVariableId>0</AttachVariableId>
           <AssetValueType>System.Double</AssetValueType>
-          <RootConnector PointId="105">
+          <RootConnector PointId="137">
             <Caption>
               <LabelString>InOutSine</LabelString>
             </Caption>
@@ -296,15 +267,15 @@
             <ForcedChecked>false</ForcedChecked>
             <Connector>
               <LinkList>
-                <PointID>131</PointID>
+                <PointID>179</PointID>
               </LinkList>
             </Connector>
             <Arguments>
-              <LinkConnector PointId="106">
+              <LinkConnector PointId="138">
                 <Value>0</Value>
                 <CastConnect>false</CastConnect>
                 <ParamInfo>
-                  <ParamName />
+                  <ParamName>t</ParamName>
                   <ParamNameLabelOverlap>t</ParamNameLabelOverlap>
                   <ParamNameLabel>
                     <LabelString>t</LabelString>
@@ -312,6 +283,7 @@
                 </ParamInfo>
                 <LinkConnectorList>
                   <List />
+                  <IsOpenList>true</IsOpenList>
                 </LinkConnectorList>
               </LinkConnector>
             </Arguments>
@@ -326,7 +298,7 @@
           <AttachVariableIds />
           <AttachVariableId>0</AttachVariableId>
           <AssetValueType>System.Double</AssetValueType>
-          <RootConnector PointId="109">
+          <RootConnector PointId="141">
             <Caption>
               <LabelString>Linear</LabelString>
             </Caption>
@@ -336,11 +308,11 @@
               <LinkList />
             </Connector>
             <Arguments>
-              <LinkConnector PointId="110">
+              <LinkConnector PointId="142">
                 <Value>0</Value>
                 <CastConnect>false</CastConnect>
                 <ParamInfo>
-                  <ParamName />
+                  <ParamName>t</ParamName>
                   <ParamNameLabelOverlap>t</ParamNameLabelOverlap>
                   <ParamNameLabel>
                     <LabelString>t</LabelString>
@@ -348,6 +320,7 @@
                 </ParamInfo>
                 <LinkConnectorList>
                   <List />
+                  <IsOpenList>true</IsOpenList>
                 </LinkConnectorList>
               </LinkConnector>
             </Arguments>
@@ -362,7 +335,7 @@
           <AttachVariableIds />
           <AttachVariableId>0</AttachVariableId>
           <AssetValueType>System.Double</AssetValueType>
-          <RootConnector PointId="113">
+          <RootConnector PointId="145">
             <Caption>
               <LabelString>InQuad</LabelString>
             </Caption>
@@ -372,11 +345,11 @@
               <LinkList />
             </Connector>
             <Arguments>
-              <LinkConnector PointId="114">
+              <LinkConnector PointId="146">
                 <Value>0</Value>
                 <CastConnect>false</CastConnect>
                 <ParamInfo>
-                  <ParamName />
+                  <ParamName>t</ParamName>
                   <ParamNameLabelOverlap>t</ParamNameLabelOverlap>
                   <ParamNameLabel>
                     <LabelString>t</LabelString>
@@ -384,6 +357,7 @@
                 </ParamInfo>
                 <LinkConnectorList>
                   <List />
+                  <IsOpenList>true</IsOpenList>
                 </LinkConnectorList>
               </LinkConnector>
             </Arguments>
@@ -398,7 +372,7 @@
           <AttachVariableIds />
           <AttachVariableId>0</AttachVariableId>
           <AssetValueType>System.Double</AssetValueType>
-          <RootConnector PointId="117">
+          <RootConnector PointId="149">
             <Caption>
               <LabelString>OutQuad</LabelString>
             </Caption>
@@ -408,11 +382,11 @@
               <LinkList />
             </Connector>
             <Arguments>
-              <LinkConnector PointId="118">
+              <LinkConnector PointId="150">
                 <Value>0</Value>
                 <CastConnect>false</CastConnect>
                 <ParamInfo>
-                  <ParamName />
+                  <ParamName>t</ParamName>
                   <ParamNameLabelOverlap>t</ParamNameLabelOverlap>
                   <ParamNameLabel>
                     <LabelString>t</LabelString>
@@ -420,6 +394,7 @@
                 </ParamInfo>
                 <LinkConnectorList>
                   <List />
+                  <IsOpenList>true</IsOpenList>
                 </LinkConnectorList>
               </LinkConnector>
             </Arguments>
@@ -428,25 +403,25 @@
         </RootFunc>
       </MultiRootConnector>
     </Asset>
-    <Asset Id="379" X="1447.3748478484622" Y="472.71095487809595">
+    <Asset Id="384" X="1461.4003976543847" Y="568.5416087025567">
       <MultiRootConnector>
-        <RootFunc AssetType="FuncType" AssetFuncType="CapybaraVS.Script.Lib.Graph.CreatePlotInfo#_List&lt;double&gt;_DrawType">
+        <RootFunc AssetType="FuncType" AssetFuncType="CapybaraVS.Script.Lib.Graph.CreatePlotInfo#_IEnumerable&lt;double&gt;_DrawType">
           <AttachVariableIds />
           <AttachVariableId>0</AttachVariableId>
           <AssetValueType>System.Double</AssetValueType>
-          <RootConnector PointId="122">
+          <RootConnector PointId="154">
             <Caption>
               <LabelString>CreatePlotInfo</LabelString>
             </Caption>
-            <Value>[PlotInfo]&lt;null&gt;</Value>
+            <Value>[PlotInfo]</Value>
             <ForcedChecked>false</ForcedChecked>
             <Connector>
               <LinkList>
-                <PointID>141</PointID>
+                <PointID>165</PointID>
               </LinkList>
             </Connector>
             <Arguments>
-              <LinkConnector PointId="123">
+              <LinkConnector PointId="155">
                 <CastConnect>false</CastConnect>
                 <ParamInfo>
                   <ParamName>list</ParamName>
@@ -457,9 +432,10 @@
                 </ParamInfo>
                 <LinkConnectorList>
                   <List />
+                  <IsOpenList>false</IsOpenList>
                 </LinkConnectorList>
               </LinkConnector>
-              <LinkConnector PointId="124">
+              <LinkConnector PointId="156">
                 <Value>DrawType.Line</Value>
                 <CastConnect>false</CastConnect>
                 <ParamInfo>
@@ -471,6 +447,7 @@
                 </ParamInfo>
                 <LinkConnectorList>
                   <List />
+                  <IsOpenList>true</IsOpenList>
                 </LinkConnectorList>
               </LinkConnector>
             </Arguments>
@@ -479,78 +456,13 @@
         </RootFunc>
       </MultiRootConnector>
     </Asset>
-    <Asset Id="381" X="1093.904713837758" Y="546.0112130830809">
+    <Asset Id="385" X="1829.7816506319937" Y="486.16099094807043">
       <MultiRootConnector>
-        <RootFunc AssetType="FuncType" AssetFuncType="CapybaraVS.Script.Lib.Graph.MakePlotList#_int_Func&lt;double,double&gt;_double">
+        <RootFunc AssetType="FuncType" AssetFuncType="CapybaraVS.Script.Lib.Graph.OutPlot#_string_ICollection&lt;PlotInfo&gt;_ICollection&lt;double&gt;">
           <AttachVariableIds />
           <AttachVariableId>0</AttachVariableId>
           <AssetValueType>System.Double</AssetValueType>
-          <RootConnector PointId="129">
-            <Caption>
-              <LabelString>MakePlotList</LabelString>
-            </Caption>
-            <ForcedChecked>false</ForcedChecked>
-            <Connector>
-              <LinkList>
-                <PointID>123</PointID>
-              </LinkList>
-            </Connector>
-            <Arguments>
-              <LinkConnector PointId="130">
-                <Value>2</Value>
-                <CastConnect>false</CastConnect>
-                <ParamInfo>
-                  <ParamName>count</ParamName>
-                  <ParamNameLabelOverlap>count</ParamNameLabelOverlap>
-                  <ParamNameLabel>
-                    <LabelString>count</LabelString>
-                  </ParamNameLabel>
-                </ParamInfo>
-                <LinkConnectorList>
-                  <List />
-                </LinkConnectorList>
-              </LinkConnector>
-              <LinkConnector PointId="131">
-                <Value>[Func&lt;double, double&gt;()]&lt;null&gt;</Value>
-                <CastConnect>false</CastConnect>
-                <ParamInfo>
-                  <ParamName />
-                  <ParamNameLabelOverlap>func</ParamNameLabelOverlap>
-                  <ParamNameLabel>
-                    <LabelString>func</LabelString>
-                  </ParamNameLabel>
-                </ParamInfo>
-                <LinkConnectorList>
-                  <List />
-                </LinkConnectorList>
-              </LinkConnector>
-              <LinkConnector PointId="132">
-                <Value>0.05</Value>
-                <CastConnect>false</CastConnect>
-                <ParamInfo>
-                  <ParamName>step</ParamName>
-                  <ParamNameLabelOverlap>step</ParamNameLabelOverlap>
-                  <ParamNameLabel>
-                    <LabelString>step</LabelString>
-                  </ParamNameLabel>
-                </ParamInfo>
-                <LinkConnectorList>
-                  <List />
-                </LinkConnectorList>
-              </LinkConnector>
-            </Arguments>
-            <IsPublicExecute>false</IsPublicExecute>
-          </RootConnector>
-        </RootFunc>
-      </MultiRootConnector>
-    </Asset>
-    <Asset Id="382" X="1737.1441038022904" Y="417.7998071944404">
-      <MultiRootConnector>
-        <RootFunc AssetType="FuncType" AssetFuncType="CapybaraVS.Script.Lib.Graph.OutPlot#_string_List&lt;PlotInfo&gt;_List&lt;double&gt;">
-          <AttachVariableIds />
-          <AttachVariableId>0</AttachVariableId>
-          <AssetValueType>System.Double</AssetValueType>
-          <RootConnector PointId="137">
+          <RootConnector PointId="161">
             <Caption>
               <LabelString>OutPlot</LabelString>
             </Caption>
@@ -558,11 +470,11 @@
             <ForcedChecked>false</ForcedChecked>
             <Connector>
               <LinkList>
-                <PointID>84</PointID>
+                <PointID>172</PointID>
               </LinkList>
             </Connector>
             <Arguments>
-              <LinkConnector PointId="138">
+              <LinkConnector PointId="162">
                 <Value />
                 <CastConnect>false</CastConnect>
                 <ParamInfo>
@@ -574,9 +486,10 @@
                 </ParamInfo>
                 <LinkConnectorList>
                   <List />
+                  <IsOpenList>true</IsOpenList>
                 </LinkConnectorList>
               </LinkConnector>
-              <LinkConnector PointId="139">
+              <LinkConnector PointId="163">
                 <CastConnect>false</CastConnect>
                 <ParamInfo>
                   <ParamName>list</ParamName>
@@ -587,24 +500,26 @@
                 </ParamInfo>
                 <LinkConnectorList>
                   <List>
-                    <LinkConnector PointId="141">
+                    <LinkConnector PointId="165">
                       <Value>[PlotInfo]&lt;null&gt;</Value>
                       <CastConnect>false</CastConnect>
                       <ParamInfo>
-                        <ParamName> </ParamName>
+                        <ParamName />
                         <ParamNameLabelOverlap />
                         <ParamNameLabel>
-                          <LabelString> </LabelString>
+                          <LabelString />
                         </ParamNameLabel>
                       </ParamInfo>
                       <LinkConnectorList>
                         <List />
+                        <IsOpenList>true</IsOpenList>
                       </LinkConnectorList>
                     </LinkConnector>
                   </List>
+                  <IsOpenList>true</IsOpenList>
                 </LinkConnectorList>
               </LinkConnector>
-              <LinkConnector PointId="142">
+              <LinkConnector PointId="166">
                 <CastConnect>false</CastConnect>
                 <ParamInfo>
                   <ParamName>guideLines</ParamName>
@@ -615,6 +530,127 @@
                 </ParamInfo>
                 <LinkConnectorList>
                   <List />
+                  <IsOpenList>true</IsOpenList>
+                </LinkConnectorList>
+              </LinkConnector>
+            </Arguments>
+            <IsPublicExecute>false</IsPublicExecute>
+          </RootConnector>
+        </RootFunc>
+      </MultiRootConnector>
+    </Asset>
+    <Asset Id="386" X="2215.260767671854" Y="501.7045037319356">
+      <MultiRootConnector>
+        <RootFunc AssetType="FuncType" AssetFuncType="Subroutine">
+          <AttachVariableIds />
+          <AttachVariableId>0</AttachVariableId>
+          <AssetValueType>System.Collections.Generic.ICollection`1[[System.Object, System.Private.CoreLib, Version=5.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]</AssetValueType>
+          <RootConnector PointId="169">
+            <Caption>
+              <LabelString>Sequence</LabelString>
+            </Caption>
+            <Value>void</Value>
+            <ForcedChecked>false</ForcedChecked>
+            <Connector>
+              <LinkList />
+            </Connector>
+            <Arguments>
+              <LinkConnector PointId="170">
+                <CastConnect>false</CastConnect>
+                <ParamInfo>
+                  <ParamName>call list</ParamName>
+                  <ParamNameLabelOverlap>call list</ParamNameLabelOverlap>
+                  <ParamNameLabel>
+                    <LabelString>call list</LabelString>
+                  </ParamNameLabel>
+                </ParamInfo>
+                <LinkConnectorList>
+                  <List>
+                    <LinkConnector PointId="172">
+                      <Value>[object]&lt;null&gt;</Value>
+                      <CastConnect>false</CastConnect>
+                      <ParamInfo>
+                        <ParamName> </ParamName>
+                        <ParamNameLabelOverlap />
+                        <ParamNameLabel>
+                          <LabelString> </LabelString>
+                        </ParamNameLabel>
+                      </ParamInfo>
+                      <LinkConnectorList>
+                        <List />
+                        <IsOpenList>true</IsOpenList>
+                      </LinkConnectorList>
+                    </LinkConnector>
+                  </List>
+                  <IsOpenList>false</IsOpenList>
+                </LinkConnectorList>
+              </LinkConnector>
+            </Arguments>
+            <IsPublicExecute>true</IsPublicExecute>
+          </RootConnector>
+        </RootFunc>
+      </MultiRootConnector>
+    </Asset>
+    <Asset Id="387" X="1081.3763003258714" Y="604.672508199798">
+      <MultiRootConnector>
+        <RootFunc AssetType="FuncType" AssetFuncType="CapybaraVS.Script.Lib.Graph.MakePlotList#_int_Func&lt;double,double&gt;_double">
+          <AttachVariableIds />
+          <AttachVariableId>0</AttachVariableId>
+          <AssetValueType>System.Double</AssetValueType>
+          <RootConnector PointId="177">
+            <Caption>
+              <LabelString>MakePlotList</LabelString>
+            </Caption>
+            <ForcedChecked>false</ForcedChecked>
+            <Connector>
+              <LinkList>
+                <PointID>155</PointID>
+              </LinkList>
+            </Connector>
+            <Arguments>
+              <LinkConnector PointId="178">
+                <Value>2</Value>
+                <CastConnect>false</CastConnect>
+                <ParamInfo>
+                  <ParamName>count</ParamName>
+                  <ParamNameLabelOverlap>count</ParamNameLabelOverlap>
+                  <ParamNameLabel>
+                    <LabelString>count</LabelString>
+                  </ParamNameLabel>
+                </ParamInfo>
+                <LinkConnectorList>
+                  <List />
+                  <IsOpenList>true</IsOpenList>
+                </LinkConnectorList>
+              </LinkConnector>
+              <LinkConnector PointId="179">
+                <Value>[Func&lt;double, double&gt;()]&lt;null&gt;</Value>
+                <CastConnect>false</CastConnect>
+                <ParamInfo>
+                  <ParamName>func</ParamName>
+                  <ParamNameLabelOverlap>func</ParamNameLabelOverlap>
+                  <ParamNameLabel>
+                    <LabelString>func</LabelString>
+                  </ParamNameLabel>
+                </ParamInfo>
+                <LinkConnectorList>
+                  <List />
+                  <IsOpenList>true</IsOpenList>
+                </LinkConnectorList>
+              </LinkConnector>
+              <LinkConnector PointId="180">
+                <Value>0.05</Value>
+                <CastConnect>false</CastConnect>
+                <ParamInfo>
+                  <ParamName>step</ParamName>
+                  <ParamNameLabelOverlap>step</ParamNameLabelOverlap>
+                  <ParamNameLabel>
+                    <LabelString>step</LabelString>
+                  </ParamNameLabel>
+                </ParamInfo>
+                <LinkConnectorList>
+                  <List />
+                  <IsOpenList>true</IsOpenList>
                 </LinkConnectorList>
               </LinkConnector>
             </Arguments>

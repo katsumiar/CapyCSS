@@ -16,9 +16,7 @@ namespace CapybaraVS.Script.Lib
         }
 
         //------------------------------------------------------------------
-        [ScriptMethod("Net" + ".Web" + "." + nameof(GetContents), "",
-            "RS=>Ip_GetContents"//"HTTPのコンテンツを参照します。"
-            )]
+        [ScriptMethod("Net" + ".Web" + "." + nameof(GetContents), "", "RS=>Ip_GetContents")]
         public static string GetContents(string address, double timeout = 5000)
         {
             var client = new HttpClient() { Timeout = TimeSpan.FromMilliseconds(timeout) };
@@ -28,9 +26,7 @@ namespace CapybaraVS.Script.Lib
         }
 
         //------------------------------------------------------------------
-        [ScriptMethod("Net" + ".Web" + "." + nameof(GetHeaders), "",
-            "RS=>Ip_GetHeaders"//"HTTPのヘッダーを参照します。"
-            )]
+        [ScriptMethod("Net" + ".Web" + "." + nameof(GetHeaders), "", "RS=>Ip_GetHeaders")]
         public static string GetHeaders(string address, double timeout = 5000)
         {
             var client = new HttpClient() { Timeout = TimeSpan.FromMilliseconds(timeout) };
@@ -40,9 +36,7 @@ namespace CapybaraVS.Script.Lib
         }
 
         //------------------------------------------------------------------
-        [ScriptMethod("Net" + ".Web." + nameof(WebAPI), "",
-            "RS=>Ip_WebAPI"
-            )]
+        [ScriptMethod("Net" + ".Web." + nameof(WebAPI), "", "RS=>Ip_WebAPI")]
         public static HttpWebResponse WebAPI(string command, string account, string passwd, WebMethod method = WebMethod.GET)
         {
             WebRequest req = WebRequest.Create(command);
@@ -61,21 +55,17 @@ namespace CapybaraVS.Script.Lib
         }
 
         //------------------------------------------------------------------
-        [ScriptMethod("Net" + "." + nameof(GetMyHostName), "",
-            "RS=>Ip_GetMyHostName"//"ホスト名を参照します。"
-            )]
+        [ScriptMethod("Net" + "." + nameof(GetMyHostName), "", "RS=>Ip_GetMyHostName")]
         public static string GetMyHostName()
         {
             return Dns.GetHostName();
         }
 
         //------------------------------------------------------------------
-        [ScriptMethod("Net" + "." + nameof(GetMyHostAddress), "",
-            "RS=>Ip_GetMyHostAddress"//"ホストアドレスを参照します。"
-            )]
-        public static List<string> GetMyHostAddress()
+        [ScriptMethod("Net" + "." + nameof(GetMyHostAddress), "", "RS=>Ip_GetMyHostAddress")]
+        public static ICollection<string> GetMyHostAddress()
         {
-            List<string> addressList = new List<string>();
+            var addressList = new List<string>();
             foreach (var node in Dns.GetHostAddresses(Dns.GetHostName()))
             {
                 addressList.Add(node.ToString());
@@ -84,12 +74,10 @@ namespace CapybaraVS.Script.Lib
         }
 
         //------------------------------------------------------------------
-        [ScriptMethod("Net" + "." + nameof(GetHostEntry), "",
-            "RS=>Ip_GetHostEntry"//"ホスト名からアドレス情報を参照します。"
-            )]
-        public static List<string> GetHostEntry(string hostname)
+        [ScriptMethod("Net" + "." + nameof(GetHostEntry), "", "RS=>Ip_GetHostEntry")]
+        public static ICollection<string> GetHostEntry(string hostname)
         {
-            List<string> ipAddressList = new List<string>();
+            var ipAddressList = new List<string>();
             foreach (var node in Dns.GetHostEntry(hostname).AddressList)
             {
                 ipAddressList.Add(node.ToString());
@@ -98,9 +86,7 @@ namespace CapybaraVS.Script.Lib
         }
 
         //------------------------------------------------------------------
-        [ScriptMethod("Net" + "." + nameof(GetHostName), "",
-            "RS=>Ip_GetHostName"//"アドレスからホスト名を参照します。"
-            )]
+        [ScriptMethod("Net" + "." + nameof(GetHostName), "", "RS=>Ip_GetHostName")]
         public static string GetHostName(string address)
         {
             IPHostEntry hostInfo = Dns.GetHostEntry(address);

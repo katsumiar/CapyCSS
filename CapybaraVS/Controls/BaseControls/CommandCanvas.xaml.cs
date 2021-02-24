@@ -897,8 +897,17 @@ namespace CapybaraVS.Controls.BaseControls
         /// <summary>
         /// メニューの有効無効判定イベントを登録します。
         /// </summary>
-        private Func<Type, bool> _CanTypeMenuExecuteEvent = null;
-        
+        private Func<Type, bool>[] _CanTypeMenuExecuteEvent = null;
+        private int _CanTypeMenuExecuteEventIndex = 0;
+        private Func<Type, bool> GetCanTypeMenuExecuteEvent()
+        {
+            if (_CanTypeMenuExecuteEventIndex >= _CanTypeMenuExecuteEvent.Length)
+            {
+                return (n) => true;
+            }
+            return _CanTypeMenuExecuteEvent[_CanTypeMenuExecuteEventIndex];
+        }
+
         /// <summary>
         /// メニューの有効無効判定イベントを呼び出します。
         /// </summary>
@@ -906,17 +915,18 @@ namespace CapybaraVS.Controls.BaseControls
         {
             if (_CanTypeMenuExecuteEvent is null)
                 return true;
-            return _CanTypeMenuExecuteEvent(type);
+            return GetCanTypeMenuExecuteEvent()(type);
         }
 
         /// <summary>
         /// ユーザーに型の指定を要求します。
         /// </summary>
         /// <returns>型名</returns>
-        public string RequestTypeString(Func<Type, bool> isAccept)
+        public string RequestTypeString(Func<Type, bool>[] isAccept)
         {
             TypeMenuWindow.Message = "";
             _CanTypeMenuExecuteEvent = isAccept;
+            _CanTypeMenuExecuteEventIndex = 0;
             TypeMenu.RefreshItem();
             string ret = null;
             try
@@ -948,6 +958,8 @@ namespace CapybaraVS.Controls.BaseControls
             {
                 return null;
             }
+            _CanTypeMenuExecuteEventIndex++;
+            TypeMenu.RefreshItem();
 
             Type type = CbST.GetTypeEx(SelectType);
             if (type is null)
@@ -973,9 +985,11 @@ namespace CapybaraVS.Controls.BaseControls
         /// </summary>
         /// <param name="genericTypeName">ジェネリック型の型名</param>
         /// <returns>型名（ジェネリック型でない場合はそのままの型名）</returns>
-        public string RequestGenericTypeName(string genericTypeName, Func<Type, bool> isAccept)
+        public string RequestGenericTypeName(string genericTypeName, Func<Type, bool>[] isAccept)
         {
             _CanTypeMenuExecuteEvent = isAccept;
+            _CanTypeMenuExecuteEventIndex = 0;
+            TypeMenu.RefreshItem();
             string ret = null;
             try
             {

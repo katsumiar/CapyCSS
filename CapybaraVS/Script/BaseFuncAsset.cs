@@ -94,7 +94,6 @@ namespace CapybaraVS.Script
                     CreateAssetMenu(ownerCommandCanvas, mathNode, new Inc());
                     CreateAssetMenu(ownerCommandCanvas, mathNode, new Dec());
                     CreateAssetMenu(ownerCommandCanvas, mathNode, new Sum());
-                    CreateAssetMenu(ownerCommandCanvas, mathNode, new Sum_Func());
                     CreateAssetMenu(ownerCommandCanvas, mathNode, new Sub());
                     CreateAssetMenu(ownerCommandCanvas, mathNode, new Mul());
                     CreateAssetMenu(ownerCommandCanvas, mathNode, new Div());
@@ -288,7 +287,7 @@ namespace CapybaraVS.Script
 
         public string ValueType { get; } = CbSTUtils.FREE_TYPE_STR;
 
-        public Func<Type, bool> IsAccept => (t) => CbScript.AcceptAll(t);
+        public Func<Type, bool>[] IsAccept => new Func<Type, bool>[] { (t) => !t.IsAbstract };
     }
 
     //-----------------------------------------------------------------
@@ -300,7 +299,9 @@ namespace CapybaraVS.Script
 
         public string ValueType { get; } = CbSTUtils.FREE_LIST_TYPE_STR;
 
-        public Func<Type, bool> IsAccept => (t) => CbScript.AcceptAll(t);
+        public Func<Type, bool>[] IsAccept => new Func<Type, bool>[] {
+            (t) => CbScript.AcceptAll(t)
+        };
     }
 
     //-----------------------------------------------------------------
@@ -312,95 +313,32 @@ namespace CapybaraVS.Script
 
         public string MenuTitle => AssetCode;
 
-        public string ValueType { get; } = CbSTUtils.FREE_TYPE_STR;
+        public string ValueType { get; } = CbSTUtils.FREE_LIST_INTERFACE_TYPE_STR;
 
-        public Func<Type, bool> IsAccept => (t) => CbScript.IsValueType(t) || t == typeof(string);
+        public Func<Type, bool>[] IsAccept => new Func<Type, bool>[] {
+            (t) => CbScript.IsValueType(t) || t == typeof(string)
+        };
 
         public bool ImplAsset(MultiRootConnector col, bool isReBuildMode = false)
         {
             col.MakeFunction(
                 MenuTitle,
                 HelpText,
-                CbST.CbCreateTF(col.SelectedVariableType[0]),  // 返し値の型
+                CbST.CbCreateTF(col.SelectedVariableType[0].GenericTypeArguments[0]),  // 返し値の型
                 new List<ICbValue>()  // 引数
                 {
-                    CbList.Create(col.SelectedVariableType[0], "sample"),
+                    CbST.CbCreate(col.SelectedVariableType[0], "sample"),
                 },
                 new Func<List<ICbValue>, DummyArgumentsStack, ICbValue>(
                     (argument, cagt) =>
                     {
-                        var ret = CbST.CbCreate(col.SelectedVariableType[0]);    // 返し値
+                        var ret = CbST.CbCreate(col.SelectedVariableType[0].GenericTypeArguments[0]);    // 返し値
                         try
                         {
                             TryArgListProc(argument[0],
                                 (valueData) =>
                                 {
                                     ret.Add(valueData);
-                                });
-                        }
-                        catch (Exception ex)
-                        {
-                            col.ExceptionFunc(ret, ex);
-                        }
-                        return ret;
-                    }
-                    )
-                );
-
-            return true;
-        }
-    }
-
-    //-----------------------------------------------------------------
-    class Sum_Func : FuncAssetSub, IFuncAssetWithArgumentDef
-    {
-        public string AssetCode => nameof(Sum_Func);
-
-        public string HelpText { get; } = Language.GetInstance["Sum_Func"];
-
-        public string MenuTitle => "Sum<Func>";
-
-        public string ValueType { get; } = CbSTUtils.FREE_TYPE_STR;
-
-        public Func<Type, bool> IsAccept => (t) => CbScript.IsValueType(t) || t == typeof(string);
-
-        public bool ImplAsset(MultiRootConnector col, bool isReBuildMode = false)
-        {
-            // 仮引数コントロールを作成
-            DummyArgumentsControl dummyArgumentsControl = new DummyArgumentsControl(col);
-
-            col.MakeFunction(
-                $"Sum Func<{col.SelectedVariableTypeName[0]},{col.SelectedVariableTypeName[0]}>.Invoke",
-                HelpText,
-                CbST.CbCreateTF(col.SelectedVariableType[0]),  // 返し値の型
-                new List<ICbValue>()  // 引数
-                {
-                    CbST.CbCreate(col.SelectedVariableType[0], "base"),
-                    CbList.Create(typeof(Func<,>).MakeGenericType(
-                        col.SelectedVariableType[0],
-                        col.SelectedVariableType[0]),
-                        "sample"),
-                },
-                new Func<List<ICbValue>, DummyArgumentsStack, ICbValue>(
-                    (argument, cagt) =>
-                    {
-                        var ret = CbST.CbCreate(col.SelectedVariableType[0]);    // 返し値
-                        if (dummyArgumentsControl.IsInvalid(cagt))
-                            return ret; // 実行環境が有効でない
-
-                        try
-                        {
-                            ret.Set(argument[0]);
-
-                            TryArgListProc(argument[1],
-                                (valueData) =>
-                                {
-                                    dummyArgumentsControl.Enable(cagt, ret.Data);    // 仮引数に引数を登録
-
-                                    if (CanCallBack(valueData))
-                                        ret.Add(CallEvent(valueData, cagt));
-
-                                    dummyArgumentsControl.Invalidated(cagt);    // 仮引数後処理
                                 });
                         }
                         catch (Exception ex)
@@ -425,24 +363,26 @@ namespace CapybaraVS.Script
 
         public string MenuTitle => "Sequence";
 
-        public string ValueType { get; } = CbSTUtils.FREE_TYPE_STR;
+        public string ValueType { get; } = CbSTUtils.FREE_LIST_INTERFACE_TYPE_STR;
 
-        public Func<Type, bool> IsAccept => (t) => CbScript.AcceptAll(t);
+        public Func<Type, bool>[] IsAccept => new Func<Type, bool>[] { 
+            (t) => CbScript.AcceptAll(t)
+        };
 
         public bool ImplAsset(MultiRootConnector col, bool isReBuildMode = false)
         {
             col.MakeFunction(
                 MenuTitle,
                 HelpText,
-                CbST.CbCreateTF(col.SelectedVariableType[0]),  // 返し値の型
+                CbST.CbCreateTF(col.SelectedVariableType[0].GenericTypeArguments[0]),  // 返し値の型
                 new List<ICbValue>()  // 引数
                 {
-                    CbList.Create(col.SelectedVariableType[0], "call list"),
+                    CbST.CbCreate(col.SelectedVariableType[0], "call list"),
                 },
                 new Func<List<ICbValue>, DummyArgumentsStack, ICbValue>(
                     (argument, cagt) =>
                     {
-                        var ret = CbST.CbCreate(col.SelectedVariableType[0]);    // 返し値
+                        var ret = CbST.CbCreate(col.SelectedVariableType[0].GenericTypeArguments[0]);    // 返し値
                         try
                         {
                             var argList = GetArgumentList(argument, 0);
@@ -485,7 +425,7 @@ namespace CapybaraVS.Script
 
         public string ValueType { get; } = CbSTUtils.FREE_TYPE_STR;
 
-        public Func<Type, bool> IsAccept => (t) => CbScript.IsValueType(t);
+        public Func<Type, bool>[] IsAccept => new Func<Type, bool>[] { (t) => CbScript.IsValueType(t) };
 
         public bool ImplAsset(MultiRootConnector col, bool isReBuildMode = false)
         {
@@ -530,7 +470,7 @@ namespace CapybaraVS.Script
 
         public string ValueType { get; } = CbSTUtils.FREE_TYPE_STR;
 
-        public Func<Type, bool> IsAccept => (t) => CbScript.IsValueType(t);
+        public Func<Type, bool>[] IsAccept => new Func<Type, bool>[] { (t) => CbScript.IsValueType(t) };
 
         public bool ImplAsset(MultiRootConnector col, bool isReBuildMode = false)
         {
@@ -575,7 +515,8 @@ namespace CapybaraVS.Script
 
         public string ValueType { get; } = CbSTUtils.FREE_TYPE_STR;
 
-        public Func<Type, bool> IsAccept => (t) => CbScript.IsValueType(t);
+        public Func<Type, bool>[] IsAccept => new Func<Type, bool>[] { (t) => CbScript.IsValueType(t) };
+
 
         public bool ImplAsset(MultiRootConnector col, bool isReBuildMode = false)
         {
@@ -621,7 +562,7 @@ namespace CapybaraVS.Script
 
         public string ValueType { get; } = CbSTUtils.FREE_TYPE_STR;
 
-        public Func<Type, bool> IsAccept => (t) => CbScript.AcceptAll(t);
+        public Func<Type, bool>[] IsAccept => new Func<Type, bool>[] { (t) => CbScript.AcceptAll(t) };
 
         public bool ImplAsset(MultiRootConnector col, bool isReBuildMode = false)
         {
@@ -668,7 +609,8 @@ namespace CapybaraVS.Script
 
         public string ValueType { get; } = CbSTUtils.FREE_TYPE_STR;
 
-        public Func<Type, bool> IsAccept => (t) => CbScript.AcceptAll(t);
+        public Func<Type, bool>[] IsAccept => new Func<Type, bool>[] { (t) => CbScript.AcceptAll(t) };
+
 
         public bool ImplAsset(MultiRootConnector col, bool isReBuildMode = false)
         {
@@ -715,7 +657,8 @@ namespace CapybaraVS.Script
 
         public string ValueType { get; } = CbSTUtils.FREE_TYPE_STR;
 
-        public Func<Type, bool> IsAccept => (t) => CbScript.AcceptAll(t);
+        public Func<Type, bool>[] IsAccept => new Func<Type, bool>[] { (t) => CbScript.AcceptAll(t) };
+
 
         public bool ImplAsset(MultiRootConnector col, bool isReBuildMode = false)
         {
@@ -762,7 +705,8 @@ namespace CapybaraVS.Script
 
         public string ValueType { get; } = CbSTUtils.FREE_TYPE_STR;
 
-        public Func<Type, bool> IsAccept => (t) => CbScript.AcceptAll(t);
+        public Func<Type, bool>[] IsAccept => new Func<Type, bool>[] { (t) => CbScript.AcceptAll(t) };
+
 
         public bool ImplAsset(MultiRootConnector col, bool isReBuildMode = false)
         {
@@ -809,7 +753,8 @@ namespace CapybaraVS.Script
 
         public string ValueType { get; } = CbSTUtils.FREE_TYPE_STR;
 
-        public Func<Type, bool> IsAccept => (t) => CbScript.AcceptAll(t);
+        public Func<Type, bool>[] IsAccept => new Func<Type, bool>[] { (t) => CbScript.AcceptAll(t) };
+
 
         public bool ImplAsset(MultiRootConnector col, bool isReBuildMode = false)
         {
@@ -854,9 +799,11 @@ namespace CapybaraVS.Script
 
         public string MenuTitle => AssetCode;
 
-        public string ValueType { get; } = typeof(bool).FullName;
+        public string ValueType { get; } = typeof(ICollection<bool>).FullName;
 
-        public Func<Type, bool> IsAccept => (t) => CbScript.AcceptAll(t);
+        public Func<Type, bool>[] IsAccept => new Func<Type, bool>[] { 
+            (t) => t == typeof(bool)    // ダミー
+        };
 
         public bool ImplAsset(MultiRootConnector col, bool isReBuildMode = false)
         {
@@ -866,7 +813,7 @@ namespace CapybaraVS.Script
                 CbST.CbCreateTF<bool>(),  // 返し値の型
                 new List<ICbValue>()          // 引数
                 {
-                    CbList.Create(typeof(bool), "sample"),
+                    CbST.CbCreate(col.SelectedVariableType[0], "sample"),
                 },
                 new Func<List<ICbValue>, DummyArgumentsStack, ICbValue>(
                     (argument, cagt) =>
@@ -905,9 +852,11 @@ namespace CapybaraVS.Script
 
         public string MenuTitle => AssetCode;
 
-        public string ValueType { get; } = typeof(bool).FullName;
+        public string ValueType { get; } = typeof(ICollection<bool>).FullName;
 
-        public Func<Type, bool> IsAccept => (t) => CbScript.AcceptAll(t);
+        public Func<Type, bool>[] IsAccept => new Func<Type, bool>[] {
+            (t) => t == typeof(bool)    // ダミー
+        };
 
         public bool ImplAsset(MultiRootConnector col, bool isReBuildMode = false)
         {
@@ -917,7 +866,7 @@ namespace CapybaraVS.Script
                 CbST.CbCreateTF<bool>(),  // 返し値の型
                 new List<ICbValue>()          // 引数
                 {
-                    CbList.Create(typeof(bool), "sample"),
+                    CbST.CbCreate(col.SelectedVariableType[0], "sample"),
                 },
                 new Func<List<ICbValue>, DummyArgumentsStack, ICbValue>(
                     (argument, cagt) =>
@@ -958,7 +907,8 @@ namespace CapybaraVS.Script
 
         public string ValueType { get; } = typeof(bool).FullName;
 
-        public Func<Type, bool> IsAccept => (t) => CbScript.AcceptAll(t);
+        public Func<Type, bool>[] IsAccept => new Func<Type, bool>[] { (t) => CbScript.AcceptAll(t) };
+
 
         public bool ImplAsset(MultiRootConnector col, bool isReBuildMode = false)
         {
@@ -1000,25 +950,27 @@ namespace CapybaraVS.Script
 
         public string MenuTitle => AssetCode;
 
-        public string ValueType { get; } = CbSTUtils.FREE_TYPE_STR;
+        public string ValueType { get; } = CbSTUtils.FREE_LIST_INTERFACE_TYPE_STR;
 
-        public Func<Type, bool> IsAccept => (t) => CbScript.IsValueType(t);
+        public Func<Type, bool>[] IsAccept => new Func<Type, bool>[] { 
+            (t) => CbScript.IsValueType(t)
+        };
 
         public bool ImplAsset(MultiRootConnector col, bool isReBuildMode = false)
         {
             col.MakeFunction(
                 "Multiply",
                 HelpText,
-                CbST.CbCreateTF(col.SelectedVariableType[0]),  // 返し値の型
+                CbST.CbCreateTF(col.SelectedVariableType[0].GenericTypeArguments[0]),  // 返し値の型
                 new List<ICbValue>()  // 引数
                 {
-                    CbST.CbCreate(col.SelectedVariableType[0], "base"),
-                    CbList.Create(col.SelectedVariableType[0], "sample"),
+                    CbST.CbCreate(col.SelectedVariableType[0].GenericTypeArguments[0], "base"),
+                    CbST.CbCreate(col.SelectedVariableType[0], "sample"),
                 },
                 new Func<List<ICbValue>, DummyArgumentsStack, ICbValue>(
                     (argument, cagt) =>
                     {
-                        var ret = CbST.CbCreate(col.SelectedVariableType[0]);    // 返し値
+                        var ret = CbST.CbCreate(col.SelectedVariableType[0].GenericTypeArguments[0]);    // 返し値
                         try
                         {
                             ret.Set(argument[0]);
@@ -1051,25 +1003,27 @@ namespace CapybaraVS.Script
 
         public string MenuTitle => AssetCode;
 
-        public string ValueType { get; } = CbSTUtils.FREE_TYPE_STR;
+        public string ValueType { get; } = CbSTUtils.FREE_LIST_INTERFACE_TYPE_STR;
 
-        public Func<Type, bool> IsAccept => (t) => CbScript.IsValueType(t);
+        public Func<Type, bool>[] IsAccept => new Func<Type, bool>[] {
+            (t) => CbScript.IsValueType(t)
+        };
 
         public bool ImplAsset(MultiRootConnector col, bool isReBuildMode = false)
         {
             col.MakeFunction(
                 "Divide",
                 HelpText,
-                CbST.CbCreateTF(col.SelectedVariableType[0]),  // 返し値の型
+                CbST.CbCreateTF(col.SelectedVariableType[0].GenericTypeArguments[0]),  // 返し値の型
                 new List<ICbValue>()  // 引数
                 {
-                    CbST.CbCreate(col.SelectedVariableType[0], "n1"),
-                    CbList.Create(col.SelectedVariableType[0], "sample"),
+                    CbST.CbCreate(col.SelectedVariableType[0].GenericTypeArguments[0], "base"),
+                    CbST.CbCreate(col.SelectedVariableType[0], "sample"),
                 },
                 new Func<List<ICbValue>, DummyArgumentsStack, ICbValue>(
                     (argument, cagt) =>
                     {
-                        var ret = CbST.CbCreate(col.SelectedVariableType[0]);    // 返し値
+                        var ret = CbST.CbCreate(col.SelectedVariableType[0].GenericTypeArguments[0]);    // 返し値
                         try
                         {
                             ret.Set(argument[0]);
@@ -1101,25 +1055,27 @@ namespace CapybaraVS.Script
 
         public string MenuTitle => AssetCode;
 
-        public string ValueType { get; } = CbSTUtils.FREE_TYPE_STR;
+        public string ValueType { get; } = CbSTUtils.FREE_LIST_INTERFACE_TYPE_STR;
 
-        public Func<Type, bool> IsAccept => (t) => CbScript.IsValueType(t);
+        public Func<Type, bool>[] IsAccept => new Func<Type, bool>[] { 
+            (t) => CbScript.IsValueType(t) 
+        };
 
         public bool ImplAsset(MultiRootConnector col, bool isReBuildMode = false)
         {
             col.MakeFunction(
                 "Subtract",
                 HelpText,
-                CbST.CbCreateTF(col.SelectedVariableType[0]),  // 返し値の型
+                CbST.CbCreateTF(col.SelectedVariableType[0].GenericTypeArguments[0]),  // 返し値の型
                 new List<ICbValue>()  // 引数
                 {
-                    CbST.CbCreate(col.SelectedVariableType[0], "base"),
-                    CbList.Create(col.SelectedVariableType[0], "sample"),
+                    CbST.CbCreate(col.SelectedVariableType[0].GenericTypeArguments[0], "base"),
+                    CbST.CbCreate(col.SelectedVariableType[0], "sample"),
                 },
                 new Func<List<ICbValue>, DummyArgumentsStack, ICbValue>(
                     (argument, cagt) =>
                     {
-                        var ret = CbST.CbCreate(col.SelectedVariableType[0]);    // 返し値
+                        var ret = CbST.CbCreate(col.SelectedVariableType[0].GenericTypeArguments[0]);    // 返し値
                         try
                         {
                             ret.Set(argument[0]);
@@ -1154,7 +1110,8 @@ namespace CapybaraVS.Script
 
         public string ValueType { get; } = typeof(string).FullName;
 
-        public Func<Type, bool> IsAccept => (t) => CbScript.AcceptAll(t);
+        public Func<Type, bool>[] IsAccept => new Func<Type, bool>[] { (t) => CbScript.AcceptAll(t) };
+
 
         public bool ImplAsset(MultiRootConnector col, bool isReBuildMode = false)
         {
@@ -1214,7 +1171,8 @@ namespace CapybaraVS.Script
 
         public string ValueType { get; } = CbSTUtils.FREE_TYPE_STR;
 
-        public Func<Type, bool> IsAccept => (t) => CbScript.AcceptAll(t);
+        public Func<Type, bool>[] IsAccept => new Func<Type, bool>[] { (t) => CbScript.AcceptAll(t) };
+
 
         public bool ImplAsset(MultiRootConnector col, bool isReBuildMode = false)
         {
@@ -1267,7 +1225,8 @@ namespace CapybaraVS.Script
 
         public string ValueType { get; } = CbSTUtils.DUMMY_TYPE_STR;
 
-        public Func<Type, bool> IsAccept => (t) => CbScript.AcceptAll(t);
+        public Func<Type, bool>[] IsAccept => new Func<Type, bool>[] { (t) => CbScript.AcceptAll(t) };
+
 
         public bool ImplAsset(MultiRootConnector col, bool isReBuildMode = false)
         {
@@ -1319,7 +1278,8 @@ namespace CapybaraVS.Script
 
         public string ValueType { get; } = CbSTUtils.FREE_TYPE_STR;
 
-        public Func<Type, bool> IsAccept => (t) => CbScript.AcceptAll(t);
+        public Func<Type, bool>[] IsAccept => new Func<Type, bool>[] { (t) => CbScript.AcceptAll(t) };
+
 
         public bool ImplAsset(MultiRootConnector col, bool isReBuildMode = false)
         {
@@ -1372,7 +1332,9 @@ namespace CapybaraVS.Script
 
         public string ValueType { get; } = CbSTUtils.FREE_FUNC_TYPE_STR;
 
-        public Func<Type, bool> IsAccept => (t) => CbScript.AcceptAll(t);
+        public Func<Type, bool>[] IsAccept => new Func<Type, bool>[] {
+            (t) => CbScript.AcceptAll(t)
+        };
 
         public bool ImplAsset(MultiRootConnector col, bool isReBuildMode = false)
         {
@@ -1419,7 +1381,10 @@ namespace CapybaraVS.Script
 
         public string ValueType { get; } = CbSTUtils.FREE_FUNC2A_TYPE_STR;
 
-        public Func<Type, bool> IsAccept => (t) => CbScript.AcceptAll(t);
+        public Func<Type, bool>[] IsAccept => new Func<Type, bool>[] {
+            (t) => CbScript.AcceptAll(t),   // T1
+            (t) => CbScript.AcceptAll(t)    // T2
+        };
 
         public bool ImplAsset(MultiRootConnector col, bool isReBuildMode = false)
         {
@@ -1473,7 +1438,8 @@ namespace CapybaraVS.Script
 
         public string ValueType { get; } = CbSTUtils.FREE_ACTION_TYPE_STR;
 
-        public Func<Type, bool> IsAccept => (t) => CbScript.AcceptAll(t);
+        public Func<Type, bool>[] IsAccept => new Func<Type, bool>[] { (t) => CbScript.AcceptAll(t) };
+
 
         public bool ImplAsset(MultiRootConnector col, bool isReBuildMode = false)
         {
@@ -1526,7 +1492,8 @@ namespace CapybaraVS.Script
 
         public string ValueType { get; } = CbSTUtils.DUMMY_TYPE_STR;
 
-        public Func<Type, bool> IsAccept => (t) => CbScript.IsValueType(t);
+        public Func<Type, bool>[] IsAccept => new Func<Type, bool>[] { (t) => CbScript.IsValueType(t) };
+
 
         public bool ImplAsset(MultiRootConnector col, bool isReBuildMode = false)
         {
@@ -1584,7 +1551,7 @@ namespace CapybaraVS.Script
 
         public string ValueType { get; } = CbSTUtils.FREE_TYPE_STR;
 
-        public Func<Type, bool> IsAccept => (t) => CbScript.IsValueType(t) && t != typeof(bool);
+        public Func<Type, bool>[] IsAccept => new Func<Type, bool>[] { (t) => CbScript.IsValueType(t) && t != typeof(bool) };
 
         public bool ImplAsset(MultiRootConnector col, bool isReBuildMode = false)
         {
@@ -1708,7 +1675,7 @@ namespace CapybaraVS.Script
 
         public string ValueType { get; } = CbSTUtils.FREE_TYPE_STR;
 
-        public Func<Type, bool> IsAccept => (t) => true;    // 新規作成を意味する
+        public Func<Type, bool>[] IsAccept => new Func<Type, bool>[] { (t) => true };    // 新規作成を意味する
     }
 
     //-----------------------------------------------------------------
@@ -1720,7 +1687,7 @@ namespace CapybaraVS.Script
 
         public string ValueType { get; } = CbSTUtils.FREE_LIST_TYPE_STR;
 
-        public Func<Type, bool> IsAccept => (t) => true;    // 新規作成を意味する
+        public Func<Type, bool>[] IsAccept => new Func<Type, bool>[] { (t) => true };    // 新規作成を意味する
     }
 
     //-----------------------------------------------------------------
@@ -1732,7 +1699,7 @@ namespace CapybaraVS.Script
 
         public string MenuTitle => $"Create Variable<{CbSTUtils.FUNC_STR}>";
 
-        public Func<Type, bool> IsAccept => (t) => true;    // 新規作成を意味する
+        public Func<Type, bool>[] IsAccept => new Func<Type, bool>[] { (t) => true };    // 新規作成を意味する
     }
 
     //-----------------------------------------------------------------
@@ -1744,7 +1711,7 @@ namespace CapybaraVS.Script
 
         public string ValueType { get; } = CbSTUtils.FREE_TYPE_STR;
 
-        public Func<Type, bool> IsAccept => null;    // 選択を意味する
+        public Func<Type, bool>[] IsAccept => null;    // 選択を意味する
     }
 
     //-----------------------------------------------------------------
@@ -1758,7 +1725,7 @@ namespace CapybaraVS.Script
 
         public string ValueType { get; } = CbSTUtils.FREE_FUNC_TYPE_STR;
 
-        public Func<Type, bool> IsAccept => null;    // 選択を意味する
+        public Func<Type, bool>[] IsAccept => null;    // 選択を意味する
 
         public bool ImplAsset(MultiRootConnector col, bool isReBuildMode = false)
         {
@@ -1830,7 +1797,8 @@ namespace CapybaraVS.Script
 
         public string ValueType { get; } = CbSTUtils.FREE_TYPE_STR;
 
-        public Func<Type, bool> IsAccept => (t) => CbScript.AcceptAll(t);
+        public Func<Type, bool>[] IsAccept => new Func<Type, bool>[] { (t) => CbScript.AcceptAll(t) };
+
 
         public bool ImplAsset(MultiRootConnector col, bool isReBuildMode = false)
         {
@@ -1885,9 +1853,11 @@ namespace CapybaraVS.Script
 
         public string MenuTitle => $"Foreach {CbSTUtils.LIST_STR}<{CbSTUtils.ACTION_STR}>";
 
-        public string ValueType { get; } = CbSTUtils.FREE_TYPE_STR;
+        public string ValueType { get; } = CbSTUtils.FREE_LIST_INTERFACE_TYPE_STR;
 
-        public Func<Type, bool> IsAccept => (t) => CbScript.AcceptAll(t);
+        public Func<Type, bool>[] IsAccept => new Func<Type, bool>[] {
+            (t) => CbScript.AcceptAll(t)
+        };
 
         public bool ImplAsset(MultiRootConnector col, bool isReBuildMode = false)
         {
@@ -1895,13 +1865,13 @@ namespace CapybaraVS.Script
             DummyArgumentsControl dummyArgumentsControl = new DummyArgumentsControl(col);
 
             col.MakeFunction(
-                $"Foreach {CbSTUtils.ACTION_STR}<{col.SelectedVariableTypeName[0]}>.Invoke",
+                $"Foreach {CbSTUtils.ACTION_STR}<{CbSTUtils._GetTypeName(col.SelectedVariableType[0].GenericTypeArguments[0])}>.Invoke",
                 HelpText,
                 CbVoid.TF,  // 返し値の型
                 new List<ICbValue>()  // 引数
                 {
-                    CbList.Create(col.SelectedVariableType[0], "sample"),
-                    CbFunc.CreateAction(col.SelectedVariableType[0], "func f(node)"),
+                    CbST.CbCreate(col.SelectedVariableType[0], "sample"),
+                    CbFunc.CreateAction(col.SelectedVariableType[0].GenericTypeArguments[0], "func f(node)"),
                 },
                 new Func<List<ICbValue>, DummyArgumentsStack, ICbValue>(
                     (argument, cagt) =>
@@ -1942,7 +1912,8 @@ namespace CapybaraVS.Script
 
         public string ValueType { get; } = CbSTUtils.FREE_TYPE_STR;
 
-        public Func<Type, bool> IsAccept => (t) => CbScript.AcceptAll(t);
+        public Func<Type, bool>[] IsAccept => new Func<Type, bool>[] { (t) => CbScript.AcceptAll(t) };
+
 
         public bool ImplAsset(MultiRootConnector col, bool isReBuildMode = false)
         {
@@ -1997,7 +1968,7 @@ namespace CapybaraVS.Script
 
         public string ValueType { get; } = CbSTUtils.FREE_TYPE_STR;
 
-        public Func<Type, bool> IsAccept => (t) => CbScript.IsEnum(t);
+        public Func<Type, bool>[] IsAccept => new Func<Type, bool>[] { (t) => CbScript.IsEnum(t) };
 
         public bool ImplAsset(MultiRootConnector col, bool isReBuildMode = false)
         {
@@ -2017,6 +1988,7 @@ namespace CapybaraVS.Script
                         ).Name = $":{name}";    // Append では名前がコピーされないので後から設定する
                 }
             }
+            caseList.SourceType = typeof(IEnumerable<Action>);  // キャスト
             args.Add(caseList);
             args.Add(
                 CbST.CbCreate<Action>("default")
@@ -2081,7 +2053,7 @@ namespace CapybaraVS.Script
 
         public string ValueType { get; } = CbSTUtils.FREE_TYPE_STR;
 
-        public Func<Type, bool> IsAccept => (t) => CbScript.IsNotObject(t);
+        public Func<Type, bool>[] IsAccept => new Func<Type, bool>[] { (t) => CbScript.IsNotObject(t) };
 
         public bool ImplAsset(MultiRootConnector col, bool isReBuildMode = false)
         {
@@ -2130,7 +2102,7 @@ namespace CapybaraVS.Script
 
         public string ValueType { get; } = CbSTUtils.FREE_TYPE_STR;
 
-        public Func<Type, bool> IsAccept => (t) => CbScript.IsSigned(t);
+        public Func<Type, bool>[] IsAccept => new Func<Type, bool>[] { (t) => CbScript.IsSigned(t) };
 
         public bool ImplAsset(MultiRootConnector col, bool isReBuildMode = false)
         {
@@ -2174,7 +2146,8 @@ namespace CapybaraVS.Script
 
         public string ValueType { get; } = CbSTUtils.FREE_TYPE_STR;
 
-        public Func<Type, bool> IsAccept => (t) => CbScript.AcceptAll(t);
+        public Func<Type, bool>[] IsAccept => new Func<Type, bool>[] { (t) => CbScript.AcceptAll(t) };
+
 
         public bool ImplAsset(MultiRootConnector col, bool isReBuildMode = false)
         {
@@ -2228,7 +2201,8 @@ namespace CapybaraVS.Script
 
         public string ValueType { get; } = CbSTUtils.FREE_TYPE_STR;
 
-        public Func<Type, bool> IsAccept => (t) => CbScript.AcceptAll(t);
+        public Func<Type, bool>[] IsAccept => new Func<Type, bool>[] { (t) => CbScript.AcceptAll(t) };
+
 
         public bool ImplAsset(MultiRootConnector col, bool isReBuildMode = false)
         {
@@ -2284,7 +2258,8 @@ namespace CapybaraVS.Script
 
         public string ValueType { get; } = CbSTUtils.FREE_TYPE_STR;
 
-        public Func<Type, bool> IsAccept => (t) => CbScript.AcceptAll(t);
+        public Func<Type, bool>[] IsAccept => new Func<Type, bool>[] { (t) => CbScript.AcceptAll(t) };
+
 
         public bool ImplAsset(MultiRootConnector col, bool isReBuildMode = false)
         {
@@ -2335,9 +2310,11 @@ namespace CapybaraVS.Script
 
         public string MenuTitle => AssetCode;
 
-        public string ValueType { get; } = CbSTUtils.FREE_LIST_TYPE_STR;
+        public string ValueType { get; } = CbSTUtils.FREE_LIST_INTERFACE_TYPE_STR;
 
-        public Func<Type, bool> IsAccept => (t) => CbScript.AcceptAll(t);
+        public Func<Type, bool>[] IsAccept => new Func<Type, bool>[] {
+            (t) => CbScript.AcceptAll(t)
+        };
 
         public bool ImplAsset(MultiRootConnector col, bool isReBuildMode = false)
         {
@@ -2379,9 +2356,11 @@ namespace CapybaraVS.Script
 
         public string MenuTitle => AssetCode;
 
-        public string ValueType { get; } = CbSTUtils.FREE_LIST_TYPE_STR;
+        public string ValueType { get; } = CbSTUtils.FREE_LIST_INTERFACE_TYPE_STR;
 
-        public Func<Type, bool> IsAccept => (t) => CbScript.AcceptAll(t);
+        public Func<Type, bool>[] IsAccept => new Func<Type, bool>[] {
+            (t) => CbScript.AcceptAll(t)
+        };
 
         public bool ImplAsset(MultiRootConnector col, bool isReBuildMode = false)
         {
@@ -2424,9 +2403,11 @@ namespace CapybaraVS.Script
 
         public string MenuTitle => "Get List[index]";
 
-        public string ValueType { get; } = CbSTUtils.FREE_LIST_TYPE_STR;
+        public string ValueType { get; } = CbSTUtils.FREE_LIST_INTERFACE_TYPE_STR;
 
-        public Func<Type, bool> IsAccept => (t) => CbScript.AcceptAll(t);
+        public Func<Type, bool>[] IsAccept => new Func<Type, bool>[] { 
+            (t) => CbScript.AcceptAll(t)
+        };
 
         public bool ImplAsset(MultiRootConnector col, bool isReBuildMode = false)
         {
@@ -2470,9 +2451,11 @@ namespace CapybaraVS.Script
 
         public string MenuTitle => "Get List[last]";
 
-        public string ValueType { get; } = CbSTUtils.FREE_LIST_TYPE_STR;
+        public string ValueType { get; } = CbSTUtils.FREE_LIST_INTERFACE_TYPE_STR;
 
-        public Func<Type, bool> IsAccept => (t) => CbScript.AcceptAll(t);
+        public Func<Type, bool>[] IsAccept => new Func<Type, bool>[] {
+            (t) => CbScript.AcceptAll(t)
+        };
 
         public bool ImplAsset(MultiRootConnector col, bool isReBuildMode = false)
         {
@@ -2515,9 +2498,11 @@ namespace CapybaraVS.Script
 
         public string MenuTitle => "Set List[index]";
 
-        public string ValueType { get; } = CbSTUtils.FREE_LIST_TYPE_STR;
+        public string ValueType { get; } = CbSTUtils.FREE_LIST_INTERFACE_TYPE_STR;
 
-        public Func<Type, bool> IsAccept => (t) => CbScript.AcceptAll(t);
+        public Func<Type, bool>[] IsAccept => new Func<Type, bool>[] {
+            (t) => CbScript.AcceptAll(t)
+        };
 
         public bool ImplAsset(MultiRootConnector col, bool isReBuildMode = false)
         {
@@ -2570,9 +2555,11 @@ namespace CapybaraVS.Script
 
         public string MenuTitle => AssetCode;
 
-        public string ValueType { get; } = CbSTUtils.FREE_LIST_TYPE_STR;
+        public string ValueType { get; } = CbSTUtils.FREE_LIST_INTERFACE_TYPE_STR;
 
-        public Func<Type, bool> IsAccept => (t) => CbScript.AcceptAll(t);
+        public Func<Type, bool>[] IsAccept => new Func<Type, bool>[] { 
+            (t) => CbScript.AcceptAll(t) 
+        };
 
         public bool ImplAsset(MultiRootConnector col, bool isReBuildMode = false)
         {
@@ -2627,7 +2614,7 @@ namespace CapybaraVS.Script
 
         public string ValueType { get; } = typeof(double).FullName;
 
-        public Func<Type, bool> IsAccept => (t) => typeof(double) == t;
+        public Func<Type, bool>[] IsAccept => new Func<Type, bool>[] { (t) => typeof(double) == t };
 
         public bool ImplAsset(MultiRootConnector col, bool isReBuildMode = false)
         {
@@ -2675,7 +2662,7 @@ namespace CapybaraVS.Script
 
         public string ValueType { get; } = typeof(int).FullName;
 
-        public Func<Type, bool> IsAccept => (t) => typeof(int) == t;
+        public Func<Type, bool>[] IsAccept => new Func<Type, bool>[] { (t) => typeof(int) == t };
 
         public bool ImplAsset(MultiRootConnector col, bool isReBuildMode = false)
         {

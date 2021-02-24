@@ -35,15 +35,13 @@ namespace CbVS.Script.Lib
             //return (width * image.Format.BitsPerPixel + 7) / 8;
         }
 
-        [ScriptMethod(nameSpace + ".Def." + nameof(GammaCollection2dot2), "",
-            "RS=>Image_GammaCollection2dot2")]
+        [ScriptMethod(nameSpace + ".Def." + nameof(GammaCollection2dot2), "", "RS=>Image_GammaCollection2dot2")]
         public static double GammaCollection2dot2()
         {
             return DEF_GammaCollection2dot2;
         }
 
-        [ScriptMethod(nameSpace + ".Def." + nameof(CRTGamma2dot2), "",
-            "RS=>Image_CRTGamma2dot2")]
+        [ScriptMethod(nameSpace + ".Def." + nameof(CRTGamma2dot2), "", "RS=>Image_CRTGamma2dot2")]
         public static double CRTGamma2dot2()
         {
             return DEF_CRTGamma2dot2;
@@ -222,9 +220,7 @@ namespace CbVS.Script.Lib
         }
 
         //------------------------------------------------------------------
-        [ScriptMethod(nameSpace + "." + "OutImageWindow", "",
-            "RS=>Image_OutImageWindow"
-            )]
+        [ScriptMethod(nameSpace + "." + nameof(OutImageWindow), "", "RS=>Image_OutImageWindow")]
         public static void OutImageWindow(string title, BitmapSource image, MediaOption mediaOption = null)
         {
             if (image is null)
@@ -240,9 +236,7 @@ namespace CbVS.Script.Lib
         }
 
         //------------------------------------------------------------------
-        [ScriptMethod(nameSpace + "." + nameof(OpenImage), "",
-            "RS=>Image_OpenImage"
-            )]
+        [ScriptMethod(nameSpace + "." + nameof(OpenImage), "", "RS=>Image_OpenImage")]
         public static BitmapImage OpenImage(string path)
         {
             if (File.Exists(path))
@@ -257,9 +251,7 @@ namespace CbVS.Script.Lib
         }
 
         //------------------------------------------------------------------
-        [ScriptMethod(nameSpace + "." + nameof(OutImageFile), nameof(OutImageFile),
-            "RS=>Image_OutImageFile"
-            )]
+        [ScriptMethod(nameSpace + "." + nameof(OutImageFile), "", "RS=>Image_OutImageFile")]
         public static void OutImageFile(BitmapSource image, string path)
         {
             string ext = Path.GetExtension(path);
@@ -299,9 +291,7 @@ namespace CbVS.Script.Lib
             OutImageFile(image, path, type);
         }
 
-        [ScriptMethod(nameSpace + "." + nameof(OutImageFile) + "(ImageType)", nameof(OutImageFile),
-            "RS=>Image_OutImageFile"
-            )]
+        [ScriptMethod(nameSpace + "." + nameof(OutImageFile), "", "RS=>Image_OutImageFile")]
         public static void OutImageFile(BitmapSource image, string path, ImageType type = ImageType.JPEG)
         {
             if (image is null)
@@ -340,9 +330,7 @@ namespace CbVS.Script.Lib
         }
 
         //------------------------------------------------------------------
-        [ScriptMethod(nameSpace + "." + nameof(RGBAFilteringProc), "",
-            "RS=>Image_PixelOutRGBAProcessing"
-            )]
+        [ScriptMethod(nameSpace + "." + nameof(RGBAFilteringProc), "", "RS=>Image_PixelOutRGBAProcessing")]
         public static BitmapImage RGBAFilteringProc(
             BitmapSource image,
             IRGBAFilter imageProc,
@@ -400,9 +388,7 @@ namespace CbVS.Script.Lib
             return x * colorComponentLength + (width * colorComponentLength) * y;
         }
 
-        [ScriptMethod(nameSpace + "." + nameof(RGBA3x3FilteringProc) + "(IRGBA3x3Filter)", nameof(RGBA3x3FilteringProc),
-            "RS=>Image_Kernel3x3RGBAProcessing"
-            )]
+        [ScriptMethod(nameSpace + "." + nameof(RGBA3x3FilteringProc), nameof(RGBA3x3FilteringProc), "RS=>Image_Kernel3x3RGBAProcessing")]
         public static BitmapImage RGBA3x3FilteringProc(
             BitmapSource image,
             IRGBAFilter beforeImageProc = null,
@@ -411,7 +397,7 @@ namespace CbVS.Script.Lib
             bool useThread = true,
             int dpi = DEFAULT_dpi)
         {
-            List<IRGBA3x3Filter> imageProcingList = null;
+            IList<IRGBA3x3Filter> imageProcingList = null;
 
             if (imageProc != null)
             {
@@ -427,13 +413,11 @@ namespace CbVS.Script.Lib
                 dpi);
         }
 
-        [ScriptMethod(nameSpace + "." + nameof(RGBA3x3FilteringProc) + "(List<IRGBA3x3Filter>)", nameof(RGBA3x3FilteringProc),
-            "RS=>Image_Kernel3x3RGBAProcessing"
-            )]
+        [ScriptMethod(nameSpace + "." + nameof(RGBA3x3FilteringProc), "", "RS=>Image_Kernel3x3RGBAProcessing")]
         public static BitmapImage RGBA3x3FilteringProc(
             BitmapSource image,
             IRGBAFilter beforeImageProc = null,
-            List<IRGBA3x3Filter> imageProcList = null,
+            IList<IRGBA3x3Filter> imageProcList = null,
             IRGBAFilter afterImageProc = null,
             bool useThread = true,
             int dpi = DEFAULT_dpi)
@@ -637,14 +621,12 @@ namespace CbVS.Script.Lib
         public class CRGBA3x3FilteringProc
         {
             public IRGBAFilter beforeImageProcessing = null;
-            public List<IRGBA3x3Filter> imageProcessingList = null;
+            public IList<IRGBA3x3Filter> imageProcessingList = null;
             public IRGBAFilter afterImageProcessing = null;
             public bool useThread = true;
         }
 
-        [ScriptMethod(nameSpace + "." + nameof(RGBA3x3FilteringProc) + "(" + nameof(CRGBA3x3FilteringProc) + ")", nameof(RGBA3x3FilteringProc),
-            "RS=>Image_Kernel3x3RGBAProcessing"
-            )]
+        [ScriptMethod(nameSpace + "." + nameof(RGBA3x3FilteringProc), "", "RS=>Image_Kernel3x3RGBAProcessing")]
         public static BitmapImage RGBA3x3FilteringProc(
             BitmapSource image,
             CRGBA3x3FilteringProc cRGBA3x3Proc,
@@ -661,12 +643,10 @@ namespace CbVS.Script.Lib
                 );
         }
 
-        [ScriptMethod(nameSpace + "." + nameof(CreateRGBA3x3FilteringProc), "",
-            "RS=>Image_CreateRGBA3x3FilteringProc"
-            )]
+        [ScriptMethod(nameSpace + "." + nameof(CreateRGBA3x3FilteringProc), "", "RS=>Image_CreateRGBA3x3FilteringProc")]
         public static CRGBA3x3FilteringProc CreateRGBA3x3FilteringProc(
             IRGBAFilter beforeImageProcessing = null,
-            List<IRGBA3x3Filter> imageProcessingList = null,
+            IList<IRGBA3x3Filter> imageProcessingList = null,
             IRGBAFilter afterImageProcessing = null,
             bool useThread = true
             )
@@ -685,8 +665,7 @@ namespace CbVS.Script.Lib
         /// スクリーンをキャプチャします。
         /// </summary>
         /// <returns>キャプチャしたイメージ</returns>
-        [ScriptMethod(nameSpace + "." + nameof(ScreenCapture), "",
-           "RS=>Image_ScreenCapture")]
+        [ScriptMethod(nameSpace + "." + nameof(ScreenCapture), "", "RS=>Image_ScreenCapture")]
         public static BitmapSource ScreenCapture(bool hideAndCapture = true)
         {
             if (hideAndCapture)
@@ -718,8 +697,7 @@ namespace CbVS.Script.Lib
         }
 
         //------------------------------------------------------------------
-        [ScriptMethod(nameSpace + ".Scaling." + nameof(Scaling) + "(scale)", nameof(Scaling),
-            "RS=>Image_Scaling")]
+        [ScriptMethod(nameSpace + ".Scaling." + nameof(Scaling), "", "RS=>Image_Scaling")]
         public static BitmapImage Scaling(BitmapSource image, double widthScale, double heightScale, int dpi = DEFAULT_dpi)
         {
             if (image is null)
@@ -730,8 +708,7 @@ namespace CbVS.Script.Lib
         }
 
         //------------------------------------------------------------------
-        [ScriptMethod(nameSpace + ".Scaling." + nameof(Scaling) + "(size)", nameof(Scaling),
-            "RS=>Image_Scaling")]
+        [ScriptMethod(nameSpace + ".Scaling." + nameof(Scaling), "", "RS=>Image_Scaling")]
         public static BitmapImage Scaling(BitmapSource image, int width, int height, int dpi = DEFAULT_dpi)
         {
             if (image is null)
@@ -748,8 +725,7 @@ namespace CbVS.Script.Lib
         }
 
         //------------------------------------------------------------------
-        [ScriptMethod(nameSpace + ".Synthesis." + nameof(Synthesis), nameof(Synthesis),
-            "RS=>Image_Synthesis")]
+        [ScriptMethod(nameSpace + ".Synthesis." + nameof(Synthesis), "", "RS=>Image_Synthesis")]
         public static BitmapImage Synthesis(
             BitmapSource image,
             BitmapSource add,
@@ -772,8 +748,7 @@ namespace CbVS.Script.Lib
                 dpi);
         }
 
-        [ScriptMethod(nameSpace + ".Synthesis." + nameof(Synthesis) + "(pos)", nameof(Synthesis),
-            "RS=>Image_Synthesis")]
+        [ScriptMethod(nameSpace + ".Synthesis." + nameof(Synthesis), "", "RS=>Image_Synthesis")]
         public static BitmapImage Synthesis(
             BitmapSource image,
             BitmapSource add,
@@ -796,8 +771,7 @@ namespace CbVS.Script.Lib
                 dpi);
         }
 
-        [ScriptMethod(nameSpace + ".Synthesis." + nameof(Synthesis) + "(free)", nameof(Synthesis),
-            "RS=>Image_Synthesis")]
+        [ScriptMethod(nameSpace + ".Synthesis." + nameof(Synthesis), "", "RS=>Image_Synthesis")]
         public static BitmapImage Synthesis(
             BitmapSource image, 
             BitmapSource add, 
@@ -871,10 +845,8 @@ namespace CbVS.Script.Lib
             return numberOfPixels;
         }
 
-        [ScriptMethod(nameSpace + ".Info." + nameof(GetHistogramList), "",
-            "RS=>Image_GetHistogram"
-            )]
-        public static List<int> GetHistogramList(BitmapSource image, ColorComponentType colorComponent)
+        [ScriptMethod(nameSpace + ".Info." + nameof(GetHistogramList), "", "RS=>Image_GetHistogram")]
+        public static IList<int> GetHistogramList(BitmapSource image, ColorComponentType colorComponent)
         {
             return new List<int>(GetHistogram(image, colorComponent));
         }
@@ -885,9 +857,7 @@ namespace CbVS.Script.Lib
         /// </summary>
         /// <param name="image">対象の画像</param>
         /// <returns>画素値の分布配列</returns>
-        [ScriptMethod(nameSpace + ".Info." + nameof(OutHistogram), "",
-            "RS=>Image_OutHistogram"
-            )]
+        [ScriptMethod(nameSpace + ".Info." + nameof(OutHistogram), "", "RS=>Image_OutHistogram")]
         public static void OutHistogram(string msg, BitmapSource image, GlayScaleType glayScale = GlayScaleType.BT_601, bool R = true, bool G = true, bool B = true)
         {
             if (image is null)
@@ -919,7 +889,7 @@ namespace CbVS.Script.Lib
                 int r = R ? numberOfRPixels[i] : 0;
                 int g = G ? numberOfGPixels[i] : 0;
                 int b = B ? numberOfBPixels[i] : 0;
-                List<int> srt = new List<int>() { r, g, b };
+                var srt = new List<int>() { r, g, b };
                 srt.Sort();
                 bool isBar = false;
                 if (!isBar)
@@ -937,7 +907,7 @@ namespace CbVS.Script.Lib
                 }
             }
 
-            List<PlotInfo> plotList = new List<PlotInfo>();
+            var plotList = new List<PlotInfo>();
 
             var listGry = new List<int>(numberOfGryPixels);
             listGry.RemoveAt(0);   // 0の分布数は不要
@@ -977,9 +947,7 @@ namespace CbVS.Script.Lib
         /// </summary>
         /// <param name="image">対象の画像</param>
         /// <returns>最大数存在する画素値の分布数</returns>
-        [ScriptMethod(nameSpace + ".Info." + nameof(GetMaxNumberOfPixels), "",
-            "RS=>Image_GetMaxNumberOfPixels"
-            )]
+        [ScriptMethod(nameSpace + ".Info." + nameof(GetMaxNumberOfPixels), "", "RS=>Image_GetMaxNumberOfPixels")]
         public static int GetMaxNumberOfPixels(BitmapSource image)
         {
             if (image is null)
@@ -1010,9 +978,7 @@ namespace CbVS.Script.Lib
         /// </summary>
         /// <param name="image">対象の画像</param>
         /// <returns>平均値</returns>
-        [ScriptMethod(nameSpace + ".Info." + nameof(GetAverageNumberOfPixels), "",
-            "RS=>Image_GetAverageNumberOfPixels"
-            )]
+        [ScriptMethod(nameSpace + ".Info." + nameof(GetAverageNumberOfPixels), "", "RS=>Image_GetAverageNumberOfPixels")]
         public static double GetAverageNumberOfPixels(BitmapSource image)
         {
             if (image is null)
@@ -1055,9 +1021,7 @@ namespace CbVS.Script.Lib
         }
 
         //------------------------------------------------------------------
-        [ScriptMethod(nameSpace + ".Info." + nameof(GetPixelWidth), "",
-            "RS=>Image_GetPixelWidth"
-            )]
+        [ScriptMethod(nameSpace + ".Info." + nameof(GetPixelWidth), "", "RS=>Image_GetPixelWidth")]
         public static int GetPixelWidth(BitmapSource image)
         {
             if (image is null)
@@ -1068,9 +1032,7 @@ namespace CbVS.Script.Lib
         }
 
         //------------------------------------------------------------------
-        [ScriptMethod(nameSpace + ".Info." + nameof(GetPixelHeight), "",
-            "RS=>Image_GetPixelHeight"
-            )]
+        [ScriptMethod(nameSpace + ".Info." + nameof(GetPixelHeight), "", "RS=>Image_GetPixelHeight")]
         public static int GetPixelHeight(BitmapSource image)
         {
             if (image is null)
@@ -1127,18 +1089,14 @@ namespace CbVS.Script.Lib
         }
 
         //------------------------------------------------------------------
-        [ScriptMethod(nameSpace + ".Lib." + nameof(GammaCorrection) + "(byte)", nameof(GammaCorrection),
-            "RS=>Image_GammaCorrection"
-            )]
+        [ScriptMethod(nameSpace + ".Lib." + nameof(GammaCorrection), "", "RS=>Image_GammaCorrection")]
         public static byte GammaCorrection(byte pixelValue, double gamma = DEF_GammaCollection2dot2)
         {
             return (byte)(Math.Pow((double)pixelValue / 255.0, gamma) * 255.0);
         }
 
         //------------------------------------------------------------------
-        [ScriptMethod(nameSpace + ".Lib." + nameof(GammaCorrection) + "(double)", nameof(GammaCorrection),
-            "RS=>Image_GammaCorrection"
-            )]
+        [ScriptMethod(nameSpace + ".Lib." + nameof(GammaCorrection), "", "RS=>Image_GammaCorrection")]
         public static double GammaCorrection(double pixelValue, double gamma = DEF_GammaCollection2dot2)
         {
             return Math.Pow((double)pixelValue, gamma);
@@ -1150,8 +1108,8 @@ namespace CbVS.Script.Lib
         /// </summary>
         public class CRGBAFilteringHub : IRGBAFilter, IRGBA3x3Filter
         {
-            List<IRGBAFilter> list = null;
-            public CRGBAFilteringHub(List<IRGBAFilter> list)
+            IList<IRGBAFilter> list = null;
+            public CRGBAFilteringHub(IList<IRGBAFilter> list)
             {
                 this.list = list;
             }
@@ -1214,10 +1172,8 @@ namespace CbVS.Script.Lib
             }
         }
 
-        [ScriptMethod(nameSpace + ".Filter." + nameof(CreateRGBAFilteringHub), "",
-            "RS=>Image_CreateCPixelOutRPGAHub"
-            )]
-        public static CRGBAFilteringHub CreateRGBAFilteringHub(List<IRGBAFilter> list = null)
+        [ScriptMethod(nameSpace + ".Filter." + nameof(CreateRGBAFilteringHub), "", "RS=>Image_CreateCPixelOutRPGAHub")]
+        public static CRGBAFilteringHub CreateRGBAFilteringHub(IList<IRGBAFilter> list = null)
         {
             return new CRGBAFilteringHub(list);
         }
@@ -1296,9 +1252,7 @@ namespace CbVS.Script.Lib
             }
         }
 
-        [ScriptMethod(nameSpace + ".Filter." + nameof(CreateRGBAEventFuncFilter), "",
-            "RS=>Image_CreateCEventFuncRGB"
-            )]
+        [ScriptMethod(nameSpace + ".Filter." + nameof(CreateRGBAEventFuncFilter), "", "RS=>Image_CreateCEventFuncRGB")]
         public static CRGBAEventFuncFilter CreateRGBAEventFuncFilter(
                 Func<double, double> funcR = null,
                 Func<double, double> funcG = null,
@@ -1352,9 +1306,7 @@ namespace CbVS.Script.Lib
             }
         }
 
-        [ScriptMethod(nameSpace + ".Filter." + nameof(CreateRGBASubAverageFilter), "",
-            "RS=>Image_CreateCSubAverageRGB"
-            )]
+        [ScriptMethod(nameSpace + ".Filter." + nameof(CreateRGBASubAverageFilter), "", "RS=>Image_CreateCSubAverageRGB")]
         public static CRGBASubAverageFilter CreateRGBASubAverageFilter()
         {
             return new CRGBASubAverageFilter();
@@ -1418,9 +1370,7 @@ namespace CbVS.Script.Lib
             }
         }
 
-        [ScriptMethod(nameSpace + ".Filter." + nameof(CreateRGBAMulRateFilter), "",
-            "RS=>Image_CreateCMulRateRGB"
-            )]
+        [ScriptMethod(nameSpace + ".Filter." + nameof(CreateRGBAMulRateFilter), "", "RS=>Image_CreateCMulRateRGB")]
         public static CRGBAMulRateFilter CreateRGBAMulRateFilter(
             double rateR = 1,
             double rateG = 1,
@@ -1491,17 +1441,14 @@ namespace CbVS.Script.Lib
             }
         }
 
-        [ScriptMethod(nameSpace + ".Filter." + nameof(CreateRGBAGammaCorrectionFilter) + "(double)", nameof(CreateRGBAGammaCorrectionFilter),
-            "RS=>Image_CreateCGammaCorrection"
-            )]
+        [ScriptMethod(nameSpace + ".Filter." + nameof(CreateRGBAGammaCorrectionFilter), "", "RS=>Image_CreateCGammaCorrection")]
         public static CRGBAGammaCorrectionFilter CreateRGBAGammaCorrectionFilter(
             double gamma = DEF_GammaCollection2dot2)
         {
             return new CRGBAGammaCorrectionFilter(gamma);
         }
 
-        [ScriptMethod(nameSpace + ".Filter." + nameof(CreateRGBAGammaCorrectionFilter) + "(double, double, double)", nameof(CreateRGBAGammaCorrectionFilter),
-            "RS=>Image_CreateCGammaCorrectionRGB"
+        [ScriptMethod(nameSpace + ".Filter." + nameof(CreateRGBAGammaCorrectionFilter), "", "RS=>Image_CreateCGammaCorrectionRGB"
             )]
         public static CRGBAGammaCorrectionFilter CreateRGBAGammaCorrectionFilter(
             double gammaR = DEF_GammaCollection2dot2,
@@ -1605,9 +1552,7 @@ namespace CbVS.Script.Lib
             }
         }
 
-        [ScriptMethod(nameSpace + ".Filter." + nameof(CreateRGBAGlayScaleFilter), "",
-            "RS=>Image_CreateCGlayScale"
-            )]
+        [ScriptMethod(nameSpace + ".Filter." + nameof(CreateRGBAGlayScaleFilter), "", "RS=>Image_CreateCGlayScale")]
         public static CRGBAGlayScaleFilter CreateRGBAGlayScaleFilter(GlayScaleType type = GlayScaleType.AVERAGE, IRGBAFilter beforeImageProc = null)
         {
             return new CRGBAGlayScaleFilter(type, beforeImageProc);
@@ -1667,17 +1612,13 @@ namespace CbVS.Script.Lib
             }
         }
 
-        [ScriptMethod(nameSpace + ".Filter." + nameof(CreateRGBABinarizationFilter), "",
-            "RS=>Image_CreateCBinarizationRGB"
-            )]
+        [ScriptMethod(nameSpace + ".Filter." + nameof(CreateRGBABinarizationFilter), "", "RS=>Image_CreateCBinarizationRGB")]
         public static CRGBABinarizationFilter CreateRGBABinarizationFilter(double threshold = 0.5)
         {
             return new CRGBABinarizationFilter(threshold);
         }
 
-        [ScriptMethod(nameSpace + ".Filter." + nameof(CreateRGBAAdaptiveBinarizationFilter), "",
-            "RS=>Image_CreateCAdaptiveBinarizationRGB"
-            )]
+        [ScriptMethod(nameSpace + ".Filter." + nameof(CreateRGBAAdaptiveBinarizationFilter), "", "RS=>Image_CreateCAdaptiveBinarizationRGB")]
         public static CRGBABinarizationFilter CreateRGBAAdaptiveBinarizationFilter(BitmapSource image)
         {
             return new CRGBABinarizationFilter(GetAverageNumberOfPixels(image));
@@ -1732,9 +1673,7 @@ namespace CbVS.Script.Lib
             }
         }
 
-        [ScriptMethod(nameSpace + ".Filter." + nameof(CreateRGBANegativePositiveReversalFilter), "",
-            "RS=>Image_CreateNegativePositiveReversalRGB"
-            )]
+        [ScriptMethod(nameSpace + ".Filter." + nameof(CreateRGBANegativePositiveReversalFilter), "", "RS=>Image_CreateNegativePositiveReversalRGB")]
         public static CRGBANegativePositiveReversalFilter CreateRGBANegativePositiveReversalFilter()
         {
             return new CRGBANegativePositiveReversalFilter();
@@ -1791,9 +1730,7 @@ namespace CbVS.Script.Lib
             }
         }
 
-        [ScriptMethod(nameSpace + ".Filter." + nameof(CreateRGBATransparentFilter), "",
-            "RS=>Image_CreateTransparent"
-            )]
+        [ScriptMethod(nameSpace + ".Filter." + nameof(CreateRGBATransparentFilter), "", "RS=>Image_CreateTransparent")]
         public static CRGBATransparentFilter CreateRGBATransparentFilter(double rate)
         {
             return new CRGBATransparentFilter(rate);
@@ -1863,9 +1800,7 @@ namespace CbVS.Script.Lib
             }
         }
 
-        [ScriptMethod(nameSpace + ".Filter." + nameof(CreateRGBAWhiteMaskFilter), "",
-            "RS=>Image_CreateWhiteMaskFilter"
-            )]
+        [ScriptMethod(nameSpace + ".Filter." + nameof(CreateRGBAWhiteMaskFilter), "", "RS=>Image_CreateWhiteMaskFilter")]
         public static CRGBAWhiteMaskFilter CreateRGBAWhiteMaskFilter(bool smooth = false)
         {
             return new CRGBAWhiteMaskFilter(smooth);
@@ -1932,17 +1867,13 @@ namespace CbVS.Script.Lib
             }
         }
 
-        [ScriptMethod(nameSpace + ".Filter." + nameof(CreateRGBAContrastFilter) + "(" + nameof(Func<double, double>)  + ")", nameof(CreateRGBAContrastFilter),
-            "RS=>Image_CreateContrastRGB"
-            )]
+        [ScriptMethod(nameSpace + ".Filter." + nameof(CreateRGBAContrastFilter), "", "RS=>Image_CreateContrastRGB")]
         public static CRGBAContrastFilter CreateRGBAContrastFilter(Func<double, double> func)
         {
             return new CRGBAContrastFilter(func);
         }
 
-        [ScriptMethod(nameSpace + ".Filter." + nameof(CreateRGBAContrastFilter) + "(" + nameof(ContrastType) + ")", nameof(CreateRGBAContrastFilter),
-            "RS=>Image_CreateContrastRGB"
-            )]
+        [ScriptMethod(nameSpace + ".Filter." + nameof(CreateRGBAContrastFilter) , "", "RS=>Image_CreateContrastRGB")]
         public static CRGBAContrastFilter CreateRGBAContrastFilter(ContrastType type)
         {
             switch (type)
@@ -1973,9 +1904,9 @@ namespace CbVS.Script.Lib
         /// </summary>
         public class CRGBA3x3FilteringHub : IRGBA3x3Filter
         {
-            List<IRGBA3x3Filter> filters;
+            IList<IRGBA3x3Filter> filters;
 
-            public CRGBA3x3FilteringHub(List<IRGBA3x3Filter> filters)
+            public CRGBA3x3FilteringHub(IList<IRGBA3x3Filter> filters)
             {
                 this.filters = filters;
             }
@@ -2020,10 +1951,8 @@ namespace CbVS.Script.Lib
             }
         }
 
-        [ScriptMethod(nameSpace + ".3x3Filter." + nameof(CreateRGBA3x3FilteringHub), "",
-            "RS=>Image_Create3x3FilterHub"
-            )]
-        public static CRGBA3x3FilteringHub CreateRGBA3x3FilteringHub(List<IRGBA3x3Filter> list)
+        [ScriptMethod(nameSpace + ".3x3Filter." + nameof(CreateRGBA3x3FilteringHub), "", "RS=>Image_Create3x3FilterHub")]
+        public static CRGBA3x3FilteringHub CreateRGBA3x3FilteringHub(IList<IRGBA3x3Filter> list)
         {
             return new CRGBA3x3FilteringHub(list);
         }
@@ -2081,18 +2010,14 @@ namespace CbVS.Script.Lib
             }
         }
 
-        [ScriptMethod(nameSpace + ".3x3Filter." + nameof(CreateRGBA3x3DiffFilter) + "(" + nameof(CRGBA3x3FilteringHub) + ")", nameof(CreateRGBA3x3DiffFilter),
-            "RS=>Image_Create3x3FilterDiff"
-            )]
+        [ScriptMethod(nameSpace + ".3x3Filter." + nameof(CreateRGBA3x3DiffFilter), "", "RS=>Image_Create3x3FilterDiff")]
         public static CRGBA3x3DiffFilter CreateRGBA3x3DiffFilter(CRGBA3x3FilteringHub hub)
         {
             return new CRGBA3x3DiffFilter(hub);
         }
 
-        [ScriptMethod(nameSpace + ".3x3Filter." + nameof(CreateRGBA3x3DiffFilter) + "(" + nameof(List<IRGBA3x3Filter>) + ")", nameof(CreateRGBA3x3DiffFilter),
-            "RS=>Image_Create3x3FilterDiff"
-            )]
-        public static CRGBA3x3DiffFilter CreateRGBA3x3DiffFilter(List<IRGBA3x3Filter> filters)
+        [ScriptMethod(nameSpace + ".3x3Filter." + nameof(CreateRGBA3x3DiffFilter), "", "RS=>Image_Create3x3FilterDiff")]
+        public static CRGBA3x3DiffFilter CreateRGBA3x3DiffFilter(IList<IRGBA3x3Filter> filters)
         {
             return new CRGBA3x3DiffFilter(CreateRGBA3x3FilteringHub(filters));
         }
@@ -2119,12 +2044,12 @@ namespace CbVS.Script.Lib
                 SetupKernel(kernel);
             }
 
-            public CRGBA3x3FreeFilter(List<double> kernel)
+            public CRGBA3x3FreeFilter(IList<double> kernel)
             {
                 SetupKernel(kernel);
             }
 
-            private void SetupKernel(List<double> kernel)
+            private void SetupKernel(IList<double> kernel)
             {
                 for (int i = 0; i < kernel.Count; ++i)
                 {
@@ -2181,17 +2106,13 @@ namespace CbVS.Script.Lib
             }
         }
 
-        [ScriptMethod(nameSpace + ".3x3Filter." + nameof(CreateRGBA3x3FreeFilter) + "(List<double>)", nameof(CreateRGBA3x3FreeFilter),
-            "RS=>Image_CreateFreeFilter_ld"
-            )]
-        public static CRGBA3x3FreeFilter CreateRGBA3x3FreeFilter(List<double> kernel)
+        [ScriptMethod(nameSpace + ".3x3Filter." + nameof(CreateRGBA3x3FreeFilter), "", "RS=>Image_CreateFreeFilter_ld")]
+        public static CRGBA3x3FreeFilter CreateRGBA3x3FreeFilter(IList<double> kernel)
         {
             return new CRGBA3x3FreeFilter(kernel);
         }
 
-        [ScriptMethod(nameSpace + ".3x3Filter." + nameof(CreateRGBA3x3FreeFilter) + "(List<double>, double)", nameof(CreateRGBA3x3FreeFilter),
-            "RS=>Image_CreateFreeFilter_ld_d"
-            )]
+        [ScriptMethod(nameSpace + ".3x3Filter." + nameof(CreateRGBA3x3FreeFilter), "", "RS=>Image_CreateFreeFilter_ld_d")]
         public static CRGBA3x3FreeFilter CreateRGBA3x3FreeFilter(List<double> kernel, double div)
         {
             return new CRGBA3x3FreeFilter(kernel, div);
@@ -2201,9 +2122,7 @@ namespace CbVS.Script.Lib
         /// <summary>
         /// 平滑化（平均）処理を定義するクラスです。
         /// </summary>
-        [ScriptMethod(nameSpace + ".3x3Filter." + nameof(CreateRGBA3x3AverageFilter), "",
-            "RS=>Image_CreateAverageFilter"
-            )]
+        [ScriptMethod(nameSpace + ".3x3Filter." + nameof(CreateRGBA3x3AverageFilter), "", "RS=>Image_CreateAverageFilter")]
         public static CRGBA3x3FreeFilter CreateRGBA3x3AverageFilter()
         {
             return CreateRGBA3x3FreeFilter(
@@ -2220,9 +2139,7 @@ namespace CbVS.Script.Lib
         /// <summary>
         /// 平滑化（ガウシアンフィルター）処理を定義するクラスです。
         /// </summary>
-        [ScriptMethod(nameSpace + ".3x3Filter." + nameof(CreateRGBA3x3GaussianFilter), "",
-            "RS=>Image_CreateGaussianFilter"
-            )]
+        [ScriptMethod(nameSpace + ".3x3Filter." + nameof(CreateRGBA3x3GaussianFilter), "", "RS=>Image_CreateGaussianFilter")]
         public static CRGBA3x3FreeFilter CreateRGBA3x3GaussianFilter()
         {
             return CreateRGBA3x3FreeFilter(
@@ -2239,9 +2156,7 @@ namespace CbVS.Script.Lib
         /// <summary>
         /// 輪郭抽出（一次微分フィルタ）処理を定義するクラスです。
         /// </summary>
-        [ScriptMethod(nameSpace + ".3x3Filter." + nameof(CreateRGBA3x3FirstDerivativeFilter), "",
-            "RS=>Image_CreateFirstDerivativeFilter"
-            )]
+        [ScriptMethod(nameSpace + ".3x3Filter." + nameof(CreateRGBA3x3FirstDerivativeFilter), "", "RS=>Image_CreateFirstDerivativeFilter")]
         public static CRGBA3x3FreeFilter CreateRGBA3x3FirstDerivativeFilter()
         {
             return CreateRGBA3x3FreeFilter(
@@ -2258,9 +2173,7 @@ namespace CbVS.Script.Lib
         /// <summary>
         /// 輪郭抽出（プレヴィットフィルタ）処理を定義するクラスです。
         /// </summary>
-        [ScriptMethod(nameSpace + ".3x3Filter." + nameof(CreateRGBA3x3PrewittFilter), "",
-            "RS=>Image_CreatePrewittFilter"
-            )]
+        [ScriptMethod(nameSpace + ".3x3Filter." + nameof(CreateRGBA3x3PrewittFilter), "", "RS=>Image_CreatePrewittFilter")]
         public static CRGBA3x3FreeFilter CreateRGBA3x3PrewittFilter()
         {
             return CreateRGBA3x3FreeFilter(
@@ -2277,9 +2190,7 @@ namespace CbVS.Script.Lib
         /// <summary>
         /// 輪郭抽出（ソーベルフィルタ）処理を定義するクラスです。
         /// </summary>
-        [ScriptMethod(nameSpace + ".3x3Filter." + nameof(CreateRGBA3x3SobelFilter), "",
-            "RS=>Image_CreateSobelFilter"
-            )]
+        [ScriptMethod(nameSpace + ".3x3Filter." + nameof(CreateRGBA3x3SobelFilter), "", "RS=>Image_CreateSobelFilter")]
         public static CRGBA3x3FreeFilter CreateRGBA3x3SobelFilter()
         {
             return CreateRGBA3x3FreeFilter(
@@ -2296,9 +2207,7 @@ namespace CbVS.Script.Lib
         /// <summary>
         /// 鮮鋭化（アンシャープマスキング）処理を定義するクラスです。
         /// </summary>
-        [ScriptMethod(nameSpace + ".3x3Filter." + nameof(CreateRGBA3x3UnsharpMasking), "",
-            "RS=>Image_CreateUnsharpMasking"
-            )]
+        [ScriptMethod(nameSpace + ".3x3Filter." + nameof(CreateRGBA3x3UnsharpMasking), "", "RS=>Image_CreateUnsharpMasking")]
         public static CRGBA3x3FreeFilter CreateRGBA3x3UnsharpMasking(double k = 2.0)
         {
             return CreateRGBA3x3FreeFilter(
@@ -2332,9 +2241,9 @@ namespace CbVS.Script.Lib
                 out double Alpha
                 )
             {
-                List<double> listR = new List<double>() { pixel01.R, pixel10.R, pixel11.R, pixel12.R, pixel21.R };
-                List<double> listG = new List<double>() { pixel01.G, pixel10.G, pixel11.G, pixel12.G, pixel21.G };
-                List<double> listB = new List<double>() { pixel01.B, pixel10.B, pixel11.B, pixel12.B, pixel21.B };
+                var listR = new List<double>() { pixel01.R, pixel10.R, pixel11.R, pixel12.R, pixel21.R };
+                var listG = new List<double>() { pixel01.G, pixel10.G, pixel11.G, pixel12.G, pixel21.G };
+                var listB = new List<double>() { pixel01.B, pixel10.B, pixel11.B, pixel12.B, pixel21.B };
 
                 R = listR.Max();
                 G = listG.Max();
@@ -2346,9 +2255,7 @@ namespace CbVS.Script.Lib
         /// <summary>
         /// 膨張処理を定義するクラスです。
         /// </summary>
-        [ScriptMethod(nameSpace + ".3x3Filter." + nameof(CreateRGBA3x3DilationFilter), "",
-            "RS=>Image_CreateDilationFilter"
-            )]
+        [ScriptMethod(nameSpace + ".3x3Filter." + nameof(CreateRGBA3x3DilationFilter), "", "RS=>Image_CreateDilationFilter")]
         public static IRGBA3x3Filter CreateRGBA3x3DilationFilter()
         {
             return new CRGBA3x3DilationFilter();
@@ -2375,9 +2282,9 @@ namespace CbVS.Script.Lib
                 out double Alpha
                 )
             {
-                List<double> listR = new List<double>() { pixel01.R, pixel10.R, pixel11.R, pixel12.R, pixel21.R };
-                List<double> listG = new List<double>() { pixel01.G, pixel10.G, pixel11.G, pixel12.G, pixel21.G };
-                List<double> listB = new List<double>() { pixel01.B, pixel10.B, pixel11.B, pixel12.B, pixel21.B };
+                var listR = new List<double>() { pixel01.R, pixel10.R, pixel11.R, pixel12.R, pixel21.R };
+                var listG = new List<double>() { pixel01.G, pixel10.G, pixel11.G, pixel12.G, pixel21.G };
+                var listB = new List<double>() { pixel01.B, pixel10.B, pixel11.B, pixel12.B, pixel21.B };
 
                 R = listR.Min();
                 G = listG.Min();
@@ -2455,18 +2362,14 @@ namespace CbVS.Script.Lib
             }
         }
 
-        [ScriptMethod(nameSpace + ".3x3Filter." + nameof(CreateRGBA3x3MedianFilter), "",
-            "RS=>Image_CreateMedianFilter"
-            )]
+        [ScriptMethod(nameSpace + ".3x3Filter." + nameof(CreateRGBA3x3MedianFilter), "", "RS=>Image_CreateMedianFilter")]
         public static CRGBA3x3MedianFilter CreateRGBA3x3MedianFilter()
         {
             return new CRGBA3x3MedianFilter();
         }
 
         //------------------------------------------------------------------
-        [ScriptMethod(nameSpace + ".3x3Filter." + nameof(Create3x3Filter), "",
-            "RS=>Image_Create3x3Filter"
-            )]
+        [ScriptMethod(nameSpace + ".3x3Filter." + nameof(Create3x3Filter), "", "RS=>Image_Create3x3Filter")]
         public static IRGBA3x3Filter Create3x3Filter(K3x3FilterType type)
         {
             IRGBA3x3Filter filter = null;

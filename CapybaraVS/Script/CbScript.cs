@@ -58,13 +58,13 @@ namespace CbVS.Script
         /// <param name="typeName">選択された型の格納先</param>
         /// <param name="isAccept">受け付ける型を判定する処理</param>
         /// <returns>true = 有効</returns>
-        private static bool _SelectVariableType(CommandCanvas OwnerCommandCanvas, ref string typeName, Func<Type, bool> isAccept)
+        private static bool _SelectVariableType(CommandCanvas OwnerCommandCanvas, ref string typeName, Func<Type, bool>[] isAccept)
         {
             if (typeName == CbSTUtils.FREE_ENUM_TYPE_STR)
             {
                 typeName = OwnerCommandCanvas.RequestTypeString(isAccept);
             }
-            if (typeName == CbSTUtils.FREE_TYPE_STR)
+            else if (typeName == CbSTUtils.FREE_TYPE_STR)
             {
                 typeName = OwnerCommandCanvas.RequestTypeString(isAccept);
             }
@@ -73,10 +73,6 @@ namespace CbVS.Script
                 typeName = OwnerCommandCanvas.RequestGenericTypeName(typeName, isAccept);
             }
             if (typeName is null)
-            {
-                return false;
-            }
-            if (isAccept != null && !isAccept(CbST.GetTypeEx(typeName)))
             {
                 return false;
             }
@@ -91,7 +87,7 @@ namespace CbVS.Script
         /// <param name="stackNode">変数の登録領域</param>
         /// <param name="forcedListTypeSelect">リスト型を選択するか？</param>
         /// <returns>ノード</returns>
-        private static MultiRootConnector _CreateFreeTypeVariableFunction(CommandCanvas OwnerCommandCanvas, string assetCode, string valueType, Func<Type, bool> isAccept, MultiRootConnector multiRootConnector, StackNode stackNode, bool forcedListTypeSelect)
+        private static MultiRootConnector _CreateFreeTypeVariableFunction(CommandCanvas OwnerCommandCanvas, string assetCode, string valueType, Func<Type, bool>[] isAccept, MultiRootConnector multiRootConnector, StackNode stackNode, bool forcedListTypeSelect)
         {
             if (multiRootConnector is null)
             {
@@ -151,7 +147,7 @@ namespace CbVS.Script
         /// <param name="ignoreTypes">選択除外の型を指定</param>
         /// <param name="forcedListTypeSelect">リスト型を選択するか？</param>
         /// <returns>ノード</returns>
-        public static MultiRootConnector CreateFreeTypeVariableFunction(CommandCanvas OwnerCommandCanvas, string assetCode, string valueType, Func<Type, bool> isAccept = null, bool forcedListTypeSelect = false)
+        public static MultiRootConnector CreateFreeTypeVariableFunction(CommandCanvas OwnerCommandCanvas, string assetCode, string valueType, Func<Type, bool>[] isAccept = null, bool forcedListTypeSelect = false)
         {
             MultiRootConnector multiRootConnector = null;
             StackNode stackNode = null;
@@ -166,7 +162,7 @@ namespace CbVS.Script
         /// <param name="cbType">選択された型の格納先</param>
         /// <param name="ignoreTypes">選択除外の型を指定</param>
         /// <returns>ノード</returns>
-        public static MultiRootConnector CreateFreeTypeFunction(CommandCanvas OwnerCommandCanvas, string assetCode, string valueType, Func<Type, bool> isAccept = null)
+        public static MultiRootConnector CreateFreeTypeFunction(CommandCanvas OwnerCommandCanvas, string assetCode, string valueType, Func<Type, bool>[] isAccept = null)
         {
             if (!_SelectVariableType(OwnerCommandCanvas, ref valueType, isAccept))
                 return null;
@@ -185,7 +181,7 @@ namespace CbVS.Script
         /// <param name="cbType">選択された型の格納先</param>
         /// <param name="ignoreTypes">選択除外の型を指定</param>
         /// <returns>ノード</returns>
-        public static MultiRootConnector SelectVariableType(CommandCanvas OwnerCommandCanvas, string valueType, Func<Type, bool> isAccept = null)
+        public static MultiRootConnector SelectVariableType(CommandCanvas OwnerCommandCanvas, string valueType, Func<Type, bool>[] isAccept = null)
         {
             if (!_SelectVariableType(OwnerCommandCanvas, ref valueType, isAccept))
                 return null;

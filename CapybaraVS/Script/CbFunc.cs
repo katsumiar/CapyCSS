@@ -122,7 +122,9 @@ namespace CbVS.Script
                 CbVoid.T // Action の場合はこの指定が必要
                 );
 
-            object result = cbFuncType.InvokeMember("GetCbFunc", BindingFlags.InvokeMethod,
+            object result = cbFuncType.InvokeMember(
+                        "GetCbFunc", //nameof(CbFunc<int, CbInt>.GetCbFunc),//"GetCbFunc",
+                        BindingFlags.InvokeMethod,
                         null, null, new object[] { name }) as ICbValue;
             return result as ICbValue;
         }
@@ -139,7 +141,9 @@ namespace CbVS.Script
                 CbVoid.T // Action の場合はこの指定が必要
                 );
 
-            object result = cbFuncType.InvokeMember("GetCbFunc", BindingFlags.InvokeMethod,
+            object result = cbFuncType.InvokeMember(
+                        "GetCbFunc", //nameof(CbFunc<int, CbInt>.GetCbFunc),//"GetCbFunc",
+                        BindingFlags.InvokeMethod,
                         null, null, new object[] { name }) as ICbValue;
             return result as ICbValue;
         }
@@ -156,7 +160,9 @@ namespace CbVS.Script
                 CbST.ConvertCbType(ret)
                 );
 
-            object result = cbFuncType.InvokeMember("GetCbFunc", BindingFlags.InvokeMethod,
+            object result = cbFuncType.InvokeMember(
+                        "GetCbFunc", //nameof(CbFunc<int, CbInt>.GetCbFunc),//"GetCbFunc",
+                        BindingFlags.InvokeMethod,
                         null, null, new object[] { name }) as ICbValue;
             return result as ICbValue;
         }
@@ -174,7 +180,9 @@ namespace CbVS.Script
                 CbST.ConvertCbType(ret)
                 );
 
-            object result = cbFuncType.InvokeMember("GetCbFunc", BindingFlags.InvokeMethod,
+            object result = cbFuncType.InvokeMember(
+                        "GetCbFunc", //nameof(CbFunc<int, CbInt>.GetCbFunc),//"GetCbFunc",
+                        BindingFlags.InvokeMethod,
                         null, null, new object[] { name }) as ICbValue;
             return result as ICbValue;
         }
@@ -202,7 +210,9 @@ namespace CbVS.Script
         public static ICbValue CreateFuncFromOriginalType(Type original, Type ret, string name = "")
         {
             object result = GetFuncType(original, ret)
-                        .InvokeMember("GetCbFunc", BindingFlags.InvokeMethod,
+                        .InvokeMember(
+                            "GetCbFunc", //nameof(CbFunc<int, CbInt>.GetCbFunc),//"GetCbFunc",
+                            BindingFlags.InvokeMethod,
                             null, null, new object[] { name }) as ICbValue;
             return result as ICbValue;
         }
@@ -210,87 +220,11 @@ namespace CbVS.Script
         private static ICbValue CallGetCbFunc(ICbValue ret, string name, Type originalType)
         {
             object result = GetFuncType(originalType, ret.OriginalReturnType)
-                        .InvokeMember("GetCbFunc", BindingFlags.InvokeMethod,
+                        .InvokeMember(
+                            "GetCbFunc", //nameof(CbFunc<int, CbInt>.GetCbFunc),//"GetCbFunc",
+                            BindingFlags.InvokeMethod,
                             null, null, new object[] { name }) as ICbValue;
             return result as ICbValue;
-        }
-
-        /// <summary>
-        /// Func 及び Action のノード接続の可否判定を行います。
-        /// </summary>
-        /// <param name="toName">接続先の型名</param>
-        /// <param name="fromName">接続元の型名</param>
-        /// <returns></returns>
-        public static bool IsCanConnect(string toName, string fromName)
-        {
-            if ((toName == $"{CbSTUtils.FUNC_STR}<" && toName.EndsWith($", {CbSTUtils.OBJECT_STR}>"))
-                || toName == $"{CbSTUtils.FUNC_STR}<{CbSTUtils.OBJECT_STR}>"
-                || toName.StartsWith(CbSTUtils.ACTION_STR))
-            {
-                // イベント接続
-
-                return true;
-            }
-            if (toName.StartsWith($"{CbSTUtils.FUNC_STR}<") && toName.EndsWith(fromName + ">"))
-            {
-                // イベント接続（返し値が一致するなら接続可）
-
-                return true;
-            }
-            if (toName.StartsWith($"{CbSTUtils.FUNC_STR}<") && toName.EndsWith($"{CbSTUtils.OBJECT_STR}>"))
-            {
-                // イベント接続（返し値が一致するなら接続可）
-
-                return true;
-            }
-            return false;
-        }
-
-        /// <summary>
-        /// Func 及び Action ノードの通常接続の可否判定を行います。
-        /// </summary>
-        /// <param name="toName">接続先の型名</param>
-        /// <param name="fromName">接続元の型名</param>
-        /// <returns></returns>
-        public static bool IsNormalConnect(string toName, string fromName)
-        {
-            if (toName.StartsWith(CbSTUtils.ACTION_STR))
-            {
-                // イベント接続
-
-                return true;
-            }
-            if (toName.StartsWith($"{CbSTUtils.FUNC_STR}<") && toName.EndsWith(fromName + ">"))
-            {
-                // イベント接続（返し値が一致するなら接続可）
-
-                return true;
-            }
-            if (toName.StartsWith($"{CbSTUtils.FUNC_STR}<") && toName.EndsWith($"{CbSTUtils.OBJECT_STR}>"))
-            {
-                // イベント接続（返し値がobjectなら接続可）
-
-                return true;
-            }
-            return false;
-        }
-
-        /// <summary>
-        /// Func ノードのキャスト接続の可否判定を行います。
-        /// </summary>
-        /// <param name="toName">接続先の型名</param>
-        /// <param name="fromName">接続元の型名</param>
-        /// <param name="toType"></param>
-        /// <param name="fromType"></param>
-        /// <returns></returns>
-        public static bool IsCastConnect(string toName, string fromName, Type toType, Type fromType)
-        {
-            // Action はこの判定まで来ない
-            Debug.Assert(!toName.StartsWith(CbSTUtils.ACTION_STR));
-
-            return CbSTUtils.IsCastAssignment(
-                CbSTUtils._GetTypeName(toType.GenericTypeArguments.Last()),
-                CbSTUtils._GetTypeName(fromType.GenericTypeArguments.Last()));
         }
 
         public static bool IsEventType(Type type)

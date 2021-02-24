@@ -5,12 +5,12 @@
     <EnableInfo>false</EnableInfo>
     <CanvasScale>1</CanvasScale>
     <CanvasRenderTransform>
-      <M11>0.9821089184275337</M11>
+      <M11>0.9907997083104636</M11>
       <M12>0</M12>
       <M21>0</M21>
-      <M22>0.9821089184275337</M22>
-      <OffsetX>227.39697735670438</OffsetX>
-      <OffsetY>-27.000643902803375</OffsetY>
+      <M22>0.9907997083104636</M22>
+      <OffsetX>233.04682924977791</OffsetX>
+      <OffsetY>-34.30151934187058</OffsetY>
     </CanvasRenderTransform>
   </WorkCanvas>
   <ImportClassModule />
@@ -20,14 +20,14 @@
   <WorkStack>
     <StackList>
       <Asset>
-        <Id>1</Id>
-        <AssetValueType>System.Collections.Generic.List`1[[System.Action, System.Private.CoreLib, Version=5.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]</AssetValueType>
+        <Id>58</Id>
+        <AssetValueType>System.Collections.Generic.ICollection`1[[System.Action, System.Private.CoreLib, Version=5.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]</AssetValueType>
         <Name>actions</Name>
       </Asset>
     </StackList>
   </WorkStack>
   <WorkCanvasAssetList>
-    <Asset Id="3" X="420.2366300350298" Y="166.0858788756164">
+    <Asset Id="3" X="320.45136369521384" Y="174.23161490335647">
       <MultiRootConnector>
         <RootFunc AssetType="LiteralType" AssetFuncType="none">
           <AttachVariableIds />
@@ -40,7 +40,7 @@
             <ForcedChecked>false</ForcedChecked>
             <Connector>
               <LinkList>
-                <PointID>72</PointID>
+                <PointID>66</PointID>
               </LinkList>
             </Connector>
             <Arguments>
@@ -95,7 +95,7 @@
         </RootFunc>
       </MultiRootConnector>
     </Asset>
-    <Asset Id="4" X="153.39536894535937" Y="117.77642070309375">
+    <Asset Id="4" X="57.647245497744024" Y="127.94072817693413">
       <MultiRootConnector>
         <RootFunc AssetType="FuncType" AssetFuncType="ConsoleOut">
           <AttachVariableIds />
@@ -134,7 +134,7 @@
         </RootFunc>
       </MultiRootConnector>
     </Asset>
-    <Asset Id="4" X="158.5271585938125" Y="286.65694059048025">
+    <Asset Id="4" X="58.741892253996525" Y="294.8026766182202">
       <MultiRootConnector>
         <RootFunc AssetType="FuncType" AssetFuncType="ConsoleOut">
           <AttachVariableIds />
@@ -173,66 +173,13 @@
         </RootFunc>
       </MultiRootConnector>
     </Asset>
-    <Asset Id="6" X="630.8074325690964" Y="531.0912542699798">
-      <MultiRootConnector>
-        <RootFunc AssetType="FuncType" AssetFuncType="Foreach">
-          <AttachVariableIds />
-          <AttachVariableId>0</AttachVariableId>
-          <AssetValueType>System.Action</AssetValueType>
-          <RootConnector PointId="52">
-            <Caption>
-              <LabelString>Foreach Action&lt;Action&gt;.Invoke</LabelString>
-            </Caption>
-            <Value>void</Value>
-            <ForcedChecked>false</ForcedChecked>
-            <Connector>
-              <LinkList>
-                <PointID>66</PointID>
-              </LinkList>
-            </Connector>
-            <Arguments>
-              <LinkConnector PointId="53">
-                <CastConnect>false</CastConnect>
-                <ParamInfo>
-                  <ParamName>sample</ParamName>
-                  <ParamNameLabelOverlap>sample</ParamNameLabelOverlap>
-                  <ParamNameLabel>
-                    <LabelString>sample</LabelString>
-                  </ParamNameLabel>
-                </ParamInfo>
-                <LinkConnectorList>
-                  <List />
-                  <IsOpenList>false</IsOpenList>
-                </LinkConnectorList>
-              </LinkConnector>
-              <LinkConnector PointId="54">
-                <Value>[Action&lt;Action&gt;()]&lt;null&gt;</Value>
-                <CastConnect>false</CastConnect>
-                <ParamInfo>
-                  <ParamName>func f(node)</ParamName>
-                  <ParamNameLabelOverlap>func f(node)</ParamNameLabelOverlap>
-                  <ParamNameLabel>
-                    <LabelString>func f(node)</LabelString>
-                  </ParamNameLabel>
-                </ParamInfo>
-                <LinkConnectorList>
-                  <List />
-                  <IsOpenList>true</IsOpenList>
-                </LinkConnectorList>
-              </LinkConnector>
-            </Arguments>
-            <IsPublicExecute>false</IsPublicExecute>
-          </RootConnector>
-        </RootFunc>
-      </MultiRootConnector>
-    </Asset>
     <Asset Id="8" X="366.3730647178608" Y="664.5347919748574">
       <MultiRootConnector>
         <RootFunc AssetType="FuncType" AssetFuncType="CallerArguments">
           <AttachVariableIds />
           <AttachVariableId>0</AttachVariableId>
           <AssetValueType>System.Action</AssetValueType>
-          <RootConnector PointId="57">
+          <RootConnector PointId="51">
             <Caption>
               <LabelString>DummyArguments&lt;Action&gt;</LabelString>
             </Caption>
@@ -240,11 +187,11 @@
             <ForcedChecked>false</ForcedChecked>
             <Connector>
               <LinkList>
-                <PointID>54</PointID>
+                <PointID>72</PointID>
               </LinkList>
             </Connector>
             <Arguments>
-              <LinkConnector PointId="58">
+              <LinkConnector PointId="52">
                 <Value>INDEX.ARG_1</Value>
                 <CastConnect>false</CastConnect>
                 <ParamInfo>
@@ -265,13 +212,36 @@
         </RootFunc>
       </MultiRootConnector>
     </Asset>
-    <Asset Id="9" X="1106.41597532044" Y="363.91294085298404">
+    <Asset Id="1107" X="1080.1795095072837" Y="299.8406029209378">
+      <GroupAreaControl>
+        <Text>dog
+cat
+と出力されたら正解。</Text>
+        <Witdh>351.33505551974855</Witdh>
+        <Height>235.11839257132357</Height>
+      </GroupAreaControl>
+    </Asset>
+    <Asset Id="1126" X="309.55542268698224" Y="484.8314699115023">
+      <GroupAreaControl>
+        <Text>actions リスト変数に登録されたイベントをすべて実行します。</Text>
+        <Witdh>652.5664746970493</Witdh>
+        <Height>305.2389422621146</Height>
+      </GroupAreaControl>
+    </Asset>
+    <Asset Id="1127" X="29.83663376313507" Y="84.62003375067842">
+      <GroupAreaControl>
+        <Text>actions リスト変数に「dog」と「cat」を出力する２つのイベントを登録します。</Text>
+        <Witdh>928.2881676838807</Witdh>
+        <Height>374.56579861553115</Height>
+      </GroupAreaControl>
+    </Asset>
+    <Asset Id="1153" X="1103.1020312005874" Y="359.65040800174745">
       <MultiRootConnector>
         <RootFunc AssetType="FuncType" AssetFuncType="Subroutine">
           <AttachVariableIds />
           <AttachVariableId>0</AttachVariableId>
-          <AssetValueType>System.Object</AssetValueType>
-          <RootConnector PointId="61">
+          <AssetValueType>System.Collections.Generic.ICollection`1[[System.Object, System.Private.CoreLib, Version=5.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]</AssetValueType>
+          <RootConnector PointId="55">
             <Caption>
               <LabelString>Sequence</LabelString>
             </Caption>
@@ -281,7 +251,7 @@
               <LinkList />
             </Connector>
             <Arguments>
-              <LinkConnector PointId="62">
+              <LinkConnector PointId="56">
                 <CastConnect>false</CastConnect>
                 <ParamInfo>
                   <ParamName>call list</ParamName>
@@ -292,7 +262,7 @@
                 </ParamInfo>
                 <LinkConnectorList>
                   <List>
-                    <LinkConnector PointId="64">
+                    <LinkConnector PointId="58">
                       <Value>[object]&lt;null&gt;</Value>
                       <CastConnect>false</CastConnect>
                       <ParamInfo>
@@ -307,7 +277,7 @@
                         <IsOpenList>true</IsOpenList>
                       </LinkConnectorList>
                     </LinkConnector>
-                    <LinkConnector PointId="66">
+                    <LinkConnector PointId="60">
                       <Value>[object]&lt;null&gt;</Value>
                       <CastConnect>false</CastConnect>
                       <ParamInfo>
@@ -332,22 +302,22 @@
         </RootFunc>
       </MultiRootConnector>
     </Asset>
-    <Asset Id="10" X="377.4818559062726" Y="527.7739729306986">
+    <Asset Id="1158" X="333.01702451332625" Y="547.3775524890746">
       <MultiRootConnector>
         <RootFunc AssetType="FuncType" AssetFuncType="GetVariable">
           <AttachVariableIds>
-            <int>1</int>
+            <int>58</int>
           </AttachVariableIds>
-          <AttachVariableId>1</AttachVariableId>
-          <AssetValueType>System.Collections.Generic.List`1[[System.Action, System.Private.CoreLib, Version=5.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]</AssetValueType>
-          <RootConnector PointId="68">
+          <AttachVariableId>58</AttachVariableId>
+          <AssetValueType>System.Collections.Generic.ICollection`1[[System.Action, System.Private.CoreLib, Version=5.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]</AssetValueType>
+          <RootConnector PointId="62">
             <Caption>
               <LabelString>[ actions ]</LabelString>
             </Caption>
             <ForcedChecked>false</ForcedChecked>
             <Connector>
               <LinkList>
-                <PointID>53</PointID>
+                <PointID>71</PointID>
               </LinkList>
             </Connector>
             <Arguments />
@@ -356,15 +326,15 @@
         </RootFunc>
       </MultiRootConnector>
     </Asset>
-    <Asset Id="11" X="765.8841374281426" Y="182.38520823254083">
+    <Asset Id="1159" X="628.7377413670188" Y="242.57326412793049">
       <MultiRootConnector>
         <RootFunc AssetType="FuncType" AssetFuncType="SetVariable">
           <AttachVariableIds>
-            <int>1</int>
+            <int>58</int>
           </AttachVariableIds>
-          <AttachVariableId>1</AttachVariableId>
-          <AssetValueType>System.Collections.Generic.List`1[[System.Action, System.Private.CoreLib, Version=5.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]</AssetValueType>
-          <RootConnector PointId="71">
+          <AttachVariableId>58</AttachVariableId>
+          <AssetValueType>System.Collections.Generic.ICollection`1[[System.Action, System.Private.CoreLib, Version=5.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]</AssetValueType>
+          <RootConnector PointId="65">
             <Caption>
               <LabelString>[ actions ]</LabelString>
             </Caption>
@@ -372,11 +342,11 @@
             <ForcedChecked>false</ForcedChecked>
             <Connector>
               <LinkList>
-                <PointID>64</PointID>
+                <PointID>58</PointID>
               </LinkList>
             </Connector>
             <Arguments>
-              <LinkConnector PointId="72">
+              <LinkConnector PointId="66">
                 <CastConnect>false</CastConnect>
                 <ParamInfo>
                   <ParamName>n</ParamName>
@@ -396,28 +366,58 @@
         </RootFunc>
       </MultiRootConnector>
     </Asset>
-    <Asset Id="1107" X="1080.1795095072837" Y="299.84060292093784">
-      <GroupAreaControl>
-        <Text>dog
-cat
-と出力されたら正解。</Text>
-        <Witdh>275.9869972631531</Witdh>
-        <Height>235.11839257132348</Height>
-      </GroupAreaControl>
-    </Asset>
-    <Asset Id="1126" X="309.55542268698224" Y="484.8314699115023">
-      <GroupAreaControl>
-        <Text>actions リスト変数に登録されたイベントをすべて実行します。</Text>
-        <Witdh>652.5664746970493</Witdh>
-        <Height>305.2389422621146</Height>
-      </GroupAreaControl>
-    </Asset>
-    <Asset Id="1127" X="129.62190010295103" Y="77.49251472640586">
-      <GroupAreaControl>
-        <Text>actions リスト変数に「dog」と「cat」を出力する２つのイベントを登録します。</Text>
-        <Witdh>865.1587134688958</Witdh>
-        <Height>373.54758161206365</Height>
-      </GroupAreaControl>
+    <Asset Id="1160" X="605.5241697368654" Y="545.3589810429742">
+      <MultiRootConnector>
+        <RootFunc AssetType="FuncType" AssetFuncType="Foreach">
+          <AttachVariableIds />
+          <AttachVariableId>0</AttachVariableId>
+          <AssetValueType>System.Collections.Generic.ICollection`1[[System.Action, System.Private.CoreLib, Version=5.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]</AssetValueType>
+          <RootConnector PointId="70">
+            <Caption>
+              <LabelString>Foreach Action&lt;Action&gt;.Invoke</LabelString>
+            </Caption>
+            <Value>void</Value>
+            <ForcedChecked>false</ForcedChecked>
+            <Connector>
+              <LinkList>
+                <PointID>60</PointID>
+              </LinkList>
+            </Connector>
+            <Arguments>
+              <LinkConnector PointId="71">
+                <CastConnect>false</CastConnect>
+                <ParamInfo>
+                  <ParamName>sample</ParamName>
+                  <ParamNameLabelOverlap>sample</ParamNameLabelOverlap>
+                  <ParamNameLabel>
+                    <LabelString>sample</LabelString>
+                  </ParamNameLabel>
+                </ParamInfo>
+                <LinkConnectorList>
+                  <List />
+                  <IsOpenList>false</IsOpenList>
+                </LinkConnectorList>
+              </LinkConnector>
+              <LinkConnector PointId="72">
+                <Value>[Action&lt;Action&gt;()]&lt;null&gt;</Value>
+                <CastConnect>false</CastConnect>
+                <ParamInfo>
+                  <ParamName>func f(node)</ParamName>
+                  <ParamNameLabelOverlap>func f(node)</ParamNameLabelOverlap>
+                  <ParamNameLabel>
+                    <LabelString>func f(node)</LabelString>
+                  </ParamNameLabel>
+                </ParamInfo>
+                <LinkConnectorList>
+                  <List />
+                  <IsOpenList>true</IsOpenList>
+                </LinkConnectorList>
+              </LinkConnector>
+            </Arguments>
+            <IsPublicExecute>false</IsPublicExecute>
+          </RootConnector>
+        </RootFunc>
+      </MultiRootConnector>
     </Asset>
   </WorkCanvasAssetList>
 </CommandCanvas>

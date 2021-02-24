@@ -346,6 +346,27 @@ namespace CapybaraVS.Script
                 CbST.AddModule(module);
             }
 
+#if false    // テスト用
+            foreach (Type classType in types)
+            {
+                if (!IsAcceptClass(classType))
+                    continue;   // 扱えない
+
+                if (ignoreClassList != null && !ignoreClassList.Contains(classType.Name))
+                    continue;
+
+                if (!classType.IsAbstract)
+                {
+                    // コンストラクタをインポートする
+
+                    CreateMakeInportConstructorInfoTasks(module, classType);
+                }
+
+                // メソッドをインポートする
+                CreateMakeInportMethodInfoTasks(module, classType);
+            }
+#endif
+
             Task<List<Type>> tcTask = null;
             if (inportTypeMenu != null)
             {
@@ -367,27 +388,6 @@ namespace CapybaraVS.Script
                     return resultTypes;
                 });
             }
-
-#if false    // テスト用
-            foreach (Type classType in types)
-            {
-                if (!IsAcceptClass(classType))
-                    continue;   // 扱えない
-
-                if (ignoreClassList != null && !ignoreClassList.Contains(classType.Name))
-                    continue;
-
-                if (!classType.IsAbstract)
-                {
-                    // コンストラクタをインポートする
-
-                    CreateMakeInportConstructorInfoTasks(module, classType);
-                }
-
-                // メソッドをインポートする
-                CreateMakeInportMethodInfoTasks(module, classType);
-            }
-#endif
 
             List<Task<List<AutoImplementFunctionInfo>>> tasks = CreateMakeInportFunctionInfoTasks(module, ignoreClassList, types);
 
@@ -756,16 +756,17 @@ namespace CapybaraVS.Script
 
                         menuName = classType.Namespace + "." + menuName;
                     }
-
-                    // 引数情報を追加する
-                    menuName += MakeParamsString(methodInfo);
-
-                    // 返り値の型名を追加する
-                    menuName += " : " + retType("").TypeName;
                 }
 
                 // ノード用の名前を作成
                 string nodeName = MakeScriptNodeName(menuName);
+
+                // 引数情報を追加する
+                menuName += MakeParamsString(methodInfo);
+
+                // 返り値の型名を追加する
+                menuName += " : " + retType("").TypeName;
+
                 if (methodAttr != null && methodAttr.FuncName != "")
                 {
                     // 指定の名前を採用する
