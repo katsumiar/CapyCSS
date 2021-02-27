@@ -163,17 +163,6 @@ namespace CapybaraVS.Script
             { nameof(CbVoid), VOID_STR },
         };
 
-        static private readonly List<string> eqTypeList = new List<string>()
-        {
-            USHORT_STR,
-            UINT_STR,
-            ULONG_STR,
-            BYTE_STR,
-            STRING_STR,
-            BOOL_STR,
-            OBJECT_STR,
-        };
-
         /// <summary>
         /// オブジェクトの型の文字列名を返します。
         /// </summary>

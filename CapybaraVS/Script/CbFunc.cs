@@ -123,7 +123,7 @@ namespace CbVS.Script
                 );
 
             object result = cbFuncType.InvokeMember(
-                        "GetCbFunc", //nameof(CbFunc<int, CbInt>.GetCbFunc),//"GetCbFunc",
+                        nameof(CbFunc<int, CbInt>.GetCbFunc),
                         BindingFlags.InvokeMethod,
                         null, null, new object[] { name }) as ICbValue;
             return result as ICbValue;
@@ -142,7 +142,7 @@ namespace CbVS.Script
                 );
 
             object result = cbFuncType.InvokeMember(
-                        "GetCbFunc", //nameof(CbFunc<int, CbInt>.GetCbFunc),//"GetCbFunc",
+                        nameof(CbFunc<int, CbInt>.GetCbFunc),
                         BindingFlags.InvokeMethod,
                         null, null, new object[] { name }) as ICbValue;
             return result as ICbValue;
@@ -161,7 +161,7 @@ namespace CbVS.Script
                 );
 
             object result = cbFuncType.InvokeMember(
-                        "GetCbFunc", //nameof(CbFunc<int, CbInt>.GetCbFunc),//"GetCbFunc",
+                        nameof(CbFunc<int, CbInt>.GetCbFunc),
                         BindingFlags.InvokeMethod,
                         null, null, new object[] { name }) as ICbValue;
             return result as ICbValue;
@@ -181,7 +181,7 @@ namespace CbVS.Script
                 );
 
             object result = cbFuncType.InvokeMember(
-                        "GetCbFunc", //nameof(CbFunc<int, CbInt>.GetCbFunc),//"GetCbFunc",
+                        nameof(CbFunc<int, CbInt>.GetCbFunc),
                         BindingFlags.InvokeMethod,
                         null, null, new object[] { name }) as ICbValue;
             return result as ICbValue;
@@ -211,7 +211,7 @@ namespace CbVS.Script
         {
             object result = GetFuncType(original, ret)
                         .InvokeMember(
-                            "GetCbFunc", //nameof(CbFunc<int, CbInt>.GetCbFunc),//"GetCbFunc",
+                            nameof(CbFunc<int, CbInt>.GetCbFunc),
                             BindingFlags.InvokeMethod,
                             null, null, new object[] { name }) as ICbValue;
             return result as ICbValue;
@@ -221,7 +221,7 @@ namespace CbVS.Script
         {
             object result = GetFuncType(originalType, ret.OriginalReturnType)
                         .InvokeMember(
-                            "GetCbFunc", //nameof(CbFunc<int, CbInt>.GetCbFunc),//"GetCbFunc",
+                            nameof(CbFunc<int, CbInt>.GetCbFunc),
                             BindingFlags.InvokeMethod,
                             null, null, new object[] { name }) as ICbValue;
             return result as ICbValue;

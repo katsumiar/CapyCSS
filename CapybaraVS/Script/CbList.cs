@@ -108,7 +108,7 @@ namespace CbVS.Script
         public static ICbValue Create(Type original, string name = "")
         {
             ICbList result = CbList.GetCbType(original.GenericTypeArguments[0]).InvokeMember(
-                        "GetCbFunc",//nameof(CbList<int>.GetCbFunc),
+                        nameof(CbList<int>.GetCbFunc),
                         BindingFlags.InvokeMethod,
                         null,
                         null,
@@ -127,6 +127,12 @@ namespace CbVS.Script
             return stackNode;
         }
 
+        /// <summary>
+        /// 引数付きのインターフェイスを持っているか判定します。
+        /// </summary>
+        /// <param name="type">判定する型</param>
+        /// <param name="interfaceType">インターフェイスの型</param>
+        /// <returns>インターフェイスを持っているならtrue</returns>
         public static bool HaveInterface(Type type, Type interfaceType)
         {
             Type arg = type.GenericTypeArguments[0];
@@ -136,7 +142,6 @@ namespace CbVS.Script
             return collectionType.IsAssignableFrom(type) ||
                type.GetGenericTypeDefinition() == interfaceType;
         }
-
     }
 
     /// <summary>
