@@ -17,6 +17,7 @@ namespace CapybaraVS.Script
     public class ApiImporter : ImplementAsset
     {
         private TreeMenuNode ProgramNode = null;
+        private TreeMenuNode DotNet = null;
         private TreeMenuNode DllNode = null;
         private TreeMenuNode NuGetNode = null;
         private CommandCanvas OwnerCommandCanvas = null;
@@ -120,21 +121,32 @@ namespace CapybaraVS.Script
             }
 
             {
-                var functionNode = CreateGroup(ProgramNode, ".Net Function");
+                DotNet = CreateGroup(ProgramNode, ".Net Function");
 
                 {
-                    var io = CreateGroup(functionNode, "Input/Output");
+                    var io = CreateGroup(DotNet, "Input/Output");
                     var conOut = CreateGroup(io, "ConsoleOut");
                     CreateAssetMenu(ownerCommandCanvas, conOut, new ConsoleOut());
                 }
 
                 {
-                    var tools = CreateGroup(functionNode, "Exec");
+                    var tools = CreateGroup(DotNet, "Exec");
                     CreateAssetMenu(ownerCommandCanvas, tools, new CallFile());
                 }
 
-                ScriptImplement.ImportScriptMethods(ownerCommandCanvas, functionNode);
+                ScriptImplement.ImportScriptMethods(ownerCommandCanvas, DotNet);
             }
+        }
+
+        /// <summary>
+        /// スクリプトに基本のクラスをインポートします。
+        /// </summary>
+        /// <param name="className">クラス名</param>
+        /// <returns>true==成功</returns>
+        public bool ImportBase()
+        {
+            ScriptImplement.ImportScriptMethodsForBase(OwnerCommandCanvas, CreateGroup(DotNet, "Standard"));
+            return true;
         }
 
         /// <summary>

@@ -378,6 +378,9 @@ namespace CapybaraVS.Controls.BaseControls
                     CommandCanvasControl.DllDir,
                     CommandCanvasControl.PackageDir
                 );
+
+            ApiImporter.ImportBase();
+
             ImportModule();
 
             // デバッグ用アセットを追加

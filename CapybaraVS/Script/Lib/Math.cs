@@ -178,21 +178,21 @@ namespace CapybaraVS.Script.Lib
 
         //------------------------------------------------------------------
         [ScriptMethod("Math." + "ax+b")]
-        public static double DimFunc(double x, double a, double b)
+        public static double DimFunc(double a, double x, double b)
         {
             return a * x + b;
         }
 
         //------------------------------------------------------------------
         [ScriptMethod("Math." + "kx^n")]
-        public static double DimFunc2(double x, double k, double n)
+        public static double DimFunc2(double k, double x, double n)
         {
             return k * Math.Pow(x, n);
         }
 
         //------------------------------------------------------------------
         [ScriptMethod("Math." + "(m/d)x^n")]
-        public static double DimFunc3(double x, double m, double d, double n)
+        public static double DimFunc3(double m, double d, double x, double n)
         {
             return (m * Math.Pow(x, n)) / d;
         }

@@ -140,13 +140,13 @@ namespace CapybaraVS.Script
         /// <param name="OwnerCommandCanvas">オーナーキャンバス</param>
         /// <param name="node">登録先のノード</param>
         /// <param name="name">パッケージ名</param>
-        /// <param name="ignoreClassList">無視するクラスリスト</param>
+        /// <param name="importNameList">取り込む名前リスト</param>
         /// <returns>インポートしたパッケージ名</returns>
         public static string ImportScriptMethodsFromPackage(
             CommandCanvas OwnerCommandCanvas,
             TreeMenuNode node,
             string name,
-            List<string> ignoreClassList)
+            List<string> importNameList)
         {
             var asm = Assembly.Load(name);
             string outputName = ModuleControler.HEADER_PACKAGE + name;
@@ -156,11 +156,33 @@ namespace CapybaraVS.Script
                 functionNode, 
                 asm, 
                 null, 
-                ignoreClassList,
+                importNameList,
                 (t) => OwnerCommandCanvas.AddImportTypeMenu(t)
                 );
             CommandCanvasList.OutPut.OutLine(nameof(ScriptImplement), $"imported {name} package.");
             return outputName;
+        }
+
+        /// <summary>
+        /// スクリプトに基本のクラスをインポートします。
+        /// </summary>
+        /// <param name="OwnerCommandCanvas">オーナーキャンバス</param>
+        /// <param name="node">登録先のノード</param>
+        /// <param name="name">クラス名</param>
+        public static void ImportScriptMethodsForBase(
+            CommandCanvas OwnerCommandCanvas,
+            TreeMenuNode node)
+        {
+            ImportScriptMethods(
+                OwnerCommandCanvas,
+                node,
+                typeof(System.Object).GetTypeInfo().Assembly,
+                null,
+                new List<string>() {
+                    "System."
+                },
+                (t) => OwnerCommandCanvas.AddImportTypeMenu(t)
+                );
         }
 
         /// <summary>
@@ -169,7 +191,6 @@ namespace CapybaraVS.Script
         /// <param name="OwnerCommandCanvas">オーナーキャンバス</param>
         /// <param name="node">登録先のノード</param>
         /// <param name="name">クラス名</param>
-        /// <param name="ignoreClassList">無視するクラスリスト</param>
         /// <returns>インポートしたクラス名</returns>
         public static string ImportScriptMethodsFromClass(
             CommandCanvas OwnerCommandCanvas,
@@ -202,13 +223,13 @@ namespace CapybaraVS.Script
         /// <param name="OwnerCommandCanvas">オーナーキャンバス</param>
         /// <param name="node">登録先のノード</param>
         /// <param name="path"></param>
-        /// <param name="ignoreClassList">無視するクラスリスト</param>
+        /// <param name="importNameList">取り込む名前リスト</param>
         /// <returns>インポートしたモジュール名</returns>
         public static string ImportScriptMethodsFromDllFile(
             CommandCanvas OwnerCommandCanvas,
             TreeMenuNode node,
             string path,
-            List<string> ignoreClassList,
+            List<string> importNameList,
             string version = null)
         {
             try
@@ -221,7 +242,7 @@ namespace CapybaraVS.Script
                     node,
                     asm,
                     mod,
-                    ignoreClassList,
+                    importNameList,
                     (t) => OwnerCommandCanvas.AddImportTypeMenu(t)
                     );
                 if (version is null)
@@ -326,13 +347,13 @@ namespace CapybaraVS.Script
         /// <param name="node">登録先のノード</param>
         /// <param name="asm">対象Assembly</param>
         /// <param name="module">モジュール</param>
-        /// <param name="ignoreClassList">無視するクラスリスト</param>
+        /// <param name="importNameList">取り込む名前リスト</param>
         public static void ImportScriptMethods(
             CommandCanvas OwnerCommandCanvas,
             TreeMenuNode node,
             Assembly asm,
             Module module,
-            List<string> ignoreClassList,
+            List<string> importNameList,
             Action<Type> inportTypeMenu)
         {
             Type[] types = null;
@@ -352,7 +373,7 @@ namespace CapybaraVS.Script
                 if (!IsAcceptClass(classType))
                     continue;   // 扱えない
 
-                if (ignoreClassList != null && !ignoreClassList.Contains(classType.Name))
+                if (importNameList != null && !importNameList.Any(n => type.FullName == n))
                     continue;
 
                 if (!classType.IsAbstract)
@@ -377,7 +398,7 @@ namespace CapybaraVS.Script
                     List<Type> resultTypes = new List<Type>();
                     foreach (Type type in types)
                     {
-                        if (ignoreClassList != null && !ignoreClassList.Contains(type.Name))
+                        if (importNameList != null && !importNameList.Any(n => type.FullName.StartsWith(n)))
                             continue;
 
                         if (!IsAcceptTypeMenuType(type))
@@ -389,7 +410,7 @@ namespace CapybaraVS.Script
                 });
             }
 
-            List<Task<List<AutoImplementFunctionInfo>>> tasks = CreateMakeInportFunctionInfoTasks(module, ignoreClassList, types);
+            List<Task<List<AutoImplementFunctionInfo>>> tasks = CreateMakeInportFunctionInfoTasks(module, importNameList, types);
 
             // ノード化
             foreach (var task in tasks)
@@ -422,15 +443,15 @@ namespace CapybaraVS.Script
         /// メソッド取り込み用情報収集タスクリストを作成します。
         /// </summary>
         /// <param name="module">モジュール</param>
-        /// <param name="ignoreClassList">無視するクラスリスト</param>
+        /// <param name="importNameList">取り込む名前リスト</param>
         /// <param name="types">モジュールの情報</param>
         /// <returns>タスクリスト</returns>
-        private static List<Task<List<AutoImplementFunctionInfo>>> CreateMakeInportFunctionInfoTasks(Module module, List<string> ignoreClassList, Type[] types)
+        private static List<Task<List<AutoImplementFunctionInfo>>> CreateMakeInportFunctionInfoTasks(Module module, List<string> importNameList, Type[] types)
         {
             var tasks = new List<Task<List<AutoImplementFunctionInfo>>>();
             foreach (Type classType in types)
             {
-                if (ignoreClassList != null && !ignoreClassList.Contains(classType.Name))
+                if (importNameList != null && !importNameList.Any(n => classType.FullName.StartsWith(n)))
                     continue;
 
                 if (!IsAcceptClass(classType))
@@ -594,7 +615,7 @@ namespace CapybaraVS.Script
             // ノード化
             foreach (var info in tasks)
             {
-                if (info is null)
+                if (info is null || info.Result is null)
                     continue;
 
                 CreateMethodNode(OwnerCommandCanvas, node, info.Result);

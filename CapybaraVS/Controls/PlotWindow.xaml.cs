@@ -54,7 +54,7 @@ namespace CapybaraVS.Controls
             }
             public PlotInfo(IEnumerable<int> list, DrawType drawType, SolidColorBrush solidColorBrush = null)
             {
-                this.list = ListFactory.IntToDouble(list);
+                this.list = ListFactory.ToDouble(list);
                 this.drawType = drawType;
                 this.solidColorBrush = solidColorBrush;
             }
@@ -229,8 +229,8 @@ namespace CapybaraVS.Controls
             double minPoint = aaaa[0];
             double maxPoint = aaaa[1];
 #else
-            double minPoint = StatisticsLib.MinInTheList(allList);
-            double maxPoint = StatisticsLib.MaxInTheList(allList);
+            double minPoint = StatisticsLib.Min(allList);
+            double maxPoint = StatisticsLib.Max(allList);
 #endif
 
             var _baseLines = new List<double>(baseLines);

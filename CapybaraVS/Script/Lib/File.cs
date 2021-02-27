@@ -11,7 +11,7 @@ namespace CapybaraVS.Script.Lib
     public class FileLib
     {
         [ScriptMethod("Input/Output" + ".ConsoleOut.List." + "ConsoleOut", "", "RS=>FileLib_ConsoleOutStringList")]
-        public static int ConsoleOutStringList(ICollection<string> list)
+        public static int ConsoleOutList(ICollection<string> list)
         {
             foreach (var node in list)
             {
@@ -22,7 +22,7 @@ namespace CapybaraVS.Script.Lib
 
         //------------------------------------------------------------------
         [ScriptMethod("Input/Output" + ".ConsoleOut.List." + "ConsoleOut", "", "RS=>FileLib_ConsoleOutIntList")]
-        public static int ConsoleOutIntList(ICollection<int> list)
+        public static int ConsoleOutList(ICollection<int> list)
         {
             foreach (var node in list)
             {
@@ -33,7 +33,7 @@ namespace CapybaraVS.Script.Lib
 
         //------------------------------------------------------------------
         [ScriptMethod("Input/Output" + ".ConsoleOut.List." + "ConsoleOut", "", "RS=>FileLib_ConsoleOutLongList")]
-        public static int ConsoleOutLongList(ICollection<long> list)
+        public static int ConsoleOutList(ICollection<long> list)
         {
             foreach (var node in list)
             {
@@ -44,7 +44,7 @@ namespace CapybaraVS.Script.Lib
 
         //------------------------------------------------------------------
         [ScriptMethod("Input/Output" + ".ConsoleOut.List." + "ConsoleOut", "", "RS=>FileLib_ConsoleOutDoubleList")]
-        public static int ConsoleOutDoubleList(ICollection<double> list)
+        public static int ConsoleOutList(ICollection<double> list)
         {
             foreach (var node in list)
             {
@@ -55,7 +55,7 @@ namespace CapybaraVS.Script.Lib
 
         //------------------------------------------------------------------
         [ScriptMethod("Input/Output" + ".ConsoleOut.List." + "ConsoleOut", "", "RS=>FileLib_ConsoleOutBoolList")]
-        public static int ConsoleOutBoolList(ICollection<bool> list)
+        public static int ConsoleOutList(ICollection<bool> list)
         {
             foreach (var node in list)
             {

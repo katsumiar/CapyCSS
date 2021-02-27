@@ -67,6 +67,9 @@ namespace CapybaraVS.Script
             Type openedType = typeof(CbEnum<>); //CapybaraVS.Script.CbEnum`1
             Type cbEnumType = openedType.MakeGenericType(type);
 
+            if (CbST.GetTypeEx(type) is null)
+                return null;
+
             object result = cbEnumType.InvokeMember("Create", BindingFlags.InvokeMethod,
                         null, null, new object[] { name }) as ICbValue;
             return result as ICbValue;
@@ -105,7 +108,8 @@ namespace CapybaraVS.Script
 
         public CbEnum(string name = "")
         {
-            Value = Enum.Parse(typeof(T), Enum.GetNames(typeof(T))[0]) as Enum;
+            Type type = CbST.GetTypeEx(typeof(T));
+            Value = Enum.Parse(type, Enum.GetNames(type)[0]) as Enum;
             Name = name;
         }
 

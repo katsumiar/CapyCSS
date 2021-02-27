@@ -968,7 +968,7 @@ namespace CbVS.Script.Lib
                 }
             }
 
-            return StatisticsLib.MaxInTheList(new List<int>(numberOfPixels));
+            return StatisticsLib.Max(new List<int>(numberOfPixels));
         }
 
         //------------------------------------------------------------------

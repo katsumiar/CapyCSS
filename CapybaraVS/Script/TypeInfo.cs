@@ -339,7 +339,10 @@ namespace CapybaraVS.Script
                     _mame = type.FullName;
                 else if (type.Name != null)
                     _mame = type.Name;
-                Type element = CbST.GetTypeEx(_mame).GetElementType();
+                Type tType = CbST.GetTypeEx(_mame);
+                if (tType is null)
+                    return null;
+                Type element = tType.GetElementType();
                 if (element != null)
                 {
                     Type collectionType = typeof(List<>).MakeGenericType(element);
@@ -382,6 +385,8 @@ namespace CapybaraVS.Script
                         return null;
 
                     var ret = _CbCreate(type.GenericTypeArguments[0], name, false);
+                    if (ret is null)
+                        return null;
                     ret.IsNullable = true;
                     return ret;
                 }

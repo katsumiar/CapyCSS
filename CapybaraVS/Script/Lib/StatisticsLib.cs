@@ -58,7 +58,7 @@ namespace CapybaraVS.Script.Lib
 
         //------------------------------------------------------------------
         [ScriptMethod("Statistics" + ".Max." + "Max in List<int>", "", "RS=>StatisticsLib_MaxInTheList")]
-        public static int MaxInTheList(IEnumerable<int> sample)
+        public static int Max(IEnumerable<int> sample)
         {
             int maxValue = int.MinValue;
             foreach (var node in sample)
@@ -70,7 +70,7 @@ namespace CapybaraVS.Script.Lib
 
         //------------------------------------------------------------------
         [ScriptMethod("Statistics" + ".Max." + "Max in List<double>", "", "RS=>StatisticsLib_MaxInTheList")]
-        public static double MaxInTheList(List<double> sample)
+        public static double Max(IEnumerable<double> sample)
         {
             double maxValue = double.MinValue;
             foreach (var node in sample)
@@ -82,7 +82,7 @@ namespace CapybaraVS.Script.Lib
 
         //------------------------------------------------------------------
         [ScriptMethod("Statistics" + ".Min." + "Min in List<int>", "", "RS=>StatisticsLib_MinInTheList")]
-        public static int MinInTheList(IEnumerable<int> sample)
+        public static int Min(IEnumerable<int> sample)
         {
             int minValue = int.MaxValue;
             foreach (var node in sample)
@@ -94,7 +94,7 @@ namespace CapybaraVS.Script.Lib
 
         //------------------------------------------------------------------
         [ScriptMethod("Statistics" + ".Min." + "Min in List<double>", "", "RS=>StatisticsLib_MinInTheList")]
-        public static double MinInTheList(IEnumerable<double> sample)
+        public static double Min(IEnumerable<double> sample)
         {
             double minValue = double.MaxValue;
             foreach (var node in sample)
@@ -106,7 +106,7 @@ namespace CapybaraVS.Script.Lib
 
         //------------------------------------------------------------------
         [ScriptMethod("Statistics" + "." + "Width of values in list", "", "RS=>StatisticsLib_WidthOfValueInTheList")]
-        public static double WidthOfValueInTheList(IEnumerable<double> sample)
+        public static double WidthOfValue(IEnumerable<double> sample)
         {
             double maxValue = double.MinValue;
             double minValue = double.MaxValue;
