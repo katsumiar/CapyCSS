@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.Linq;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
@@ -66,7 +67,17 @@ namespace CapybaraVS.Controls
                     if (RootFunc.AttachVariableId != 0)
                         self.AttachParam = new AttachVariableId(RootFunc.AttachVariableId);
 
-                    self.AssetValueType = RootFunc.AssetValueType;
+                    if (RootFunc.AssetValueType != null)
+                    {
+                        Type type = CbST.GetTypeEx(RootFunc.AssetValueType);
+                        self.SelectedVariableType[0] = type;
+                        self.SelectedVariableTypeName[0] = RootFunc.AssetValueType;
+                    }
+                    else
+                    {
+                        self.SelectedVariableTypes = RootFunc.AssetValueTypes.ToArray();
+                    }
+
                     self.IsReBuildMode = true;
                     self.AssetFuncType = RootFunc.AssetFuncType;
                     self.AssetType = RootFunc.AssetType;
@@ -99,7 +110,14 @@ namespace CapybaraVS.Controls
 
                     info.AssetType = self.AssetType;
                     info.AssetFuncType = self.AssetFuncType;
-                    info.AssetValueType = self.AssetValueType;
+                    info.AssetValueTypes = new List<string>();
+                    foreach (var typeName in self.SelectedVariableTypeName)
+                    {
+                        if (typeName != null)
+                        {
+                            info.AssetValueTypes.Add(typeName);
+                        }
+                    }
 
                     self.LinkConnectorControl.AssetXML.WriteAction?.Invoke();
                     info.RootConnector = self.LinkConnectorControl.AssetXML;
@@ -116,6 +134,7 @@ namespace CapybaraVS.Controls
                 [XmlAttribute(nameof(AssetType))]
                 public FunctionType AssetType { get; set; }
                 public string AssetValueType { get; set; }
+                public List<string> AssetValueTypes { get; set; }
                 [XmlAttribute(nameof(AssetFuncType))]
                 public string AssetFuncType { get; set; }
                 public RootConnector._AssetXML<RootConnector> RootConnector { get; set; }
@@ -237,7 +256,12 @@ namespace CapybaraVS.Controls
                         {
                             setValue = toStringNode(self, ref text);
                         }
-                        self.AssetValueType = setValue.OriginalType.FullName;
+
+                        {
+                            self.SelectedVariableType[0] = setValue.OriginalType;
+                            self.SelectedVariableTypeName[0] = setValue.OriginalType.FullName;
+                        }
+
                         self.AssetType = FunctionType.LiteralType;
                         if (self.LinkConnectorControl.ValueData != null && setValue != null)
                         {
@@ -342,6 +366,19 @@ namespace CapybaraVS.Controls
         //--------------------------------------------------------------------------------
         #region ファンクションアセット機能
 
+        public string[] SelectedVariableTypes
+        {
+            set
+            {
+                foreach (var node in value.Select((name, index) => new { name, index }))
+                {
+                    Type type = CbST.GetTypeEx(node.name);
+                    SelectedVariableType[node.index] = type;
+                    SelectedVariableTypeName[node.index] = CbSTUtils.GetTypeName(type);
+                }
+            }
+        }
+
         private Type[] selectedVariableType = new Type[16];
         public Type[] SelectedVariableType
         {
@@ -379,37 +416,6 @@ namespace CapybaraVS.Controls
         {
             get { return impAssetType.GetValue(this); }
             set { impAssetType.SetValue(this, value); }
-        }
-
-        #endregion
-
-        /// <summary>
-        /// Func や Action であれば、OriginalReturnType の型で NTF を返す
-        /// </summary>
-        public Func<ICbValue> ReturnValueTypeTF => CbST.CbCreateTF(originalReturnType);
-        public Func<string, ICbValue> ReturnValueTypeNTF => CbST.CbCreateNTF(originalReturnType);
-        private Type originalReturnType = null;
-
-        #region AssetValueType 添付プロパティ実装
-
-        private static ImplementDependencyProperty<MultiRootConnector, string> impAssetValueType =
-            new ImplementDependencyProperty<MultiRootConnector, string>(
-                nameof(AssetValueType),
-                (self, getValue) =>
-                {
-                    string value = getValue(self);
-                    var typeValue = CbST.CbCreate(CbST.GetTypeEx(value));
-                    self.SelectedVariableType[0] = typeValue.OriginalType;
-                    self.SelectedVariableTypeName[0] = typeValue.TypeName;
-                    self.originalReturnType = typeValue.OriginalReturnType;
-                });
-
-        public static readonly DependencyProperty AssetValueTypeProperty = impAssetValueType.Regist("none");
-
-        public string AssetValueType
-        {
-            get { return impAssetValueType.GetValue(this); }
-            set { impAssetValueType.SetValue(this, value); }
         }
 
         #endregion
@@ -529,7 +535,7 @@ namespace CapybaraVS.Controls
 
             if (AssetType == FunctionType.LiteralType)
             {
-                Func<ICbValue> tf = CbST.CbCreateTF(CbST.GetTypeEx(AssetValueType));
+                Func<ICbValue> tf = CbST.CbCreateTF(SelectedVariableType[0]);
                 MakeLiteral(tf);
             }
 

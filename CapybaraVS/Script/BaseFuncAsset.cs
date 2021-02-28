@@ -2169,7 +2169,7 @@ namespace CapybaraVS.Script
             col.MakeFunction(
                variableGetter.MakeName,
                HelpText,
-               col.ReturnValueTypeTF,  // 返し値の型
+               CbST.CbCreateTF(col.SelectedVariableType[0]),  // 返し値の型
                new List<ICbValue>()       // 引数
                {
                    CbST.CbCreate<int>("index", 0),
@@ -2177,7 +2177,7 @@ namespace CapybaraVS.Script
                new Func<List<ICbValue>, DummyArgumentsStack, ICbValue>(
                    (argument, cagt) =>
                    {
-                       var ret = col.ReturnValueTypeTF();    // 返し値
+                       var ret = CbST.CbCreate(col.SelectedVariableType[0]);    // 返し値
                        try
                        {
                            int index = GetArgument<int>(argument, 0);
@@ -2228,7 +2228,7 @@ namespace CapybaraVS.Script
                new List<ICbValue>()       // 引数
                {
                     CbST.CbCreate<int>("index", 0),
-                    col.ReturnValueTypeNTF("n")
+                    CbST.CbCreate(col.SelectedVariableType[0].GenericTypeArguments[0], "n")
                },
                new Func<List<ICbValue>, DummyArgumentsStack, ICbValue>(
                    (argument, cagt) =>
@@ -2284,7 +2284,7 @@ namespace CapybaraVS.Script
                CbST.CbCreateTF(col.SelectedVariableType[0]),   // 返し値の型
                new List<ICbValue>()   // 引数
                {
-                    col.ReturnValueTypeNTF("n")
+                   CbST.CbCreate(col.SelectedVariableType[0].GenericTypeArguments[0], "n")
                },
                new Func<List<ICbValue>, DummyArgumentsStack, ICbValue>(
                    (argument, cagt) =>

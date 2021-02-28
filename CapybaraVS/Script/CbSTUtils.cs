@@ -176,6 +176,21 @@ namespace CapybaraVS.Script
             return newName;
         }
 
+        /// <summary>
+        /// オブジェクトの型の文字列名を返します。
+        /// </summary>
+        /// <param name="type">型情報</param>
+        /// <returns></returns>
+        static public string GetTypeName(Type type)
+        {
+            string newName = _GetTypeName(type);
+            if (!CbTypeNameList.ContainsKey(type.FullName))
+            {
+                CbTypeNameList.Add(type.FullName, newName);
+            }
+            return newName;
+        }
+
         static public string _GetTypeName(Type type)
         {
             string ret = __GetTypeName(type);

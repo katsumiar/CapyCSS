@@ -113,7 +113,8 @@ namespace CbVS.Script
 
                 multiRootConnector = new MultiRootConnector();
                 multiRootConnector.OwnerCommandCanvas = OwnerCommandCanvas;
-                multiRootConnector.AssetValueType = typeNames[0];
+                multiRootConnector.SelectedVariableTypes = typeNames.ToArray();
+
                 multiRootConnector.AssetFuncType = assetCode;
             }
 
@@ -161,7 +162,7 @@ namespace CbVS.Script
 
             var ret = new MultiRootConnector();
             ret.OwnerCommandCanvas = OwnerCommandCanvas;
-            ret.AssetValueType = typeNames[0];
+            ret.SelectedVariableTypes = typeNames.ToArray();
             ret.AssetFuncType = assetCode;
             ret.AssetType = FunctionType.FuncType;
             return ret;
@@ -184,7 +185,7 @@ namespace CbVS.Script
 
             var ret = new MultiRootConnector();
             ret.OwnerCommandCanvas = OwnerCommandCanvas;
-            ret.AssetValueType = typeNames[0];
+            ret.SelectedVariableTypes = typeNames.ToArray();
             ret.AssetType = FunctionType.LiteralType;
             return ret;
         }
