@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using CapyCSS.Script;
 using CbVS.Script;
 
@@ -45,16 +46,12 @@ namespace CapybaraVS.Script
         public const string ACTION_GROUP_STR = "action.";
         public const string FUNC_GROUP_STR = "func.";
 
-        public static readonly string FREE_LIST_TYPE_STR = typeof(List<>).FullName;
-        public static readonly string FREE_LIST_INTERFACE_TYPE_STR = typeof(ICollection<>).FullName;
-        public static readonly string FREE_FUNC_TYPE_STR = typeof(Func<>).FullName;
-        public static readonly string FREE_FUNC2A_TYPE_STR = typeof(Func<,>).FullName;
-        public static readonly string FREE_ACTION_TYPE_STR = typeof(Action<>).FullName;
-
-        public const string FREE_ENUM_TYPE_STR = "<ENUM>";  // Enum型を要求する
-
-        public const string FREE_TYPE_STR = "<FREE>";   // 型選択を要求する
-        public static readonly string DUMMY_TYPE_STR = typeof(int).FullName; // ダミー
+        public static readonly Type LIST_TYPE = typeof(List<>);
+        public static readonly Type LIST_INTERFACE_TYPE = typeof(ICollection<>);
+        public static readonly Type FUNC_TYPE = typeof(Func<>);
+        public static readonly Type FUNC2ARG_TYPE = typeof(Func<,>);
+        public static readonly Type ACTION_TYPE = typeof(Action<>);
+        public static readonly Type DUMMY_TYPE = typeof(int); // ダミー
 
         public const string ERROR_STR = "[ERROR]";  // エラーの表現
         public const string NULL_STR = "<null>";    // nullの表現
@@ -407,6 +404,17 @@ namespace CapybaraVS.Script
                 return CbSTUtils.CLASS_STR;
             }
             return null;
+        }
+
+
+        public static string MakeGroupedTypeNameWithOutNameSpace(Type type)
+        {
+            string result = MakeGroupedTypeName(type);
+            if (result.Contains('.'))
+            {
+                return result.Split('.').Last();
+            }
+            return result;
         }
 
         /// <summary>

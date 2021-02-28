@@ -7,6 +7,7 @@ using System.Diagnostics;
 using System.Reflection;
 using System.Windows;
 using System.Windows.Input;
+using static CapybaraVS.Controls.BaseControls.CommandCanvas;
 using static CapybaraVS.Script.ScriptImplement;
 
 namespace CapybaraVS.Script
@@ -68,9 +69,7 @@ namespace CapybaraVS.Script
 
         public string FuncTitle { get; set; } = "";
 
-        public string ValueType { get; } = typeof(double).FullName;    // Dummy
-
-        public Func<Type, bool>[] IsAccept => null;
+        public List<TypeRequest> typeRequests => null;
 
         public Type ClassType { get; set; } = null;
 

@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Runtime.Serialization;
 using System.Text;
@@ -382,9 +383,6 @@ namespace CapybaraVS.Controls.BaseControls
             ApiImporter.ImportBase();
 
             ImportModule();
-
-            // デバッグ用アセットを追加
-            AddTestTreeAsset(treeViewCommand);
         }
 
         /// <summary>
@@ -441,55 +439,6 @@ namespace CapybaraVS.Controls.BaseControls
                 _inportDllModule = null;
             }
             return true;
-        }
-
-        [Conditional("DEBUG")]
-        private void AddTestTreeAsset(TreeViewCommand treeViewCommand)
-        {
-            {
-                var TypeMenuWindow = new TreeMenuNode("TypeMenuWindow");
-                TypeMenuWindow.AddChild(new TreeMenuNode("TypeMenuWindow()", CreateImmediateExecutionCanvasCommand(
-                    () =>
-                    {
-                        string ret = RequestTypeString(null);
-                        if (ret != null)
-                        {
-                            CommandCanvasList.OutPut.OutLine(nameof(CommandCanvas), $"Type Name: {ret}");
-                        }
-                    })));
-                treeViewCommand.AssetTreeData.Add(TypeMenuWindow);
-            }
-
-            {
-                var testCommandNode = new TreeMenuNode("TestCommand");
-                testCommandNode.AddChild(new TreeMenuNode("OutputControlXML()", CreateImmediateExecutionCanvasCommand(() => OutputControlXML())));
-                treeViewCommand.AssetTreeData.Add(testCommandNode);
-            }
-            #region Connector
-#if false// 今は動かない
-            {
-                var connectorNode = new TreeMenuNode("Connector");
-                connectorNode.AddChild(new TreeMenuNode("Node List", CreateEventCanvasCommand(
-                    () =>
-                    {
-                        var ret = new RunableControl();
-                        ret.AssetFunctionType = RunableFunctionType.Execute;
-                        return ret;
-                    }
-                    )));
-                connectorNode.AddChild(new TreeMenuNode("SingleRootConnector", CreateEventCanvasCommand(() => CbScript.MakeSingleRootConnector())));
-                connectorNode.AddChild(new TreeMenuNode("MakeMultiRootConnector", CreateEventCanvasCommand(() => CbScript.MakeMultiRootConnector())));
-                connectorNode.AddChild(new TreeMenuNode("SingleLinkConnector", CreateEventCanvasCommand(() => CbScript.MakeSingleLinkConnector())));
-                connectorNode.AddChild(new TreeMenuNode("MultiLinkConnector", CreateEventCanvasCommand(() => CbScript.MakeMultiLinkConnector())));
-                treeViewCommand.AssetTreeData.Add(connectorNode);
-            }
-#endif
-            #endregion
-            {
-                var testAssetNode = new TreeMenuNode("TestAsset");
-                testAssetNode.AddChild(new TreeMenuNode("Rectangle", CreateEventCanvasCommand(testAssetNode.Name + ".Rectangle", () => new Rectangle() { Fill = Brushes.Red, Width = 50, Height = 50 })));
-                treeViewCommand.AssetTreeData.Add(testAssetNode);
-            }
         }
 
         public List<string> ScriptControlRecent
@@ -897,35 +846,88 @@ namespace CapybaraVS.Controls.BaseControls
                 );
         }
 
-        /// <summary>
-        /// メニューの有効無効判定イベントを登録します。
-        /// </summary>
-        private Func<Type, bool>[] _CanTypeMenuExecuteEvent = null;
-        private int _CanTypeMenuExecuteEventIndex = 0;
-        private Func<Type, bool> GetCanTypeMenuExecuteEvent()
+        public struct TypeRequest
         {
-            if (_CanTypeMenuExecuteEventIndex >= _CanTypeMenuExecuteEvent.Length)
+            public Type InitType;
+            public Func<Type, bool>[] IsAccepts;
+            public TypeRequest(Func<Type, bool>[] isAccept)
             {
-                return (n) => true;
+                InitType = null;
+                IsAccepts = isAccept;
             }
-            return _CanTypeMenuExecuteEvent[_CanTypeMenuExecuteEventIndex];
+            public TypeRequest(Func<Type, bool> isAccept)
+            {
+                Func<Type, bool>[] isAccepts = new Func<Type, bool>[]
+                {
+                    isAccept
+                };
+                InitType = null;
+                IsAccepts = isAccepts;
+            }
+            public TypeRequest(Type initTypeName, Func<Type, bool> isAccept)
+            {
+                Func<Type, bool>[] isAccepts = new Func<Type, bool>[]
+                {
+                    isAccept
+                };
+                InitType = initTypeName;
+                IsAccepts = isAccepts;
+            }
+            public TypeRequest(Type initTypeName, Func<Type, bool>[] isAccepts)
+            {
+                InitType = initTypeName;
+                IsAccepts = isAccepts;
+            }
+            public TypeRequest(Type initTypeName)
+            {
+                InitType = initTypeName;
+                IsAccepts = null;
+            }
         }
 
         /// <summary>
-        /// メニューの有効無効判定イベントを呼び出します。
+        /// ユーザーに複数の型の指定を要求します。
         /// </summary>
-        private bool CanTypeMenuExecuteEvent(Type type)
+        /// <param name="typeRequests">型の要求リスト</param>
+        /// <returns>型名リスト</returns>
+        public List<string> RequestTypeName(in List<TypeRequest> typeRequests)
         {
-            if (_CanTypeMenuExecuteEvent is null)
-                return true;
-            return GetCanTypeMenuExecuteEvent()(type);
+            var result = new List<string>();
+            foreach (var typeRequest in typeRequests)
+            {
+                string typeName;
+                if (typeRequest.InitType is null)
+                {
+                    // フィルタリングされた任意の型
+
+                    typeName = RequestTypeName(typeRequest.IsAccepts);
+                }
+                else if (typeRequest.InitType.IsGenericType && typeRequest.InitType.GenericTypeArguments.Length == 0)
+                {
+                    // ジェネリックでかつ型が完成していない
+
+                    typeName = RequestGenericTypeName(typeRequest.InitType.FullName, typeRequest.IsAccepts);
+                }
+                else
+                {
+                    // 指定された型
+
+                    typeName = typeRequest.InitType.FullName;
+                }
+                if (typeName is null)
+                {
+                    return null;
+                }
+                result.Add(typeName);
+            }
+            return result;
         }
 
         /// <summary>
         /// ユーザーに型の指定を要求します。
         /// </summary>
         /// <returns>型名</returns>
-        public string RequestTypeString(Func<Type, bool>[] isAccept)
+        public string RequestTypeName(Func<Type, bool>[] isAccept)
         {
             TypeMenuWindow.Message = "";
             _CanTypeMenuExecuteEvent = isAccept;
@@ -934,7 +936,7 @@ namespace CapybaraVS.Controls.BaseControls
             string ret = null;
             try
             {
-                Type type = RequestType();
+                Type type = RequestType(true);
                 if (type is null)
                 {
                     return null;
@@ -946,41 +948,6 @@ namespace CapybaraVS.Controls.BaseControls
                 CommandCanvasControl.MainLog.OutLine("System", nameof(CommandCanvas) + ":" + ex.Message);
             }
             return ret;
-        }
-
-        /// <summary>
-        /// ユーザーに型の指定を要求します。
-        /// </summary>
-        /// <returns>型情報</returns>
-        public Type RequestType()
-        {
-            SelectType = null;
-            ControlTools.SetWindowPos(TypeMenuWindow, new Point(Mouse.GetPosition(null).X, Mouse.GetPosition(null).Y));
-            TypeMenuWindow.ShowDialog();
-            if (SelectType is null)
-            {
-                return null;
-            }
-            _CanTypeMenuExecuteEventIndex++;
-            TypeMenu.RefreshItem();
-
-            Type type = CbST.GetTypeEx(SelectType);
-            if (type is null)
-            {
-                CommandCanvasControl.MainLog.OutLine("System", nameof(CommandCanvas) + $": {SelectType} was an unsupportable type.");
-                return null;
-            }
-
-            string name = type.Name.Split('`')[0];
-            if (CbSTUtils.CbTypeNameList.ContainsKey(name))
-            {
-                TypeMenuWindow.Message += CbSTUtils.CbTypeNameList[name];
-            }
-            else
-            {
-                TypeMenuWindow.Message += name;
-            }
-            return RequestGenericType(type);
         }
 
         /// <summary>
@@ -1006,28 +973,108 @@ namespace CapybaraVS.Controls.BaseControls
         }
 
         /// <summary>
+        /// メニューの有効無効判定イベントを登録します。
+        /// </summary>
+        private Func<Type, bool>[] _CanTypeMenuExecuteEvent = null;
+        private int _CanTypeMenuExecuteEventIndex = 0;
+        private Func<Type, bool> GetCanTypeMenuExecuteEvent()
+        {
+            if (_CanTypeMenuExecuteEventIndex >= _CanTypeMenuExecuteEvent.Length || _CanTypeMenuExecuteEventIndex < 0)
+            {
+                return (n) => true;
+            }
+            return _CanTypeMenuExecuteEvent[_CanTypeMenuExecuteEventIndex];
+        }
+
+        /// <summary>
+        /// メニューの有効無効判定イベントを呼び出します。
+        /// </summary>
+        private bool CanTypeMenuExecuteEvent(Type type)
+        {
+            if (_CanTypeMenuExecuteEvent is null)
+                return true;
+            return GetCanTypeMenuExecuteEvent()(type);
+        }
+
+        /// <summary>
+        /// ユーザーに型の指定を要求します。
+        /// </summary>
+        /// <returns>型情報</returns>
+        private Type RequestType(bool checkType)
+        {
+            SelectType = null;
+            if (_CanTypeMenuExecuteEventIndex == 0)
+            {
+                ControlTools.SetWindowPos(TypeMenuWindow, new Point(Mouse.GetPosition(null).X, Mouse.GetPosition(null).Y));
+            }
+            TypeMenuWindow.ShowDialog();
+            if (SelectType is null)
+            {
+                return null;
+            }
+            if (checkType)
+            {
+                _CanTypeMenuExecuteEventIndex++;
+                TypeMenu.RefreshItem();
+            }
+            else
+            {
+                var backup = _CanTypeMenuExecuteEventIndex;
+                _CanTypeMenuExecuteEventIndex = -1;
+                TypeMenu.RefreshItem();
+                _CanTypeMenuExecuteEventIndex = backup;
+            }
+
+            Type type = CbST.GetTypeEx(SelectType);
+            if (type is null)
+            {
+                CommandCanvasControl.MainLog.OutLine("System", nameof(CommandCanvas) + $": {SelectType} was an unsupportable type.");
+                return null;
+            }
+
+            string name = type.Name.Split('`')[0];
+            if (CbSTUtils.CbTypeNameList.ContainsKey(name))
+            {
+                TypeMenuWindow.Message += CbSTUtils.CbTypeNameList[name];
+            }
+            else
+            {
+                TypeMenuWindow.Message += name;
+            }
+            return RequestGenericType(type, false);
+        }
+
+        /// <summary>
         /// ユーザーにジェネリック型の引数の型の指定を要求します。
         /// </summary>
         /// <param name="genericType">ジェネリック型の型情報</param>
         /// <returns>型名（ジェネリック型でない場合はそのままの型名）</returns>
-        public string RequestGenericTypeName(Type genericType)
+        private string RequestGenericTypeName(Type genericType)
         {
             if (genericType is null)
             {
                 return null;
             }
 
-            string name = genericType.Name.Split('`')[0];
+            var token = genericType.Name.Split('`');
+            string name = token[0];
+
+            string param = "<";
+            int argCount = int.Parse(token[1]);
+            if (argCount - 1 > 0)
+            {
+                param += new string(',', argCount - 1);
+            }
+            param += '>';
+
             if (CbSTUtils.CbTypeNameList.ContainsKey(name))
             {
-                TypeMenuWindow.Message = CbSTUtils.CbTypeNameList[name];
-            }
-            else
-            {
-                TypeMenuWindow.Message = name;
+                name = CbSTUtils.CbTypeNameList[name];
             }
 
-            Type type = RequestGenericType(genericType);
+            TypeMenuWindow.Message = $"{name}{param} : {name}";
+
+            Type type = RequestGenericType(genericType, true);
             if (type is null)
             {
                 return null;
@@ -1040,7 +1087,7 @@ namespace CapybaraVS.Controls.BaseControls
         /// </summary>
         /// <param name="genericType">ジェネリック型の型情報</param>
         /// <returns>型情報（ジェネリック型でない場合はそのままの型情報）</returns>
-        private Type RequestGenericType(Type genericType)
+        private Type RequestGenericType(Type genericType, bool checkType)
         {
             if (genericType is null)
             {
@@ -1053,10 +1100,14 @@ namespace CapybaraVS.Controls.BaseControls
                 var args = new List<Type>();
 
                 string cmc = genericType.FullName.Split('`')[1];
+                if (cmc.Contains('['))
+                {
+                    cmc = cmc.Split('[')[0];
+                }
                 int argCount = Int32.Parse(cmc);
                 for (int i = 0; i < argCount; ++i)
                 {
-                    Type arg = RequestType();
+                    Type arg = RequestType(checkType);
                     if (arg is null)
                     {
                         return null;
@@ -1078,7 +1129,7 @@ namespace CapybaraVS.Controls.BaseControls
         /// <summary>
         /// インポートされている型情報を削除します。
         /// </summary>
-        void ClearTypeImportMenu()
+        private void ClearTypeImportMenu()
         {
             typeWindow_import?.Child.Clear();
         }

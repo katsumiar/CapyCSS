@@ -66,7 +66,7 @@ namespace CapybaraVS.Script
             group.AddChild(menu);
             menu.LeftClickCommand = OwnerCommandCanvas.CreateEventCanvasCommand(
                 menu.Path,
-                () => CbScript.CreateFreeTypeVariableFunction(OwnerCommandCanvas, funcAssetDef.AssetCode, funcAssetDef.ValueType, funcAssetDef.IsAccept)
+                () => CbScript.CreateFreeTypeVariableFunction(OwnerCommandCanvas, funcAssetDef.AssetCode, funcAssetDef.typeRequests)
                 );
         }
 
@@ -83,7 +83,7 @@ namespace CapybaraVS.Script
             group.AddChild(menu);
             menu.LeftClickCommand = OwnerCommandCanvas.CreateEventCanvasCommand(
                 menu.Path,
-                () => CbScript.CreateFreeTypeVariableFunction(OwnerCommandCanvas, funcAssetDef.AssetCode, funcAssetDef.ValueType, null, true)
+                () => CbScript.CreateFreeTypeVariableFunction(OwnerCommandCanvas, funcAssetDef.AssetCode, null, true)
                 );
         }
 
@@ -100,7 +100,7 @@ namespace CapybaraVS.Script
             group.AddChild(menu);
             menu.LeftClickCommand = OwnerCommandCanvas.CreateEventCanvasCommand(
                 menu.Path, 
-                () => CbScript.CreateFreeTypeFunction(OwnerCommandCanvas, funcAssetDef.AssetCode, funcAssetDef.ValueType, funcAssetDef.IsAccept)
+                () => CbScript.CreateFreeTypeFunction(OwnerCommandCanvas, funcAssetDef.AssetCode, funcAssetDef.typeRequests)
                 );
         }
 
@@ -117,7 +117,7 @@ namespace CapybaraVS.Script
             group.AddChild(menu);
             menu.LeftClickCommand = OwnerCommandCanvas.CreateEventCanvasCommand(
                 menu.Path,
-                () => CbScript.SelectVariableType(OwnerCommandCanvas, funcAssetDef.ValueType, funcAssetDef.IsAccept)
+                () => CbScript.SelectVariableType(OwnerCommandCanvas, funcAssetDef.typeRequests)
                 );
         }
     }

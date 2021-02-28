@@ -3,6 +3,7 @@ using CbVS.Script;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using static CapybaraVS.Controls.BaseControls.CommandCanvas;
 using static CapybaraVS.Controls.MultiRootConnector;
 
 namespace CapybaraVS.Script
@@ -52,15 +53,10 @@ namespace CapybaraVS.Script
         string MenuTitle { get; }
 
         /// <summary>
-        /// 型名
-        /// </summary>
-        string ValueType { get; }
-
-        /// <summary>
         /// 型選択リストの受け入れ項目
         /// ※必要がないなら null にする
         /// </summary>
-        Func<Type, bool>[] IsAccept { get; }
+        List<TypeRequest> typeRequests { get; }
     }
 
     /// <summary>
@@ -75,15 +71,10 @@ namespace CapybaraVS.Script
         string MenuTitle { get; }
 
         /// <summary>
-        /// 型名
-        /// </summary>
-        string ValueType { get; }
-
-        /// <summary>
         /// 型選択リストの受け入れ項目
         /// ※必要がないなら null にする
         /// </summary>
-        Func<Type, bool>[] IsAccept { get; }
+        List<TypeRequest> typeRequests { get; }
     }
 
     /// <summary>
@@ -96,16 +87,12 @@ namespace CapybaraVS.Script
         /// </summary>
         string MenuTitle { get; }
 
-        /// <summary>
-        /// 型名
-        /// </summary>
-        string ValueType { get; }
 
         /// <summary>
         /// 型選択リストの受け入れ項目
         /// ※必要がないなら null にする
         /// </summary>
-        Func<Type, bool>[] IsAccept { get; }
+        List<TypeRequest> typeRequests { get; }
     }
 
     /// <summary>
@@ -124,15 +111,10 @@ namespace CapybaraVS.Script
         string MenuTitle { get; }
 
         /// <summary>
-        /// 型名
-        /// </summary>
-        string ValueType { get; }
-
-        /// <summary>
         /// 型選択リストの受け入れ項目
         /// ※必要がないなら null にする
         /// </summary>
-        Func<Type, bool>[] IsAccept { get; }
+        List<TypeRequest> typeRequests { get; }
     }
 
     public class FuncAssetSub

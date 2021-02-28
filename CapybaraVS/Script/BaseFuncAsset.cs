@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Text;
+using static CapybaraVS.Controls.BaseControls.CommandCanvas;
 using static CapybaraVS.Controls.MultiRootConnector;
 
 namespace CapybaraVS.Script
@@ -295,11 +296,12 @@ namespace CapybaraVS.Script
     {
         public string MenuTitle => "Literal";
 
-        public string HelpText { get; } = Language.GetInstance["LiteralType"];
+        public string HelpText => Language.GetInstance["LiteralType"];
 
-        public string ValueType { get; } = CbSTUtils.FREE_TYPE_STR;
-
-        public Func<Type, bool>[] IsAccept => new Func<Type, bool>[] { (t) => !t.IsAbstract };
+        public List<TypeRequest> typeRequests => new List<TypeRequest>()
+        {
+            new TypeRequest(t => !t.IsAbstract)
+        };
     }
 
     //-----------------------------------------------------------------
@@ -307,12 +309,11 @@ namespace CapybaraVS.Script
     {
         public string MenuTitle => "Literal List";
 
-        public string HelpText { get; } = Language.GetInstance["LiteralListType"];
+        public string HelpText => Language.GetInstance["LiteralListType"];
 
-        public string ValueType { get; } = CbSTUtils.FREE_LIST_TYPE_STR;
-
-        public Func<Type, bool>[] IsAccept => new Func<Type, bool>[] {
-            (t) => CbScript.AcceptAll(t)
+        public List<TypeRequest> typeRequests => new List<TypeRequest>()
+        { 
+            new TypeRequest(CbSTUtils.LIST_TYPE, t => CbScript.AcceptAll(t))
         };
     }
 
@@ -321,14 +322,13 @@ namespace CapybaraVS.Script
     {
         public string AssetCode => nameof(Sum);
 
-        public string HelpText { get; } = Language.GetInstance["Sum"];
+        public string HelpText => Language.GetInstance["Sum"];
 
         public string MenuTitle => AssetCode;
 
-        public string ValueType { get; } = CbSTUtils.FREE_LIST_INTERFACE_TYPE_STR;
-
-        public Func<Type, bool>[] IsAccept => new Func<Type, bool>[] {
-            (t) => CbScript.IsValueType(t) || t == typeof(string)
+        public List<TypeRequest> typeRequests => new List<TypeRequest>()
+        {
+            new TypeRequest(CbSTUtils.LIST_INTERFACE_TYPE, t => CbScript.IsValueType(t) || t == typeof(string))
         };
 
         public bool ImplAsset(MultiRootConnector col, bool isReBuildMode = false)
@@ -371,14 +371,13 @@ namespace CapybaraVS.Script
     {
         public string AssetCode => nameof(Subroutine);
 
-        public string HelpText { get; } = Language.GetInstance["Subroutine"];
+        public string HelpText => Language.GetInstance["Subroutine"];
 
         public string MenuTitle => "Sequence";
 
-        public string ValueType { get; } = CbSTUtils.FREE_LIST_INTERFACE_TYPE_STR;
-
-        public Func<Type, bool>[] IsAccept => new Func<Type, bool>[] { 
-            (t) => CbScript.AcceptAll(t)
+        public List<TypeRequest> typeRequests => new List<TypeRequest>()
+        { 
+            new TypeRequest(CbSTUtils.LIST_INTERFACE_TYPE, t => CbScript.AcceptAll(t))
         };
 
         public bool ImplAsset(MultiRootConnector col, bool isReBuildMode = false)
@@ -431,13 +430,14 @@ namespace CapybaraVS.Script
     {
         public string AssetCode => nameof(Inc);
 
-        public string HelpText { get; } = Language.GetInstance["Inc"];
+        public string HelpText => Language.GetInstance["Inc"];
 
         public string MenuTitle => AssetCode;
 
-        public string ValueType { get; } = CbSTUtils.FREE_TYPE_STR;
-
-        public Func<Type, bool>[] IsAccept => new Func<Type, bool>[] { (t) => CbScript.IsValueType(t) };
+        public List<TypeRequest> typeRequests => new List<TypeRequest>()
+        {
+            new TypeRequest(t => CbScript.IsValueType(t))
+        };
 
         public bool ImplAsset(MultiRootConnector col, bool isReBuildMode = false)
         {
@@ -476,13 +476,14 @@ namespace CapybaraVS.Script
     {
         public string AssetCode => nameof(Dec);
 
-        public string HelpText { get; } = Language.GetInstance["Dec"];
+        public string HelpText => Language.GetInstance["Dec"];
 
         public string MenuTitle => AssetCode;
 
-        public string ValueType { get; } = CbSTUtils.FREE_TYPE_STR;
-
-        public Func<Type, bool>[] IsAccept => new Func<Type, bool>[] { (t) => CbScript.IsValueType(t) };
+        public List<TypeRequest> typeRequests => new List<TypeRequest>()
+        {
+            new TypeRequest(t => CbScript.IsValueType(t))
+        };
 
         public bool ImplAsset(MultiRootConnector col, bool isReBuildMode = false)
         {
@@ -521,14 +522,14 @@ namespace CapybaraVS.Script
     {
         public string AssetCode => nameof(Mod);
 
-        public string HelpText { get; } = Language.GetInstance["Mod"];
+        public string HelpText => Language.GetInstance["Mod"];
 
         public string MenuTitle => AssetCode;
 
-        public string ValueType { get; } = CbSTUtils.FREE_TYPE_STR;
-
-        public Func<Type, bool>[] IsAccept => new Func<Type, bool>[] { (t) => CbScript.IsValueType(t) };
-
+        public List<TypeRequest> typeRequests => new List<TypeRequest>()
+        {
+            new TypeRequest(t => CbScript.IsValueType(t))
+        };
 
         public bool ImplAsset(MultiRootConnector col, bool isReBuildMode = false)
         {
@@ -568,13 +569,14 @@ namespace CapybaraVS.Script
     {
         public string AssetCode => nameof(Eq);
 
-        public string HelpText { get; } = Language.GetInstance["Eq"];
+        public string HelpText => Language.GetInstance["Eq"];
 
         public string MenuTitle => "==";
 
-        public string ValueType { get; } = CbSTUtils.FREE_TYPE_STR;
-
-        public Func<Type, bool>[] IsAccept => new Func<Type, bool>[] { (t) => CbScript.AcceptAll(t) };
+        public List<TypeRequest> typeRequests => new List<TypeRequest>()
+        {
+            new TypeRequest(t => CbScript.AcceptAll(t))
+        };
 
         public bool ImplAsset(MultiRootConnector col, bool isReBuildMode = false)
         {
@@ -615,14 +617,14 @@ namespace CapybaraVS.Script
     {
         public string AssetCode => nameof(Ge);
 
-        public string HelpText { get; } = Language.GetInstance["Ge"];
+        public string HelpText => Language.GetInstance["Ge"];
 
         public string MenuTitle => ">=";
 
-        public string ValueType { get; } = CbSTUtils.FREE_TYPE_STR;
-
-        public Func<Type, bool>[] IsAccept => new Func<Type, bool>[] { (t) => CbScript.AcceptAll(t) };
-
+        public List<TypeRequest> typeRequests => new List<TypeRequest>()
+        {
+            new TypeRequest(t => CbScript.AcceptAll(t))
+        };
 
         public bool ImplAsset(MultiRootConnector col, bool isReBuildMode = false)
         {
@@ -663,14 +665,14 @@ namespace CapybaraVS.Script
     {
         public string AssetCode => nameof(Gt);
 
-        public string HelpText { get; } = Language.GetInstance["Gt"];
+        public string HelpText => Language.GetInstance["Gt"];
 
         public string MenuTitle => ">";
 
-        public string ValueType { get; } = CbSTUtils.FREE_TYPE_STR;
-
-        public Func<Type, bool>[] IsAccept => new Func<Type, bool>[] { (t) => CbScript.AcceptAll(t) };
-
+        public List<TypeRequest> typeRequests => new List<TypeRequest>()
+        {
+            new TypeRequest(t => CbScript.AcceptAll(t))
+        };
 
         public bool ImplAsset(MultiRootConnector col, bool isReBuildMode = false)
         {
@@ -711,14 +713,14 @@ namespace CapybaraVS.Script
     {
         public string AssetCode => nameof(Le);
 
-        public string HelpText { get; } = Language.GetInstance["Le"];
+        public string HelpText => Language.GetInstance["Le"];
 
         public string MenuTitle => "<=";
 
-        public string ValueType { get; } = CbSTUtils.FREE_TYPE_STR;
-
-        public Func<Type, bool>[] IsAccept => new Func<Type, bool>[] { (t) => CbScript.AcceptAll(t) };
-
+        public List<TypeRequest> typeRequests => new List<TypeRequest>()
+        {
+            new TypeRequest(t => CbScript.AcceptAll(t))
+        };
 
         public bool ImplAsset(MultiRootConnector col, bool isReBuildMode = false)
         {
@@ -759,14 +761,14 @@ namespace CapybaraVS.Script
     {
         public string AssetCode => nameof(Lt);
 
-        public string HelpText { get; } = Language.GetInstance["Lt"];
+        public string HelpText => Language.GetInstance["Lt"];
 
         public string MenuTitle => "<";
 
-        public string ValueType { get; } = CbSTUtils.FREE_TYPE_STR;
-
-        public Func<Type, bool>[] IsAccept => new Func<Type, bool>[] { (t) => CbScript.AcceptAll(t) };
-
+        public List<TypeRequest> typeRequests => new List<TypeRequest>()
+        {
+            new TypeRequest(t => CbScript.AcceptAll(t))
+        };
 
         public bool ImplAsset(MultiRootConnector col, bool isReBuildMode = false)
         {
@@ -807,14 +809,13 @@ namespace CapybaraVS.Script
     {
         public string AssetCode => nameof(And);
 
-        public string HelpText { get; } = Language.GetInstance["And"];
+        public string HelpText => Language.GetInstance["And"];
 
         public string MenuTitle => AssetCode;
 
-        public string ValueType { get; } = typeof(ICollection<bool>).FullName;
-
-        public Func<Type, bool>[] IsAccept => new Func<Type, bool>[] { 
-            (t) => t == typeof(bool)    // ダミー
+        public List<TypeRequest> typeRequests => new List<TypeRequest>()
+        {
+            new TypeRequest(typeof(ICollection<bool>))
         };
 
         public bool ImplAsset(MultiRootConnector col, bool isReBuildMode = false)
@@ -860,14 +861,13 @@ namespace CapybaraVS.Script
     {
         public string AssetCode => nameof(Or);
 
-        public string HelpText { get; } = Language.GetInstance["Or"];
+        public string HelpText => Language.GetInstance["Or"];
 
         public string MenuTitle => AssetCode;
 
-        public string ValueType { get; } = typeof(ICollection<bool>).FullName;
-
-        public Func<Type, bool>[] IsAccept => new Func<Type, bool>[] {
-            (t) => t == typeof(bool)    // ダミー
+        public List<TypeRequest> typeRequests => new List<TypeRequest>()
+        {
+            new TypeRequest(typeof(ICollection<bool>))
         };
 
         public bool ImplAsset(MultiRootConnector col, bool isReBuildMode = false)
@@ -913,14 +913,14 @@ namespace CapybaraVS.Script
     {
         public string AssetCode => nameof(Not);
 
-        public string HelpText { get; } = Language.GetInstance["Not"];
+        public string HelpText => Language.GetInstance["Not"];
 
         public string MenuTitle => AssetCode;
 
-        public string ValueType { get; } = typeof(bool).FullName;
-
-        public Func<Type, bool>[] IsAccept => new Func<Type, bool>[] { (t) => CbScript.AcceptAll(t) };
-
+        public List<TypeRequest> typeRequests => new List<TypeRequest>()
+        {
+            new TypeRequest(typeof(bool), t => CbScript.AcceptAll(t))
+        };
 
         public bool ImplAsset(MultiRootConnector col, bool isReBuildMode = false)
         {
@@ -958,14 +958,13 @@ namespace CapybaraVS.Script
     {
         public string AssetCode => nameof(Mul);
 
-        public string HelpText { get; } = Language.GetInstance["Mul"];
+        public string HelpText => Language.GetInstance["Mul"];
 
         public string MenuTitle => AssetCode;
 
-        public string ValueType { get; } = CbSTUtils.FREE_LIST_INTERFACE_TYPE_STR;
-
-        public Func<Type, bool>[] IsAccept => new Func<Type, bool>[] { 
-            (t) => CbScript.IsValueType(t)
+        public List<TypeRequest> typeRequests => new List<TypeRequest>()
+        {
+            new TypeRequest(CbSTUtils.LIST_INTERFACE_TYPE, t => CbScript.IsValueType(t))
         };
 
         public bool ImplAsset(MultiRootConnector col, bool isReBuildMode = false)
@@ -1011,14 +1010,13 @@ namespace CapybaraVS.Script
     {
         public string AssetCode => nameof(Div);
 
-        public string HelpText { get; } = Language.GetInstance["Div"];
+        public string HelpText => Language.GetInstance["Div"];
 
         public string MenuTitle => AssetCode;
 
-        public string ValueType { get; } = CbSTUtils.FREE_LIST_INTERFACE_TYPE_STR;
-
-        public Func<Type, bool>[] IsAccept => new Func<Type, bool>[] {
-            (t) => CbScript.IsValueType(t)
+        public List<TypeRequest> typeRequests => new List<TypeRequest>()
+        {
+            new TypeRequest(CbSTUtils.LIST_INTERFACE_TYPE, t => CbScript.IsValueType(t))
         };
 
         public bool ImplAsset(MultiRootConnector col, bool isReBuildMode = false)
@@ -1063,14 +1061,13 @@ namespace CapybaraVS.Script
     {
         public string AssetCode => nameof(Sub);
 
-        public string HelpText { get; } = Language.GetInstance["Sub"];
+        public string HelpText => Language.GetInstance["Sub"];
 
         public string MenuTitle => AssetCode;
 
-        public string ValueType { get; } = CbSTUtils.FREE_LIST_INTERFACE_TYPE_STR;
-
-        public Func<Type, bool>[] IsAccept => new Func<Type, bool>[] { 
-            (t) => CbScript.IsValueType(t) 
+        public List<TypeRequest> typeRequests => new List<TypeRequest>()
+        {
+            new TypeRequest(CbSTUtils.LIST_INTERFACE_TYPE, t => CbScript.IsValueType(t))
         };
 
         public bool ImplAsset(MultiRootConnector col, bool isReBuildMode = false)
@@ -1116,14 +1113,14 @@ namespace CapybaraVS.Script
     {
         public string AssetCode => nameof(CallFile);
 
-        public string HelpText { get; } = Language.GetInstance["CallFile"];
+        public string HelpText => Language.GetInstance["CallFile"];
 
         public string MenuTitle => "Call File";
 
-        public string ValueType { get; } = typeof(string).FullName;
-
-        public Func<Type, bool>[] IsAccept => new Func<Type, bool>[] { (t) => CbScript.AcceptAll(t) };
-
+        public List<TypeRequest> typeRequests => new List<TypeRequest>()
+        {
+            new TypeRequest(typeof(string))
+        };
 
         public bool ImplAsset(MultiRootConnector col, bool isReBuildMode = false)
         {
@@ -1177,14 +1174,14 @@ namespace CapybaraVS.Script
     {
         public string AssetCode => nameof(If_Func);
 
-        public string HelpText { get; } = Language.GetInstance["If_Func"];
+        public string HelpText => Language.GetInstance["If_Func"];
 
         public string MenuTitle => $"If<{CbSTUtils.FUNC_STR}>";
 
-        public string ValueType { get; } = CbSTUtils.FREE_TYPE_STR;
-
-        public Func<Type, bool>[] IsAccept => new Func<Type, bool>[] { (t) => CbScript.AcceptAll(t) };
-
+        public List<TypeRequest> typeRequests => new List<TypeRequest>()
+        {
+            new TypeRequest(t => CbScript.AcceptAll(t))
+        };
 
         public bool ImplAsset(MultiRootConnector col, bool isReBuildMode = false)
         {
@@ -1231,14 +1228,14 @@ namespace CapybaraVS.Script
     {
         public string AssetCode => nameof(If_Action);
 
-        public string HelpText { get; } = Language.GetInstance["If_Action"];
+        public string HelpText => Language.GetInstance["If_Action"];
 
         public string MenuTitle => $"If<{CbSTUtils.ACTION_STR}>";
 
-        public string ValueType { get; } = CbSTUtils.DUMMY_TYPE_STR;
-
-        public Func<Type, bool>[] IsAccept => new Func<Type, bool>[] { (t) => CbScript.AcceptAll(t) };
-
+        public List<TypeRequest> typeRequests => new List<TypeRequest>()
+        {
+            new TypeRequest(CbSTUtils.DUMMY_TYPE)
+        };
 
         public bool ImplAsset(MultiRootConnector col, bool isReBuildMode = false)
         {
@@ -1284,14 +1281,14 @@ namespace CapybaraVS.Script
     {
         public string AssetCode => nameof(If);
 
-        public string HelpText { get; } = Language.GetInstance["If"];
+        public string HelpText => Language.GetInstance["If"];
 
         public string MenuTitle => AssetCode;
 
-        public string ValueType { get; } = CbSTUtils.FREE_TYPE_STR;
-
-        public Func<Type, bool>[] IsAccept => new Func<Type, bool>[] { (t) => CbScript.AcceptAll(t) };
-
+        public List<TypeRequest> typeRequests => new List<TypeRequest>()
+        {
+            new TypeRequest(t => CbScript.AcceptAll(t))
+        };
 
         public bool ImplAsset(MultiRootConnector col, bool isReBuildMode = false)
         {
@@ -1338,14 +1335,13 @@ namespace CapybaraVS.Script
     {
         public string AssetCode => nameof(InvokeFuncNoArg);
 
-        public string HelpText { get; } = Language.GetInstance["Invoke"];
+        public string HelpText => Language.GetInstance["Invoke"];
 
         public string MenuTitle => $"{CbSTUtils.FUNC_STR}<T>.Invoke";
 
-        public string ValueType { get; } = CbSTUtils.FREE_FUNC_TYPE_STR;
-
-        public Func<Type, bool>[] IsAccept => new Func<Type, bool>[] {
-            (t) => CbScript.AcceptAll(t)
+        public List<TypeRequest> typeRequests => new List<TypeRequest>()
+        {
+            new TypeRequest(CbSTUtils.FUNC_TYPE, t => CbScript.AcceptAll(t))
         };
 
         public bool ImplAsset(MultiRootConnector col, bool isReBuildMode = false)
@@ -1387,15 +1383,16 @@ namespace CapybaraVS.Script
     {
         public string AssetCode => nameof(InvokeFuncWithArg);
 
-        public string HelpText { get; } = Language.GetInstance["InvokeWithArg"];
+        public string HelpText => Language.GetInstance["InvokeWithArg"];
 
         public string MenuTitle => $"{CbSTUtils.FUNC_STR}<T1,T2>.Invoke(n)";
 
-        public string ValueType { get; } = CbSTUtils.FREE_FUNC2A_TYPE_STR;
-
-        public Func<Type, bool>[] IsAccept => new Func<Type, bool>[] {
-            (t) => CbScript.AcceptAll(t),   // T1
-            (t) => CbScript.AcceptAll(t)    // T2
+        public List<TypeRequest> typeRequests => new List<TypeRequest>()
+        {
+            new TypeRequest(CbSTUtils.FUNC2ARG_TYPE, new Func<Type, bool>[] {
+                t => CbScript.AcceptAll(t),   // T1
+                t => CbScript.AcceptAll(t)    // T2
+            })
         };
 
         public bool ImplAsset(MultiRootConnector col, bool isReBuildMode = false)
@@ -1444,14 +1441,14 @@ namespace CapybaraVS.Script
     {
         public string AssetCode => nameof(InvokeActionWithArg);
 
-        public string HelpText { get; } = Language.GetInstance["InvokeWithArg"];
+        public string HelpText => Language.GetInstance["InvokeWithArg"];
 
         public string MenuTitle => $"{CbSTUtils.ACTION_STR}<T>.Invoke(n)";
 
-        public string ValueType { get; } = CbSTUtils.FREE_ACTION_TYPE_STR;
-
-        public Func<Type, bool>[] IsAccept => new Func<Type, bool>[] { (t) => CbScript.AcceptAll(t) };
-
+        public List<TypeRequest> typeRequests => new List<TypeRequest>()
+        {
+            new TypeRequest(CbSTUtils.ACTION_TYPE, t => CbScript.AcceptAll(t))
+        };
 
         public bool ImplAsset(MultiRootConnector col, bool isReBuildMode = false)
         {
@@ -1498,14 +1495,14 @@ namespace CapybaraVS.Script
     {
         public string AssetCode => nameof(For);
 
-        public string HelpText { get; } = Language.GetInstance["For"];
+        public string HelpText => Language.GetInstance["For"];
 
         public string MenuTitle => $"{nameof(For)}<{CbSTUtils.ACTION_STR}>";
 
-        public string ValueType { get; } = CbSTUtils.DUMMY_TYPE_STR;
-
-        public Func<Type, bool>[] IsAccept => new Func<Type, bool>[] { (t) => CbScript.IsValueType(t) };
-
+        public List<TypeRequest> typeRequests => new List<TypeRequest>()
+        {
+            new TypeRequest(CbSTUtils.DUMMY_TYPE)
+        };
 
         public bool ImplAsset(MultiRootConnector col, bool isReBuildMode = false)
         {
@@ -1557,13 +1554,14 @@ namespace CapybaraVS.Script
     {
         public string AssetCode => nameof(For_Until);
 
-        public string HelpText { get; } = Language.GetInstance["For"];
+        public string HelpText => Language.GetInstance["For"];
 
         public string MenuTitle => $"{nameof(For_Until)}<{CbSTUtils.ACTION_STR}>";
 
-        public string ValueType { get; } = CbSTUtils.FREE_TYPE_STR;
-
-        public Func<Type, bool>[] IsAccept => new Func<Type, bool>[] { (t) => CbScript.IsValueType(t) && t != typeof(bool) };
+        public List<TypeRequest> typeRequests => new List<TypeRequest>()
+        {
+            new TypeRequest(t => CbScript.IsValueType(t) && t != typeof(bool))
+        };
 
         public bool ImplAsset(MultiRootConnector col, bool isReBuildMode = false)
         {
@@ -1620,7 +1618,7 @@ namespace CapybaraVS.Script
     {
         public string AssetCode => nameof(GetVariable);
 
-        public string HelpText { get; } = "";
+        public string HelpText => "";
 
         public bool ImplAsset(MultiRootConnector col, bool isReBuildMode = false)
         {
@@ -1683,11 +1681,12 @@ namespace CapybaraVS.Script
     {
         public string MenuTitle => "Create Variable";
 
-        public new string HelpText { get; } = Language.GetInstance["CreateVariable"];
+        public new string HelpText => Language.GetInstance["CreateVariable"];
 
-        public string ValueType { get; } = CbSTUtils.FREE_TYPE_STR;
-
-        public Func<Type, bool>[] IsAccept => new Func<Type, bool>[] { (t) => true };    // 新規作成を意味する
+        public List<TypeRequest> typeRequests => new List<TypeRequest>()
+        {
+            new TypeRequest(t => true)    // 新規作成を意味する
+        };
     }
 
     //-----------------------------------------------------------------
@@ -1695,23 +1694,25 @@ namespace CapybaraVS.Script
     {
         public string MenuTitle => "Create VariableList";
 
-        public new string HelpText { get; } = Language.GetInstance["CreateVariableList"];
+        public new string HelpText => Language.GetInstance["CreateVariableList"];
 
-        public string ValueType { get; } = CbSTUtils.FREE_LIST_TYPE_STR;
-
-        public Func<Type, bool>[] IsAccept => new Func<Type, bool>[] { (t) => true };    // 新規作成を意味する
+        public List<TypeRequest> typeRequests => new List<TypeRequest>()
+        {
+            new TypeRequest(CbSTUtils.LIST_TYPE, t => true)
+        };
     }
 
     //-----------------------------------------------------------------
     class CreateVariableFunc : _GetVariable, IFuncCreateVariableAssetDef
     {
-        public string ValueType { get; } = CbSTUtils.FREE_FUNC_TYPE_STR;
-
-        public new string HelpText { get; } = Language.GetInstance["CreateVariableFunc"];
+        public new string HelpText => Language.GetInstance["CreateVariableFunc"];
 
         public string MenuTitle => $"Create Variable<{CbSTUtils.FUNC_STR}>";
 
-        public Func<Type, bool>[] IsAccept => new Func<Type, bool>[] { (t) => true };    // 新規作成を意味する
+        public List<TypeRequest> typeRequests => new List<TypeRequest>()
+        {
+            new TypeRequest(CbSTUtils.FUNC_TYPE, t => true)
+        };
     }
 
     //-----------------------------------------------------------------
@@ -1719,11 +1720,9 @@ namespace CapybaraVS.Script
     {
         public string MenuTitle => "Get Variable";
 
-        public new string HelpText { get; } = Language.GetInstance["GetVariable"];
+        public new string HelpText => Language.GetInstance["GetVariable"];
 
-        public string ValueType { get; } = CbSTUtils.FREE_TYPE_STR;
-
-        public Func<Type, bool>[] IsAccept => null;    // 選択を意味する
+        public List<TypeRequest> typeRequests => null;    // 選択を意味する
     }
 
     //-----------------------------------------------------------------
@@ -1731,13 +1730,11 @@ namespace CapybaraVS.Script
     {
         public string AssetCode => nameof(SetVariable);
 
-        public string HelpText { get; } = Language.GetInstance["SetVariable"];
+        public string HelpText => Language.GetInstance["SetVariable"];
 
         public string MenuTitle => "Set Variable";
 
-        public string ValueType { get; } = CbSTUtils.FREE_FUNC_TYPE_STR;
-
-        public Func<Type, bool>[] IsAccept => null;    // 選択を意味する
+        public List<TypeRequest> typeRequests => null;    // 選択を意味する
 
         public bool ImplAsset(MultiRootConnector col, bool isReBuildMode = false)
         {
@@ -1803,14 +1800,14 @@ namespace CapybaraVS.Script
     {
         public string AssetCode => nameof(CallerArguments);
 
-        public string HelpText { get; } = Language.GetInstance["CallerArgument"];
+        public string HelpText => Language.GetInstance["CallerArgument"];
 
         public string MenuTitle => "DummyArguments";
 
-        public string ValueType { get; } = CbSTUtils.FREE_TYPE_STR;
-
-        public Func<Type, bool>[] IsAccept => new Func<Type, bool>[] { (t) => CbScript.AcceptAll(t) };
-
+        public List<TypeRequest> typeRequests => new List<TypeRequest>()
+        {
+            new TypeRequest(t => CbScript.AcceptAll(t))
+        };
 
         public bool ImplAsset(MultiRootConnector col, bool isReBuildMode = false)
         {
@@ -1861,14 +1858,13 @@ namespace CapybaraVS.Script
     {
         public string AssetCode => nameof(Foreach);
 
-        public string HelpText { get; } = Language.GetInstance["Foreach"];
+        public string HelpText => Language.GetInstance["Foreach"];
 
         public string MenuTitle => $"Foreach {CbSTUtils.LIST_STR}<{CbSTUtils.ACTION_STR}>";
 
-        public string ValueType { get; } = CbSTUtils.FREE_LIST_INTERFACE_TYPE_STR;
-
-        public Func<Type, bool>[] IsAccept => new Func<Type, bool>[] {
-            (t) => CbScript.AcceptAll(t)
+        public List<TypeRequest> typeRequests => new List<TypeRequest>()
+        {
+            new TypeRequest(CbSTUtils.LIST_INTERFACE_TYPE, t => CbScript.AcceptAll(t))
         };
 
         public bool ImplAsset(MultiRootConnector col, bool isReBuildMode = false)
@@ -1918,14 +1914,14 @@ namespace CapybaraVS.Script
     {
         public string AssetCode => nameof(ForeachIEnumerable);
 
-        public string HelpText { get; } = Language.GetInstance["Foreach"];
+        public string HelpText => Language.GetInstance["Foreach"];
 
         public string MenuTitle => $"Foreach IEnumerable<{CbSTUtils.ACTION_STR}>";
 
-        public string ValueType { get; } = CbSTUtils.FREE_TYPE_STR;
-
-        public Func<Type, bool>[] IsAccept => new Func<Type, bool>[] { (t) => CbScript.AcceptAll(t) };
-
+        public List<TypeRequest> typeRequests => new List<TypeRequest>()
+        {
+            new TypeRequest(t => CbScript.AcceptAll(t))
+        };
 
         public bool ImplAsset(MultiRootConnector col, bool isReBuildMode = false)
         {
@@ -1974,13 +1970,14 @@ namespace CapybaraVS.Script
     {
         public string AssetCode => nameof(SwitchEnum);
 
-        public string HelpText { get; } = "Switch";
+        public string HelpText => "Switch";
 
         public string MenuTitle => $"Switch Case<{CbSTUtils.ENUM_STR}>";
 
-        public string ValueType { get; } = CbSTUtils.FREE_TYPE_STR;
-
-        public Func<Type, bool>[] IsAccept => new Func<Type, bool>[] { (t) => CbScript.IsEnum(t) };
+        public List<TypeRequest> typeRequests => new List<TypeRequest>()
+        {
+            new TypeRequest(t => CbScript.IsEnum(t))
+        };
 
         public bool ImplAsset(MultiRootConnector col, bool isReBuildMode = false)
         {
@@ -2059,13 +2056,14 @@ namespace CapybaraVS.Script
     {
         public string AssetCode => nameof(ConsoleOut);
 
-        public string HelpText { get; } = Language.GetInstance["ConsoleOut"];
+        public string HelpText => Language.GetInstance["ConsoleOut"];
 
         public string MenuTitle => "ConsoleOut";
 
-        public string ValueType { get; } = CbSTUtils.FREE_TYPE_STR;
-
-        public Func<Type, bool>[] IsAccept => new Func<Type, bool>[] { (t) => CbScript.IsNotObject(t) };
+        public List<TypeRequest> typeRequests => new List<TypeRequest>()
+        {
+            new TypeRequest(t => CbScript.IsNotObject(t))
+        };
 
         public bool ImplAsset(MultiRootConnector col, bool isReBuildMode = false)
         {
@@ -2108,13 +2106,14 @@ namespace CapybaraVS.Script
     {
         public string AssetCode => nameof(Abs);
 
-        public string HelpText { get; } = Language.GetInstance["Abs"];
+        public string HelpText => Language.GetInstance["Abs"];
 
         public string MenuTitle => AssetCode;
 
-        public string ValueType { get; } = CbSTUtils.FREE_TYPE_STR;
-
-        public Func<Type, bool>[] IsAccept => new Func<Type, bool>[] { (t) => CbScript.IsSigned(t) };
+        public List<TypeRequest> typeRequests => new List<TypeRequest>()
+        {
+            new TypeRequest(t => CbScript.IsSigned(t))
+        };
 
         public bool ImplAsset(MultiRootConnector col, bool isReBuildMode = false)
         {
@@ -2152,14 +2151,14 @@ namespace CapybaraVS.Script
     {
         public string AssetCode => nameof(GetVariableFromIndex);
 
-        public string HelpText { get; } = Language.GetInstance["GetVariableFromIndex"];
+        public string HelpText => Language.GetInstance["GetVariableFromIndex"];
 
         public string MenuTitle => "Get VariableList[index]";
 
-        public string ValueType { get; } = CbSTUtils.FREE_TYPE_STR;
-
-        public Func<Type, bool>[] IsAccept => new Func<Type, bool>[] { (t) => CbScript.AcceptAll(t) };
-
+        public List<TypeRequest> typeRequests => new List<TypeRequest>()
+        {
+            new TypeRequest(t => CbScript.AcceptAll(t))
+        };
 
         public bool ImplAsset(MultiRootConnector col, bool isReBuildMode = false)
         {
@@ -2207,14 +2206,14 @@ namespace CapybaraVS.Script
     {
         public string AssetCode => nameof(SetVariableToIndex);
 
-        public string HelpText { get; } = Language.GetInstance["SetVariableToIndex"];
+        public string HelpText => Language.GetInstance["SetVariableToIndex"];
 
         public string MenuTitle => "Set VariableList[index]";
 
-        public string ValueType { get; } = CbSTUtils.FREE_TYPE_STR;
-
-        public Func<Type, bool>[] IsAccept => new Func<Type, bool>[] { (t) => CbScript.AcceptAll(t) };
-
+        public List<TypeRequest> typeRequests => new List<TypeRequest>()
+        {
+            new TypeRequest(t => CbScript.AcceptAll(t))
+        };
 
         public bool ImplAsset(MultiRootConnector col, bool isReBuildMode = false)
         {
@@ -2264,14 +2263,14 @@ namespace CapybaraVS.Script
     {
         public string AssetCode => nameof(AppendVariableList);
 
-        public string HelpText { get; } = Language.GetInstance["AppendVariableList"];
+        public string HelpText => Language.GetInstance["AppendVariableList"];
 
         public string MenuTitle => "Append VariableList";
 
-        public string ValueType { get; } = CbSTUtils.FREE_TYPE_STR;
-
-        public Func<Type, bool>[] IsAccept => new Func<Type, bool>[] { (t) => CbScript.AcceptAll(t) };
-
+        public List<TypeRequest> typeRequests => new List<TypeRequest>()
+        {
+            new TypeRequest(t => CbScript.AcceptAll(t))
+        };
 
         public bool ImplAsset(MultiRootConnector col, bool isReBuildMode = false)
         {
@@ -2318,14 +2317,13 @@ namespace CapybaraVS.Script
     {
         public string AssetCode => nameof(Count);
 
-        public string HelpText { get; } = Language.GetInstance["Count"];
+        public string HelpText => Language.GetInstance["Count"];
 
         public string MenuTitle => AssetCode;
 
-        public string ValueType { get; } = CbSTUtils.FREE_LIST_INTERFACE_TYPE_STR;
-
-        public Func<Type, bool>[] IsAccept => new Func<Type, bool>[] {
-            (t) => CbScript.AcceptAll(t)
+        public List<TypeRequest> typeRequests => new List<TypeRequest>()
+        {
+            new TypeRequest(CbSTUtils.LIST_INTERFACE_TYPE, t => CbScript.AcceptAll(t))
         };
 
         public bool ImplAsset(MultiRootConnector col, bool isReBuildMode = false)
@@ -2364,14 +2362,13 @@ namespace CapybaraVS.Script
     {
         public string AssetCode => nameof(Contains);
 
-        public string HelpText { get; } = Language.GetInstance["Contains"];
+        public string HelpText => Language.GetInstance["Contains"];
 
         public string MenuTitle => AssetCode;
 
-        public string ValueType { get; } = CbSTUtils.FREE_LIST_INTERFACE_TYPE_STR;
-
-        public Func<Type, bool>[] IsAccept => new Func<Type, bool>[] {
-            (t) => CbScript.AcceptAll(t)
+        public List<TypeRequest> typeRequests => new List<TypeRequest>()
+        {
+            new TypeRequest(CbSTUtils.LIST_INTERFACE_TYPE, t => CbScript.AcceptAll(t))
         };
 
         public bool ImplAsset(MultiRootConnector col, bool isReBuildMode = false)
@@ -2383,7 +2380,7 @@ namespace CapybaraVS.Script
                 new List<ICbValue>()      // 引数
                 {
                     CbST.CbCreate(col.SelectedVariableType[0], "sample"),
-                    CbST.CbCreate(col.SelectedVariableType[0].GetGenericArguments()[0], "n"),
+                    CbST.CbCreate(col.SelectedVariableType[0].GenericTypeArguments[0], "n"),
                 },
                 new Func<List<ICbValue>, DummyArgumentsStack, ICbValue>(
                     (argument, cagt) =>
@@ -2411,14 +2408,13 @@ namespace CapybaraVS.Script
     {
         public string AssetCode => nameof(GetListIndex);
 
-        public string HelpText { get; } = Language.GetInstance["GetListIndex"];
+        public string HelpText => Language.GetInstance["GetListIndex"];
 
         public string MenuTitle => "Get List[index]";
 
-        public string ValueType { get; } = CbSTUtils.FREE_LIST_INTERFACE_TYPE_STR;
-
-        public Func<Type, bool>[] IsAccept => new Func<Type, bool>[] { 
-            (t) => CbScript.AcceptAll(t)
+        public List<TypeRequest> typeRequests => new List<TypeRequest>()
+        {
+            new TypeRequest(CbSTUtils.LIST_INTERFACE_TYPE, t => CbScript.AcceptAll(t))
         };
 
         public bool ImplAsset(MultiRootConnector col, bool isReBuildMode = false)
@@ -2426,7 +2422,7 @@ namespace CapybaraVS.Script
             col.MakeFunction(
                 MenuTitle,
                 HelpText,
-                CbST.CbCreateTF(col.SelectedVariableType[0].GetGenericArguments()[0]),    // 返し値の型
+                CbST.CbCreateTF(col.SelectedVariableType[0].GenericTypeArguments[0]),    // 返し値の型
                 new List<ICbValue>()  // 引数
                 {
                     CbST.CbCreate(col.SelectedVariableType[0], "sample"),
@@ -2442,7 +2438,7 @@ namespace CapybaraVS.Script
                         }
                         catch (Exception ex)
                         {
-                            var ret = CbST.CbCreate(col.SelectedVariableType[0].GetGenericArguments()[0]);    // 返し値
+                            var ret = CbST.CbCreate(col.SelectedVariableType[0].GenericTypeArguments[0]);    // 返し値
                             col.ExceptionFunc(ret, ex);
                             return ret;
                         }
@@ -2459,14 +2455,13 @@ namespace CapybaraVS.Script
     {
         public string AssetCode => nameof(GetListLast);
 
-        public string HelpText { get; } = Language.GetInstance["GetListLast"];
+        public string HelpText => Language.GetInstance["GetListLast"];
 
         public string MenuTitle => "Get List[last]";
 
-        public string ValueType { get; } = CbSTUtils.FREE_LIST_INTERFACE_TYPE_STR;
-
-        public Func<Type, bool>[] IsAccept => new Func<Type, bool>[] {
-            (t) => CbScript.AcceptAll(t)
+        public List<TypeRequest> typeRequests => new List<TypeRequest>()
+        {
+            new TypeRequest(CbSTUtils.LIST_INTERFACE_TYPE, t => CbScript.AcceptAll(t))
         };
 
         public bool ImplAsset(MultiRootConnector col, bool isReBuildMode = false)
@@ -2474,7 +2469,7 @@ namespace CapybaraVS.Script
             col.MakeFunction(
                 MenuTitle,
                 HelpText,
-                CbST.CbCreateTF(col.SelectedVariableType[0].GetGenericArguments()[0]),  // 返し値の型
+                CbST.CbCreateTF(col.SelectedVariableType[0].GenericTypeArguments[0]),  // 返し値の型
                 new List<ICbValue>()  // 引数
                 {
                     CbST.CbCreate(col.SelectedVariableType[0], "sample"),
@@ -2489,7 +2484,7 @@ namespace CapybaraVS.Script
                         }
                         catch (Exception ex)
                         {
-                            var ret = CbST.CbCreate(col.SelectedVariableType[0].GetGenericArguments()[0]);    // 返し値
+                            var ret = CbST.CbCreate(col.SelectedVariableType[0].GenericTypeArguments[0]);    // 返し値
                             col.ExceptionFunc(ret, ex);
                             return ret;
                         }
@@ -2506,14 +2501,13 @@ namespace CapybaraVS.Script
     {
         public string AssetCode => nameof(SetListIndex);
 
-        public string HelpText { get; } = Language.GetInstance["SetListIndex"];
+        public string HelpText => Language.GetInstance["SetListIndex"];
 
         public string MenuTitle => "Set List[index]";
 
-        public string ValueType { get; } = CbSTUtils.FREE_LIST_INTERFACE_TYPE_STR;
-
-        public Func<Type, bool>[] IsAccept => new Func<Type, bool>[] {
-            (t) => CbScript.AcceptAll(t)
+        public List<TypeRequest> typeRequests => new List<TypeRequest>()
+        {
+            new TypeRequest(CbSTUtils.LIST_INTERFACE_TYPE, t => CbScript.AcceptAll(t))
         };
 
         public bool ImplAsset(MultiRootConnector col, bool isReBuildMode = false)
@@ -2526,7 +2520,7 @@ namespace CapybaraVS.Script
                 {
                     CbST.CbCreate(col.SelectedVariableType[0], "sample"),
                     CbST.CbCreate<int>("index"),
-                    CbST.CbCreate(col.SelectedVariableType[0].GetGenericArguments()[0], "n"),
+                    CbST.CbCreate(col.SelectedVariableType[0].GenericTypeArguments[0], "n"),
                 },
                 new Func<List<ICbValue>, DummyArgumentsStack, ICbValue>(
                     (argument, cagt) =>
@@ -2563,14 +2557,13 @@ namespace CapybaraVS.Script
     {
         public string AssetCode => nameof(Append);
 
-        public string HelpText { get; } = Language.GetInstance["Append"];
+        public string HelpText => Language.GetInstance["Append"];
 
         public string MenuTitle => AssetCode;
 
-        public string ValueType { get; } = CbSTUtils.FREE_LIST_INTERFACE_TYPE_STR;
-
-        public Func<Type, bool>[] IsAccept => new Func<Type, bool>[] { 
-            (t) => CbScript.AcceptAll(t) 
+        public List<TypeRequest> typeRequests => new List<TypeRequest>()
+        {
+            new TypeRequest(CbSTUtils.LIST_INTERFACE_TYPE, t => CbScript.AcceptAll(t))
         };
 
         public bool ImplAsset(MultiRootConnector col, bool isReBuildMode = false)
@@ -2582,7 +2575,7 @@ namespace CapybaraVS.Script
                new List<ICbValue>()   // 引数
                {
                     CbST.CbCreate(col.SelectedVariableType[0], "list"),
-                    CbST.CbCreate(col.SelectedVariableType[0].GetGenericArguments()[0], "n")
+                    CbST.CbCreate(col.SelectedVariableType[0].GenericTypeArguments[0], "n")
                },
                new Func<List<ICbValue>, DummyArgumentsStack, ICbValue>(
                    (argument, cagt) =>
@@ -2620,13 +2613,14 @@ namespace CapybaraVS.Script
     {
         public string AssetCode => nameof(Pow);
 
-        public string HelpText { get; } = Language.GetInstance["Pow"];
+        public string HelpText => Language.GetInstance["Pow"];
 
         public string MenuTitle => AssetCode;
 
-        public string ValueType { get; } = typeof(double).FullName;
-
-        public Func<Type, bool>[] IsAccept => new Func<Type, bool>[] { (t) => typeof(double) == t };
+        public List<TypeRequest> typeRequests => new List<TypeRequest>()
+        {
+            new TypeRequest(typeof(double))
+        };
 
         public bool ImplAsset(MultiRootConnector col, bool isReBuildMode = false)
         {
@@ -2668,13 +2662,14 @@ namespace CapybaraVS.Script
     {
         public string AssetCode => nameof(Rand);
 
-        public string HelpText { get; } = Language.GetInstance["Rand"];
+        public string HelpText => Language.GetInstance["Rand"];
 
         public string MenuTitle => AssetCode;
 
-        public string ValueType { get; } = typeof(int).FullName;
-
-        public Func<Type, bool>[] IsAccept => new Func<Type, bool>[] { (t) => typeof(int) == t };
+        public List<TypeRequest> typeRequests => new List<TypeRequest>()
+        {
+            new TypeRequest(typeof(int))
+        };
 
         public bool ImplAsset(MultiRootConnector col, bool isReBuildMode = false)
         {

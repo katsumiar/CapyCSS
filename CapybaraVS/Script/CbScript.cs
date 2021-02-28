@@ -8,6 +8,7 @@ using System.Linq;
 using CapybaraVS.Script;
 using CapybaraVS;
 using System.Diagnostics;
+using static CapybaraVS.Controls.BaseControls.CommandCanvas;
 
 namespace CbVS.Script
 {
@@ -16,27 +17,27 @@ namespace CbVS.Script
         /// <summary>
         /// object 型を除く
         /// </summary>
-        public static Func<Type, bool> AcceptAll => (t) => true;
+        public static Func<Type, bool> AcceptAll => t => true;
 
         /// <summary>
         /// Enum 型
         /// </summary>
-        public static Func<Type, bool> IsEnum => (t) => t.IsEnum;
+        public static Func<Type, bool> IsEnum => t => t.IsEnum;
 
         /// <summary>
         /// object 型を除く
         /// </summary>
-        public static Func<Type, bool> IsNotObject => (t) => t != typeof(object);
+        public static Func<Type, bool> IsNotObject => t => t != typeof(object);
 
         /// <summary>
         // 演算可能な型
         /// </summary>
-        public static Func<Type, bool> IsValueType => (t) => t.IsValueType && !t.IsEnum && t.IsPrimitive || t == typeof(decimal);
+        public static Func<Type, bool> IsValueType => t => t == typeof(decimal) || (t.IsValueType && !t.IsEnum && t.IsPrimitive && t != typeof(bool));
 
         /// <summary>
         /// signed型
         /// </summary>
-        public static Func<Type, bool> IsSigned => (t) => IsValueType(t) && (t == typeof(short) || t == typeof(int) || t == typeof(long) || t == typeof(float) || t == typeof(double) || t == typeof(sbyte) || t == typeof(decimal));
+        public static Func<Type, bool> IsSigned => t => IsValueType(t) && (t == typeof(short) || t == typeof(int) || t == typeof(long) || t == typeof(float) || t == typeof(double) || t == typeof(sbyte) || t == typeof(decimal));
 
         /// <summary>
         /// アセットコードでノードを作成します。
@@ -53,33 +54,6 @@ namespace CbVS.Script
         }
 
         /// <summary>
-        /// 変数の型を選択します。
-        /// </summary>
-        /// <param name="typeName">選択された型の格納先</param>
-        /// <param name="isAccept">受け付ける型を判定する処理</param>
-        /// <returns>true = 有効</returns>
-        private static bool _SelectVariableType(CommandCanvas OwnerCommandCanvas, ref string typeName, Func<Type, bool>[] isAccept)
-        {
-            if (typeName == CbSTUtils.FREE_ENUM_TYPE_STR)
-            {
-                typeName = OwnerCommandCanvas.RequestTypeString(isAccept);
-            }
-            else if (typeName == CbSTUtils.FREE_TYPE_STR)
-            {
-                typeName = OwnerCommandCanvas.RequestTypeString(isAccept);
-            }
-            else
-            {
-                typeName = OwnerCommandCanvas.RequestGenericTypeName(typeName, isAccept);
-            }
-            if (typeName is null)
-            {
-                return false;
-            }
-            return true;
-        }
-
-        /// <summary>
         /// 指定されたアセットコードに対してウインドウを表示して変数の型を選択しノードを作成します。
         /// </summary>
         /// <param name="assetCode">アセットコード</param>
@@ -87,11 +61,18 @@ namespace CbVS.Script
         /// <param name="stackNode">変数の登録領域</param>
         /// <param name="forcedListTypeSelect">リスト型を選択するか？</param>
         /// <returns>ノード</returns>
-        private static MultiRootConnector _CreateFreeTypeVariableFunction(CommandCanvas OwnerCommandCanvas, string assetCode, string valueType, Func<Type, bool>[] isAccept, MultiRootConnector multiRootConnector, StackNode stackNode, bool forcedListTypeSelect)
+        private static MultiRootConnector _CreateFreeTypeVariableFunction(
+            CommandCanvas OwnerCommandCanvas, 
+            string assetCode,
+            List<TypeRequest> typeRequests, 
+            MultiRootConnector multiRootConnector, 
+            StackNode stackNode, 
+            bool forcedListTypeSelect)
         {
             if (multiRootConnector is null)
             {
-                if (isAccept == null && OwnerCommandCanvas.ScriptWorkStack.StackData.Count != 0)
+                List<string> typeNames;
+                if (typeRequests == null && OwnerCommandCanvas.ScriptWorkStack.StackData.Count != 0)
                 {
                     // 既存の変数から選択する
 
@@ -105,13 +86,16 @@ namespace CbVS.Script
                     if (stackNode is null)
                         return null;
 
-                    valueType = stackNode.ValueData.OriginalType.FullName;
+                    typeNames = new List<string>();
+                    typeNames.Add(stackNode.ValueData.OriginalType.FullName);
                 }
                 else
                 {
                     // 変数を新規作成する
 
-                    if (!_SelectVariableType(OwnerCommandCanvas, ref valueType, isAccept))
+                    typeNames = OwnerCommandCanvas.RequestTypeName(typeRequests);
+
+                    if (typeNames is null)
                         return null;
 
                     int nameIndex = 1;
@@ -122,14 +106,14 @@ namespace CbVS.Script
                     }
                     while (OwnerCommandCanvas.ScriptWorkStack.NameContains(name));
 
-                    ListSelectWindow.DefaultValue = CbST.CbCreate(CbST.GetTypeEx(valueType), name);
+                    ListSelectWindow.DefaultValue = CbST.CbCreate(CbST.GetTypeEx(typeNames[0]), name);
                     stackNode = OwnerCommandCanvas.ScriptWorkStack.Append(ListSelectWindow.DefaultValue).stackNode;
                     ListSelectWindow.DefaultValue = null;
                 }
 
                 multiRootConnector = new MultiRootConnector();
                 multiRootConnector.OwnerCommandCanvas = OwnerCommandCanvas;
-                multiRootConnector.AssetValueType = valueType;
+                multiRootConnector.AssetValueType = typeNames[0];
                 multiRootConnector.AssetFuncType = assetCode;
             }
 
@@ -147,12 +131,15 @@ namespace CbVS.Script
         /// <param name="ignoreTypes">選択除外の型を指定</param>
         /// <param name="forcedListTypeSelect">リスト型を選択するか？</param>
         /// <returns>ノード</returns>
-        public static MultiRootConnector CreateFreeTypeVariableFunction(CommandCanvas OwnerCommandCanvas, string assetCode, string valueType, Func<Type, bool>[] isAccept = null, bool forcedListTypeSelect = false)
+        public static MultiRootConnector CreateFreeTypeVariableFunction(
+            CommandCanvas OwnerCommandCanvas, 
+            string assetCode,
+            List<TypeRequest> typeRequests, 
+            bool forcedListTypeSelect = false)
         {
             MultiRootConnector multiRootConnector = null;
             StackNode stackNode = null;
-
-            return _CreateFreeTypeVariableFunction(OwnerCommandCanvas, assetCode, valueType, isAccept, multiRootConnector, stackNode, forcedListTypeSelect);
+            return _CreateFreeTypeVariableFunction(OwnerCommandCanvas, assetCode, typeRequests, multiRootConnector, stackNode, forcedListTypeSelect);
         }
 
         /// <summary>
@@ -162,14 +149,19 @@ namespace CbVS.Script
         /// <param name="cbType">選択された型の格納先</param>
         /// <param name="ignoreTypes">選択除外の型を指定</param>
         /// <returns>ノード</returns>
-        public static MultiRootConnector CreateFreeTypeFunction(CommandCanvas OwnerCommandCanvas, string assetCode, string valueType, Func<Type, bool>[] isAccept = null)
+        public static MultiRootConnector CreateFreeTypeFunction(
+            CommandCanvas OwnerCommandCanvas, 
+            string assetCode,
+            List<TypeRequest> typeRequests = null)
         {
-            if (!_SelectVariableType(OwnerCommandCanvas, ref valueType, isAccept))
+            List<string> typeNames = OwnerCommandCanvas.RequestTypeName(typeRequests);
+
+            if (typeNames is null)
                 return null;
 
             var ret = new MultiRootConnector();
             ret.OwnerCommandCanvas = OwnerCommandCanvas;
-            ret.AssetValueType = valueType;
+            ret.AssetValueType = typeNames[0];
             ret.AssetFuncType = assetCode;
             ret.AssetType = FunctionType.FuncType;
             return ret;
@@ -181,87 +173,20 @@ namespace CbVS.Script
         /// <param name="cbType">選択された型の格納先</param>
         /// <param name="ignoreTypes">選択除外の型を指定</param>
         /// <returns>ノード</returns>
-        public static MultiRootConnector SelectVariableType(CommandCanvas OwnerCommandCanvas, string valueType, Func<Type, bool>[] isAccept = null)
+        public static MultiRootConnector SelectVariableType(
+            CommandCanvas OwnerCommandCanvas,
+            List<TypeRequest> typeRequests = null)
         {
-            if (!_SelectVariableType(OwnerCommandCanvas, ref valueType, isAccept))
+            List<string> typeNames = OwnerCommandCanvas.RequestTypeName(typeRequests);
+
+            if (typeNames is null)
                 return null;
 
             var ret = new MultiRootConnector();
             ret.OwnerCommandCanvas = OwnerCommandCanvas;
-            ret.AssetValueType = valueType;
+            ret.AssetValueType = typeNames[0];
             ret.AssetType = FunctionType.LiteralType;
             return ret;
-        }
-
-        /// <summary>
-        /// （削除検討）
-        /// </summary>
-        /// <param name="OwnerCommandCanvas"></param>
-        /// <param name="name"></param>
-        /// <returns></returns>
-        public static SingleRootConnector MakeSingleRootConnector(CommandCanvas OwnerCommandCanvas, string name = "Root")
-        {
-            var ret = new SingleRootConnector();
-            ret.LinkConnectorControl.Caption = nameof(SingleRootConnector);
-            ret.OwnerCommandCanvas = OwnerCommandCanvas;
-            return ret;
-        }
-
-        /// <summary>
-        /// （削除検討）
-        /// </summary>
-        /// <param name="OwnerCommandCanvas"></param>
-        /// <returns></returns>
-        public static MultiRootConnector MakeMultiRootConnector(CommandCanvas OwnerCommandCanvas)
-        {
-            var ret = new MultiRootConnector();
-            ret.OwnerCommandCanvas = OwnerCommandCanvas;
-            ret.AssetType = FunctionType.ConnectorType;
-            return ret;
-        }
-
-        /// <summary>
-        /// （削除検討）
-        /// </summary>
-        /// <param name="OwnerCommandCanvas"></param>
-        /// <param name="name"></param>
-        /// <returns></returns>
-        public static SingleLinkConnector MakeSingleLinkConnector(CommandCanvas OwnerCommandCanvas, string name = "Link")
-        {
-            // ※新形式に未対応
-
-            var ret = new SingleLinkConnector();
-            ret.LinkConnectorControl.ValueData = new ParamNameOnly(name);
-            ret.OwnerCommandCanvas = OwnerCommandCanvas;
-            return ret;
-        }
-
-        /// <summary>
-        /// （削除検討）
-        /// </summary>
-        /// <param name="OwnerCommandCanvas"></param>
-        /// <param name="name"></param>
-        /// <returns></returns>
-        public static MultiLinkConnector MakeMultiLinkConnector(CommandCanvas OwnerCommandCanvas, string name = "Link")
-        {
-            // ※新形式に未対応
-
-            var ret = new MultiLinkConnector();
-            ret.LinkConnectorControl.ValueData = new ParamNameOnly(name);
-            ret.OwnerCommandCanvas = OwnerCommandCanvas;
-            return ret;
-        }
-
-        public static object GetValue<T>(List<object> list, int index)
-            where T : class, ICbValueClass<T>
-        {
-            if ((list[index] as T) is null)
-                new NotImplementedException();
-            return (list[index] as T).Value;
-        }
-        public static bool TryEnumParse<T>(string s, out T d) where T : struct
-        {
-            return Enum.TryParse(s, out d) && Enum.IsDefined(typeof(T), d);
         }
     }
 }
