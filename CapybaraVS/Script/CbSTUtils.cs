@@ -333,6 +333,9 @@ namespace CapybaraVS.Script
         /// <returns></returns>
         public static bool IsCastAssignment(Type toType, Type fromType)
         {
+            if (!CbScript.IsValueType(fromType) || !CbScript.IsValueType(toType))
+                return false;
+
             if (fromType == typeof(object))
                 return true;    // 接続元が object なら無条件でキャスト可能
 
@@ -370,27 +373,32 @@ namespace CapybaraVS.Script
             bool isCast = false
             )
         {
+            if (toType == typeof(object))
+                return true;    // object型なら無条件に繋がる
+            if (toType.IsGenericType && CbFunc.IsActionType(toType))
+                return true;    // Action型なら無条件に繋がる
+
+            if (fromType == typeof(CbVoid))
+                return false;   // object と Action 以外には繋がらない
+
+            if (toType == typeof(string))
+                return true;    // CbVoid型以外なら無条件に繋がる
+
             if (isCast && IsCastAssignment(toType, fromType))
-                return true;    // Cast接続なら可能
+                return true;    // Cast接続なら繋がる
 
             if (toType.IsGenericType)
             {
                 if (CbFunc.IsFuncType(toType))
                 {
                     Type argType = toType.GetGenericArguments()[0]; // Func の返り値の型
-
-                    if (isCast && IsCastAssignment(argType, fromType))
-                        return true;    // Cast接続なら可能
-
-                    if (argType.IsAssignableFrom(fromType))
-                        return true;    // Func の返り値の型に代入可能なら
+                    if (IsAssignment(argType, fromType, isCast))
+                        return true;    // Func の返り値の型に代入可能なら繋がる
                 }
-                if (CbFunc.IsActionType(toType))
-                    return true;    // Action型なら無条件
             }
 
             if (toType.IsAssignableFrom(fromType))
-                return true;    // 普通に代入可能
+                return true;    // 繋がる
 
             return false;
         }
