@@ -59,7 +59,7 @@ namespace CapybaraVS
                         foreach (var node in selectValue.ElementList)
                         {
                             self.Select.Items.Add(node);
-                            if (selectValue.TypeName + "." + node == selectValue.ValueString)
+                            if (selectValue.TypeName + "." + node == selectValue.ValueUIString)
                                 selectIndex = count;
                             count++;
                         }

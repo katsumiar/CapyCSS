@@ -2082,7 +2082,7 @@ namespace CapybaraVS.Script
                         try
                         {
                             ret.Set(argument[0]);
-                            string str = argument[0].ValueString;
+                            string str = argument[0].ValueUIString;
                             col.OwnerCommandCanvas.CommandCanvasControl.MainLog.OutLine(nameof(ConsoleOut), str);
                         }
                         catch (Exception ex)

@@ -53,8 +53,10 @@ namespace CapybaraVS.Script
         public static readonly Type ACTION_TYPE = typeof(Action<>);
         public static readonly Type DUMMY_TYPE = typeof(int); // ダミー
 
-        public const string ERROR_STR = "[ERROR]";  // エラーの表現
-        public const string NULL_STR = "<null>";    // nullの表現
+        public const string ERROR_STR = "[ERROR]";          // エラーの表現
+        public const string NULL_STR = "null";              // nullの表現
+        public const string DELEGATE_STR = "[delegate]";    // dlegateの表現
+        public const string UI_NULL_STR = "<null>";         // UI上のnullの表現
 
         /// <summary>
         /// ユーザーによる型作成時に組み込み型選択肢に出てくる型情報です。

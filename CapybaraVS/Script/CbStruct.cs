@@ -23,7 +23,7 @@ namespace CapybaraVS.Script
         /// <summary>
         /// 値を文字列で参照します。
         /// </summary>
-        string ValueString { get; }
+        string ValueUIString { get; }
     }
 
     public class CbStruct
@@ -149,7 +149,10 @@ namespace CapybaraVS.Script
             }
         }
 
-        public override string ValueString
+        /// <summary>
+        /// 値のUI上の文字列表現
+        /// </summary>
+        public override string ValueUIString
         {
             get
             {
@@ -157,6 +160,24 @@ namespace CapybaraVS.Script
                 if (IsError)
                     return CbSTUtils.ERROR_STR;
                 return baseName;
+            }
+        }
+
+        /// <summary>
+        /// 値の文字列表現
+        /// </summary>
+        public override string ValueString
+        {
+            get
+            {
+                if (IsNull)
+                {
+                    return CbSTUtils.NULL_STR;
+                }
+                else
+                {
+                    return Value.ToString();
+                }
             }
             set => new NotImplementedException();
         }

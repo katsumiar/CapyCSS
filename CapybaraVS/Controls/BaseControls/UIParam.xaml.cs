@@ -78,12 +78,12 @@ namespace CapybaraVS.Controls.BaseControls
                 (self, getValue) =>
                 {
                     string text = getValue(self);
-                    string backup = self.ValueData.ValueString;
+                    string backup = self.ValueData.ValueUIString;
                     try
                     {
                         if (self.ValueData.IsStringableValue)
                             self.ValueData.ValueString = text;
-                        self.Edit.Text = self.ValueData.ValueString.Trim('\r', '\n');
+                        self.Edit.Text = self.ValueData.ValueUIString.Trim('\r', '\n');
                         self.ToolTipUpdate();
                     }
                     catch (Exception ex)
@@ -156,7 +156,7 @@ namespace CapybaraVS.Controls.BaseControls
                     if (self.ValueData is ICbValue value)
                     {
                         value.Name = text;
-                        self.ParamEdit = value.ValueString;
+                        self.ParamEdit = value.ValueUIString;
                     }
                 });
 
@@ -297,9 +297,9 @@ namespace CapybaraVS.Controls.BaseControls
             {
                 Edit.Visibility = Visibility.Visible;
 
-                if (valueData.ValueString != null)
+                if (valueData.ValueUIString != null)
                 {
-                    ParamEdit = valueData.ValueString;
+                    ParamEdit = valueData.ValueUIString;
                 }
                 ToolTipUpdate();    // 必ず更新確認が必要
 
@@ -352,8 +352,8 @@ namespace CapybaraVS.Controls.BaseControls
             foreach (var node in selectValue.ElementList)
             {
                 Select.Items.Add(node);
-                if (node == valueData.ValueString ||
-                    selectValue.TypeName + "." + node == valueData.ValueString)
+                if (node == valueData.ValueUIString ||
+                    selectValue.TypeName + "." + node == valueData.ValueUIString)
                 {
                     selectIndex = count;
                 }
@@ -519,7 +519,7 @@ namespace CapybaraVS.Controls.BaseControls
                 }
                 else
                 {
-                    valueString = cbObject.ValueString;
+                    valueString = cbObject.ValueUIString;
                 }
             }
             else if (ValueData is ICbClass cbClass)
@@ -537,7 +537,7 @@ namespace CapybaraVS.Controls.BaseControls
                 }
                 else
                 {
-                    valueString = cbClass.ValueString;
+                    valueString = cbClass.ValueUIString;
                 }
             }
 #if !SHOW_LINK_ARRAY
@@ -550,7 +550,7 @@ namespace CapybaraVS.Controls.BaseControls
                 }
                 else
                 {
-                    valueString = cbList.ValueString;
+                    valueString = cbList.ValueUIString;
                 }
             }
 #endif
@@ -562,7 +562,7 @@ namespace CapybaraVS.Controls.BaseControls
                 }
                 else
                 {
-                    valueString = ValueData.ValueString;
+                    valueString = ValueData.ValueUIString;
                 }
             }
             if (valueString is null)
@@ -604,7 +604,6 @@ namespace CapybaraVS.Controls.BaseControls
         private void MediaBox_MouseEnter(object sender, MouseEventArgs e)
         {
             MediaBox.Position = TimeSpan.Zero;
-            //MediaBox.Visibility = Visibility.Visible;
             MediaBox.LoadedBehavior = MediaState.Manual;
             MediaBox.Play();
         }

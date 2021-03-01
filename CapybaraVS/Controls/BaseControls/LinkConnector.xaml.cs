@@ -88,11 +88,11 @@ namespace CapybaraVS.Controls.BaseControls
                     {
                         if (self.backupValueData is null)
                         {
-                            Value = self.ValueData.ValueString;
+                            Value = self.ValueData.ValueUIString;
                         }
                         else
                         {
-                            Value = self.backupValueData.ValueString;
+                            Value = self.backupValueData.ValueUIString;
                         }
                     }
 

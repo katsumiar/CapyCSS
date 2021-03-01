@@ -473,6 +473,11 @@ namespace CapybaraVS.Script
     public interface IUIShowValue
     {
         /// <summary>
+        /// 値のUI上の文字列表現
+        /// </summary>
+        string ValueUIString { get; }
+
+        /// <summary>
         /// 値の文字列表現
         /// </summary>
         string ValueString { get; set; }
@@ -687,6 +692,15 @@ namespace CapybaraVS.Script
         public virtual T Value { get => _value; set { _value = value; } }
 
         /// <summary>
+        /// 値の文字列表現
+        /// </summary>
+        public virtual string ValueString
+        {
+            get => Value.ToString();
+            set { }
+        }
+
+        /// <summary>
         /// 型の名前を参照します。
         /// </summary>
         public virtual string TypeName
@@ -757,7 +771,7 @@ namespace CapybaraVS.Script
         /// <summary>
         /// 変数の持つ値を文字列として参照します。
         /// </summary>
-        public virtual string ValueString { get; set; }
+        public virtual string ValueUIString { get; }
 
         /// <summary>
         /// 値の変化後に動かす必要のある処理です。
@@ -1049,7 +1063,9 @@ namespace CapybaraVS.Script
 
         public virtual ICbList GetListValue => null;
 
-        public string ValueString { get => name; set { name = value; } }
+        public string ValueUIString { get => name; set { name = value; } }
+
+        public string ValueString { get; set; } = null;
 
         public Action<object> ReturnAction { set; get; } = null;
 

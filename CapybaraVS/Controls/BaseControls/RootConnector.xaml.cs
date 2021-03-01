@@ -112,7 +112,7 @@ namespace CapybaraVS.Controls.BaseControls
                     Caption = self.FuncCaption.AssetXML;
 
                     if (!(self.ValueData is ICbValueList))
-                        Value = self.ValueData.ValueString;
+                        Value = self.ValueData.ValueUIString;
 
                     ForcedChecked = self.ForcedChecked;
 

@@ -5,12 +5,12 @@
     <EnableInfo>false</EnableInfo>
     <CanvasScale>1</CanvasScale>
     <CanvasRenderTransform>
-      <M11>1.0677026563983483</M11>
+      <M11>1.0366553483508683</M11>
       <M12>0</M12>
       <M21>0</M21>
-      <M22>1.0677026563983483</M22>
-      <OffsetX>241.3324965799252</OffsetX>
-      <OffsetY>12.758432034689731</OffsetY>
+      <M22>1.0366553483508683</M22>
+      <OffsetX>540.3206733618023</OffsetX>
+      <OffsetY>96.80798244999457</OffsetY>
     </CanvasRenderTransform>
   </WorkCanvas>
   <ImportClassModule />
@@ -21,12 +21,14 @@
     <StackList />
   </WorkStack>
   <WorkCanvasAssetList>
-    <Asset Id="3" X="233.48931148961043" Y="147.36412190451037">
+    <Asset Id="3" X="-142.10553980521837" Y="207.98644878016702">
       <MultiRootConnector>
         <RootFunc AssetType="LiteralType" AssetFuncType="none">
           <AttachVariableIds />
           <AttachVariableId>0</AttachVariableId>
-          <AssetValueType>System.Collections.Generic.List`1[[System.Action, System.Private.CoreLib, Version=5.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]</AssetValueType>
+          <AssetValueTypes>
+            <string>System.Collections.Generic.List`1[[System.Action, System.Private.CoreLib, Version=5.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]</string>
+          </AssetValueTypes>
           <RootConnector PointId="3">
             <Caption>
               <LabelString>List&lt;Action&gt;</LabelString>
@@ -53,10 +55,10 @@
                       <Value>[Action()]&lt;null&gt;</Value>
                       <CastConnect>false</CastConnect>
                       <ParamInfo>
-                        <ParamName> </ParamName>
+                        <ParamName />
                         <ParamNameLabelOverlap />
                         <ParamNameLabel>
-                          <LabelString> </LabelString>
+                          <LabelString />
                         </ParamNameLabel>
                       </ParamInfo>
                       <LinkConnectorList>
@@ -68,10 +70,10 @@
                       <Value>[Action()]&lt;null&gt;</Value>
                       <CastConnect>false</CastConnect>
                       <ParamInfo>
-                        <ParamName> </ParamName>
+                        <ParamName />
                         <ParamNameLabelOverlap />
                         <ParamNameLabel>
-                          <LabelString> </LabelString>
+                          <LabelString />
                         </ParamNameLabel>
                       </ParamInfo>
                       <LinkConnectorList>
@@ -89,12 +91,14 @@
         </RootFunc>
       </MultiRootConnector>
     </Asset>
-    <Asset Id="4" X="-25.48720004201192" Y="96.05877181560132">
+    <Asset Id="4" X="-401.0820513368407" Y="156.68109869125797">
       <MultiRootConnector>
         <RootFunc AssetType="FuncType" AssetFuncType="ConsoleOut">
           <AttachVariableIds />
           <AttachVariableId>0</AttachVariableId>
-          <AssetValueType>System.String</AssetValueType>
+          <AssetValueTypes>
+            <string>System.String</string>
+          </AssetValueTypes>
           <RootConnector PointId="11">
             <Caption>
               <LabelString>ConsoleOut</LabelString>
@@ -128,12 +132,14 @@
         </RootFunc>
       </MultiRootConnector>
     </Asset>
-    <Asset Id="4" X="-26.057886931225624" Y="279.37582008738667">
+    <Asset Id="4" X="-401.65273822605445" Y="339.9981469630433">
       <MultiRootConnector>
         <RootFunc AssetType="FuncType" AssetFuncType="ConsoleOut">
           <AttachVariableIds />
           <AttachVariableId>0</AttachVariableId>
-          <AssetValueType>System.String</AssetValueType>
+          <AssetValueTypes>
+            <string>System.String</string>
+          </AssetValueTypes>
           <RootConnector PointId="15">
             <Caption>
               <LabelString>ConsoleOut</LabelString>
@@ -167,17 +173,19 @@
         </RootFunc>
       </MultiRootConnector>
     </Asset>
-    <Asset Id="8" X="417.93426152102154" Y="554.878019249591">
+    <Asset Id="8" X="257.1533076334107" Y="271.53453493945693">
       <MultiRootConnector>
         <RootFunc AssetType="FuncType" AssetFuncType="CallerArguments">
           <AttachVariableIds />
           <AttachVariableId>0</AttachVariableId>
-          <AssetValueType>System.Action</AssetValueType>
+          <AssetValueTypes>
+            <string>System.Action</string>
+          </AssetValueTypes>
           <RootConnector PointId="19">
             <Caption>
               <LabelString>DummyArguments&lt;Action&gt;</LabelString>
             </Caption>
-            <Value>[Action()]</Value>
+            <Value>[Action()]&lt;null&gt;</Value>
             <ForcedChecked>false</ForcedChecked>
             <Connector>
               <LinkList>
@@ -206,7 +214,7 @@
         </RootFunc>
       </MultiRootConnector>
     </Asset>
-    <Asset Id="1115" X="1039.070931892512" Y="370.93558031017864">
+    <Asset Id="1115" X="877.9829565641953" Y="79.86661667905705">
       <GroupAreaControl>
         <Text>dog
 cat
@@ -215,26 +223,28 @@ cat
         <Height>220.00870791772329</Height>
       </GroupAreaControl>
     </Asset>
-    <Asset Id="1135" X="-45.62049208940721" Y="38.05057573076816">
+    <Asset Id="1135" X="-421.215343384236" Y="98.67290260642481">
       <GroupAreaControl>
         <Text>「dog」と「cat」を出力する２つのイベントを登録したリストを作成します。</Text>
         <Witdh>606.135106059626</Witdh>
         <Height>404.51253949330174</Height>
       </GroupAreaControl>
     </Asset>
-    <Asset Id="1136" X="380.09405839784927" Y="463.3988252863055">
+    <Asset Id="1136" X="214.04159782539864" Y="133.92965748382395">
       <GroupAreaControl>
         <Text>リストに登録されているイベントを実行します。</Text>
-        <Witdh>620.9769578914494</Witdh>
-        <Height>222.08830988134375</Height>
+        <Witdh>626.2484645762889</Witdh>
+        <Height>278.7570067433705</Height>
       </GroupAreaControl>
     </Asset>
-    <Asset Id="1140" X="667.4775033566895" Y="504.1493197938464">
+    <Asset Id="1140" X="501.4250427842388" Y="174.68015199136482">
       <MultiRootConnector>
         <RootFunc AssetType="FuncType" AssetFuncType="Foreach">
           <AttachVariableIds />
           <AttachVariableId>0</AttachVariableId>
-          <AssetValueType>System.Collections.Generic.ICollection`1[[System.Action, System.Private.CoreLib, Version=5.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]</AssetValueType>
+          <AssetValueTypes>
+            <string>System.Collections.Generic.ICollection`1[[System.Action, System.Private.CoreLib, Version=5.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]</string>
+          </AssetValueTypes>
           <RootConnector PointId="24">
             <Caption>
               <LabelString>Foreach Action&lt;Action&gt;.Invoke</LabelString>
@@ -282,17 +292,19 @@ cat
         </RootFunc>
       </MultiRootConnector>
     </Asset>
-    <Asset Id="1141" X="1060.8454485267187" Y="419.85618868598306">
+    <Asset Id="1141" X="899.7574731984021" Y="128.78722505486144">
       <MultiRootConnector>
         <RootFunc AssetType="FuncType" AssetFuncType="Subroutine">
           <AttachVariableIds />
           <AttachVariableId>0</AttachVariableId>
-          <AssetValueType>System.Collections.Generic.ICollection`1[[System.Object, System.Private.CoreLib, Version=5.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]</AssetValueType>
+          <AssetValueTypes>
+            <string>System.Collections.Generic.ICollection`1[[System.Object, System.Private.CoreLib, Version=5.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]</string>
+          </AssetValueTypes>
           <RootConnector PointId="29">
             <Caption>
               <LabelString>Sequence</LabelString>
             </Caption>
-            <Value>void</Value>
+            <Value>[object]&lt;null&gt;</Value>
             <ForcedChecked>false</ForcedChecked>
             <Connector>
               <LinkList />
@@ -313,10 +325,10 @@ cat
                       <Value>[object]&lt;null&gt;</Value>
                       <CastConnect>false</CastConnect>
                       <ParamInfo>
-                        <ParamName> </ParamName>
+                        <ParamName />
                         <ParamNameLabelOverlap />
                         <ParamNameLabel>
-                          <LabelString> </LabelString>
+                          <LabelString />
                         </ParamNameLabel>
                       </ParamInfo>
                       <LinkConnectorList>

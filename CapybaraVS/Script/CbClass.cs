@@ -26,7 +26,7 @@ namespace CapybaraVS.Script
         /// <summary>
         /// UI接続上の表示を文字列で参照します。
         /// </summary>
-        string ValueString { get; }
+        string ValueUIString { get; }
 
         /// <summary>
         /// 値の変化後に動かす必要のある処理です。
@@ -173,7 +173,10 @@ namespace CapybaraVS.Script
             }
         }
 
-        public override string ValueString
+        /// <summary>
+        /// 値のUI上の文字列表現
+        /// </summary>
+        public override string ValueUIString
         {
             get
             {
@@ -184,9 +187,27 @@ namespace CapybaraVS.Script
                 string baseName = $"[{TypeName}]";
                 if (IsNull)
                 {
-                    return baseName + CbSTUtils.NULL_STR;
+                    return baseName + CbSTUtils.UI_NULL_STR;
                 }
                 return baseName;
+            }
+        }
+
+        /// <summary>
+        /// 値の文字列表現
+        /// </summary>
+        public override string ValueString
+        {
+            get
+            {
+                if (IsNull)
+                {
+                    return CbSTUtils.NULL_STR;
+                }
+                else
+                {
+                    return Value.ToString();
+                }
             }
             set => new NotImplementedException();
         }

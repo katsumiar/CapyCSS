@@ -10,60 +10,6 @@ namespace CapybaraVS.Script.Lib
 {
     public class FileLib
     {
-        [ScriptMethod("Input/Output" + ".ConsoleOut.List." + "ConsoleOut", "", "RS=>FileLib_ConsoleOutStringList")]
-        public static int ConsoleOutList(ICollection<string> list)
-        {
-            foreach (var node in list)
-            {
-                CommandCanvasList.OutPut.OutLine(nameof(ConsoleOut), node);
-            }
-            return list.Count;
-        }
-
-        //------------------------------------------------------------------
-        [ScriptMethod("Input/Output" + ".ConsoleOut.List." + "ConsoleOut", "", "RS=>FileLib_ConsoleOutIntList")]
-        public static int ConsoleOutList(ICollection<int> list)
-        {
-            foreach (var node in list)
-            {
-                CommandCanvasList.OutPut.OutLine(nameof(ConsoleOut), node.ToString());
-            }
-            return list.Count;
-        }
-
-        //------------------------------------------------------------------
-        [ScriptMethod("Input/Output" + ".ConsoleOut.List." + "ConsoleOut", "", "RS=>FileLib_ConsoleOutLongList")]
-        public static int ConsoleOutList(ICollection<long> list)
-        {
-            foreach (var node in list)
-            {
-                CommandCanvasList.OutPut.OutLine(nameof(ConsoleOut), node.ToString());
-            }
-            return list.Count;
-        }
-
-        //------------------------------------------------------------------
-        [ScriptMethod("Input/Output" + ".ConsoleOut.List." + "ConsoleOut", "", "RS=>FileLib_ConsoleOutDoubleList")]
-        public static int ConsoleOutList(ICollection<double> list)
-        {
-            foreach (var node in list)
-            {
-                CommandCanvasList.OutPut.OutLine(nameof(ConsoleOut), node.ToString());
-            }
-            return list.Count;
-        }
-
-        //------------------------------------------------------------------
-        [ScriptMethod("Input/Output" + ".ConsoleOut.List." + "ConsoleOut", "", "RS=>FileLib_ConsoleOutBoolList")]
-        public static int ConsoleOutList(ICollection<bool> list)
-        {
-            foreach (var node in list)
-            {
-                CommandCanvasList.OutPut.OutLine(nameof(ConsoleOut), node.ToString());
-            }
-            return list.Count;
-        }
-
         //------------------------------------------------------------------
         [ScriptMethod("File" + ".Reader." + "GetReadStreamVariable", "", "RS=>FileLib_CreateReadStreamVariable")]
         public static StreamReader CreateReadStreamVariable(ref StreamReader stream)

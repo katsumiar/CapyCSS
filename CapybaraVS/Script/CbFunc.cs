@@ -515,7 +515,10 @@ namespace CbVS.Script
             }
         }
 
-        public override string ValueString
+        /// <summary>
+        /// 値のUI上の文字列表現
+        /// </summary>
+        public override string ValueUIString
         {
             get
             {
@@ -523,8 +526,26 @@ namespace CbVS.Script
                 if (IsError)
                     return CbSTUtils.ERROR_STR;
                 if (IsNull)
-                    return baseName + CbSTUtils.NULL_STR;
+                    return baseName + CbSTUtils.UI_NULL_STR;
                 return baseName;
+            }
+        }
+
+        /// <summary>
+        /// 値の文字列表現
+        /// </summary>
+        public override string ValueString
+        {
+            get
+            {
+                if (IsNull)
+                {
+                    return CbSTUtils.NULL_STR;
+                }
+                else
+                {
+                    return CbSTUtils.DELEGATE_STR;
+                }
             }
             set => new NotImplementedException();
         }

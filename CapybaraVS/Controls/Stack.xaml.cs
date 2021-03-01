@@ -101,7 +101,7 @@ namespace CapybaraVS.Controls
                     {
                         // イベント系以外の値は保存対象
 
-                        Value = self.ValueData.ValueString;
+                        Value = self.ValueData.ValueUIString;
                     }
                     Name = self.ValueData.Name;
                 };

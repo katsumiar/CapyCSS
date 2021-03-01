@@ -103,7 +103,10 @@ namespace CapybaraVS.Script
             }
         }
 
-        public override string ValueString
+        /// <summary>
+        /// 値のUI上の文字列表現
+        /// </summary>
+        public override string ValueUIString
         {
             get 
             {
@@ -111,7 +114,7 @@ namespace CapybaraVS.Script
                     return CbSTUtils.ERROR_STR;
                 if (IsNull)
                 {
-                    return $"[{CbSTUtils.OBJECT_STR}]" + CbSTUtils.NULL_STR;
+                    return $"[{CbSTUtils.OBJECT_STR}]" + CbSTUtils.UI_NULL_STR;
                 }
                 else if (Value is ICbEvent cbEvent)
                 {
@@ -119,16 +122,35 @@ namespace CapybaraVS.Script
                 }
                 else if (Value is ICbClass cbClass)
                 {
-                    return $"{cbClass.ValueString}";
+                    return $"{cbClass.ValueUIString}";
                 }
                 else if (copyOriginal is null)
                 {
                     return Value.ToString();
                 }
-                return copyOriginal.ValueString;
+                return copyOriginal.ValueUIString;
+            }
+        }
+
+        /// <summary>
+        /// 値の文字列表現
+        /// </summary>
+        public override string ValueString
+        {
+            get
+            {
+                if (IsNull)
+                {
+                    return CbSTUtils.NULL_STR;
+                }
+                else
+                {
+                    return Data.ToString();
+                }
             }
             set => new NotImplementedException();
         }
+
         public override bool IsStringableValue => false;
 
         public override bool IsReadOnlyValue { get; set; } = true;

@@ -174,7 +174,7 @@ namespace CbVS.Script
                 string text = $"{CbSTUtils.CbTypeNameList[nameof(CbList)]} {Value.Count}-{ItemName}" + Environment.NewLine;
                 foreach (var node in Value)
                 {
-                    text += node.ValueString + Environment.NewLine;
+                    text += node.ValueUIString + Environment.NewLine;
                 }
 #else
                 string text = TypeName + Environment.NewLine;
@@ -284,16 +284,42 @@ namespace CbVS.Script
             }
         }
 
-        public override string ValueString
+        /// <summary>
+        /// 値のUI上の文字列表現
+        /// </summary>
+        public override string ValueUIString
         {
             get
             {
                 string baseName = "[" + TypeName + "()]";
                 if (IsError)
                     return CbSTUtils.ERROR_STR;
-                if (nullFlg)
-                    return baseName + CbSTUtils.NULL_STR;
+                if (IsNull)
+                    return baseName + CbSTUtils.UI_NULL_STR;
                 return baseName;
+            }
+        }
+
+        /// <summary>
+        /// 値の文字列表現
+        /// </summary>
+        public override string ValueString
+        {
+            get
+            {
+                if (IsNull)
+                {
+                    return CbSTUtils.NULL_STR;
+                }
+                else
+                {
+                    string result = "";
+                    for (int i = 0; i < Count; ++i)
+                    {
+                        result += Value[i].ValueString + Environment.NewLine;
+                    }
+                    return result;
+                }
             }
             set => new NotImplementedException();
         }
@@ -481,6 +507,8 @@ namespace CbVS.Script
         {
             Value?.Clear();
         }
+
+        public override bool IsNull => nullFlg;
 
         public static CbList<T> Create(string name = "")
         {

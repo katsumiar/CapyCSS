@@ -15,12 +15,16 @@ namespace CapybaraVS.Script
             Name = name;
         }
 
-        public override string ValueString 
+        /// <summary>
+        /// 値のUI上の文字列表現
+        /// </summary>
+        public override string ValueUIString 
         {
             get
             {
                 if (IsError)
                     return CbSTUtils.ERROR_STR;
+
                 if (Value == '\n') return "\\n";
                 if (Value == '\0') return "\\0";
                 if (Value == '\a') return "\\a";
@@ -32,6 +36,14 @@ namespace CapybaraVS.Script
                 if (Value == '\v') return "\\v";
                 return Value.ToString();
             }
+        }
+
+        /// <summary>
+        /// 値の文字列表現
+        /// </summary>
+        public override string ValueString
+        {
+            get => ValueUIString;
             set
             {
                 if (value != null)
