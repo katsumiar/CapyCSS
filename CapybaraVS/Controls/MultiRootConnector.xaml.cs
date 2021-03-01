@@ -111,11 +111,11 @@ namespace CapybaraVS.Controls
                     info.AssetType = self.AssetType;
                     info.AssetFuncType = self.AssetFuncType;
                     info.AssetValueTypes = new List<string>();
-                    foreach (var typeName in self.SelectedVariableTypeName)
+                    foreach (var type in self.SelectedVariableType)
                     {
-                        if (typeName != null)
+                        if (type != null)
                         {
-                            info.AssetValueTypes.Add(typeName);
+                            info.AssetValueTypes.Add(type.FullName);
                         }
                     }
 
