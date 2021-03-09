@@ -155,14 +155,15 @@ namespace CbVS.Script
             string assetCode,
             List<TypeRequest> typeRequests = null)
         {
-            List<string> typeNames = OwnerCommandCanvas.RequestTypeName(typeRequests);
-
-            if (typeNames is null)
-                return null;
-
             var ret = new MultiRootConnector();
             ret.OwnerCommandCanvas = OwnerCommandCanvas;
-            ret.SelectedVariableTypes = typeNames.ToArray();
+            if (typeRequests != null)
+            {
+                List<string> typeNames = OwnerCommandCanvas.RequestTypeName(typeRequests);
+                if (typeNames is null)
+                    return null;
+                ret.SelectedVariableTypes = typeNames.ToArray();
+            }
             ret.AssetFuncType = assetCode;
             ret.AssetType = FunctionType.FuncType;
             return ret;
@@ -178,14 +179,15 @@ namespace CbVS.Script
             CommandCanvas OwnerCommandCanvas,
             List<TypeRequest> typeRequests = null)
         {
-            List<string> typeNames = OwnerCommandCanvas.RequestTypeName(typeRequests);
-
-            if (typeNames is null)
-                return null;
-
             var ret = new MultiRootConnector();
             ret.OwnerCommandCanvas = OwnerCommandCanvas;
-            ret.SelectedVariableTypes = typeNames.ToArray();
+            if (typeRequests != null)
+            {
+                List<string> typeNames = OwnerCommandCanvas.RequestTypeName(typeRequests);
+                if (typeNames is null)
+                    return null;
+                ret.SelectedVariableTypes = typeNames.ToArray();
+            }
             ret.AssetType = FunctionType.LiteralType;
             return ret;
         }
