@@ -318,8 +318,8 @@ namespace CapybaraVS.Controls.BaseControls
             RectBox.Stroke = RectboxStroke;
             CheckBoxVisibility();
 
-            Forced.ToolTip = CapybaraVS.Language.Instance["ArgumentForced"];
-            IsPublicExecute.ToolTip = CapybaraVS.Language.Instance["IsPublicExecute"];
+            Forced.ToolTip = CapybaraVS.Language.Instance["SYSTEM_ArgumentForced"];
+            IsPublicExecute.ToolTip = CapybaraVS.Language.Instance["SYSTEM_IsPublicExecute"];
 
             NameText.UpdateEvent =
                 new Action(

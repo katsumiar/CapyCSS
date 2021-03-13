@@ -55,6 +55,14 @@ namespace CapybaraVS
                 string text = null;
                 try
                 {
+                    if (!index.StartsWith("SYSTE_"))
+                    {
+                        // ひとまず null を返す
+                        // TODO テキストファイルからの参照にする
+
+                        return null;
+                    }
+
                     text = rm.GetString(index, cultureInfo);
                     if (text is null)
                         return "(none)";

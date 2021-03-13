@@ -118,7 +118,7 @@ namespace CapybaraVS.Controls.BaseControls
         {
             Name = name;
             Path = name;
-            if (hintText != "")
+            if (hintText != null && hintText != "")
             {
                 HintText = hintText;
             }

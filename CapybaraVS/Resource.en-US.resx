@@ -117,31 +117,28 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="ArgumentForced" xml:space="preserve">
+  <data name="SYSTEM_ArgumentForced" xml:space="preserve">
     <value>If checked, the argument cache is ignored. Necessary when the value of the argument reference destination changes dynamically. However, the cache is cleared every time you call back.</value>
   </data>
-  <data name="Confirmation" xml:space="preserve">
+  <data name="SYSTEM_Confirmation" xml:space="preserve">
     <value>Confirmation</value>
   </data>
-  <data name="ConfirmationAllDelete" xml:space="preserve">
-    <value>Are you sure you want to delete them all?</value>
-  </data>
-  <data name="ConfirmationDelete" xml:space="preserve">
+  <data name="SYSTEM_ConfirmationDelete" xml:space="preserve">
     <value>Are you sure you want to delete?</value>
   </data>
-  <data name="IsPublicExecute" xml:space="preserve">
+  <data name="SYSTEM_IsPublicExecute" xml:space="preserve">
     <value>Register in the entry list that can be executed by clicking the "Execute" button.</value>
   </data>
-  <data name="ModuleControler_01" xml:space="preserve">
+  <data name="SYSTEM_ModuleControler_01" xml:space="preserve">
     <value>Do you want to overwrite and import {0}?\nIf you overwrite it, you need to restart the application.</value>
   </data>
-  <data name="ModuleControler_02" xml:space="preserve">
+  <data name="SYSTEM_ModuleControler_02" xml:space="preserve">
     <value>The import of {0} was successful.\nAre you sure you want to quit the application?</value>
   </data>
-  <data name="ModuleControler_03" xml:space="preserve">
+  <data name="SYSTEM_ModuleControler_03" xml:space="preserve">
     <value>The import of {0} was successful.</value>
   </data>
-  <data name="ModuleControler_04" xml:space="preserve">
+  <data name="SYSTEM_ModuleControler_04" xml:space="preserve">
     <value>Not Found {0}.</value>
   </data>
 </root>

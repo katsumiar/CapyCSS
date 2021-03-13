@@ -117,31 +117,28 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="ArgumentForced" xml:space="preserve">
+  <data name="SYSTEM_ArgumentForced" xml:space="preserve">
     <value>チェックすると引数キャッシュを無視します。引数の参照先の値が動的に変化する場合に必要です。ただし、コールバック時は毎回キャッシュはクリアされています。</value>
   </data>
-  <data name="Confirmation" xml:space="preserve">
+  <data name="SYSTEM_Confirmation" xml:space="preserve">
     <value>確認</value>
   </data>
-  <data name="ConfirmationAllDelete" xml:space="preserve">
-    <value>すべて削除してもよろしいですか？</value>
-  </data>
-  <data name="ConfirmationDelete" xml:space="preserve">
+  <data name="SYSTEM_ConfirmationDelete" xml:space="preserve">
     <value>消去してもよろしいですか？</value>
   </data>
-  <data name="IsPublicExecute" xml:space="preserve">
+  <data name="SYSTEM_IsPublicExecute" xml:space="preserve">
     <value>「Execute」ボタンで実行できるエントリーリストに登録します。</value>
   </data>
-  <data name="ModuleControler_01" xml:space="preserve">
+  <data name="SYSTEM_ModuleControler_01" xml:space="preserve">
     <value>{0} を上書きインポートしますか？\n上書きした場合、アプリケーションの再起動が必要です。</value>
   </data>
-  <data name="ModuleControler_02" xml:space="preserve">
+  <data name="SYSTEM_ModuleControler_02" xml:space="preserve">
     <value>{0} のインポートに成功しました。\nアプリケーションを終了して宜しいでしょうか？</value>
   </data>
-  <data name="ModuleControler_03" xml:space="preserve">
+  <data name="SYSTEM_ModuleControler_03" xml:space="preserve">
     <value>{0} のインポートに成功しました。</value>
   </data>
-  <data name="ModuleControler_04" xml:space="preserve">
+  <data name="SYSTEM_ModuleControler_04" xml:space="preserve">
     <value>{0} が見つかりませんでした。</value>
   </data>
 </root>
