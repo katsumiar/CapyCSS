@@ -296,7 +296,7 @@ namespace CapybaraVS.Script
     {
         public string MenuTitle => "Literal";
 
-        public string HelpText => Language.Instance["LiteralType"];
+        public string HelpText => Language.Instance["BASE_LIB_LiteralType"];
 
         public List<TypeRequest> typeRequests => new List<TypeRequest>()
         {
@@ -309,7 +309,7 @@ namespace CapybaraVS.Script
     {
         public string MenuTitle => "Literal List";
 
-        public string HelpText => Language.Instance["LiteralListType"];
+        public string HelpText => Language.Instance["BASE_LIB_LiteralListType"];
 
         public List<TypeRequest> typeRequests => new List<TypeRequest>()
         { 
@@ -322,7 +322,7 @@ namespace CapybaraVS.Script
     {
         public string AssetCode => nameof(Sum);
 
-        public string HelpText => Language.Instance["Sum"];
+        public string HelpText => Language.Instance["BASE_LIB_Sum"];
 
         public string MenuTitle => AssetCode;
 
@@ -371,7 +371,7 @@ namespace CapybaraVS.Script
     {
         public string AssetCode => nameof(Subroutine);
 
-        public string HelpText => Language.Instance["Subroutine"];
+        public string HelpText => Language.Instance["BASE_LIB_Subroutine"];
 
         public string MenuTitle => "Sequence";
 
@@ -430,7 +430,7 @@ namespace CapybaraVS.Script
     {
         public string AssetCode => nameof(Inc);
 
-        public string HelpText => Language.Instance["Inc"];
+        public string HelpText => Language.Instance["BASE_LIB_Inc"];
 
         public string MenuTitle => AssetCode;
 
@@ -476,7 +476,7 @@ namespace CapybaraVS.Script
     {
         public string AssetCode => nameof(Dec);
 
-        public string HelpText => Language.Instance["Dec"];
+        public string HelpText => Language.Instance["BASE_LIB_Dec"];
 
         public string MenuTitle => AssetCode;
 
@@ -522,7 +522,7 @@ namespace CapybaraVS.Script
     {
         public string AssetCode => nameof(Mod);
 
-        public string HelpText => Language.Instance["Mod"];
+        public string HelpText => Language.Instance["BASE_LIB_Mod"];
 
         public string MenuTitle => AssetCode;
 
@@ -569,7 +569,7 @@ namespace CapybaraVS.Script
     {
         public string AssetCode => nameof(Eq);
 
-        public string HelpText => Language.Instance["Eq"];
+        public string HelpText => Language.Instance["BASE_LIB_Eq"];
 
         public string MenuTitle => "==";
 
@@ -617,7 +617,7 @@ namespace CapybaraVS.Script
     {
         public string AssetCode => nameof(Ge);
 
-        public string HelpText => Language.Instance["Ge"];
+        public string HelpText => Language.Instance["BASE_LIB_Ge"];
 
         public string MenuTitle => ">=";
 
@@ -665,7 +665,7 @@ namespace CapybaraVS.Script
     {
         public string AssetCode => nameof(Gt);
 
-        public string HelpText => Language.Instance["Gt"];
+        public string HelpText => Language.Instance["BASE_LIB_Gt"];
 
         public string MenuTitle => ">";
 
@@ -713,7 +713,7 @@ namespace CapybaraVS.Script
     {
         public string AssetCode => nameof(Le);
 
-        public string HelpText => Language.Instance["Le"];
+        public string HelpText => Language.Instance["BASE_LIB_Le"];
 
         public string MenuTitle => "<=";
 
@@ -761,7 +761,7 @@ namespace CapybaraVS.Script
     {
         public string AssetCode => nameof(Lt);
 
-        public string HelpText => Language.Instance["Lt"];
+        public string HelpText => Language.Instance["BASE_LIB_Lt"];
 
         public string MenuTitle => "<";
 
@@ -809,7 +809,7 @@ namespace CapybaraVS.Script
     {
         public string AssetCode => nameof(And);
 
-        public string HelpText => Language.Instance["And"];
+        public string HelpText => Language.Instance["BASE_LIB_And"];
 
         public string MenuTitle => AssetCode;
 
@@ -861,7 +861,7 @@ namespace CapybaraVS.Script
     {
         public string AssetCode => nameof(Or);
 
-        public string HelpText => Language.Instance["Or"];
+        public string HelpText => Language.Instance["BASE_LIB_Or"];
 
         public string MenuTitle => AssetCode;
 
@@ -913,7 +913,7 @@ namespace CapybaraVS.Script
     {
         public string AssetCode => nameof(Not);
 
-        public string HelpText => Language.Instance["Not"];
+        public string HelpText => Language.Instance["BASE_LIB_Not"];
 
         public string MenuTitle => AssetCode;
 
@@ -958,7 +958,7 @@ namespace CapybaraVS.Script
     {
         public string AssetCode => nameof(Mul);
 
-        public string HelpText => Language.Instance["Mul"];
+        public string HelpText => Language.Instance["BASE_LIB_Mul"];
 
         public string MenuTitle => AssetCode;
 
@@ -1010,7 +1010,7 @@ namespace CapybaraVS.Script
     {
         public string AssetCode => nameof(Div);
 
-        public string HelpText => Language.Instance["Div"];
+        public string HelpText => Language.Instance["BASE_LIB_Div"];
 
         public string MenuTitle => AssetCode;
 
@@ -1061,7 +1061,7 @@ namespace CapybaraVS.Script
     {
         public string AssetCode => nameof(Sub);
 
-        public string HelpText => Language.Instance["Sub"];
+        public string HelpText => Language.Instance["BASE_LIB_Sub"];
 
         public string MenuTitle => AssetCode;
 
@@ -1113,7 +1113,7 @@ namespace CapybaraVS.Script
     {
         public string AssetCode => nameof(CallFile);
 
-        public string HelpText => Language.Instance["CallFile"];
+        public string HelpText => Language.Instance["BASE_LIB_CallFile"];
 
         public string MenuTitle => "Call File";
 
@@ -1174,7 +1174,7 @@ namespace CapybaraVS.Script
     {
         public string AssetCode => nameof(If_Func);
 
-        public string HelpText => Language.Instance["If_Func"];
+        public string HelpText => Language.Instance["BASE_LIB_If_Func"];
 
         public string MenuTitle => $"If<{CbSTUtils.FUNC_STR}>";
 
@@ -1228,7 +1228,7 @@ namespace CapybaraVS.Script
     {
         public string AssetCode => nameof(If_Action);
 
-        public string HelpText => Language.Instance["If_Action"];
+        public string HelpText => Language.Instance["BASE_LIB_If_Action"];
 
         public string MenuTitle => $"If<{CbSTUtils.ACTION_STR}>";
 
@@ -1281,7 +1281,7 @@ namespace CapybaraVS.Script
     {
         public string AssetCode => nameof(If);
 
-        public string HelpText => Language.Instance["If"];
+        public string HelpText => Language.Instance["BASE_LIB_If"];
 
         public string MenuTitle => AssetCode;
 
@@ -1335,7 +1335,7 @@ namespace CapybaraVS.Script
     {
         public string AssetCode => nameof(InvokeFuncNoArg);
 
-        public string HelpText => Language.Instance["Invoke"];
+        public string HelpText => Language.Instance["BASE_LIB_Invoke"];
 
         public string MenuTitle => $"{CbSTUtils.FUNC_STR}<T>.Invoke";
 
@@ -1383,7 +1383,7 @@ namespace CapybaraVS.Script
     {
         public string AssetCode => nameof(InvokeFuncWithArg);
 
-        public string HelpText => Language.Instance["InvokeWithArg"];
+        public string HelpText => Language.Instance["BASE_LIB_InvokeWithArg"];
 
         public string MenuTitle => $"{CbSTUtils.FUNC_STR}<T1,T2>.Invoke(n)";
 
@@ -1441,7 +1441,7 @@ namespace CapybaraVS.Script
     {
         public string AssetCode => nameof(InvokeActionWithArg);
 
-        public string HelpText => Language.Instance["InvokeWithArg"];
+        public string HelpText => Language.Instance["BASE_LIB_InvokeWithArg"];
 
         public string MenuTitle => $"{CbSTUtils.ACTION_STR}<T>.Invoke(n)";
 
@@ -1495,7 +1495,7 @@ namespace CapybaraVS.Script
     {
         public string AssetCode => nameof(For);
 
-        public string HelpText => Language.Instance["For"];
+        public string HelpText => Language.Instance["BASE_LIB_For"];
 
         public string MenuTitle => $"{nameof(For)}<{CbSTUtils.ACTION_STR}>";
 
@@ -1554,7 +1554,7 @@ namespace CapybaraVS.Script
     {
         public string AssetCode => nameof(For_Until);
 
-        public string HelpText => Language.Instance["For"];
+        public string HelpText => Language.Instance["BASE_LIB_For"];
 
         public string MenuTitle => $"{nameof(For_Until)}<{CbSTUtils.ACTION_STR}>";
 
@@ -1681,7 +1681,7 @@ namespace CapybaraVS.Script
     {
         public string MenuTitle => "Create Variable";
 
-        public new string HelpText => Language.Instance["CreateVariable"];
+        public new string HelpText => Language.Instance["BASE_LIB_CreateVariable"];
 
         public List<TypeRequest> typeRequests => new List<TypeRequest>()
         {
@@ -1694,7 +1694,7 @@ namespace CapybaraVS.Script
     {
         public string MenuTitle => "Create VariableList";
 
-        public new string HelpText => Language.Instance["CreateVariableList"];
+        public new string HelpText => Language.Instance["BASE_LIB_CreateVariableList"];
 
         public List<TypeRequest> typeRequests => new List<TypeRequest>()
         {
@@ -1705,7 +1705,7 @@ namespace CapybaraVS.Script
     //-----------------------------------------------------------------
     class CreateVariableFunc : _GetVariable, IFuncCreateVariableAssetDef
     {
-        public new string HelpText => Language.Instance["CreateVariableFunc"];
+        public new string HelpText => Language.Instance["BASE_LIB_CreateVariableFunc"];
 
         public string MenuTitle => $"Create Variable<{CbSTUtils.FUNC_STR}>";
 
@@ -1720,7 +1720,7 @@ namespace CapybaraVS.Script
     {
         public string MenuTitle => "Get Variable";
 
-        public new string HelpText => Language.Instance["GetVariable"];
+        public new string HelpText => Language.Instance["BASE_LIB_GetVariable"];
 
         public List<TypeRequest> typeRequests => null;    // 選択を意味する
     }
@@ -1730,7 +1730,7 @@ namespace CapybaraVS.Script
     {
         public string AssetCode => nameof(SetVariable);
 
-        public string HelpText => Language.Instance["SetVariable"];
+        public string HelpText => Language.Instance["BASE_LIB_SetVariable"];
 
         public string MenuTitle => "Set Variable";
 
@@ -1800,7 +1800,7 @@ namespace CapybaraVS.Script
     {
         public string AssetCode => nameof(CallerArguments);
 
-        public string HelpText => Language.Instance["CallerArgument"];
+        public string HelpText => Language.Instance["BASE_LIB_CallerArgument"];
 
         public string MenuTitle => "DummyArguments";
 
@@ -1858,7 +1858,7 @@ namespace CapybaraVS.Script
     {
         public string AssetCode => nameof(Foreach);
 
-        public string HelpText => Language.Instance["Foreach"];
+        public string HelpText => Language.Instance["BASE_LIB_Foreach"];
 
         public string MenuTitle => $"Foreach {CbSTUtils.LIST_STR}<{CbSTUtils.ACTION_STR}>";
 
@@ -1914,7 +1914,7 @@ namespace CapybaraVS.Script
     {
         public string AssetCode => nameof(ForeachIEnumerable);
 
-        public string HelpText => Language.Instance["Foreach"];
+        public string HelpText => Language.Instance["BASE_LIB_Foreach"];
 
         public string MenuTitle => $"Foreach IEnumerable<{CbSTUtils.ACTION_STR}>";
 
@@ -2056,7 +2056,7 @@ namespace CapybaraVS.Script
     {
         public string AssetCode => nameof(ConsoleOut);
 
-        public string HelpText => Language.Instance["ConsoleOut"];
+        public string HelpText => Language.Instance["BASE_LIB_ConsoleOut"];
 
         public string MenuTitle => "ConsoleOut";
 
@@ -2106,7 +2106,7 @@ namespace CapybaraVS.Script
     {
         public string AssetCode => nameof(Abs);
 
-        public string HelpText => Language.Instance["Abs"];
+        public string HelpText => Language.Instance["BASE_LIB_Abs"];
 
         public string MenuTitle => AssetCode;
 
@@ -2151,7 +2151,7 @@ namespace CapybaraVS.Script
     {
         public string AssetCode => nameof(GetVariableFromIndex);
 
-        public string HelpText => Language.Instance["GetVariableFromIndex"];
+        public string HelpText => Language.Instance["BASE_LIB_GetVariableFromIndex"];
 
         public string MenuTitle => "Get VariableList[index]";
 
@@ -2206,7 +2206,7 @@ namespace CapybaraVS.Script
     {
         public string AssetCode => nameof(SetVariableToIndex);
 
-        public string HelpText => Language.Instance["SetVariableToIndex"];
+        public string HelpText => Language.Instance["BASE_LIB_SetVariableToIndex"];
 
         public string MenuTitle => "Set VariableList[index]";
 
@@ -2263,7 +2263,7 @@ namespace CapybaraVS.Script
     {
         public string AssetCode => nameof(AppendVariableList);
 
-        public string HelpText => Language.Instance["AppendVariableList"];
+        public string HelpText => Language.Instance["BASE_LIB_AppendVariableList"];
 
         public string MenuTitle => "Append VariableList";
 
@@ -2317,7 +2317,7 @@ namespace CapybaraVS.Script
     {
         public string AssetCode => nameof(Count);
 
-        public string HelpText => Language.Instance["Count"];
+        public string HelpText => Language.Instance["BASE_LIB_Count"];
 
         public string MenuTitle => AssetCode;
 
@@ -2362,7 +2362,7 @@ namespace CapybaraVS.Script
     {
         public string AssetCode => nameof(Contains);
 
-        public string HelpText => Language.Instance["Contains"];
+        public string HelpText => Language.Instance["BASE_LIB_Contains"];
 
         public string MenuTitle => AssetCode;
 
@@ -2408,7 +2408,7 @@ namespace CapybaraVS.Script
     {
         public string AssetCode => nameof(GetListIndex);
 
-        public string HelpText => Language.Instance["GetListIndex"];
+        public string HelpText => Language.Instance["BASE_LIB_GetListIndex"];
 
         public string MenuTitle => "Get List[index]";
 
@@ -2455,7 +2455,7 @@ namespace CapybaraVS.Script
     {
         public string AssetCode => nameof(GetListLast);
 
-        public string HelpText => Language.Instance["GetListLast"];
+        public string HelpText => Language.Instance["BASE_LIB_GetListLast"];
 
         public string MenuTitle => "Get List[last]";
 
@@ -2501,7 +2501,7 @@ namespace CapybaraVS.Script
     {
         public string AssetCode => nameof(SetListIndex);
 
-        public string HelpText => Language.Instance["SetListIndex"];
+        public string HelpText => Language.Instance["BASE_LIB_SetListIndex"];
 
         public string MenuTitle => "Set List[index]";
 
@@ -2557,7 +2557,7 @@ namespace CapybaraVS.Script
     {
         public string AssetCode => nameof(Append);
 
-        public string HelpText => Language.Instance["Append"];
+        public string HelpText => Language.Instance["BASE_LIB_Append"];
 
         public string MenuTitle => AssetCode;
 
@@ -2613,7 +2613,7 @@ namespace CapybaraVS.Script
     {
         public string AssetCode => nameof(Pow);
 
-        public string HelpText => Language.Instance["Pow"];
+        public string HelpText => Language.Instance["BASE_LIB_Pow"];
 
         public string MenuTitle => AssetCode;
 
@@ -2662,7 +2662,7 @@ namespace CapybaraVS.Script
     {
         public string AssetCode => nameof(Rand);
 
-        public string HelpText => Language.Instance["Rand"];
+        public string HelpText => Language.Instance["BASE_LIB_Rand"];
 
         public string MenuTitle => AssetCode;
 

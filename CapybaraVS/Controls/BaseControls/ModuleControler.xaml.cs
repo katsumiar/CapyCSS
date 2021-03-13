@@ -59,7 +59,7 @@ namespace CapyCSS.Controls.BaseControls
             {
                 // TODO フォルダを指定してもらいファイルのパスを特定してもらう
 
-                string msg = string.Format(CapybaraVS.Language.Instance["ModuleControler_04"], filter);
+                string msg = string.Format(CapybaraVS.Language.Instance["SYSTEM_ModuleControler_04"], filter);
                 ControlTools.ShowErrorMessage(msg, MESSAGE_TITLE);
                 return null;    // 失敗
             }

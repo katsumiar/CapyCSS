@@ -1212,8 +1212,8 @@ namespace CapybaraVS.Controls.BaseControls
         private void ClearWorkCanvasWithConfirmation()
         {
             if (ControlTools.ShowSelectMessage(
-                        CapybaraVS.Language.Instance["ConfirmationDelete"],
-                        CapybaraVS.Language.Instance["Confirmation"],
+                        CapybaraVS.Language.Instance["SYSTEM_ConfirmationDelete"],
+                        CapybaraVS.Language.Instance["SYSTEM_Confirmation"],
                         MessageBoxButton.OKCancel) == MessageBoxResult.OK)
             {
                 CommandCanvasList.OwnerWindow.Cursor = Cursors.Wait;
