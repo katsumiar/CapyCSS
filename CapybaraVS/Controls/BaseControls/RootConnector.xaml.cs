@@ -286,7 +286,10 @@ namespace CapybaraVS.Controls.BaseControls
                 if (NameText.OwnerCommandCanvas is null)
                     NameText.OwnerCommandCanvas = value;
                 if (_OwnerCommandCanvas is null)
+                {
                     _OwnerCommandCanvas = value;
+                    ChangeConnectorStyle(SingleLinkMode);
+                }
             }
         }
 
@@ -337,13 +340,6 @@ namespace CapybaraVS.Controls.BaseControls
                     ExecuteRoot();
                 }
                 );
-
-            Dispatcher.BeginInvoke(
-                new Action(() =>
-                {
-                    ChangeConnectorStyle(SingleLinkMode);
-                }
-                ), DispatcherPriority.Loaded);
             
             LayoutUpdated += _LayoutUpdated;
         }
@@ -787,30 +783,15 @@ namespace CapybaraVS.Controls.BaseControls
             }
         }
 
-        private Canvas curveCanvas;
         public Canvas CurveCanvas
         {
             get
             {
-                if (curveCanvas is null)
-                {
-                    // キャンバスが設定されていないので探す
+                if (OwnerCommandCanvas is null)
+                    return null;
 
-                    DependencyObject target = this;
-                    do
-                    {
-                        FrameworkElement _target = target as FrameworkElement;
-                        target = VisualTreeHelper.GetParent(target);
-                        if (target is Canvas canvas)
-                        {
-                            curveCanvas = canvas;
-                            break;
-                        }
-                    } while (target != null);
-                }
-                return curveCanvas; 
+                return OwnerCommandCanvas.CurveCanvas;
             }
-            set { curveCanvas = value; }
         }
 
         public bool RequestBuildCurve(ICurveLinkPoint target, Point? endPos)

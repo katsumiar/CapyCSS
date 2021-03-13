@@ -301,6 +301,11 @@ namespace CapybaraVS.Control.BaseControls
         }
 
         /// <summary>
+        /// カーブ用キャンバスを参照します。
+        /// </summary>
+        public Canvas CurveCanvas => ControlsCanvas;
+
+        /// <summary>
         /// 背景イメージへのパスです。
         /// </summary>
         static public string BackGrountImagePath = null;    // TODO static を外す

@@ -258,6 +258,10 @@ namespace CapybaraVS.Controls.BaseControls
         public TreeViewCommand CommandMenu => CommandMenuWindow.treeViewCommand;
         public CommandCanvas ScriptCommandCanvas = null;
         public BaseWorkCanvas ScriptWorkCanvas = null;
+        /// <summary>
+        /// カーブ用キャンバスを参照します。
+        /// </summary>
+        public Canvas CurveCanvas => ScriptWorkCanvas.CurveCanvas;
         public Stack ScriptWorkStack = null;
         public Func<object> ScriptWorkClickEvent = null;
         public Action ClickEntryEvent = null;
