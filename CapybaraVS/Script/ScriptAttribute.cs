@@ -137,17 +137,23 @@ namespace CapybaraVS.Script
             string name,
             List<string> importNameList)
         {
-            var asm = Assembly.Load(name);
             string outputName = ModuleControler.HEADER_PACKAGE + name;
             var functionNode = ImplementAsset.CreateGroup(node, outputName);
-            ImportScriptMethods(
-                OwnerCommandCanvas, 
-                functionNode, 
-                asm, 
-                null, 
-                importNameList,
-                (t) => OwnerCommandCanvas.AddImportTypeMenu(t)
-                );
+            try
+            {
+                ImportScriptMethods(
+                    OwnerCommandCanvas,
+                    functionNode,
+                    Assembly.Load(name),
+                    null,
+                    importNameList,
+                    (t) => OwnerCommandCanvas.AddImportTypeMenu(t)
+                    );
+            }
+            catch (Exception ex)
+            {
+                ControlTools.ShowErrorMessage(ex.Message, "Import Error.");
+            }
             CommandCanvasList.OutPut.OutLine(nameof(ScriptImplement), $"imported {name} package.");
             return outputName;
         }
