@@ -16,7 +16,7 @@ namespace CapybaraVS.Script.Lib
         }
 
         //------------------------------------------------------------------
-        [ScriptMethod("Net" + ".Web" + "." + nameof(GetContents), "", "RS=>Ip_GetContents")]
+        [ScriptMethod("Net" + ".Web" + "." + nameof(GetContents))]
         public static string GetContents(string address, double timeout = 5000)
         {
             var client = new HttpClient() { Timeout = TimeSpan.FromMilliseconds(timeout) };
@@ -26,7 +26,7 @@ namespace CapybaraVS.Script.Lib
         }
 
         //------------------------------------------------------------------
-        [ScriptMethod("Net" + ".Web" + "." + nameof(GetHeaders), "", "RS=>Ip_GetHeaders")]
+        [ScriptMethod("Net" + ".Web" + "." + nameof(GetHeaders))]
         public static string GetHeaders(string address, double timeout = 5000)
         {
             var client = new HttpClient() { Timeout = TimeSpan.FromMilliseconds(timeout) };
@@ -36,7 +36,7 @@ namespace CapybaraVS.Script.Lib
         }
 
         //------------------------------------------------------------------
-        [ScriptMethod("Net" + ".Web." + nameof(WebAPI), "", "RS=>Ip_WebAPI")]
+        [ScriptMethod("Net" + ".Web." + nameof(WebAPI))]
         public static HttpWebResponse WebAPI(string command, string account, string passwd, WebMethod method = WebMethod.GET)
         {
             WebRequest req = WebRequest.Create(command);
@@ -55,14 +55,14 @@ namespace CapybaraVS.Script.Lib
         }
 
         //------------------------------------------------------------------
-        [ScriptMethod("Net" + "." + nameof(GetMyHostName), "", "RS=>Ip_GetMyHostName")]
+        [ScriptMethod("Net" + "." + nameof(GetMyHostName))]
         public static string GetMyHostName()
         {
             return Dns.GetHostName();
         }
 
         //------------------------------------------------------------------
-        [ScriptMethod("Net" + "." + nameof(GetMyHostAddress), "", "RS=>Ip_GetMyHostAddress")]
+        [ScriptMethod("Net" + "." + nameof(GetMyHostAddress))]
         public static ICollection<string> GetMyHostAddress()
         {
             var addressList = new List<string>();
@@ -74,7 +74,7 @@ namespace CapybaraVS.Script.Lib
         }
 
         //------------------------------------------------------------------
-        [ScriptMethod("Net" + "." + nameof(GetHostEntry), "", "RS=>Ip_GetHostEntry")]
+        [ScriptMethod("Net" + "." + nameof(GetHostEntry))]
         public static ICollection<string> GetHostEntry(string hostname)
         {
             var ipAddressList = new List<string>();
@@ -86,7 +86,7 @@ namespace CapybaraVS.Script.Lib
         }
 
         //------------------------------------------------------------------
-        [ScriptMethod("Net" + "." + nameof(GetHostName), "", "RS=>Ip_GetHostName")]
+        [ScriptMethod("Net" + "." + nameof(GetHostName))]
         public static string GetHostName(string address)
         {
             IPHostEntry hostInfo = Dns.GetHostEntry(address);

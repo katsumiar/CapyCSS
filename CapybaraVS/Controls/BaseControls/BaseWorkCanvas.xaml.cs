@@ -1153,8 +1153,8 @@ namespace CapybaraVS.Control.BaseControls
         {
             if (SelectedNodes.Count != 0 &&
                     ControlTools.ShowSelectMessage(
-                        CapybaraVS.Language.GetInstance["ConfirmationDelete"],
-                        CapybaraVS.Language.GetInstance["Confirmation"],
+                        CapybaraVS.Language.Instance["ConfirmationDelete"],
+                        CapybaraVS.Language.Instance["Confirmation"],
                         MessageBoxButton.OKCancel) == MessageBoxResult.OK)
             {
                 foreach (var node in SelectedNodes)

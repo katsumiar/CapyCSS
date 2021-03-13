@@ -7,7 +7,7 @@ namespace CapybaraVS.Script.Lib
     public class RandomLib
     {
         //------------------------------------------------------------------
-        [ScriptMethod("Random" + "." + "* Random Sign", "", "RS=>RandomLib_PMRand")]
+        [ScriptMethod("Random" + "." + "* Random Sign")]
         public static double PMRand(double rnd)
         {
             if (FuncAssetSub.random.Next(0, 2) == 1)
@@ -18,7 +18,7 @@ namespace CapybaraVS.Script.Lib
         }
 
         //------------------------------------------------------------------
-        [ScriptMethod("Random" + "." + "±Random", "", "RS=>RandomLib_RandPMRand")]
+        [ScriptMethod("Random" + "." + "±Random")]
         public static double RandPMRand(int min, int max)
         {
             double rnd = FuncAssetSub.random.Next(min, max + 1);
@@ -30,35 +30,35 @@ namespace CapybaraVS.Script.Lib
         }
 
         //------------------------------------------------------------------
-        [ScriptMethod("Random" + "." + "Random Double", "", "RS=>RandomLib_RandomDouble")]
+        [ScriptMethod("Random" + "." + "Random Double")]
         public static double RandomDouble()
         {
             return FuncAssetSub.random.NextDouble();
         }
 
         //------------------------------------------------------------------
-        [ScriptMethod("Random" + "." + "Random Mul Double", "" , "RS=>RandomLib_RandomMulDouble")]
+        [ScriptMethod("Random" + "." + "Random Mul Double")]
         public static double RandomMulDouble(double value)
         {
             return FuncAssetSub.random.NextDouble() * value;
         }
 
         //------------------------------------------------------------------
-        [ScriptMethod("Random" + "." + "±Random Double", "", "RS=>RandomLib_PmRandomDouble")]
+        [ScriptMethod("Random" + "." + "±Random Double")]
         public static double PmRandomDouble()
         {
             return PMRand(FuncAssetSub.random.NextDouble());
         }
 
         //------------------------------------------------------------------
-        [ScriptMethod("Random" + "." + "±Random Mul Double", "", "RS=>RandomLib_PmRandomMulDouble")]
+        [ScriptMethod("Random" + "." + "±Random Mul Double")]
         public static double PmRandomMulDouble(double value)
         {
             return PMRand(FuncAssetSub.random.NextDouble()) * value;
         }
 
         //------------------------------------------------------------------
-        [ScriptMethod("Random" + "." + "Probability True", "", "RS=>RandomLib_ProbabilityTrue")]
+        [ScriptMethod("Random" + "." + "Probability True")]
         public static bool ProbabilityTrue(double probability)
         {
             return (RandomDouble() * 100) < 100 * probability;

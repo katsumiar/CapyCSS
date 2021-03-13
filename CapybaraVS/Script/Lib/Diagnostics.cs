@@ -6,7 +6,7 @@ namespace CapybaraVS.Script.Lib
 {
     public class DiagnosticsLib
     {
-        [ScriptMethod("Diagnostics" + "." + nameof(GetListOfRunningProcesses), "", "RS=>DiagnosticsLib_GetListOfRunningProcesses")]
+        [ScriptMethod("Diagnostics" + "." + nameof(GetListOfRunningProcesses))]
         public static ICollection<string> GetListOfRunningProcesses(bool distinct = false)
         {
             ICollection<string> processNameList = new List<string>();

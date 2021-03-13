@@ -23,23 +23,12 @@ namespace CapybaraVS.Script
     {
         private string menuName;    // メニュー用のメソッド名
         private string funcName;    // ノード用のメソッド名
-        private string hint;        // メニュー用のヒントメッセージ
-        private string nodeHint;    // ノード用のヒントメッセージ
         public string MenuName => menuName;
         public string FuncName => funcName;
-        public string Hint => hint;
-        public string NodeHint => nodeHint;
-        public ScriptMethodAttribute(string menuName = "", string funcName = "", string hint = "", string nodeHint = "")
+        public ScriptMethodAttribute(string menuName = "", string funcName = "")
         {
             this.menuName = menuName;
             this.funcName = funcName;
-            this.hint = hint;
-            if (nodeHint == "(none)")
-                this.nodeHint = "";
-            else if (nodeHint.Trim() == "")
-                this.nodeHint = hint;
-            else
-                this.nodeHint = nodeHint;
         }
     }
 
@@ -709,6 +698,17 @@ namespace CapybaraVS.Script
                 if (retType("") is null)
                     return null; // 返り値の型が対象外
 
+
+                // オーバーロード用の名前保管情報を作成（同名にならないようにする）
+                string addArg = "#";
+                ParameterInfo[] paramsinfo = methodInfo.GetParameters();
+                foreach (ParameterInfo para in paramsinfo)
+                {
+                    addArg += "_" + CbSTUtils._GetTypeName(para.ParameterType);
+                }
+
+                string nodeCode = methodInfo.ReflectedType.Namespace + "." + methodInfo.ReflectedType.Name + "." + methodInfo.Name + addArg;
+
                 // メニュー用の名前を作成
                 string menuName = methodInfo.Name;
                 if (methodAttr != null && methodAttr.MenuName != "")
@@ -811,14 +811,9 @@ namespace CapybaraVS.Script
                 string nodeHintTitle = menuName;
                 if (methodAttr != null)
                 {
-                    nodeHint = methodAttr.NodeHint.Trim();
-                    if (nodeHint.StartsWith("RS=>"))
-                    {
-                        // ノード用ヒントをリソースから取得
+                    // ノード用ヒントをリソースから取得
 
-                        string id = nodeHint.Split("=>")[1];
-                        nodeHint = Language.GetInstance[id];
-                    }
+                    nodeHint = Language.Instance["NODE_" + nodeCode];
                 }
                 nodeHint = $"【{nodeHintTitle}】" + (nodeHint != "" ? Environment.NewLine : "") + nodeHint;
 
@@ -826,28 +821,15 @@ namespace CapybaraVS.Script
                 string hint = "";
                 if (methodAttr != null)
                 {
-                    hint = methodAttr.Hint.Trim();
-                    if (hint.StartsWith("RS=>"))
-                    {
-                        // メニュー用ヒントをリソースから取得
+                    // メニュー用ヒントをリソースから取得
 
-                        string id = hint.Split("=>")[1];
-                        hint = Language.GetInstance[id];
-                    }
-                }
-
-                // オーバーロード用の名前保管情報を作成（同名にならないようにする）
-                string addArg = "#";
-                ParameterInfo[] paramsinfo = methodInfo.GetParameters();
-                foreach (ParameterInfo para in paramsinfo)
-                {
-                    addArg += "_" + CbSTUtils._GetTypeName(para.ParameterType);
+                    hint = Language.Instance["MENU_" + nodeCode];
                 }
 
                 // ノード化依頼用の情報をセット
                 AutoImplementFunctionInfo autoImplementFunctionInfo = new AutoImplementFunctionInfo()
                 {
-                    assetCode = methodInfo.ReflectedType.Namespace + "." + methodInfo.ReflectedType.Name + "." + methodInfo.Name + addArg,
+                    assetCode = nodeCode,
                     menuTitle = menuName,
                     funcTitle = nodeName,
                     hint = hint,

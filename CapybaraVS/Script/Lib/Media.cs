@@ -71,7 +71,7 @@ namespace CbVS.Script.Lib
         }
 
         //------------------------------------------------------------------
-        [ScriptMethod(nameSpace + "." + "OutMediaWindow", "", "RS=>Image_OutMediaWindow")]
+        [ScriptMethod(nameSpace + "." + "OutMediaWindow")]
         public static void OutMediaWindow(string title, MediaPlayer media, MediaOption mediaOption = null)
         {
             if (media is null)
@@ -87,7 +87,7 @@ namespace CbVS.Script.Lib
         }
 
         //------------------------------------------------------------------
-        [ScriptMethod(nameSpace + "." + nameof(OpenMedia), "", "RS=>Image_OpenMedia")]
+        [ScriptMethod(nameSpace + "." + nameof(OpenMedia))]
         public static MediaPlayer OpenMedia(string fileName)
         {
             if (File.Exists(fileName))
@@ -102,7 +102,7 @@ namespace CbVS.Script.Lib
         }
 
         //------------------------------------------------------------------
-        [ScriptMethod(nameSpace + "." + nameof(Seek), "", "RS=>Media_Seek")]
+        [ScriptMethod(nameSpace + "." + nameof(Seek))]
         public static MediaPlayer Seek(MediaPlayer player, double seconds)
         {
             if (player is null)
@@ -128,7 +128,7 @@ namespace CbVS.Script.Lib
         }
 
         //------------------------------------------------------------------
-        [ScriptMethod(nameSpace + "." + nameof(Captures), "", "RS=>Media_Capture_all")]
+        [ScriptMethod(nameSpace + "." + nameof(Captures))]
         public static BitmapImage Captures(
             MediaPlayer player,
             double waitSeconds = 10,
@@ -164,7 +164,7 @@ namespace CbVS.Script.Lib
         }
 
         //------------------------------------------------------------------
-        [ScriptMethod(nameSpace + "." + nameof(Captures), "", "RS=>Media_Capture_all_d_d")]
+        [ScriptMethod(nameSpace + "." + nameof(Captures))]
         public static BitmapImage Captures(
             MediaPlayer player,
             double startSeconds = 0,
@@ -225,7 +225,7 @@ namespace CbVS.Script.Lib
         }
 
         //------------------------------------------------------------------
-        [ScriptMethod(nameSpace + "." + nameof(CaptureOutGifAnimation), "", "RS=>Media_CaptureOutGifAnimation")]
+        [ScriptMethod(nameSpace + "." + nameof(CaptureOutGifAnimation))]
         public static void CaptureOutGifAnimation(
             string path,
             MediaPlayer player,
@@ -261,7 +261,7 @@ namespace CbVS.Script.Lib
         }
 
         //------------------------------------------------------------------
-        [ScriptMethod(nameSpace + "." + nameof(CaptureOutGifAnimation), "", "RS=>Media_CaptureOutGifAnimation")]
+        [ScriptMethod(nameSpace + "." + nameof(CaptureOutGifAnimation))]
         public static void CaptureOutGifAnimation(
             string path,
             MediaPlayer player,
@@ -322,7 +322,7 @@ namespace CbVS.Script.Lib
         }
 
         //------------------------------------------------------------------
-        [ScriptMethod(nameSpace + "." + nameof(Capture), "", "RS=>Media_Capture_cm_d")]
+        [ScriptMethod(nameSpace + "." + nameof(Capture))]
         public static BitmapImage Capture(
             MediaPlayer player, 
             double seconds, 
@@ -354,7 +354,7 @@ namespace CbVS.Script.Lib
         }
 
         //------------------------------------------------------------------
-        [ScriptMethod(nameSpace + "." + nameof(Capture), "", "RS=>Media_Capture_cm")]
+        [ScriptMethod(nameSpace + "." + nameof(Capture))]
         public static BitmapImage Capture(
             MediaPlayer player, 
             double maxWidth = 640,

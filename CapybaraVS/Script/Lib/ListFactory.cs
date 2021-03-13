@@ -6,7 +6,7 @@ namespace CapybaraVS.Script.Lib
 {
     public class ListFactory
     {
-        [ScriptMethod(nameof(ListFactory) + "." + nameof(MakeListDouble), "", "RS=>ListFactory_MakeListDouble")]
+        [ScriptMethod(nameof(ListFactory) + "." + nameof(MakeListDouble))]
         public static ICollection<double> MakeListDouble(int num, double value, double step)
         {
             var vs = new List<double>();
@@ -19,7 +19,7 @@ namespace CapybaraVS.Script.Lib
         }
 
         //------------------------------------------------------------------
-        [ScriptMethod(nameof(ListFactory) + "." + nameof(MakeListDouble), "", "RS=>ListFactory_MakeListDouble2")]
+        [ScriptMethod(nameof(ListFactory) + "." + nameof(MakeListDouble))]
         public static ICollection<double> MakeListDouble(int num, double value, double step, double power)
         {
             var vs = new List<double>();
@@ -52,35 +52,35 @@ namespace CapybaraVS.Script.Lib
         }
 
         //------------------------------------------------------------------
-        [ScriptMethod(nameof(ListFactory) + ".Convert." + nameof(ToDouble), "", "RS=>ListFactory_IntToDouble")]
+        [ScriptMethod(nameof(ListFactory) + ".Convert." + nameof(ToDouble))]
         public static ICollection<double> ToDouble(IEnumerable<int> list)
         {
             return ConvertList(list, (n) => (double)n);
         }
 
         //------------------------------------------------------------------
-        [ScriptMethod(nameof(ListFactory) + ".Convert." + nameof(ToInteger), "", "RS=>ListFactory_DoubleToInt")]
+        [ScriptMethod(nameof(ListFactory) + ".Convert." + nameof(ToInteger))]
         public static ICollection<int> ToInteger(IEnumerable<double> list)
         {
             return ConvertList(list, (n) => (int)n);
         }
 
         //------------------------------------------------------------------
-        [ScriptMethod(nameof(ListFactory) + ".Convert." + nameof(ToString), "", "RS=>ListFactory_IntToString")]
+        [ScriptMethod(nameof(ListFactory) + ".Convert." + nameof(ToString))]
         public static ICollection<string> ToString(IEnumerable<int> list)
         {
             return ConvertList(list, (n) => n.ToString());
         }
 
         //------------------------------------------------------------------
-        [ScriptMethod(nameof(ListFactory) + ".Convert." + nameof(ToString), "", "RS=>ListFactory_DoubleToString")]
+        [ScriptMethod(nameof(ListFactory) + ".Convert." + nameof(ToString))]
         public static ICollection<string> ToString(IEnumerable<double> list)
         {
             return ConvertList(list, (n) => n.ToString());
         }
 
         //------------------------------------------------------------------
-        [ScriptMethod(nameof(ListFactory) + ".Parse." + nameof(ParseIntegerCSV), "", "RS=>ListFactory_StringToParseIntList")]
+        [ScriptMethod(nameof(ListFactory) + ".Parse." + nameof(ParseIntegerCSV))]
         public static ICollection<int> ParseIntegerCSV(string value)
         {
             var ret = new List<int>();
@@ -93,7 +93,7 @@ namespace CapybaraVS.Script.Lib
         }
 
         //------------------------------------------------------------------
-        [ScriptMethod(nameof(ListFactory) + ".Parse." + nameof(ParseDoubleCSV), "", "RS=>ListFactory_StringToParseDoubleList")]
+        [ScriptMethod(nameof(ListFactory) + ".Parse." + nameof(ParseDoubleCSV))]
         public static ICollection<double> ParseDoubleCSV(string value)
         {
             var ret = new List<double>();
@@ -106,28 +106,28 @@ namespace CapybaraVS.Script.Lib
         }
 
         //------------------------------------------------------------------
-        [ScriptMethod(nameof(ListFactory) + ".Join." + nameof(Join), "", "RS=>ListFactory_JoinIntList")]
+        [ScriptMethod(nameof(ListFactory) + ".Join." + nameof(Join))]
         public static string Join(string separator, IEnumerable<int> value)
         {
             return string.Join(separator, value);
         }
 
         //------------------------------------------------------------------
-        [ScriptMethod(nameof(ListFactory) + ".Join." + nameof(Join), "", "RS=>ListFactory_JoinDoubleList")]
+        [ScriptMethod(nameof(ListFactory) + ".Join." + nameof(Join))]
         public static string Join(string separator, IEnumerable<double> value)
         {
             return string.Join(separator, value);
         }
 
         //------------------------------------------------------------------
-        [ScriptMethod(nameof(ListFactory) + ".Join." + nameof(Join), "", "RS=>ListFactory_JoinStringList")]
+        [ScriptMethod(nameof(ListFactory) + ".Join." + nameof(Join))]
         public static string Join(string separator, IEnumerable<string> value)
         {
             return string.Join(separator, value);
         }
 
         //------------------------------------------------------------------
-        [ScriptMethod(nameof(ListFactory) + ".Counter." + nameof(Counter), "", "RS=>ListFactory_IntListSetCount")]
+        [ScriptMethod(nameof(ListFactory) + ".Counter." + nameof(Counter))]
         public static int Counter(ICollection<int> sample, int value)
         {
             int count = 0;
@@ -142,7 +142,7 @@ namespace CapybaraVS.Script.Lib
         }
 
         //------------------------------------------------------------------
-        [ScriptMethod(nameof(ListFactory) + ".Counter." + nameof(Counter), "", "RS=>ListFactory_DoubleCount")]
+        [ScriptMethod(nameof(ListFactory) + ".Counter." + nameof(Counter))]
         public static int Counter(ICollection<double> sample, double value)
         {
             int count = 0;
@@ -157,7 +157,7 @@ namespace CapybaraVS.Script.Lib
         }
 
         //------------------------------------------------------------------
-        [ScriptMethod(nameof(ListFactory) + ".Counter." + nameof(Counter), "", "RS=>ListFactory_WordCount")]
+        [ScriptMethod(nameof(ListFactory) + ".Counter." + nameof(Counter))]
         public static int Counter(ICollection<string> sample, string value)
         {
             int count = 0;
@@ -172,7 +172,7 @@ namespace CapybaraVS.Script.Lib
         }
 
         //------------------------------------------------------------------
-        [ScriptMethod(nameof(ListFactory) + ".Counter." + nameof(Counter), "", "RS=>ListFactory_IntCountInvoke")]
+        [ScriptMethod(nameof(ListFactory) + ".Counter." + nameof(Counter))]
         public static int Counter(IEnumerable<int> sample, Func<int, bool> predicate)
         {
             int count = 0;
@@ -187,7 +187,7 @@ namespace CapybaraVS.Script.Lib
         }
 
         //------------------------------------------------------------------
-        [ScriptMethod(nameof(ListFactory) + ".Counter." + nameof(Counter), "", "RS=>ListFactory_DoubleCountInvoke")]
+        [ScriptMethod(nameof(ListFactory) + ".Counter." + nameof(Counter))]
         public static int Counter(IEnumerable<double> sample, Func<double, bool> predicate)
         {
             int count = 0;
@@ -202,7 +202,7 @@ namespace CapybaraVS.Script.Lib
         }
 
         //------------------------------------------------------------------
-        [ScriptMethod(nameof(ListFactory) + ".Counter." + nameof(Counter), "", "RS=>ListFactory_WordCountInvoke")]
+        [ScriptMethod(nameof(ListFactory) + ".Counter." + nameof(Counter))]
         public static int Counter(IEnumerable<string> sample, Func<string, bool> predicate)
         {
             int count = 0;
@@ -217,7 +217,7 @@ namespace CapybaraVS.Script.Lib
         }
 
         //------------------------------------------------------------------
-        [ScriptMethod(nameof(ListFactory) + ".Sort.Desc." + nameof(DescSort), "", "RS=>ListFactory_SortDescIntList")]
+        [ScriptMethod(nameof(ListFactory) + ".Sort.Desc." + nameof(DescSort))]
         public static ICollection<int> DescSort(IEnumerable<int> sample)
         {
             var ret = new List<int>(sample);
@@ -226,7 +226,7 @@ namespace CapybaraVS.Script.Lib
         }
 
         //------------------------------------------------------------------
-        [ScriptMethod(nameof(ListFactory) + ".Sort.Desc." + nameof(DescSort), "", "RS=>ListFactory_SortDescDoubleList")]
+        [ScriptMethod(nameof(ListFactory) + ".Sort.Desc." + nameof(DescSort))]
         public static ICollection<double> DescSort(IEnumerable<double> sample)
         {
             var ret = new List<double>(sample);
@@ -235,7 +235,7 @@ namespace CapybaraVS.Script.Lib
         }
 
         //------------------------------------------------------------------
-        [ScriptMethod(nameof(ListFactory) + ".Sort.Desc." + nameof(DescSort), "", "RS=>ListFactory_SortDescStringList")]
+        [ScriptMethod(nameof(ListFactory) + ".Sort.Desc." + nameof(DescSort))]
         public static ICollection<string> DescSort(IEnumerable<string> sample)
         {
             var ret = new List<string>(sample);
@@ -244,7 +244,7 @@ namespace CapybaraVS.Script.Lib
         }
 
         //------------------------------------------------------------------
-        [ScriptMethod(nameof(ListFactory) + ".Sort.Asc." + nameof(AscSort), "", "RS=>ListFactory_SortAscIntList")]
+        [ScriptMethod(nameof(ListFactory) + ".Sort.Asc." + nameof(AscSort))]
         public static ICollection<int> AscSort(IEnumerable<int> sample)
         {
             var ret = new List<int>(sample);
@@ -253,7 +253,7 @@ namespace CapybaraVS.Script.Lib
         }
 
         //------------------------------------------------------------------
-        [ScriptMethod(nameof(ListFactory) + ".Sort.Asc." + nameof(AscSort), "", "RS=>ListFactory_SortAscDoubleList")]
+        [ScriptMethod(nameof(ListFactory) + ".Sort.Asc." + nameof(AscSort))]
         public static ICollection<double> AscSort(IEnumerable<double> sample)
         {
             var ret = new List<double>(sample);
@@ -262,7 +262,7 @@ namespace CapybaraVS.Script.Lib
         }
 
         //------------------------------------------------------------------
-        [ScriptMethod(nameof(ListFactory) + ".Sort.Asc." + nameof(AscSort), "", "RS=>ListFactory_SortAscStringList")]
+        [ScriptMethod(nameof(ListFactory) + ".Sort.Asc." + nameof(AscSort))]
         public static ICollection<string> AscSort(IEnumerable<string> sample)
         {
             var ret = new List<string>(sample);
@@ -271,7 +271,7 @@ namespace CapybaraVS.Script.Lib
         }
 
         //------------------------------------------------------------------
-        [ScriptMethod(nameof(ListFactory) + ".Filtering." + nameof(Filtering), "", "RS=>ListFactory_FilteringIntList")]
+        [ScriptMethod(nameof(ListFactory) + ".Filtering." + nameof(Filtering))]
         public static ICollection<int> Filtering(IEnumerable<int> sample, Func<int, bool> predicate)
         {
             var ret = new List<int>();
@@ -284,7 +284,7 @@ namespace CapybaraVS.Script.Lib
         }
 
         //------------------------------------------------------------------
-        [ScriptMethod(nameof(ListFactory) + ".Filtering." + nameof(Filtering), "", "RS=>ListFactory_FilteringDoubleList")]
+        [ScriptMethod(nameof(ListFactory) + ".Filtering." + nameof(Filtering))]
         public static ICollection<double> Filtering(IEnumerable<double> sample, Func<double, bool> predicate)
         {
             var ret = new List<double>();
@@ -297,7 +297,7 @@ namespace CapybaraVS.Script.Lib
         }
 
         //------------------------------------------------------------------
-        [ScriptMethod(nameof(ListFactory) + ".Filtering." + nameof(Filtering), "", "RS=>ListFactory_FilteringWordList")]
+        [ScriptMethod(nameof(ListFactory) + ".Filtering." + nameof(Filtering))]
         public static ICollection<string> Filtering(IEnumerable<string> sample, Func<string, bool> predicate)
         {
             var ret = new List<string>();
@@ -310,7 +310,7 @@ namespace CapybaraVS.Script.Lib
         }
 
         //------------------------------------------------------------------
-        [ScriptMethod(nameof(ListFactory) + ".Filtering." + nameof(Distinct), "", "RS=>ListFactory_Distinct")]
+        [ScriptMethod(nameof(ListFactory) + ".Filtering." + nameof(Distinct))]
         public static ICollection<string> Distinct(IEnumerable<string> sample)
         {
             var ret = new List<string>();

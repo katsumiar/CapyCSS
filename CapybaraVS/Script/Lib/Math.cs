@@ -6,14 +6,14 @@ namespace CapybaraVS.Script.Lib
 {
     public class MathLib
     {
-        [ScriptMethod("Math.Literal." + nameof(PI), "", "RS=>MathLib_PI")]
+        [ScriptMethod("Math.Literal." + nameof(PI))]
         public static double PI()
         {
             return Math.PI;
         }
 
         //------------------------------------------------------------------
-        [ScriptMethod("Math.Literal." + nameof(E), "", "RS=>MathLib_E")]
+        [ScriptMethod("Math.Literal." + nameof(E))]
         public static double E()
         {
             return Math.E;
@@ -21,7 +21,7 @@ namespace CapybaraVS.Script.Lib
 
         //------------------------------------------------------------------
 
-        [ScriptMethod("Math.Trigonometric." + nameof(Sin), "", "RS=>MathLib_Sin")]
+        [ScriptMethod("Math.Trigonometric." + nameof(Sin))]
         public static double Sin(double radian)
         {
             return Math.Sin(radian);
@@ -29,7 +29,7 @@ namespace CapybaraVS.Script.Lib
 
         //------------------------------------------------------------------
 
-        [ScriptMethod("Math.Trigonometric." + nameof(Cos), "", "RS=>MathLib_Cos")]
+        [ScriptMethod("Math.Trigonometric." + nameof(Cos))]
         public static double Cos(double radian)
         {
             return Math.Cos(radian);
@@ -37,7 +37,7 @@ namespace CapybaraVS.Script.Lib
 
         //------------------------------------------------------------------
 
-        [ScriptMethod("Math.Trigonometric." + nameof(Tan), "", "RS=>MathLib_Tan")]
+        [ScriptMethod("Math.Trigonometric." + nameof(Tan))]
         public static double Tan(double radian)
         {
             return Math.Tan(radian);
@@ -45,7 +45,7 @@ namespace CapybaraVS.Script.Lib
 
         //------------------------------------------------------------------
 
-        [ScriptMethod("Math.Trigonometric." + nameof(Asin), "", "RS=>MathLib_Asin")]
+        [ScriptMethod("Math.Trigonometric." + nameof(Asin))]
         public static double Asin(double radian)
         {
             return Math.Asin(radian);
@@ -53,7 +53,7 @@ namespace CapybaraVS.Script.Lib
 
         //------------------------------------------------------------------
 
-        [ScriptMethod("Math.Trigonometric." + nameof(Acos), "", "RS=>MathLib_Acos")]
+        [ScriptMethod("Math.Trigonometric." + nameof(Acos))]
         public static double Acos(double radian)
         {
             return Math.Acos(radian);
@@ -61,7 +61,7 @@ namespace CapybaraVS.Script.Lib
 
         //------------------------------------------------------------------
 
-        [ScriptMethod("Math.Trigonometric." + nameof(Atan), "", "RS=>MathLib_Atan")]
+        [ScriptMethod("Math.Trigonometric." + nameof(Atan))]
         public static double Atan(double radian)
         {
             return Math.Atan(radian);
@@ -69,7 +69,7 @@ namespace CapybaraVS.Script.Lib
 
         //------------------------------------------------------------------
 
-        [ScriptMethod("Math.Trigonometric." + nameof(Atan2), "", "RS=>MathLib_Atan2")]
+        [ScriptMethod("Math.Trigonometric." + nameof(Atan2))]
         public static double Atan2(double y, double x)
         {
             return Math.Atan2(y, x);
@@ -77,7 +77,7 @@ namespace CapybaraVS.Script.Lib
 
         //------------------------------------------------------------------
 
-        [ScriptMethod("Math.Trigonometric." + nameof(Sinh), "", "RS=>MathLib_Sinh")]
+        [ScriptMethod("Math.Trigonometric." + nameof(Sinh))]
         public static double Sinh(double radian)
         {
             return Math.Sinh(radian);
@@ -85,7 +85,7 @@ namespace CapybaraVS.Script.Lib
 
         //------------------------------------------------------------------
 
-        [ScriptMethod("Math.Trigonometric." + nameof(Cosh), "", "RS=>MathLib_Cosh")]
+        [ScriptMethod("Math.Trigonometric." + nameof(Cosh))]
         public static double Cosh(double radian)
         {
             return Math.Cosh(radian);
@@ -93,77 +93,77 @@ namespace CapybaraVS.Script.Lib
 
         //------------------------------------------------------------------
 
-        [ScriptMethod("Math.Trigonometric." + nameof(Tanh), "", "RS=>MathLib_Tanh")]
+        [ScriptMethod("Math.Trigonometric." + nameof(Tanh))]
         public static double Tanh(double radian)
         {
             return Math.Tanh(radian);
         }
 
         //------------------------------------------------------------------
-        [ScriptMethod("Math." + nameof(Sqrt), "", "RS=>MathLib_Sqrt")]
+        [ScriptMethod("Math." + nameof(Sqrt))]
         public static double Sqrt(double value)
         {
             return Math.Sqrt(value);
         }
 
         //------------------------------------------------------------------
-        [ScriptMethod("Math." + nameof(Sign), "", "RS=>MathLib_Sign")]
+        [ScriptMethod("Math." + nameof(Sign))]
         public static int Sign(double value)
         {
             return Math.Sign(value);
         }
 
         //------------------------------------------------------------------
-        [ScriptMethod("Math." + nameof(Round), "", "RS=>MathLib_Round")]
+        [ScriptMethod("Math." + nameof(Round))]
         public static double Round(double value)
         {
             return Math.Round(value);
         }
 
         //------------------------------------------------------------------
-        [ScriptMethod("Math." + nameof(Ceiling), "", "RS=>MathLib_Ceiling")]
+        [ScriptMethod("Math." + nameof(Ceiling))]
         public static double Ceiling(double value)
         {
             return Math.Ceiling(value);
         }
 
         //------------------------------------------------------------------
-        [ScriptMethod("Math." + nameof(Floor), "", "RS=>MathLib_Floor")]
+        [ScriptMethod("Math." + nameof(Floor))]
         public static double Floor(double value)
         {
             return Math.Floor(value);
         }
 
         //------------------------------------------------------------------
-        [ScriptMethod("Math." + nameof(Truncate), "", "RS=>MathLib_Truncate")]
+        [ScriptMethod("Math." + nameof(Truncate))]
         public static double Truncate(double value)
         {
             return Math.Truncate(value);
         }
 
         //------------------------------------------------------------------
-        [ScriptMethod("Math." + nameof(Max), "", "RS=>MathLib_Max")]
+        [ScriptMethod("Math." + nameof(Max))]
         public static double Max(double value1, double value2)
         {
             return Math.Max(value1, value2);
         }
 
         //------------------------------------------------------------------
-        [ScriptMethod("Math." + nameof(Min), "", "RS=>MathLib_Min")]
+        [ScriptMethod("Math." + nameof(Min))]
         public static double Min(double value1, double value2)
         {
             return Math.Min(value1, value2);
         }
 
         //------------------------------------------------------------------
-        [ScriptMethod("Math." + nameof(ToRadian), "", "RS=>MathLib_ToRadian")]
+        [ScriptMethod("Math." + nameof(ToRadian))]
         public static double ToRadian(double angle)
         {
             return angle * Math.PI / 180;
         }
 
         //------------------------------------------------------------------
-        [ScriptMethod("Math." + nameof(ToAngle), "", "RS=>MathLib_ToAngle")]
+        [ScriptMethod("Math." + nameof(ToAngle))]
         public static double ToAngle(double radian)
         {
             return radian * 180 / Math.PI;
@@ -198,14 +198,14 @@ namespace CapybaraVS.Script.Lib
         }
 
         //------------------------------------------------------------------
-        [ScriptMethod("Math." + "n!", "", "RS=>MathLib_Factorial")]
+        [ScriptMethod("Math." + "n!")]
         public static int Factorial(int n)
         {
             return Permutation(n, n);
         }
 
         //------------------------------------------------------------------
-        [ScriptMethod("Math." + "nPr", "", "RS=>MathLib_Permutation")]
+        [ScriptMethod("Math." + "nPr")]
         public static int Permutation(int n, int r)
         {
             int ret = 1;
@@ -217,7 +217,7 @@ namespace CapybaraVS.Script.Lib
         }
 
         //------------------------------------------------------------------
-        [ScriptMethod("Math." + "nCr", "", "RS=>MathLib_Combination")]
+        [ScriptMethod("Math." + "nCr")]
         public static int Combination(int n, int r)
         {
             return Permutation(n, r) / Factorial(r);

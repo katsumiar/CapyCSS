@@ -21,7 +21,7 @@ namespace CapybaraVS
                 cultureInfo = new CultureInfo(value);
             }
         }
-        public static Language GetInstance
+        public static Language Instance
         {
             get
             {

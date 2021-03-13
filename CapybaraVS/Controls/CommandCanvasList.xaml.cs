@@ -45,7 +45,7 @@ namespace CapyCSS.Controls
             {
                 ReadAction = (self) =>
                 {
-                    CapybaraVS.Language.GetInstance.LanguageType = Language;
+                    CapybaraVS.Language.Instance.LanguageType = Language;
 
                     if (BackGroundImagePath != null)
                     {
@@ -68,7 +68,7 @@ namespace CapyCSS.Controls
             {
                 WriteAction = () =>
                 {
-                    Language = CapybaraVS.Language.GetInstance.LanguageType;
+                    Language = CapybaraVS.Language.Instance.LanguageType;
 
                     BackGroundImagePath = BaseWorkCanvas.BackGrountImagePath;
 
@@ -752,9 +752,7 @@ namespace CapyCSS.Controls
             helpWindow.ShowDialog();
         }
 
-        [ScriptMethod("System.Application." + nameof(SetWorkCanvasBG), "",
-            "RS=>SA_SetWorkCanvasBG"
-        )]
+        [ScriptMethod("System.Application." + nameof(SetWorkCanvasBG))]
         static public void SetWorkCanvasBG(string path, Stretch stretch = Stretch.UniformToFill, bool overwriteSettings = false)
         {
             if (overwriteSettings)

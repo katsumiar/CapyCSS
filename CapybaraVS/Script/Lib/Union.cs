@@ -6,7 +6,7 @@ namespace CapybaraVS.Script.Lib
 {
     public class Union
     {
-        [ScriptMethod("Union." + "∩", "", "RS=>Union_And")]
+        [ScriptMethod("Union." + "∩")]
         public static ICollection<string> And(IEnumerable<string> A, IEnumerable<string> B)
         {
             var temp = new List<string>();
@@ -24,7 +24,7 @@ namespace CapybaraVS.Script.Lib
         }
 
         //------------------------------------------------------------------
-        [ScriptMethod("Union." + "∪", "", "RS=>Union_Or")]
+        [ScriptMethod("Union." + "∪")]
         public static ICollection<string> Or(IEnumerable<string> A, IEnumerable<string> B)
         {
             var temp = new List<string>(A);
@@ -39,7 +39,7 @@ namespace CapybaraVS.Script.Lib
         }
 
         //------------------------------------------------------------------
-        [ScriptMethod("Union." + "+", "", "RS=>Union_Add")]
+        [ScriptMethod("Union." + "+")]
         public static ICollection<string> Add(IEnumerable<string> A, IEnumerable<string> B)
         {
             var temp = new List<string>(A);
@@ -48,7 +48,7 @@ namespace CapybaraVS.Script.Lib
         }
 
         //------------------------------------------------------------------
-        [ScriptMethod("Union." + "-", "", "RS=>Union_Sub")]
+        [ScriptMethod("Union." + "-")]
         public static ICollection<string> Sub(IEnumerable<string> A, IEnumerable<string> B)
         {
             var temp = new List<string>(A);
@@ -63,7 +63,7 @@ namespace CapybaraVS.Script.Lib
         }
 
         //------------------------------------------------------------------
-        [ScriptMethod("Union." + "=", "", "RS=>Union_IfEq")]
+        [ScriptMethod("Union." + "=")]
         public static bool IfEq(ICollection<string> A, ICollection<string> B)
         {
             if (IfSubset(A, B))
@@ -72,14 +72,14 @@ namespace CapybaraVS.Script.Lib
         }
 
         //------------------------------------------------------------------
-        [ScriptMethod("Union." + "!=", "", "RS=>Union_IfNotEq")]
+        [ScriptMethod("Union." + "!=")]
         public static bool IfNotEq(ICollection<string> A, ICollection<string> B)
         {
             return !IfEq(A, B);
         }
 
         //------------------------------------------------------------------
-        [ScriptMethod("Union." + "⊆", "", "RS=>Union_IfSubset")]
+        [ScriptMethod("Union." + "⊆")]
         public static bool IfSubset(ICollection<string> A, IEnumerable<string> B)
         {
             foreach (var b in B)
@@ -93,14 +93,14 @@ namespace CapybaraVS.Script.Lib
         }
 
         //------------------------------------------------------------------
-        [ScriptMethod("Union." + "!⊆", "", "RS=>Union_IfNotSubset")]
+        [ScriptMethod("Union." + "!⊆")]
         public static bool IfNotSubset(ICollection<string> A, ICollection<string> B)
         {
             return !IfSubset(A, B);
         }
 
         //------------------------------------------------------------------
-        [ScriptMethod("Union." + "⊂", "", "RS=>Union_IfTrueSubset")]
+        [ScriptMethod("Union." + "⊂")]
         public static bool IfTrueSubset(ICollection<string> A, ICollection<string> B)
         {
             if (IfSubset(A, B))
@@ -109,42 +109,42 @@ namespace CapybaraVS.Script.Lib
         }
 
         //------------------------------------------------------------------
-        [ScriptMethod("Union." + "!⊂", "", "RS=>Union_IfNotTrueSubset")]
+        [ScriptMethod("Union." + "!⊂")]
         public static bool IfNotTrueSubset(ICollection<string> A, ICollection<string> B)
         {
             return !IfTrueSubset(A, B);
         }
 
         //------------------------------------------------------------------
-        [ScriptMethod("Union." + "|A∩B|", "", "RS=>Union_AndCount")]
+        [ScriptMethod("Union." + "|A∩B|")]
         public static int AndCount(IEnumerable<string> A, IEnumerable<string> B)
         {
             return And(A, B).Count;
         }
 
         //------------------------------------------------------------------
-        [ScriptMethod("Union." + "|A∪B|", "", "RS=>Union_OrCount")]
+        [ScriptMethod("Union." + "|A∪B|")]
         public static int OrCount(IEnumerable<string> A, IEnumerable<string> B)
         {
             return Or(A, B).Count;
         }
 
         //------------------------------------------------------------------
-        [ScriptMethod("Union." + nameof(Jaccard), "", "RS=>Union_Jaccard")]
+        [ScriptMethod("Union." + nameof(Jaccard))]
         public static double Jaccard(IEnumerable<string> A, IEnumerable<string> B)
         {
             return (double)And(A, B).Count / Or(A, B).Count;
         }
 
         //------------------------------------------------------------------
-        [ScriptMethod("Union." + nameof(Dice), "", "RS=>Union_Dice")]
+        [ScriptMethod("Union." + nameof(Dice))]
         public static double Dice(ICollection<string> A, ICollection<string> B)
         {
             return (double)(And(A, B).Count * 2) / (A.Count + B.Count);
         }
 
         //------------------------------------------------------------------
-        [ScriptMethod("Union." + nameof(Simpson), "", "RS=>Union_Simpson")]
+        [ScriptMethod("Union." + nameof(Simpson))]
         public static double Simpson(ICollection<string> A, ICollection<string> B)
         {
             return (double)And(A, B).Count / Math.Min(A.Count, B.Count);
