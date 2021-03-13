@@ -22,6 +22,7 @@ using System.Windows.Shapes;
 using System.Windows.Threading;
 using System.Xml;
 using System.Xml.Serialization;
+using Path = System.IO.Path;
 
 namespace CapyCSS.Controls
 {
@@ -90,6 +91,11 @@ namespace CapyCSS.Controls
         public static CommandCanvasList Instance = null;
         public static OutPutLog OutPut => Instance.MainLog;
 
+        public static string CAPYCSS_WORK_PATH = null;
+        public static string CAPYCSS_INFO_PATH = @"CapyCSS.xml";
+        public static string CAPYCSS_DLL_DIR_PATH = @"dll"; // DLL保存用ディレクトリ
+        public static string CAPYCSS_PACKAGE_DIR_PATH = @"package"; // NuGet保存用ディレクトリ
+
         public bool IsAutoExecute = false;   // スクリプトの自動実行
         public bool IsAutoExit = false;      // スクリプトの自動実行後自動終了
 
@@ -156,9 +162,7 @@ namespace CapyCSS.Controls
         /// <param name="isAutoExit">自動終了</param>
         public void Setup(
             Window owner,
-            string settingFile,
-            string dllDir,
-            string packageDir,
+            string path,
             Action<string> setTitleFunc = null,
             Action closingFunc = null,
             string autoLoadCbsFile = null,
@@ -167,6 +171,20 @@ namespace CapyCSS.Controls
         {
             ownerWindow = owner;
             SetTitleFunc = setTitleFunc;
+
+            CAPYCSS_WORK_PATH = path;
+            CAPYCSS_INFO_PATH = Path.Combine(CAPYCSS_WORK_PATH, CAPYCSS_INFO_PATH);
+            string dllDir = Path.Combine(CAPYCSS_WORK_PATH, CAPYCSS_DLL_DIR_PATH);
+            string packageDir = Path.Combine(CAPYCSS_WORK_PATH, CAPYCSS_PACKAGE_DIR_PATH);
+            if (!Directory.Exists(dllDir))
+            {
+                Directory.CreateDirectory(dllDir);
+            }
+            if (!Directory.Exists(packageDir))
+            {
+                Directory.CreateDirectory(packageDir);
+            }
+
             DllDir = dllDir;
             PackageDir = packageDir;
             CallClosing = closingFunc;
@@ -175,11 +193,11 @@ namespace CapyCSS.Controls
             {
                 SetLoadCbsFile(autoLoadCbsFile);
             }
-            if (!File.Exists(settingFile))
+            if (!File.Exists(CAPYCSS_INFO_PATH))
             {
-                SaveInfo(settingFile);
+                SaveInfo();
             }
-            LoadInfo(settingFile);
+            LoadInfo(CAPYCSS_INFO_PATH);
             IsAutoExecute = isAutoExecute;
             IsAutoExit = isAutoExit;
             ShowSystemErrorLog();
@@ -188,8 +206,7 @@ namespace CapyCSS.Controls
         /// <summary>
         /// 全体的な情報を保存します。
         /// </summary>
-        /// <param name="filename">保存ファイル名</param>
-        public void SaveInfo(string filename)
+        public void SaveInfo()
         {
             try
             {
@@ -199,7 +216,7 @@ namespace CapyCSS.Controls
                 namespaces.Add(string.Empty, string.Empty);
                 AssetXML.WriteAction();
                 serializer.Serialize(writer, AssetXML, namespaces);
-                StreamWriter swriter = new StreamWriter(filename, false);
+                StreamWriter swriter = new StreamWriter(CAPYCSS_INFO_PATH, false);
                 swriter.WriteLine(writer.ToString());
                 swriter.Close();
             }

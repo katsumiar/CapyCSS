@@ -28,6 +28,8 @@ namespace CapybaraVS.Script
         public List<string> ClassModuleList = new List<string>();
         public List<string> NuGetModuleList = new List<string>();
 
+        public const string BASE_LIB_TAG_PRE = "BaseLib:";
+
         public ApiImporter(CommandCanvas ownerCommandCanvas)
         {
             OwnerCommandCanvas = ownerCommandCanvas;
@@ -296,7 +298,7 @@ namespace CapybaraVS.Script
     {
         public string MenuTitle => "Literal";
 
-        public string HelpText => Language.Instance["BASE_LIB_LiteralType"];
+        public string HelpText => Language.Instance[ApiImporter.BASE_LIB_TAG_PRE + nameof(LiteralType)];
 
         public List<TypeRequest> typeRequests => new List<TypeRequest>()
         {
@@ -309,7 +311,7 @@ namespace CapybaraVS.Script
     {
         public string MenuTitle => "Literal List";
 
-        public string HelpText => Language.Instance["BASE_LIB_LiteralListType"];
+        public string HelpText => Language.Instance[ApiImporter.BASE_LIB_TAG_PRE + nameof(LiteralListType)];
 
         public List<TypeRequest> typeRequests => new List<TypeRequest>()
         { 
@@ -322,7 +324,7 @@ namespace CapybaraVS.Script
     {
         public string AssetCode => nameof(Sum);
 
-        public string HelpText => Language.Instance["BASE_LIB_Sum"];
+        public string HelpText => Language.Instance[ApiImporter.BASE_LIB_TAG_PRE + nameof(Sum)];
 
         public string MenuTitle => AssetCode;
 
@@ -371,7 +373,7 @@ namespace CapybaraVS.Script
     {
         public string AssetCode => nameof(Subroutine);
 
-        public string HelpText => Language.Instance["BASE_LIB_Subroutine"];
+        public string HelpText => Language.Instance[ApiImporter.BASE_LIB_TAG_PRE + nameof(Subroutine)];
 
         public string MenuTitle => "Sequence";
 
@@ -430,7 +432,7 @@ namespace CapybaraVS.Script
     {
         public string AssetCode => nameof(Inc);
 
-        public string HelpText => Language.Instance["BASE_LIB_Inc"];
+        public string HelpText => Language.Instance[ApiImporter.BASE_LIB_TAG_PRE + nameof(Inc)];
 
         public string MenuTitle => AssetCode;
 
@@ -476,7 +478,7 @@ namespace CapybaraVS.Script
     {
         public string AssetCode => nameof(Dec);
 
-        public string HelpText => Language.Instance["BASE_LIB_Dec"];
+        public string HelpText => Language.Instance[ApiImporter.BASE_LIB_TAG_PRE + nameof(Dec)];
 
         public string MenuTitle => AssetCode;
 
@@ -522,7 +524,7 @@ namespace CapybaraVS.Script
     {
         public string AssetCode => nameof(Mod);
 
-        public string HelpText => Language.Instance["BASE_LIB_Mod"];
+        public string HelpText => Language.Instance[ApiImporter.BASE_LIB_TAG_PRE + nameof(Mod)];
 
         public string MenuTitle => AssetCode;
 
@@ -569,7 +571,7 @@ namespace CapybaraVS.Script
     {
         public string AssetCode => nameof(Eq);
 
-        public string HelpText => Language.Instance["BASE_LIB_Eq"];
+        public string HelpText => Language.Instance[ApiImporter.BASE_LIB_TAG_PRE + nameof(Eq)];
 
         public string MenuTitle => "==";
 
@@ -617,7 +619,7 @@ namespace CapybaraVS.Script
     {
         public string AssetCode => nameof(Ge);
 
-        public string HelpText => Language.Instance["BASE_LIB_Ge"];
+        public string HelpText => Language.Instance[ApiImporter.BASE_LIB_TAG_PRE + nameof(Ge)];
 
         public string MenuTitle => ">=";
 
@@ -665,7 +667,7 @@ namespace CapybaraVS.Script
     {
         public string AssetCode => nameof(Gt);
 
-        public string HelpText => Language.Instance["BASE_LIB_Gt"];
+        public string HelpText => Language.Instance[ApiImporter.BASE_LIB_TAG_PRE + nameof(Gt)];
 
         public string MenuTitle => ">";
 
@@ -713,7 +715,7 @@ namespace CapybaraVS.Script
     {
         public string AssetCode => nameof(Le);
 
-        public string HelpText => Language.Instance["BASE_LIB_Le"];
+        public string HelpText => Language.Instance[ApiImporter.BASE_LIB_TAG_PRE + nameof(Le)];
 
         public string MenuTitle => "<=";
 
@@ -761,7 +763,7 @@ namespace CapybaraVS.Script
     {
         public string AssetCode => nameof(Lt);
 
-        public string HelpText => Language.Instance["BASE_LIB_Lt"];
+        public string HelpText => Language.Instance[ApiImporter.BASE_LIB_TAG_PRE + nameof(Lt)];
 
         public string MenuTitle => "<";
 
@@ -809,7 +811,7 @@ namespace CapybaraVS.Script
     {
         public string AssetCode => nameof(And);
 
-        public string HelpText => Language.Instance["BASE_LIB_And"];
+        public string HelpText => Language.Instance[ApiImporter.BASE_LIB_TAG_PRE + nameof(And)];
 
         public string MenuTitle => AssetCode;
 
@@ -861,7 +863,7 @@ namespace CapybaraVS.Script
     {
         public string AssetCode => nameof(Or);
 
-        public string HelpText => Language.Instance["BASE_LIB_Or"];
+        public string HelpText => Language.Instance[ApiImporter.BASE_LIB_TAG_PRE + nameof(Or)];
 
         public string MenuTitle => AssetCode;
 
@@ -913,7 +915,7 @@ namespace CapybaraVS.Script
     {
         public string AssetCode => nameof(Not);
 
-        public string HelpText => Language.Instance["BASE_LIB_Not"];
+        public string HelpText => Language.Instance[ApiImporter.BASE_LIB_TAG_PRE + nameof(Not)];
 
         public string MenuTitle => AssetCode;
 
@@ -958,7 +960,7 @@ namespace CapybaraVS.Script
     {
         public string AssetCode => nameof(Mul);
 
-        public string HelpText => Language.Instance["BASE_LIB_Mul"];
+        public string HelpText => Language.Instance[ApiImporter.BASE_LIB_TAG_PRE + nameof(Mul)];
 
         public string MenuTitle => AssetCode;
 
@@ -1010,7 +1012,7 @@ namespace CapybaraVS.Script
     {
         public string AssetCode => nameof(Div);
 
-        public string HelpText => Language.Instance["BASE_LIB_Div"];
+        public string HelpText => Language.Instance[ApiImporter.BASE_LIB_TAG_PRE + nameof(Div)];
 
         public string MenuTitle => AssetCode;
 
@@ -1061,7 +1063,7 @@ namespace CapybaraVS.Script
     {
         public string AssetCode => nameof(Sub);
 
-        public string HelpText => Language.Instance["BASE_LIB_Sub"];
+        public string HelpText => Language.Instance[ApiImporter.BASE_LIB_TAG_PRE + nameof(Sub)];
 
         public string MenuTitle => AssetCode;
 
@@ -1113,7 +1115,7 @@ namespace CapybaraVS.Script
     {
         public string AssetCode => nameof(CallFile);
 
-        public string HelpText => Language.Instance["BASE_LIB_CallFile"];
+        public string HelpText => Language.Instance[ApiImporter.BASE_LIB_TAG_PRE + nameof(CallFile)];
 
         public string MenuTitle => "Call File";
 
@@ -1174,7 +1176,7 @@ namespace CapybaraVS.Script
     {
         public string AssetCode => nameof(If_Func);
 
-        public string HelpText => Language.Instance["BASE_LIB_If_Func"];
+        public string HelpText => Language.Instance[ApiImporter.BASE_LIB_TAG_PRE + nameof(If_Func)];
 
         public string MenuTitle => $"If<{CbSTUtils.FUNC_STR}>";
 
@@ -1228,7 +1230,7 @@ namespace CapybaraVS.Script
     {
         public string AssetCode => nameof(If_Action);
 
-        public string HelpText => Language.Instance["BASE_LIB_If_Action"];
+        public string HelpText => Language.Instance[ApiImporter.BASE_LIB_TAG_PRE + nameof(If_Action)];
 
         public string MenuTitle => $"If<{CbSTUtils.ACTION_STR}>";
 
@@ -1281,7 +1283,7 @@ namespace CapybaraVS.Script
     {
         public string AssetCode => nameof(If);
 
-        public string HelpText => Language.Instance["BASE_LIB_If"];
+        public string HelpText => Language.Instance[ApiImporter.BASE_LIB_TAG_PRE + nameof(If)];
 
         public string MenuTitle => AssetCode;
 
@@ -1335,7 +1337,7 @@ namespace CapybaraVS.Script
     {
         public string AssetCode => nameof(InvokeFuncNoArg);
 
-        public string HelpText => Language.Instance["BASE_LIB_Invoke"];
+        public string HelpText => Language.Instance[ApiImporter.BASE_LIB_TAG_PRE + nameof(InvokeFuncNoArg)];
 
         public string MenuTitle => $"{CbSTUtils.FUNC_STR}<T>.Invoke";
 
@@ -1383,7 +1385,7 @@ namespace CapybaraVS.Script
     {
         public string AssetCode => nameof(InvokeFuncWithArg);
 
-        public string HelpText => Language.Instance["BASE_LIB_InvokeWithArg"];
+        public string HelpText => Language.Instance[ApiImporter.BASE_LIB_TAG_PRE + nameof(InvokeFuncWithArg)];
 
         public string MenuTitle => $"{CbSTUtils.FUNC_STR}<T1,T2>.Invoke(n)";
 
@@ -1441,7 +1443,7 @@ namespace CapybaraVS.Script
     {
         public string AssetCode => nameof(InvokeActionWithArg);
 
-        public string HelpText => Language.Instance["BASE_LIB_InvokeWithArg"];
+        public string HelpText => Language.Instance[ApiImporter.BASE_LIB_TAG_PRE + nameof(InvokeActionWithArg)];
 
         public string MenuTitle => $"{CbSTUtils.ACTION_STR}<T>.Invoke(n)";
 
@@ -1495,7 +1497,7 @@ namespace CapybaraVS.Script
     {
         public string AssetCode => nameof(For);
 
-        public string HelpText => Language.Instance["BASE_LIB_For"];
+        public string HelpText => Language.Instance[ApiImporter.BASE_LIB_TAG_PRE + nameof(For)];
 
         public string MenuTitle => $"{nameof(For)}<{CbSTUtils.ACTION_STR}>";
 
@@ -1554,7 +1556,7 @@ namespace CapybaraVS.Script
     {
         public string AssetCode => nameof(For_Until);
 
-        public string HelpText => Language.Instance["BASE_LIB_For"];
+        public string HelpText => Language.Instance[ApiImporter.BASE_LIB_TAG_PRE + nameof(For_Until)];
 
         public string MenuTitle => $"{nameof(For_Until)}<{CbSTUtils.ACTION_STR}>";
 
@@ -1618,7 +1620,7 @@ namespace CapybaraVS.Script
     {
         public string AssetCode => nameof(GetVariable);
 
-        public string HelpText => "";
+        public string HelpText => Language.Instance[ApiImporter.BASE_LIB_TAG_PRE + nameof(_GetVariable)];
 
         public bool ImplAsset(MultiRootConnector col, bool isReBuildMode = false)
         {
@@ -1681,7 +1683,7 @@ namespace CapybaraVS.Script
     {
         public string MenuTitle => "Create Variable";
 
-        public new string HelpText => Language.Instance["BASE_LIB_CreateVariable"];
+        public new string HelpText => Language.Instance[ApiImporter.BASE_LIB_TAG_PRE + nameof(CreateVariable)];
 
         public List<TypeRequest> typeRequests => new List<TypeRequest>()
         {
@@ -1694,7 +1696,7 @@ namespace CapybaraVS.Script
     {
         public string MenuTitle => "Create VariableList";
 
-        public new string HelpText => Language.Instance["BASE_LIB_CreateVariableList"];
+        public new string HelpText => Language.Instance[ApiImporter.BASE_LIB_TAG_PRE + nameof(CreateVariableList)];
 
         public List<TypeRequest> typeRequests => new List<TypeRequest>()
         {
@@ -1705,7 +1707,7 @@ namespace CapybaraVS.Script
     //-----------------------------------------------------------------
     class CreateVariableFunc : _GetVariable, IFuncCreateVariableAssetDef
     {
-        public new string HelpText => Language.Instance["BASE_LIB_CreateVariableFunc"];
+        public new string HelpText => Language.Instance[ApiImporter.BASE_LIB_TAG_PRE + nameof(CreateVariableFunc)];
 
         public string MenuTitle => $"Create Variable<{CbSTUtils.FUNC_STR}>";
 
@@ -1720,7 +1722,7 @@ namespace CapybaraVS.Script
     {
         public string MenuTitle => "Get Variable";
 
-        public new string HelpText => Language.Instance["BASE_LIB_GetVariable"];
+        public new string HelpText => Language.Instance[ApiImporter.BASE_LIB_TAG_PRE + nameof(GetVariable)];
 
         public List<TypeRequest> typeRequests => null;    // 選択を意味する
     }
@@ -1730,7 +1732,7 @@ namespace CapybaraVS.Script
     {
         public string AssetCode => nameof(SetVariable);
 
-        public string HelpText => Language.Instance["BASE_LIB_SetVariable"];
+        public string HelpText => Language.Instance[ApiImporter.BASE_LIB_TAG_PRE + nameof(SetVariable)];
 
         public string MenuTitle => "Set Variable";
 
@@ -1800,7 +1802,7 @@ namespace CapybaraVS.Script
     {
         public string AssetCode => nameof(CallerArguments);
 
-        public string HelpText => Language.Instance["BASE_LIB_CallerArgument"];
+        public string HelpText => Language.Instance[ApiImporter.BASE_LIB_TAG_PRE + nameof(CallerArguments)];
 
         public string MenuTitle => "DummyArguments";
 
@@ -1858,7 +1860,7 @@ namespace CapybaraVS.Script
     {
         public string AssetCode => nameof(Foreach);
 
-        public string HelpText => Language.Instance["BASE_LIB_Foreach"];
+        public string HelpText => Language.Instance[ApiImporter.BASE_LIB_TAG_PRE + nameof(Foreach)];
 
         public string MenuTitle => $"Foreach {CbSTUtils.LIST_STR}<{CbSTUtils.ACTION_STR}>";
 
@@ -1914,7 +1916,7 @@ namespace CapybaraVS.Script
     {
         public string AssetCode => nameof(ForeachIEnumerable);
 
-        public string HelpText => Language.Instance["BASE_LIB_Foreach"];
+        public string HelpText => Language.Instance[ApiImporter.BASE_LIB_TAG_PRE + nameof(ForeachIEnumerable)];
 
         public string MenuTitle => $"Foreach IEnumerable<{CbSTUtils.ACTION_STR}>";
 
@@ -1970,7 +1972,7 @@ namespace CapybaraVS.Script
     {
         public string AssetCode => nameof(SwitchEnum);
 
-        public string HelpText => "Switch";
+        public string HelpText => Language.Instance[ApiImporter.BASE_LIB_TAG_PRE + nameof(SwitchEnum)];
 
         public string MenuTitle => $"Switch Case<{CbSTUtils.ENUM_STR}>";
 
@@ -2056,7 +2058,7 @@ namespace CapybaraVS.Script
     {
         public string AssetCode => nameof(ConsoleOut);
 
-        public string HelpText => Language.Instance["BASE_LIB_ConsoleOut"];
+        public string HelpText => Language.Instance[ApiImporter.BASE_LIB_TAG_PRE + nameof(ConsoleOut)];
 
         public string MenuTitle => "ConsoleOut";
 
@@ -2106,7 +2108,7 @@ namespace CapybaraVS.Script
     {
         public string AssetCode => nameof(Abs);
 
-        public string HelpText => Language.Instance["BASE_LIB_Abs"];
+        public string HelpText => Language.Instance[ApiImporter.BASE_LIB_TAG_PRE + nameof(Abs)];
 
         public string MenuTitle => AssetCode;
 
@@ -2151,7 +2153,7 @@ namespace CapybaraVS.Script
     {
         public string AssetCode => nameof(GetVariableFromIndex);
 
-        public string HelpText => Language.Instance["BASE_LIB_GetVariableFromIndex"];
+        public string HelpText => Language.Instance[ApiImporter.BASE_LIB_TAG_PRE + nameof(GetVariableFromIndex)];
 
         public string MenuTitle => "Get VariableList[index]";
 
@@ -2206,7 +2208,7 @@ namespace CapybaraVS.Script
     {
         public string AssetCode => nameof(SetVariableToIndex);
 
-        public string HelpText => Language.Instance["BASE_LIB_SetVariableToIndex"];
+        public string HelpText => Language.Instance[ApiImporter.BASE_LIB_TAG_PRE + nameof(SetVariableToIndex)];
 
         public string MenuTitle => "Set VariableList[index]";
 
@@ -2263,7 +2265,7 @@ namespace CapybaraVS.Script
     {
         public string AssetCode => nameof(AppendVariableList);
 
-        public string HelpText => Language.Instance["BASE_LIB_AppendVariableList"];
+        public string HelpText => Language.Instance[ApiImporter.BASE_LIB_TAG_PRE + nameof(AppendVariableList)];
 
         public string MenuTitle => "Append VariableList";
 
@@ -2317,7 +2319,7 @@ namespace CapybaraVS.Script
     {
         public string AssetCode => nameof(Count);
 
-        public string HelpText => Language.Instance["BASE_LIB_Count"];
+        public string HelpText => Language.Instance[ApiImporter.BASE_LIB_TAG_PRE + nameof(Count)];
 
         public string MenuTitle => AssetCode;
 
@@ -2362,7 +2364,7 @@ namespace CapybaraVS.Script
     {
         public string AssetCode => nameof(Contains);
 
-        public string HelpText => Language.Instance["BASE_LIB_Contains"];
+        public string HelpText => Language.Instance[ApiImporter.BASE_LIB_TAG_PRE + nameof(Contains)];
 
         public string MenuTitle => AssetCode;
 
@@ -2408,7 +2410,7 @@ namespace CapybaraVS.Script
     {
         public string AssetCode => nameof(GetListIndex);
 
-        public string HelpText => Language.Instance["BASE_LIB_GetListIndex"];
+        public string HelpText => Language.Instance[ApiImporter.BASE_LIB_TAG_PRE + nameof(GetListIndex)];
 
         public string MenuTitle => "Get List[index]";
 
@@ -2455,7 +2457,7 @@ namespace CapybaraVS.Script
     {
         public string AssetCode => nameof(GetListLast);
 
-        public string HelpText => Language.Instance["BASE_LIB_GetListLast"];
+        public string HelpText => Language.Instance[ApiImporter.BASE_LIB_TAG_PRE + nameof(GetListLast)];
 
         public string MenuTitle => "Get List[last]";
 
@@ -2501,7 +2503,7 @@ namespace CapybaraVS.Script
     {
         public string AssetCode => nameof(SetListIndex);
 
-        public string HelpText => Language.Instance["BASE_LIB_SetListIndex"];
+        public string HelpText => Language.Instance[ApiImporter.BASE_LIB_TAG_PRE + nameof(SetListIndex)];
 
         public string MenuTitle => "Set List[index]";
 
@@ -2557,7 +2559,7 @@ namespace CapybaraVS.Script
     {
         public string AssetCode => nameof(Append);
 
-        public string HelpText => Language.Instance["BASE_LIB_Append"];
+        public string HelpText => Language.Instance[ApiImporter.BASE_LIB_TAG_PRE + nameof(Append)];
 
         public string MenuTitle => AssetCode;
 
@@ -2613,7 +2615,7 @@ namespace CapybaraVS.Script
     {
         public string AssetCode => nameof(Pow);
 
-        public string HelpText => Language.Instance["BASE_LIB_Pow"];
+        public string HelpText => Language.Instance[ApiImporter.BASE_LIB_TAG_PRE + nameof(Pow)];
 
         public string MenuTitle => AssetCode;
 
@@ -2662,7 +2664,7 @@ namespace CapybaraVS.Script
     {
         public string AssetCode => nameof(Rand);
 
-        public string HelpText => Language.Instance["BASE_LIB_Rand"];
+        public string HelpText => Language.Instance[ApiImporter.BASE_LIB_TAG_PRE + nameof(Rand)];
 
         public string MenuTitle => AssetCode;
 

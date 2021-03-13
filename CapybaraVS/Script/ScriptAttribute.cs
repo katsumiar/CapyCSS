@@ -812,25 +812,30 @@ namespace CapybaraVS.Script
                     }
                 }
 
+                string helpCode = $"{classType.Namespace}:" + nodeName.Replace(" ", "_");
+
                 // スクリプトノード用のヒント
-                string nodeHint = "";
+                string nodeHint = null;
                 string nodeHintTitle = menuName;
                 if (methodAttr != null)
                 {
                     // ノード用ヒントをリソースから取得
 
-                    nodeHint = Language.Instance["NODE_" + nodeCode];
+                    nodeHint = Language.Instance[$"Assembly.{helpCode}/node"];
                 }
-                nodeHint = $"【{nodeHintTitle}】" + (nodeHint != "" ? Environment.NewLine : "") + nodeHint;
+                nodeHint = $"【{nodeHintTitle}】" + (nodeHint is null ? "" : Environment.NewLine + nodeHint);
 
                 // メニュー用のヒント
-                string hint = "";
+                string hint = null;
                 if (methodAttr != null)
                 {
                     // メニュー用ヒントをリソースから取得
 
-                    hint = Language.Instance["MENU_" + nodeCode];
+                    hint = Language.Instance[$"Assembly.{helpCode}/menu"];
                 }
+
+                if (hint is null)
+                    hint = "";
 
                 // ノード化依頼用の情報をセット
                 AutoImplementFunctionInfo autoImplementFunctionInfo = new AutoImplementFunctionInfo()
