@@ -212,6 +212,8 @@ namespace CapybaraVS.Controls.BaseControls
             ScriptWorkCanvas = WorkCanvas;
             ScriptWorkStack = WorkStack;
 
+            ScriptWorkCanvas.Cursor = Cursors.Wait;
+
             TypeMenuWindow = CommandWindow.Create();
             TypeMenuWindow.Title = "Type";
             TypeMenuWindow.treeViewCommand.OwnerCommandCanvas = this;
@@ -235,6 +237,8 @@ namespace CapybaraVS.Controls.BaseControls
                 ScriptWorkCanvas.Cursor = Cursors.Hand;
                 CommandMenu.Cursor = Cursors.Hand;
             });
+
+            ScriptWorkCanvas.Cursor = null;
         }
 
         ~CommandCanvas()
