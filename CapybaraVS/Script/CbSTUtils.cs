@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Threading;
 using CapyCSS.Script;
 using CbVS.Script;
 
@@ -162,6 +163,8 @@ namespace CapybaraVS.Script
             { nameof(CbVoid), VOID_STR },
         };
 
+        private static ReaderWriterLock CbTypeNameListRwLock = new ReaderWriterLock();
+
         /// <summary>
         /// オブジェクトの型の文字列名を返します。
         /// </summary>
@@ -169,13 +172,7 @@ namespace CapybaraVS.Script
         /// <returns></returns>
         static public string GetTypeName(object obj)
         {
-            string typeName = obj.GetType().FullName;
-            string newName = _GetTypeName(obj.GetType());
-            if (!CbTypeNameList.ContainsKey(typeName))
-            {
-                CbTypeNameList.Add(typeName, newName);
-            }
-            return newName;
+            return GetTypeName(obj.GetType());
         }
 
         /// <summary>
@@ -185,10 +182,30 @@ namespace CapybaraVS.Script
         /// <returns></returns>
         static public string GetTypeName(Type type)
         {
+            string typeName = type.FullName;
             string newName = _GetTypeName(type);
-            if (!CbTypeNameList.ContainsKey(type.FullName))
+
+            try
             {
-                CbTypeNameList.Add(type.FullName, newName);
+                CbTypeNameListRwLock.AcquireReaderLock(Timeout.Infinite);
+                if (CbTypeNameList.ContainsKey(typeName))
+                {
+                    return newName;
+                }
+            }
+            finally
+            {
+                CbTypeNameListRwLock.ReleaseReaderLock();
+            }
+
+            try
+            {
+                CbTypeNameListRwLock.AcquireWriterLock(Timeout.Infinite);
+                CbTypeNameList.Add(typeName, newName);
+            }
+            finally
+            {
+                CbTypeNameListRwLock.ReleaseWriterLock();
             }
             return newName;
         }
@@ -230,9 +247,17 @@ namespace CapybaraVS.Script
                 typeName = typeName.Replace("[]", "");
             }
 
-            if (CbTypeNameList.ContainsKey(typeName))
+            try
             {
-                return CbTypeNameList[typeName];
+                CbTypeNameListRwLock.AcquireReaderLock(Timeout.Infinite);
+                if (CbTypeNameList.ContainsKey(typeName))
+                {
+                    return CbTypeNameList[typeName];
+                }
+            }
+            finally
+            {
+                CbTypeNameListRwLock.ReleaseReaderLock();
             }
 
             if (type.IsGenericType ||
@@ -269,9 +294,17 @@ namespace CapybaraVS.Script
             // ネームスペースを省略できるかチェックをここで行い、省略できるなら省略する
             typeName = Optimisation(typeName);
 
-            if (CbTypeNameList.ContainsKey(typeName))
+            try
             {
-                typeName = CbTypeNameList[typeName];
+                CbTypeNameListRwLock.AcquireReaderLock(Timeout.Infinite);
+                if (CbTypeNameList.ContainsKey(typeName))
+                {
+                    typeName = CbTypeNameList[typeName];
+                }
+            }
+            finally
+            {
+                CbTypeNameListRwLock.ReleaseReaderLock();
             }
 
             if (type.IsEnum || type.IsInterface || type.IsClass)
@@ -310,9 +343,17 @@ namespace CapybaraVS.Script
             string reverseName = testName[0];
             for (int i = 1; i < testName.Count; ++i)
             {
-                if (!CbTypeNameList.ContainsValue(reverseName))
+                try
                 {
-                    break;
+                    CbTypeNameListRwLock.AcquireReaderLock(Timeout.Infinite);
+                    if (!CbTypeNameList.ContainsValue(reverseName))
+                    {
+                        break;
+                    }
+                }
+                finally
+                {
+                    CbTypeNameListRwLock.ReleaseReaderLock();
                 }
                 reverseName += "." + testName[i];
             }
