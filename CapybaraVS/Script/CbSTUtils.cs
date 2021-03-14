@@ -187,21 +187,11 @@ namespace CapybaraVS.Script
 
             try
             {
-                CbTypeNameListRwLock.AcquireReaderLock(Timeout.Infinite);
-                if (CbTypeNameList.ContainsKey(typeName))
-                {
-                    return newName;
-                }
-            }
-            finally
-            {
-                CbTypeNameListRwLock.ReleaseReaderLock();
-            }
-
-            try
-            {
                 CbTypeNameListRwLock.AcquireWriterLock(Timeout.Infinite);
-                CbTypeNameList.Add(typeName, newName);
+                if (!CbTypeNameList.ContainsKey(typeName))
+                {
+                    CbTypeNameList.Add(typeName, newName);
+                }
             }
             finally
             {
