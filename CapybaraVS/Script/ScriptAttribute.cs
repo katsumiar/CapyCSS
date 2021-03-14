@@ -368,7 +368,7 @@ namespace CapybaraVS.Script
                 if (!IsAcceptClass(classType))
                     continue;   // 扱えない
 
-                if (importNameList != null && !importNameList.Any(n => type.FullName == n))
+                if (importNameList != null && !importNameList.Any(n => classType.FullName == n))
                     continue;
 
                 if (!classType.IsAbstract)
@@ -812,17 +812,13 @@ namespace CapybaraVS.Script
                     }
                 }
 
-                string helpCode = $"{classType.Namespace}:" + nodeName.Replace(" ", "_");
+                string helpCode = $"{classType.Namespace}:{classType.Name}." + nodeName.Replace(" ", "_");
 
                 // スクリプトノード用のヒント
                 string nodeHint = null;
                 string nodeHintTitle = menuName;
-                if (methodAttr != null)
-                {
-                    // ノード用ヒントをリソースから取得
-
-                    nodeHint = Language.Instance[$"Assembly.{helpCode}/node"];
-                }
+                // ノード用ヒントを取得
+                nodeHint = Language.Instance[$"Assembly.{helpCode}/node"];
                 nodeHint = $"【{nodeHintTitle}】" + (nodeHint is null ? "" : Environment.NewLine + nodeHint);
 
                 // メニュー用のヒント
@@ -834,6 +830,8 @@ namespace CapybaraVS.Script
                     hint = Language.Instance[$"Assembly.{helpCode}/menu"];
                 }
 
+                if (hint is null)
+                    hint = nodeHint;
                 if (hint is null)
                     hint = "";
 

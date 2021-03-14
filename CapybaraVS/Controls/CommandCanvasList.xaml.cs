@@ -813,6 +813,7 @@ namespace CapyCSS.Controls
                 node.Dispose();
             }
             CanvasData.Clear();
+            CapybaraVS.Language.Instance.Dispose();
             ToolExec.KillProcess();
         }
     }
