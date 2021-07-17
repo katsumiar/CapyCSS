@@ -26,8 +26,10 @@
         <RootFunc AssetType="FuncType" AssetFuncType="ConsoleOut">
           <AttachVariableIds />
           <AttachVariableId>0</AttachVariableId>
-          <AssetValueType>System.String</AssetValueType>
-          <RootConnector PointId="260">
+          <AssetValueTypes>
+            <string>System.String</string>
+          </AssetValueTypes>
+          <RootConnector PointId="298">
             <Caption>
               <LabelString>ConsoleOut</LabelString>
             </Caption>
@@ -35,11 +37,11 @@
             <ForcedChecked>false</ForcedChecked>
             <Connector>
               <LinkList>
-                <PointID>277</PointID>
+                <PointID>315</PointID>
               </LinkList>
             </Connector>
             <Arguments>
-              <LinkConnector PointId="261">
+              <LinkConnector PointId="299">
                 <Value />
                 <CastConnect>false</CastConnect>
                 <ParamInfo>
@@ -80,8 +82,10 @@
         <RootFunc AssetType="FuncType" AssetFuncType="CallerArguments">
           <AttachVariableIds />
           <AttachVariableId>0</AttachVariableId>
-          <AssetValueType>System.String</AssetValueType>
-          <RootConnector PointId="264">
+          <AssetValueTypes>
+            <string>System.String</string>
+          </AssetValueTypes>
+          <RootConnector PointId="302">
             <Caption>
               <LabelString>DummyArguments&lt;string&gt;</LabelString>
             </Caption>
@@ -89,11 +93,11 @@
             <ForcedChecked>false</ForcedChecked>
             <Connector>
               <LinkList>
-                <PointID>261</PointID>
+                <PointID>299</PointID>
               </LinkList>
             </Connector>
             <Arguments>
-              <LinkConnector PointId="265">
+              <LinkConnector PointId="303">
                 <Value>INDEX.ARG_1</Value>
                 <CastConnect>false</CastConnect>
                 <ParamInfo>
@@ -119,8 +123,10 @@
         <RootFunc AssetType="FuncType" AssetFuncType="Foreach">
           <AttachVariableIds />
           <AttachVariableId>0</AttachVariableId>
-          <AssetValueType>System.Collections.Generic.ICollection`1[[System.String, System.Private.CoreLib, Version=5.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]</AssetValueType>
-          <RootConnector PointId="269">
+          <AssetValueTypes>
+            <string>System.Collections.Generic.ICollection`1[[System.String, System.Private.CoreLib, Version=5.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]</string>
+          </AssetValueTypes>
+          <RootConnector PointId="307">
             <Caption>
               <LabelString>Foreach Action&lt;string&gt;.Invoke</LabelString>
             </Caption>
@@ -128,11 +134,11 @@
             <ForcedChecked>false</ForcedChecked>
             <Connector>
               <LinkList>
-                <PointID>283</PointID>
+                <PointID>321</PointID>
               </LinkList>
             </Connector>
             <Arguments>
-              <LinkConnector PointId="270">
+              <LinkConnector PointId="308">
                 <CastConnect>false</CastConnect>
                 <ParamInfo>
                   <ParamName>sample</ParamName>
@@ -143,7 +149,7 @@
                 </ParamInfo>
                 <LinkConnectorList>
                   <List>
-                    <LinkConnector PointId="272">
+                    <LinkConnector PointId="310">
                       <Value>Apple</Value>
                       <CastConnect>false</CastConnect>
                       <ParamInfo>
@@ -158,7 +164,7 @@
                         <IsOpenList>true</IsOpenList>
                       </LinkConnectorList>
                     </LinkConnector>
-                    <LinkConnector PointId="274">
+                    <LinkConnector PointId="312">
                       <Value>Banana</Value>
                       <CastConnect>false</CastConnect>
                       <ParamInfo>
@@ -173,7 +179,7 @@
                         <IsOpenList>true</IsOpenList>
                       </LinkConnectorList>
                     </LinkConnector>
-                    <LinkConnector PointId="276">
+                    <LinkConnector PointId="314">
                       <Value>Pineapple</Value>
                       <CastConnect>false</CastConnect>
                       <ParamInfo>
@@ -192,7 +198,7 @@
                   <IsOpenList>true</IsOpenList>
                 </LinkConnectorList>
               </LinkConnector>
-              <LinkConnector PointId="277">
+              <LinkConnector PointId="315">
                 <Value>[Action&lt;string&gt;()]&lt;null&gt;</Value>
                 <CastConnect>false</CastConnect>
                 <ParamInfo>
@@ -218,18 +224,20 @@
         <RootFunc AssetType="FuncType" AssetFuncType="Subroutine">
           <AttachVariableIds />
           <AttachVariableId>0</AttachVariableId>
-          <AssetValueType>System.Collections.Generic.ICollection`1[[System.Object, System.Private.CoreLib, Version=5.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]</AssetValueType>
-          <RootConnector PointId="280">
+          <AssetValueTypes>
+            <string>System.Collections.Generic.ICollection`1[[System.Object, System.Private.CoreLib, Version=5.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]</string>
+          </AssetValueTypes>
+          <RootConnector PointId="318">
             <Caption>
               <LabelString>Sequence</LabelString>
             </Caption>
-            <Value>void</Value>
+            <Value>[object]&lt;null&gt;</Value>
             <ForcedChecked>false</ForcedChecked>
             <Connector>
               <LinkList />
             </Connector>
             <Arguments>
-              <LinkConnector PointId="281">
+              <LinkConnector PointId="319">
                 <CastConnect>false</CastConnect>
                 <ParamInfo>
                   <ParamName>call list</ParamName>
@@ -240,14 +248,14 @@
                 </ParamInfo>
                 <LinkConnectorList>
                   <List>
-                    <LinkConnector PointId="283">
+                    <LinkConnector PointId="321">
                       <Value>[object]&lt;null&gt;</Value>
                       <CastConnect>false</CastConnect>
                       <ParamInfo>
-                        <ParamName> </ParamName>
+                        <ParamName />
                         <ParamNameLabelOverlap />
                         <ParamNameLabel>
-                          <LabelString> </LabelString>
+                          <LabelString />
                         </ParamNameLabel>
                       </ParamInfo>
                       <LinkConnectorList>

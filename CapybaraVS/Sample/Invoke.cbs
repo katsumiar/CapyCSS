@@ -26,8 +26,10 @@
         <RootFunc AssetType="FuncType" AssetFuncType="ConsoleOut">
           <AttachVariableIds />
           <AttachVariableId>0</AttachVariableId>
-          <AssetValueType>System.String</AssetValueType>
-          <RootConnector PointId="373">
+          <AssetValueTypes>
+            <string>System.String</string>
+          </AssetValueTypes>
+          <RootConnector PointId="480">
             <Caption>
               <LabelString>ConsoleOut</LabelString>
             </Caption>
@@ -35,11 +37,11 @@
             <ForcedChecked>false</ForcedChecked>
             <Connector>
               <LinkList>
-                <PointID>389</PointID>
+                <PointID>495</PointID>
               </LinkList>
             </Connector>
             <Arguments>
-              <LinkConnector PointId="374">
+              <LinkConnector PointId="481">
                 <Value />
                 <CastConnect>false</CastConnect>
                 <ParamInfo>
@@ -65,8 +67,10 @@
         <RootFunc AssetType="FuncType" AssetFuncType="ConsoleOut">
           <AttachVariableIds />
           <AttachVariableId>0</AttachVariableId>
-          <AssetValueType>System.String</AssetValueType>
-          <RootConnector PointId="377">
+          <AssetValueTypes>
+            <string>System.String</string>
+          </AssetValueTypes>
+          <RootConnector PointId="484">
             <Caption>
               <LabelString>ConsoleOut</LabelString>
             </Caption>
@@ -74,11 +78,11 @@
             <ForcedChecked>false</ForcedChecked>
             <Connector>
               <LinkList>
-                <PointID>383</PointID>
+                <PointID>489</PointID>
               </LinkList>
             </Connector>
             <Arguments>
-              <LinkConnector PointId="378">
+              <LinkConnector PointId="485">
                 <Value>Call with no arguments</Value>
                 <CastConnect>false</CastConnect>
                 <ParamInfo>
@@ -120,8 +124,10 @@
         <RootFunc AssetType="FuncType" AssetFuncType="InvokeFuncNoArg">
           <AttachVariableIds />
           <AttachVariableId>0</AttachVariableId>
-          <AssetValueType>System.Func`1[[System.String, System.Private.CoreLib, Version=5.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]</AssetValueType>
-          <RootConnector PointId="382">
+          <AssetValueTypes>
+            <string>System.Func`1[[System.String, System.Private.CoreLib, Version=5.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]</string>
+          </AssetValueTypes>
+          <RootConnector PointId="488">
             <Caption>
               <LabelString>Func&lt;string&gt;.Invoke</LabelString>
             </Caption>
@@ -129,11 +135,11 @@
             <ForcedChecked>false</ForcedChecked>
             <Connector>
               <LinkList>
-                <PointID>396</PointID>
+                <PointID>505</PointID>
               </LinkList>
             </Connector>
             <Arguments>
-              <LinkConnector PointId="383">
+              <LinkConnector PointId="489">
                 <Value>[Func&lt;string&gt;()]&lt;null&gt;</Value>
                 <CastConnect>false</CastConnect>
                 <ParamInfo>
@@ -159,8 +165,10 @@
         <RootFunc AssetType="FuncType" AssetFuncType="InvokeFuncWithArg">
           <AttachVariableIds />
           <AttachVariableId>0</AttachVariableId>
-          <AssetValueType>System.Func`2[[System.String, System.Private.CoreLib, Version=5.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.String, System.Private.CoreLib, Version=5.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]</AssetValueType>
-          <RootConnector PointId="387">
+          <AssetValueTypes>
+            <string>System.Func`2[[System.String, System.Private.CoreLib, Version=5.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.String, System.Private.CoreLib, Version=5.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]</string>
+          </AssetValueTypes>
+          <RootConnector PointId="493">
             <Caption>
               <LabelString>Func&lt;string, string&gt;.Invoke</LabelString>
             </Caption>
@@ -168,11 +176,11 @@
             <ForcedChecked>false</ForcedChecked>
             <Connector>
               <LinkList>
-                <PointID>397</PointID>
+                <PointID>507</PointID>
               </LinkList>
             </Connector>
             <Arguments>
-              <LinkConnector PointId="388">
+              <LinkConnector PointId="494">
                 <Value>Call with arguments</Value>
                 <CastConnect>false</CastConnect>
                 <ParamInfo>
@@ -187,7 +195,7 @@
                   <IsOpenList>true</IsOpenList>
                 </LinkConnectorList>
               </LinkConnector>
-              <LinkConnector PointId="389">
+              <LinkConnector PointId="495">
                 <Value>[Func&lt;string, string&gt;()]&lt;null&gt;</Value>
                 <CastConnect>false</CastConnect>
                 <ParamInfo>
@@ -213,8 +221,10 @@
         <RootFunc AssetType="FuncType" AssetFuncType="CallerArguments">
           <AttachVariableIds />
           <AttachVariableId>0</AttachVariableId>
-          <AssetValueType>System.String</AssetValueType>
-          <RootConnector PointId="392">
+          <AssetValueTypes>
+            <string>System.String</string>
+          </AssetValueTypes>
+          <RootConnector PointId="498">
             <Caption>
               <LabelString>DummyArguments&lt;string&gt;</LabelString>
             </Caption>
@@ -222,11 +232,11 @@
             <ForcedChecked>false</ForcedChecked>
             <Connector>
               <LinkList>
-                <PointID>374</PointID>
+                <PointID>481</PointID>
               </LinkList>
             </Connector>
             <Arguments>
-              <LinkConnector PointId="393">
+              <LinkConnector PointId="499">
                 <Value>INDEX.ARG_1</Value>
                 <CastConnect>false</CastConnect>
                 <ParamInfo>
@@ -252,8 +262,10 @@
         <RootFunc AssetType="FuncType" AssetFuncType="Subroutine">
           <AttachVariableIds />
           <AttachVariableId>0</AttachVariableId>
-          <AssetValueType>System.Collections.Generic.ICollection`1[[System.Object, System.Private.CoreLib, Version=5.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]</AssetValueType>
-          <RootConnector PointId="394">
+          <AssetValueTypes>
+            <string>System.Collections.Generic.ICollection`1[[System.Object, System.Private.CoreLib, Version=5.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]</string>
+          </AssetValueTypes>
+          <RootConnector PointId="502">
             <Caption>
               <LabelString>Sequence</LabelString>
             </Caption>
@@ -263,7 +275,7 @@
               <LinkList />
             </Connector>
             <Arguments>
-              <LinkConnector PointId="395">
+              <LinkConnector PointId="503">
                 <CastConnect>false</CastConnect>
                 <ParamInfo>
                   <ParamName>call list</ParamName>
@@ -274,7 +286,7 @@
                 </ParamInfo>
                 <LinkConnectorList>
                   <List>
-                    <LinkConnector PointId="396">
+                    <LinkConnector PointId="505">
                       <Value>[object]&lt;null&gt;</Value>
                       <CastConnect>false</CastConnect>
                       <ParamInfo>
@@ -289,7 +301,7 @@
                         <IsOpenList>true</IsOpenList>
                       </LinkConnectorList>
                     </LinkConnector>
-                    <LinkConnector PointId="397">
+                    <LinkConnector PointId="507">
                       <Value>[object]&lt;null&gt;</Value>
                       <CastConnect>false</CastConnect>
                       <ParamInfo>

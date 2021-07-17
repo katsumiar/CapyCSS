@@ -26,8 +26,10 @@
         <RootFunc AssetType="FuncType" AssetFuncType="CbVS.Script.Lib.Image.OutImageWindow#_string_BitmapSource_MediaOption">
           <AttachVariableIds />
           <AttachVariableId>0</AttachVariableId>
-          <AssetValueType>System.Double</AssetValueType>
-          <RootConnector PointId="151">
+          <AssetValueTypes>
+            <string>System.Double</string>
+          </AssetValueTypes>
+          <RootConnector PointId="416">
             <Caption>
               <LabelString>OutImageWindow</LabelString>
             </Caption>
@@ -35,11 +37,11 @@
             <ForcedChecked>false</ForcedChecked>
             <Connector>
               <LinkList>
-                <PointID>186</PointID>
+                <PointID>451</PointID>
               </LinkList>
             </Connector>
             <Arguments>
-              <LinkConnector PointId="152">
+              <LinkConnector PointId="417">
                 <Value />
                 <CastConnect>false</CastConnect>
                 <ParamInfo>
@@ -54,7 +56,7 @@
                   <IsOpenList>true</IsOpenList>
                 </LinkConnectorList>
               </LinkConnector>
-              <LinkConnector PointId="153">
+              <LinkConnector PointId="418">
                 <Value>[BitmapSource]&lt;null&gt;</Value>
                 <CastConnect>false</CastConnect>
                 <ParamInfo>
@@ -69,7 +71,7 @@
                   <IsOpenList>true</IsOpenList>
                 </LinkConnectorList>
               </LinkConnector>
-              <LinkConnector PointId="154">
+              <LinkConnector PointId="419">
                 <Value>[MediaOption]&lt;null&gt;</Value>
                 <CastConnect>false</CastConnect>
                 <ParamInfo>
@@ -95,8 +97,10 @@
         <RootFunc AssetType="FuncType" AssetFuncType="CbVS.Script.Lib.Image.CreateRGBAGlayScaleFilter#_GlayScaleType_IRGBAFilter">
           <AttachVariableIds />
           <AttachVariableId>0</AttachVariableId>
-          <AssetValueType>System.Double</AssetValueType>
-          <RootConnector PointId="158">
+          <AssetValueTypes>
+            <string>System.Double</string>
+          </AssetValueTypes>
+          <RootConnector PointId="423">
             <Caption>
               <LabelString>CreateRGBAGlayScaleFilter</LabelString>
             </Caption>
@@ -104,11 +108,11 @@
             <ForcedChecked>false</ForcedChecked>
             <Connector>
               <LinkList>
-                <PointID>200</PointID>
+                <PointID>467</PointID>
               </LinkList>
             </Connector>
             <Arguments>
-              <LinkConnector PointId="159">
+              <LinkConnector PointId="424">
                 <Value>GlayScaleType.BT_709</Value>
                 <CastConnect>false</CastConnect>
                 <ParamInfo>
@@ -123,7 +127,7 @@
                   <IsOpenList>true</IsOpenList>
                 </LinkConnectorList>
               </LinkConnector>
-              <LinkConnector PointId="160">
+              <LinkConnector PointId="425">
                 <Value>[IRGBAFilter]&lt;null&gt;</Value>
                 <CastConnect>false</CastConnect>
                 <ParamInfo>
@@ -149,8 +153,10 @@
         <RootFunc AssetType="FuncType" AssetFuncType="CbVS.Script.Lib.Image.CreateRGBA3x3DilationFilter#">
           <AttachVariableIds />
           <AttachVariableId>0</AttachVariableId>
-          <AssetValueType>System.Double</AssetValueType>
-          <RootConnector PointId="162">
+          <AssetValueTypes>
+            <string>System.Double</string>
+          </AssetValueTypes>
+          <RootConnector PointId="427">
             <Caption>
               <LabelString>CreateRGBA3x3DilationFilter</LabelString>
             </Caption>
@@ -158,7 +164,7 @@
             <ForcedChecked>false</ForcedChecked>
             <Connector>
               <LinkList>
-                <PointID>205</PointID>
+                <PointID>457</PointID>
               </LinkList>
             </Connector>
             <Arguments />
@@ -172,8 +178,10 @@
         <RootFunc AssetType="FuncType" AssetFuncType="CbVS.Script.Lib.Image.CreateRGBANegativePositiveReversalFilter#">
           <AttachVariableIds />
           <AttachVariableId>0</AttachVariableId>
-          <AssetValueType>System.Double</AssetValueType>
-          <RootConnector PointId="164">
+          <AssetValueTypes>
+            <string>System.Double</string>
+          </AssetValueTypes>
+          <RootConnector PointId="429">
             <Caption>
               <LabelString>CreateRGBANegativePositiveReversalFilter</LabelString>
             </Caption>
@@ -181,7 +189,7 @@
             <ForcedChecked>false</ForcedChecked>
             <Connector>
               <LinkList>
-                <PointID>208</PointID>
+                <PointID>474</PointID>
               </LinkList>
             </Connector>
             <Arguments />
@@ -195,8 +203,10 @@
         <RootFunc AssetType="FuncType" AssetFuncType="CbVS.Script.Lib.Image.CreateRGBAContrastFilter#_ContrastType">
           <AttachVariableIds />
           <AttachVariableId>0</AttachVariableId>
-          <AssetValueType>System.Double</AssetValueType>
-          <RootConnector PointId="167">
+          <AssetValueTypes>
+            <string>System.Double</string>
+          </AssetValueTypes>
+          <RootConnector PointId="432">
             <Caption>
               <LabelString>CreateRGBAContrastFilter</LabelString>
             </Caption>
@@ -204,11 +214,11 @@
             <ForcedChecked>false</ForcedChecked>
             <Connector>
               <LinkList>
-                <PointID>202</PointID>
+                <PointID>475</PointID>
               </LinkList>
             </Connector>
             <Arguments>
-              <LinkConnector PointId="168">
+              <LinkConnector PointId="433">
                 <Value>ContrastType.InOutSine</Value>
                 <CastConnect>false</CastConnect>
                 <ParamInfo>
@@ -234,8 +244,10 @@
         <RootFunc AssetType="FuncType" AssetFuncType="CbVS.Script.Lib.Image.CreateRGBAMulRateFilter#_double_double_double">
           <AttachVariableIds />
           <AttachVariableId>0</AttachVariableId>
-          <AssetValueType>System.Double</AssetValueType>
-          <RootConnector PointId="173">
+          <AssetValueTypes>
+            <string>System.Double</string>
+          </AssetValueTypes>
+          <RootConnector PointId="438">
             <Caption>
               <LabelString>CreateRGBAMulRateFilter</LabelString>
             </Caption>
@@ -243,11 +255,11 @@
             <ForcedChecked>false</ForcedChecked>
             <Connector>
               <LinkList>
-                <PointID>207</PointID>
+                <PointID>472</PointID>
               </LinkList>
             </Connector>
             <Arguments>
-              <LinkConnector PointId="174">
+              <LinkConnector PointId="439">
                 <Value>5</Value>
                 <CastConnect>false</CastConnect>
                 <ParamInfo>
@@ -262,7 +274,7 @@
                   <IsOpenList>true</IsOpenList>
                 </LinkConnectorList>
               </LinkConnector>
-              <LinkConnector PointId="175">
+              <LinkConnector PointId="440">
                 <Value>5</Value>
                 <CastConnect>false</CastConnect>
                 <ParamInfo>
@@ -277,7 +289,7 @@
                   <IsOpenList>true</IsOpenList>
                 </LinkConnectorList>
               </LinkConnector>
-              <LinkConnector PointId="176">
+              <LinkConnector PointId="441">
                 <Value>5</Value>
                 <CastConnect>false</CastConnect>
                 <ParamInfo>
@@ -303,8 +315,10 @@
         <RootFunc AssetType="FuncType" AssetFuncType="CbVS.Script.Lib.Image.ScreenCapture#_bool">
           <AttachVariableIds />
           <AttachVariableId>0</AttachVariableId>
-          <AssetValueType>System.Double</AssetValueType>
-          <RootConnector PointId="179">
+          <AssetValueTypes>
+            <string>System.Double</string>
+          </AssetValueTypes>
+          <RootConnector PointId="444">
             <Caption>
               <LabelString>ScreenCapture</LabelString>
             </Caption>
@@ -312,11 +326,11 @@
             <ForcedChecked>false</ForcedChecked>
             <Connector>
               <LinkList>
-                <PointID>199</PointID>
+                <PointID>466</PointID>
               </LinkList>
             </Connector>
             <Arguments>
-              <LinkConnector PointId="180">
+              <LinkConnector PointId="445">
                 <Value>True</Value>
                 <CastConnect>false</CastConnect>
                 <ParamInfo>
@@ -342,8 +356,10 @@
         <RootFunc AssetType="FuncType" AssetFuncType="Subroutine">
           <AttachVariableIds />
           <AttachVariableId>0</AttachVariableId>
-          <AssetValueType>System.Collections.Generic.ICollection`1[[System.Object, System.Private.CoreLib, Version=5.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]</AssetValueType>
-          <RootConnector PointId="183">
+          <AssetValueTypes>
+            <string>System.Collections.Generic.ICollection`1[[System.Object, System.Private.CoreLib, Version=5.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]</string>
+          </AssetValueTypes>
+          <RootConnector PointId="448">
             <Caption>
               <LabelString>Sequence</LabelString>
             </Caption>
@@ -353,7 +369,7 @@
               <LinkList />
             </Connector>
             <Arguments>
-              <LinkConnector PointId="184">
+              <LinkConnector PointId="449">
                 <CastConnect>false</CastConnect>
                 <ParamInfo>
                   <ParamName>call list</ParamName>
@@ -364,7 +380,7 @@
                 </ParamInfo>
                 <LinkConnectorList>
                   <List>
-                    <LinkConnector PointId="186">
+                    <LinkConnector PointId="451">
                       <Value>[object]&lt;null&gt;</Value>
                       <CastConnect>false</CastConnect>
                       <ParamInfo>
@@ -394,8 +410,10 @@
         <RootFunc AssetType="FuncType" AssetFuncType="CbVS.Script.Lib.Image.CreateRGBA3x3DiffFilter#_IList&lt;IRGBA3x3Filter&gt;">
           <AttachVariableIds />
           <AttachVariableId>0</AttachVariableId>
-          <AssetValueType>System.Double</AssetValueType>
-          <RootConnector PointId="189">
+          <AssetValueTypes>
+            <string>System.Double</string>
+          </AssetValueTypes>
+          <RootConnector PointId="454">
             <Caption>
               <LabelString>CreateRGBA3x3DiffFilter</LabelString>
             </Caption>
@@ -403,11 +421,11 @@
             <ForcedChecked>false</ForcedChecked>
             <Connector>
               <LinkList>
-                <PointID>206</PointID>
+                <PointID>470</PointID>
               </LinkList>
             </Connector>
             <Arguments>
-              <LinkConnector PointId="190">
+              <LinkConnector PointId="455">
                 <CastConnect>false</CastConnect>
                 <ParamInfo>
                   <ParamName>filters</ParamName>
@@ -418,7 +436,7 @@
                 </ParamInfo>
                 <LinkConnectorList>
                   <List>
-                    <LinkConnector PointId="205">
+                    <LinkConnector PointId="457">
                       <Value>[IRGBA3x3Filter]&lt;null&gt;</Value>
                       <CastConnect>false</CastConnect>
                       <ParamInfo>
@@ -448,8 +466,10 @@
         <RootFunc AssetType="FuncType" AssetFuncType="CbVS.Script.Lib.Image.RGBA3x3FilteringProc#_BitmapSource_IRGBAFilter_IList&lt;IRGBA3x3Filter&gt;_IRGBAFilter_bool_int">
           <AttachVariableIds />
           <AttachVariableId>0</AttachVariableId>
-          <AssetValueType>System.Double</AssetValueType>
-          <RootConnector PointId="198">
+          <AssetValueTypes>
+            <string>System.Double</string>
+          </AssetValueTypes>
+          <RootConnector PointId="465">
             <Caption>
               <LabelString>RGBA3x3FilteringProc</LabelString>
             </Caption>
@@ -457,11 +477,11 @@
             <ForcedChecked>false</ForcedChecked>
             <Connector>
               <LinkList>
-                <PointID>153</PointID>
+                <PointID>418</PointID>
               </LinkList>
             </Connector>
             <Arguments>
-              <LinkConnector PointId="199">
+              <LinkConnector PointId="466">
                 <Value>[BitmapSource]&lt;null&gt;</Value>
                 <CastConnect>false</CastConnect>
                 <ParamInfo>
@@ -476,7 +496,7 @@
                   <IsOpenList>true</IsOpenList>
                 </LinkConnectorList>
               </LinkConnector>
-              <LinkConnector PointId="200">
+              <LinkConnector PointId="467">
                 <Value>[IRGBAFilter]&lt;null&gt;</Value>
                 <CastConnect>false</CastConnect>
                 <ParamInfo>
@@ -491,7 +511,7 @@
                   <IsOpenList>true</IsOpenList>
                 </LinkConnectorList>
               </LinkConnector>
-              <LinkConnector PointId="201">
+              <LinkConnector PointId="468">
                 <CastConnect>false</CastConnect>
                 <ParamInfo>
                   <ParamName>imageProcList</ParamName>
@@ -502,7 +522,7 @@
                 </ParamInfo>
                 <LinkConnectorList>
                   <List>
-                    <LinkConnector PointId="206">
+                    <LinkConnector PointId="470">
                       <Value>[IRGBA3x3Filter]&lt;null&gt;</Value>
                       <CastConnect>false</CastConnect>
                       <ParamInfo>
@@ -517,7 +537,7 @@
                         <IsOpenList>true</IsOpenList>
                       </LinkConnectorList>
                     </LinkConnector>
-                    <LinkConnector PointId="207">
+                    <LinkConnector PointId="472">
                       <Value>[IRGBA3x3Filter]&lt;null&gt;</Value>
                       <CastConnect>false</CastConnect>
                       <ParamInfo>
@@ -532,7 +552,7 @@
                         <IsOpenList>true</IsOpenList>
                       </LinkConnectorList>
                     </LinkConnector>
-                    <LinkConnector PointId="208">
+                    <LinkConnector PointId="474">
                       <Value>[IRGBA3x3Filter]&lt;null&gt;</Value>
                       <CastConnect>false</CastConnect>
                       <ParamInfo>
@@ -551,7 +571,7 @@
                   <IsOpenList>false</IsOpenList>
                 </LinkConnectorList>
               </LinkConnector>
-              <LinkConnector PointId="202">
+              <LinkConnector PointId="475">
                 <Value>[IRGBAFilter]&lt;null&gt;</Value>
                 <CastConnect>false</CastConnect>
                 <ParamInfo>
@@ -566,8 +586,8 @@
                   <IsOpenList>true</IsOpenList>
                 </LinkConnectorList>
               </LinkConnector>
-              <LinkConnector PointId="203">
-                <Value>True</Value>
+              <LinkConnector PointId="476">
+                <Value>False</Value>
                 <CastConnect>false</CastConnect>
                 <ParamInfo>
                   <ParamName>useThread</ParamName>
@@ -581,7 +601,7 @@
                   <IsOpenList>true</IsOpenList>
                 </LinkConnectorList>
               </LinkConnector>
-              <LinkConnector PointId="204">
+              <LinkConnector PointId="477">
                 <Value>96</Value>
                 <CastConnect>false</CastConnect>
                 <ParamInfo>

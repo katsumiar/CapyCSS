@@ -53,7 +53,9 @@
         <RootFunc AssetType="FuncType" AssetFuncType="System.Collections.IList.Add#_object">
           <AttachVariableIds />
           <AttachVariableId>0</AttachVariableId>
-          <AssetValueType>System.Double</AssetValueType>
+          <AssetValueTypes>
+            <string>System.Double</string>
+          </AssetValueTypes>
           <RootConnector PointId="4">
             <Caption>
               <LabelString>Add</LabelString>
@@ -107,7 +109,9 @@
         <RootFunc AssetType="LiteralType" AssetFuncType="none">
           <AttachVariableIds />
           <AttachVariableId>0</AttachVariableId>
-          <AssetValueType>System.Collections.Generic.List`1[[System.Int32, System.Private.CoreLib, Version=5.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]</AssetValueType>
+          <AssetValueTypes>
+            <string>System.Collections.Generic.List`1[[System.Int32, System.Private.CoreLib, Version=5.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]</string>
+          </AssetValueTypes>
           <RootConnector PointId="9">
             <Caption>
               <LabelString>List&lt;int&gt;</LabelString>
@@ -177,7 +181,9 @@
         <RootFunc AssetType="FuncType" AssetFuncType="System.Collections.IList.Add#_object">
           <AttachVariableIds />
           <AttachVariableId>0</AttachVariableId>
-          <AssetValueType>System.Double</AssetValueType>
+          <AssetValueTypes>
+            <string>System.Double</string>
+          </AssetValueTypes>
           <RootConnector PointId="18">
             <Caption>
               <LabelString>Add</LabelString>
@@ -231,7 +237,9 @@
         <RootFunc AssetType="LiteralType" AssetFuncType="none">
           <AttachVariableIds />
           <AttachVariableId>0</AttachVariableId>
-          <AssetValueType>System.Int32</AssetValueType>
+          <AssetValueTypes>
+            <string>System.Int32</string>
+          </AssetValueTypes>
           <RootConnector PointId="23">
             <Caption>
               <LabelString>int</LabelString>
@@ -254,7 +262,9 @@
         <RootFunc AssetType="LiteralType" AssetFuncType="none">
           <AttachVariableIds />
           <AttachVariableId>0</AttachVariableId>
-          <AssetValueType>System.Int32</AssetValueType>
+          <AssetValueTypes>
+            <string>System.Int32</string>
+          </AssetValueTypes>
           <RootConnector PointId="26">
             <Caption>
               <LabelString>int</LabelString>
@@ -277,7 +287,9 @@
         <RootFunc AssetType="FuncType" AssetFuncType="SetListIndex">
           <AttachVariableIds />
           <AttachVariableId>0</AttachVariableId>
-          <AssetValueType>System.Collections.Generic.List`1[[System.Int32, System.Private.CoreLib, Version=5.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]</AssetValueType>
+          <AssetValueTypes>
+            <string>System.Collections.Generic.List`1[[System.Int32, System.Private.CoreLib, Version=5.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]</string>
+          </AssetValueTypes>
           <RootConnector PointId="31">
             <Caption>
               <LabelString>Set List[index]</LabelString>
@@ -379,7 +391,9 @@
         <RootFunc AssetType="FuncType" AssetFuncType="Subroutine">
           <AttachVariableIds />
           <AttachVariableId>0</AttachVariableId>
-          <AssetValueType>System.Collections.Generic.ICollection`1[[System.Object, System.Private.CoreLib, Version=5.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]</AssetValueType>
+          <AssetValueTypes>
+            <string>System.Collections.Generic.ICollection`1[[System.Object, System.Private.CoreLib, Version=5.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]</string>
+          </AssetValueTypes>
           <RootConnector PointId="37">
             <Caption>
               <LabelString>Sequence</LabelString>
@@ -508,7 +522,9 @@
             <int>24</int>
           </AttachVariableIds>
           <AttachVariableId>24</AttachVariableId>
-          <AssetValueType>System.Collections.Generic.List`1[[System.Int32, System.Private.CoreLib, Version=5.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]</AssetValueType>
+          <AssetValueTypes>
+            <string>System.Collections.Generic.List`1[[System.Int32, System.Private.CoreLib, Version=5.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]</string>
+          </AssetValueTypes>
           <RootConnector PointId="52">
             <Caption>
               <LabelString>[ variable2 ]</LabelString>
@@ -532,7 +548,9 @@
             <int>25</int>
           </AttachVariableIds>
           <AttachVariableId>25</AttachVariableId>
-          <AssetValueType>System.Collections.Generic.List`1[[System.Int32, System.Private.CoreLib, Version=5.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]</AssetValueType>
+          <AssetValueTypes>
+            <string>System.Collections.Generic.List`1[[System.Int32, System.Private.CoreLib, Version=5.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]</string>
+          </AssetValueTypes>
           <RootConnector PointId="54">
             <Caption>
               <LabelString>[ variable3 ]</LabelString>
@@ -556,7 +574,9 @@
             <int>23</int>
           </AttachVariableIds>
           <AttachVariableId>23</AttachVariableId>
-          <AssetValueType>System.Collections.Generic.List`1[[System.Int32, System.Private.CoreLib, Version=5.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]</AssetValueType>
+          <AssetValueTypes>
+            <string>System.Collections.Generic.List`1[[System.Int32, System.Private.CoreLib, Version=5.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]</string>
+          </AssetValueTypes>
           <RootConnector PointId="57">
             <Caption>
               <LabelString>[ variable1 ]</LabelString>
@@ -596,7 +616,9 @@
             <int>27</int>
           </AttachVariableIds>
           <AttachVariableId>27</AttachVariableId>
-          <AssetValueType>System.Collections.Generic.List`1[[System.Int32, System.Private.CoreLib, Version=5.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]</AssetValueType>
+          <AssetValueTypes>
+            <string>System.Collections.Generic.List`1[[System.Int32, System.Private.CoreLib, Version=5.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]</string>
+          </AssetValueTypes>
           <RootConnector PointId="61">
             <Caption>
               <LabelString>[ variable4 ]</LabelString>
@@ -634,7 +656,9 @@
         <RootFunc AssetType="FuncType" AssetFuncType="Append">
           <AttachVariableIds />
           <AttachVariableId>0</AttachVariableId>
-          <AssetValueType>System.Collections.Generic.ICollection`1[[System.Int32, System.Private.CoreLib, Version=5.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]</AssetValueType>
+          <AssetValueTypes>
+            <string>System.Collections.Generic.ICollection`1[[System.Int32, System.Private.CoreLib, Version=5.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]</string>
+          </AssetValueTypes>
           <RootConnector PointId="66">
             <Caption>
               <LabelString>Append</LabelString>
