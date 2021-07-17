@@ -24,7 +24,7 @@ namespace CapybaraVS.Script
             {
                 if (IsError)
                     return CbSTUtils.ERROR_STR;
-                return Value.ToString();
+                return Value.ToString().ToLower();  // ElementList は小文字
             }
         }
 
