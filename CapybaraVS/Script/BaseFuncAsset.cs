@@ -2681,8 +2681,8 @@ namespace CapybaraVS.Script
                 CbST.CbCreateTF<int>(),   // 返し値の型
                 new List<ICbValue>()  // 引数
                 {
-                    CbST.CbCreate<int>("max", 0),
-                    CbST.CbCreate<int>("int", 1),
+                    CbST.CbCreate<int>("min", 0),
+                    CbST.CbCreate<int>("max", 1),
                 },
                 new Func<List<ICbValue>, DummyArgumentsStack, ICbValue>(
                     (argument, cagt) =>

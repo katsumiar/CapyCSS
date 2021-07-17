@@ -136,7 +136,7 @@ namespace CapybaraVS.Controls.BaseControls
             AddOption.Visibility = Visibility.Collapsed;
         }
 
-        private HoldActionManager<StackGroup> HoldAction = new HoldActionManager<StackGroup>();
+        private HoldActionQueue<StackGroup> HoldAction = new HoldActionQueue<StackGroup>();
 
         private void Accordion_MouseDown(object sender, MouseButtonEventArgs e)
         {

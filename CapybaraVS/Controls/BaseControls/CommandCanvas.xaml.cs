@@ -270,10 +270,10 @@ namespace CapybaraVS.Controls.BaseControls
         public Func<object> ScriptWorkClickEvent = null;
         public Action ClickEntryEvent = null;
         public Action ClickExitEvent = null;
-        public HoldActionManager<UIParam> UIParamHoldAction = new HoldActionManager<UIParam>();
-        public HoldActionManager<StackGroup> StackGroupHoldAction = new HoldActionManager<StackGroup>();
-        public HoldActionManager<PlotWindow> PlotWindowHoldAction = new HoldActionManager<PlotWindow>();
-        public HoldActionManager<LinkConnectorList> LinkConnectorListHoldAction = new HoldActionManager<LinkConnectorList>();
+        public HoldActionQueue<UIParam> UIParamHoldAction = new HoldActionQueue<UIParam>();
+        public HoldActionQueue<StackGroup> StackGroupHoldAction = new HoldActionQueue<StackGroup>();
+        public HoldActionQueue<PlotWindow> PlotWindowHoldAction = new HoldActionQueue<PlotWindow>();
+        public HoldActionQueue<LinkConnectorList> LinkConnectorListHoldAction = new HoldActionQueue<LinkConnectorList>();
         public bool EnabledScriptHoldActionMode
         {
             set
