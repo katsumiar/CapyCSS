@@ -301,6 +301,11 @@ namespace CapybaraVS.Control.BaseControls
         }
 
         /// <summary>
+        /// カーブ用キャンバスを参照します。
+        /// </summary>
+        public Canvas CurveCanvas => ControlsCanvas;
+
+        /// <summary>
         /// 背景イメージへのパスです。
         /// </summary>
         static public string BackGrountImagePath = null;    // TODO static を外す
@@ -1153,8 +1158,8 @@ namespace CapybaraVS.Control.BaseControls
         {
             if (SelectedNodes.Count != 0 &&
                     ControlTools.ShowSelectMessage(
-                        CapybaraVS.Language.GetInstance["ConfirmationDelete"],
-                        CapybaraVS.Language.GetInstance["Confirmation"],
+                        CapybaraVS.Language.Instance["SYSTEM_ConfirmationDelete"],
+                        CapybaraVS.Language.Instance["SYSTEM_Confirmation"],
                         MessageBoxButton.OKCancel) == MessageBoxResult.OK)
             {
                 foreach (var node in SelectedNodes)

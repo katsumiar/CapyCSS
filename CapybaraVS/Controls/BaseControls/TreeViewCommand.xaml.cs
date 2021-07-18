@@ -118,7 +118,7 @@ namespace CapybaraVS.Controls.BaseControls
         {
             Name = name;
             Path = name;
-            if (hintText != "")
+            if (hintText != null && hintText != "")
             {
                 HintText = hintText;
             }
@@ -413,13 +413,16 @@ namespace CapybaraVS.Controls.BaseControls
         {
             ObservableCollection<TreeMenuNode> treeView = viewer.TreeView.ItemsSource as ObservableCollection<TreeMenuNode>;
             treeView.Clear();   // これを起因にバインド系のエラーが出るが…無視して良い...
+            int limit = 50;
             foreach (var node in AssetTreeData)
             {
                 if (node.Path == RecentName)
                 {
                     continue;
                 }
-                SetFilter(viewer, node, name.ToUpper());
+                SetFilter(treeView, node, name.ToUpper(), ref limit);
+                if (limit <= 0)
+                    return;
             }
         }
 
@@ -429,9 +432,11 @@ namespace CapybaraVS.Controls.BaseControls
         /// <param name="viewer">結果登録用リスト</param>
         /// <param name="node">メニューノード</param>
         /// <param name="name">メニュー名</param>
-        private void SetFilter(TreeViewCommand viewer, TreeMenuNode node, string name)
+        private void SetFilter(ObservableCollection<TreeMenuNode> treeView, TreeMenuNode node, string name, ref int limit)
         {
-            ObservableCollection<TreeMenuNode> treeView = viewer.TreeView.ItemsSource as ObservableCollection<TreeMenuNode>;
+            if (limit <= 0)
+                return;
+
             if (node.Name.ToUpper().Contains(name))
             {
                 if (node.LeftClickCommand != null && node.LeftClickCommand.CanExecute(null))
@@ -441,10 +446,12 @@ namespace CapybaraVS.Controls.BaseControls
                         ExecuteFindCommand(node.Path);
                     })));
                 }
+                if (--limit == 0)
+                    return;
             }
             foreach (var child in node.Child)
             {
-                SetFilter(viewer, child, name);
+                SetFilter(treeView, child, name, ref limit);
             }
         }
 

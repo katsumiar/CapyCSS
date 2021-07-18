@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
+using System.Threading;
 using CapyCSS.Script;
 using CbVS.Script;
 
@@ -14,7 +16,8 @@ namespace CapybaraVS.Script
         public const string VOID_STR = "void";
         public const string FUNC_STR = "Func";
         public const string ACTION_STR = "Action";
-        public const string LIST_STR = "List";
+        public const string LITERAL_LIST_STR = "List";
+        public const string LIST_STR = "ICollection";
         public const string CLASS_STR = "Class";
         public const string ENUM_STR = "Enum";
         public const string STRUCT_STR = "Struct";
@@ -44,18 +47,22 @@ namespace CapybaraVS.Script
         public const string ACTION_GROUP_STR = "action.";
         public const string FUNC_GROUP_STR = "func.";
 
-        public static string FREE_LIST_TYPE_STR = typeof(List<>).FullName;
-        public static string FREE_FUNC_TYPE_STR = typeof(Func<>).FullName;
+        public static readonly Type LIST_TYPE = typeof(List<>);
+        public static readonly Type LIST_INTERFACE_TYPE = typeof(ICollection<>);
+        public static readonly Type FUNC_TYPE = typeof(Func<>);
+        public static readonly Type FUNC2ARG_TYPE = typeof(Func<,>);
+        public static readonly Type ACTION_TYPE = typeof(Action<>);
+        public static readonly Type DUMMY_TYPE = typeof(int); // ダミー
 
-        public const string FREE_ENUM_TYPE_STR = "<ENUM>";  // Enum型を要求する（未対応）
-
-        public const string FREE_TYPE_STR = "<FREE>";   // 型選択を要求する
-        public static string DUMMY_TYPE_STR = typeof(int).FullName; // ダミー
+        public const string ERROR_STR = "[ERROR]";          // エラーの表現
+        public const string NULL_STR = "null";              // nullの表現
+        public const string DELEGATE_STR = "[delegate]";    // dlegateの表現
+        public const string UI_NULL_STR = "<null>";         // UI上のnullの表現
 
         /// <summary>
         /// ユーザーによる型作成時に組み込み型選択肢に出てくる型情報です。
         /// </summary>
-        public static Dictionary<string, string> BuiltInTypeList = new Dictionary<string, string>()
+        static public readonly Dictionary<string, string> BuiltInTypeList = new Dictionary<string, string>()
         {
             { typeof(List<>).FullName, GENELICS_GROUP_STR + "List<>" },
             { typeof(IList<>).FullName, INTERFACE_GROUP_STR + "IList<>" },
@@ -116,7 +123,7 @@ namespace CapybaraVS.Script
             { typeof(Object).FullName, OBJECT_STR },
         };
 
-        static public Dictionary<string, string> CbTypeNameList = new Dictionary<string, string>()
+        static public readonly Dictionary<string, string> CbTypeNameList = new Dictionary<string, string>()
         {
             // 型名変換
             { nameof(Byte), BYTE_STR },
@@ -156,16 +163,7 @@ namespace CapybaraVS.Script
             { nameof(CbVoid), VOID_STR },
         };
 
-        static private List<string> eqTypeList = new List<string>()
-        {
-            USHORT_STR,
-            UINT_STR,
-            ULONG_STR,
-            BYTE_STR,
-            STRING_STR,
-            BOOL_STR,
-            OBJECT_STR,
-        };
+        private static ReaderWriterLock CbTypeNameListRwLock = new ReaderWriterLock();
 
         /// <summary>
         /// オブジェクトの型の文字列名を返します。
@@ -174,11 +172,30 @@ namespace CapybaraVS.Script
         /// <returns></returns>
         static public string GetTypeName(object obj)
         {
-            string typeName = obj.GetType().FullName;
-            string newName = _GetTypeName(obj.GetType());
-            if (!CbTypeNameList.ContainsKey(typeName))
+            return GetTypeName(obj.GetType());
+        }
+
+        /// <summary>
+        /// オブジェクトの型の文字列名を返します。
+        /// </summary>
+        /// <param name="type">型情報</param>
+        /// <returns></returns>
+        static public string GetTypeName(Type type)
+        {
+            string typeName = type.FullName;
+            string newName = _GetTypeName(type);
+
+            try
             {
-                CbTypeNameList.Add(typeName, newName);
+                CbTypeNameListRwLock.AcquireWriterLock(Timeout.Infinite);
+                if (!CbTypeNameList.ContainsKey(typeName))
+                {
+                    CbTypeNameList.Add(typeName, newName);
+                }
+            }
+            finally
+            {
+                CbTypeNameListRwLock.ReleaseWriterLock();
             }
             return newName;
         }
@@ -220,9 +237,17 @@ namespace CapybaraVS.Script
                 typeName = typeName.Replace("[]", "");
             }
 
-            if (CbTypeNameList.ContainsKey(typeName))
+            try
             {
-                return CbTypeNameList[typeName];
+                CbTypeNameListRwLock.AcquireReaderLock(Timeout.Infinite);
+                if (CbTypeNameList.ContainsKey(typeName))
+                {
+                    return CbTypeNameList[typeName];
+                }
+            }
+            finally
+            {
+                CbTypeNameListRwLock.ReleaseReaderLock();
             }
 
             if (type.IsGenericType ||
@@ -259,9 +284,17 @@ namespace CapybaraVS.Script
             // ネームスペースを省略できるかチェックをここで行い、省略できるなら省略する
             typeName = Optimisation(typeName);
 
-            if (CbTypeNameList.ContainsKey(typeName))
+            try
             {
-                typeName = CbTypeNameList[typeName];
+                CbTypeNameListRwLock.AcquireReaderLock(Timeout.Infinite);
+                if (CbTypeNameList.ContainsKey(typeName))
+                {
+                    typeName = CbTypeNameList[typeName];
+                }
+            }
+            finally
+            {
+                CbTypeNameListRwLock.ReleaseReaderLock();
             }
 
             if (type.IsEnum || type.IsInterface || type.IsClass)
@@ -273,6 +306,12 @@ namespace CapybaraVS.Script
 
             if (isNotGeneName)
                 return Optimisation(geneString);
+
+            if (typeName == "Nullable")
+            {
+                typeName = geneString.Substring(1).Split('>')[0] + "?";
+                geneString = "";
+            }
 
             return Optimisation(typeName + geneString);
         }
@@ -294,9 +333,17 @@ namespace CapybaraVS.Script
             string reverseName = testName[0];
             for (int i = 1; i < testName.Count; ++i)
             {
-                if (!CbTypeNameList.ContainsValue(reverseName))
+                try
                 {
-                    break;
+                    CbTypeNameListRwLock.AcquireReaderLock(Timeout.Infinite);
+                    if (!CbTypeNameList.ContainsValue(reverseName))
+                    {
+                        break;
+                    }
+                }
+                finally
+                {
+                    CbTypeNameListRwLock.ReleaseReaderLock();
                 }
                 reverseName += "." + testName[i];
             }
@@ -312,6 +359,39 @@ namespace CapybaraVS.Script
         }
 
         /// <summary>
+        /// キャストを通しての代入の可否を判定します。
+        /// </summary>
+        /// <param name="toType">代入先の型</param>
+        /// <param name="fromType">代入元の型</param>
+        /// <returns></returns>
+        public static bool IsCastAssignment(Type toType, Type fromType)
+        {
+            if (!CbScript.IsValueType(fromType) || !CbScript.IsValueType(toType))
+                return false;
+
+            if (fromType == typeof(object))
+                return true;    // 接続元が object なら無条件でキャスト可能
+
+            if (fromType == typeof(decimal) && toType == typeof(char))
+                return false;
+
+            if (fromType == typeof(char) &&
+                (toType == typeof(decimal) || toType == typeof(float) || toType == typeof(double)))
+                return false;
+
+            if (fromType == typeof(ulong) || fromType == typeof(uint) || fromType == typeof(ushort) || fromType == typeof(byte))
+                return true;
+
+            if (toType == typeof(string) || toType == typeof(bool) || toType == typeof(object))
+                return false;
+
+            if (fromType == typeof(string) || fromType == typeof(bool) || fromType == typeof(object))
+                return false;
+
+            return true;
+        }
+
+        /// <summary>
         /// 代入の可否を判定します。
         /// </summary>
         /// <param name="toName">代入先の型名</param>
@@ -321,136 +401,39 @@ namespace CapybaraVS.Script
         /// <param name="isCast">キャストでの判定なら true</param>
         /// <returns>接続可能なら true</returns>
         static public bool IsAssignment(
-            string toName, 
-            string fromName, 
             Type toType, 
             Type fromType, 
             bool isCast = false
             )
         {
-            if (CbFunc.IsCanConnect(toName, fromName))
-            {
-                // イベント接続
+            if (toType == typeof(object))
+                return true;    // object型なら無条件に繋がる
+            if (toType.IsGenericType && CbFunc.IsActionType(toType))
+                return true;    // Action型なら無条件に繋がる
 
-                if (!isCast)
+            if (fromType == typeof(CbVoid))
+                return false;   // object と Action 以外には繋がらない
+
+            if (toType == typeof(string))
+                return true;    // CbVoid型以外なら無条件に繋がる
+
+            if (isCast && IsCastAssignment(toType, fromType))
+                return true;    // Cast接続なら繋がる
+
+            if (toType.IsGenericType)
+            {
+                if (CbFunc.IsFuncType(toType))
                 {
-                    if (CbFunc.IsNormalConnect(toName, fromName))
-                        return true;
-
-                    return false;
-                }
-
-                return CbFunc.IsCastConnect(toName, fromName, toType, fromType);    // キャスト接続
-            }
-
-            if (toName == OBJECT_STR)
-                return true;    // 代入先が object なら無条件で代入可能
-
-            if (toName == VOID_STR)
-                return false;   // 接続先が void なら無条件で代入禁止
-
-            if (toName == fromName)
-                return true;    // 型が同じなら代入可能
-
-            if (toType.IsGenericType || fromType.IsGenericType)
-            {
-                // 一先ず、ジェネリックは完全一致だけ代入可能
-                // TODO 判定方法を模索する
-
-                if (toName == fromName)
-                    return true;
-
-                if (toType.IsAssignableFrom(fromType))
-                    return true;
-
-                return false;
-            }
-
-            if (fromName == OBJECT_STR)
-            {
-                // object からの代入ならキャストで許可
-
-                if (isCast)
-                {
-                    return IsCastAssignment(toName, fromName);
-                }
-                return false;
-            }
-
-            if (toName == STRING_STR || toName == TEXT_STR)
-            {
-                return true;    // 文字列型になら変換可能
-            }
-
-            bool isToBase = CbTypeNameList.ContainsValue(toName);
-            bool isFromBase = CbTypeNameList.ContainsValue(fromName);
-
-            if (isToBase != isFromBase)
-                return false;   // 片方だけが組み込み型の場合は、代入不可
-
-            if (!isToBase)
-            {
-                // 組み込み型でない場合は、クラスやインターフェイスとして判定する
-
-                if (toType.IsAssignableFrom(fromType))
-                    return true;
-
-                return false;
-            }
-
-            if (toName == BOOL_STR && isCast)
-            {
-                if (fromName == SBYTE_STR || fromName == SHORT_STR || fromName == INT_STR ||
-                    fromName == LONG_STR || fromName == USHORT_STR || fromName == UINT_STR ||
-                    fromName == ULONG_STR || fromName == DECIMAL_STR || fromName == BYTE_STR)
-                {
-                    return true;
+                    Type argType = toType.GetGenericArguments()[0]; // Func の返り値の型
+                    if (IsAssignment(argType, fromType, isCast))
+                        return true;    // Func の返り値の型に代入可能なら繋がる
                 }
             }
 
-            bool isToEq = eqTypeList.Contains(toName);
-            bool isFromEq = eqTypeList.Contains(fromName);
-
-            if (isToEq != isFromEq)
-                return false;
-
-            if (isCast)
-            {
-                return IsCastAssignment(toName, fromName);
-            }
+            if (toType.IsAssignableFrom(fromType))
+                return true;    // 繋がる
 
             return false;
-        }
-
-        /// <summary>
-        /// キャストを通しての代入の可否を判定します。
-        /// </summary>
-        /// <param name="toName">代入先の型名</param>
-        /// <param name="fromName">代入元の型名</param>
-        /// <returns></returns>
-        public static bool IsCastAssignment(string toName, string fromName)
-        {
-            if (fromName == OBJECT_STR)
-                return true;    // 接続元が object なら無条件でキャスト可能
-
-            if (fromName == DECIMAL_STR && toName == CHAR_STR)
-                return false;
-
-            if (fromName == CHAR_STR &&
-                (toName == DECIMAL_STR || toName == FLOAT_STR || toName == DOUBLE_STR))
-            {
-                return false;
-            }
-
-            if (fromName == ULONG_STR || fromName == UINT_STR || fromName == USHORT_STR || fromName == BYTE_STR)
-                return true;
-
-            if (toName == STRING_STR || toName == BOOL_STR || toName == OBJECT_STR)
-                return false;
-            if (fromName == STRING_STR || fromName == BOOL_STR || fromName == OBJECT_STR)
-                return false;
-
-            return true;
         }
 
         /// <summary>
@@ -477,6 +460,17 @@ namespace CapybaraVS.Script
                 return CbSTUtils.CLASS_STR;
             }
             return null;
+        }
+
+
+        public static string MakeGroupedTypeNameWithOutNameSpace(Type type)
+        {
+            string result = MakeGroupedTypeName(type);
+            if (result.Contains('.'))
+            {
+                return result.Split('.').Last();
+            }
+            return result;
         }
 
         /// <summary>

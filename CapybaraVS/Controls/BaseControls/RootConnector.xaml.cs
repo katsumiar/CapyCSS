@@ -57,7 +57,7 @@ namespace CapybaraVS.Controls.BaseControls
                     self.FuncCaption.AssetXML = Caption;
                     self.FuncCaption.AssetXML.ReadAction?.Invoke(self.FuncCaption);
 
-                    if (Value != null && self.ValueData != null && Value != "[ERROR]")
+                    if (Value != null && self.ValueData != null && Value != CbSTUtils.ERROR_STR)
                     {
                         if (self.ValueData.IsStringableValue)
                             self.ValueData.ValueString = Value;
@@ -112,7 +112,7 @@ namespace CapybaraVS.Controls.BaseControls
                     Caption = self.FuncCaption.AssetXML;
 
                     if (!(self.ValueData is ICbValueList))
-                        Value = self.ValueData.ValueString;
+                        Value = self.ValueData.ValueUIString;
 
                     ForcedChecked = self.ForcedChecked;
 
@@ -286,7 +286,10 @@ namespace CapybaraVS.Controls.BaseControls
                 if (NameText.OwnerCommandCanvas is null)
                     NameText.OwnerCommandCanvas = value;
                 if (_OwnerCommandCanvas is null)
+                {
                     _OwnerCommandCanvas = value;
+                    ChangeConnectorStyle(SingleLinkMode);
+                }
             }
         }
 
@@ -315,8 +318,8 @@ namespace CapybaraVS.Controls.BaseControls
             RectBox.Stroke = RectboxStroke;
             CheckBoxVisibility();
 
-            Forced.ToolTip = CapybaraVS.Language.GetInstance["ArgumentForced"];
-            IsPublicExecute.ToolTip = CapybaraVS.Language.GetInstance["IsPublicExecute"];
+            Forced.ToolTip = CapybaraVS.Language.Instance["SYSTEM_ArgumentForced"];
+            IsPublicExecute.ToolTip = CapybaraVS.Language.Instance["SYSTEM_IsPublicExecute"];
 
             NameText.UpdateEvent =
                 new Action(
@@ -337,13 +340,6 @@ namespace CapybaraVS.Controls.BaseControls
                     ExecuteRoot();
                 }
                 );
-
-            Dispatcher.BeginInvoke(
-                new Action(() =>
-                {
-                    ChangeConnectorStyle(SingleLinkMode);
-                }
-                ), DispatcherPriority.Loaded);
             
             LayoutUpdated += _LayoutUpdated;
         }
@@ -438,6 +434,9 @@ namespace CapybaraVS.Controls.BaseControls
             get => (string)FuncCaption.ToolTip;
             set
             {
+                if (value is null)
+                    return;
+
                 if (value.Trim() != "")
                     FuncCaption.ToolTip = value;
             }
@@ -520,7 +519,9 @@ namespace CapybaraVS.Controls.BaseControls
                         // 接続時にイベントとして処理している。
                     }
                     else
+                    {
                         connector.RequestExecute(functionStack, preArgument);
+                    }
                     arguments.Add(connector.ValueData);
                 }
             }
@@ -626,48 +627,90 @@ namespace CapybaraVS.Controls.BaseControls
             }
         }
 
-        public void AppendToBox(ICbList obj, bool hideLinkConnector = false)
+        /// <summary>
+        /// 引数を追加します。
+        /// </summary>
+        /// <param name="variable">リンクする変数</param>
+        /// <param name="literalType">リテラルタイプか？</param>
+        public void AppendArgument(ICbValue variable, bool literalType = false)
         {
-            // リストをリンクする為のリンクコネクターを作成する
+            // 引数とリンクしたリンクコネクターを作成する
             var linkConnector = new LinkConnector()
             {
                 OwnerCommandCanvas = this.OwnerCommandCanvas,
-                ValueData = obj
+                ValueData = variable
             };
-            // リンクコネクターにリストを追加する
-            linkConnector.SetListNodeType(obj.NodeTF);
-            // リストを返し値と同期させる
-            linkConnector.ConnectorList.LinkToList(obj);
-            if (hideLinkConnector)
+            if (variable.IsList)
             {
-                linkConnector.ConnectorListUpdateListEvent = new Action(
-                        () =>
-                        {
-                            // リストの変更を接続先に伝える
+                // リスト型の引数を追加する
 
-                            rootCurveLinks?.RequestUpdateRootValue();
-                        });
+                AppendListArgument(linkConnector, variable, literalType);
+            }
+            else
+            {
+                if (literalType)
+                {
+                    // 引数にしない（ルートのみ）
 
-                // 接続を禁止する
+                    return;
+                }
+
+                // 引数UIを追加する
+                AppendUIArgument(linkConnector);
+            }
+        }
+
+        /// <summary>
+        /// リスト型引数の為のノードリストを用意します。
+        /// </summary>
+        /// <param name="linkConnector">コネクター</param>
+        /// <param name="variable">リンクする変数</param>
+        /// <param name="literalType">リテラルタイプか？</param>
+        private void AppendListArgument(LinkConnector linkConnector, ICbValue variable, bool literalType = false)
+        {
+            // 要素を増やす場合の型の作成方法を登録
+            linkConnector.SetListNodeType(variable.NodeTF);
+            // リストを返し値と同期させる
+            if (literalType)
+            {
+                // 更新時処理を登録する
+                linkConnector.ConnectorList.UpdateListEvent =
+                    () =>
+                    {
+                        // 変更したら自身（ルート）の表示を更新する
+                        UpdateValueData();
+
+                        // 変更をルートの接続先に伝える
+                        rootCurveLinks?.RequestUpdateRootValue();
+                    };
+
+                // 引数の親に対してのコネクターへの接続を禁止する
                 linkConnector.HideLinkConnector();
             }
-
-            AppendBox(linkConnector);
-        }
-
-        public void AppendToBox(ICbValue obj)
-        {
-            var linkConnector = new LinkConnector()
+            else
             {
-                OwnerCommandCanvas = this.OwnerCommandCanvas,
-                ValueData = obj
-            };
-            AppendBox(linkConnector);
+                // 更新時処理を登録する
+                linkConnector.ConnectorList.UpdateListEvent =
+                    () =>
+                    {
+                        linkConnector.UpdateValueData();
+                    };
+            }
+
+            // 変数をコネクターに登録する
+            linkConnector.ConnectorList.LinkListTypeVariable(variable);
+
+            // 引数UIを追加する
+            AppendUIArgument(linkConnector);
         }
 
-        public void AppendBox(LinkConnector obj)
+        /// <summary>
+        /// 引数UIを追加します。
+        /// </summary>
+        /// <param name="linkConnector">コネクター</param>
+        private void AppendUIArgument(LinkConnector linkConnector)
         {
-            ListData.Add(obj);
+            ListData.Add(linkConnector);
             CheckBoxVisibility();
         }
 
@@ -740,30 +783,24 @@ namespace CapybaraVS.Controls.BaseControls
             }
         }
 
-        private Canvas curveCanvas;
         public Canvas CurveCanvas
         {
             get
             {
-                if (curveCanvas is null)
-                {
-                    // キャンバスが設定されていないので探す
+                if (OwnerCommandCanvas is null)
+                    return null;
 
-                    DependencyObject target = this;
-                    do
-                    {
-                        FrameworkElement _target = target as FrameworkElement;
-                        target = VisualTreeHelper.GetParent(target);
-                        if (target is Canvas canvas)
-                        {
-                            curveCanvas = canvas;
-                            break;
-                        }
-                    } while (target != null);
-                }
-                return curveCanvas; 
+                return OwnerCommandCanvas.CurveCanvas;
             }
-            set { curveCanvas = value; }
+        }
+
+        public bool RequestBuildCurve(ICurveLinkPoint target, Point? endPos)
+        {
+            if (rootCurveLinks is null)
+                return false;
+            var ret = rootCurveLinks.RequestBuildCurve(target, endPos);
+            ChangeLinkConnectorStroke();
+            return ret;
         }
 
         public bool RequestBuildCurve()

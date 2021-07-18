@@ -92,15 +92,9 @@ namespace CapybaraVS.Controls
             LinkConnectorControl.ValueData = new ParamNameOnly("Root");
         }
 
-        public SingleRootConnector AppendToBox(ICbList obj, bool hideLinkConnector = false)
+        public SingleRootConnector AppendToBox(ICbValue variable, bool openList = false)
         {
-            LinkConnectorControl.AppendToBox(obj, hideLinkConnector);
-            return this;
-        }
-
-        public SingleRootConnector AppendToBox(ICbValue obj)
-        {
-            LinkConnectorControl.AppendToBox(obj);
+            LinkConnectorControl.AppendArgument(variable, openList);
             return this;
         }
 

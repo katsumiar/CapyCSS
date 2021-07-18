@@ -20,6 +20,7 @@ using System.Linq;
 using System.Windows.Media;
 using CbVS.Script;
 using CapyCSS.Script;
+using System.Collections;
 
 namespace CapybaraVS.Script
 {
@@ -84,6 +85,28 @@ namespace CapybaraVS.Script
         }
 
         /// <summary>
+        /// 型情報を参照します。
+        /// ※インポートしたモジュールの型情報も参照できます。
+        /// </summary>
+        /// <param name="type">型情報</param>
+        /// <returns>型情報</returns>
+        public static Type GetTypeEx(Type type)
+        {
+            return GetTypeEx(type.FullName);
+        }
+
+        /// <summary>
+        /// 列挙体のメンバの名前を取得します。
+        /// ※インポートしたモジュールの列挙体も参照できます。
+        /// </summary>
+        /// <param name="type">型情報</param>
+        /// <returns>名前</returns>
+        public static string[] GetEnumNames(Type type)
+        {
+            return Enum.GetNames(GetTypeEx(type));
+        }
+
+        /// <summary>
         /// 対応するCbXXX型を求めます。
         /// </summary>
         /// <param name="type">オリジナルの型情報</param>
@@ -140,7 +163,7 @@ namespace CapybaraVS.Script
                 return cbClassType;
             }
 
-            if (type.GetGenericTypeDefinition() == typeof(List<>))
+            if (type.GetGenericTypeDefinition() == typeof(ICollection<>))
             {
                 Debug.Assert(false);
             }
@@ -226,6 +249,42 @@ namespace CapybaraVS.Script
         /// <summary>
         /// 対応する CbXXX 型の変数を作成します。
         /// </summary>
+        /// <param name="geneType">オリジナルのジェネリック型</param>
+        /// <param name="argType">ジェネリックの引数型</param>
+        /// <param name="name">変数名</param>
+        /// <returns>CbXXX 型の変数</returns>
+        public static ICbValue CbCreate(Type geneType, Type argType, string name = "", object value = null)
+        {
+            Type type = geneType.MakeGenericType(argType);
+            var variable = CbCreate(type, name);
+            if (value != null)
+            {
+                variable.Data = value;
+            }
+            return variable;
+        }
+
+        /// <summary>
+        /// 対応する CbXXX 型の変数を作成します。
+        /// </summary>
+        /// <param name="geneType">オリジナルのジェネリック型</param>
+        /// <param name="argTypes">ジェネリックの引数型</param>
+        /// <param name="name">変数名</param>
+        /// <returns>CbXXX 型の変数</returns>
+        public static ICbValue CbCreate(Type geneType, Type[] argTypes, string name = "", object value = null)
+        {
+            Type type = geneType.MakeGenericType(argTypes);
+            var variable = CbCreate(type, name);
+            if (value != null)
+            {
+                variable.Data = value;
+            }
+            return variable;
+        }
+
+        /// <summary>
+        /// 対応する CbXXX 型の変数を作成します。
+        /// </summary>
         /// <typeparam name="T">オリジナルの型</typeparam>
         /// <param name="name">変数名</param>
         /// <returns>CbXXX 型の変数</returns>
@@ -280,12 +339,19 @@ namespace CapybaraVS.Script
                     _mame = type.FullName;
                 else if (type.Name != null)
                     _mame = type.Name;
-                Type element = CbST.GetTypeEx(_mame.Replace("[]", ""));
+                Type tType = CbST.GetTypeEx(_mame);
+                if (tType is null)
+                    return null;
+                Type element = tType.GetElementType();
                 if (element != null)
                 {
-                    var ret = CbList.Create(element, name);
-                    if (ret is ICbList cbList)
+                    Type collectionType = typeof(List<>).MakeGenericType(element);
+                    var ret = CbList.Create(collectionType, name);
+                    if (ret.IsList)
+                    {
+                        ICbList cbList = ret.GetListValue;
                         cbList.IsArrayType = true;
+                    }
                     return ret;
                 }
             }
@@ -319,16 +385,18 @@ namespace CapybaraVS.Script
                         return null;
 
                     var ret = _CbCreate(type.GenericTypeArguments[0], name, false);
+                    if (ret is null)
+                        return null;
                     ret.IsNullable = true;
                     return ret;
                 }
 
-                if (type.GetGenericTypeDefinition() == typeof(List<>))
+                if (CbList.HaveInterface(type, typeof(IEnumerable<>)))
                 {
                     if (type.GenericTypeArguments.Length > 1)
                         return null;
 
-                    return CbList.Create(type.GenericTypeArguments[0], name);
+                    return CbList.Create(type, name);
                 }
 
                 if (CbFunc.IsActionType(type))
@@ -402,10 +470,23 @@ namespace CapybaraVS.Script
         Type OriginalType { get; }
     }
 
+    public interface IUIShowValue
+    {
+        /// <summary>
+        /// 値のUI上の文字列表現
+        /// </summary>
+        string ValueUIString { get; }
+
+        /// <summary>
+        /// 値の文字列表現
+        /// </summary>
+        string ValueString { get; set; }
+    }
+
     /// <summary>
     /// CbVSValue機能インターフェイス
     /// </summary>
-    public interface ICbValue : ICbVSValueBase
+    public interface ICbValue : ICbVSValueBase, IUIShowValue
     {
         /// <summary>
         /// 変数生成用型情報
@@ -424,13 +505,25 @@ namespace CapybaraVS.Script
         /// </summary>
         bool IsReadOnlyName { get; }
         /// <summary>
-        /// 値の文字列表現
+        /// 引数時参照修飾されているか？
         /// </summary>
-        string ValueString { get; set; }
+        bool IsByRef { get; set; }
+        /// <summary>
+        /// リテラルかどうか？
+        /// </summary>
+        bool IsLiteral { get; set; }
         /// <summary>
         /// デリゲート型かどうか？
         /// </summary>
         bool IsDelegate { get; }
+        /// <summary>
+        /// リストか否か？（ToArray も含めるので ICollection ではない）
+        /// </summary>
+        bool IsList { get; }
+        /// <summary>
+        /// リスト形式の値を返します。
+        /// </summary>
+        ICbList GetListValue { get; }
         /// <summary>
         /// 変数の値は変更不可か？
         /// </summary>
@@ -439,6 +532,10 @@ namespace CapybaraVS.Script
         /// UIで変数の値を表示するか？
         /// </summary>
         bool IsVisibleValue { get; }
+        /// <summary>
+        /// 値の変化後に動かす必要のある処理です。
+        /// </summary>
+        Action<object> ReturnAction { set; get; }
         /// <summary>
         /// 変数の値
         /// </summary>
@@ -526,7 +623,7 @@ namespace CapybaraVS.Script
     }
 
     /// <summary>
-    /// データ表示インターフェイス
+    /// データ表示インターフェイス（※TODO 実装を見直す）
     /// </summary>
     public interface ICbShowValue
     {
@@ -555,21 +652,33 @@ namespace CapybaraVS.Script
     /// <typeparam name="T">型</typeparam>
     public class BaseCbValueClass<T>
     {
-        protected const string ERROR_STR = "[ERROR]";
-        protected const string NULL_STR = "<null>";
-
-        public virtual Func<ICbValue> NodeTF => () => CbST.CbCreate(OriginalType);// CbST.Create(CbType);
+        public virtual Func<ICbValue> NodeTF => () => CbST.CbCreate(OriginalType);
 
         protected T _value;
-        
+
         public virtual bool IsAssignment(ICbValue obj, bool isCast)
         {
             if (obj is ParamNameOnly)
                 return false;
-            if (this is ICbList)
-                if (TypeName != obj.TypeName)
-                    return false;
-            return CbSTUtils.IsAssignment(TypeName, obj.TypeName, OriginalType, obj.OriginalType, isCast);
+
+            if (IsList)
+            {
+                ICbList cbList = GetListValue;
+
+                if (isCast && cbList.IsArrayType && obj.IsList)
+                    return true;    // ToArrya() を行う特殊なキャスト
+
+                if (isCast && obj.IsList)
+                {
+                    ICbList ListObj = obj.GetListValue;
+                    if (ListObj.IsArrayType)
+                        return true;    // List<>(array) を行う特殊なキャスト
+                }
+
+                if (OriginalType.IsAssignableFrom(obj.OriginalType))
+                    return true;
+            }
+            return CbSTUtils.IsAssignment(OriginalType, obj.OriginalType, isCast);
         }
 
         public bool IsError { get; set; } = false;
@@ -581,6 +690,15 @@ namespace CapybaraVS.Script
         /// ※ object として扱う場合は Data を参照します。
         /// </summary>
         public virtual T Value { get => _value; set { _value = value; } }
+
+        /// <summary>
+        /// 値の文字列表現
+        /// </summary>
+        public virtual string ValueString
+        {
+            get => Value.ToString();
+            set { }
+        }
 
         /// <summary>
         /// 型の名前を参照します。
@@ -598,8 +716,6 @@ namespace CapybaraVS.Script
                 {
                     typeName = CbSTUtils.GetTypeName(Value as object);
                 }
-                if (IsNullable)
-                    return typeName + "?";
                 return typeName;
             }
         }
@@ -618,11 +734,29 @@ namespace CapybaraVS.Script
         /// オリジナルの型（Func, Action, List 以外は OriginalReturnType と同じ）を参照します。
         /// </summary>
         public virtual Type OriginalType => typeof(T);
-
+        /// <summary>
+        /// 引数時参照修飾されているか？
+        /// </summary>
+        public bool IsByRef { get; set; } = false;
+        /// <summary>
+        /// リテラルかどうか？
+        /// ※変数以外は、原則リテラル
+        /// </summary>
+        public bool IsLiteral { get; set; } = true;
         /// <summary>
         /// デリゲート型かどうか？
         /// </summary>
         public virtual bool IsDelegate => false;
+
+        /// <summary>
+        /// リストか否か？（ToArray も含めるので ICollection ではない）
+        /// </summary>
+        public virtual bool IsList => false;
+
+        /// <summary>
+        /// リスト形式の値を返します。
+        /// </summary>
+        public virtual ICbList GetListValue => this as ICbList;
 
         /// <summary>
         /// 変数名を参照します。
@@ -637,7 +771,12 @@ namespace CapybaraVS.Script
         /// <summary>
         /// 変数の持つ値を文字列として参照します。
         /// </summary>
-        public virtual string ValueString { get; set; }
+        public virtual string ValueUIString { get; }
+
+        /// <summary>
+        /// 値の変化後に動かす必要のある処理です。
+        /// </summary>
+        public Action<object> ReturnAction { set; get; } = null;
 
         /// <summary>
         /// 変数の持つ値は変更禁止か？
@@ -694,6 +833,7 @@ namespace CapybaraVS.Script
                 if (n.IsError)
                     throw new Exception(n.ErrorMessage);
 
+                ReturnAction = null;
                 if (n is CbObject cbObject)
                 {
                     n = (dynamic)cbObject.ValueTypeObject;
@@ -703,17 +843,30 @@ namespace CapybaraVS.Script
                     // ただのキャストでは sbyte から int への変換などで例外が出るので ChangeType を使って変換する
 
                     Value = (T)Convert.ChangeType(n.Data, typeof(T));
+
+                    // 参照渡しの為のリアクションのコピー
+                    ReturnAction = n.ReturnAction;
                 }
-                else if (!(this is ICbList) && n is ICbList cbList)
+                else if (!this.IsList && n.IsList)
                 {
                     // リストはオリジナルの型にしないと代入できない
 
+                    ICbList cbList = n.GetListValue;
+
                     Value = (T)cbList.ConvertOriginalTypeList(null, null);
+
+                    if (this is ICbClass cbClass)
+                    {
+                        // List は、参照型なので Value の値が更新されると cbList に戻す必要がある。
+
+                        cbClass.ReturnAction = (val) => cbList.CopyFrom(val);
+                    }
                 }
                 else
                 {
                     Value = (dynamic)n.Data;
                 }
+                IsLiteral = n.IsLiteral;
                 if (IsError)
                 {
                     IsError = false;
@@ -900,9 +1053,21 @@ namespace CapybaraVS.Script
 
         public bool IsReadOnlyName { get; set; } = false;
 
+        public bool IsLiteral { get; set; } = false;
+
+        public bool IsByRef { get; set; } = false;
+
         public virtual bool IsDelegate => false;
 
-        public string ValueString { get => name; set { name = value; } }
+        public virtual bool IsList => false;
+
+        public virtual ICbList GetListValue => null;
+
+        public string ValueUIString { get => name; set { name = value; } }
+
+        public string ValueString { get; set; } = null;
+
+        public Action<object> ReturnAction { set; get; } = null;
 
         public bool IsReadOnlyValue { get; set; } = true;
 

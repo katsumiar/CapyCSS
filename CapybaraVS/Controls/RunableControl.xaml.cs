@@ -220,7 +220,7 @@ namespace CapybaraVS.Controls
                                         node.RequestExecute(null, null);
                                         ICbValue value = node.ValueData;
                                         if (value != null)
-                                            OwnerCommandCanvas.CommandCanvasControl.MainLog.OutLine(OwnerCommandCanvas.ScriptWorkCanvas.Name, value.ValueString);
+                                            OwnerCommandCanvas.CommandCanvasControl.MainLog.OutLine(OwnerCommandCanvas.ScriptWorkCanvas.Name, value.ValueUIString);
                                     }
                                     OwnerCommandCanvas.CommandCanvasControl.MainLog.OutLine(OwnerCommandCanvas.ScriptWorkCanvas.Name, "[Total Count] " + count);
                                 }

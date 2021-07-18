@@ -18,12 +18,10 @@ namespace CapybaraVS.Script.Lib
         }
 
         //------------------------------------------------------------------
-        [ScriptMethod(nameof(Graph) + "." + nameof(MakePlotList), "",
-           "RS=>Graph_MakePlotList"
-           )]
-        public static List<double> MakePlotList(int count, Func<double, double> func, double step = TickGraph)
+        [ScriptMethod(nameof(Graph) + "." + nameof(MakePlotList))]
+        public static ICollection<double> MakePlotList(int count, Func<double, double> func, double step = TickGraph)
         {
-            List<double> list = new List<double>();
+            var list = new List<double>();
             if (step <= 0)
                 return list;
             count--;
@@ -36,55 +34,43 @@ namespace CapybaraVS.Script.Lib
         }
 
         //------------------------------------------------------------------
-        [ScriptMethod(nameof(Graph) + "." + nameof(CreateErrorList), "",
-            "RS=>Graph_CreateErrorList"
-            )]
-        public static List<double> CreateErrorList(List<double> list, double errorValue)
+        [ScriptMethod(nameof(Graph) + "." + nameof(CreateErrorList))]
+        public static ICollection<double> CreateErrorList(IEnumerable<double> list, double errorValue)
         {
-            return list.ConvertAll(new Converter<double, double>((n) => n + errorValue));
+            return ListFactory.ConvertList(list, (n) => n + errorValue);
         }
 
         //------------------------------------------------------------------
-        [ScriptMethod(nameof(Graph) + "." + nameof(CreatePlotInfo) + "(List<double>)", nameof(CreatePlotInfo),
-            "RS=>Graph_CreatePlotInfo"
-            )]
-        public static PlotInfo CreatePlotInfo(List<double> list, DrawType drawType = DrawType.NormalPlot)
+        [ScriptMethod(nameof(Graph) + "." + nameof(CreatePlotInfo) + "." + nameof(CreatePlotInfo))]
+        public static PlotInfo CreatePlotInfo(IEnumerable<double> list, DrawType drawType = DrawType.NormalPlot)
         {
             return new PlotInfo(list, drawType);
         }
 
         //------------------------------------------------------------------
-        [ScriptMethod(nameof(Graph) + "." + nameof(CreatePlotInfo) + "(List<double>, BrushColors)", nameof(CreatePlotInfo),
-            "RS=>Graph_CreatePlotInfo"
-            )]
-        public static PlotInfo CreatePlotInfo(List<double> list, DrawType drawType = DrawType.NormalPlot, BrushColors colors = BrushColors.None)
+        [ScriptMethod(nameof(Graph) + "." + nameof(CreatePlotInfo) + "." + nameof(CreatePlotInfo))]
+        public static PlotInfo CreatePlotInfo(IEnumerable<double> list, DrawType drawType = DrawType.NormalPlot, BrushColors colors = BrushColors.None)
         {
             return new PlotInfo(list, drawType, CreateBrushes(colors));
         }
 
         //------------------------------------------------------------------
-        [ScriptMethod(nameof(Graph) + "." + nameof(CreatePlotInfo) + "(List<int>)", nameof(CreatePlotInfo),
-            "RS=>Graph_CreatePlotInfo"
-            )]
-        public static PlotInfo CreatePlotInfo(List<int> list, DrawType drawType = DrawType.NormalPlot)
+        [ScriptMethod(nameof(Graph) + "." + nameof(CreatePlotInfo) + "." + nameof(CreatePlotInfo))]
+        public static PlotInfo CreatePlotInfo(IEnumerable<int> list, DrawType drawType = DrawType.NormalPlot)
         {
             return new PlotInfo(list, drawType);
         }
 
         //------------------------------------------------------------------
-        [ScriptMethod(nameof(Graph) + "." + nameof(CreatePlotInfo) + "(List<int>, BrushColors)", nameof(CreatePlotInfo),
-            "RS=>Graph_CreatePlotInfo"
-            )]
-        public static PlotInfo CreatePlotInfo(List<int> list, DrawType drawType = DrawType.NormalPlot, BrushColors colors = BrushColors.None)
+        [ScriptMethod(nameof(Graph) + "." + nameof(CreatePlotInfo) + "." + nameof(CreatePlotInfo))]
+        public static PlotInfo CreatePlotInfo(IEnumerable<int> list, DrawType drawType = DrawType.NormalPlot, BrushColors colors = BrushColors.None)
         {
             return new PlotInfo(list, drawType, CreateBrushes(colors));
         }
 
         //------------------------------------------------------------------
-        [ScriptMethod(nameof(Graph) + "." + nameof(OutPlot), "",
-            "RS=>Graph_OutPlot"
-            )]
-        public static void OutPlot(string msg, List<PlotInfo> list, List<double> guideLines = null)
+        [ScriptMethod(nameof(Graph) + "." + nameof(OutPlot))]
+        public static void OutPlot(string msg, ICollection<PlotInfo> list, ICollection<double> guideLines = null)
         {
             if (list is null)
                 return;

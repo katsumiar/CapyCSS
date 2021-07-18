@@ -5,8 +5,8 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:CapyCSS"
         mc:Ignorable="d"
-        Title="HelpWindow" Height="219" Width="256" WindowStyle="ToolWindow">
+        Title="HelpWindow" Height="550" Width="654" WindowStyle="ToolWindow">
     <Grid>
-        <TextBlock x:Name="Info" HorizontalAlignment="Center" VerticalAlignment="Center" />
+        <TextBlock x:Name="Info" HorizontalAlignment="Left" VerticalAlignment="Center" Grid.Column="1" Margin="34,0,0,0" />
     </Grid>
 </Window>

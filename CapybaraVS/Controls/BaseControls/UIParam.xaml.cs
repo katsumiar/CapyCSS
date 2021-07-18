@@ -78,12 +78,12 @@ namespace CapybaraVS.Controls.BaseControls
                 (self, getValue) =>
                 {
                     string text = getValue(self);
-                    string backup = self.ValueData.ValueString;
+                    string backup = self.ValueData.ValueUIString;
                     try
                     {
                         if (self.ValueData.IsStringableValue)
                             self.ValueData.ValueString = text;
-                        self.Edit.Text = self.ValueData.ValueString.Trim('\r', '\n');
+                        self.Edit.Text = self.ValueData.ValueUIString.Trim('\r', '\n');
                         self.ToolTipUpdate();
                     }
                     catch (Exception ex)
@@ -110,9 +110,28 @@ namespace CapybaraVS.Controls.BaseControls
                 nameof(TypeName),
                 (self, getValue) =>
                 {
-                    self.TypeNameLabel.Content = getValue(self);
+                    string value = getValue(self);
                     if (self.TypeNameLabelOverlap.Length != 0 && !(self.ValueData is ParamNameOnly))
+                    {
                         self.TypeNameLabel.Content = self.TypeNameLabelOverlap;
+                    }
+                    if (self.ValueData.IsByRef || self.ValueData.IsNullable)
+                    {
+                        self.TypeNameLabel.FontWeight = FontWeights.UltraBold;
+                        if (self.ValueData.IsByRef)
+                        {
+                            value = $"[ref] {value}";
+                        }
+                        if (self.ValueData.IsNullable)
+                        {
+                            value = $"{value}?";
+                        }
+                    }
+                    else
+                    {
+                        self.TypeNameLabel.FontWeight = FontWeights.Normal;
+                    }
+                    self.TypeNameLabel.Content = value;
                 });
 
         public static readonly DependencyProperty TypeNameProperty = impTypeName.Regist("TypeName");
@@ -137,7 +156,7 @@ namespace CapybaraVS.Controls.BaseControls
                     if (self.ValueData is ICbValue value)
                     {
                         value.Name = text;
-                        self.ParamEdit = value.ValueString;
+                        self.ParamEdit = value.ValueUIString;
                     }
                 });
 
@@ -278,9 +297,9 @@ namespace CapybaraVS.Controls.BaseControls
             {
                 Edit.Visibility = Visibility.Visible;
 
-                if (valueData.ValueString != null)
+                if (valueData.ValueUIString != null)
                 {
-                    ParamEdit = valueData.ValueString;
+                    ParamEdit = valueData.ValueUIString;
                 }
                 ToolTipUpdate();    // 必ず更新確認が必要
 
@@ -333,8 +352,8 @@ namespace CapybaraVS.Controls.BaseControls
             foreach (var node in selectValue.ElementList)
             {
                 Select.Items.Add(node);
-                if (node == valueData.ValueString ||
-                    selectValue.TypeName + "." + node == valueData.ValueString)
+                if (node == valueData.ValueUIString ||
+                    selectValue.TypeName + "." + node == valueData.ValueUIString)
                 {
                     selectIndex = count;
                 }
@@ -380,7 +399,14 @@ namespace CapybaraVS.Controls.BaseControls
                 (self, getValue) =>
                 {
                     bool value = getValue(self);
-                    self.Edit.IsReadOnly = self.ValueData.IsReadOnlyValue || value;
+                    if (self.ValueData is null)
+                    {
+                        self.Edit.IsReadOnly = true;
+                    }
+                    else
+                    {
+                        self.Edit.IsReadOnly = self.ValueData.IsReadOnlyValue || value;
+                    }
                 });
 
         public static readonly DependencyProperty ReadOnlyProperty = impReadOnly.Regist(false);
@@ -484,36 +510,47 @@ namespace CapybaraVS.Controls.BaseControls
 
         private void ToolTipUpdate()
         {
+            string valueString = null;
             if (ValueData is CbObject cbObject)
             {
                 if (!cbObject.ValueTypeObject.IsNull && cbObject.ValueTypeObject.Data is ICbShowValue cbVSShow)
                 {
-                    Edit.ToolTip = cbVSShow.DataString.Trim('\r', '\n');
-                    return;
+                    valueString = cbVSShow.DataString;
+                }
+                else
+                {
+                    valueString = cbObject.ValueUIString;
                 }
             }
-            if (ValueData is ICbClass cbClass)
+            else if (ValueData is ICbClass cbClass)
             {
                 if (cbClass.Data != null)
                 {
                     if (cbClass.Data is ICbShowValue cbVSShow)
                     {
-                        Edit.ToolTip = cbVSShow.DataString.Trim('\r', '\n');
+                        valueString = cbVSShow.DataString;
                     }
                     else
                     {
-                        Edit.ToolTip = cbClass.ValueString.Trim('\r', '\n');
+                        valueString = cbClass.Data.ToString();
                     }
-                    return;
+                }
+                else
+                {
+                    valueString = cbClass.ValueUIString;
                 }
             }
 #if !SHOW_LINK_ARRAY
-            else if (ValueData is ICbList cbList)
+            else if (ValueData.IsList)
             {
+                ICbList cbList = ValueData.GetListValue;
                 if (!cbList.IsNull && cbList is ICbShowValue cbVSShow)
                 {
-                    Edit.ToolTip = cbVSShow.DataString.Trim('\r', '\n');
-                    return;
+                    valueString = cbVSShow.DataString;
+                }
+                else
+                {
+                    valueString = cbList.ValueUIString;
                 }
             }
 #endif
@@ -521,11 +558,21 @@ namespace CapybaraVS.Controls.BaseControls
             {
                 if (!ValueData.IsNull && ValueData.Data is ICbShowValue cbVSShow)
                 {
-                    Edit.ToolTip = cbVSShow.DataString.Trim('\r', '\n');
-                    return;
+                    valueString = cbVSShow.DataString;
+                }
+                else
+                {
+                    valueString = ValueData.ValueUIString;
                 }
             }
-            Edit.ToolTip = Edit.Text.Trim('\r', '\n');
+            if (valueString is null)
+            {
+                Edit.ToolTip = Edit.Text.Trim('\r', '\n');
+            }
+            else
+            {
+                Edit.ToolTip = valueString.Trim('\r', '\n');
+            }
         }
 
         private void Edit_KeyDown(object sender, KeyEventArgs e)
@@ -557,7 +604,6 @@ namespace CapybaraVS.Controls.BaseControls
         private void MediaBox_MouseEnter(object sender, MouseEventArgs e)
         {
             MediaBox.Position = TimeSpan.Zero;
-            //MediaBox.Visibility = Visibility.Visible;
             MediaBox.LoadedBehavior = MediaState.Manual;
             MediaBox.Play();
         }

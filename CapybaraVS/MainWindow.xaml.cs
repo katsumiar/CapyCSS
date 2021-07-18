@@ -46,9 +46,7 @@ namespace CapybaraVS
 
             CommandControl.Setup(
                 this,
-                App.CAPYCSS_INFO_PATH,
-                App.CAPYCSS_DLL_DIR_PATH,
-                App.CAPYCSS_PACKAGE_DIR_PATH,
+                App.CAPY_CSS_PATH,
                 (filename) =>
                 {
                     // タイトルをセットします。
@@ -97,12 +95,12 @@ namespace CapybaraVS
 
         private void MainWindow_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            CommandControl.SaveInfo(App.CAPYCSS_INFO_PATH);
+            CommandControl.SaveInfo();
             CommandControl.Dispose();
             App.Instance.SaveAppInfo();
         }
 
-        [ScriptMethod(nameof(SetExitCode), "", "RS=>SetExitCode")]
+        [ScriptMethod(nameof(SetExitCode))]
         public static void SetExitCode(int code)
         {
             Environment.Exit(code);

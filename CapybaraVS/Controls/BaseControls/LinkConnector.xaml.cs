@@ -88,11 +88,11 @@ namespace CapybaraVS.Controls.BaseControls
                     {
                         if (self.backupValueData is null)
                         {
-                            Value = self.ValueData.ValueString;
+                            Value = self.ValueData.ValueUIString;
                         }
                         else
                         {
-                            Value = self.backupValueData.ValueString;
+                            Value = self.backupValueData.ValueUIString;
                         }
                     }
 
@@ -182,6 +182,24 @@ namespace CapybaraVS.Controls.BaseControls
 
         #endregion
 
+        #region OwnerLinkConnector 添付プロパティ実装
+        private static ImplementDependencyProperty<LinkConnector, LinkConnector> impOwnerLinkConnector =
+            new ImplementDependencyProperty<LinkConnector, LinkConnector>(
+                nameof(OwnerLinkConnector),
+                (self, getValue) =>
+                {
+                    //LinkConnector value = getValue(self);
+                });
+
+        public static readonly DependencyProperty OwnerLinkConnectorProperty = impOwnerLinkConnector.Regist(null);
+
+        public LinkConnector OwnerLinkConnector
+        {
+            get { return impOwnerLinkConnector.GetValue(this); }
+            set { impOwnerLinkConnector.SetValue(this, value); }
+        }
+        #endregion
+
         private CommandCanvas _OwnerCommandCanvas = null;
 
         public CommandCanvas OwnerCommandCanvas
@@ -195,13 +213,17 @@ namespace CapybaraVS.Controls.BaseControls
                 if (ParamTextBox.OwnerCommandCanvas is null)
                     ParamTextBox.OwnerCommandCanvas = value;
                 if (_OwnerCommandCanvas is null)
+                {
                     _OwnerCommandCanvas = value;
+                    ChangeConnectorStyle(SingleLinkMode);
+                }
             }
         }
 
         public LinkConnector()
         {
             InitializeComponent();
+            ConnectorList.OwnerLinkConnector = this;
             pointIdProvider = new PointIdProvider(this);
             AssetXML = new _AssetXML<LinkConnector>(this);
             DataContext = this;
@@ -214,13 +236,6 @@ namespace CapybaraVS.Controls.BaseControls
                     UpdateEvent?.Invoke();
                 }
                 );
-
-            Dispatcher.BeginInvoke(
-                new Action(() =>
-                {
-                    ChangeConnectorStyle(SingleLinkMode);
-                }
-                ), DispatcherPriority.Loaded);
 
             LayoutUpdated += _LayoutUpdated;
         }
@@ -242,7 +257,7 @@ namespace CapybaraVS.Controls.BaseControls
         public void SetListNodeType(Func<ICbValue> nodeType)
         {
             BoxMainPanel.Visibility = Visibility.Visible;
-            ConnectorList.AddFunc = new Func<ObservableCollection<LinkConnector>, ICbValue>(
+            ConnectorList.CreateNodeEvent = new Func<ObservableCollection<LinkConnector>, ICbValue>(
                 (ListData) => 
                 {
                     return nodeType();
@@ -412,14 +427,36 @@ namespace CapybaraVS.Controls.BaseControls
         /// <param name="e"></param>
         private void _LayoutUpdated(object sender, EventArgs e)
         {
+            if (IsLoaded)
+            {
+                ForcedLayoutUpdated(IsOpenList);
+            }
+        }
+
+        private bool IsOpenList = true;
+
+        /// <summary>
+        /// 接続線のレイアウトを正しく更新します。
+        /// </summary>
+        public void ForcedLayoutUpdated(bool isOpenList)
+        {
+            IsOpenList = isOpenList;
             if (linkCurveLinks != null && linkCurveLinks.Count != 0 && IsLoaded)
             {
                 try
                 {
-                    Point pos = TargetPoint;
+                    Point pos;
+                    if (OwnerLinkConnector != null && !IsOpenList)
+                    {
+                        pos = OwnerLinkConnector.TargetPoint;
+                    }
+                    else
+                    {
+                        pos = TargetPoint;
+                    }
                     if (backupPos != pos)
                     {
-                        linkCurveLinks?.RequestBuildCurve();
+                        linkCurveLinks?.RequestBuildCurve(this, pos);
                         backupPos = pos;
                     }
                 }
@@ -430,29 +467,15 @@ namespace CapybaraVS.Controls.BaseControls
             }
         }
 
-        private Canvas curveCanvas;
         public Canvas CurveCanvas
         {
             get
             {
-                if (curveCanvas is null)
-                {
-                    // キャンバスが設定されていないので探す
+                if (OwnerCommandCanvas is null)
+                    return null;
 
-                    DependencyObject target = this;
-                    do
-                    {
-                        target = VisualTreeHelper.GetParent(target);
-                        if (target is Canvas canvas)
-                        {
-                            curveCanvas = canvas;
-                            break;
-                        }
-                    } while (target != null);
-                }
-                return curveCanvas;
+                return OwnerCommandCanvas.CurveCanvas;
             }
-            set { curveCanvas = value; }
         }
 
         private bool ClearLock = false;
@@ -485,12 +508,11 @@ namespace CapybaraVS.Controls.BaseControls
                 }
 
                 if (BoxMainPanel.Visibility == Visibility.Visible &&
-                    value is ICbList list)
+                    value.IsList)
                 {
-                    // リンクコネクターリストが開いている（リスト接続可能）
-                    // かつ接続されたリンクがリストデータを持っている場合は、リストを展開する
+                    // 接続可能かつリスト型の場合は、ノードを展開する
 
-                    ConnectorList.SetList(list.Value);
+                    ConnectorList.Connect(value);
                 }
 
                 ValueData = CbST.CbCreate(backupValueData.OriginalType);
@@ -498,18 +520,22 @@ namespace CapybaraVS.Controls.BaseControls
                 eventLinkRootConnector = root as RootConnector;
 
                 SetupValue();
+                ValueData.Name = ParamTextBox.ParamNameLabelOverlap;    // ノードを接続すると名前が消えるので上書きする
                 ParamTextBox.UpdateValueData();
 
                 UpdateEvent?.Invoke();
 
-                IsCallBackLink = CheckCallBackLink();
+                SetIsCallBackLink();
             }
 
             ChangeLinkConnectorStroke();
             return ret;
         }
 
-        public void UpdateParam()
+        /// <summary>
+        /// 表示を更新します。
+        /// </summary>
+        public void UpdateValueData()
         {
             ParamTextBox.UpdateValueData();
         }
@@ -522,14 +548,9 @@ namespace CapybaraVS.Controls.BaseControls
         /// <summary>
         /// 接続がコールバック呼び出し接続かの判定を残しておきます。
         /// </summary>
-        /// <returns></returns>
-        private bool CheckCallBackLink()
+        private void SetIsCallBackLink()
         {
-            if (ValueData is ICbList cbList)
-            {
-                return cbList.ItemName.StartsWith(CbSTUtils.FUNC_STR) || cbList.ItemName.StartsWith(CbSTUtils.ACTION_STR);
-            }
-            return ValueData is ICbEvent;
+            IsCallBackLink = ValueData is ICbEvent;
         }
 
         /// <summary>
@@ -606,7 +627,13 @@ namespace CapybaraVS.Controls.BaseControls
         {
             try
             {
-                if (connectValueData is CbObject cbObject)
+                if (connectValueData.IsList && connectValueData.IsList)
+                {
+                    // ToArray() によるキャスト
+
+                    ValueData.Set(connectValueData);
+                }
+                else if (connectValueData is CbObject cbObject)
                 {
                     if (cbObject.Data is null)
                         return; // 保険
@@ -643,18 +670,18 @@ namespace CapybaraVS.Controls.BaseControls
         {
             SetupValue();
             ParamTextBox.UpdateValueData();
-            UpdateLinkedList();
+            UpdateConnectedList();
             UpdateEvent?.Invoke();
         }
 
         /// <summary>
-        /// 管理している値がList<>なら指定要素数だけ増やす
+        /// 管理している値が ICollection<> なら指定要素数だけ増やす
         /// </summary>
         /// <param name="count">増やす要素の数</param>
         public void TryAddListNode(int count)
         {
             if (BoxMainPanel.Visibility == Visibility.Visible &&
-                ValueData is ICbList list)
+                ValueData.IsList)
             {
                 // リンクされているリストを表示に再反映する
 
@@ -666,23 +693,17 @@ namespace CapybaraVS.Controls.BaseControls
         }
 
         /// <summary>
-        /// リンクされているリストを表示に再反映します。
+        /// 接続されているリストを表示に再反映します。
         /// </summary>
-        private void UpdateLinkedList()
+        private void UpdateConnectedList()
         {
             if (BoxMainPanel.Visibility == Visibility.Visible &&
-                ValueData is ICbList list)
+                ValueData.IsList)
             {
-                // リンクされているリストを表示に再反映する
+                // 接続されているリストを表示に再反映する
 
-                ConnectorList.UpdateListData(list.Value);
+                ConnectorList.UpdateListData(ValueData);
             }
-        }
-
-        public Action ConnectorListUpdateListEvent
-        {
-            get => ConnectorList.UpdateListEvent;
-            set { ConnectorList.UpdateListEvent = value; }
         }
 
         public void RequestRemoveCurveLinkPoint(ICurveLinkRoot root)
@@ -693,7 +714,7 @@ namespace CapybaraVS.Controls.BaseControls
                 ValueData.Set(backupValueData);
                 UpdateEvent?.Invoke();
                 backupValueData = null;
-                ConnectorList.ClearSetList();
+                ConnectorList.Disconnect();
             }
             if (!ClearLock)
                 RemoveQurveUpdate();
@@ -718,7 +739,7 @@ namespace CapybaraVS.Controls.BaseControls
                 ValueData = backupValueData;
                 UpdateEvent?.Invoke();
                 backupValueData = null;
-                ConnectorList.ClearSetList();
+                ConnectorList.Disconnect();
             }
             RemoveQurveUpdate();
             ChangeLinkConnectorStroke();

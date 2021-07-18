@@ -59,7 +59,7 @@ namespace CapyCSS.Controls.BaseControls
             {
                 // TODO フォルダを指定してもらいファイルのパスを特定してもらう
 
-                string msg = string.Format(CapybaraVS.Language.GetInstance["ModuleControler_04"], filter);
+                string msg = string.Format(CapybaraVS.Language.Instance["SYSTEM_ModuleControler_04"], filter);
                 ControlTools.ShowErrorMessage(msg, MESSAGE_TITLE);
                 return null;    // 失敗
             }
@@ -175,7 +175,7 @@ namespace CapyCSS.Controls.BaseControls
             string dllPath = System.IO.Path.Combine(InstallDllDirectory, selected);
             if (File.Exists(selected))
             {
-                string msg = string.Format(CapybaraVS.Language.GetInstance["ModuleControler_04"], dllPath);
+                string msg = string.Format(CapybaraVS.Language.Instance["SYSTEM_ModuleControler_04"], dllPath);
                 ControlTools.ShowErrorMessage(msg, MESSAGE_TITLE);
                 return;
             }
@@ -271,7 +271,7 @@ namespace CapyCSS.Controls.BaseControls
             {
                 // dll は既にインポート済み
 
-                string msg = string.Format(CapybaraVS.Language.GetInstance["ModuleControler_01"], dllFileName);
+                string msg = string.Format(CapybaraVS.Language.Instance["SYSTEM_ModuleControler_01"], dllFileName);
                 var ret = ControlTools.ShowSelectMessage(msg, MESSAGE_TITLE, MessageBoxButton.YesNo);
                 if (ret == MessageBoxResult.No)
                 {
@@ -286,7 +286,7 @@ namespace CapyCSS.Controls.BaseControls
             {
                 // 上書きインストール成功
 
-                string msg = string.Format(CapybaraVS.Language.GetInstance["ModuleControler_02"], dllFileName);
+                string msg = string.Format(CapybaraVS.Language.Instance["SYSTEM_ModuleControler_02"], dllFileName);
                 ControlTools.ShowMessage(msg, MESSAGE_TITLE);
 
                 // アプリケーションの終了
@@ -297,7 +297,7 @@ namespace CapyCSS.Controls.BaseControls
             {
                 // インストール成功
 
-                string msg = string.Format(CapybaraVS.Language.GetInstance["ModuleControler_03"], dllFileName);
+                string msg = string.Format(CapybaraVS.Language.Instance["SYSTEM_ModuleControler_03"], dllFileName);
                 ControlTools.ShowMessage(msg, MESSAGE_TITLE);
             }
 
@@ -315,7 +315,6 @@ namespace CapyCSS.Controls.BaseControls
             InportList.Items.Add("[ Install dll ]");
             InportList.Items.Add("[ Import class ]");
             InportList.Items.Add("[ NuGet ]");
-            InportList.Items.Add(HEADER_PACKAGE + "MathNet.Numerics");
             InportList.SelectedIndex = SELECT_INSTALL_DLL;
             string[] paths = Directory.GetFiles(InstallDllDirectory, "*.dll");
             foreach (string path in paths)

@@ -2,6 +2,7 @@
 using CapybaraVS.Controls.BaseControls;
 using CapybaraVS.Script;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
@@ -27,12 +28,20 @@ namespace CbVS.Script
         /// <returns></returns>
         object ConvertOriginalTypeList(DummyArgumentsControl dummyArgumentsControl, DummyArgumentsStack cagt, MultiRootConnector col = null);
 
-        ObservableCollection<LinkConnector> LinkConnectors { get; }
-
         /// <summary>
         /// 配列型か？
         /// </summary>
         bool IsArrayType { get; set; }
+
+        /// <summary>
+        /// 実際に取り込んだ型の情報
+        /// </summary>
+        Type SourceType { get; set; }
+
+        /// <summary>
+        /// リストの要素を追加できるか？
+        /// </summary>
+        bool HaveAdd { get; }
 
         List<ICbValue> Value { get; set; }
 
@@ -50,16 +59,10 @@ namespace CbVS.Script
         int Count { get; }
 
         /// <summary>
-        /// リストのコピー
-        /// </summary>
-        /// <param name="toList"></param>
-        void CopyTo(ICbList toList);
-
-        /// <summary>
         /// リストに要素を追加します。
         /// </summary>
         /// <param name="cbVSValue"></param>
-        void Append(ICbValue cbVSValue);
+        ICbValue Append(ICbValue cbVSValue);
 
         /// <summary>
         /// リストの持つ変数の持つ値に cbVSValue が持つ値が含まれるかを返します。
@@ -69,7 +72,7 @@ namespace CbVS.Script
         bool Contains(ICbValue cbVSValue);
 
         /// <summary>
-        /// List<> のインスタンスから内容をコピーします。
+        /// ICollection<> のインスタンスから内容をコピーします。
         /// </summary>
         /// <param name="list"></param>
         void CopyFrom(object list);
@@ -83,7 +86,7 @@ namespace CbVS.Script
     public class CbList
     {
         /// <summary>
-        /// CbXXX型の List<> 型を作成します。
+        /// CbXXX型の ICollection<> 型を作成します。
         /// </summary>
         /// <param name="original">オリジナルのList<T>のTの型</param>
         /// <returns>型</returns>
@@ -97,74 +100,22 @@ namespace CbVS.Script
         }
 
         /// <summary>
-        /// CbList<T>に要素を追加します。
+        /// CbXXX型の ICollection<> 変数を作成します。
         /// </summary>
-        /// <param name="instance">CbList<T>のインスタンス</param>
-        /// <param name="originalNode">T の型</param>
-        /// <param name="data">追加する要素</param>
-        public static void Append(ICbValue instance, Type originalNode, ICbValue data)
-        {
-            var listType = CbList.GetCbType(originalNode);
-            MethodInfo addMethod = listType.GetMethod("Append");
-            addMethod.Invoke(instance, new Object[] { data });
-        }
-
-        /// <summary>
-        /// CbList<T>に要素を追加します。
-        /// </summary>
-        /// <param name="instance">CbList<T>のインスタンス</param>
-        /// <param name="originalNode">T の型</param>
-        public static void Append(ICbValue instance, Type originalNode)
-        {
-            Append(instance, originalNode, CbST.CbCreate(originalNode));
-        }
-
-        /// <summary>
-        /// CbXXX型の List<> 変数を作成します。
-        /// </summary>
-        /// <param name="original">オリジナルのList<T>のTの型</param>
+        /// <param name="original">オリジナルの型</param>
         /// <param name="name">変数名</param>
-        /// <returns>CbList<original>型の変数</returns>
+        /// <returns>CbList<オリジナルの要素の型>型の変数</returns>
         public static ICbValue Create(Type original, string name = "")
         {
-            object result = CbList.GetCbType(original).InvokeMember(
-                        "GetCbFunc",
+            ICbList result = CbList.GetCbType(original.GenericTypeArguments[0]).InvokeMember(
+                        nameof(CbList<int>.GetCbFunc),
                         BindingFlags.InvokeMethod,
                         null,
                         null,
                         new object[] { name }
-                        );
-            return result as ICbValue;
-        }
-
-        /// <summary>
-        /// CbXXX型の List<> 変数の型を作成します。
-        /// </summary>
-        /// <param name="original">オリジナルのList<T>のTの型</param>
-        /// <returns>CbList<original>型の型</returns>
-        public static Func<ICbValue> CreateTF(Type original)
-        {
-            return () => CbList.Create(original);
-        }
-
-        /// <summary>
-        /// CbXXX型の List<> 変数の型を作成します。
-        /// </summary>
-        /// <param name="original">オリジナルのList<T>のTの型</param>
-        /// <returns>CbList<original>型の型</returns>
-        public static Func<string, ICbValue> CreateNTF(Type original)
-        {
-            return (name) => CbList.Create(original, name);
-        }
-
-        public static LinkConnector ConvertLinkConnector(CommandCanvas ownerCommandCanvas, ICbValue cbVSValue)
-        {
-            var linkConnector = new LinkConnector()
-            {
-                OwnerCommandCanvas = ownerCommandCanvas,
-                ValueData = cbVSValue
-            };
-            return linkConnector;
+                        ) as ICbList;
+            result.SourceType = original;
+            return result;
         }
 
         public static StackNode ConvertStackNode(CommandCanvas ownerCommandCanvas, ICbValue cbVSValue)
@@ -175,12 +126,28 @@ namespace CbVS.Script
             };
             return stackNode;
         }
+
+        /// <summary>
+        /// 引数付きのインターフェイスを持っているか判定します。
+        /// </summary>
+        /// <param name="type">判定する型</param>
+        /// <param name="interfaceType">インターフェイスの型</param>
+        /// <returns>インターフェイスを持っているならtrue</returns>
+        public static bool HaveInterface(Type type, Type interfaceType)
+        {
+            Type arg = type.GenericTypeArguments[0];
+            Type openedType = interfaceType;
+            Type collectionType = openedType.MakeGenericType(arg);
+
+            return collectionType.IsAssignableFrom(type) ||
+               type.GetGenericTypeDefinition() == interfaceType;
+        }
     }
 
     /// <summary>
-    /// List<>型
+    /// ICollection<>型
     /// </summary>
-    /// <typeparam name="T">オリジナルの型</typeparam>
+    /// <typeparam name="T">オリジナルのList<T>のTの型</typeparam>
     public class CbList<T> : BaseCbValueClass<List<ICbValue>>, ICbValueListClass<List<ICbValue>>, ICbShowValue, ICbList
     {
         private bool nullFlg = true;
@@ -207,7 +174,7 @@ namespace CbVS.Script
                 string text = $"{CbSTUtils.CbTypeNameList[nameof(CbList)]} {Value.Count}-{ItemName}" + Environment.NewLine;
                 foreach (var node in Value)
                 {
-                    text += node.ValueString + Environment.NewLine;
+                    text += node.ValueUIString + Environment.NewLine;
                 }
 #else
                 string text = TypeName + Environment.NewLine;
@@ -216,7 +183,22 @@ namespace CbVS.Script
             }
         }
 
+        public override bool IsList => true;
+        public override ICbList GetListValue => this;
+
         public bool IsArrayType { get; set; } = false;
+
+        public Type SourceType { get; set; }
+
+        public bool HaveAdd
+        {
+            get
+            {
+                // ICollection<> インターフェイスを持っているか？
+
+                return CbList.HaveInterface(SourceType, typeof(ICollection<>));
+            }
+        }
 
         public override Type OriginalReturnType => typeof(T);
 
@@ -230,7 +212,11 @@ namespace CbVS.Script
 
                     return CbST.GetTypeEx(OriginalReturnType.FullName + "[]");
                 }
-                return typeof(List<>).MakeGenericType(typeof(T));
+                else if (SourceType != null)
+                {
+                    return SourceType;
+                }
+                return typeof(ICollection<>).MakeGenericType(typeof(T));
             }
         }
 
@@ -260,13 +246,22 @@ namespace CbVS.Script
                         return $"{ItemName}[]";
                     }
                 }
-                if (NodeTF is null)
+                string typeName;
+                if (SourceType != null)
                 {
-                    return $"{CbSTUtils.CbTypeNameList[nameof(CbList)]}<>";
+                    return CbSTUtils._GetTypeName(SourceType);
                 }
                 else
                 {
-                    return $"{CbSTUtils.CbTypeNameList[nameof(CbList)]}<{ItemName}>";
+                    typeName = CbSTUtils.CbTypeNameList[nameof(CbList)];
+                }
+                if (NodeTF is null)
+                {
+                    return $"{typeName}<>";
+                }
+                else
+                {
+                    return $"{typeName}<{ItemName}>";
                 }
             }
         }
@@ -289,16 +284,42 @@ namespace CbVS.Script
             }
         }
 
-        public override string ValueString
+        /// <summary>
+        /// 値のUI上の文字列表現
+        /// </summary>
+        public override string ValueUIString
         {
             get
             {
                 string baseName = "[" + TypeName + "()]";
                 if (IsError)
-                    return ERROR_STR;
-                if (nullFlg)
-                    return baseName + NULL_STR;
+                    return CbSTUtils.ERROR_STR;
+                if (IsNull)
+                    return baseName + CbSTUtils.UI_NULL_STR;
                 return baseName;
+            }
+        }
+
+        /// <summary>
+        /// 値の文字列表現
+        /// </summary>
+        public override string ValueString
+        {
+            get
+            {
+                if (IsNull)
+                {
+                    return CbSTUtils.NULL_STR;
+                }
+                else
+                {
+                    string result = "";
+                    for (int i = 0; i < Count; ++i)
+                    {
+                        result += Value[i].ValueString + Environment.NewLine;
+                    }
+                    return result;
+                }
             }
             set => new NotImplementedException();
         }
@@ -328,75 +349,15 @@ namespace CbVS.Script
         }
 
         /// <summary>
-        /// リストの内容をtoListに比較的高速にコピーします。
-        /// </summary>
-        /// <param name="toList">コピー先のリスト</param>
-        public void CopyTo(ICbList toList)
-        {
-            if (toList.Count > 0 && Count > 0 && (toList as CbList<T>) != null)
-            {
-                // 差分のコピー
-
-                int len = Math.Min(toList.Count, Value.Count);
-                int i = 0;
-                for (; i < len; ++i)
-                {
-                    toList[i].Set(Value[i]);
-                }
-                int remaining = toList.Count - Value.Count;
-                if (remaining != 0)
-                {
-                    if (remaining > 0)
-                    {
-                        // 多すぎる配列を消す
-
-                        while (remaining-- > 0)
-                        {
-                            toList.RemoveAt(i);
-                        }
-                    }
-                    else
-                    {
-                        // 足りない配列を足す
-
-                        remaining = Math.Abs(remaining);
-                        for (int j = 0; j < remaining; ++j)
-                        {
-                            var addNode = NodeTF();
-                            addNode.Set(Value[i + j]);
-                            toList.Append(addNode);
-                        }
-                    }
-                }
-            }
-            else
-            {
-                (toList as CbList<T>).Value = new List<ICbValue>(Value);
-            }
-        }
-
-        /// <summary>
         /// リストに要素を追加します。
         /// </summary>
         /// <param name="cbVSValue">追加要素</param>
-        public void Append(ICbValue cbVSValue)  // CbList.Append にリフレクションとして参照されている
+        public ICbValue Append(ICbValue cbVSValue)
         {
             var addData = NodeTF();
             addData.Set(cbVSValue);
             Value.Add(addData);
-        }
-
-        public ObservableCollection<LinkConnector> LinkConnectors
-        {
-            get
-            {
-                ObservableCollection<LinkConnector> ret = new ObservableCollection<LinkConnector>();
-                foreach (var node in Value)
-                {
-                    ret.Add(CbList.ConvertLinkConnector(null, node));
-                }
-                return ret;
-            }
+            return addData;
         }
 
         /// <summary>
@@ -435,7 +396,7 @@ namespace CbVS.Script
             var listNodeType = NodeTF();
 
             var genericType = typeof(List<>).MakeGenericType(typeof(T));
-            List<T> originalCopyList = (List<T>)Activator.CreateInstance(genericType);
+            ICollection<T> originalCopyList = (ICollection<T>)Activator.CreateInstance(genericType);
 
             if (listNodeType is ICbEvent)
             {
@@ -475,19 +436,48 @@ namespace CbVS.Script
             if (IsArrayType)
             {
                 // 配列に変換する
-
-                return originalCopyList.ToArray();
+                T[] ts = new T[originalCopyList.Count];
+                int index = 0;
+                foreach (T node in originalCopyList)
+                {
+                    ts[index++] = node;
+                }
+                return ts;// originalCopyList.ToArray();
             }
             return originalCopyList;
         }
 
         /// <summary>
-        /// List<> のインスタンスから内容をコピーします。
+        /// 内容をコピーします。
         /// </summary>
         /// <param name="list"></param>
         public void CopyFrom(object list)
         {
             Clear();
+
+            if (list is ICbValue cbValue && cbValue.IsList)
+            {
+                ICbList cbList = cbValue.GetListValue;
+                if (cbList.Count == 0)
+                    return;
+
+                if (cbList[0] is ICbClass)
+                {
+                    // 要素は、参照渡し
+
+                    for (int i = 0; i < cbList.Count; ++i)
+                    {
+                        Value.Add(cbList[i]);   // ※Append だとコピーになる
+                    }
+                    return;
+                }
+                // 要素をコピー
+                foreach (var node in (IEnumerable<ICbValue>)cbList.Data)
+                {
+                    Append(node);
+                }
+                return;
+            }
 
             if (IsArrayType)
             {
@@ -502,7 +492,7 @@ namespace CbVS.Script
                 return;
             }
 
-            foreach (var nd in (List<T>)list)
+            foreach (var nd in (IEnumerable<T>)list)
             {
                 ICbValue val = NodeTF();
                 val.Data = nd;
@@ -517,6 +507,8 @@ namespace CbVS.Script
         {
             Value?.Clear();
         }
+
+        public override bool IsNull => nullFlg;
 
         public static CbList<T> Create(string name = "")
         {

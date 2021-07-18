@@ -5,10 +5,10 @@ using System.Text;
 namespace CbVS
 {
     /// <summary>
-    /// 処理の保留を支援するクラスです。
+    /// データ付きの実行を待機するための待ち行列クラスです。
     /// </summary>
     /// <typeparam name="T">識別子の型</typeparam>
-    public class HoldActionManager<T>
+    public class HoldActionQueue<T>
     {
         /// <summary>
         /// 保留処理リスト

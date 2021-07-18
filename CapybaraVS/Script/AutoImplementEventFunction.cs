@@ -27,10 +27,15 @@ namespace CapybaraVS.Script
             return ret;
         }
 
-        public override bool ImplAsset(MultiRootConnector col, bool noThreadMode = false)
+        /// <summary>
+        /// メソッド呼び出し処理を実装する
+        /// </summary>
+        /// <param name="col">スクリプトのルートノード</param>
+        /// <param name="isReBuildMode">再構築か？（保存データからの復帰）</param>
+        public override bool ImplAsset(MultiRootConnector col, bool isReBuildMode = false)
         {
             DummyArgumentsControl dummyArgumentsControl = new DummyArgumentsControl(col);
-            return ImplAsset(col, noThreadMode, dummyArgumentsControl);
+            return ImplAsset(col, dummyArgumentsControl);
         }
     }
 }

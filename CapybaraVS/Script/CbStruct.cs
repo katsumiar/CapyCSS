@@ -23,7 +23,7 @@ namespace CapybaraVS.Script
         /// <summary>
         /// 値を文字列で参照します。
         /// </summary>
-        string ValueString { get; }
+        string ValueUIString { get; }
     }
 
     public class CbStruct
@@ -73,10 +73,14 @@ namespace CapybaraVS.Script
             Type openedType = typeof(CbStruct<>); //CapybaraVS.Script.CbStruct`1
             Type cbStructType = openedType.MakeGenericType(type);
 
-            object result = cbStructType.InvokeMember("Create", BindingFlags.InvokeMethod,
+            object result = cbStructType.InvokeMember(
+                        nameof(CbStruct<dummy>.Create),//"Create",
+                        BindingFlags.InvokeMethod,
                         null, null, new object[] { name }) as ICbValue;
             return result as ICbValue;
         }
+
+        private struct dummy {};
 
         /// <summary>
         /// 構造体を判定します。
@@ -145,14 +149,35 @@ namespace CapybaraVS.Script
             }
         }
 
-        public override string ValueString
+        /// <summary>
+        /// 値のUI上の文字列表現
+        /// </summary>
+        public override string ValueUIString
         {
             get
             {
                 string baseName = "[" + TypeName + "]";
                 if (IsError)
-                    return ERROR_STR;
+                    return CbSTUtils.ERROR_STR;
                 return baseName;
+            }
+        }
+
+        /// <summary>
+        /// 値の文字列表現
+        /// </summary>
+        public override string ValueString
+        {
+            get
+            {
+                if (IsNull)
+                {
+                    return CbSTUtils.NULL_STR;
+                }
+                else
+                {
+                    return Value.ToString();
+                }
             }
             set => new NotImplementedException();
         }

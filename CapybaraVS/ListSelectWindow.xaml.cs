@@ -77,7 +77,7 @@ namespace CapybaraVS
 
                 if (forcedListTypeSelect)
                 {
-                    if (!(node.stackNode.ValueData is ICbList))
+                    if (!node.stackNode.ValueData.IsList)
                         continue;
                 }
 

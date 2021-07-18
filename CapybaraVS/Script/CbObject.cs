@@ -32,8 +32,11 @@ namespace CapybaraVS.Script
                 {
                     ICbValue newValue = null;
 
-                    if (cbVSValue is ICbList cbList)
+                    if (cbVSValue.IsList)
+                    {
+                        ICbList cbList = cbVSValue.GetListValue;
                         newValue = cbList.CreateTF();
+                    }
                     else
                         newValue = cbVSValue.NodeTF();
                     newValue.Set(cbVSValue);
@@ -56,7 +59,7 @@ namespace CapybaraVS.Script
 
                 // 型情報を残す
                 copyOriginal = n;
-                if (n is ICbEvent cbEvent)
+                if (n is ICbEvent || n is ICbClass)
                 {
                     Value = n;
                 }
@@ -64,7 +67,7 @@ namespace CapybaraVS.Script
                 {
                     Value = n.Data;
                 }
-
+                IsLiteral = n.IsLiteral;
                 if (IsError)
                 {
                     // エラーからの復帰
@@ -100,28 +103,54 @@ namespace CapybaraVS.Script
             }
         }
 
-        public override string ValueString
+        /// <summary>
+        /// 値のUI上の文字列表現
+        /// </summary>
+        public override string ValueUIString
         {
             get 
             {
                 if (IsError)
-                    return ERROR_STR;
+                    return CbSTUtils.ERROR_STR;
                 if (IsNull)
                 {
-                    return $"[{CbSTUtils.OBJECT_STR}]" + NULL_STR;
+                    return $"[{CbSTUtils.OBJECT_STR}]" + CbSTUtils.UI_NULL_STR;
                 }
                 else if (Value is ICbEvent cbEvent)
                 {
                     return $"{cbEvent.TypeName}()";
                 }
-                if (copyOriginal is null)
+                else if (Value is ICbClass cbClass)
+                {
+                    return $"{cbClass.ValueUIString}";
+                }
+                else if (copyOriginal is null)
                 {
                     return Value.ToString();
                 }
-                return copyOriginal.ValueString;
+                return copyOriginal.ValueUIString;
+            }
+        }
+
+        /// <summary>
+        /// 値の文字列表現
+        /// </summary>
+        public override string ValueString
+        {
+            get
+            {
+                if (IsNull)
+                {
+                    return CbSTUtils.NULL_STR;
+                }
+                else
+                {
+                    return Data.ToString();
+                }
             }
             set => new NotImplementedException();
         }
+
         public override bool IsStringableValue => false;
 
         public override bool IsReadOnlyValue { get; set; } = true;

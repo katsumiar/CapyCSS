@@ -3,6 +3,7 @@ using CbVS.Script;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using static CapybaraVS.Controls.BaseControls.CommandCanvas;
 using static CapybaraVS.Controls.MultiRootConnector;
 
 namespace CapybaraVS.Script
@@ -25,8 +26,9 @@ namespace CapybaraVS.Script
         /// <summary>
         /// アセット処理を実装する
         /// </summary>
-        /// <param name="col"></param>
-        bool ImplAsset(MultiRootConnector col, bool notheradMode = false);
+        /// <param name="col">スクリプトのルートノード</param>
+        /// <param name="isReBuildMode">再構築か？（保存データからの復帰）</param>
+        bool ImplAsset(MultiRootConnector col, bool isReBuildMode = false);
     }
 
     /// <summary>
@@ -51,15 +53,10 @@ namespace CapybaraVS.Script
         string MenuTitle { get; }
 
         /// <summary>
-        /// 型名
-        /// </summary>
-        string ValueType { get; }
-
-        /// <summary>
         /// 型選択リストの受け入れ項目
         /// ※必要がないなら null にする
         /// </summary>
-        Func<Type, bool> IsAccept { get; }
+        List<TypeRequest> typeRequests { get; }
     }
 
     /// <summary>
@@ -74,15 +71,10 @@ namespace CapybaraVS.Script
         string MenuTitle { get; }
 
         /// <summary>
-        /// 型名
-        /// </summary>
-        string ValueType { get; }
-
-        /// <summary>
         /// 型選択リストの受け入れ項目
         /// ※必要がないなら null にする
         /// </summary>
-        Func<Type, bool> IsAccept { get; }
+        List<TypeRequest> typeRequests { get; }
     }
 
     /// <summary>
@@ -95,16 +87,12 @@ namespace CapybaraVS.Script
         /// </summary>
         string MenuTitle { get; }
 
-        /// <summary>
-        /// 型名
-        /// </summary>
-        string ValueType { get; }
 
         /// <summary>
         /// 型選択リストの受け入れ項目
         /// ※必要がないなら null にする
         /// </summary>
-        Func<Type, bool> IsAccept { get; }
+        List<TypeRequest> typeRequests { get; }
     }
 
     /// <summary>
@@ -123,15 +111,10 @@ namespace CapybaraVS.Script
         string MenuTitle { get; }
 
         /// <summary>
-        /// 型名
-        /// </summary>
-        string ValueType { get; }
-
-        /// <summary>
         /// 型選択リストの受け入れ項目
         /// ※必要がないなら null にする
         /// </summary>
-        Func<Type, bool> IsAccept { get; }
+        List<TypeRequest> typeRequests { get; }
     }
 
     public class FuncAssetSub
@@ -146,7 +129,7 @@ namespace CapybaraVS.Script
             if (func is null)
                 return;
 
-            var argList = (variable as ICbList).Value;
+            var argList = variable.GetListValue.Value;
             foreach (var node in argList)
             {
                 if (node.IsError)
@@ -161,7 +144,7 @@ namespace CapybaraVS.Script
             if (func is null)
                 return;
 
-            var argList = (variable as ICbList).Value;
+            var argList = variable.GetListValue.Value;
             foreach (var node in argList)
             {
                 if (node.IsError)
@@ -244,7 +227,7 @@ namespace CapybaraVS.Script
         {
             ICbValue valueData = arguments[index];
             CheckArgument(valueData);
-            return (valueData as ICbList).Value;
+            return valueData.GetListValue.Value;
         }
 
         /// <summary>

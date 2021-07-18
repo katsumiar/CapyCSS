@@ -1,12 +1,18 @@
 # CapyCSS
-![CapyCSS](https://user-images.githubusercontent.com/63950487/99184540-e5d56300-2786-11eb-8868-dd06a950d7d6.png)
+![CapyCSSimage](https://user-images.githubusercontent.com/63950487/111024064-01443800-8420-11eb-81a9-3e37531ae003.png)
 
-## 最新の変更
+## 0.3.1.0 での変更
 
-型関連の扱いを整理しました。
-<br>保存データの形式が変わり、過去のバージョンに対応しなくなりました。
-<br>型を選択するときに自由な型を選択できるようになりました。
-<br>ただし、ジェネリック型は、型制約に未対応です。
+* 参照渡し仕様を見直しました（曖昧で自動で変数化されるのではなく、引数の接続元の変数の内容が書き換わります）。
+* ノードのリスト引数を開閉できるようにしました。
+* Enum型のケースノードを作成できるようにしました。
+* 変数周りの危険な不具合をいくつか改修しました。
+* 接続されたノードの帰り値がより適切にUIに反映されるようにしました。
+* 持っているインターフェイスに合わせてリスト型の動きを変えるようにしました。
+* IEnumerable<> インターフェイスを持っていれば、UIでリスト扱いするようにしました。
+* 参照渡しで書き換わった変数の中身がスクリプト実行後にUIに反映されるようにしました。
+* 不要なものを無くし、f(x)周りを整理しました。
+* 古い仕様を無くし、サンプルスクリプトを整理しました。
 
 ## 特徴
 * ビジュアルなスクリプトを作成することができます。
@@ -14,8 +20,6 @@
 * dllをインポートしてメソッドをスクリプトで使うことができます。
 * クラス指定でメソッドをインポートしてスクリプトで使うことができます。
 * NuGetからパッケージをインポートしてスクリプトで使うことができます。
-
-![CapyCSS ver 0 1 2 0](https://user-images.githubusercontent.com/63950487/105629319-ab263000-5e85-11eb-8716-58e26444338b.png)
 
 ## ターゲット環境
 * .Net 5.0
@@ -78,7 +82,8 @@ public static System.IO.StreamReader GetReadStream(string path, string encoding 
 * 引数の上にカーソルを置くと内容を確認できます。
 * 数字と文字をドラッグアンドドロップするだけで定数ノードを作成できます。
 * ノードの接続時に型キャストが可能です。
-* object型からのキャストをできるようにしました。
+* object型から任意の型へのキャストができます。
+* ICollection型からArray型（この逆も）へのキャストができます。
 
 ## ヒント表示
 英語と日本語をサポートします。ただし、初期状態では英語のみの機械翻訳です。
@@ -99,6 +104,7 @@ public static System.IO.StreamReader GetReadStream(string path, string encoding 
 ## スクリプトが対応するメソッドの引数の型（及び修飾子など）
 * Type: int, string, double, byte, sbyte, long, short, ushort, uint, ulong, char, float, decimal, bool, object
 * 配列
+* ICollection（※UI上で要素を操作できます）
 * Class
 * Struct
 * Interface

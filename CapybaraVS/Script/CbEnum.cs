@@ -14,6 +14,11 @@ namespace CapybaraVS.Script
         /// CbEnum<T> の管理するT型の名前
         /// </summary>
         string ItemName { get; }
+
+        /// <summary>
+        /// 選択されている要素です。
+        /// </summary>
+        string SelectedItemName { get; }
     }
 
     public class CbEnumTools
@@ -62,6 +67,9 @@ namespace CapybaraVS.Script
             Type openedType = typeof(CbEnum<>); //CapybaraVS.Script.CbEnum`1
             Type cbEnumType = openedType.MakeGenericType(type);
 
+            if (CbST.GetTypeEx(type) is null)
+                return null;
+
             object result = cbEnumType.InvokeMember("Create", BindingFlags.InvokeMethod,
                         null, null, new object[] { name }) as ICbValue;
             return result as ICbValue;
@@ -76,7 +84,19 @@ namespace CapybaraVS.Script
     {
         public override Type MyType => typeof(CbEnum<T>);
 
+        public override Type OriginalType => typeof(T);
+
         public string ItemName => typeof(T).FullName;
+
+        public string SelectedItemName
+        {
+            get
+            {
+                if (Value is null)
+                    return "";
+                return Value.ToString();
+            }
+        }
 
         public static Type GetItemType() { return typeof(T); }  // ※リフレクションから参照されている
 
@@ -88,7 +108,8 @@ namespace CapybaraVS.Script
 
         public CbEnum(string name = "")
         {
-            Value = Enum.Parse(typeof(T), Enum.GetNames(typeof(T))[0]) as Enum;
+            Type type = CbST.GetTypeEx(typeof(T));
+            Value = Enum.Parse(type, Enum.GetNames(type)[0]) as Enum;
             Name = name;
         }
 
@@ -98,14 +119,25 @@ namespace CapybaraVS.Script
 
         public string[] ElementList => Enum.GetNames(typeof(T));
 
-        public override string ValueString
+        /// <summary>
+        /// 値のUI上の文字列表現
+        /// </summary>
+        public override string ValueUIString
         {
             get
             {
                 if (IsError)
-                    return ERROR_STR;
+                    return CbSTUtils.ERROR_STR;
                 return CbSTUtils._GetTypeName(typeof(T)) + "." + Value.ToString();
             }
+        }
+
+        /// <summary>
+        /// 値の文字列表現
+        /// </summary>
+        public override string ValueString
+        {
+            get => ValueUIString;
             set
             {
                 if (value.Contains("."))
