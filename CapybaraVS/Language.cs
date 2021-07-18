@@ -12,6 +12,7 @@ using System.Text;
 using System.Threading;
 using System.Windows;
 using System.Diagnostics;
+using CapyCSS;
 
 namespace CapybaraVS
 {
@@ -263,7 +264,14 @@ namespace CapybaraVS
                     {
                         // 基本のヘルプファイルを参照する
 
-                        string path = Path.Combine(hTextPath, "BaseLib");
+                        string path = Path.Combine(hTextPath, ApiImporter.BASE_LIB_TAG_PRE.Substring(0, ApiImporter.BASE_LIB_TAG_PRE.Length - 1));
+                        text = GetHelpText(path, tag, true);
+                    }
+                    else if (index.StartsWith(HelpWindow.HELP))
+                    {
+                        // 基本のヘルプファイルを参照する
+
+                        string path = Path.Combine(hTextPath, HelpWindow.HELP.Substring(0, HelpWindow.HELP.Length - 1));
                         text = GetHelpText(path, tag, true);
                     }
                     else if (!index.StartsWith("SYSTEM_"))

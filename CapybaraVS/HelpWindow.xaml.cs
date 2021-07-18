@@ -22,6 +22,8 @@ namespace CapyCSS
     /// </summary>
     public partial class HelpWindow : Window
     {
+        public const string HELP = "Help:";
+
         public HelpWindow()
         {
             InitializeComponent();
@@ -34,8 +36,12 @@ namespace CapyCSS
             Info.Text += "All rights reserved." + Environment.NewLine;
             Info.Text += Environment.NewLine;
             Info.Text += "Included package:" + Environment.NewLine;
+            Info.Text += "  .NET 5.0.0" + Environment.NewLine;
             Info.Text += "  MaterialDesignThemes 3.2.0" + Environment.NewLine;
-            Info.Text += "  System.Drawing.Common 5.0.0";
+
+            Info.Text += Environment.NewLine;
+            Info.Text += "Shortcut Key:" + Environment.NewLine;
+            Info.Text += CapybaraVS.Language.Instance["Help:SCK"] + Environment.NewLine;
         }
 
         public static HelpWindow Create()
