@@ -372,6 +372,7 @@ namespace CapybaraVS.Controls.BaseControls
                 OwnerCommandCanvas.CommandCanvasControl.MainLog.OutLine(
                     "system",
                     $"Execute Time: {sw.ElapsedMilliseconds} (ms)");
+                OwnerCommandCanvas.CommandCanvasControl.MainLog.Flush();
 
                 OwnerCommandCanvas.EnabledScriptHoldActionMode = false; // 保留した表示更新処理を実行する
 

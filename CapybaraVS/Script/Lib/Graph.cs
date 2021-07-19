@@ -29,7 +29,7 @@ namespace CapybaraVS.Script.Lib
             {
                 list.Add(func(i));
             }
-            list.Add(func(count));  // 精度の歪みが気になるけども...計算しきるために入れておく
+            list.Add(func(count));  // 精度に課題？
             return list;
         }
 

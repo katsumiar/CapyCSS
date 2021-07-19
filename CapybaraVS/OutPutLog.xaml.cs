@@ -30,19 +30,15 @@ namespace CapybaraVS
         public OutPutLog()
         {
             InitializeComponent();
+            SetupTimer();
         }
 
         public void OutString(string tag, string msg)
         {
             // tag は将来的にタグの作成に使われる
 
-            // スクロールを最終行へ移動
-            Log.Focus();
-            Log.CaretIndex = Log.Text.Length;
-            Log.ScrollToEnd();
-
             Log.AppendText(msg);
-            ImmediateReflection();
+            afterPutTimer.Start();
 
             if (consolOutTagList.Contains(tag))
             {
@@ -63,9 +59,15 @@ namespace CapybaraVS
         {
             if ((bool)AutoClear.IsChecked)
             {
-                Log.Clear();
+                Clear();
                 ImmediateReflection();
             }
+        }
+
+        public void Clear()
+        {
+            afterPutTimer?.Stop();
+            Log.Clear();
         }
 
         private void ImmediateReflection()
@@ -79,6 +81,21 @@ namespace CapybaraVS
             );
             Dispatcher.CurrentDispatcher.BeginInvoke(DispatcherPriority.Background, callback, frame);
             Dispatcher.PushFrame(frame);
+        }
+
+        public void Flush()
+        {
+            afterPutTimer?.Stop();
+            Log.ScrollToEnd();
+            ImmediateReflection();
+        }
+
+        private DispatcherTimer afterPutTimer = null;
+        private void SetupTimer()
+        {
+            afterPutTimer = new DispatcherTimer();
+            afterPutTimer.Interval = new TimeSpan(0, 0, 1);
+            afterPutTimer.Tick += (x,e) => { Flush(); };
         }
     }
 }
