@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Reflection;
 using System.Threading;
 using CapyCSS.Script;
 using CbVS.Script;
@@ -505,6 +506,44 @@ namespace CapybaraVS.Script
                 outNodes.Add(outNode);
             }
             return String.Join(".", outNodes);
+        }
+
+        public static string GetGenericParamatersString(MethodBase type)
+        {
+            return GetGenericParamatersString(type.GetGenericArguments());
+        }
+
+        public static string GetGenericParamatersString(Type type)
+        {
+            return GetGenericParamatersString(type.GetGenericArguments());
+        }
+
+        public static string GetGenericParamatersString(Type[] types)
+        {
+            if (types.Length == 0)
+                return "";
+            string ret = null;
+            foreach (var ga in types)
+            {
+                if (ret is null)
+                    ret = $"<{ga.Name}";
+                else
+                    ret += $", {ga.Name}";
+            }
+            return ret + ">";
+        }
+
+        public static string GetClassNameOnly(Type type)
+        {
+            string name = type.Name;
+            if (name.Contains("`"))
+                name = name.Substring(0, name.IndexOf("`"));
+            return name;
+        }
+
+        public static string GetGenericTypeName(Type type)
+        {
+            return GetClassNameOnly(type) + GetGenericParamatersString(type);
         }
     }
 }

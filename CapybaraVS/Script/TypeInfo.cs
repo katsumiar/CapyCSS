@@ -373,13 +373,18 @@ namespace CapybaraVS.Script
                 }
             }
 
+            if (type.IsGenericTypeParameter)
+            {
+                return CbGeneMethArg.NTF(name, type, type.GetGenericArguments());
+            }
+
             if (type.IsGenericType)
             {
                 // ジェネリック
 
                 foreach (var checkArg in type.GetGenericArguments())
                 {
-                    if (checkArg.IsGenericMethodParameter)
+                    if (checkArg.IsGenericMethodParameter || checkArg.IsGenericTypeParameter || checkArg.IsGenericType)
                     {
                         // 未確定なジェネリック型
 

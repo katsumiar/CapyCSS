@@ -119,6 +119,21 @@ namespace CapybaraVS.Script
             return null;
         }
 
+        private Type GetRequestType(MultiRootConnector col, string name)
+        {
+            for (int i = 0; i < typeRequests.Count; i++)
+            {
+                TypeRequest typeRequest = typeRequests[i];
+                if (typeRequest.Name == name)
+                {
+                    // 対応する型が見つかった
+
+                    return col.SelectedVariableType[i];
+                }
+            }
+            return null;
+        }
+
         /// <summary>
         /// メソッド呼び出し処理を実装する
         /// </summary>
@@ -129,8 +144,53 @@ namespace CapybaraVS.Script
             DummyArgumentsControl dummyArgumentsControl,
             string exTitle)
         {
-            List<ICbValue> argumentTypeList = new List<ICbValue>();
+            Type classType = ClassType;
+            string funcTitle = FuncTitle;
+            Func<ICbValue> returnType = ReturnType;
+            if (classType.IsGenericType)
+            {
+                // ジェネリッククラスの型を確定する
 
+                CbGeneMethArg gmaType = (CbGeneMethArg)ReturnType().Data;
+                List<Type> argTypes = new List<Type>();
+                for (int i = 0; i < typeRequests.Count; ++i)
+                {
+                    argTypes.Add(col.SelectedVariableType[i]);
+                }
+
+                //クラスの型を確定した型で差し替える
+                classType = classType.MakeGenericType(argTypes.ToArray());
+
+                if (IsConstructor)
+                {
+                    returnType = CbST.CbCreateTF(classType);
+                    if (funcTitle.Contains("<"))
+                    {
+                        // 確定した型情報に差し替える
+
+                        funcTitle = funcTitle.Substring(0, funcTitle.IndexOf("<"));
+                    }
+                }
+                else
+                {
+                    // 確定した型情報を追加する
+
+                    funcTitle = CbSTUtils.GetClassNameOnly(classType) + exTitle + "." + funcTitle;
+                    exTitle = "";
+                }
+            }
+
+            {
+                var methodReturnType = returnType();
+                if (methodReturnType.MyType == typeof(CbClass<CbGeneMethArg>))
+                {
+                    CbGeneMethArg gmaType = (CbGeneMethArg)methodReturnType.Data;
+                    Type repType = GetRequestType(col, gmaType.ArgumentType.Name);
+                    returnType = CbST.CbCreateTF(repType);
+                }
+            }
+
+            List<ICbValue> argumentTypeList = new List<ICbValue>();
             if (ArgumentTypeList != null)
             {
                 // 引数用の変数を用意する
@@ -143,14 +203,22 @@ namespace CapybaraVS.Script
                         // 未確定なジェネリック型を確定した型で差し替える
 
                         CbGeneMethArg gmaType = (CbGeneMethArg)argumentType.Data;
-                        Type replaceArgumentType = CbST.GetTypeEx(gmaType.ArgumentType.Namespace + "." + gmaType.ArgumentType.Name);
+                        Type replaceArgumentType;
+                        if (gmaType.ArgumentType.IsGenericTypeParameter)
+                        {
+                            replaceArgumentType = GetRequestType(col, gmaType.ArgumentType.Name);
+                        }
+                        else
+                        {
+                            replaceArgumentType = CbST.GetTypeEx(gmaType.ArgumentType.Namespace + "." + gmaType.ArgumentType.Name);
+                        }
                         if (replaceArgumentType.IsGenericType)
                         {
+                            List<Type> argTypes = new List<Type>();
                             foreach (var gat in gmaType.GeneArgTypes)
                             {
                                 // ジェネリック引数を収集する
 
-                                List<Type> argTypes = new List<Type>();
                                 for (int i = 0; i < typeRequests.Count; i++)
                                 {
                                     TypeRequest typeRequest = typeRequests[i];
@@ -161,10 +229,9 @@ namespace CapybaraVS.Script
                                         argTypes.Add(col.SelectedVariableType[i]);
                                     }
                                 }
-
-                                // 確定した型で差し替える
-                                replaceArgumentType = replaceArgumentType.MakeGenericType(argTypes.ToArray());
                             }
+                            // 確定した型で差し替える
+                            replaceArgumentType = replaceArgumentType.MakeGenericType(argTypes.ToArray());
                         }
                         // 引数の型を差し替える
                         argumentType = CbST.CbCreate(replaceArgumentType, argumentType.Name);
@@ -174,18 +241,18 @@ namespace CapybaraVS.Script
             }
 
             col.MakeFunction(
-                FuncTitle + exTitle,
+                funcTitle + exTitle,
                 NodeHelpText,
-                ReturnType,
+                returnType,
                 argumentTypeList,
                 new Func<List<ICbValue>, DummyArgumentsStack, ICbValue>(
                     (argument, cagt) =>
                     {
-                        var ret = ReturnType();
+                        var ret = returnType();
                         if (dummyArgumentsControl != null && dummyArgumentsControl.IsInvalid(cagt))
                             return ret; // 実行環境が有効でない
 
-                        ImplCallMethod(col, dummyArgumentsControl, argument, cagt, ret);
+                        ImplCallMethod(col, classType, dummyArgumentsControl, argument, cagt, ret);
                         return ret;
                     }
                 )
@@ -204,6 +271,7 @@ namespace CapybaraVS.Script
         /// <param name="returnValue">返り値</param>
         private void ImplCallMethod(
             MultiRootConnector col, 
+            Type classType,
             DummyArgumentsControl dummyArgumentsControl, 
             List<ICbValue> callArguments, 
             DummyArgumentsStack dummyArgumentsStack, 
@@ -225,6 +293,7 @@ namespace CapybaraVS.Script
                     );
 
                 object result = CallMethod(
+                    classType,
                     callArguments,
                     isClassInstanceMethod, 
                     methodArguments);
@@ -317,6 +386,7 @@ namespace CapybaraVS.Script
         /// <param name="methodArguments">メソッド呼び出し引数リスト</param>
         /// <returns>メソッドの返り値</returns>
         private object CallMethod(
+            Type classType,
             List<ICbValue> callArguments, 
             bool isClassInstanceMethod, 
             List<object> methodArguments
@@ -342,12 +412,12 @@ namespace CapybaraVS.Script
 
                 if (methodArguments is null)
                 {
-                    result = Activator.CreateInstance(ClassType);
+                    result = Activator.CreateInstance(classType);
                 }
                 else
                 {
                     object[] args = methodArguments.ToArray();
-                    result = Activator.CreateInstance(ClassType, args);
+                    result = Activator.CreateInstance(classType, args);
 
                     ReturnArgumentsValue(callArguments, isClassInstanceMethod, args);
                 }
@@ -356,7 +426,7 @@ namespace CapybaraVS.Script
             {
                 // 引数のないメソッド
 
-                result = ClassType.InvokeMember(
+                result = classType.InvokeMember(
                                 FuncCode,
                                 BindingFlags.InvokeMethod,
                                 null,
@@ -370,7 +440,7 @@ namespace CapybaraVS.Script
 
                 object[] args = methodArguments.ToArray();
 
-                result = ClassType.InvokeMember(
+                result = classType.InvokeMember(
                                 FuncCode,
                                 BindingFlags.InvokeMethod,
                                 null,

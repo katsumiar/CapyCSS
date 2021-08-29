@@ -1,4 +1,4 @@
-﻿//#define THREAD_DEBUG    // スレッドでの並行処理を抑制するテストモード
+﻿//#define DEBUG_IMPORT    // インポート機能のデバッグモード
 
 using CapybaraVS.Controls.BaseControls;
 using CapyCSS.Controls;
@@ -281,9 +281,6 @@ namespace CapybaraVS.Script
         /// <returns>true==受け入れられる</returns>
         private static bool IsAcceptClass(Type classType)
         {
-            if (classType.IsGenericType || classType.IsGenericTypeDefinition)
-                return false;   // ジェネリックなクラスには未対応
-
             if (classType.IsNestedPrivate)
                 return false;   // 扱えない
 
@@ -382,7 +379,7 @@ namespace CapybaraVS.Script
                     }
                     return resultTypes;
                 });
-#if THREAD_DEBUG
+#if DEBUG_IMPORT
                 tcTask.Wait();
 #endif
             }
@@ -434,6 +431,13 @@ namespace CapybaraVS.Script
                 if (!IsAcceptClass(classType))
                     continue;   // 扱えない
 
+                if (classType == typeof(Action))
+                    continue;   // 本システムで特殊な扱いをしているので扱わない
+                if (classType.Name.StartsWith("Action`"))
+                    continue;   // 本システムで特殊な扱いをしているので扱わない
+                if (classType.Name.StartsWith("Func`"))
+                    continue;   // 本システムで特殊な扱いをしているので扱わない
+
                 if (!classType.IsAbstract)
                 {
                     // コンストラクタをインポートする
@@ -443,7 +447,7 @@ namespace CapybaraVS.Script
                         return CreateMakeInportConstructorInfoTasks(module, classType);
                     });
                     tasks.Add(importConstructorTask);
-#if THREAD_DEBUG
+#if DEBUG_IMPORT
                     importConstructorTask.Wait();
 #endif
                 }
@@ -454,7 +458,7 @@ namespace CapybaraVS.Script
                     return CreateMakeInportMethodInfoTasks(module, classType);
                 });
                 tasks.Add(importMethodTask);
-#if THREAD_DEBUG
+#if DEBUG_IMPORT
                 importMethodTask.Wait();
 #endif
             }
@@ -470,7 +474,9 @@ namespace CapybaraVS.Script
                 if (!IsAcceptMethod(classType, constructorInfo))
                     continue;   // 未対応
 
+#if !DEBUG_IMPORT
                 try
+#endif
                 {
                     var functionInfo = MakeInportFunctionInfo(classType, constructorInfo, null, null, module);
                     if (functionInfo != null)
@@ -478,10 +484,12 @@ namespace CapybaraVS.Script
                         importFuncInfoList.Add(functionInfo);
                     }
                 }
+#if !DEBUG_IMPORT
                 catch (Exception ex)
                 {
                     CommandCanvasList.ErrorLog += nameof(ScriptImplement) + "." + nameof(ImportScriptMethods) + ": " + ex.Message + Environment.NewLine + Environment.NewLine;
                 }
+#endif
             }
             return importFuncInfoList;
         }
@@ -626,7 +634,7 @@ namespace CapybaraVS.Script
                         return MakeInportFunctionInfo(classType, methodInfo, returnType, methodAttr);
                     });
                     tasks.Add(task);
-#if THREAD_DEBUG
+#if DEBUG_IMPORT
                     task.Wait();
 #endif
                 }
@@ -652,27 +660,31 @@ namespace CapybaraVS.Script
             ScriptMethodAttribute methodAttr = null,
             Module module = null)
         {
+            if (returnType != null && returnType.IsGenericType && returnType.GetGenericTypeDefinition() == typeof(Task<>))
+                return null;
+            if (returnType == typeof(Task))
+                return null;
+
             List<ArgumentInfoNode> argumentList = null;
 
             string genericArgs = "";
             List<TypeRequest> genericTypeRequests = null;
+            if (classType.IsGenericType)
+            {
+                // ジェネリッククラスのメニュー名に追加するジェネリック情報を作成
+                // 型確定時に選択を要求する型リクエスト情報リストを作成
+
+                genericTypeRequests ??= new List<TypeRequest>();
+                MakeGenericParamaterTypeRequestList(classType, genericTypeRequests);
+            }
             if (methodInfo.IsGenericMethod)
             {
-                // ジェネリックのメソッドのメニュー名に追加するジェネリック情報を作成
+                // ジェネリックメソッドのメニュー名に追加するジェネリック情報を作成
+                // 型確定時に選択を要求する型リクエスト情報リストを作成
 
-                genericTypeRequests = new List<TypeRequest>();
-
-                foreach (var geneArg in methodInfo.GetGenericArguments())
-                {
-                    if (genericArgs == "")
-                        genericArgs += "<";
-                    else
-                        genericArgs += ", ";
-
-                    genericArgs += geneArg.Name;
-                    genericTypeRequests.Add(new TypeRequest(t => CbScript.AcceptAll(t), geneArg.Name));
-                }
-                genericArgs += ">";
+                genericTypeRequests ??= new List<TypeRequest>();
+                MakeGenericParamaterTypeRequestList(methodInfo, genericTypeRequests);
+                genericArgs = CbSTUtils.GetGenericParamatersString(methodInfo);
             }
 
             if (!methodInfo.IsStatic && !methodInfo.IsConstructor)
@@ -713,7 +725,7 @@ namespace CapybaraVS.Script
                 if (retType is null)
                     return null; // 返り値の型が対象外
 
-                if (retType("") is null)
+                if (!(methodInfo.IsConstructor && classType.IsGenericType) && retType("") is null)
                     return null; // 返り値の型が対象外
 
 
@@ -729,6 +741,15 @@ namespace CapybaraVS.Script
 
                 // メニュー用の名前を作成
                 string menuName = methodInfo.Name;
+                string className;
+                if (classType.IsGenericType)
+                {
+                    className = CbSTUtils.GetGenericTypeName(classType);
+                }
+                else
+                {
+                    className = classType.Name;
+                }
                 if (methodAttr != null && methodAttr.MenuName != "")
                 {
                     // 指定の名前を採用する
@@ -741,7 +762,7 @@ namespace CapybaraVS.Script
 
                     if (methodInfo.IsConstructor)
                     {
-                        menuName = classType.Name + ".(new)." + classType.Name;
+                        menuName = className + ".(new)." + className;
                     }
                     else
                     {
@@ -764,10 +785,10 @@ namespace CapybaraVS.Script
                         switch (group)
                         {
                             case "get.":
-                                menuName = classType.Name + ".(getter)." + menuName;
+                                menuName = className + ".(getter)." + menuName;
                                 break;
                             case "set.":
-                                menuName = classType.Name + ".(setter)." + menuName;
+                                menuName = className + ".(setter)." + menuName;
                                 break;
                             default:
                                 {
@@ -780,11 +801,11 @@ namespace CapybaraVS.Script
                                     };
                                     if (baseGroup.Contains(methodInfo.Name))
                                     {
-                                        menuName = classType.Name + ".(base)." + menuName;
+                                        menuName = className + ".(base)." + menuName;
                                     }
                                     else
                                     {
-                                        menuName = classType.Name + "." + group + methodInfo.Name + "." + menuName;
+                                        menuName = className + "." + group + methodInfo.Name + "." + menuName;
                                     }
                                 }
                                 break;
@@ -805,7 +826,18 @@ namespace CapybaraVS.Script
                 menuName += MakeParamsString(methodInfo);
 
                 // 返り値の型名を追加する
-                menuName += " : " + retType("").TypeName;
+                if (methodInfo.IsConstructor && classType.IsGenericType)
+                {
+                    menuName += " : " + className;
+                }
+                else
+                {
+                    var type = retType("");
+                    if (type.MyType == typeof(CbClass<CbGeneMethArg>))
+                        menuName += " : " + (type.Data as CbGeneMethArg).ArgumentType.Name;
+                    else
+                        menuName += " : " + type.TypeName;
+                }
 
                 if (methodAttr != null && methodAttr.FuncName != "")
                 {
@@ -817,7 +849,7 @@ namespace CapybaraVS.Script
                 {
                     if (methodInfo.IsConstructor)
                     {
-                        nodeName = "new " + classType.Name;
+                        nodeName = "new " + className;
                     }
                     else
                     {
@@ -825,7 +857,7 @@ namespace CapybaraVS.Script
                     }
                 }
 
-                string helpCode = $"{classType.Namespace}:{classType.Name}." + nodeName.Replace(" ", "_");
+                string helpCode = $"{classType.Namespace}:{className}." + nodeName.Replace(" ", "_");
 
                 // スクリプトノード用のヒント
                 string nodeHint = null;
@@ -867,6 +899,25 @@ namespace CapybaraVS.Script
                 return autoImplementFunctionInfo;
             }
             return null;
+        }
+
+        private static void MakeGenericParamaterTypeRequestList(Type classType, List<TypeRequest> genericTypeRequests)
+        {
+            foreach (var geneArg in classType.GetGenericArguments())
+            {
+                genericTypeRequests.Add(new TypeRequest(t => CbScript.AcceptAll(t), geneArg.Name));
+            }
+        }
+
+        private static void MakeGenericParamaterTypeRequestList(MethodBase method, List<TypeRequest> genericTypeRequests)
+        {
+            foreach (var geneArg in method.GetGenericArguments())
+            {
+                if (genericTypeRequests.Any(n => n.Name == geneArg.Name))
+                    continue;
+
+                genericTypeRequests.Add(new TypeRequest(t => CbScript.AcceptAll(t), geneArg.Name));
+            }
         }
 
         /// <summary>
@@ -1005,7 +1056,7 @@ namespace CapybaraVS.Script
                     argNode.IsByRef = true;
 
                 // イベント引数をチェック
-                if (para.ParameterType.IsGenericParameter)
+                if (para.ParameterType.IsGenericParameter && !para.ParameterType.IsGenericTypeParameter)
                 {
                     if (para.ParameterType.GetGenericTypeDefinition() == typeof(CbFunc<,>))
                     {

@@ -135,6 +135,9 @@ namespace CbVS.Script
         /// <returns>インターフェイスを持っているならtrue</returns>
         public static bool HaveInterface(Type type, Type interfaceType)
         {
+            if (type.GenericTypeArguments.Length == 0)
+                return false;
+
             Type arg = type.GenericTypeArguments[0];
             Type openedType = interfaceType;
             Type collectionType = openedType.MakeGenericType(arg);
