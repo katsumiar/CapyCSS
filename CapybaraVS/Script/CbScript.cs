@@ -159,7 +159,26 @@ namespace CbVS.Script
             ret.OwnerCommandCanvas = OwnerCommandCanvas;
             if (typeRequests != null)
             {
-                List<string> typeNames = OwnerCommandCanvas.RequestTypeName(typeRequests);
+                // 型選択要求用のタイトルを作成する
+
+                string methodName;
+                if (assetCode.Contains("#"))
+                {
+                    methodName = assetCode.Substring(0, assetCode.IndexOf('#'));
+                    string args = null;
+                    foreach (var typeRequest in typeRequests)
+                    {
+                        if (args is null)
+                            args = "<" + typeRequest.Name;
+                        else
+                            args = "," + typeRequest.Name;
+                    }
+                    args += ">";
+                    methodName += args;
+                }
+                else
+                    methodName = assetCode + "<>";  // 本来ジェネリックメソッドには引数がある筈だが、システムの提供するメソッドでそうでない場合がある
+                List<string> typeNames = OwnerCommandCanvas.RequestTypeName(typeRequests, $"[{methodName}] ");
                 if (typeNames is null)
                     return null;
                 ret.SelectedVariableTypes = typeNames.ToArray();

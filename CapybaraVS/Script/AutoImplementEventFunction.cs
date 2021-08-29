@@ -35,7 +35,8 @@ namespace CapybaraVS.Script
         public override bool ImplAsset(MultiRootConnector col, bool isReBuildMode = false)
         {
             DummyArgumentsControl dummyArgumentsControl = new DummyArgumentsControl(col);
-            return ImplAsset(col, dummyArgumentsControl);
+            string exTitle = GetGenericArgumentsString(col, isReBuildMode);
+            return ImplAsset(col, dummyArgumentsControl, exTitle);
         }
     }
 }

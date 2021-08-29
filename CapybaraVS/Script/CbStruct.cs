@@ -97,7 +97,11 @@ namespace CapybaraVS.Script
             {
                 // リファレンスの場合は、リファレンスで無い場合の型情報を評価する（スクリプトの仕組み上の条件）
 
-                return IsStruct(CbST.GetTypeEx(type.FullName.Replace("&", "")));
+                string name = type.FullName;
+                if (name is null)
+                    name = type.Name;
+
+                return IsStruct(CbST.GetTypeEx(name.Replace("&", "")));
             }
             return type.IsValueType && !type.IsPrimitive && !type.IsEnum;
         }

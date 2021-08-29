@@ -377,6 +377,16 @@ namespace CapybaraVS.Script
             {
                 // ジェネリック
 
+                foreach (var checkArg in type.GetGenericArguments())
+                {
+                    if (checkArg.IsGenericMethodParameter)
+                    {
+                        // 未確定なジェネリック型
+
+                        return CbGeneMethArg.NTF(name, type, type.GetGenericArguments());
+                    }
+                }
+
                 if (type.GetGenericTypeDefinition() == typeof(Nullable<>))
                 {
                     // Null許容型
@@ -642,6 +652,30 @@ namespace CapybaraVS.Script
         public static bool Is(Type type)
         {
             return type == CbVoid.T || type == typeof(CbVoid);
+        }
+    }
+
+    /// <summary>
+    /// ジェネリックメソッドの引数型を表現するクラスです。
+    /// </summary>
+    public class CbGeneMethArg : ICbShowValue
+    {
+        public Type ArgumentType = null;
+        public Type[] GeneArgTypes = null;
+        public string DataString => "(GMA)";
+        public static Func<ICbValue> TF = () => CbClass<CbGeneMethArg>.Create();
+        public static Func<string, Type, Type[], ICbValue> NTF = (name, argType, geneArgTypes) =>
+        {
+            var ret = CbClass<CbGeneMethArg>.Create(name);
+            ret.Value = new CbGeneMethArg();
+            ret.Value.ArgumentType = argType;
+            ret.Value.GeneArgTypes = geneArgTypes;
+            return ret;
+        };
+        public static Type T => typeof(CbClass<CbGeneMethArg>);
+        public static bool Is(Type type)
+        {
+            return type == CbGeneMethArg.T || type == typeof(CbGeneMethArg);
         }
     }
 

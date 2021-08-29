@@ -65,6 +65,10 @@ namespace CapybaraVS.Script
             }
 
             string typeName = type.FullName;
+            if (typeName is null)
+            {
+                typeName = type.Name;
+            }
             if (type.IsByRef)
             {
                 // リファレンス（スクリプト変数接続）

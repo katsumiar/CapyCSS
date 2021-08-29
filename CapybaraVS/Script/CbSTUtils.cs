@@ -228,6 +228,10 @@ namespace CapybaraVS.Script
             }
 
             string typeName = type.FullName;
+            if (typeName is null)
+            {
+                typeName = type.Name;
+            }
             string geneString = "";
 
             if (type.IsArray)

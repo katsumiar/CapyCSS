@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Reflection;
+using static CapybaraVS.Controls.BaseControls.CommandCanvas;
 using static CapybaraVS.Script.ScriptImplement;
 
 namespace CapybaraVS.Script
@@ -50,5 +51,9 @@ namespace CapybaraVS.Script
         /// コンストラクターか？
         /// </summary>
         public bool isConstructor;
+        /// <summary>
+        /// 型選択要求情報
+        /// </summary>
+        public List<TypeRequest> typeRequests;
     }
 }

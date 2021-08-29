@@ -31,7 +31,8 @@ namespace CapybaraVS.Script
                 ReturnType = info.returnType,
                 ArgumentTypeList = info.argumentTypeList,
                 DllModule = info.dllModule,
-                IsConstructor = info.isConstructor
+                IsConstructor = info.isConstructor,
+                typeRequests = info.typeRequests
             };
             return ret;
         }
@@ -69,7 +70,7 @@ namespace CapybaraVS.Script
 
         public string FuncTitle { get; set; } = "";
 
-        public List<TypeRequest> typeRequests => null;
+        public List<TypeRequest> typeRequests { get; set; } = null;
 
         public Type ClassType { get; set; } = null;
 
@@ -94,7 +95,28 @@ namespace CapybaraVS.Script
         /// <param name="isReBuildMode">再構築か？（保存データからの復帰）</param>
         public virtual bool ImplAsset(MultiRootConnector col, bool isReBuildMode = false)
         {
-            return ImplAsset(col, null);
+            string exTitle = GetGenericArgumentsString(col, isReBuildMode);
+            return ImplAsset(col, null, exTitle);
+        }
+
+        public string GetGenericArgumentsString(MultiRootConnector col, bool isReBuildMode)
+        {
+            if (!isReBuildMode && typeRequests != null)
+            {
+                string exTitle = "";
+                foreach (var geneArg in col.SelectedVariableType)
+                {
+                    if (geneArg != null)
+                    {
+                        if (exTitle == "")
+                            exTitle += "<" + CbSTUtils.GetTypeName(geneArg);
+                        else
+                            exTitle += ", " + CbSTUtils.GetTypeName(geneArg);
+                    }
+                }
+                return exTitle + ">";
+            }
+            return null;
         }
 
         /// <summary>
@@ -104,7 +126,8 @@ namespace CapybaraVS.Script
         /// <param name="dummyArgumentsControl">仮引数管理</param>
         protected bool ImplAsset(
             MultiRootConnector col, 
-            DummyArgumentsControl dummyArgumentsControl = null)
+            DummyArgumentsControl dummyArgumentsControl,
+            string exTitle)
         {
             List<ICbValue> argumentTypeList = new List<ICbValue>();
 
@@ -114,12 +137,44 @@ namespace CapybaraVS.Script
 
                 foreach (var node in ArgumentTypeList)
                 {
-                    argumentTypeList.Add(node.CreateArgument());
+                    var argumentType = node.CreateArgument();
+                    if (argumentType.MyType == typeof(CbClass<CbGeneMethArg>))
+                    {
+                        // 未確定なジェネリック型を確定した型で差し替える
+
+                        CbGeneMethArg gmaType = (CbGeneMethArg)argumentType.Data;
+                        Type replaceArgumentType = CbST.GetTypeEx(gmaType.ArgumentType.Namespace + "." + gmaType.ArgumentType.Name);
+                        if (replaceArgumentType.IsGenericType)
+                        {
+                            foreach (var gat in gmaType.GeneArgTypes)
+                            {
+                                // ジェネリック引数を収集する
+
+                                List<Type> argTypes = new List<Type>();
+                                for (int i = 0; i < typeRequests.Count; i++)
+                                {
+                                    TypeRequest typeRequest = typeRequests[i];
+                                    if (typeRequest.Name == gat.Name)
+                                    {
+                                        // 対応する型を登録する
+
+                                        argTypes.Add(col.SelectedVariableType[i]);
+                                    }
+                                }
+
+                                // 確定した型で差し替える
+                                replaceArgumentType = replaceArgumentType.MakeGenericType(argTypes.ToArray());
+                            }
+                        }
+                        // 引数の型を差し替える
+                        argumentType = CbST.CbCreate(replaceArgumentType, argumentType.Name);
+                    }
+                    argumentTypeList.Add(argumentType);
                 }
             }
 
             col.MakeFunction(
-                FuncTitle,
+                FuncTitle + exTitle,
                 NodeHelpText,
                 ReturnType,
                 argumentTypeList,

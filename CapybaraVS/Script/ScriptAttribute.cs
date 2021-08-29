@@ -1,4 +1,6 @@
-﻿using CapybaraVS.Controls.BaseControls;
+﻿//#define THREAD_DEBUG    // スレッドでの並行処理を抑制するテストモード
+
+using CapybaraVS.Controls.BaseControls;
 using CapyCSS.Controls;
 using CapyCSS.Controls.BaseControls;
 using CapyCSS.Script;
@@ -12,6 +14,7 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Controls;
+using static CapybaraVS.Controls.BaseControls.CommandCanvas;
 
 namespace CapybaraVS.Script
 {
@@ -265,9 +268,6 @@ namespace CapybaraVS.Script
         /// <returns>true==受け入れられる</returns>
         private static bool IsAcceptMethod(Type classType, MethodBase methodInfo)
         {
-            if (methodInfo.IsGenericMethod || methodInfo.IsGenericMethodDefinition)
-                return false;   // ジェネリックメソッドは現在未対応
-
             if (!classType.IsInterface && methodInfo.IsAbstract)
                 return false;   // 象徴メソッドは呼べない
 
@@ -362,27 +362,6 @@ namespace CapybaraVS.Script
                 CbST.AddModule(module);
             }
 
-#if false    // テスト用
-            foreach (Type classType in types)
-            {
-                if (!IsAcceptClass(classType))
-                    continue;   // 扱えない
-
-                if (importNameList != null && !importNameList.Any(n => classType.FullName == n))
-                    continue;
-
-                if (!classType.IsAbstract)
-                {
-                    // コンストラクタをインポートする
-
-                    CreateMakeInportConstructorInfoTasks(module, classType);
-                }
-
-                // メソッドをインポートする
-                CreateMakeInportMethodInfoTasks(module, classType);
-            }
-#endif
-
             Task<List<Type>> tcTask = null;
             if (inportTypeMenu != null)
             {
@@ -403,6 +382,9 @@ namespace CapybaraVS.Script
                     }
                     return resultTypes;
                 });
+#if THREAD_DEBUG
+                tcTask.Wait();
+#endif
             }
 
             List<Task<List<AutoImplementFunctionInfo>>> tasks = CreateMakeInportFunctionInfoTasks(module, importNameList, types);
@@ -461,6 +443,9 @@ namespace CapybaraVS.Script
                         return CreateMakeInportConstructorInfoTasks(module, classType);
                     });
                     tasks.Add(importConstructorTask);
+#if THREAD_DEBUG
+                    importConstructorTask.Wait();
+#endif
                 }
 
                 // メソッドをインポートする
@@ -469,6 +454,9 @@ namespace CapybaraVS.Script
                     return CreateMakeInportMethodInfoTasks(module, classType);
                 });
                 tasks.Add(importMethodTask);
+#if THREAD_DEBUG
+                importMethodTask.Wait();
+#endif
             }
 
             return tasks;
@@ -638,6 +626,9 @@ namespace CapybaraVS.Script
                         return MakeInportFunctionInfo(classType, methodInfo, returnType, methodAttr);
                     });
                     tasks.Add(task);
+#if THREAD_DEBUG
+                    task.Wait();
+#endif
                 }
             }
             return tasks;
@@ -662,6 +653,27 @@ namespace CapybaraVS.Script
             Module module = null)
         {
             List<ArgumentInfoNode> argumentList = null;
+
+            string genericArgs = "";
+            List<TypeRequest> genericTypeRequests = null;
+            if (methodInfo.IsGenericMethod)
+            {
+                // ジェネリックのメソッドのメニュー名に追加するジェネリック情報を作成
+
+                genericTypeRequests = new List<TypeRequest>();
+
+                foreach (var geneArg in methodInfo.GetGenericArguments())
+                {
+                    if (genericArgs == "")
+                        genericArgs += "<";
+                    else
+                        genericArgs += ", ";
+
+                    genericArgs += geneArg.Name;
+                    genericTypeRequests.Add(new TypeRequest(t => CbScript.AcceptAll(t), geneArg.Name));
+                }
+                genericArgs += ">";
+            }
 
             if (!methodInfo.IsStatic && !methodInfo.IsConstructor)
             {
@@ -740,6 +752,7 @@ namespace CapybaraVS.Script
 
                             group = methodInfo.Name.Split("_")[0] + ".";
                         }
+                        menuName += genericArgs;
                         if (methodInfo.IsStatic)
                         {
                             menuName = "[s] " + menuName;
@@ -848,6 +861,7 @@ namespace CapybaraVS.Script
                     argumentTypeList = argumentList,
                     dllModule = module,
                     isConstructor = methodInfo.IsConstructor,
+                    typeRequests = genericTypeRequests,
                 };
 
                 return autoImplementFunctionInfo;
