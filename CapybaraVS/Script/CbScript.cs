@@ -161,23 +161,39 @@ namespace CbVS.Script
             {
                 // 型選択要求用のタイトルを作成する
 
-                string methodName;
-                if (assetCode.Contains("#"))
+                string methodName = assetCode;
+                string className = null;
+                if (methodName.Contains("`"))
                 {
-                    methodName = assetCode.Substring(0, assetCode.IndexOf('#'));
+                    className = methodName.Substring(0, methodName.IndexOf("`"));
+                }
+                if (methodName.Contains(".."))
+                {
+                    methodName = methodName.Substring(methodName.LastIndexOf("..") + 1);
+                }
+                else
+                {
+                    methodName = methodName.Substring(methodName.LastIndexOf(".") + 1);
+                }
+                if (methodName.Contains("#"))
+                {
+                    methodName = methodName.Substring(0, methodName.IndexOf('#'));
                     string args = null;
                     foreach (var typeRequest in typeRequests)
                     {
                         if (args is null)
                             args = "<" + typeRequest.Name;
                         else
-                            args = "," + typeRequest.Name;
+                            args += "," + typeRequest.Name;
                     }
-                    args += ">";
-                    methodName += args;
+                    methodName += args + ">";
                 }
                 else
-                    methodName = assetCode + "<>";  // 本来ジェネリックメソッドには引数がある筈だが、システムの提供するメソッドでそうでない場合がある
+                    methodName += "<>";  // 本来ジェネリックメソッドには引数がある筈だが、システムの提供するメソッドでそうでない場合がある
+                if (className != null)
+                {
+                    methodName = className + "." + methodName;
+                }
                 List<string> typeNames = OwnerCommandCanvas.RequestTypeName(typeRequests, $"[{methodName}] ");
                 if (typeNames is null)
                     return null;
