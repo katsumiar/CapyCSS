@@ -908,6 +908,7 @@ namespace CapybaraVS.Controls.BaseControls
         public List<string> RequestTypeName(in List<TypeRequest> typeRequests, string title = "")
         {
             var result = new List<string>();
+            bool positionSet = true;
             foreach (var typeRequest in typeRequests)
             {
                 string typeName;
@@ -915,13 +916,13 @@ namespace CapybaraVS.Controls.BaseControls
                 {
                     // フィルタリングされた任意の型
 
-                    typeName = RequestTypeName(typeRequest.IsAccepts, title);
+                    typeName = RequestTypeName(typeRequest.IsAccepts, title, positionSet);
                 }
                 else if (typeRequest.InitType.IsGenericType && typeRequest.InitType.GenericTypeArguments.Length == 0)
                 {
                     // ジェネリックでかつ型が完成していない
 
-                    typeName = RequestGenericTypeName(typeRequest.InitType.FullName, typeRequest.IsAccepts, title);
+                    typeName = RequestGenericTypeName(typeRequest.InitType.FullName, typeRequest.IsAccepts, title, positionSet);
                 }
                 else
                 {
@@ -934,6 +935,7 @@ namespace CapybaraVS.Controls.BaseControls
                     return null;
                 }
                 result.Add(typeName);
+                positionSet = false;
             }
             return result;
         }
@@ -942,7 +944,7 @@ namespace CapybaraVS.Controls.BaseControls
         /// ユーザーに型の指定を要求します。
         /// </summary>
         /// <returns>型名</returns>
-        public string RequestTypeName(Func<Type, bool>[] isAccept, string title = "")
+        public string RequestTypeName(Func<Type, bool>[] isAccept, string title = "", bool positionSet = true)
         {
             TypeMenuWindow.Message = title;
             _CanTypeMenuExecuteEvent = isAccept;
@@ -951,7 +953,7 @@ namespace CapybaraVS.Controls.BaseControls
             string ret = null;
             try
             {
-                Type type = RequestType(true);
+                Type type = RequestType(true, positionSet);
                 if (type is null)
                 {
                     return null;
@@ -970,7 +972,7 @@ namespace CapybaraVS.Controls.BaseControls
         /// </summary>
         /// <param name="genericTypeName">ジェネリック型の型名</param>
         /// <returns>型名（ジェネリック型でない場合はそのままの型名）</returns>
-        public string RequestGenericTypeName(string genericTypeName, Func<Type, bool>[] isAccept, string title = "")
+        public string RequestGenericTypeName(string genericTypeName, Func<Type, bool>[] isAccept, string title = "", bool positionSet = true)
         {
             _CanTypeMenuExecuteEvent = isAccept;
             _CanTypeMenuExecuteEventIndex = 0;
@@ -978,7 +980,7 @@ namespace CapybaraVS.Controls.BaseControls
             string ret = null;
             try
             {
-                ret = RequestGenericTypeName(CbST.GetTypeEx(genericTypeName), title);
+                ret = RequestGenericTypeName(CbST.GetTypeEx(genericTypeName), title, positionSet);
             }
             catch (Exception ex)
             {
@@ -1015,10 +1017,10 @@ namespace CapybaraVS.Controls.BaseControls
         /// ユーザーに型の指定を要求します。
         /// </summary>
         /// <returns>型情報</returns>
-        private Type RequestType(bool checkType)
+        private Type RequestType(bool checkType, bool positionSet = true)
         {
             SelectType = null;
-            if (_CanTypeMenuExecuteEventIndex == 0)
+            if (positionSet && _CanTypeMenuExecuteEventIndex == 0)
             {
                 ControlTools.SetWindowPos(TypeMenuWindow, new Point(Mouse.GetPosition(null).X, Mouse.GetPosition(null).Y));
             }
@@ -1064,7 +1066,7 @@ namespace CapybaraVS.Controls.BaseControls
         /// </summary>
         /// <param name="genericType">ジェネリック型の型情報</param>
         /// <returns>型名（ジェネリック型でない場合はそのままの型名）</returns>
-        private string RequestGenericTypeName(Type genericType, string title = "")
+        private string RequestGenericTypeName(Type genericType, string title = "", bool positionSet = true)
         {
             if (genericType is null)
             {
@@ -1089,7 +1091,7 @@ namespace CapybaraVS.Controls.BaseControls
 
             TypeMenuWindow.Message = $"{title}{name}{param} : {name}";
 
-            Type type = RequestGenericType(genericType, true);
+            Type type = RequestGenericType(genericType, true, positionSet);
             if (type is null)
             {
                 return null;
@@ -1102,7 +1104,7 @@ namespace CapybaraVS.Controls.BaseControls
         /// </summary>
         /// <param name="genericType">ジェネリック型の型情報</param>
         /// <returns>型情報（ジェネリック型でない場合はそのままの型情報）</returns>
-        private Type RequestGenericType(Type genericType, bool checkType)
+        private Type RequestGenericType(Type genericType, bool checkType, bool positionSet = true)
         {
             if (genericType is null)
             {
@@ -1122,7 +1124,7 @@ namespace CapybaraVS.Controls.BaseControls
                 int argCount = Int32.Parse(cmc);
                 for (int i = 0; i < argCount; ++i)
                 {
-                    Type arg = RequestType(checkType);
+                    Type arg = RequestType(checkType, positionSet);
                     if (arg is null)
                     {
                         return null;
