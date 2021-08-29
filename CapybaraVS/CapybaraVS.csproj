@@ -55,6 +55,12 @@
     <None Update="hText\CbVS-ja-JP.htxt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="hText\Help-en-US.htxt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="hText\Help-ja-JP.htxt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="hText\System-en-US.htxt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
