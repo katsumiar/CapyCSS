@@ -437,7 +437,17 @@ namespace CapybaraVS.Controls.BaseControls
             if (limit <= 0)
                 return;
 
-            if (node.Name.ToUpper().Contains(name))
+            if (node.Name.Replace(" ", "").ToUpper() == name)
+            {
+                // 名前が完全一致したら下の階層すべてを対象とする
+
+                foreach (var child in node.Child)
+                {
+                    SetAll(treeView, child, name, ref limit);
+                }
+                return;
+            }
+            else if (node.Name.ToUpper().Replace(" ", "").Contains(name))
             {
                 if (node.LeftClickCommand != null && node.LeftClickCommand.CanExecute(null))
                 {
@@ -454,6 +464,28 @@ namespace CapybaraVS.Controls.BaseControls
                 SetFilter(treeView, child, name, ref limit);
             }
         }
+
+        private void SetAll(ObservableCollection<TreeMenuNode> treeView, TreeMenuNode node, string name, ref int limit)
+        {
+            if (limit <= 0)
+                return;
+
+            if (node.LeftClickCommand != null && node.LeftClickCommand.CanExecute(null))
+            {
+                treeView.Add(new TreeMenuNode(node.Path, OwnerCommandCanvas.CreateImmediateExecutionCanvasCommand(() =>
+                {
+                    ExecuteFindCommand(node.Path);
+                })));
+            }
+            if (limit <= 0)
+                return;
+
+            foreach (var child in node.Child)
+            {
+                SetAll(treeView, child, name, ref limit);
+            }
+        }
+
 
         /// <summary>
         /// 正式な名前からコマンドノードを参照します。
