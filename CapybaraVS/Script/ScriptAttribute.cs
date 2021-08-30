@@ -80,7 +80,9 @@ namespace CapybaraVS.Script
             string pkgId;
             string ver = "(" + packageName.Split("(")[1];
             CommandCanvasList.OutPut.OutLine(nameof(ScriptImplement), $"NuGet {packageName}.");
+#if !DEBUG_IMPORT
             try
+#endif
             {
                 List<NugetClient.PackageInfo> packageList = CapyCSS.Script.NugetClient.install(packageDir, packageName, out pkgId);
                 if (packageList is null)
@@ -104,11 +106,13 @@ namespace CapybaraVS.Script
 #endif
                 }
             }
+#if !DEBUG_IMPORT
             catch (WebException)
             {
                 CommandCanvasList.OutPut.OutLine(nameof(ScriptImplement), $"NG.");
                 return null;
             }
+#endif
             return ModuleControler.HEADER_NUGET + pkgId + ver;
         }
 
@@ -142,7 +146,9 @@ namespace CapybaraVS.Script
         {
             string outputName = ModuleControler.HEADER_PACKAGE + name;
             var functionNode = ImplementAsset.CreateGroup(node, outputName);
+#if !DEBUG_IMPORT
             try
+#endif
             {
                 ImportScriptMethods(
                     OwnerCommandCanvas,
@@ -153,10 +159,12 @@ namespace CapybaraVS.Script
                     (t) => OwnerCommandCanvas.AddImportTypeMenu(t)
                     );
             }
+#if !DEBUG_IMPORT
             catch (Exception ex)
             {
                 ControlTools.ShowErrorMessage(ex.Message, "Import Error.");
             }
+#endif
             CommandCanvasList.OutPut.OutLine(nameof(ScriptImplement), $"imported {name} package.");
             return outputName;
         }
@@ -230,7 +238,9 @@ namespace CapybaraVS.Script
             List<string> importNameList,
             string version = null)
         {
+#if !DEBUG_IMPORT
             try
+#endif
             {
                 var asm = Assembly.LoadFrom(path);
                 Module mod = asm.GetModule(path);
@@ -253,11 +263,13 @@ namespace CapybaraVS.Script
                 }
                 return name;
             }
+#if !DEBUG_IMPORT
             catch (Exception ex)
             {
                 CommandCanvasList.OutPut.OutLine(nameof(ScriptImplement), $"Import Dll Error: {ex.Message}.");
             }
             return null;
+#endif
         }
 
         /// <summary>
@@ -502,7 +514,9 @@ namespace CapybaraVS.Script
                 if (!IsAcceptMethod(classType, methodInfo))
                     continue;   // 未対応
 
+#if !DEBUG_IMPORT
                 try
+#endif
                 {
                     var functionInfo = MakeInportFunctionInfo(classType, methodInfo, methodInfo.ReturnType, null, module);
                     if (functionInfo != null)
@@ -510,10 +524,12 @@ namespace CapybaraVS.Script
                         importFuncInfoList.Add(functionInfo);
                     }
                 }
+#if !DEBUG_IMPORT
                 catch (Exception ex)
                 {
                     CommandCanvasList.ErrorLog += nameof(ScriptImplement) + "." + nameof(ImportScriptMethods) + ": " + ex.Message + Environment.NewLine + Environment.NewLine;
                 }
+#endif
             }
             return importFuncInfoList;
         }
@@ -554,34 +570,42 @@ namespace CapybaraVS.Script
 
                     foreach (ConstructorInfo constructorInfo in classType.GetConstructors())
                     {
+#if !DEBUG_IMPORT
                         try
+#endif
                         {
                             if (!IsAcceptMethod(classType, constructorInfo))
                                 continue;   // 未対応
 
                             importScriptMethodAttributeMethods(OwnerCommandCanvas, node, classType, constructorInfo, null);
                         }
+#if !DEBUG_IMPORT
                         catch (Exception ex)
                         {
                             CommandCanvasList.ErrorLog += nameof(ScriptImplement) + "." + nameof(ImportScriptMethods) + ": " + ex.Message + Environment.NewLine + Environment.NewLine;
                         }
+#endif
                     }
                 }
 
                 // メソッドをインポートする
                 foreach (MethodInfo methodInfo in classType.GetMethods())
                 {
+#if !DEBUG_IMPORT
                     try
+#endif
                     {
                         if (!IsAcceptMethod(classType, methodInfo))
                             continue;   // 未対応
 
                         importScriptMethodAttributeMethods(OwnerCommandCanvas, node, classType, methodInfo, methodInfo.ReturnType);
                     }
+#if !DEBUG_IMPORT
                     catch (Exception ex)
                     {
                         CommandCanvasList.ErrorLog += nameof(ScriptImplement) + "." + nameof(ImportScriptMethods) + ": " + ex.Message + Environment.NewLine + Environment.NewLine;
                     }
+#endif
                 }
             }
         }
@@ -1056,7 +1080,7 @@ namespace CapybaraVS.Script
                     argNode.IsByRef = true;
 
                 // イベント引数をチェック
-                if (para.ParameterType.IsGenericParameter && !para.ParameterType.IsGenericTypeParameter)
+                if (para.ParameterType.IsGenericType)
                 {
                     if (para.ParameterType.GetGenericTypeDefinition() == typeof(CbFunc<,>))
                     {

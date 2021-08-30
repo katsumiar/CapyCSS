@@ -255,12 +255,14 @@ namespace CapybaraVS.Script
                 CbTypeNameListRwLock.ReleaseReaderLock();
             }
 
-            if (type.IsGenericType ||
-                typeName.Contains("`")  // IsClass だと思われる
-                )
+            if (type.IsGenericType && typeName.Contains("`"))
             {
-                // ジェネリック引数文字以降を削除
-                typeName = typeName.Substring(0, typeName.IndexOf("`"));
+                if (typeName.Contains("`"))
+                {
+                    // ジェネリック引数文字以降を削除
+
+                    typeName = typeName.Substring(0, typeName.IndexOf("`"));
+                }
 
                 foreach (Type arg in type.GenericTypeArguments)
                 {

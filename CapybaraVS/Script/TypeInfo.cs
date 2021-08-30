@@ -373,7 +373,7 @@ namespace CapybaraVS.Script
                 }
             }
 
-            if (type.IsGenericTypeParameter)
+            if (type.IsGenericParameter || type.IsGenericTypeParameter)
             {
                 return CbGeneMethArg.NTF(name, type, type.GetGenericArguments());
             }
