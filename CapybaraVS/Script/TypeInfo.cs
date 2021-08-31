@@ -387,20 +387,6 @@ namespace CapybaraVS.Script
             {
                 // ジェネリック
 
-                if (type.GetGenericTypeDefinition() == typeof(Nullable<>))
-                {
-                    // Null許容型
-
-                    if (type.GenericTypeArguments.Length > 1)
-                        return null;
-
-                    var ret = _CbCreate(type.GenericTypeArguments[0], name, false);
-                    if (ret is null)
-                        return null;
-                    ret.IsNullable = true;
-                    return ret;
-                }
-
                 if (CbList.HaveInterface(type, typeof(IEnumerable<>)))
                 {
                     if (type.GenericTypeArguments.Length > 1)
@@ -417,6 +403,20 @@ namespace CapybaraVS.Script
                 if (CbFunc.IsFuncType(type))
                 {
                     return CbFunc.FuncValue(type, type.GenericTypeArguments.Last(), name);
+                }
+
+                if (type.GetGenericTypeDefinition() == typeof(Nullable<>))
+                {
+                    // Null許容型
+
+                    if (type.GenericTypeArguments.Length > 1)
+                        return null;
+
+                    var ret = _CbCreate(type.GenericTypeArguments[0], name, false);
+                    if (ret is null)
+                        return null;
+                    ret.IsNullable = true;
+                    return ret;
                 }
 
                 // その他のジェネリックは、構造体かクラスとして扱う

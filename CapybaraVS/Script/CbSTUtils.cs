@@ -424,7 +424,8 @@ namespace CapybaraVS.Script
         {
             if (toType == typeof(object))
                 return true;    // object型なら無条件に繋がる
-            if (toType.IsGenericType && CbFunc.IsActionType(toType))
+            
+            if (CbFunc.IsActionType(toType))
                 return true;    // Action型なら無条件に繋がる
 
             if (fromType == typeof(CbVoid))
@@ -436,14 +437,11 @@ namespace CapybaraVS.Script
             if (isCast && IsCastAssignment(toType, fromType))
                 return true;    // Cast接続なら繋がる
 
-            if (toType.IsGenericType)
+            if (CbFunc.IsFuncType(toType))
             {
-                if (CbFunc.IsFuncType(toType))
-                {
-                    Type argType = toType.GetGenericArguments()[0]; // Func の返り値の型
-                    if (IsAssignment(argType, fromType, isCast))
-                        return true;    // Func の返り値の型に代入可能なら繋がる
-                }
+                Type argType = toType.GetGenericArguments()[0]; // Func の返り値の型
+                if (IsAssignment(argType, fromType, isCast))
+                    return true;    // Func の返り値の型に代入可能なら繋がる
             }
 
             if (toType.IsAssignableFrom(fromType))

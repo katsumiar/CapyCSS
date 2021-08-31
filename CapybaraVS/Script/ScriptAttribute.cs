@@ -1,4 +1,4 @@
-﻿#define DEBUG_IMPORT    // インポート機能のデバッグモード
+﻿//#define DEBUG_IMPORT    // インポート機能のデバッグモード
 
 using CapybaraVS.Controls.BaseControls;
 using CapyCSS.Controls;

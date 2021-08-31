@@ -239,6 +239,8 @@ namespace CbVS.Script
 
         public static int FuncTypeArgCount(Type type)
         {
+            if (!type.IsGenericType)
+                return -1;
             if (type.GetGenericTypeDefinition() == typeof(Func<>))
                 return 1;
             if (type.GetGenericTypeDefinition() == typeof(Func<,>))
@@ -285,6 +287,8 @@ namespace CbVS.Script
         {
             if (type == typeof(Action))
                 return 0;
+            if (!type.IsGenericType)
+                return -1;
             if (type.GetGenericTypeDefinition() == typeof(Action<>))
                 return 1;
             if (type.GetGenericTypeDefinition() == typeof(Action<,>))
