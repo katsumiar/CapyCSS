@@ -151,41 +151,50 @@ namespace CapybaraVS.Script
             {
                 // ジェネリッククラスの型を確定する
 
-                CbGeneMethArg gmaType = (CbGeneMethArg)ReturnType().Data;
-                List<Type> argTypes = new List<Type>();
-                for (int i = 0; i < typeRequests.Count; ++i)
+                var data = ReturnType().Data;
+                if (data is CbGeneMethArg gmaType)
                 {
-                    argTypes.Add(col.SelectedVariableType[i]);
-                }
-
-                //クラスの型を確定した型で差し替える
-                classType = classType.MakeGenericType(argTypes.ToArray());
-
-                if (IsConstructor)
-                {
-                    returnType = CbST.CbCreateTF(classType);
-                    if (funcTitle.Contains("<"))
+                    List<Type> argTypes = new List<Type>();
+                    for (int i = 0; i < typeRequests.Count; ++i)
                     {
-                        // 確定した型情報に差し替える
-
-                        funcTitle = funcTitle.Substring(0, funcTitle.IndexOf("<"));
+                        argTypes.Add(col.SelectedVariableType[i]);
                     }
-                }
-                else
-                {
-                    // 確定した型情報を追加する
 
-                    funcTitle = CbSTUtils.GetClassNameOnly(classType) + exTitle + "." + funcTitle;
-                    exTitle = "";
+                    //クラスの型を確定した型で差し替える
+                    classType = classType.MakeGenericType(argTypes.ToArray());
+
+                    if (IsConstructor)
+                    {
+                        returnType = CbST.CbCreateTF(classType);
+                        if (funcTitle.Contains("<"))
+                        {
+                            // 確定した型情報に差し替える
+
+                            funcTitle = funcTitle.Substring(0, funcTitle.IndexOf("<"));
+                        }
+                    }
                 }
             }
 
-            {
+            {// 返し値の型を差し替える
+
                 var methodReturnType = returnType();
                 if (methodReturnType.MyType == typeof(CbClass<CbGeneMethArg>))
                 {
                     CbGeneMethArg gmaType = (CbGeneMethArg)methodReturnType.Data;
-                    Type repType = GetRequestType(col, gmaType.ArgumentType.Name);
+                    Type repType = gmaType.ArgumentType;
+                    if (repType.IsGenericType)
+                    {
+                        repType = MakeRequestGenericType(col, repType);
+                    }
+                    else if (repType.IsGenericTypeParameter)
+                    {
+                        repType = GetRequestType(col, repType.Name);
+                    }
+                    else
+                    {
+                        Debug.Assert(false);
+                    }
                     returnType = CbST.CbCreateTF(repType);
                 }
             }
@@ -203,36 +212,21 @@ namespace CapybaraVS.Script
                         // 未確定なジェネリック型を確定した型で差し替える
 
                         CbGeneMethArg gmaType = (CbGeneMethArg)argumentType.Data;
-                        Type replaceArgumentType;
-                        if (gmaType.ArgumentType.IsGenericTypeParameter)
+                        Type replaceArgumentType = gmaType.ArgumentType;
+
+                        if (replaceArgumentType.IsGenericType)
                         {
-                            replaceArgumentType = GetRequestType(col, gmaType.ArgumentType.Name);
+                            replaceArgumentType = MakeRequestGenericType(col, replaceArgumentType);
+                        }
+                        else if (replaceArgumentType.IsGenericTypeParameter)
+                        {
+                            replaceArgumentType = GetRequestType(col, replaceArgumentType.Name);
                         }
                         else
                         {
-                            replaceArgumentType = CbST.GetTypeEx(gmaType.ArgumentType.Namespace + "." + gmaType.ArgumentType.Name);
+                            Debug.Assert(false);
                         }
-                        if (replaceArgumentType.IsGenericType)
-                        {
-                            List<Type> argTypes = new List<Type>();
-                            foreach (var gat in gmaType.GeneArgTypes)
-                            {
-                                // ジェネリック引数を収集する
 
-                                for (int i = 0; i < typeRequests.Count; i++)
-                                {
-                                    TypeRequest typeRequest = typeRequests[i];
-                                    if (typeRequest.Name == gat.Name)
-                                    {
-                                        // 対応する型を登録する
-
-                                        argTypes.Add(col.SelectedVariableType[i]);
-                                    }
-                                }
-                            }
-                            // 確定した型で差し替える
-                            replaceArgumentType = replaceArgumentType.MakeGenericType(argTypes.ToArray());
-                        }
                         // 引数の型を差し替える
                         argumentType = CbST.CbCreate(replaceArgumentType, argumentType.Name);
                     }
@@ -259,6 +253,45 @@ namespace CapybaraVS.Script
             );
 
             return true;
+        }
+
+        /// <summary>
+        /// リクエストされた型でジェネリックなパラメータを持つジェネリック型の型を確定します。
+        /// </summary>
+        /// <param name="col"></param>
+        /// <param name="type"></param>
+        /// <returns></returns>
+        private Type MakeRequestGenericType(MultiRootConnector col, Type type)
+        {
+            List<Type> argTypes = new List<Type>();
+            foreach (var gat in type.GetGenericArguments())
+            {
+                if (gat.IsGenericType)
+                {
+                    // パラメータがジェネリックだった
+
+                    var ngt = MakeRequestGenericType(col, gat);
+                    argTypes.Add(ngt);
+                }
+                else
+                {
+                    // ジェネリック引数を収集する
+
+                    for (int i = 0; i < typeRequests.Count; i++)
+                    {
+                        TypeRequest typeRequest = typeRequests[i];
+                        if (typeRequest.Name == gat.Name)
+                        {
+                            // 対応する型を登録する
+
+                            argTypes.Add(col.SelectedVariableType[i]);
+                        }
+                    }
+                }
+            }
+            // 確定した型を返す（repType を使って MakeGenericType しては駄目）
+            Type nType = Type.GetType(type.Namespace + "." + type.Name);
+            return nType.MakeGenericType(argTypes.ToArray());
         }
 
         /// <summary>

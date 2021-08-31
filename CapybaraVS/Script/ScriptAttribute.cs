@@ -1,4 +1,4 @@
-﻿//#define DEBUG_IMPORT    // インポート機能のデバッグモード
+﻿#define DEBUG_IMPORT    // インポート機能のデバッグモード
 
 using CapybaraVS.Controls.BaseControls;
 using CapyCSS.Controls;
@@ -749,9 +749,8 @@ namespace CapybaraVS.Script
                 if (retType is null)
                     return null; // 返り値の型が対象外
 
-                if (!(methodInfo.IsConstructor && classType.IsGenericType) && retType("") is null)
+                if (retType("") is null)
                     return null; // 返り値の型が対象外
-
 
                 // オーバーロード用の名前保管情報を作成（同名にならないようにする）
                 string addArg = "#";
@@ -858,7 +857,7 @@ namespace CapybaraVS.Script
                 {
                     var type = retType("");
                     if (type.MyType == typeof(CbClass<CbGeneMethArg>))
-                        menuName += " : " + (type.Data as CbGeneMethArg).ArgumentType.Name;
+                        menuName += " : " + CbSTUtils.GetGenericTypeName((type.Data as CbGeneMethArg).ArgumentType);
                     else
                         menuName += " : " + type.TypeName;
                 }
@@ -929,7 +928,7 @@ namespace CapybaraVS.Script
         {
             foreach (var geneArg in classType.GetGenericArguments())
             {
-                genericTypeRequests.Add(new TypeRequest(t => CbScript.AcceptAll(t), geneArg.Name));
+                SetParamaterTypeFilter(genericTypeRequests, geneArg);
             }
         }
 
@@ -937,11 +936,68 @@ namespace CapybaraVS.Script
         {
             foreach (var geneArg in method.GetGenericArguments())
             {
-                if (genericTypeRequests.Any(n => n.Name == geneArg.Name))
-                    continue;
-
-                genericTypeRequests.Add(new TypeRequest(t => CbScript.AcceptAll(t), geneArg.Name));
+                SetParamaterTypeFilter(genericTypeRequests, geneArg);
             }
+        }
+
+        /// <summary>
+        /// パラメータ型の制約判定をフィルターに登録します。
+        /// </summary>
+        /// <param name="genericTypeRequests">型リクエストリスト</param>
+        /// <param name="geneArg">パラメータ型</param>
+        private static void SetParamaterTypeFilter(List<TypeRequest> genericTypeRequests, Type geneArg)
+        {
+            if (!geneArg.IsGenericParameter)
+                return;
+
+            if (genericTypeRequests.Any(n => n.Name == geneArg.Name))
+                return; // 二重登録拒否
+
+            // t には、判定対象の型が入ります。
+            Func<Type, bool> isAccept = (t) =>
+            {
+                if (geneArg.GetGenericParameterConstraints().Length > 0)
+                {
+                    foreach (var constraint in geneArg.GetGenericParameterConstraints())
+                    {
+                        if (t.IsAssignableFrom(constraint))
+                            return true;
+                    }
+                    return false;
+                }
+
+                GenericParameterAttributes sConstraints =
+                            geneArg.GenericParameterAttributes &
+                            GenericParameterAttributes.SpecialConstraintMask;
+
+                if (sConstraints != GenericParameterAttributes.None)
+                {
+                    if (GenericParameterAttributes.None != (sConstraints &
+                        GenericParameterAttributes.DefaultConstructorConstraint))
+                    {
+                        var query = t.GetMethods(BindingFlags.Public).Where(n => n.IsConstructor);
+                        bool haveDefaultConstructer = query.Any(n => n.GetParameters().Length == 0);
+                        if (!haveDefaultConstructer)
+                           return false;    // デフォルトコンストラクタを持っていなければ拒否
+                    }
+                    if (GenericParameterAttributes.None != (sConstraints &
+                        GenericParameterAttributes.ReferenceTypeConstraint))
+                    {
+                        if (!t.IsClass)
+                            return false;   // リファレンス型でなければ拒否
+                    }
+                    if (GenericParameterAttributes.None != (sConstraints &
+                        GenericParameterAttributes.NotNullableValueTypeConstraint))
+                    {
+                        if (t.GetGenericTypeDefinition() != typeof(Nullable<>))
+                            return false;   // null許容型でなければ拒否
+                    }
+                }
+
+                return true;
+            };
+
+            genericTypeRequests.Add(new TypeRequest(isAccept, geneArg.Name));
         }
 
         /// <summary>

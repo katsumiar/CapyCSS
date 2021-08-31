@@ -1,4 +1,5 @@
-﻿using CapyCSS.Controls;
+﻿using CapybaraVS.Script;
+using CapyCSS.Controls;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -413,14 +414,15 @@ namespace CapybaraVS.Controls.BaseControls
         {
             ObservableCollection<TreeMenuNode> treeView = viewer.TreeView.ItemsSource as ObservableCollection<TreeMenuNode>;
             treeView.Clear();   // これを起因にバインド系のエラーが出るが…無視して良い...
-            int limit = 50;
+            string searchName = name.ToUpper().Replace(" ", "");
+            int limit = 60;
             foreach (var node in AssetTreeData)
             {
                 if (node.Path == RecentName)
                 {
                     continue;
                 }
-                SetFilter(treeView, node, name.ToUpper(), ref limit);
+                SetFilter(treeView, node, searchName, CbSTUtils.StripParamater(searchName), ref limit);
                 if (limit <= 0)
                     return;
             }
@@ -432,60 +434,78 @@ namespace CapybaraVS.Controls.BaseControls
         /// <param name="viewer">結果登録用リスト</param>
         /// <param name="node">メニューノード</param>
         /// <param name="name">メニュー名</param>
-        private void SetFilter(ObservableCollection<TreeMenuNode> treeView, TreeMenuNode node, string name, ref int limit)
+        private void SetFilter(ObservableCollection<TreeMenuNode> treeView, TreeMenuNode node, string name, string stripName, ref int limit)
         {
             if (limit <= 0)
                 return;
 
-            if (node.Name.Replace(" ", "").ToUpper() == name)
+            string nodeName = node.Name.ToUpper().Replace(" ", "");
+
+            if (nodeName == name)
             {
                 // 名前が完全一致したら下の階層すべてを対象とする
 
-                foreach (var child in node.Child)
-                {
-                    SetAll(treeView, child, name, ref limit);
-                }
+                SetAll(treeView, node, ref limit);
                 return;
             }
-            else if (node.Name.ToUpper().Replace(" ", "").Contains(name))
+            else
             {
+                if (stripName.Contains("<") && stripName.Contains(">") &&
+                    nodeName.Contains("<") && nodeName.Contains(">") &&
+                    stripName == CbSTUtils.StripParamater(nodeName))
+                {
+                    // パラメータを取り除いた名前が完全一致したら下の階層すべてを対象とする
+
+                    SetAll(treeView, node, ref limit);
+                    return;
+                }
+                if (nodeName.Contains(name))
+                {
+                    if (node.LeftClickCommand != null && node.LeftClickCommand.CanExecute(null))
+                    {
+                        treeView.Add(new TreeMenuNode(node.Path, node.HintText, OwnerCommandCanvas.CreateImmediateExecutionCanvasCommand(() =>
+                        {
+                            ExecuteFindCommand(node.Path);
+                        })));
+                    }
+                    if (--limit == 0)
+                        return;
+                }
+            }
+            foreach (var child in node.Child)
+            {
+                SetFilter(treeView, child, name, stripName, ref limit);
+            }
+        }
+
+        private void SetAll(ObservableCollection<TreeMenuNode> treeView, TreeMenuNode node, ref int limit)
+        {
+            void _SetAll(ObservableCollection<TreeMenuNode> treeView, TreeMenuNode node, ref int limit)
+            {
+                if (limit <= 0)
+                    return;
+
                 if (node.LeftClickCommand != null && node.LeftClickCommand.CanExecute(null))
                 {
-                    treeView.Add(new TreeMenuNode(node.Path, OwnerCommandCanvas.CreateImmediateExecutionCanvasCommand(() =>
+                    treeView.Add(new TreeMenuNode(node.Path, node.HintText, OwnerCommandCanvas.CreateImmediateExecutionCanvasCommand(() =>
                     {
                         ExecuteFindCommand(node.Path);
                     })));
                 }
-                if (--limit == 0)
+                if (limit <= 0)
                     return;
-            }
-            foreach (var child in node.Child)
-            {
-                SetFilter(treeView, child, name, ref limit);
-            }
-        }
 
-        private void SetAll(ObservableCollection<TreeMenuNode> treeView, TreeMenuNode node, string name, ref int limit)
-        {
-            if (limit <= 0)
-                return;
-
-            if (node.LeftClickCommand != null && node.LeftClickCommand.CanExecute(null))
-            {
-                treeView.Add(new TreeMenuNode(node.Path, OwnerCommandCanvas.CreateImmediateExecutionCanvasCommand(() =>
+                foreach (var child in node.Child)
                 {
-                    ExecuteFindCommand(node.Path);
-                })));
+                    _SetAll(treeView, child, ref limit);
+                }
             }
-            if (limit <= 0)
-                return;
 
             foreach (var child in node.Child)
             {
-                SetAll(treeView, child, name, ref limit);
+                _SetAll(treeView, child, ref limit);
             }
         }
-
 
         /// <summary>
         /// 正式な名前からコマンドノードを参照します。

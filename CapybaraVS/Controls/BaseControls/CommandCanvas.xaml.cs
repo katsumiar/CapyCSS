@@ -1245,9 +1245,10 @@ namespace CapybaraVS.Controls.BaseControls
         /// コマンドメニューを表示します。
         /// </summary>
         /// <param name="pos">表示位置</param>
-        public void ShowCommandMenu(Point? pos = null)
+        public void ShowCommandMenu(Point? pos = null, string filterString = null)
         {
             CommandMenuWindow.SetPos(pos);
+            CommandMenuWindow.FilterString = filterString;
             CommandMenuWindow.ShowDialog();
         }
 

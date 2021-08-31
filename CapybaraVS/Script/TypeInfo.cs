@@ -373,24 +373,19 @@ namespace CapybaraVS.Script
                 }
             }
 
-            if (type.IsGenericParameter || type.IsGenericTypeParameter)
+            if (HaveGenericParamater(type))
             {
+                // 確定していない型なので仮の型に差し替える
+
+                if (!type.IsPublic)
+                    return null;
+
                 return CbGeneMethArg.NTF(name, type, type.GetGenericArguments());
             }
 
             if (type.IsGenericType)
             {
                 // ジェネリック
-
-                foreach (var checkArg in type.GetGenericArguments())
-                {
-                    if (checkArg.IsGenericMethodParameter || checkArg.IsGenericTypeParameter || checkArg.IsGenericType)
-                    {
-                        // 未確定なジェネリック型
-
-                        return CbGeneMethArg.NTF(name, type, type.GetGenericArguments());
-                    }
-                }
 
                 if (type.GetGenericTypeDefinition() == typeof(Nullable<>))
                 {
@@ -463,6 +458,35 @@ namespace CapybaraVS.Script
             }
 
             return null;
+        }
+
+        /// <summary>
+        /// ジェネリックなパラメータかジェネリック型がジェネリックなパラメータを持つか判定します。
+        /// </summary>
+        /// <param name="type">型</param>
+        /// <returns>条件を満たす==true</returns>
+        private static bool HaveGenericParamater(Type type)
+        {
+            if (type.IsGenericParameter || type.IsGenericMethodParameter)
+            {
+                // ジェネリックパラメータを持つジェネリック型
+
+                return true;
+            }
+
+            if (type.IsGenericType)
+            {
+                // ジェネリック
+
+                foreach (var node in type.GetGenericArguments())
+                {
+                    if (HaveGenericParamater(node))
+                    {
+                        return true;
+                    }
+                }
+            }
+            return false;
         }
     }
 

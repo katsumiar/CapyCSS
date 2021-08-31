@@ -425,7 +425,14 @@ namespace CapybaraVS.Controls.BaseControls
         /// Forced チェックの状態を参照します。
         /// ※チェックするとノードの実行結果のキャッシュ値を返さずに常に実行した値を返すモードになります。
         /// </summary>
-        public bool ForcedChecked { get => Forced.IsChecked.Value; set { Forced.IsChecked = value; }}
+        public bool ForcedChecked
+        {
+            get => Forced.IsChecked.Value;
+            set
+            {
+                Forced.IsChecked = value;
+            }
+        }
 
         /// <summary>
         /// アセットのヒント
@@ -838,6 +845,13 @@ namespace CapybaraVS.Controls.BaseControls
 
         private void Forced_Click(object sender, RoutedEventArgs e)
         {
+            UpdateMainPanelColor();
+            if (e != null)
+                e.Handled = true;
+        }
+
+        private void UpdateMainPanelColor()
+        {
             RectBox.Stroke = RectboxStroke;
             if (Forced.IsChecked == true)
             {
@@ -847,8 +861,6 @@ namespace CapybaraVS.Controls.BaseControls
             {
                 Forced.Foreground = Brushes.Black;
             }
-            if (e != null)
-                e.Handled = true;
         }
 
         /// <summary>
@@ -998,6 +1010,14 @@ namespace CapybaraVS.Controls.BaseControls
                 // 仮のリンク曲線を消す
                 curvePath?.Dispose();
                 curvePath = null;
+
+                if (target is null)
+                {
+                    // 接続ターゲットが無い
+
+                    string targetName = (RootValue as ICbValue).TypeName;
+                    OwnerCommandCanvas.ShowCommandMenu(e.GetPosition(null), CbSTUtils.StripParamater(targetName));
+                }
 
                 if (IsNgAssignment(target))
                 {

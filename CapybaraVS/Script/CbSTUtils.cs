@@ -330,6 +330,14 @@ namespace CapybaraVS.Script
         /// <returns></returns>
         private static string Optimisation(string typeName)
         {
+#if true
+            int pos = typeName.LastIndexOf(".");
+            if (pos != -1)
+            {
+                typeName = typeName.Substring(pos + 1);
+            }
+            return typeName;
+#else
             string[] arr = typeName.Split('.');
             List<string> testName = new List<string>();
             foreach (var node in arr)
@@ -363,6 +371,7 @@ namespace CapybaraVS.Script
             reverseWork.Reverse();
             string newName = string.Join(".", reverseWork);
             return newName;
+#endif
         }
 
         /// <summary>
@@ -527,10 +536,20 @@ namespace CapybaraVS.Script
             string ret = null;
             foreach (var ga in types)
             {
-                if (ret is null)
-                    ret = $"<{ga.Name}";
+                string name = "";
+                if (ga.IsGenericType)
+                {
+                    name = GetGenericTypeName(ga);
+                }
                 else
-                    ret += $", {ga.Name}";
+                {
+                    name = ga.Name;
+                }
+
+                if (ret is null)
+                    ret = $"<{name}";
+                else
+                    ret += $", {name}";
             }
             return ret + ">";
         }
@@ -546,6 +565,53 @@ namespace CapybaraVS.Script
         public static string GetGenericTypeName(Type type)
         {
             return GetClassNameOnly(type) + GetGenericParamatersString(type);
+        }
+
+        /// <summary>
+        /// ジェネリック引数をストリップしたジェネリック引数を返します。
+        /// </summary>
+        /// <param name="outName"></param>
+        /// <returns></returns>
+        public static string StripParamater(string outName)
+        {
+            string _StripParamater(string outName)
+            {
+                var paramArea = new Tuple<char, char>('<', '>');
+                string param = GetParamater(paramArea, outName);
+                if (param is null)
+                    return outName;
+                int count = param.Length - param.Replace(",", "").Length;
+                string repParam = "<";
+                while (count-- != 0)
+                    repParam += ",";
+                repParam += ">";
+                outName = outName.Replace(param, repParam);
+                return outName;
+            }
+
+            if (!outName.Contains("<") || !outName.Contains(">"))
+                return outName;
+
+            string temp;
+            do
+            {
+                temp = outName;
+                outName = _StripParamater(outName);
+            }
+            while (outName != temp);
+
+            return outName;
+        }
+
+        public static string GetParamater(Tuple<char, char> tuple, string outName)
+        {
+            int sPos = outName.IndexOf(tuple.Item1);
+            int ePos = outName.IndexOf(tuple.Item2);
+            if (sPos != -1 && ePos != -1)
+            {
+                return outName.Substring(sPos, ePos - sPos + 1);
+            }
+            return null;
         }
     }
 }

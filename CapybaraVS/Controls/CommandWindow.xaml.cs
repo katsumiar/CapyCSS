@@ -66,6 +66,31 @@ namespace CapyCSS.Controls
 
         #endregion
 
+        #region FilterString プロパティ実装
+
+        private static ImplementWindowDependencyProperty<CommandWindow, string> impFilterString =
+            new ImplementWindowDependencyProperty<CommandWindow, string>(
+                nameof(FilterString),
+                (self, getValue) =>
+                {
+                    string value = getValue(self);
+                    if (value != null && value.Trim() != "")
+                    {
+                        self.FilterText.Text = value;
+                        self.FilterText_KeyUp(null, null);
+                    }
+                });
+
+        public static readonly DependencyProperty FilterStringProperty = impFilterString.Regist(null);
+
+        public string FilterString
+        {
+            get { return impFilterString.GetValue(this); }
+            set { impFilterString.SetValue(this, value); }
+        }
+
+        #endregion
+
         public void SetPos(Point? pos = null)
         {
             ControlTools.SetWindowPos(this, pos);
