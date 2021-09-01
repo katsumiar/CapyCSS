@@ -1001,6 +1001,23 @@ namespace CapybaraVS.Controls.BaseControls
             return false;
         }
 
+        /// <summary>
+        /// 型と一致する引数リンクコネクターを返します。
+        /// </summary>
+        /// <param name="type"></param>
+        /// <returns></returns>
+        public LinkConnector GetLinkConnector(Type type)
+        {
+            foreach (var node in ListData)
+            {
+                if (node.ValueData.OriginalType == type)
+                {
+                    return node;
+                }
+            }
+            return null;
+        }
+
         private void Grid_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
             if (curvePath != null)
@@ -1011,51 +1028,71 @@ namespace CapybaraVS.Controls.BaseControls
                 curvePath?.Dispose();
                 curvePath = null;
 
+                ICbValue rootValue = null;
                 if (target is null)
                 {
                     // 接続ターゲットが無い
 
-                    string targetName = (RootValue as ICbValue).TypeName;
+                    var setPos = e.GetPosition(CurveCanvas);
+                    rootValue = RootValue as ICbValue;
+                    OwnerCommandCanvas.RootConnectorValueType = rootValue.OriginalType;
+                    string targetName = rootValue.TypeName;
+
+                    // コマンドウインドウを開く
                     OwnerCommandCanvas.ShowCommandMenu(e.GetPosition(null), CbSTUtils.StripParamater(targetName));
+                    
+                    // コマンドが登録されていたら実行する
+                    OwnerCommandCanvas.ProcessCommand(setPos);
                 }
 
-                if (IsNgAssignment(target))
+                OwnerCommandCanvas.WorkCanvas.Dispatcher.BeginInvoke(new Action(() =>
                 {
-                    // 絶対に接続不可
-
-                }
-                else if (IsAssignment(target))
-                {
-                    // 正式な接続を作成
-
-                    var backup = target.CastType;
-                    // 接続を前提に Cast モードを変更
-                    target.CastType = false;
-                    if (!RequestLinkCurve(target))
+                    if (rootValue != null)
                     {
-                        // 接続に失敗したので接続先の Cast モードを戻す
+                        // WorkCanvas に最後に置かれた MultiRootConnector の引数の中から rootValue.OriginalType の型と一致する LinkConnector を取得する
 
-                        target.CastType = backup;
+                        target = OwnerCommandCanvas.GetLinkConnectorFromInstalledMultiRootConnector(rootValue.OriginalType);
                     }
-                }
-                else if (IsAssignmentCast(target))
-                {
-                    // キャストによる正式な接続を作成
 
-                    var backup = target.CastType;
-                    // 接続を前提に Cast モードを変更
-                    target.CastType = true;
-                    if (!RequestLinkCurve(target))
+                    if (IsNgAssignment(target))
                     {
-                        // 接続に失敗したので接続先の Cast モードを戻す
+                        // 絶対に接続不可
 
-                        target.CastType = backup;
                     }
-                }
+                    else if (IsAssignment(target))
+                    {
+                        // 正式な接続を作成
 
-                MouseMove -= Grid_MouseMove;
-                MouseUp -= Grid_MouseLeftButtonUp;
-                ReleaseMouseCapture();
+                        var backup = target.CastType;
+                        // 接続を前提に Cast モードを変更
+                        target.CastType = false;
+                        if (!RequestLinkCurve(target))
+                        {
+                            // 接続に失敗したので接続先の Cast モードを戻す
+
+                            target.CastType = backup;
+                        }
+                    }
+                    else if (IsAssignmentCast(target))
+                    {
+                        // キャストによる正式な接続を作成
+
+                        var backup = target.CastType;
+                        // 接続を前提に Cast モードを変更
+                        target.CastType = true;
+                        if (!RequestLinkCurve(target))
+                        {
+                            // 接続に失敗したので接続先の Cast モードを戻す
+
+                            target.CastType = backup;
+                        }
+                    }
+
+                    MouseMove -= Grid_MouseMove;
+                    MouseUp -= Grid_MouseLeftButtonUp;
+                    ReleaseMouseCapture();
+
+                }), DispatcherPriority.ApplicationIdle);
             }
         }
 

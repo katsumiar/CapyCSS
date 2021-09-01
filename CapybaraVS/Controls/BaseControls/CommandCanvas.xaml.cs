@@ -1412,6 +1412,83 @@ namespace CapybaraVS.Controls.BaseControls
             }
         }
 
+        #region ROOT_VALUE_TYPE
+        private Type rootConnectorValueType = null;
+        /// <summary>
+        /// 接続操作されている RootConnector の型を参照します。
+        /// </summary>
+        public Type RootConnectorValueType
+        {
+            get => rootConnectorValueType;
+            set
+            {
+                rootConnectorValueType = value;
+            }
+        }
+
+        /// <summary>
+        /// 接続操作されている RootConnector の型との一致を判定します。
+        /// </summary>
+        /// <param name="typeName"></param>
+        /// <returns></returns>
+        public bool IsEqualRootConnectorValueType(string typeName)
+        {
+            if (rootConnectorValueType is null)
+                return false;
+            bool ret = (rootConnectorValueType.Namespace + "." + rootConnectorValueType.Name) == typeName;
+            if (!ret)
+            {
+                RootConnectorValueType = null;
+            }
+            return ret;
+        }
+
+        /// <summary>
+        /// 接続操作されている RootConnector の型リクエスト情報をコピーします。
+        /// </summary>
+        /// <param name="col"></param>
+        /// <returns></returns>
+        public string[] SetRootConnectorValueType(MultiRootConnector col)
+        {
+            List<string> typeNames = new List<string>();
+            for (int i = 0; i < rootConnectorValueType.GetGenericArguments().Length; ++i)
+            {
+                var type = rootConnectorValueType.GetGenericArguments()[i];
+                col.SelectedVariableType[i] = type;
+                typeNames.Add(type.FullName);
+            }
+            RootConnectorValueType = null;
+            return typeNames.ToArray();
+        }
+
+        /// <summary>
+        /// 最後に WorkCanvas に置かれた MultiRootConnector を参照します。
+        /// </summary>
+        public MultiRootConnector InstalledMultiRootConnector = null;
+
+        /// <summary>
+        /// 最後に WorkCanvas に置かれた MultiRootConnector の持つ引数 LinkConnector の内から型の一致するものを返します。
+        /// </summary>
+        /// <param name="type">要求する型</param>
+        /// <returns>一致する最初に見つかった LinkConnector</returns>
+        public LinkConnector GetLinkConnectorFromInstalledMultiRootConnector(Type type)
+        {
+            if (InstalledMultiRootConnector is null ||
+                InstalledMultiRootConnector.LinkConnectorControl is null)
+                return null;
+            return InstalledMultiRootConnector.LinkConnectorControl.GetLinkConnector(type);
+        }
+        #endregion
+
+        /// <summary>
+        /// WorkCanvas に登録されたコマンドを実行します。
+        /// </summary>
+        /// <param name="setPos">場所</param>
+        public void ProcessCommand(Point setPos)
+        {
+            ScriptWorkCanvas.ProcessCommand(setPos);
+        }
+
         /// <summary>
         /// コマンドメニューを表示します。
         /// </summary>

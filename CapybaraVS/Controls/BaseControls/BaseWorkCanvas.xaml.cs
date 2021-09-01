@@ -828,9 +828,10 @@ namespace CapybaraVS.Control.BaseControls
         /// 登録されているコマンドを実行します。
         /// </summary>
         /// <param name="setPos">ノードを置く位置</param>
-        private void ProcessCommand(Point setPos)
+        public void ProcessCommand(Point setPos)
         {
             object obj = ObjectSetCommand?.Invoke();
+            OwnerCommandCanvas.InstalledMultiRootConnector = null;
             if (obj != null)
             {
                 if (obj is UIElement element)
@@ -853,6 +854,13 @@ namespace CapybaraVS.Control.BaseControls
                     // マウスカーソルの座標でセットする
                     Canvas.SetLeft(movable, setPos.X);
                     Canvas.SetTop(movable, setPos.Y);
+
+                    if (element is MultiRootConnector rootConnector)
+                    {
+                        // 設置した MultiRootConnector を記録します。
+
+                        OwnerCommandCanvas.InstalledMultiRootConnector = rootConnector;
+                    }
 
                     // 全てのワークに最近使ったスクリプトノードを記録します。
                     OwnerCommandCanvas.CommandCanvasControl.AddScriptCommandRecent(ObjectSetCommandName);

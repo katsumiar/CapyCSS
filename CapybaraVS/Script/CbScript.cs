@@ -162,42 +162,52 @@ namespace CbVS.Script
                 // 型選択要求用のタイトルを作成する
 
                 string methodName = assetCode;
-                string className = null;
-                if (methodName.Contains("`"))
+                int pos = methodName.LastIndexOf(".");
+                if (pos != -1 && ret.OwnerCommandCanvas.IsEqualRootConnectorValueType(methodName.Substring(0, pos)))
                 {
-                    className = methodName.Substring(0, methodName.IndexOf("`"));
-                }
-                if (methodName.Contains(".."))
-                {
-                    methodName = methodName.Substring(methodName.LastIndexOf("..") + 1);
+                    // RootConnector の型と選ばれたメソッドの型が一致するなら RootConnector の型リクエスト情報をコピーする
+
+                    ret.SelectedVariableTypes = ret.OwnerCommandCanvas.SetRootConnectorValueType(ret);
                 }
                 else
                 {
-                    methodName = methodName.Substring(methodName.LastIndexOf(".") + 1);
-                }
-                if (methodName.Contains("#"))
-                {
-                    methodName = methodName.Substring(0, methodName.IndexOf('#'));
-                    string args = null;
-                    foreach (var typeRequest in typeRequests)
+                    string className = null;
+                    if (methodName.Contains("`"))
                     {
-                        if (args is null)
-                            args = "<" + typeRequest.Name;
-                        else
-                            args += "," + typeRequest.Name;
+                        className = methodName.Substring(0, methodName.IndexOf("`"));
                     }
-                    methodName += args + ">";
+                    if (methodName.Contains(".."))
+                    {
+                        methodName = methodName.Substring(methodName.LastIndexOf("..") + 1);
+                    }
+                    else
+                    {
+                        methodName = methodName.Substring(methodName.LastIndexOf(".") + 1);
+                    }
+                    if (methodName.Contains("#"))
+                    {
+                        methodName = methodName.Substring(0, methodName.IndexOf('#'));
+                        string args = null;
+                        foreach (var typeRequest in typeRequests)
+                        {
+                            if (args is null)
+                                args = "<" + typeRequest.Name;
+                            else
+                                args += "," + typeRequest.Name;
+                        }
+                        methodName += args + ">";
+                    }
+                    else
+                        methodName += "<>";  // 本来ジェネリックメソッドには引数がある筈だが、システムの提供するメソッドでそうでない場合がある
+                    if (className != null)
+                    {
+                        methodName = className + "." + methodName;
+                    }
+                    List<string> typeNames = OwnerCommandCanvas.RequestTypeName(typeRequests, $"[{methodName}] ");
+                    if (typeNames is null)
+                        return null;
+                    ret.SelectedVariableTypes = typeNames.ToArray();
                 }
-                else
-                    methodName += "<>";  // 本来ジェネリックメソッドには引数がある筈だが、システムの提供するメソッドでそうでない場合がある
-                if (className != null)
-                {
-                    methodName = className + "." + methodName;
-                }
-                List<string> typeNames = OwnerCommandCanvas.RequestTypeName(typeRequests, $"[{methodName}] ");
-                if (typeNames is null)
-                    return null;
-                ret.SelectedVariableTypes = typeNames.ToArray();
             }
             ret.AssetFuncType = assetCode;
             ret.AssetType = FunctionType.FuncType;
