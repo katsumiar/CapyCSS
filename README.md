@@ -5,7 +5,7 @@
 
 * ジェネリッククラスおよびジェネリックメソッドのインポートに対応
 
-![generic](https://user-images.githubusercontent.com/63950487/131246561-519002fd-c554-4771-bcce-bff846beee85.gif)
+![generic](https://user-images.githubusercontent.com/63950487/131509029-e7fc6a8b-1666-4995-8f37-9ea2511e3a08.gif)
 
 ## 特徴
 * ビジュアルなスクリプトを作成することができます。
