@@ -4,6 +4,7 @@ using CapyCSS.Controls;
 using CapyCSS.Controls.BaseControls;
 using CapyCSS.Script;
 using CbVS;
+using CbVS.Script;
 using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
@@ -239,12 +240,167 @@ namespace CapybaraVS.Controls.BaseControls
             });
 
             ScriptWorkCanvas.Cursor = null;
+
+            DEBUG_Check();
         }
 
         ~CommandCanvas()
         {
             Dispose();
         }
+
+        //----------------------------------------------------------------------
+        #region DEBUG
+        [Conditional("DEBUG")]
+        private void DEBUG_Check()
+        {
+            CommandCanvasControl.MainLog.OutString("System", nameof(CommandCanvas) + $": check...");
+
+            Type[] valueTypes = new Type[]
+            {
+                typeof(Byte),
+                typeof(SByte),
+                typeof(Int16),
+                typeof(Int32),
+                typeof(Int64),
+                typeof(UInt16),
+                typeof(UInt32),
+                typeof(UInt64),
+                typeof(Char),
+                typeof(Single),
+                typeof(Double),
+                typeof(Decimal),
+            };
+
+            // 代入チェックのチェック
+            Debug.Assert(CbSTUtils.IsAssignment(typeof(Action), typeof(Action)));
+            Debug.Assert(CbSTUtils.IsAssignment(typeof(Action<int>), typeof(Action<int>)));
+            Debug.Assert(CbSTUtils.IsAssignment(typeof(Func<int>), typeof(Func<int>)));
+            Debug.Assert(CbSTUtils.IsAssignment(typeof(Func<Type>), typeof(Func<Type>)));
+            Debug.Assert(CbSTUtils.IsAssignment(typeof(Action), typeof(int)));
+            Debug.Assert(CbSTUtils.IsAssignment(typeof(Action<string>), typeof(int)));
+            Debug.Assert(CbSTUtils.IsAssignment(typeof(Func<int>), typeof(int)));
+            Debug.Assert(CbSTUtils.IsAssignment(typeof(Func<Type>), typeof(Type)));
+            Debug.Assert(CbSTUtils.IsAssignment(typeof(Func<Func<int>>), typeof(Func<int>)));
+
+            foreach (var valueType in valueTypes)
+                Debug.Assert(CbSTUtils.IsAssignment(valueType, valueType));
+            Debug.Assert(CbSTUtils.IsAssignment(typeof(object), typeof(object)));
+            foreach (var valueType in valueTypes)
+                Debug.Assert(CbSTUtils.IsAssignment(typeof(object), valueType));
+            Debug.Assert(CbSTUtils.IsAssignment(typeof(Action), typeof(CbVoid)));
+            Debug.Assert(CbSTUtils.IsAssignment(typeof(object), typeof(CbVoid)));
+            Debug.Assert(CbSTUtils.IsAssignment(typeof(List<int>), typeof(List<int>)));
+            Debug.Assert(CbSTUtils.IsAssignment(typeof(IEnumerable<int>), typeof(List<int>)));
+            Debug.Assert(CbSTUtils.IsAssignment(typeof(ICollection<int>), typeof(List<int>)));
+            Debug.Assert(CbSTUtils.IsAssignment(typeof(IList<int>), typeof(List<int>)));
+            Debug.Assert(CbSTUtils.IsAssignment(typeof(IEnumerable<int>), typeof(IList<int>)));
+            Debug.Assert(CbSTUtils.IsAssignment(typeof(int), typeof(int)));
+
+            foreach (var valueType in valueTypes)
+                Debug.Assert(CbSTUtils.IsAssignment(typeof(string), valueType));
+            Debug.Assert(CbSTUtils.IsAssignment(typeof(string), typeof(object)));
+            Debug.Assert(CbSTUtils.IsAssignment(typeof(string), typeof(List<int>)));
+            Debug.Assert(CbSTUtils.IsAssignment(typeof(string), typeof(Func<int>)));
+            Debug.Assert(CbSTUtils.IsAssignment(typeof(string), typeof(Action)));
+            Debug.Assert(CbSTUtils.IsAssignment(typeof(string), typeof(Action<int>)));
+
+            // Void は object と Action 以外に代入できない
+            Debug.Assert(!CbSTUtils.IsAssignment(typeof(bool), typeof(CbVoid)));
+            Debug.Assert(!CbSTUtils.IsAssignment(typeof(string), typeof(CbVoid)));
+            Debug.Assert(!CbSTUtils.IsAssignment(typeof(Type), typeof(CbVoid)));
+            Debug.Assert(!CbSTUtils.IsAssignment(typeof(List<int>), typeof(CbVoid)));
+            foreach (var valueType in valueTypes)
+                Debug.Assert(!CbSTUtils.IsAssignment(valueType, typeof(CbVoid)));
+
+            foreach (var toType in valueTypes)
+                foreach (var fromType in valueTypes)
+                {
+                    if (toType == fromType)
+                        continue;
+                    bool result = true;
+                    if (toType == typeof(char) && fromType == typeof(decimal))
+                        result = false;
+                    if (toType == typeof(decimal) && fromType == typeof(char))
+                        result = false;
+                    if (toType == typeof(float) && fromType == typeof(char))
+                        result = false;
+                    if (toType == typeof(double) && fromType == typeof(char))
+                        result = false;
+                    Debug.Assert(CbSTUtils.IsAssignment(toType, fromType, true) == result);
+                }
+
+            foreach (var valueType in valueTypes)
+            {
+                Debug.Assert(!CbSTUtils.IsAssignment(valueType, typeof(string), true));
+                Debug.Assert(!CbSTUtils.IsAssignment(typeof(bool), valueType, true));
+                Debug.Assert(!CbSTUtils.IsAssignment(valueType, typeof(bool), true));
+            }
+
+            // 接続元が object なら無条件でキャスト可能
+            foreach (var valueType in valueTypes)
+                Debug.Assert(CbSTUtils.IsAssignment(valueType, typeof(object), true));
+            Debug.Assert(CbSTUtils.IsAssignment(typeof(List<int>), typeof(object), true));
+
+            // ジェネリック型名変換チェック
+            Debug.Assert(CbSTUtils.GetGenericTypeName(typeof(List<>)) == "List<T>");
+            Debug.Assert(CbSTUtils.StripParamater(CbSTUtils.GetGenericTypeName(typeof(List<>))) == "List<>");
+            Debug.Assert(CbSTUtils.GetGenericTypeName(typeof(Dictionary<,>)) == "Dictionary<TKey, TValue>");
+            Debug.Assert(CbSTUtils.GetGenericTypeName(typeof(Dictionary<string, bool>)) == "Dictionary<string, bool>");
+            Debug.Assert(CbSTUtils.GetGenericTypeName(typeof(List<Dictionary<int, double>>)) == "List<Dictionary<int, double>>");
+            Debug.Assert(CbSTUtils.StripParamater(CbSTUtils.GetGenericTypeName(typeof(Dictionary<string, bool>))) == "Dictionary<,>");
+
+            // 型生成チェック
+            void CheckCreateCbType(Type type, Type ifc = null)
+            {
+                var cbType = CbST.CbCreate(type);
+                Debug.Assert(cbType != null);
+                Debug.Assert(cbType.OriginalType == type);
+                if (ifc != null)
+                    Debug.Assert(ifc.IsAssignableFrom(cbType.GetType()));
+            }
+
+            foreach (var valueType in valueTypes)
+                CheckCreateCbType(valueType, typeof(ICbValueClass<>).MakeGenericType(new Type[] { valueType }));
+            CheckCreateCbType(typeof(bool), typeof(ICbValueClass<bool>));
+            CheckCreateCbType(typeof(string), typeof(ICbValueClass<string>));
+            CheckCreateCbType(typeof(object), typeof(ICbValueClass<object>));
+            
+            CheckCreateCbType(typeof(Type), typeof(ICbClass));
+            CheckCreateCbType(typeof(Rect), typeof(ICbStruct));
+            
+            CheckCreateCbType(typeof(Action), typeof(ICbEvent));
+            CheckCreateCbType(typeof(Action<bool>), typeof(ICbEvent));
+            CheckCreateCbType(typeof(Action<ushort, Type>), typeof(ICbEvent));
+            CheckCreateCbType(typeof(Func<object>), typeof(ICbEvent));
+            CheckCreateCbType(typeof(Func<sbyte, decimal>), typeof(ICbEvent));
+
+            CheckCreateCbType(typeof(List<byte>), typeof(ICbList));
+            CheckCreateCbType(typeof(IEnumerable<float>), typeof(ICbList));
+            CheckCreateCbType(typeof(List<Dictionary<int, double>>), typeof(ICbList));
+            CheckCreateCbType(typeof(IEnumerable<Dictionary<int, double>>), typeof(ICbList));
+            
+            CheckCreateCbType(typeof(Dictionary<short, char>));
+
+            // 型生成時ジェネリックパラメータの置き換えチェック
+            void CheckGenericType(ICbValue cbType)
+            {
+                Debug.Assert(cbType != null);
+                Debug.Assert(cbType.MyType != null);
+                foreach (var arg in cbType.MyType.GetGenericArguments())
+                {
+                    Debug.Assert(arg != null);
+                    Debug.Assert(arg == typeof(CbGeneMethArg));
+                }
+            }
+
+            CheckGenericType(CbST.CbCreate(typeof(List<>)));
+            CheckGenericType(CbST.CbCreate(typeof(IEnumerable<>)));
+            CheckGenericType(CbST.CbCreate(typeof(Dictionary<,>)));
+
+            CommandCanvasControl.MainLog.OutString("System", "ok");
+        }
+        #endregion
 
         //----------------------------------------------------------------------
         #region スクリプト内共有
@@ -730,12 +886,27 @@ namespace CapybaraVS.Controls.BaseControls
             // ファイルの種類を設定
             dialog.Filter = "CBS files (*.cbs, *.xml)|*.cbs;*.xml|all (*.*)|*.*";
 
+            // 初期ディレクトリをサンプルのあるディレクトリにする
+            dialog.InitialDirectory = GetSamplePath();
+
             // ダイアログを表示する
             if (dialog.ShowDialog() == true)
             {
                 return dialog.FileName;
             }
             return null;
+        }
+
+        /// <summary>
+        /// sample ディレクトリのフルパスを取得します。
+        /// </summary>
+        /// <returns>sampleディレクトリのフルパス</returns>
+        private static string GetSamplePath()
+        {
+            string exexPath = System.Environment.CommandLine;
+            System.IO.FileInfo fi = new System.IO.FileInfo(exexPath.Replace("\"", ""));
+            string startupPath = fi.Directory.FullName;
+            return System.IO.Path.Combine(startupPath, "Sample");
         }
         #endregion
 

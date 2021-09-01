@@ -375,39 +375,6 @@ namespace CapybaraVS.Script
         }
 
         /// <summary>
-        /// キャストを通しての代入の可否を判定します。
-        /// </summary>
-        /// <param name="toType">代入先の型</param>
-        /// <param name="fromType">代入元の型</param>
-        /// <returns></returns>
-        public static bool IsCastAssignment(Type toType, Type fromType)
-        {
-            if (!CbScript.IsValueType(fromType) || !CbScript.IsValueType(toType))
-                return false;
-
-            if (fromType == typeof(object))
-                return true;    // 接続元が object なら無条件でキャスト可能
-
-            if (fromType == typeof(decimal) && toType == typeof(char))
-                return false;
-
-            if (fromType == typeof(char) &&
-                (toType == typeof(decimal) || toType == typeof(float) || toType == typeof(double)))
-                return false;
-
-            if (fromType == typeof(ulong) || fromType == typeof(uint) || fromType == typeof(ushort) || fromType == typeof(byte))
-                return true;
-
-            if (toType == typeof(string) || toType == typeof(bool) || toType == typeof(object))
-                return false;
-
-            if (fromType == typeof(string) || fromType == typeof(bool) || fromType == typeof(object))
-                return false;
-
-            return true;
-        }
-
-        /// <summary>
         /// 代入の可否を判定します。
         /// </summary>
         /// <param name="toName">代入先の型名</param>
@@ -422,6 +389,32 @@ namespace CapybaraVS.Script
             bool isCast = false
             )
         {
+            /// <summary>
+            /// キャストを通しての代入の可否を判定します。
+            /// </summary>
+            bool IsCastAssignment(Type toType, Type fromType)
+            {
+                if (fromType == typeof(object))
+                    return true;    // 接続元が object なら無条件でキャスト可能
+
+                if (!CbScript.IsValueType(fromType) || !CbScript.IsValueType(toType))
+                    return false;
+
+                // 以下、値を表現する型のみ
+
+                if (fromType == typeof(decimal) && toType == typeof(char))
+                    return false;
+
+                if (fromType == typeof(char) &&
+                    (toType == typeof(decimal) || toType == typeof(float) || toType == typeof(double)))
+                    return false;
+
+                if (fromType == typeof(ulong) || fromType == typeof(uint) || fromType == typeof(ushort) || fromType == typeof(byte))
+                    return true;
+
+                return true;
+            }
+
             if (toType == typeof(object))
                 return true;    // object型なら無条件に繋がる
             
@@ -541,7 +534,10 @@ namespace CapybaraVS.Script
                 }
                 else
                 {
-                    name = ga.Name;
+                    if (ga.IsGenericParameter)
+                        name = ga.Name;
+                    else
+                        name = GetTypeName(ga);
                 }
 
                 if (ret is null)
