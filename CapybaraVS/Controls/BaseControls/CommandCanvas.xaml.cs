@@ -82,6 +82,8 @@ namespace CapybaraVS.Controls.BaseControls
         , IAsset
         , IDisposable
     {
+        public static readonly int DATA_VERSION = 1;
+
         #region ID管理
         private AssetIdProvider assetIdProvider = null;
         public int AssetId
@@ -164,6 +166,7 @@ namespace CapybaraVS.Controls.BaseControls
                 WriteAction = () =>
                 {
                     AssetId = self.AssetId;
+                    DataVersion = DATA_VERSION;
                     ImportClassModule = self.ApiImporter.ClassModuleList;
                     ImportPackageModule = self.ApiImporter.PackageModuleList;
                     ImportDllModule = self.ApiImporter.DllModulePathList;
@@ -187,6 +190,7 @@ namespace CapybaraVS.Controls.BaseControls
             [XmlAttribute("Id")]
             public int AssetId { get; set; } = 0;
             #region 固有定義
+            public int DataVersion { get; set; } = 0;
             public BaseWorkCanvas._AssetXML<BaseWorkCanvas> WorkCanvas { get; set; } = null;
             public List<string> ImportClassModule { get; set; } = null;
             public List<string> ImportPackageModule { get; set; } = null;

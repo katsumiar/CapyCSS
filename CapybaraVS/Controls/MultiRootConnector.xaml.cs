@@ -47,6 +47,8 @@ namespace CapybaraVS.Controls
         , IDisposable
         , IHaveCommandCanvas
     {
+        public static readonly int DATA_VERSION = 1;
+
         #region XML定義
         [XmlRoot(nameof(MultiRootConnector))]
         public class _AssetXML<OwnerClass>
@@ -94,6 +96,8 @@ namespace CapybaraVS.Controls
             {
                 WriteAction = () =>
                 {
+                    DataVersion = DATA_VERSION;
+
                     RootFuncType info = new RootFuncType();
 
                     info.AttachVariableIds = self.attachVariableIds;
@@ -139,6 +143,7 @@ namespace CapybaraVS.Controls
                 public string AssetFuncType { get; set; }
                 public RootConnector._AssetXML<RootConnector> RootConnector { get; set; }
             }
+            public int DataVersion { get; set; } = 0;
             public RootFuncType RootFunc { get; set; } = null;
             #endregion
         }

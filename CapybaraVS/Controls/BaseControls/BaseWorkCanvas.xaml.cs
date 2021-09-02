@@ -72,6 +72,8 @@ namespace CapybaraVS.Control.BaseControls
         , IDisposable
         , IHaveCommandCanvas
     {
+        public static readonly int DATA_VERSION = 1;
+
         #region ID管理
         private AssetIdProvider assetIdProvider = null;
         public int AssetId
@@ -112,6 +114,7 @@ namespace CapybaraVS.Control.BaseControls
                 WriteAction = () =>
                 {
                     AssetId = self.AssetId;
+                    DataVersion = DATA_VERSION;
                     EnabelGridLine = self.EnabelGridLine;
                     EnableInfo = self.EnableInfo;
                     CanvasRenderTransform = self.CanvasRenderTransform.Value;
@@ -120,6 +123,7 @@ namespace CapybaraVS.Control.BaseControls
             [XmlAttribute("Id")]
             public int AssetId { get; set; } = 0;
             #region 固有定義
+            public int DataVersion { get; set; } = 0;
             public bool EnabelGridLine { get; set; } = false;
             public bool EnableInfo { get; set; } = false;
             public double CanvasScale { get; set; } = 1.0;  // 不要になった

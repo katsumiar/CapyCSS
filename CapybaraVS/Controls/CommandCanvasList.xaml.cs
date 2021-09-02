@@ -33,6 +33,8 @@ namespace CapyCSS.Controls
         : UserControl
         , IDisposable
     {
+        public static readonly int DATA_VERSION = 1;
+
         #region XML定義
         [XmlRoot("CapyCSS")]
         public class _AssetXML<OwnerClass>
@@ -69,6 +71,8 @@ namespace CapyCSS.Controls
             {
                 WriteAction = () =>
                 {
+                    DataVersion = DATA_VERSION;
+
                     Language = CapybaraVS.Language.Instance.LanguageType;
 
                     BackGroundImagePath = BaseWorkCanvas.BackGrountImagePath;
@@ -77,6 +81,7 @@ namespace CapyCSS.Controls
                 };
             }
             #region 固有定義
+            public int DataVersion { get; set; } = 0;
             public string Language { get; set; } = "ja-JP";
             public string BackGroundImagePath { get; set; } = null;
 
