@@ -26,7 +26,7 @@
     <Asset Id="13" X="649.8030960017577" Y="4.614580879180323">
       <MultiRootConnector>
         <DataVersion>1</DataVersion>
-        <RootFunc AssetType="FuncType" AssetFuncType="ConsoleOut">
+        <RootFunc AssetType="FuncType" AssetFuncType="OutConsole">
           <AttachVariableIds />
           <AttachVariableId>0</AttachVariableId>
           <AssetValueTypes>
@@ -34,7 +34,7 @@
           </AssetValueTypes>
           <RootConnector PointId="124">
             <Caption>
-              <LabelString>ConsoleOut</LabelString>
+              <LabelString>OutConsole</LabelString>
             </Caption>
             <Value>Pineapple</Value>
             <ForcedChecked>false</ForcedChecked>
@@ -129,7 +129,7 @@
           <AttachVariableIds />
           <AttachVariableId>0</AttachVariableId>
           <AssetValueTypes>
-            <string>System.Collections.Generic.ICollection`1[[System.String, System.Private.CoreLib, Version=5.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]</string>
+            <string>System.Collections.Generic.IEnumerable`1[[System.String, System.Private.CoreLib, Version=5.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]</string>
           </AssetValueTypes>
           <RootConnector PointId="133">
             <Caption>
@@ -231,7 +231,7 @@
           <AttachVariableIds />
           <AttachVariableId>0</AttachVariableId>
           <AssetValueTypes>
-            <string>System.Collections.Generic.ICollection`1[[System.Object, System.Private.CoreLib, Version=5.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]</string>
+            <string>System.Collections.Generic.IEnumerable`1[[System.Object, System.Private.CoreLib, Version=5.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]</string>
           </AssetValueTypes>
           <RootConnector PointId="144">
             <Caption>

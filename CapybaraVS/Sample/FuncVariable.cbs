@@ -219,7 +219,7 @@
     <Asset Id="1201" X="1245.7131973294331" Y="249.58847064766292">
       <MultiRootConnector>
         <DataVersion>1</DataVersion>
-        <RootFunc AssetType="FuncType" AssetFuncType="ConsoleOut">
+        <RootFunc AssetType="FuncType" AssetFuncType="OutConsole">
           <AttachVariableIds />
           <AttachVariableId>0</AttachVariableId>
           <AssetValueTypes>
@@ -227,7 +227,7 @@
           </AssetValueTypes>
           <RootConnector PointId="166">
             <Caption>
-              <LabelString>ConsoleOut</LabelString>
+              <LabelString>OutConsole</LabelString>
             </Caption>
             <Value>999</Value>
             <ForcedChecked>false</ForcedChecked>
@@ -265,7 +265,7 @@
           <AttachVariableIds />
           <AttachVariableId>0</AttachVariableId>
           <AssetValueTypes>
-            <string>System.Collections.Generic.ICollection`1[[System.Object, System.Private.CoreLib, Version=5.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]</string>
+            <string>System.Collections.Generic.IEnumerable`1[[System.Object, System.Private.CoreLib, Version=5.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]</string>
           </AssetValueTypes>
           <RootConnector PointId="170">
             <Caption>

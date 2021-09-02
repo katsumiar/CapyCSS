@@ -50,6 +50,8 @@ namespace CapybaraVS.Script
 
         public static readonly Type LIST_TYPE = typeof(List<>);
         public static readonly Type LIST_INTERFACE_TYPE = typeof(IEnumerable<>);
+        public static readonly Type COLLECTION_INTERFACE_TYPE = typeof(ICollection<>);
+        public static readonly Type INDEX_INTERFACE_TYPE = typeof(IList<>);
         public static readonly Type FUNC_TYPE = typeof(Func<>);
         public static readonly Type FUNC2ARG_TYPE = typeof(Func<,>);
         public static readonly Type ACTION_TYPE = typeof(Action<>);

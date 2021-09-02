@@ -70,7 +70,7 @@ namespace CapybaraVS.Script.Lib
 
         //------------------------------------------------------------------
         [ScriptMethod(nameof(Graph) + "." + nameof(OutPlot))]
-        public static void OutPlot(string msg, ICollection<PlotInfo> list, ICollection<double> guideLines = null)
+        public static void OutPlot(string msg, IEnumerable<PlotInfo> list, IEnumerable<double> guideLines = null)
         {
             if (list is null)
                 return;

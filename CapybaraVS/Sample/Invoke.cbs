@@ -26,7 +26,7 @@
     <Asset Id="6" X="800.744437593617" Y="361.5702902929858">
       <MultiRootConnector>
         <DataVersion>1</DataVersion>
-        <RootFunc AssetType="FuncType" AssetFuncType="ConsoleOut">
+        <RootFunc AssetType="FuncType" AssetFuncType="OutConsole">
           <AttachVariableIds />
           <AttachVariableId>0</AttachVariableId>
           <AssetValueTypes>
@@ -34,7 +34,7 @@
           </AssetValueTypes>
           <RootConnector PointId="495">
             <Caption>
-              <LabelString>ConsoleOut</LabelString>
+              <LabelString>OutConsole</LabelString>
             </Caption>
             <Value>Call with arguments</Value>
             <ForcedChecked>false</ForcedChecked>
@@ -68,7 +68,7 @@
     <Asset Id="6" X="833.307184537307" Y="105.77518446532056">
       <MultiRootConnector>
         <DataVersion>1</DataVersion>
-        <RootFunc AssetType="FuncType" AssetFuncType="ConsoleOut">
+        <RootFunc AssetType="FuncType" AssetFuncType="OutConsole">
           <AttachVariableIds />
           <AttachVariableId>0</AttachVariableId>
           <AssetValueTypes>
@@ -76,7 +76,7 @@
           </AssetValueTypes>
           <RootConnector PointId="499">
             <Caption>
-              <LabelString>ConsoleOut</LabelString>
+              <LabelString>OutConsole</LabelString>
             </Caption>
             <Value>Call with no arguments</Value>
             <ForcedChecked>false</ForcedChecked>
@@ -109,7 +109,7 @@
     </Asset>
     <Asset Id="763" X="807.7076558686958" Y="39.84367997696434">
       <GroupAreaControl>
-        <Text>string を返す処理（ConsoleOut）を呼び出し、
+        <Text>string を返す処理（OutConsole）を呼び出し、
 結果を返します。</Text>
         <Witdh>581.0261447287916</Witdh>
         <Height>222.41796292696972</Height>
@@ -118,7 +118,7 @@
     <Asset Id="764" X="509.20940360299073" Y="292.65218203931653">
       <GroupAreaControl>
         <Text>argument 引数の文字列を引数に string を返す
-処理（ConsoleOut）を呼び出し、結果を返します。</Text>
+処理（OutConsole）を呼び出し、結果を返します。</Text>
         <Witdh>912.9480721915593</Witdh>
         <Height>230.7319233416719</Height>
       </GroupAreaControl>
@@ -271,7 +271,7 @@
           <AttachVariableIds />
           <AttachVariableId>0</AttachVariableId>
           <AssetValueTypes>
-            <string>System.Collections.Generic.ICollection`1[[System.Object, System.Private.CoreLib, Version=5.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]</string>
+            <string>System.Collections.Generic.IEnumerable`1[[System.Object, System.Private.CoreLib, Version=5.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]</string>
           </AssetValueTypes>
           <RootConnector PointId="517">
             <Caption>

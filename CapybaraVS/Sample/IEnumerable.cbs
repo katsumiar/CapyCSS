@@ -210,7 +210,7 @@
     <Asset Id="6" X="673.0120376175548" Y="335.00990595611285">
       <MultiRootConnector>
         <DataVersion>1</DataVersion>
-        <RootFunc AssetType="FuncType" AssetFuncType="ConsoleOut">
+        <RootFunc AssetType="FuncType" AssetFuncType="OutConsole">
           <AttachVariableIds />
           <AttachVariableId>0</AttachVariableId>
           <AssetValueTypes>
@@ -218,7 +218,7 @@
           </AssetValueTypes>
           <RootConnector PointId="387">
             <Caption>
-              <LabelString>ConsoleOut</LabelString>
+              <LabelString>OutConsole</LabelString>
             </Caption>
             <Value>Jupiter</Value>
             <ForcedChecked>false</ForcedChecked>
@@ -256,7 +256,7 @@
           <AttachVariableIds />
           <AttachVariableId>0</AttachVariableId>
           <AssetValueTypes>
-            <string>System.Collections.Generic.ICollection`1[[System.Object, System.Private.CoreLib, Version=5.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]</string>
+            <string>System.Collections.Generic.IEnumerable`1[[System.Object, System.Private.CoreLib, Version=5.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]</string>
           </AssetValueTypes>
           <RootConnector PointId="391">
             <Caption>
