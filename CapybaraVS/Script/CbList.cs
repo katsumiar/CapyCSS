@@ -43,6 +43,8 @@ namespace CbVS.Script
         /// </summary>
         bool HaveAdd { get; }
 
+        bool AddLock { get; set; }
+
         List<ICbValue> Value { get; set; }
 
         string ItemName { get; }
@@ -193,15 +195,22 @@ namespace CbVS.Script
 
         public Type SourceType { get; set; }
 
+        /// <summary>
+        /// UI上で Add 可能か？
+        /// </summary>
         public bool HaveAdd
         {
             get
             {
-                // ICollection<> インターフェイスを持っているか？
-
-                return CbList.HaveInterface(SourceType, typeof(ICollection<>));
+                if (AddLock)
+                {
+                    return false;
+                }
+                return CbList.HaveInterface(SourceType, typeof(IEnumerable<>));
             }
         }
+
+        public bool AddLock { get; set; } = false;
 
         public override Type OriginalReturnType => typeof(T);
 

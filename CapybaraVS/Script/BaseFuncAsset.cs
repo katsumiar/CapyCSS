@@ -2004,6 +2004,7 @@ namespace CapybaraVS.Script
             args.Add(
                 CbST.CbCreate<Action>("default")
                 );
+            caseList.AddLock = true;
 
             col.MakeFunction(
                 $"Switch Case<{col.SelectedVariableTypeName[0]}>.Invoke",
