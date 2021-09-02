@@ -890,8 +890,13 @@ namespace CapybaraVS.Controls.BaseControls
             // ファイルの種類を設定
             dialog.Filter = "CBS files (*.cbs, *.xml)|*.cbs;*.xml|all (*.*)|*.*";
 
-            // 初期ディレクトリをサンプルのあるディレクトリにする
-            dialog.InitialDirectory = GetSamplePath();
+            if (!initFlg)
+            {
+                // 初期ディレクトリをサンプルのあるディレクトリにする
+                
+                dialog.InitialDirectory = GetSamplePath();
+                initFlg = true;
+            }
 
             // ダイアログを表示する
             if (dialog.ShowDialog() == true)
@@ -900,6 +905,7 @@ namespace CapybaraVS.Controls.BaseControls
             }
             return null;
         }
+        static bool initFlg = false;
 
         /// <summary>
         /// sample ディレクトリのフルパスを取得します。
