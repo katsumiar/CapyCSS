@@ -434,14 +434,39 @@ namespace CapybaraVS.Controls.BaseControls
         /// <param name="viewer">結果登録用リスト</param>
         /// <param name="node">メニューノード</param>
         /// <param name="name">メニュー名</param>
-        private void SetFilter(ObservableCollection<TreeMenuNode> treeView, TreeMenuNode node, string name, string stripName, ref int limit)
+        private void SetFilter(ObservableCollection<TreeMenuNode> treeView, TreeMenuNode node, string name, string stripName, ref int limit, TreeMenuNode currentLock = null)
         {
             if (limit <= 0)
                 return;
 
             string nodeName = node.Name.ToUpper().Replace(" ", "");
 
-            if (nodeName == name)
+            if (name.Contains(".") || currentLock != null)
+            {
+                string current = name;
+                string next = name;
+                if (name.Contains("."))
+                {
+                    current = name.Substring(0, name.IndexOf('.'));
+                    next = name.Substring(name.IndexOf('.') + 1);
+                }
+                if (nodeName == current && !name.EndsWith('.'))
+                {
+                    foreach (var child in node.Child)
+                    {
+                        SetFilter(treeView, child, next, stripName, ref limit, node);
+                    }
+                }
+                if (currentLock != null)
+                {
+                    if (nodeName == name)
+                    {
+                        SetAll(treeView, node, ref limit, currentLock.Path.Substring(0, currentLock.Path.LastIndexOf('.') + 1));
+                    }
+                    return;
+                }
+            }
+            else if (nodeName == name)
             {
                 // 名前が完全一致したら下の階層すべてを対象とする
 
@@ -450,27 +475,7 @@ namespace CapybaraVS.Controls.BaseControls
             }
             else
             {
-                if (stripName.Contains("<") && stripName.Contains(">") &&
-                    nodeName.Contains("<") && nodeName.Contains(">") &&
-                    stripName == CbSTUtils.StripParamater(nodeName))
-                {
-                    // パラメータを取り除いた名前が完全一致したら下の階層すべてを対象とする
-
-                    SetAll(treeView, node, ref limit);
-                    return;
-                }
-                if (nodeName.Contains(name))
-                {
-                    if (node.LeftClickCommand != null && node.LeftClickCommand.CanExecute(null))
-                    {
-                        treeView.Add(new TreeMenuNode(node.Path, node.HintText, OwnerCommandCanvas.CreateImmediateExecutionCanvasCommand(() =>
-                        {
-                            ExecuteFindCommand(node.Path);
-                        })));
-                    }
-                    if (--limit == 0)
-                        return;
-                }
+                CurrentFilter(treeView, node, name, stripName, ref limit);
             }
             foreach (var child in node.Child)
             {
@@ -478,13 +483,24 @@ namespace CapybaraVS.Controls.BaseControls
             }
         }
 
-        private void SetAll(ObservableCollection<TreeMenuNode> treeView, TreeMenuNode node, ref int limit)
+        private void CurrentFilter(ObservableCollection<TreeMenuNode> treeView, TreeMenuNode node, string name, string stripName, ref int limit)
         {
-            void _SetAll(ObservableCollection<TreeMenuNode> treeView, TreeMenuNode node, ref int limit)
-            {
-                if (limit <= 0)
-                    return;
+            if (limit <= 0)
+                return;
 
+            string nodeName = node.Name.ToUpper().Replace(" ", "");
+
+            if (stripName.Contains("<") && stripName.Contains(">") &&
+                nodeName.Contains("<") && nodeName.Contains(">") &&
+                stripName == CbSTUtils.StripParamater(nodeName))
+            {
+                // パラメータを取り除いた名前が完全一致したら下の階層すべてを対象とする
+
+                SetAll(treeView, node, ref limit);
+                return;
+            }
+            if (nodeName.Contains(name))
+            {
                 if (node.LeftClickCommand != null && node.LeftClickCommand.CanExecute(null))
                 {
                     treeView.Add(new TreeMenuNode(node.Path, node.HintText, OwnerCommandCanvas.CreateImmediateExecutionCanvasCommand(() =>
@@ -492,18 +508,42 @@ namespace CapybaraVS.Controls.BaseControls
                         ExecuteFindCommand(node.Path);
                     })));
                 }
+                if (--limit == 0)
+                    return;
+            }
+        }
+
+        private void SetAll(ObservableCollection<TreeMenuNode> treeView, TreeMenuNode node, ref int limit, string frontCut = null)
+        {
+            void _SetAll(ObservableCollection<TreeMenuNode> treeView, TreeMenuNode node, ref int limit, string frontCut = null)
+            {
                 if (limit <= 0)
+                    return;
+
+                if (node.LeftClickCommand != null && node.LeftClickCommand.CanExecute(null))
+                {
+                    var title = node.Path;
+                    if (frontCut != null)
+                    {
+                        title = title.Replace(frontCut, "");    // 頭の部分だけカットしたいのだが...
+                    }
+                    treeView.Add(new TreeMenuNode(title, node.HintText, OwnerCommandCanvas.CreateImmediateExecutionCanvasCommand(() =>
+                    {
+                        ExecuteFindCommand(node.Path);
+                    })));
+                }
+                if (--limit <= 0)
                     return;
 
                 foreach (var child in node.Child)
                 {
-                    _SetAll(treeView, child, ref limit);
+                    _SetAll(treeView, child, ref limit, frontCut);
                 }
             }
 
             foreach (var child in node.Child)
             {
-                _SetAll(treeView, child, ref limit);
+                _SetAll(treeView, child, ref limit, frontCut);
             }
         }
 
