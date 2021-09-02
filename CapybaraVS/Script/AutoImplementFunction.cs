@@ -181,20 +181,10 @@ namespace CapybaraVS.Script
                 var methodReturnType = returnType();
                 if (methodReturnType.MyType == typeof(CbClass<CbGeneMethArg>))
                 {
-                    CbGeneMethArg gmaType = (CbGeneMethArg)methodReturnType.Data;
-                    Type repType = gmaType.ArgumentType;
-                    if (repType.IsGenericType)
-                    {
-                        repType = MakeRequestGenericType(col, repType);
-                    }
-                    else if (repType.IsGenericTypeParameter)
-                    {
-                        repType = GetRequestType(col, repType.Name);
-                    }
-                    else
-                    {
-                        Debug.Assert(false);
-                    }
+                    // 未確定なジェネリック型を確定した型で差し替える
+
+                    // 引数の型を差し替える
+                    Type repType = GetConfirmedType(col, (CbGeneMethArg)methodReturnType.Data);
                     returnType = CbST.CbCreateTF(repType);
                 }
             }
@@ -211,23 +201,8 @@ namespace CapybaraVS.Script
                     {
                         // 未確定なジェネリック型を確定した型で差し替える
 
-                        CbGeneMethArg gmaType = (CbGeneMethArg)argumentType.Data;
-                        Type replaceArgumentType = gmaType.ArgumentType;
-
-                        if (replaceArgumentType.IsGenericType)
-                        {
-                            replaceArgumentType = MakeRequestGenericType(col, replaceArgumentType);
-                        }
-                        else if (replaceArgumentType.IsGenericTypeParameter)
-                        {
-                            replaceArgumentType = GetRequestType(col, replaceArgumentType.Name);
-                        }
-                        else
-                        {
-                            Debug.Assert(false);
-                        }
-
                         // 引数の型を差し替える
+                        Type replaceArgumentType = GetConfirmedType(col, (CbGeneMethArg)argumentType.Data);
                         argumentType = CbST.CbCreate(replaceArgumentType, argumentType.Name);
                     }
                     argumentTypeList.Add(argumentType);
@@ -253,6 +228,32 @@ namespace CapybaraVS.Script
             );
 
             return true;
+        }
+
+        /// <summary>
+        /// ジェネリックなパラメータを持つジェネリック型を確定した型に変換します。
+        /// </summary>
+        /// <param name="col"></param>
+        /// <param name="gmaType">CbGeneMethArgのインスタンス</param>
+        /// <returns>確定した型</returns>
+        private Type GetConfirmedType(MultiRootConnector col, CbGeneMethArg gmaType)
+        {
+            Type replaceArgumentType = gmaType.ArgumentType;
+
+            if (replaceArgumentType.IsGenericType)
+            {
+                replaceArgumentType = MakeRequestGenericType(col, replaceArgumentType);
+            }
+            else if (replaceArgumentType.IsGenericTypeParameter)
+            {
+                replaceArgumentType = GetRequestType(col, replaceArgumentType.Name);
+            }
+            else
+            {
+                Debug.Assert(false);
+            }
+
+            return replaceArgumentType;
         }
 
         /// <summary>
