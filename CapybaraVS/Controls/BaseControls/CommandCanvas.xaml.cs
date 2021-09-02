@@ -402,7 +402,7 @@ namespace CapybaraVS.Controls.BaseControls
             CheckGenericType(CbST.CbCreate(typeof(IEnumerable<>)));
             CheckGenericType(CbST.CbCreate(typeof(Dictionary<,>)));
 
-            CommandCanvasControl.MainLog.OutString("System", "ok");
+            CommandCanvasControl.MainLog.OutLine("System", "ok");
         }
         #endregion
 
@@ -848,6 +848,7 @@ namespace CapybaraVS.Controls.BaseControls
             ScriptWorkStack.Clear();
             ClearTypeImportMenu();
             ScriptCommandCanvas.HideWorkStack();
+            InstalledMultiRootConnector = null;
             if (full)
             {
                 OpenFileName = "";
@@ -1474,7 +1475,22 @@ namespace CapybaraVS.Controls.BaseControls
         /// <summary>
         /// 最後に WorkCanvas に置かれた MultiRootConnector を参照します。
         /// </summary>
-        public MultiRootConnector InstalledMultiRootConnector = null;
+        public MultiRootConnector installedMultiRootConnector = null;
+        public MultiRootConnector InstalledMultiRootConnector
+        {
+            get
+            {
+                if (installedMultiRootConnector != null && !ScriptWorkCanvas.Contains(installedMultiRootConnector))
+                {
+                    installedMultiRootConnector = null;
+                }
+                return installedMultiRootConnector;
+            }
+            set
+            {
+                installedMultiRootConnector = value;
+            }
+        }
 
         /// <summary>
         /// 最後に WorkCanvas に置かれた MultiRootConnector の持つ引数 LinkConnector の内から型の一致するものを返します。
@@ -1523,6 +1539,36 @@ namespace CapybaraVS.Controls.BaseControls
                     CommandMenuWindow = null;
                     TypeMenuWindow.Dispose();
                     TypeMenuWindow = null;
+
+                    _inportClassModule = null;
+                    _inportPackageModule = null;
+                    _inportDllModule = null;
+                    _inportNuGetModule = null;
+
+                    ApiImporter = null;
+                    moduleControler = null;
+                    CommandMenuWindow = null;
+                    TypeMenuWindow = null;
+                    CommandCanvasControl = null;
+                    ScriptCommandCanvas = null;
+                    ScriptWorkCanvas = null;
+                    ScriptWorkStack = null;
+                    ScriptWorkClickEvent = null;
+                    ClickEntryEvent = null;
+                    ClickExitEvent = null;
+                    UIParamHoldAction = null;
+                    StackGroupHoldAction = null;
+                    PlotWindowHoldAction = null;
+                    LinkConnectorListHoldAction = null;
+
+                    typeWindow_classMenu = null;
+                    typeWindow_enumMenu = null;
+                    typeWindow_structMenu = null;
+                    typeWindow_interfaceMenu = null;
+                    typeWindow_import = null;
+                    InstalledMultiRootConnector = null;
+
+                    AssetXML = null;
                 }
                 disposedValue = true;
             }

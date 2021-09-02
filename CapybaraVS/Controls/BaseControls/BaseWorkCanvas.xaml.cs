@@ -1301,8 +1301,21 @@ namespace CapybaraVS.Control.BaseControls
         {
             if (value is null)
                 return false;
-            if (value is UIElement element)
-                return ControlsCanvas.Children.Contains(element);
+            if (!(value is UIElement element))
+                return false;
+             
+            bool hit = ControlsCanvas.Children.Contains(element);
+            if (hit) return true;
+
+            foreach (var obj in ControlsCanvas.Children)
+            {
+                if (obj is Movable movable)
+                {
+                    if (movable.ControlObject == element)
+                        return true;
+                }
+            }
+
             return false;
         }
 
