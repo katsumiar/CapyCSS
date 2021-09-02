@@ -49,7 +49,7 @@ namespace CapybaraVS.Script
         public const string FUNC_GROUP_STR = "func.";
 
         public static readonly Type LIST_TYPE = typeof(List<>);
-        public static readonly Type LIST_INTERFACE_TYPE = typeof(ICollection<>);
+        public static readonly Type LIST_INTERFACE_TYPE = typeof(IEnumerable<>);
         public static readonly Type FUNC_TYPE = typeof(Func<>);
         public static readonly Type FUNC2ARG_TYPE = typeof(Func<,>);
         public static readonly Type ACTION_TYPE = typeof(Action<>);
