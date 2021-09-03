@@ -33,7 +33,7 @@
             <StackPanel>
                 <StackPanel x:Name="OpenListContents" HorizontalAlignment="Stretch" FocusVisualStyle="{x:Null}">
                     <BaseControls:TreeViewCommand x:Name="treeViewCommand"/>
-                    <BaseControls:TreeViewCommand x:Name="findTreeViewCommand" Visibility="Collapsed" />
+                    <BaseControls:TreeViewCommand x:Name="searchTreeViewCommand" Visibility="Collapsed" />
                 </StackPanel>
             </StackPanel>
         </ScrollViewer>

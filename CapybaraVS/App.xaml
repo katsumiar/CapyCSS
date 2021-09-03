@@ -5,6 +5,9 @@
              Startup="Application_StartUp"
              StartupUri="MainWindow.xaml">
     <Application.Resources>
-         
+        <Style TargetType="TreeViewItem">
+            <Setter Property="HorizontalContentAlignment" Value="Left"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+        </Style>
     </Application.Resources>
 </Application>

@@ -17,6 +17,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.Windows.Threading;
 using System.Xml.Serialization;
 
 namespace CapybaraVS.Controls.BaseControls
@@ -319,6 +320,7 @@ namespace CapybaraVS.Controls.BaseControls
         const int MaxRecent = 10;
 
         const int FilteringWaitSleep = 20;
+        const int FilteringMax = 5000;
 
         /// <summary>
         /// 名前を指定してコマンドを実行します。
@@ -417,7 +419,6 @@ namespace CapybaraVS.Controls.BaseControls
         public CancellationTokenSource SetFilter(TreeViewCommand viewer, string name)
         {
             ObservableCollection<TreeMenuNode> treeView = viewer.TreeView.ItemsSource as ObservableCollection<TreeMenuNode>;
-            treeView.Clear();   // これを起因にバインド系のエラーが出るが…無視して良い...
 
             Dictionary<string, string> keyValuePairs = new Dictionary<string, string>()
             {
@@ -463,7 +464,8 @@ namespace CapybaraVS.Controls.BaseControls
                     continue;
                 }
 
-                SetFilter(viewer, token, node, searchName, CbSTUtils.StripParamater(searchName));
+                int counter = 0;
+                SetFilter(viewer, token, node, searchName, CbSTUtils.StripParamater(searchName), ref counter);
             }
         }
 
@@ -474,7 +476,7 @@ namespace CapybaraVS.Controls.BaseControls
         /// <param name="viewer">結果登録用リスト</param>
         /// <param name="node">メニューノード</param>
         /// <param name="name">メニュー名</param>
-        private void SetFilter(TreeViewCommand viewer, CancellationToken token, TreeMenuNode node, string name, string stripName, TreeMenuNode currentLock = null)
+        private void SetFilter(TreeViewCommand viewer, CancellationToken token, TreeMenuNode node, string name, string stripName, ref int counter, TreeMenuNode currentLock = null)
         {
             if (token.IsCancellationRequested)
             {
@@ -498,7 +500,7 @@ namespace CapybaraVS.Controls.BaseControls
                 {
                     foreach (var child in node.Child)
                     {
-                        SetFilter(viewer, token, child, next, stripName, node);
+                        SetFilter(viewer, token, child, next, stripName, ref counter, node);
                     }
                 }
                 if (currentLock != null)
@@ -519,11 +521,17 @@ namespace CapybaraVS.Controls.BaseControls
             }
             else
             {
-                CurrentFilter(viewer, token, node, name, stripName);
+                // 通常の一致判定
+
+                CurrentFilter(viewer, token, node, name, stripName, ref counter);
             }
             foreach (var child in node.Child)
             {
-                SetFilter(viewer, token, child, name, stripName);
+                // 子の一致判定
+
+                SetFilter(viewer, token, child, name, stripName, ref counter);
+                if (counter % 100 == 99)
+                    Thread.Sleep(FilteringWaitSleep);
             }
         }
 
@@ -535,7 +543,7 @@ namespace CapybaraVS.Controls.BaseControls
         /// <param name="node"></param>
         /// <param name="name"></param>
         /// <param name="stripName"></param>
-        private void CurrentFilter(TreeViewCommand viewer, CancellationToken token, TreeMenuNode node, string name, string stripName)
+        private void CurrentFilter(TreeViewCommand viewer, CancellationToken token, TreeMenuNode node, string name, string stripName, ref int counter)
         {
             ObservableCollection<TreeMenuNode> treeView = viewer.TreeView.ItemsSource as ObservableCollection<TreeMenuNode>;
 
@@ -559,18 +567,22 @@ namespace CapybaraVS.Controls.BaseControls
             {
                 if (node.LeftClickCommand != null && node.LeftClickCommand.CanExecute(null))
                 {
+                    var title = node.Path;
+                    title = StripDotNetStandardGroupTitle(title);
+                    title = CbSTUtils.StartStrip(title, ApiImporter.MENU_TITLE_DOT_NET_STANDERD_FULL_PATH);
+                    title = CbSTUtils.StartStrip(title, ApiImporter.MENU_TITLE_DOT_NET_FUNCTION_FULL_PATH);
                     viewer.Dispatcher.Invoke(() =>
                     {
-                        var title = node.Path;
-                        title = StripDotNetStandardGroupTitle(title);
-                        title = CbSTUtils.StartStrip(title, ApiImporter.MENU_TITLE_DOT_NET_STANDERD_FULL_PATH);
-                        title = CbSTUtils.StartStrip(title, ApiImporter.MENU_TITLE_DOT_NET_FUNCTION_FULL_PATH);
-                        treeView.Add(new TreeMenuNode(title, node.HintText, OwnerCommandCanvas.CreateImmediateExecutionCanvasCommand(() =>
+                        if (treeView.Count < FilteringMax)
                         {
-                            ExecuteFindCommand(node.Path);
-                        })));
+                            treeView.Add(new TreeMenuNode(title, node.HintText, OwnerCommandCanvas.CreateImmediateExecutionCanvasCommand(() =>
+                            {
+                                ExecuteFindCommand(node.Path);
+                            })));
+                        }
                     });
                     Thread.Sleep(FilteringWaitSleep);
+                    counter = 0;
                 }
                 if (token.IsCancellationRequested)
                 {
@@ -611,10 +623,13 @@ namespace CapybaraVS.Controls.BaseControls
                     title = CbSTUtils.StartStrip(title, ApiImporter.MENU_TITLE_DOT_NET_FUNCTION_FULL_PATH);
                     viewer.Dispatcher.Invoke(() =>
                     {
-                        treeView.Add(new TreeMenuNode(title, node.HintText, OwnerCommandCanvas.CreateImmediateExecutionCanvasCommand(() =>
+                        if (treeView.Count < FilteringMax)
                         {
-                            ExecuteFindCommand(node.Path);
-                        })));
+                            treeView.Add(new TreeMenuNode(title, node.HintText, OwnerCommandCanvas.CreateImmediateExecutionCanvasCommand(() =>
+                            {
+                                ExecuteFindCommand(node.Path);
+                            })));
+                        }
                     });
                     Thread.Sleep(FilteringWaitSleep);
                 }
