@@ -561,7 +561,11 @@ namespace CapybaraVS.Controls.BaseControls
                 {
                     viewer.Dispatcher.Invoke(() =>
                     {
-                        treeView.Add(new TreeMenuNode(node.Path, node.HintText, OwnerCommandCanvas.CreateImmediateExecutionCanvasCommand(() =>
+                        var title = node.Path;
+                        title = StripDotNetStandardGroupTitle(title);
+                        title = CbSTUtils.StartStrip(title, ApiImporter.MENU_TITLE_DOT_NET_STANDERD_FULL_PATH);
+                        title = CbSTUtils.StartStrip(title, ApiImporter.MENU_TITLE_DOT_NET_FUNCTION_FULL_PATH);
+                        treeView.Add(new TreeMenuNode(title, node.HintText, OwnerCommandCanvas.CreateImmediateExecutionCanvasCommand(() =>
                         {
                             ExecuteFindCommand(node.Path);
                         })));
@@ -598,10 +602,13 @@ namespace CapybaraVS.Controls.BaseControls
                 if (node.LeftClickCommand != null && node.LeftClickCommand.CanExecute(null))
                 {
                     var title = node.Path;
+                    title = StripDotNetStandardGroupTitle(title);
                     if (frontCut != null)
                     {
-                        title = title.Replace(frontCut, "");    // 頭の部分だけカットしたいのだが...
+                        title = CbSTUtils.StartStrip(title, frontCut);
                     }
+                    title = CbSTUtils.StartStrip(title, ApiImporter.MENU_TITLE_DOT_NET_STANDERD_FULL_PATH);
+                    title = CbSTUtils.StartStrip(title, ApiImporter.MENU_TITLE_DOT_NET_FUNCTION_FULL_PATH);
                     viewer.Dispatcher.Invoke(() =>
                     {
                         treeView.Add(new TreeMenuNode(title, node.HintText, OwnerCommandCanvas.CreateImmediateExecutionCanvasCommand(() =>
@@ -626,6 +633,24 @@ namespace CapybaraVS.Controls.BaseControls
             {
                 _SetAll(viewer, token, child, frontCut);
             }
+        }
+
+        /// <summary>
+        /// メソッドグループタイトルを削除します。
+        /// </summary>
+        /// <param name="title"></param>
+        /// <returns></returns>
+        private static string StripDotNetStandardGroupTitle(string title)
+        {
+            if (title.StartsWith(ApiImporter.MENU_TITLE_DOT_NET_STANDERD_FULL_PATH))
+            {
+                int pos1 = title.LastIndexOf('.');
+                string temp = title.Substring(0, pos1);
+                int pos2 = temp.LastIndexOf('.');
+                title = title.Substring(0, pos2) + title.Substring(pos1);
+            }
+
+            return title;
         }
 
         /// <summary>

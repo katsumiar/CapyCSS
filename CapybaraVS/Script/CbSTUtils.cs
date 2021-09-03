@@ -609,5 +609,14 @@ namespace CapybaraVS.Script
             }
             return null;
         }
+
+        public static string StartStrip(string str, string strip)
+        {
+            if (str.StartsWith(strip))
+            {
+                return str.Substring(strip.Length);
+            }
+            return str;
+        }
     }
 }

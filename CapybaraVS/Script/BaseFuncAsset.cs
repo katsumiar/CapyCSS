@@ -30,10 +30,16 @@ namespace CapybaraVS.Script
 
         public const string BASE_LIB_TAG_PRE = "BaseLib:";
 
+        public const string MENU_TITLE_PROGRAM = "Program";
+        public const string MENU_TITLE_DOT_NET_FUNCTION = ".Net Function";
+        public const string MENU_TITLE_DOT_NET_STANDERD = "Standard";
+        public const string MENU_TITLE_DOT_NET_FUNCTION_FULL_PATH = MENU_TITLE_PROGRAM + "." + MENU_TITLE_DOT_NET_FUNCTION + ".";
+        public const string MENU_TITLE_DOT_NET_STANDERD_FULL_PATH = MENU_TITLE_PROGRAM + "." + MENU_TITLE_DOT_NET_FUNCTION + "." + MENU_TITLE_DOT_NET_STANDERD + ".";
+
         public ApiImporter(CommandCanvas ownerCommandCanvas)
         {
             OwnerCommandCanvas = ownerCommandCanvas;
-            ProgramNode = CreateGroup(ownerCommandCanvas, "Program");
+            ProgramNode = CreateGroup(ownerCommandCanvas, MENU_TITLE_PROGRAM);
 
             CreateAssetMenu(ownerCommandCanvas, ProgramNode, new Subroutine());
 
@@ -124,7 +130,7 @@ namespace CapybaraVS.Script
             }
 
             {
-                DotNet = CreateGroup(ProgramNode, ".Net Function");
+                DotNet = CreateGroup(ProgramNode, MENU_TITLE_DOT_NET_FUNCTION);
 
                 {
                     var io = CreateGroup(DotNet, "Input/Output");
@@ -149,7 +155,7 @@ namespace CapybaraVS.Script
         /// <returns>true==成功</returns>
         public bool ImportBase()
         {
-            ScriptImplement.ImportScriptMethodsForBase(OwnerCommandCanvas, CreateGroup(DotNet, "Standard"));
+            ScriptImplement.ImportScriptMethodsForBase(OwnerCommandCanvas, CreateGroup(DotNet, MENU_TITLE_DOT_NET_STANDERD));
             return true;
         }
 
