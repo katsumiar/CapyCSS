@@ -114,8 +114,10 @@ namespace CapyCSS.Controls
         {
             filterProcTimer.Stop();
 
+            cancellationTokenSource?.Cancel();
+
             // 待機後の処理
-            treeViewCommand.SetFilter(
+            cancellationTokenSource = treeViewCommand.SetFilter(
                 findTreeViewCommand,
                 FilterText.Text);
             filterProcTimer.IsEnabled = false;
@@ -132,11 +134,13 @@ namespace CapyCSS.Controls
         {
             if (!trueCloseing)
             {
+                cancellationTokenSource?.Cancel();
                 Hide();
                 e.Cancel = true;
             }
         }
 
+        System.Threading.CancellationTokenSource cancellationTokenSource = null;
         DispatcherTimer filterProcTimer = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(300) };
 
         private void FilterText_KeyUp(object sender, KeyEventArgs e)
@@ -144,7 +148,7 @@ namespace CapyCSS.Controls
             FilterText.Text = FilterText.Text.Trim();
             if (FilterText.Text != "")
             {
-                // フィルタリング処理は、スレッドが使えないのでタイマーで時間差を置いて処理する
+                // フィルタリング処理は、タイマーで時間差を置いて処理する
 
                 filterProcTimer.IsEnabled = true;
                 filterProcTimer.Start();
@@ -153,6 +157,9 @@ namespace CapyCSS.Controls
             }
             else
             {
+                // フィルタリング解除
+
+                cancellationTokenSource?.Cancel();
                 filterProcTimer.IsEnabled = false;
                 treeViewCommand.Visibility = Visibility.Visible;
                 findTreeViewCommand.Visibility = Visibility.Collapsed;
@@ -161,6 +168,8 @@ namespace CapyCSS.Controls
 
         public void Dispose()
         {
+            cancellationTokenSource?.Cancel();
+            cancellationTokenSource = null;
             trueCloseing = true;
             Close();
             filterProcTimer.Tick -= EventHandler;

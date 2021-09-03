@@ -6,6 +6,8 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -316,6 +318,8 @@ namespace CapybaraVS.Controls.BaseControls
         const string RecentName = "Recent";
         const int MaxRecent = 10;
 
+        const int FilteringWaitSleep = 20;
+
         /// <summary>
         /// 名前を指定してコマンドを実行します。
         /// </summary>
@@ -410,7 +414,7 @@ namespace CapybaraVS.Controls.BaseControls
         /// コマンドをフィルタリングします。
         /// </summary>
         /// <param name="name">メニュー名</param>
-        public void SetFilter(TreeViewCommand viewer, string name)
+        public CancellationTokenSource SetFilter(TreeViewCommand viewer, string name)
         {
             ObservableCollection<TreeMenuNode> treeView = viewer.TreeView.ItemsSource as ObservableCollection<TreeMenuNode>;
             treeView.Clear();   // これを起因にバインド系のエラーが出るが…無視して良い...
@@ -426,34 +430,63 @@ namespace CapybaraVS.Controls.BaseControls
             }
 
             string searchName = name.ToUpper().Replace(" ", "");
-            int limit = 60;
-            foreach (var node in AssetTreeData)
+
+            List<TreeMenuNode> treeMenuNodes = new List<TreeMenuNode>();
+            foreach (var assetData in AssetTreeData)
             {
+                treeMenuNodes.Add(assetData);
+            }
+
+            var tokenSource = new CancellationTokenSource();
+            var token = tokenSource.Token;
+            Task.Run(() => ActionFilter(treeMenuNodes, viewer, token, searchName));
+            return tokenSource;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="token"></param>
+        /// <param name="treeView"></param>
+        /// <param name="searchName"></param>
+        private void ActionFilter(List<TreeMenuNode> treeMenuNodes, TreeViewCommand viewer, CancellationToken token, string searchName)
+        {
+            foreach (var node in treeMenuNodes)
+            {
+                if (token.IsCancellationRequested)
+                {
+                    break;
+                }
+
                 if (node.Path == RecentName)
                 {
                     continue;
                 }
-                SetFilter(treeView, node, searchName, CbSTUtils.StripParamater(searchName), ref limit);
-                if (limit <= 0)
-                    return;
+
+                SetFilter(viewer, token, node, searchName, CbSTUtils.StripParamater(searchName));
             }
         }
 
         /// <summary>
         /// コマンドをフィルタリングします。
+        /// 「.」を見つけた場合、そこを起点に一致判定を「.」区切りの完全一致に切り替えます。
         /// </summary>
         /// <param name="viewer">結果登録用リスト</param>
         /// <param name="node">メニューノード</param>
         /// <param name="name">メニュー名</param>
-        private void SetFilter(ObservableCollection<TreeMenuNode> treeView, TreeMenuNode node, string name, string stripName, ref int limit, TreeMenuNode currentLock = null)
+        private void SetFilter(TreeViewCommand viewer, CancellationToken token, TreeMenuNode node, string name, string stripName, TreeMenuNode currentLock = null)
         {
-            if (limit <= 0)
+            if (token.IsCancellationRequested)
+            {
                 return;
+            }
 
             string nodeName = node.Name.ToUpper().Replace(" ", "");
 
             if (name.Contains(".") || currentLock != null)
             {
+                // 「.」区切りの完全一致で下の階層すべてを対象とする
+
                 string current = name;
                 string next = name;
                 if (name.Contains("."))
@@ -465,14 +498,14 @@ namespace CapybaraVS.Controls.BaseControls
                 {
                     foreach (var child in node.Child)
                     {
-                        SetFilter(treeView, child, next, stripName, ref limit, node);
+                        SetFilter(viewer, token, child, next, stripName, node);
                     }
                 }
                 if (currentLock != null)
                 {
                     if (nodeName == name)
                     {
-                        SetAll(treeView, node, ref limit, currentLock.Path.Substring(0, currentLock.Path.LastIndexOf('.') + 1));
+                        SetAll(viewer, token, node, currentLock.Path.Substring(0, currentLock.Path.LastIndexOf('.') + 1));
                     }
                     return;
                 }
@@ -481,23 +514,35 @@ namespace CapybaraVS.Controls.BaseControls
             {
                 // 名前が完全一致したら下の階層すべてを対象とする
 
-                SetAll(treeView, node, ref limit);
+                SetAll(viewer, token, node);
                 return;
             }
             else
             {
-                CurrentFilter(treeView, node, name, stripName, ref limit);
+                CurrentFilter(viewer, token, node, name, stripName);
             }
             foreach (var child in node.Child)
             {
-                SetFilter(treeView, child, name, stripName, ref limit);
+                SetFilter(viewer, token, child, name, stripName);
             }
         }
 
-        private void CurrentFilter(ObservableCollection<TreeMenuNode> treeView, TreeMenuNode node, string name, string stripName, ref int limit)
+        /// <summary>
+        /// コマンドをフィルタリングします。
+        /// </summary>
+        /// <param name="token"></param>
+        /// <param name="treeView"></param>
+        /// <param name="node"></param>
+        /// <param name="name"></param>
+        /// <param name="stripName"></param>
+        private void CurrentFilter(TreeViewCommand viewer, CancellationToken token, TreeMenuNode node, string name, string stripName)
         {
-            if (limit <= 0)
+            ObservableCollection<TreeMenuNode> treeView = viewer.TreeView.ItemsSource as ObservableCollection<TreeMenuNode>;
+
+            if (token.IsCancellationRequested)
+            {
                 return;
+            }
 
             string nodeName = node.Name.ToUpper().Replace(" ", "");
 
@@ -507,29 +552,48 @@ namespace CapybaraVS.Controls.BaseControls
             {
                 // パラメータを取り除いた名前が完全一致したら下の階層すべてを対象とする
 
-                SetAll(treeView, node, ref limit);
+                SetAll(viewer, token, node);
                 return;
             }
             if (nodeName.Contains(name))
             {
                 if (node.LeftClickCommand != null && node.LeftClickCommand.CanExecute(null))
                 {
-                    treeView.Add(new TreeMenuNode(node.Path, node.HintText, OwnerCommandCanvas.CreateImmediateExecutionCanvasCommand(() =>
+                    viewer.Dispatcher.Invoke(() =>
                     {
-                        ExecuteFindCommand(node.Path);
-                    })));
+                        treeView.Add(new TreeMenuNode(node.Path, node.HintText, OwnerCommandCanvas.CreateImmediateExecutionCanvasCommand(() =>
+                        {
+                            ExecuteFindCommand(node.Path);
+                        })));
+                    });
+                    Thread.Sleep(FilteringWaitSleep);
                 }
-                if (--limit == 0)
+                if (token.IsCancellationRequested)
+                {
                     return;
+                }
             }
         }
 
-        private void SetAll(ObservableCollection<TreeMenuNode> treeView, TreeMenuNode node, ref int limit, string frontCut = null)
+        /// <summary>
+        /// コマンドをまとめて取り込みます。
+        /// </summary>
+        /// <param name="token"></param>
+        /// <param name="treeView"></param>
+        /// <param name="node"></param>
+        /// <param name="frontCut"></param>
+        private void SetAll(TreeViewCommand viewer, CancellationToken token, TreeMenuNode node, string frontCut = null)
         {
-            void _SetAll(ObservableCollection<TreeMenuNode> treeView, TreeMenuNode node, ref int limit, string frontCut = null)
+            ObservableCollection<TreeMenuNode> treeView = viewer.TreeView.ItemsSource as ObservableCollection<TreeMenuNode>;
+
+            void _SetAll(TreeViewCommand viewer, CancellationToken token, TreeMenuNode node, string frontCut = null)
             {
-                if (limit <= 0)
+                ObservableCollection<TreeMenuNode> treeView = viewer.TreeView.ItemsSource as ObservableCollection<TreeMenuNode>;
+
+                if (token.IsCancellationRequested)
+                {
                     return;
+                }
 
                 if (node.LeftClickCommand != null && node.LeftClickCommand.CanExecute(null))
                 {
@@ -538,23 +602,29 @@ namespace CapybaraVS.Controls.BaseControls
                     {
                         title = title.Replace(frontCut, "");    // 頭の部分だけカットしたいのだが...
                     }
-                    treeView.Add(new TreeMenuNode(title, node.HintText, OwnerCommandCanvas.CreateImmediateExecutionCanvasCommand(() =>
+                    viewer.Dispatcher.Invoke(() =>
                     {
-                        ExecuteFindCommand(node.Path);
-                    })));
+                        treeView.Add(new TreeMenuNode(title, node.HintText, OwnerCommandCanvas.CreateImmediateExecutionCanvasCommand(() =>
+                        {
+                            ExecuteFindCommand(node.Path);
+                        })));
+                    });
+                    Thread.Sleep(FilteringWaitSleep);
                 }
-                if (--limit <= 0)
+                if (token.IsCancellationRequested)
+                {
                     return;
+                }
 
                 foreach (var child in node.Child)
                 {
-                    _SetAll(treeView, child, ref limit, frontCut);
+                    _SetAll(viewer, token, child, frontCut);
                 }
             }
 
             foreach (var child in node.Child)
             {
-                _SetAll(treeView, child, ref limit, frontCut);
+                _SetAll(viewer, token, child, frontCut);
             }
         }
 
