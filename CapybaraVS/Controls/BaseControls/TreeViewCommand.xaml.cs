@@ -414,6 +414,17 @@ namespace CapybaraVS.Controls.BaseControls
         {
             ObservableCollection<TreeMenuNode> treeView = viewer.TreeView.ItemsSource as ObservableCollection<TreeMenuNode>;
             treeView.Clear();   // これを起因にバインド系のエラーが出るが…無視して良い...
+
+            Dictionary<string, string> keyValuePairs = new Dictionary<string, string>()
+            {
+                { "STRING", "" },
+            };
+
+            if (keyValuePairs.ContainsKey(name.ToUpper()))
+            {
+                name = "System" + keyValuePairs[name.ToUpper()] + "." + name;
+            }
+
             string searchName = name.ToUpper().Replace(" ", "");
             int limit = 60;
             foreach (var node in AssetTreeData)

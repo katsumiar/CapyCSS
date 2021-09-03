@@ -72,22 +72,31 @@ namespace CbVS.Script
             if (multiRootConnector is null)
             {
                 List<string> typeNames;
-                if (typeRequests == null && OwnerCommandCanvas.ScriptWorkStack.StackData.Count != 0)
+                if (typeRequests == null)
                 {
-                    // 既存の変数から選択する
+                    if (OwnerCommandCanvas.ScriptWorkStack.StackData.Count != 0)
+                    {
+                        // 既存の変数から選択する
 
-                    stackNode = ListSelectWindow.Create(
-                        OwnerCommandCanvas,
-                        "Variable",
-                        OwnerCommandCanvas.ScriptWorkStack.StackData,
-                        forcedListTypeSelect,
-                        new Point(Mouse.GetPosition(null).X, Mouse.GetPosition(null).Y));
+                        stackNode = ListSelectWindow.Create(
+                            OwnerCommandCanvas,
+                            "Variable",
+                            OwnerCommandCanvas.ScriptWorkStack.StackData,
+                            forcedListTypeSelect,
+                            new Point(Mouse.GetPosition(null).X, Mouse.GetPosition(null).Y));
 
-                    if (stackNode is null)
+                        if (stackNode is null)
+                            return null;
+
+                        typeNames = new List<string>();
+                        typeNames.Add(stackNode.ValueData.OriginalType.FullName);
+                    }
+                    else
+                    {
+                        // 既存の変数が存在しない
+
                         return null;
-
-                    typeNames = new List<string>();
-                    typeNames.Add(stackNode.ValueData.OriginalType.FullName);
+                    }
                 }
                 else
                 {
