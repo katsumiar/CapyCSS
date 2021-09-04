@@ -51,13 +51,15 @@ namespace CapybaraVS.Controls
 
         #region XML定義
         [XmlRoot(nameof(MultiRootConnector))]
-        public class _AssetXML<OwnerClass>
+        public class _AssetXML<OwnerClass> : IDisposable
             where OwnerClass : MultiRootConnector
         {
             [XmlIgnore]
             public Action WriteAction = null;
             [XmlIgnore]
             public Action<OwnerClass> ReadAction = null;
+            private bool disposedValue;
+
             public _AssetXML()
             {
                 ReadAction = (self) =>
@@ -130,21 +132,57 @@ namespace CapybaraVS.Controls
                 };
             }
             #region 固有定義
-            public class RootFuncType
+            public class RootFuncType : IDisposable
             {
-                public List<int> AttachVariableIds { get; set; }
-                public string AttachFileName { get; set; }
+                public List<int> AttachVariableIds { get; set; } = null;
+                public string AttachFileName { get; set; } = null;
                 public int AttachVariableId { get; set; }
                 [XmlAttribute(nameof(AssetType))]
                 public FunctionType AssetType { get; set; }
-                public string AssetValueType { get; set; }
-                public List<string> AssetValueTypes { get; set; }
+                public string AssetValueType { get; set; } = null;
+                public List<string> AssetValueTypes { get; set; } = null;
                 [XmlAttribute(nameof(AssetFuncType))]
-                public string AssetFuncType { get; set; }
-                public RootConnector._AssetXML<RootConnector> RootConnector { get; set; }
+                public string AssetFuncType { get; set; } = null;
+                public RootConnector._AssetXML<RootConnector> RootConnector { get; set; } = null;
+
+                public void Dispose()
+                {
+                    AttachVariableIds?.Clear();
+                    AttachVariableIds = null;
+                    AttachFileName = null;
+                    AssetValueType = null;
+                    AssetValueTypes?.Clear();
+                    AssetValueTypes = null;
+                    AssetFuncType = null;
+                    RootConnector?.Dispose();
+                    RootConnector = null;
+                }
             }
             public int DataVersion { get; set; } = 0;
             public RootFuncType RootFunc { get; set; } = null;
+
+            protected virtual void Dispose(bool disposing)
+            {
+                if (!disposedValue)
+                {
+                    if (disposing)
+                    {
+                        WriteAction = null;
+                        ReadAction = null;
+
+                        // 以下、固有定義開放
+                        RootFunc?.Dispose();
+                        RootFunc = null;
+                    }
+                    disposedValue = true;
+                }
+            }
+
+            public void Dispose()
+            {
+                Dispose(disposing: true);
+                GC.SuppressFinalize(this);
+            }
             #endregion
         }
         public _AssetXML<MultiRootConnector> AssetXML { get; set; } = null;
@@ -681,7 +719,7 @@ namespace CapybaraVS.Controls
             {
                 if (disposing)
                 {
-                    LinkConnectorControl.Dispose();
+                    LinkConnectorControl?.Dispose();
 
                     if (AttachParam is AttachVariableId variable)
                     {
@@ -689,6 +727,16 @@ namespace CapybaraVS.Controls
 
                         OwnerCommandCanvas.ScriptWorkStack?.Unlink((int)variable.Value, this);
                     }
+                    //LinkConnectorControl = null;
+
+                    AssetXML?.Dispose();
+                    AssetXML = null;
+                    attachVariableIds = null;
+                    _OwnerCommandCanvas = null;
+                    selectedVariableType = null;
+                    selectedVariableTypeName = null;
+                    //AssetFunctionList = null; // static なので消しては駄目
+                    GetVariableName = null;
                 }
                 disposedValue = true;
             }

@@ -39,13 +39,15 @@ namespace CapybaraVS.Controls
     {
         #region XML定義
         [XmlRoot(nameof(RunableControl))]
-        public class _AssetXML<OwnerClass>
+        public class _AssetXML<OwnerClass> : IDisposable
             where OwnerClass : RunableControl
         {
             [XmlIgnore]
             public Action WriteAction = null;
             [XmlIgnore]
             public Action<OwnerClass> ReadAction = null;
+            private bool disposedValue;
+
             public _AssetXML()
             {
                 ReadAction = (self) =>
@@ -86,6 +88,32 @@ namespace CapybaraVS.Controls
             public RunableFuncType RunableFunc { get; set; } = null;
             public LinkConnectorList._AssetXML<LinkConnectorList> List { get; set; } = null;
             public NameLabel._AssetXML<NameLabel> Caption { get; set; } = null;
+
+            protected virtual void Dispose(bool disposing)
+            {
+                if (!disposedValue)
+                {
+                    if (disposing)
+                    {
+                        WriteAction = null;
+                        ReadAction = null;
+
+                        // 以下、固有定義開放
+                        RunableFunc = null;
+                        List?.Dispose();
+                        List = null;
+                        Caption?.Dispose();
+                        Caption = null;
+                    }
+                    disposedValue = true;
+                }
+            }
+
+            public void Dispose()
+            {
+                Dispose(disposing: true);
+                GC.SuppressFinalize(this);
+            }
             #endregion
         }
         public _AssetXML<RunableControl> AssetXML { get; set; } = null;

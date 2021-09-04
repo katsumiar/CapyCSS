@@ -39,13 +39,15 @@ namespace CapybaraVS.Controls.BaseControls
 
         #region XML定義
         [XmlRoot(nameof(LinkConnector))]
-        public class _AssetXML<OwnerClass>
+        public class _AssetXML<OwnerClass> : IDisposable
             where OwnerClass : LinkConnector
         {
             [XmlIgnore]
             public Action WriteAction = null;
             [XmlIgnore]
             public Action<OwnerClass> ReadAction = null;
+            private bool disposedValue;
+
             public _AssetXML()
             {
                 ReadAction = (self) =>
@@ -110,6 +112,32 @@ namespace CapybaraVS.Controls.BaseControls
             public bool CastConnect { get; set; } = false;
             public UIParam._AssetXML<UIParam> ParamInfo { get; set; } = null;
             public LinkConnectorList._AssetXML<LinkConnectorList> LinkConnectorList { get; set; } = null;
+
+            protected virtual void Dispose(bool disposing)
+            {
+                if (!disposedValue)
+                {
+                    if (disposing)
+                    {
+                        WriteAction = null;
+                        ReadAction = null;
+
+                        // 以下、固有定義開放
+                        Value = null;
+                        ParamInfo?.Dispose();
+                        ParamInfo = null;
+                        LinkConnectorList?.Dispose();
+                        LinkConnectorList = null;
+                    }
+                    disposedValue = true;
+                }
+            }
+
+            public void Dispose()
+            {
+                Dispose(disposing: true);
+                GC.SuppressFinalize(this);
+            }
             #endregion
         }
         public _AssetXML<LinkConnector> AssetXML { get; set; } = null;
@@ -350,10 +378,10 @@ namespace CapybaraVS.Controls.BaseControls
                     linkCurveLinks ??= new LinkCurveMultiLinks(this);
                 }
                 if (HideLinkPoint)
-                    linkCurveLinks?.Dispose();
+                    linkCurveLinks?.CloseLink();   // [GGGG]
                 return;
             }
-            linkCurveLinks?.Dispose();
+            linkCurveLinks?.CloseLink();   // [GGGG]
             if (HideLinkPoint)
                 return;
             if (single)
@@ -714,7 +742,7 @@ namespace CapybaraVS.Controls.BaseControls
                 ValueData.Set(backupValueData);
                 UpdateEvent?.Invoke();
                 backupValueData = null;
-                ConnectorList.Disconnect();
+                ConnectorList?.Disconnect();
             }
             if (!ClearLock)
                 RemoveQurveUpdate();
@@ -733,7 +761,7 @@ namespace CapybaraVS.Controls.BaseControls
 
         public void RequestRemoveQurve()
         {
-            linkCurveLinks?.Dispose();
+            linkCurveLinks?.CloseLink();   // [GGGG]
             if (backupValueData != null)
             {
                 ValueData = backupValueData;
@@ -785,8 +813,18 @@ namespace CapybaraVS.Controls.BaseControls
                 {
                     LayoutUpdated -= _LayoutUpdated;
                     ConnectorList.Dispose();
-                    linkCurveLinks?.Dispose();
+                    linkCurveLinks?.Dispose();   // [GGGG]
                     linkCurveLinks = null;
+
+                    AssetXML?.Dispose();
+                    AssetXML = null;
+                    _OwnerCommandCanvas = null;
+                    defaultValueData = null;
+                    backupValueData = null;
+                    connectValueData = null;
+                    eventLinkRootConnector = null;
+
+                    ParamTextBox.Dispose();
                 }
                 disposedValue = true;
             }
@@ -795,8 +833,7 @@ namespace CapybaraVS.Controls.BaseControls
         public void Dispose()
         {
             Dispose(true);
-            // TODO: 上のファイナライザーがオーバーライドされる場合は、次の行のコメントを解除してください。
-            // GC.SuppressFinalize(this);
+            GC.SuppressFinalize(this);
         }
 #endregion
     }

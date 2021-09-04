@@ -85,13 +85,15 @@ namespace CapybaraVS.Control.BaseControls
 
         #region XML定義
         [XmlRoot(nameof(BaseWorkCanvas))]
-        public class _AssetXML<OwnerClass> 
+        public class _AssetXML<OwnerClass> : IDisposable
             where OwnerClass : BaseWorkCanvas
         {
             [XmlIgnore]
             public Action WriteAction = null;
             [XmlIgnore]
             public Action<OwnerClass> ReadAction = null;
+            private bool disposedValue;
+
             public _AssetXML()
             {
                 ReadAction = (self) =>
@@ -128,6 +130,29 @@ namespace CapybaraVS.Control.BaseControls
             public bool EnableInfo { get; set; } = false;
             public double CanvasScale { get; set; } = 1.0;  // 不要になった
             public Matrix? CanvasRenderTransform { get; set; }
+
+            protected virtual void Dispose(bool disposing)
+            {
+                if (!disposedValue)
+                {
+                    if (disposing)
+                    {
+                        WriteAction = null;
+                        ReadAction = null;
+
+                        // 以下、固有定義開放
+                        CanvasRenderTransform = null;
+                    }
+                    disposedValue = true;
+                }
+            }
+
+            public void Dispose()
+            {
+                // このコードを変更しないでください。クリーンアップ コードを 'Dispose(bool disposing)' メソッドに記述します
+                Dispose(disposing: true);
+                GC.SuppressFinalize(this);
+            }
             #endregion
         }
         public _AssetXML<BaseWorkCanvas> AssetXML { get; set; } = null;
@@ -135,13 +160,15 @@ namespace CapybaraVS.Control.BaseControls
 
         #region 選択コピー用XML定義
         [XmlRoot("CopyAsset")]
-        public class _CopyAssetXML<OwnerClass>
+        public class _CopyAssetXML<OwnerClass> : IDisposable
             where OwnerClass : BaseWorkCanvas
         {
             [XmlIgnore]
             public Action WriteAction = null;
             [XmlIgnore]
             public Action<OwnerClass,Point?> ReadAction = null;
+            private bool disposedValue;
+
             public _CopyAssetXML()
             {
                 ReadAction = (self, relPos) =>
@@ -198,6 +225,29 @@ namespace CapybaraVS.Control.BaseControls
             #region 固有定義
             [XmlArrayItem("Asset")]
             public List<Movable._AssetXML<Movable>> WorkCanvasAssetList { get; set; } = null;
+
+            protected virtual void Dispose(bool disposing)
+            {
+                if (!disposedValue)
+                {
+                    if (disposing)
+                    {
+                        WriteAction = null;
+                        ReadAction = null;
+
+                        // 以下、固有定義開放
+                        WorkCanvasAssetList?.GetEnumerator().Dispose();
+                        WorkCanvasAssetList = null;
+                    }
+                    disposedValue = true;
+                }
+            }
+
+            public void Dispose()
+            {
+                Dispose(disposing: true);
+                GC.SuppressFinalize(this);
+            }
             #endregion
         }
         public _CopyAssetXML<BaseWorkCanvas> CopyAssetXML { get; set; } = null;
@@ -333,21 +383,26 @@ namespace CapybaraVS.Control.BaseControls
         {
             for (int i = 0; i < ControlsCanvas.Children.Count; ++i)
             {
-                var node = ControlsCanvas.Children[i];
-                if (node is IDisposable target)
-                    target.Dispose();
+                if (ControlsCanvas.Children[i] is IDisposable target)
+                    target.Dispose();   // [GGGG]
             }
             ControlsCanvas.Children.Clear();
 
             for (int i = 0; i < InfoCanvas.Children.Count; ++i)
             {
-                var node = InfoCanvas.Children[i];
-                if (node is IDisposable target)
-                    target.Dispose();
+                if (InfoCanvas.Children[i] is IDisposable target)
+                    target.Dispose();   // [GGGG]
             }
             InfoCanvas.Children.Clear();
 
             LinePosList.Clear();
+
+            ObjectSetCommand = null;
+            ObjectSetExitCommand = null;
+            ObjectSetCommandName = null;
+
+            mouseDragObserver = null;
+            SelectedNodes?.Clear();
         }
 
         private Point DisplayTopLeft
@@ -1398,6 +1453,20 @@ namespace CapybaraVS.Control.BaseControls
                 {
                     // ???
                     // MainWindow.Instance.KeyDown -= CanvasBase_KeyDown;
+                    ControlsCanvas.Children.Clear();
+                    AssetXML?.Dispose();
+                    AssetXML = null;
+                    CopyAssetXML?.Dispose();
+                    CopyAssetXML = null;
+                    WorkCanvasList = null;
+                    mouseDragObserver = null;
+                    rectangle = null;
+                    SelectedNodes = null;
+                    _OwnerCommandCanvas = null;
+                    ObjectSetCommand = null;
+                    ObjectSetCommandName = null;
+                    ObjectSetExitCommand = null;
+                    NotifyCollectionChangedListeners = null;
                 }
                 disposedValue = true;
             }

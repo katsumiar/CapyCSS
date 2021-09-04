@@ -40,7 +40,7 @@ namespace CapybaraVS.Controls.BaseControls
 
         #region XML定義
         [XmlRoot(nameof(RootConnector))]
-        public class _AssetXML<OwnerClass>
+        public class _AssetXML<OwnerClass> : IDisposable
             where OwnerClass : RootConnector
         {
             private static int queueCounter = 0;
@@ -48,6 +48,8 @@ namespace CapybaraVS.Controls.BaseControls
             public Action WriteAction = null;
             [XmlIgnore]
             public Action<OwnerClass> ReadAction = null;
+            private bool disposedValue;
+
             public _AssetXML()
             {
                 ReadAction = (self) =>
@@ -139,6 +141,34 @@ namespace CapybaraVS.Controls.BaseControls
             [XmlArrayItem("LinkConnector")]
             public List<LinkConnector._AssetXML<LinkConnector>> Arguments { get; set; } = null;
             public bool IsPublicExecute { get; set; } = false;
+
+            protected virtual void Dispose(bool disposing)
+            {
+                if (!disposedValue)
+                {
+                    if (disposing)
+                    {
+                        WriteAction = null;
+                        ReadAction = null;
+
+                        // 以下、固有定義開放
+                        Caption?.Dispose();
+                        Caption = null;
+                        Value = null;
+                        Connector?.Dispose();
+                        Connector = null;
+                        Arguments?.GetEnumerator().Dispose();
+                        Arguments = null;
+                    }
+                    disposedValue = true;
+                }
+            }
+
+            public void Dispose()
+            {
+                Dispose(disposing: true);
+                GC.SuppressFinalize(this);
+            }
             #endregion
         }
         public _AssetXML<RootConnector> AssetXML { get; set; } = null;
@@ -624,7 +654,7 @@ namespace CapybaraVS.Controls.BaseControls
                 }
                 return;
             }
-            rootCurveLinks?.Dispose();
+            rootCurveLinks?.CloseLink();   // [GGGG]
             if (single)
             {
                 rootCurveLinks = new RootCurveSingleLink(this, CurveCanvas);
@@ -1187,8 +1217,24 @@ namespace CapybaraVS.Controls.BaseControls
                     {
                         node.Dispose();
                     }
-                    rootCurveLinks?.Dispose();
+                    ListData.Clear();
+                    ListData = null;
+
+                    rootCurveLinks?.CloseLink();
+                    rootCurveLinks?.Dispose();   // [GGGG]
                     rootCurveLinks = null;
+
+                    curvePath?.Dispose();
+                    curvePath = null;
+
+                    AssetXML?.Dispose();
+                    AssetXML = null;
+                    NodeNormalColor = null;
+                    NodeEntryColor = null;
+                    _OwnerCommandCanvas = null;
+
+                    NameText.Dispose();
+                    FuncCaption.Dispose();
                 }
                 disposedValue = true;
             }

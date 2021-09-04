@@ -95,13 +95,15 @@ namespace CapybaraVS.Controls.BaseControls
 
         #region XML定義
         [XmlRoot(nameof(CommandCanvas))]
-        public class _AssetXML<OwnerClass>
+        public class _AssetXML<OwnerClass> : IDisposable
             where OwnerClass : CommandCanvas
         {
             [XmlIgnore]
             public Action WriteAction = null;
             [XmlIgnore]
             public Action<OwnerClass> ReadAction = null;
+            private bool disposedValue;
+
             public _AssetXML()
             {
                 ReadAction = (self) =>
@@ -199,6 +201,41 @@ namespace CapybaraVS.Controls.BaseControls
             public Stack._AssetXML<Stack> WorkStack { get; set; } = null;
             [XmlArrayItem("Asset")]
             public List<Movable._AssetXML<Movable>> WorkCanvasAssetList { get; set; } = null;
+
+            protected virtual void Dispose(bool disposing)
+            {
+                if (!disposedValue)
+                {
+                    if (disposing)
+                    {
+                        WriteAction = null;
+                        ReadAction = null;
+
+                        // 以下、固有定義開放
+                        WorkCanvas?.Dispose();
+                        WorkCanvas = null;
+                        ImportClassModule?.Clear();
+                        ImportClassModule = null;
+                        ImportPackageModule?.Clear();
+                        ImportPackageModule = null;
+                        ImportDllModule?.Clear();
+                        ImportDllModule = null;
+                        ImportNuGetModule?.Clear();
+                        ImportNuGetModule = null;
+                        WorkStack?.Dispose();
+                        WorkStack = null;
+                        WorkCanvasAssetList?.GetEnumerator().Dispose();
+                        WorkCanvasAssetList = null;
+                    }
+                    disposedValue = true;
+                }
+            }
+
+            public void Dispose()
+            {
+                Dispose(disposing: true);
+                GC.SuppressFinalize(this);
+            }
             #endregion
         }
         public _AssetXML<CommandCanvas> AssetXML { get; set; } = null;
@@ -846,6 +883,11 @@ namespace CapybaraVS.Controls.BaseControls
             ApiImporter.ClearModule();
             ScriptWorkCanvas.Clear();
             ScriptWorkStack.Clear();
+            WorkStack.Clear();
+            UIParamHoldAction.Clear();
+            StackGroupHoldAction.Clear();
+            PlotWindowHoldAction.Clear();
+            LinkConnectorListHoldAction.Clear();
             ClearTypeImportMenu();
             ScriptCommandCanvas.HideWorkStack();
             InstalledMultiRootConnector = null;
@@ -1547,15 +1589,21 @@ namespace CapybaraVS.Controls.BaseControls
 
                     ApiImporter = null;
                     moduleControler = null;
-                    CommandMenuWindow = null;
-                    TypeMenuWindow = null;
                     CommandCanvasControl = null;
                     ScriptCommandCanvas = null;
+                    ScriptWorkCanvas?.Dispose();
                     ScriptWorkCanvas = null;
+                    ScriptWorkStack?.Dispose();
                     ScriptWorkStack = null;
                     ScriptWorkClickEvent = null;
                     ClickEntryEvent = null;
                     ClickExitEvent = null;
+
+                    UIParamHoldAction?.Dispose();
+                    StackGroupHoldAction?.Dispose();
+                    PlotWindowHoldAction?.Dispose();
+                    LinkConnectorListHoldAction?.Dispose();
+
                     UIParamHoldAction = null;
                     StackGroupHoldAction = null;
                     PlotWindowHoldAction = null;
@@ -1568,6 +1616,9 @@ namespace CapybaraVS.Controls.BaseControls
                     typeWindow_import = null;
                     InstalledMultiRootConnector = null;
 
+                    WorkStack.Dispose();
+
+                    AssetXML?.Dispose();
                     AssetXML = null;
                 }
                 disposedValue = true;

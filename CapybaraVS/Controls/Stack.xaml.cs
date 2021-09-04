@@ -21,10 +21,13 @@ using System.Xml.Serialization;
 namespace CapybaraVS.Controls
 {
     public class StackNodeIdProvider
+        : IDisposable
     {
         private static Dictionary<int, StackNode> AssetList = new Dictionary<int, StackNode>();
         private static int _stackNodeId = 0;
         private int stackNodeId = ++_stackNodeId;    // 初期化時に _pointID をインクリメントする
+        private bool disposedValue;
+
         public int Id
         {
             get => stackNodeId;
@@ -49,12 +52,35 @@ namespace CapybaraVS.Controls
         {
             AssetList.Remove(Id);
         }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!disposedValue)
+            {
+                if (disposing)
+                {
+                    AssetList.Clear();  // static なのでクリアだけする
+                }
+                disposedValue = true;
+            }
+        }
+
+        public void Dispose()
+        {
+            // このコードを変更しないでください。クリーンアップ コードを 'Dispose(bool disposing)' メソッドに記述します
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
+        }
     }
 
-    public class StackNode : UIParam
+    public class StackNode
+        : UIParam
+        , IDisposable
     {
         #region ID管理
         private StackNodeIdProvider stackNodeIdProvider = null;
+        private bool disposedValue;
+
         public int Id
         {
             get => stackNodeIdProvider.Id;
@@ -64,13 +90,15 @@ namespace CapybaraVS.Controls
 
         #region XML定義
         [XmlRoot(nameof(StackNode))]
-        public new class _AssetXML<OwnerClass>
+        public new class _AssetXML<OwnerClass> : IDisposable
             where OwnerClass : StackNode
         {
             [XmlIgnore]
             public Action WriteAction = null;
             [XmlIgnore]
             public Action<OwnerClass> ReadAction = null;
+            private bool disposedValue;
+
             public _AssetXML()
             {
                 ReadAction = (self) =>
@@ -111,6 +139,30 @@ namespace CapybaraVS.Controls
             public string AssetValueType { get; set; } = null;
             public string Value { get; set; } = null;
             public string Name { get; set; } = null;
+
+            protected virtual void Dispose(bool disposing)
+            {
+                if (!disposedValue)
+                {
+                    if (disposing)
+                    {
+                        WriteAction = null;
+                        ReadAction = null;
+
+                        // 以下、固有定義開放
+                        AssetValueType = null;
+                        Value = null;
+                        Name = null;
+                    }
+                    disposedValue = true;
+                }
+            }
+
+            public void Dispose()
+            {
+                Dispose(disposing: true);
+                GC.SuppressFinalize(this);
+            }
             #endregion
         }
         public new _AssetXML<StackNode> AssetXML { get; set; } = null;
@@ -123,6 +175,28 @@ namespace CapybaraVS.Controls
             AssetXML = new _AssetXML<StackNode>(this);
             ValueData = obj;
         }
+
+        protected override void Dispose(bool disposing)
+        {
+            if (!disposedValue)
+            {
+                if (disposing)
+                {
+                    stackNodeIdProvider.Dispose();
+                    stackNodeIdProvider = null;
+                    AssetXML?.Dispose();
+                    AssetXML = null;
+                }
+                disposedValue = true;
+            }
+        }
+
+        public new void Dispose()
+        {
+            // このコードを変更しないでください。クリーンアップ コードを 'Dispose(bool disposing)' メソッドに記述します
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
+        }
     }
 
     /// <summary>
@@ -131,16 +205,19 @@ namespace CapybaraVS.Controls
     public partial class Stack 
         : UserControl
         , IHaveCommandCanvas
+        , IDisposable
     {
         #region XML定義
         [XmlRoot(nameof(Stack))]
-        public class _AssetXML<OwnerClass>
+        public class _AssetXML<OwnerClass> : IDisposable
             where OwnerClass : Stack
         {
             [XmlIgnore]
             public Action WriteAction = null;
             [XmlIgnore]
             public Action<OwnerClass> ReadAction = null;
+            private bool disposedValue;
+
             public _AssetXML()
             {
                 ReadAction = (self) =>
@@ -176,6 +253,29 @@ namespace CapybaraVS.Controls
             #region 固有定義
             [XmlArrayItem("Asset")]
             public List<StackNode._AssetXML<StackNode>> StackList { get; set; } = null;
+
+            protected virtual void Dispose(bool disposing)
+            {
+                if (!disposedValue)
+                {
+                    if (disposing)
+                    {
+                        WriteAction = null;
+                        ReadAction = null;
+
+                        // 以下、固有定義開放
+                        StackList?.GetEnumerator().Dispose();
+                        StackList = null;
+                    }
+                    disposedValue = true;
+                }
+            }
+
+            public void Dispose()
+            {
+                Dispose(disposing: true);
+                GC.SuppressFinalize(this);
+            }
             #endregion
         }
         public _AssetXML<Stack> AssetXML { get; set; } = null;
@@ -189,6 +289,7 @@ namespace CapybaraVS.Controls
         private Dictionary<int, List<MultiRootConnector>> linkList = new Dictionary<int, List<MultiRootConnector>>();
 
         private CommandCanvas _OwnerCommandCanvas = null;
+        private bool disposedValue;
 
         public CommandCanvas OwnerCommandCanvas
         {
@@ -437,8 +538,33 @@ namespace CapybaraVS.Controls
 
         public void Clear()
         {
-            StackData.Clear();
-            linkList.Clear();
+            StackData?.GetEnumerator().Dispose();
+            StackData?.Clear();
+            linkList?.GetEnumerator().Dispose();
+            linkList?.Clear();
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!disposedValue)
+            {
+                if (disposing)
+                {
+                    AssetXML?.Dispose();
+                    AssetXML = null;
+                    Clear();
+                    StackData = null;
+                    linkList = null;
+                    _OwnerCommandCanvas = null;
+                }
+                disposedValue = true;
+            }
+        }
+
+        public void Dispose()
+        {
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
         }
     }
 }

@@ -34,16 +34,19 @@ namespace CapyCSS.Controls.BaseControls
         , IGroupList
         , IDisplayPriority
         , IHaveCommandCanvas
+        , IDisposable
     {
         #region XML定義
         [XmlRoot(nameof(GroupArea))]
-        public class _AssetXML<OwnerClass>
+        public class _AssetXML<OwnerClass> : IDisposable
             where OwnerClass : GroupArea
         {
             [XmlIgnore]
             public Action WriteAction = null;
             [XmlIgnore]
             public Action<OwnerClass> ReadAction = null;
+            private bool disposedValue;
+
             public _AssetXML()
             {
                 ReadAction = (self) =>
@@ -69,6 +72,28 @@ namespace CapyCSS.Controls.BaseControls
             public string Text { get; set; } = "";
             public double Witdh { get; set; } = 0;
             public double Height { get; set; } = 0;
+
+            protected virtual void Dispose(bool disposing)
+            {
+                if (!disposedValue)
+                {
+                    if (disposing)
+                    {
+                        WriteAction = null;
+                        ReadAction = null;
+
+                        // 以下、固有定義開放
+                        Text = null;
+                    }
+                    disposedValue = true;
+                }
+            }
+
+            public void Dispose()
+            {
+                Dispose(disposing: true);
+                GC.SuppressFinalize(this);
+            }
             #endregion
         }
         public _AssetXML<GroupArea> AssetXML { get; set; } = null;
@@ -144,6 +169,7 @@ namespace CapyCSS.Controls.BaseControls
         private Point startPoint;
         private UIElement captureObject = null;
         private UIElement movableControl = null;
+        private bool disposedValue;
 
         private void Border_MouseDownNWSE_D(object sender, MouseButtonEventArgs e)
         {
@@ -319,6 +345,28 @@ namespace CapyCSS.Controls.BaseControls
             };
 
             e.Handled = true;
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!disposedValue)
+            {
+                if (disposing)
+                {
+                    AssetXML?.Dispose();
+                    AssetXML = null;
+                    _OwnerCommandCanvas = null;
+                    captureObject = null;
+                    movableControl = null;
+                }
+                disposedValue = true;
+            }
+        }
+
+        public void Dispose()
+        {
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
         }
     }
 }

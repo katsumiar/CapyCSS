@@ -37,13 +37,15 @@ namespace CapybaraVS.Controls.BaseControls
 
         #region XML定義
         [XmlRoot(nameof(Movable))]
-        public class _AssetXML<OwnerClass>
+        public class _AssetXML<OwnerClass> : IDisposable
             where OwnerClass : Movable
         {
             [XmlIgnore]
             public Action WriteAction = null;
             [XmlIgnore]
             public Action<OwnerClass> ReadAction = null;
+            private bool disposedValue;
+
             public _AssetXML()
             {
                 ReadAction = (self) =>
@@ -154,6 +156,39 @@ namespace CapybaraVS.Controls.BaseControls
             public SingleLinkConnector._AssetXML<SingleLinkConnector> SingleLinkConnector { get; set; } = null;
             public RunableControl._AssetXML<RunableControl> RunableControl { get; set; } = null;
             public GroupArea._AssetXML<GroupArea> GroupAreaControl { get; set; } = null;
+
+            protected virtual void Dispose(bool disposing)
+            {
+                if (!disposedValue)
+                {
+                    if (disposing)
+                    {
+                        WriteAction = null;
+                        ReadAction = null;
+
+                        // 以下、固有定義開放
+                        MultiRootConnector?.Dispose();
+                        MultiRootConnector = null; ;
+                        SingleRootConnector?.Dispose();
+                        SingleRootConnector = null;
+                        MultiLinkConnector?.Dispose();
+                        MultiLinkConnector = null;
+                        SingleLinkConnector?.Dispose();
+                        SingleLinkConnector = null;
+                        RunableControl?.Dispose();
+                        RunableControl = null;
+                        GroupAreaControl?.Dispose();
+                        GroupAreaControl = null;
+                    }
+                    disposedValue = true;
+                }
+            }
+
+            public void Dispose()
+            {
+                Dispose(disposing: true);
+                GC.SuppressFinalize(this);
+            }
             #endregion
         }
         public _AssetXML<Movable> AssetXML { get; set; } = null;
@@ -249,6 +284,10 @@ namespace CapybaraVS.Controls.BaseControls
                 {
                     if (myElement is IDisposable obj)
                         obj.Dispose();
+                    myElement = null;
+                    AssetXML?.Dispose();
+                    AssetXML = null;
+                    _OwnerCommandCanvas = null;
                 }
                 disposedValue = true;
             }

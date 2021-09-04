@@ -127,6 +127,17 @@ namespace CapybaraVS
         }
     }
 
+    //-----------------------------------------------------------------------------------
+    /// <summary>
+    /// 接続解除インターフェイス
+    /// </summary>
+    public interface ICloseLink
+        : IDisposable
+    {
+        void CloseLink();
+    }
+
+    //-----------------------------------------------------------------------------------
     /// <summary>
     /// 接続ポイントインターフェイス
     /// </summary>
@@ -148,10 +159,13 @@ namespace CapybaraVS
         Point TargetPoint { get; }
     }
 
+    //-----------------------------------------------------------------------------------
     /// <summary>
     /// （接続先が保持する）接続元インターフェイス
     /// </summary>
-    public interface ICurveLinkRoot : ITargetPoint, ICbExecutable
+    public interface ICurveLinkRoot 
+        : ITargetPoint
+        , ICbExecutable
     {
         /// <summary>
         /// 接続元が保持するデータを参照する
@@ -185,10 +199,13 @@ namespace CapybaraVS
         void RequestRemoveCurveLinkRoot(ICurveLinkPoint point);
     }
 
+    //-----------------------------------------------------------------------------------
     /// <summary>
     /// （接続元が保持する）接続先インターフェイス
     /// </summary>
-    public interface ICurveLinkPoint : ITargetPoint, ICbExecutable
+    public interface ICurveLinkPoint 
+        : ITargetPoint
+        , ICbExecutable
     {
         /// <summary>
         /// データ参照更新依頼
@@ -209,10 +226,13 @@ namespace CapybaraVS
         void RequestRemoveCurveLinkPoint(ICurveLinkRoot root);
     }
 
+    //-----------------------------------------------------------------------------------
     /// <summary>
     /// コネクター接続クラス
     /// </summary>
-    public class CurveLink : IDisposable, ICbExecutable
+    public class CurveLink 
+        : ICloseLink
+        , ICbExecutable
     {
         public ICurveLinkPoint curveLinkPoint = null;
         public CurvePath curvePath = null;
@@ -266,7 +286,7 @@ namespace CapybaraVS
             else
             {
                 curveLinkPoint = null;
-                Dispose();
+                CloseLink();   // [GGGG]
             }
             return ret;
         }
@@ -296,7 +316,7 @@ namespace CapybaraVS
             var ontTime = curveLinkPoint;
             curveLinkPoint = null;
             ontTime?.RequestRemoveCurveLinkPoint(_self);
-            Dispose();
+            CloseLink();   // [GGGG]
         }
 
         public void RequestUpdateRootValue()
@@ -309,26 +329,41 @@ namespace CapybaraVS
             curveLinkPoint?.RequestExecute(functionStack, preArgument);
         }
 
-        public void Dispose()
+        public void CloseLink()
         {
             curveLinkPoint?.RequestRemoveCurveLinkPoint(_self);
             curveLinkPoint = null;
             curvePath?.Dispose();
             curvePath = null;
         }
+
+        public void Dispose()   // [GGGG]
+        {
+            CloseLink();
+            curveLinkPoint = null;
+            curvePath?.Dispose();
+            curvePath = null;
+            _self = null;
+            _canvas = null;
+        }
     }
 
-    public abstract class RootCurveLinks : IDisposable, ICbExecutable
+    //-----------------------------------------------------------------------------------
+    public abstract class RootCurveLinks
+        : ICloseLink
+        , ICbExecutable
     {
         #region XML定義
         [XmlRoot(nameof(RootCurveLinks))]
-        public class _AssetXML<OwnerClass>
+        public class _AssetXML<OwnerClass> : IDisposable
             where OwnerClass : RootCurveLinks
         {
             [XmlIgnore]
             public Action WriteAction = null;
             [XmlIgnore]
             public Action<OwnerClass> ReadAction = null;
+            private bool disposedValue;
+
             public _AssetXML()
             {
                 ReadAction = (self) =>
@@ -363,6 +398,29 @@ namespace CapybaraVS
             #region 固有定義
             [XmlArrayItem("PointID")]
             public List<int> LinkList { get; set; } = null;
+
+            protected virtual void Dispose(bool disposing)
+            {
+                if (!disposedValue)
+                {
+                    if (disposing)
+                    {
+                        WriteAction = null;
+                        ReadAction = null;
+
+                        // 以下、固有定義開放
+                        LinkList?.Clear();
+                        LinkList = null;
+                    }
+                    disposedValue = true;
+                }
+            }
+
+            public void Dispose()
+            {
+                Dispose(disposing: true);
+                GC.SuppressFinalize(this);
+            }
             #endregion
         }
         public _AssetXML<RootCurveLinks> AssetXML { get; set; } = null;
@@ -438,20 +496,38 @@ namespace CapybaraVS
                 curveLink?.RequestExecute(functionStack, preArgument);
         }
 
-        public void Dispose()
+        public void CloseLink()
         {
             while (CurveLinkData.Count != 0)
             {
-                CurveLinkData[0]?.Dispose();
+                CurveLinkData[0]?.CloseLink();   // [GGGG]
             }
             CurveLinkData.Clear();
         }
+
+        public void Dispose()   // [GGGG]
+        {
+            CloseLink();
+            foreach (var node in CurveLinkData)
+            {
+                node.Dispose();
+            }
+            CurveLinkData.Clear();
+            CurveLinkData = null;
+            AssetXML?.Dispose();
+            AssetXML = null;
+            _self = null;
+            _canvas = null;
+        }
     }
 
+    //-----------------------------------------------------------------------------------
     /// <summary>
     /// RootCurveSingleLinkと共通のインターフェイス（RootCurveLinks）を持つ複数のリンク先を持てるルートコネクター
     /// </summary>
-    public class RootCurveMulitiLink : RootCurveLinks, IDisposable
+    public class RootCurveMulitiLink 
+        : RootCurveLinks
+        , ICloseLink
     {
         public RootCurveMulitiLink(ICurveLinkRoot self, Canvas canvas)
             : base(self, canvas) { }
@@ -472,10 +548,13 @@ namespace CapybaraVS
         }
     }
 
+    //-----------------------------------------------------------------------------------
     /// <summary>
     /// RootCurveMulitiLinkと共通のインターフェイス（RootCurveLinks）を持つ単一のリンク先を持つルートコネクター
     /// </summary>
-    public class RootCurveSingleLink : RootCurveLinks, IDisposable
+    public class RootCurveSingleLink
+        : RootCurveLinks
+        , ICloseLink
     {
         public RootCurveSingleLink(ICurveLinkRoot self, Canvas canvas)
             : base(self, canvas) { }
@@ -489,7 +568,7 @@ namespace CapybaraVS
                 // 既存のリンクを解除
 
                 CurveLink _curveLink = CurveLinkData[0];
-                _curveLink.Dispose();
+                _curveLink.CloseLink();   // [GGGG]
             }
             CurveLink curveLink = new CurveLink(_self, _canvas);
             CurveLinkData.Add(curveLink);
@@ -497,12 +576,23 @@ namespace CapybaraVS
         }
     }
 
-    public abstract class LinkCurveLinks : IDisposable, ICbExecutable
+    //-----------------------------------------------------------------------------------
+    public abstract class LinkCurveLinks
+        : ICloseLink
+        , ICbExecutable
     {
         protected List<ICurveLinkRoot> CurveLinkRootData { get; set; } = new List<ICurveLinkRoot>();
 
         protected ICurveLinkPoint _self;
-        public int Count => CurveLinkRootData.Count;
+        public int Count
+        {
+            get
+            {
+                if (CurveLinkRootData is null)
+                    return 0;
+                return CurveLinkRootData.Count;
+            }
+        }
 
         public LinkCurveLinks(ICurveLinkPoint self)
         {
@@ -551,7 +641,7 @@ namespace CapybaraVS
             }
         }
 
-        public void Dispose()
+        public void CloseLink()
         {
             while (CurveLinkRootData.Count != 0)
             {
@@ -560,27 +650,41 @@ namespace CapybaraVS
             }
             CurveLinkRootData.Clear();
         }
+
+        public void Dispose()   // [GGGG]
+        {
+            CloseLink();
+            CurveLinkRootData?.Clear();
+            CurveLinkRootData = null;
+            _self = null;
+        }
     }
 
+    //-----------------------------------------------------------------------------------
     /// <summary>
     /// LinkCurveMultiLinksと共通のインターフェイス（LinkCurveLinks）を持つ単一のリンク先を持つルートコネクター
     /// </summary>
-    public class LinkCurveSingleLinks : LinkCurveLinks, IDisposable
+    public class LinkCurveSingleLinks
+        : LinkCurveLinks
+        , ICloseLink
     {
         public LinkCurveSingleLinks(ICurveLinkPoint self)
             : base(self) { }
         public override bool RequestLinkCurve(ICurveLinkRoot root)
         {
-            Dispose();
+            CloseLink();   // [GGGG]
             CurveLinkRootData.Add(root);
             return true;
         }
     }
 
+    //-----------------------------------------------------------------------------------
     /// <summary>
     /// LinkCurveSingleLinksと共通のインターフェイス（LinkCurveLinks）を持つ単一のリンク先を持つルートコネクター
     /// </summary>
-    public class LinkCurveMultiLinks : LinkCurveLinks, IDisposable
+    public class LinkCurveMultiLinks
+        : LinkCurveLinks
+        , ICloseLink
     {
         public LinkCurveMultiLinks(ICurveLinkPoint self)
             : base(self) { }
@@ -591,11 +695,12 @@ namespace CapybaraVS
         }
     }
 
-
+    //-----------------------------------------------------------------------------------
     /// <summary>
     /// 曲線を描画するクラスです。
     /// </summary>
-    public class CurvePath : IDisposable
+    public class CurvePath
+        : ICloseLink
     {
         private ITargetPoint startTarget = null;
         private Panel drawControl = null;
@@ -843,6 +948,8 @@ namespace CapybaraVS
 
         public void EntryMouseEvent()
         {
+            if (ellipsePath is null)
+                return;
             ellipsePath.Stroke = DEFAULT_FOCUS_COLOR;
         }
 
@@ -1203,48 +1310,42 @@ namespace CapybaraVS
         #region IDisposable Support
         private bool disposedValue = false; // 重複する呼び出しを検出するには
 
+        public void CloseLink()
+        {
+            if (MyLinePos != null)
+            {
+                LinePosList.Remove(MyLinePos);
+                MyLinePos = null;
+            }
+            Clear();
+        }
+
         //-----------------------------------------------------------------------------------
-        /// <summary>
-        /// 安全に破棄します。
-        /// </summary>
-        /// <param name="disposing">管理オブジェクトを破棄するかならtrueを指定する。開放のみならfalseを指定する。</param>
         protected virtual void Dispose(bool disposing)
         {
             if (!disposedValue)
             {
                 if (disposing)
                 {
-                    // TODO: マネージ状態を破棄します (マネージ オブジェクト)。
-
-                    if (MyLinePos != null)
-                    {
-                        LinePosList.Remove(MyLinePos);
-                        MyLinePos = null;
-                    }
-                    Clear();
+                    CloseLink();
+                    startTarget = null;
+                    drawControl = null;
+                    targetEndPoint = null;
+                    ellipsePath = null;
+                    ellipseBorderPath = null;
+                    MyLinePos = null;
+                    LinePosListCache.Clear();
+                    LinePosListCache = null;
                 }
                 // 開放する
                 disposedValue = true;
             }
         }
 
-        //-----------------------------------------------------------------------------------
-        // TODO: 上の Dispose(bool disposing) にアンマネージ リソースを解放するコードが含まれる場合にのみ、ファイナライザーをオーバーライドします。
-        // ~CurvePath()
-        // {
-        //   // このコードを変更しないでください。クリーンアップ コードを上の Dispose(bool disposing) に記述します。
-        //   Dispose(false);
-        // }
-
-        //-----------------------------------------------------------------------------------
-        /// <summary>
-        /// 安全に破棄します。
-        /// </summary>
         public void Dispose()
         {
             Dispose(true);
-            // TODO: 上のファイナライザーがオーバーライドされる場合は、次の行のコメントを解除してください。
-            // GC.SuppressFinalize(this);
+            GC.SuppressFinalize(this);
         }
         #endregion
     }

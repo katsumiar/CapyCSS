@@ -27,16 +27,19 @@ namespace CapybaraVS.Controls.BaseControls
     public partial class UIParam 
         : UserControl
         , IHaveCommandCanvas
+        , IDisposable
     {
         #region XML定義
         [XmlRoot(nameof(UIParam))]
-        public class _AssetXML<OwnerClass>
+        public class _AssetXML<OwnerClass> : IDisposable
             where OwnerClass : UIParam
         {
             [XmlIgnore]
             public Action WriteAction = null;
             [XmlIgnore]
             public Action<OwnerClass> ReadAction = null;
+            private bool disposedValue;
+
             public _AssetXML()
             {
                 ReadAction = (self) =>
@@ -66,6 +69,31 @@ namespace CapybaraVS.Controls.BaseControls
             public string ParamName { get; set; } = "";
             public string ParamNameLabelOverlap { get; set; } = "";
             public NameLabel._AssetXML<NameLabel> ParamNameLabel { get; set; } = null;
+
+            protected virtual void Dispose(bool disposing)
+            {
+                if (!disposedValue)
+                {
+                    if (disposing)
+                    {
+                        WriteAction = null;
+                        ReadAction = null;
+
+                        // 以下、固有定義開放
+                        ParamName = null;
+                        ParamNameLabelOverlap = null;
+                        ParamNameLabel?.Dispose();
+                        ParamNameLabel = null;
+                    }
+                    disposedValue = true;
+                }
+            }
+
+            public void Dispose()
+            {
+                Dispose(disposing: true);
+                GC.SuppressFinalize(this);
+            }
             #endregion
         }
         public _AssetXML<UIParam> AssetXML { get; set; } = null;
@@ -477,6 +505,7 @@ namespace CapybaraVS.Controls.BaseControls
 #endregion
 
         private CommandCanvas _OwnerCommandCanvas = null;
+        private bool disposedValue;
 
         public CommandCanvas OwnerCommandCanvas
         {
@@ -611,6 +640,28 @@ namespace CapybaraVS.Controls.BaseControls
         private void MediaBox_MouseLeave(object sender, MouseEventArgs e)
         {
             MediaBox.Stop();
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!disposedValue)
+            {
+                if (disposing)
+                {
+                    AssetXML?.Dispose();
+                    AssetXML = null;
+                    _OwnerCommandCanvas = null;
+                    ParamNameLabel.Dispose();
+                }
+                disposedValue = true;
+            }
+        }
+
+        public void Dispose()
+        {
+            // このコードを変更しないでください。クリーンアップ コードを 'Dispose(bool disposing)' メソッドに記述します
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
         }
     }
 }

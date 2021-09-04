@@ -32,13 +32,15 @@ namespace CapybaraVS.Controls
     {
         #region XML定義
         [XmlRoot(nameof(LinkConnectorList))]
-        public class _AssetXML<OwnerClass>
+        public class _AssetXML<OwnerClass> : IDisposable
             where OwnerClass : LinkConnectorList
         {
             [XmlIgnore]
             public Action WriteAction = null;
             [XmlIgnore]
             public Action<OwnerClass> ReadAction = null;
+            private bool disposedValue;
+
             public _AssetXML()
             {
                 ReadAction = (self) =>
@@ -90,6 +92,29 @@ namespace CapybaraVS.Controls
             [XmlArrayItem("LinkConnector")]
             public List<LinkConnector._AssetXML<LinkConnector>> List { get; set; } = null;
             public bool IsOpenList { get; set; } = true;
+
+            protected virtual void Dispose(bool disposing)
+            {
+                if (!disposedValue)
+                {
+                    if (disposing)
+                    {
+                        WriteAction = null;
+                        ReadAction = null;
+
+                        // 以下、固有定義開放
+                        List?.GetEnumerator().Dispose();
+                        List = null;
+                    }
+                    disposedValue = true;
+                }
+            }
+
+            public void Dispose()
+            {
+                Dispose(disposing: true);
+                GC.SuppressFinalize(this);
+            }
             #endregion
         }
         public _AssetXML<LinkConnectorList> AssetXML { get; set; } = null;
@@ -391,6 +416,8 @@ namespace CapybaraVS.Controls
         /// </summary>
         public void Disconnect()
         {
+            if (ListData is null)
+                return;
             foreach (var node in ListData)
             {
                 // 既存のノードへの接続を切る
@@ -416,15 +443,15 @@ namespace CapybaraVS.Controls
         }
 
         /// <summary>
-        /// ノードをDisposeしてリストをクリアします（外部接続用）。
+        /// ノードをCloseLinkしてリストをクリアします（外部接続用）。
         /// </summary>
         private void ClearList()
         {
             Debug.Assert(ListData == connectedListData);
 
             foreach (var node in ListData)
-                if (node is IDisposable target)
-                    target.Dispose();
+                if (node is ICloseLink target)
+                    target.CloseLink();
             ListData.Clear();
         }
 
@@ -708,6 +735,17 @@ namespace CapybaraVS.Controls
                     {
                         node.Dispose();
                     }
+                    connectedListData?.Clear();
+                    connectedListData = null;
+                    noneConnectedListData?.Clear();
+                    noneConnectedListData = null;
+                    AssetXML?.Dispose();
+                    AssetXML = null;
+                    ListData.Clear();
+                    ListData = null;
+                    _OwnerCommandCanvas = null;
+                    linkedListTypeVariable?.Clear();
+                    linkedListTypeVariable = null;
                 }
                 disposedValue = true;
             }

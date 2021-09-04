@@ -37,7 +37,7 @@ namespace CapyCSS.Controls
 
         #region XML定義
         [XmlRoot("CapyCSS")]
-        public class _AssetXML<OwnerClass>
+        public class _AssetXML<OwnerClass> : IDisposable
             where OwnerClass : CommandCanvasList
         {
             [XmlIgnore]
@@ -85,7 +85,34 @@ namespace CapyCSS.Controls
             public string Language { get; set; } = "ja-JP";
             public string BackGroundImagePath { get; set; } = null;
 
-            public List<string> ScriptWorkRecentList = null;
+            public List<string> ScriptWorkRecentList = null;    // 意味無し？
+            private bool disposedValue;
+
+            protected virtual void Dispose(bool disposing)
+            {
+                if (!disposedValue)
+                {
+                    if (disposing)
+                    {
+                        WriteAction = null;
+                        ReadAction = null;
+
+                        // 以下、固有定義開放
+                        Language = null;
+                        BackGroundImagePath = null;
+                        ScriptWorkRecentList?.Clear();
+                        ScriptWorkRecentList = null;
+                    }
+                    disposedValue = true;
+                }
+            }
+
+            public void Dispose()
+            {
+                // このコードを変更しないでください。クリーンアップ コードを 'Dispose(bool disposing)' メソッドに記述します
+                Dispose(disposing: true);
+                GC.SuppressFinalize(this);
+            }
             #endregion
         }
         public _AssetXML<CommandCanvasList> AssetXML { get; set; } = null;

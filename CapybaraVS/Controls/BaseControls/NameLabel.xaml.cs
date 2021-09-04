@@ -18,17 +18,21 @@ namespace CapybaraVS.Controls.BaseControls
     /// <summary>
     /// NameLabel.xaml の相互作用ロジック
     /// </summary>
-    public partial class NameLabel : UserControl
+    public partial class NameLabel 
+        : UserControl
+        , IDisposable
     {
         #region XML定義
         [XmlRoot(nameof(NameLabel))]
-        public class _AssetXML<OwnerClass>
+        public class _AssetXML<OwnerClass> : IDisposable
             where OwnerClass : NameLabel
         {
             [XmlIgnore]
             public Action WriteAction = null;
             [XmlIgnore]
             public Action<OwnerClass> ReadAction = null;
+            private bool disposedValue;
+
             public _AssetXML()
             {
                 ReadAction = (self) =>
@@ -48,6 +52,28 @@ namespace CapybaraVS.Controls.BaseControls
             }
             #region 固有定義
             public string LabelString { get; set; } = null;
+
+            protected virtual void Dispose(bool disposing)
+            {
+                if (!disposedValue)
+                {
+                    if (disposing)
+                    {
+                        WriteAction = null;
+                        ReadAction = null;
+
+                        // 以下、固有定義開放
+                        LabelString = null;
+                    }
+                    disposedValue = true;
+                }
+            }
+
+            public void Dispose()
+            {
+                Dispose(disposing: true);
+                GC.SuppressFinalize(this);
+            }
             #endregion
         }
         public _AssetXML<NameLabel> AssetXML { get; set; } = null;
@@ -169,7 +195,7 @@ namespace CapybaraVS.Controls.BaseControls
                 {
                     self.EditControl.IsReadOnly = getValue(self);
                 });
-
+        private bool disposedValue;
         public static readonly DependencyProperty ReadOnlyProperty = impReadOnly.Regist(false);
 
         public bool ReadOnly
@@ -244,6 +270,26 @@ namespace CapybaraVS.Controls.BaseControls
         private void LabelControl_MouseLeave(object sender, MouseEventArgs e)
         {
             Cursor = null;
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!disposedValue)
+            {
+                if (disposing)
+                {
+                    AssetXML?.Dispose();
+                    AssetXML = null;
+                }
+                disposedValue = true;
+            }
+        }
+
+        public void Dispose()
+        {
+            // このコードを変更しないでください。クリーンアップ コードを 'Dispose(bool disposing)' メソッドに記述します
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
         }
     }
 }
