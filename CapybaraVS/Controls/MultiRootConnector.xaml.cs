@@ -156,6 +156,8 @@ namespace CapybaraVS.Controls
                     AssetFuncType = null;
                     RootConnector?.Dispose();
                     RootConnector = null;
+
+                    GC.SuppressFinalize(this);
                 }
             }
             public int DataVersion { get; set; } = 0;
@@ -744,6 +746,7 @@ namespace CapybaraVS.Controls
         public void Dispose()
         {
             Dispose(true);
+            GC.SuppressFinalize(this);
         }
         #endregion
     }

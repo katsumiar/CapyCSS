@@ -79,7 +79,10 @@ namespace CapybaraVS.Script
     /// <summary>
     /// enum型
     /// </summary>
-    public class CbEnum<T> : BaseCbValueClass<Enum>, ICbValueEnumClass<Enum>, ICbEnum
+    public class CbEnum<T> 
+        : BaseCbValueClass<Enum>
+        , ICbValueEnumClass<Enum>
+        , ICbEnum
          where T : struct
     {
         public override Type MyType => typeof(CbEnum<T>);
@@ -171,5 +174,24 @@ namespace CapybaraVS.Script
 
         public static Func<ICbValue> TF = () => CbEnum<T>.Create();
         public static Func<string, ICbValue> NTF = (name) => CbEnum<T>.Create(name);
+        private bool disposedValue;
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!disposedValue)
+            {
+                if (disposing)
+                {
+                    ClearWork();
+                }
+                disposedValue = true;
+            }
+        }
+
+        public void Dispose()
+        {
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
+        }
     }
 }

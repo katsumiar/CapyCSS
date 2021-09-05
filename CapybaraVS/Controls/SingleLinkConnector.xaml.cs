@@ -101,6 +101,9 @@ namespace CapybaraVS.Controls
                 if (disposing)
                 {
                     LinkConnectorControl.Dispose();
+                    AssetXML?.Dispose();
+                    AssetXML = null;
+                    OwnerCommandCanvas = null;
                 }
                 disposedValue = true;
             }
@@ -108,6 +111,7 @@ namespace CapybaraVS.Controls
         public void Dispose()
         {
             Dispose(true);
+            GC.SuppressFinalize(this);
         }
         #endregion
     }

@@ -5,7 +5,9 @@ namespace CapybaraVS.Script
     /// <summary>
     /// ulong 型
     /// </summary>
-    public class CbULong : BaseCbValueClass<ulong>, ICbValueClass<ulong>
+    public class CbULong 
+        : BaseCbValueClass<ulong>
+        , ICbValueClass<ulong>
     {
         public override Type MyType => typeof(CbULong);
 
@@ -56,5 +58,25 @@ namespace CapybaraVS.Script
 
         public static Func<ICbValue> TF = () => CbULong.Create();
         public static Func<string, ICbValue> NTF = (name) => CbULong.Create(name);
+
+        private bool disposedValue;
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!disposedValue)
+            {
+                if (disposing)
+                {
+                    ClearWork();
+                }
+                disposedValue = true;
+            }
+        }
+
+        public void Dispose()
+        {
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
+        }
     }
 }

@@ -492,6 +492,7 @@ namespace CapybaraVS.Script
 
     //----------------------------------------------------------------------------------------
     public interface ICbVSValueBase
+        : IDisposable
     {
         /// <summary>
         /// 自分の型情報を参照します。
@@ -510,6 +511,7 @@ namespace CapybaraVS.Script
     }
 
     public interface IUIShowValue
+        : IDisposable
     {
         /// <summary>
         /// 値のUI上の文字列表現
@@ -525,7 +527,9 @@ namespace CapybaraVS.Script
     /// <summary>
     /// CbVSValue機能インターフェイス
     /// </summary>
-    public interface ICbValue : ICbVSValueBase, IUIShowValue
+    public interface ICbValue 
+        : ICbVSValueBase
+        , IUIShowValue
     {
         /// <summary>
         /// 変数生成用型情報
@@ -609,7 +613,8 @@ namespace CapybaraVS.Script
     /// 指定の型にCbVSValue機能インターフェイスを指定する
     /// </summary>
     /// <typeparam name="T">CbVSValue機能インターフェイスを指定する型</typeparam>
-    public interface ICbValueClass<T> : ICbValue
+    public interface ICbValueClass<T> 
+        : ICbValue
     {
         //ICbYSValueClass<T> Create(T n);
         T Value { get; set; }
@@ -630,14 +635,17 @@ namespace CapybaraVS.Script
     /// CbVSValue機能インターフェイスを持ったリスト用インターフェイス
     /// </summary>
     /// <typeparam name="T"></typeparam>
-    public interface ICbValueListClass<T> : ICbValueList, ICbValueClass<T>
+    public interface ICbValueListClass<T> 
+        : ICbValueList
+        , ICbValueClass<T>
     {
     }
 
     /// <summary>
     /// enum型用インターフェイス
     /// </summary>
-    public interface ICbValueEnum : ICbValue
+    public interface ICbValueEnum
+        : ICbValue
     {
         /// <summary>
         /// enum型の要素リスト
@@ -649,7 +657,9 @@ namespace CapybaraVS.Script
     /// CbVSValue機能インターフェイスを持ったenum型用インターフェイス
     /// </summary>
     /// <typeparam name="T">enum型</typeparam>
-    public interface ICbValueEnumClass<T> : ICbValueEnum, ICbValueClass<T>
+    public interface ICbValueEnumClass<T> 
+        : ICbValueEnum
+        , ICbValueClass<T>
     {
     }
 
@@ -672,7 +682,8 @@ namespace CapybaraVS.Script
     /// <summary>
     /// void型を表現するクラスです。
     /// </summary>
-    public class CbVoid : ICbShowValue
+    public class CbVoid
+        : ICbShowValue
     {
         public string DataString => "(void)";
         public static Func<ICbValue> TF = () => CbClass<CbVoid>.Create();
@@ -687,7 +698,8 @@ namespace CapybaraVS.Script
     /// <summary>
     /// ジェネリックメソッドの引数型を表現するクラスです。
     /// </summary>
-    public class CbGeneMethArg : ICbShowValue
+    public class CbGeneMethArg 
+        : ICbShowValue
     {
         public Type ArgumentType = null;
         public Type[] GeneArgTypes = null;
@@ -1093,13 +1105,22 @@ namespace CapybaraVS.Script
                 throw;
             }
         }
+        public void ClearWork()
+        {
+            ReturnAction = null;
+            if (IsNullable)
+            {
+                Data = null;
+            }
+        }
     }
 
     //----------------------------------------------------------------------------------------
     /// <summary>
     /// 型がstringでデータとして名前を扱う名前だけのパラメータクラス
     /// </summary>
-    public class ParamNameOnly : ICbValue
+    public class ParamNameOnly
+        : ICbValue
     {
         public Func<ICbValue> NodeTF { get => throw new NotImplementedException(); }
 
@@ -1187,5 +1208,23 @@ namespace CapybaraVS.Script
         public bool LessThan(ICbValue n) { return false; }
 
         public Func<ICbValue> TF = () => ParamNameOnly.Create();
+        private bool disposedValue;
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!disposedValue)
+            {
+                if (disposing)
+                {
+                }
+                disposedValue = true;
+            }
+        }
+
+        public void Dispose()
+        {
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
+        }
     }
 }

@@ -109,7 +109,6 @@ namespace CapyCSS.Controls
 
             public void Dispose()
             {
-                // このコードを変更しないでください。クリーンアップ コードを 'Dispose(bool disposing)' メソッドに記述します
                 Dispose(disposing: true);
                 GC.SuppressFinalize(this);
             }
@@ -840,13 +839,13 @@ namespace CapyCSS.Controls
 
         public void Dispose()
         {
-            foreach (var node in CanvasData)
-            {
-                node.Dispose();
-            }
-            CanvasData.Clear();
+            CanvasData?.GetEnumerator().Dispose();
+            CanvasData?.Clear();
+            CanvasData = null;
             CapybaraVS.Language.Instance.Dispose();
             ToolExec.KillProcess();
+
+            GC.SuppressFinalize(this);
         }
     }
 }

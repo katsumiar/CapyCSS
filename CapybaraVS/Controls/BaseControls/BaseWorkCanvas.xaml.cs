@@ -149,7 +149,6 @@ namespace CapybaraVS.Control.BaseControls
 
             public void Dispose()
             {
-                // このコードを変更しないでください。クリーンアップ コードを 'Dispose(bool disposing)' メソッドに記述します
                 Dispose(disposing: true);
                 GC.SuppressFinalize(this);
             }
@@ -1474,7 +1473,8 @@ namespace CapybaraVS.Control.BaseControls
         public void Dispose()
         {
             Dispose(true);
+            GC.SuppressFinalize(this);
         }
-#endregion
+        #endregion
     }
 }

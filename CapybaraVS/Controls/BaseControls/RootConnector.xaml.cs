@@ -1233,6 +1233,8 @@ namespace CapybaraVS.Controls.BaseControls
                     NodeEntryColor = null;
                     _OwnerCommandCanvas = null;
 
+                    ValueData?.Dispose();
+                    ValueData = null;
                     NameText.Dispose();
                     FuncCaption.Dispose();
                 }
@@ -1242,6 +1244,7 @@ namespace CapybaraVS.Controls.BaseControls
         public void Dispose()
         {
             Dispose(true);
+            GC.SuppressFinalize(this);
         }
         #endregion
     }

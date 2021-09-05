@@ -5,7 +5,9 @@ namespace CapybaraVS.Script
     /// <summary>
     /// decimal 型
     /// </summary>
-    public class CbDecimal : BaseCbValueClass<decimal>, ICbValueClass<decimal>
+    public class CbDecimal 
+        : BaseCbValueClass<decimal>
+        , ICbValueClass<decimal>
     {
         public override Type MyType => typeof(CbDecimal);
 
@@ -55,5 +57,24 @@ namespace CapybaraVS.Script
 
         public static Func<ICbValue> TF = () => CbDecimal.Create();
         public static Func<string, ICbValue> NTF = (name) => CbDecimal.Create(name);
+        private bool disposedValue;
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!disposedValue)
+            {
+                if (disposing)
+                {
+                    ClearWork();
+                }
+                disposedValue = true;
+            }
+        }
+
+        public void Dispose()
+        {
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
+        }
     }
 }

@@ -5,7 +5,9 @@ namespace CapybaraVS.Script
     /// <summary>
     /// float 型
     /// </summary>
-    public class CbFloat : BaseCbValueClass<float>, ICbValueClass<float>
+    public class CbFloat 
+        : BaseCbValueClass<float>
+        , ICbValueClass<float>
     {
         public override Type MyType => typeof(CbFloat);
 
@@ -55,5 +57,25 @@ namespace CapybaraVS.Script
 
         public static Func<ICbValue> TF = () => CbFloat.Create();
         public static Func<string, ICbValue> NTF = (name) => CbFloat.Create(name);
+
+        private bool disposedValue;
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!disposedValue)
+            {
+                if (disposing)
+                {
+                    ClearWork();
+                }
+                disposedValue = true;
+            }
+        }
+
+        public void Dispose()
+        {
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
+        }
     }
 }

@@ -5,7 +5,10 @@ namespace CapybaraVS.Script
     /// <summary>
     /// bool 型
     /// </summary>
-    public class CbBool : BaseCbValueClass<bool>, ICbValueClass<bool>, ICbValueEnum
+    public class CbBool 
+        : BaseCbValueClass<bool>
+        , ICbValueClass<bool>
+        , ICbValueEnum
     {
         public override Type MyType => typeof(CbBool);
 
@@ -64,5 +67,24 @@ namespace CapybaraVS.Script
 
         public static Func<ICbValue> TF = () => CbBool.Create();
         public static Func<string, ICbValue> NTF = (name) => CbBool.Create(name);
+        private bool disposedValue;
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!disposedValue)
+            {
+                if (disposing)
+                {
+                    ClearWork();
+                }
+                disposedValue = true;
+            }
+        }
+
+        public void Dispose()
+        {
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
+        }
     }
 }

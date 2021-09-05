@@ -68,7 +68,8 @@ namespace CbVS.Script
         public int Count => Values.Count;
     }
 
-    public interface ICbEvent : ICbValue
+    public interface ICbEvent 
+        : ICbValue
     {
         /// <summary>
         /// CbEnum<T> の管理するT型の名前
@@ -379,7 +380,10 @@ namespace CbVS.Script
     /// </summary>
     /// <typeparam name="T">オリジナルの型</typeparam>
     /// <typeparam name="RT">CbXXX型の返し値の型</typeparam>
-    public class CbFunc<T, RT> : BaseCbValueClass<ICbValue>, ICbValueClass<ICbValue>, ICbEvent
+    public class CbFunc<T, RT>
+        : BaseCbValueClass<ICbValue>
+        , ICbValueClass<ICbValue>
+        , ICbEvent
          where RT : class, ICbValue
     {
         public override Type MyType => typeof(CbFunc<T, RT>);
@@ -1047,6 +1051,26 @@ namespace CbVS.Script
         public static ICbValue GetCbFunc(string name)  // ※リフレクションから参照されている
         {
             return CbFunc<T, RT>.Create(name);
+        }
+
+        private bool disposedValue;
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!disposedValue)
+            {
+                if (disposing)
+                {
+                    ClearWork();
+                }
+                disposedValue = true;
+            }
+        }
+
+        public void Dispose()
+        {
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
         }
     }
 }

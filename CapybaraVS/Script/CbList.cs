@@ -11,7 +11,8 @@ using System.Text;
 
 namespace CbVS.Script
 {
-    public interface ICbList : ICbValue
+    public interface ICbList
+        : ICbValue
     {
         /// <summary>
         /// List<適切な型> に変換します。
@@ -153,7 +154,11 @@ namespace CbVS.Script
     /// ICollection<>型
     /// </summary>
     /// <typeparam name="T">オリジナルのList<T>のTの型</typeparam>
-    public class CbList<T> : BaseCbValueClass<List<ICbValue>>, ICbValueListClass<List<ICbValue>>, ICbShowValue, ICbList
+    public class CbList<T>
+        : BaseCbValueClass<List<ICbValue>>
+        , ICbValueListClass<List<ICbValue>>
+        , ICbShowValue
+        , ICbList
     {
         private bool nullFlg = true;
 
@@ -517,7 +522,14 @@ namespace CbVS.Script
         /// </summary>
         public void Clear()
         {
-            Value?.Clear();
+            if (!IsNull)
+            {
+                foreach (var node in Value)
+                {
+                    node?.Dispose();
+                }
+                Value.Clear();
+            }
         }
 
         public override bool IsNull => nullFlg;
@@ -539,5 +551,27 @@ namespace CbVS.Script
         public static Func<string, ICbValue> NTF => (name) => CbList<T>.Create(name);
 
         public static ICbValue GetCbFunc(string name) => Create(name);    // リフレクションで参照されている。
+
+        private bool disposedValue;
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!disposedValue)
+            {
+                if (disposing)
+                {
+                    ClearWork();
+                    Clear();
+                    Value = null;
+                }
+                disposedValue = true;
+            }
+        }
+
+        public void Dispose()
+        {
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
+        }
     }
 }

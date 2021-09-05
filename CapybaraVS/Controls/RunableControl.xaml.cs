@@ -272,6 +272,18 @@ namespace CapybaraVS.Controls
                 if (disposing)
                 {
                     LinkConnectorListControl.Dispose();
+                    foreach (var node in SetGrid.Children)
+                    {
+                        if (node is IDisposable disposable)
+                        {
+                            disposable.Dispose();
+                        }
+                    }
+                    SetGrid.Children.Clear();
+                    AssetXML?.Dispose();
+                    AssetXML = null;
+                    _OwnerCommandCanvas = null;
+                    runCommand = null;
                 }
                 disposedValue = true;
             }
@@ -280,8 +292,7 @@ namespace CapybaraVS.Controls
         public void Dispose()
         {
             Dispose(true);
-            // TODO: 上のファイナライザーがオーバーライドされる場合は、次の行のコメントを解除してください。
-            // GC.SuppressFinalize(this);
+            GC.SuppressFinalize(this);
         }
         #endregion
     }
