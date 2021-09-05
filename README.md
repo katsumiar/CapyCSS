@@ -1,11 +1,10 @@
 # CapyCSS
 ![CapyCSSimage](https://user-images.githubusercontent.com/63950487/111024064-01443800-8420-11eb-81a9-3e37531ae003.png)
 
-## 0.3.3.0 での変更
+## 0.3.4.0 での変更
 
-* ジェネリッククラスおよびジェネリックメソッドのインポートに対応
-
-![generic](https://user-images.githubusercontent.com/63950487/131742437-1d6ec46a-7d06-4e6e-9fec-746d63051b6e.gif)
+* コマンドフィルタリングの調整
+* メモリリーク対応（何度かに分けて対応予定）
 
 ## 特徴
 * ビジュアルなスクリプトを作成することができます。
