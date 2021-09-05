@@ -384,14 +384,14 @@ namespace CapybaraVS.Control.BaseControls
             for (int i = 0; i < ControlsCanvas.Children.Count; ++i)
             {
                 if (ControlsCanvas.Children[i] is IDisposable target)
-                    target.Dispose();   // [GGGG]
+                    target.Dispose();
             }
             ControlsCanvas.Children.Clear();
 
             for (int i = 0; i < InfoCanvas.Children.Count; ++i)
             {
                 if (InfoCanvas.Children[i] is IDisposable target)
-                    target.Dispose();   // [GGGG]
+                    target.Dispose();
             }
             InfoCanvas.Children.Clear();
 

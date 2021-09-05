@@ -286,7 +286,7 @@ namespace CapybaraVS
             else
             {
                 curveLinkPoint = null;
-                CloseLink();   // [GGGG]
+                CloseLink();
             }
             return ret;
         }
@@ -316,7 +316,7 @@ namespace CapybaraVS
             var ontTime = curveLinkPoint;
             curveLinkPoint = null;
             ontTime?.RequestRemoveCurveLinkPoint(_self);
-            CloseLink();   // [GGGG]
+            CloseLink();
         }
 
         public void RequestUpdateRootValue()
@@ -337,7 +337,7 @@ namespace CapybaraVS
             curvePath = null;
         }
 
-        public void Dispose()   // [GGGG]
+        public void Dispose()
         {
             CloseLink();
             curveLinkPoint = null;
@@ -500,12 +500,12 @@ namespace CapybaraVS
         {
             while (CurveLinkData.Count != 0)
             {
-                CurveLinkData[0]?.CloseLink();   // [GGGG]
+                CurveLinkData[0]?.CloseLink();
             }
             CurveLinkData.Clear();
         }
 
-        public void Dispose()   // [GGGG]
+        public void Dispose()
         {
             CloseLink();
             foreach (var node in CurveLinkData)
@@ -568,7 +568,7 @@ namespace CapybaraVS
                 // 既存のリンクを解除
 
                 CurveLink _curveLink = CurveLinkData[0];
-                _curveLink.CloseLink();   // [GGGG]
+                _curveLink.CloseLink();
             }
             CurveLink curveLink = new CurveLink(_self, _canvas);
             CurveLinkData.Add(curveLink);
@@ -651,7 +651,7 @@ namespace CapybaraVS
             CurveLinkRootData.Clear();
         }
 
-        public void Dispose()   // [GGGG]
+        public void Dispose()
         {
             CloseLink();
             CurveLinkRootData?.Clear();
@@ -672,7 +672,7 @@ namespace CapybaraVS
             : base(self) { }
         public override bool RequestLinkCurve(ICurveLinkRoot root)
         {
-            CloseLink();   // [GGGG]
+            CloseLink();
             CurveLinkRootData.Add(root);
             return true;
         }

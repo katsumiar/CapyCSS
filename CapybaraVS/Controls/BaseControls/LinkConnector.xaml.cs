@@ -378,10 +378,10 @@ namespace CapybaraVS.Controls.BaseControls
                     linkCurveLinks ??= new LinkCurveMultiLinks(this);
                 }
                 if (HideLinkPoint)
-                    linkCurveLinks?.CloseLink();   // [GGGG]
+                    linkCurveLinks?.CloseLink();
                 return;
             }
-            linkCurveLinks?.CloseLink();   // [GGGG]
+            linkCurveLinks?.CloseLink();
             if (HideLinkPoint)
                 return;
             if (single)
@@ -761,7 +761,7 @@ namespace CapybaraVS.Controls.BaseControls
 
         public void RequestRemoveQurve()
         {
-            linkCurveLinks?.CloseLink();   // [GGGG]
+            linkCurveLinks?.CloseLink();
             if (backupValueData != null)
             {
                 ValueData = backupValueData;
@@ -813,7 +813,7 @@ namespace CapybaraVS.Controls.BaseControls
                 {
                     LayoutUpdated -= _LayoutUpdated;
                     ConnectorList.Dispose();
-                    linkCurveLinks?.Dispose();   // [GGGG]
+                    linkCurveLinks?.Dispose();
                     linkCurveLinks = null;
 
                     AssetXML?.Dispose();

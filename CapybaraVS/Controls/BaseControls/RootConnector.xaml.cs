@@ -654,7 +654,7 @@ namespace CapybaraVS.Controls.BaseControls
                 }
                 return;
             }
-            rootCurveLinks?.CloseLink();   // [GGGG]
+            rootCurveLinks?.CloseLink();
             if (single)
             {
                 rootCurveLinks = new RootCurveSingleLink(this, CurveCanvas);
@@ -1221,7 +1221,7 @@ namespace CapybaraVS.Controls.BaseControls
                     ListData = null;
 
                     rootCurveLinks?.CloseLink();
-                    rootCurveLinks?.Dispose();   // [GGGG]
+                    rootCurveLinks?.Dispose();
                     rootCurveLinks = null;
 
                     curvePath?.Dispose();
