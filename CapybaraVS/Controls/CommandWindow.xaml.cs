@@ -187,6 +187,11 @@ namespace CapyCSS.Controls
             trueCloseing = true;
             Close();
             filterProcTimer.Tick -= EventHandler;
+            filterProcTimer = null;
+            searchTreeViewCommand.AssetTreeData.Clear();
+            treeViewCommand.AssetTreeData.Clear();
+
+            GC.SuppressFinalize(this);
         }
     }
 }

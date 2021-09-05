@@ -205,6 +205,7 @@ namespace CapybaraVS.Controls.BaseControls
 
                             while (remaining-- > 0)
                             {
+                                ListData[i].Dispose();
                                 ListData.RemoveAt(i);
                             }
                         }
@@ -520,7 +521,6 @@ namespace CapybaraVS.Controls.BaseControls
 
         public void Dispose()
         {
-            // このコードを変更しないでください。クリーンアップ コードを 'Dispose(bool disposing)' メソッドに記述します
             Dispose(disposing: true);
             GC.SuppressFinalize(this);
         }

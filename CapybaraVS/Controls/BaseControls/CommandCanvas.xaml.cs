@@ -784,10 +784,10 @@ namespace CapybaraVS.Controls.BaseControls
                 namespaces.Add(string.Empty, string.Empty);
                 ScriptCommandCanvas.AssetXML.WriteAction();
                 serializer.Serialize(writer, ScriptCommandCanvas.AssetXML, namespaces);
-                StreamWriter swriter = new StreamWriter(path, false);
-                swriter.WriteLine(writer.ToString());
-                swriter.Close();
-
+                using (StreamWriter swriter = new StreamWriter(path, false))
+                {
+                    swriter.WriteLine(writer.ToString());
+                }
                 OpenFileName = path;
                 CommandCanvasList.OutPut.OutLine("System", $"Save...\"{path}.xml\"");
             }
@@ -827,27 +827,24 @@ namespace CapybaraVS.Controls.BaseControls
             CommandCanvasList.OwnerWindow.Cursor = Cursors.Wait;
             ScriptWorkCanvas.Dispatcher.BeginInvoke(new Action(() =>
             {
-                StreamReader reader = null;
-                try
+                using (StreamReader reader = new StreamReader(path))
                 {
-                    reader = new StreamReader(path);
-                    XmlSerializer serializer = new XmlSerializer(ScriptCommandCanvas.AssetXML.GetType());
+                    try
+                    {
+                        XmlSerializer serializer = new XmlSerializer(ScriptCommandCanvas.AssetXML.GetType());
 
-                    XmlDocument doc = new XmlDocument();
-                    doc.PreserveWhitespace = true;
-                    doc.Load(reader);
-                    XmlNodeReader nodeReader = new XmlNodeReader(doc.DocumentElement);
+                        XmlDocument doc = new XmlDocument();
+                        doc.PreserveWhitespace = true;
+                        doc.Load(reader);
+                        XmlNodeReader nodeReader = new XmlNodeReader(doc.DocumentElement);
 
-                    object data = (CommandCanvas._AssetXML<CommandCanvas>)serializer.Deserialize(nodeReader);
-                    ScriptCommandCanvas.AssetXML = (CommandCanvas._AssetXML<CommandCanvas>)data;
-                }
-                catch (Exception ex)
-                {
-                    ControlTools.ShowErrorMessage(ex.Message);
-                }
-                finally
-                {
-                    reader?.Close();
+                        object data = (CommandCanvas._AssetXML<CommandCanvas>)serializer.Deserialize(nodeReader);
+                        ScriptCommandCanvas.AssetXML = (CommandCanvas._AssetXML<CommandCanvas>)data;
+                    }
+                    catch (Exception ex)
+                    {
+                        ControlTools.ShowErrorMessage(ex.Message);
+                    }
                 }
                 ClearWorkCanvas(false);
                 GC.Collect();
@@ -1627,6 +1624,7 @@ namespace CapybaraVS.Controls.BaseControls
         public void Dispose()
         {
             Dispose(true);
+            GC.SuppressFinalize(this);
         }
         #endregion
 

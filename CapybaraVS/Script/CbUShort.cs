@@ -5,7 +5,9 @@ namespace CapybaraVS.Script
     /// <summary>
     /// ushort 型
     /// </summary>
-    public class CbUShort : BaseCbValueClass<ushort>, ICbValueClass<ushort>
+    public class CbUShort 
+        : BaseCbValueClass<ushort>
+        , ICbValueClass<ushort>
     {
         public override Type MyType => typeof(CbUShort);
 
@@ -55,5 +57,25 @@ namespace CapybaraVS.Script
 
         public static Func<ICbValue> TF = () => CbUShort.Create();
         public static Func<string, ICbValue> NTF = (name) => CbUShort.Create(name);
+
+        private bool disposedValue;
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!disposedValue)
+            {
+                if (disposing)
+                {
+                    ClearWork();
+                }
+                disposedValue = true;
+            }
+        }
+
+        public void Dispose()
+        {
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
+        }
     }
 }

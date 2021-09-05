@@ -387,6 +387,7 @@ namespace CapybaraVS.Controls
 
                         while (remaining-- > 0)
                         {
+                            ListData[i].Dispose();
                             ListData.RemoveAt(i);
                         }
                     }
@@ -754,8 +755,7 @@ namespace CapybaraVS.Controls
         public void Dispose()
         {
             Dispose(true);
-            // TODO: 上のファイナライザーがオーバーライドされる場合は、次の行のコメントを解除してください。
-            // GC.SuppressFinalize(this);
+            GC.SuppressFinalize(this);
         }
         #endregion
     }

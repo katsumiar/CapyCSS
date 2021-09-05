@@ -149,7 +149,6 @@ namespace CapybaraVS.Control.BaseControls
 
             public void Dispose()
             {
-                // このコードを変更しないでください。クリーンアップ コードを 'Dispose(bool disposing)' メソッドに記述します
                 Dispose(disposing: true);
                 GC.SuppressFinalize(this);
             }
@@ -1407,6 +1406,10 @@ namespace CapybaraVS.Control.BaseControls
 
         public void RemoveAt(int index)
         {
+            if (ControlsCanvas.Children[index] is IDisposable disposable)
+            {
+                disposable.Dispose();
+            }
             ControlsCanvas.Children.RemoveAt(index);
             sendNotifyCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove, index));
         }
@@ -1474,7 +1477,8 @@ namespace CapybaraVS.Control.BaseControls
         public void Dispose()
         {
             Dispose(true);
+            GC.SuppressFinalize(this);
         }
-#endregion
+        #endregion
     }
 }

@@ -83,6 +83,12 @@ namespace CbVS
         }
 
         /// <summary>
+        /// 要素が空かどうか判定します。
+        /// </summary>
+        /// <returns>空==true</returns>
+        public bool IsEmpty => Count == 0;
+
+        /// <summary>
         /// 保留している処理を空にします。
         /// </summary>
         public void Clear()

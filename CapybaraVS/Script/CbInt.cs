@@ -5,7 +5,9 @@ namespace CapybaraVS.Script
     /// <summary>
     /// int 型
     /// </summary>
-    public class CbInt : BaseCbValueClass<int>, ICbValueClass<int>
+    public class CbInt 
+        : BaseCbValueClass<int>
+        , ICbValueClass<int>
     {
         public override Type MyType => typeof(CbInt);
 
@@ -64,5 +66,25 @@ namespace CapybaraVS.Script
 
         public static Func<ICbValue> TF = () => CbInt.Create();
         public static Func<string, ICbValue> NTF = (name) => CbInt.Create(name);
+
+        private bool disposedValue;
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!disposedValue)
+            {
+                if (disposing)
+                {
+                    ClearWork();
+                }
+                disposedValue = true;
+            }
+        }
+
+        public void Dispose()
+        {
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
+        }
     }
 }

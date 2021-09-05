@@ -227,6 +227,8 @@ namespace CapybaraVS.Script
                 )
             );
 
+            argumentTypeList.Clear();
+
             return true;
         }
 

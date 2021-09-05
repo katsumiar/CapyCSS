@@ -399,7 +399,7 @@ namespace CapybaraVS.Controls.BaseControls
         }
 #endregion
 
-#region UpdateEvent 添付プロパティ実装
+        #region UpdateEvent 添付プロパティ実装
 
         private static ImplementDependencyProperty<UIParam, Action> impUpdateEvent =
             new ImplementDependencyProperty<UIParam, Action>(
@@ -417,9 +417,9 @@ namespace CapybaraVS.Controls.BaseControls
             set { impUpdateEvent.SetValue(this, value); }
         }
 
-#endregion
+        #endregion
 
-#region ReadOnly 添付プロパティ実装
+        #region ReadOnly 添付プロパティ実装
 
         private static ImplementDependencyProperty<UIParam, bool> impReadOnly =
             new ImplementDependencyProperty<UIParam, bool>(
@@ -445,9 +445,9 @@ namespace CapybaraVS.Controls.BaseControls
             set { impReadOnly.SetValue(this, value); }
         }
 
-#endregion
+        #endregion
 
-#region ParamNameLabelOverlap 添付プロパティ実装
+        #region ParamNameLabelOverlap 添付プロパティ実装
         private static ImplementDependencyProperty<UIParam, string> impParamNameLabelOverlap =
             new ImplementDependencyProperty<UIParam, string>(
                 nameof(ParamNameLabelOverlap),
@@ -464,9 +464,9 @@ namespace CapybaraVS.Controls.BaseControls
             get { return impParamNameLabelOverlap.GetValue(this); }
             set { impParamNameLabelOverlap.SetValue(this, value); }
         }
-#endregion
+        #endregion
 
-#region TypeNameLabelOverlap 添付プロパティ実装
+        #region TypeNameLabelOverlap 添付プロパティ実装
         private static ImplementDependencyProperty<UIParam, string> impTypeNameLabelOverlap =
             new ImplementDependencyProperty<UIParam, string>(
                 nameof(TypeNameLabelOverlap),
@@ -483,9 +483,9 @@ namespace CapybaraVS.Controls.BaseControls
             get { return impTypeNameLabelOverlap.GetValue(this); }
             set { impTypeNameLabelOverlap.SetValue(this, value); }
         }
-#endregion
+        #endregion
 
-#region CastType 添付プロパティ実装
+        #region CastType 添付プロパティ実装
         private static ImplementDependencyProperty<UIParam, bool> impCastType =
             new ImplementDependencyProperty<UIParam, bool>(
                 nameof(CastType),
@@ -502,7 +502,7 @@ namespace CapybaraVS.Controls.BaseControls
             get { return impCastType.GetValue(this); }
             set { impCastType.SetValue(this, value); }
         }
-#endregion
+        #endregion
 
         private CommandCanvas _OwnerCommandCanvas = null;
         private bool disposedValue;
@@ -652,6 +652,8 @@ namespace CapybaraVS.Controls.BaseControls
                     AssetXML = null;
                     _OwnerCommandCanvas = null;
                     ParamNameLabel.Dispose();
+                    ValueData?.Dispose();
+                    ValueData = null;
                 }
                 disposedValue = true;
             }
@@ -659,7 +661,6 @@ namespace CapybaraVS.Controls.BaseControls
 
         public void Dispose()
         {
-            // このコードを変更しないでください。クリーンアップ コードを 'Dispose(bool disposing)' メソッドに記述します
             Dispose(disposing: true);
             GC.SuppressFinalize(this);
         }

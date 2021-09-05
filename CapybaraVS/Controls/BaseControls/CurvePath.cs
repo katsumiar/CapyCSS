@@ -345,6 +345,8 @@ namespace CapybaraVS
             curvePath = null;
             _self = null;
             _canvas = null;
+
+            GC.SuppressFinalize(this);
         }
     }
 
@@ -508,16 +510,15 @@ namespace CapybaraVS
         public void Dispose()
         {
             CloseLink();
-            foreach (var node in CurveLinkData)
-            {
-                node.Dispose();
-            }
+            CurveLinkData?.GetEnumerator().Dispose();
             CurveLinkData.Clear();
             CurveLinkData = null;
             AssetXML?.Dispose();
             AssetXML = null;
             _self = null;
             _canvas = null;
+
+            GC.SuppressFinalize(this);
         }
     }
 
@@ -643,20 +644,24 @@ namespace CapybaraVS
 
         public void CloseLink()
         {
-            while (CurveLinkRootData.Count != 0)
+            if (CurveLinkRootData != null)
             {
-                var curveLinkRoot = CurveLinkRootData[0];
-                curveLinkRoot?.RequestRemoveCurveLinkRoot(_self);
+                while (CurveLinkRootData.Count != 0)
+                {
+                    var curveLinkRoot = CurveLinkRootData[0];
+                    curveLinkRoot?.RequestRemoveCurveLinkRoot(_self);
+                }
+                CurveLinkRootData.Clear();
             }
-            CurveLinkRootData.Clear();
         }
 
         public void Dispose()
         {
             CloseLink();
-            CurveLinkRootData?.Clear();
             CurveLinkRootData = null;
             _self = null;
+
+            GC.SuppressFinalize(this);
         }
     }
 

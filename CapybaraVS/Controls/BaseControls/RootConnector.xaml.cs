@@ -314,7 +314,9 @@ namespace CapybaraVS.Controls.BaseControls
                 Debug.Assert(value != null);
                 SetOunerCanvas(ListData, value);
                 if (NameText.OwnerCommandCanvas is null)
+                {
                     NameText.OwnerCommandCanvas = value;
+                }
                 if (_OwnerCommandCanvas is null)
                 {
                     _OwnerCommandCanvas = value;
@@ -331,7 +333,9 @@ namespace CapybaraVS.Controls.BaseControls
             foreach (var node in list)
             {
                 if (node.OwnerCommandCanvas is null)
+                {
                     node.OwnerCommandCanvas = value;
+                }
             }
         }
 
@@ -1233,6 +1237,8 @@ namespace CapybaraVS.Controls.BaseControls
                     NodeEntryColor = null;
                     _OwnerCommandCanvas = null;
 
+                    ValueData?.Dispose();
+                    ValueData = null;
                     NameText.Dispose();
                     FuncCaption.Dispose();
                 }
@@ -1242,6 +1248,7 @@ namespace CapybaraVS.Controls.BaseControls
         public void Dispose()
         {
             Dispose(true);
+            GC.SuppressFinalize(this);
         }
         #endregion
     }

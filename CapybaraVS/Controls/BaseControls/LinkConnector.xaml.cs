@@ -819,11 +819,14 @@ namespace CapybaraVS.Controls.BaseControls
                     AssetXML?.Dispose();
                     AssetXML = null;
                     _OwnerCommandCanvas = null;
+                    defaultValueData?.Dispose();
                     defaultValueData = null;
+                    backupValueData?.Dispose();
                     backupValueData = null;
                     connectValueData = null;
                     eventLinkRootConnector = null;
 
+                    ParamTextBox.ValueData?.Dispose();
                     ParamTextBox.Dispose();
                 }
                 disposedValue = true;

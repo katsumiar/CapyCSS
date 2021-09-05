@@ -23,10 +23,12 @@ namespace CapybaraVS.Controls
     /// </summary>
     public partial class PlotWindow
         : Window
+        , IDisposable
     {
         private double magnification = 1.0;
         private double baseLine = 0;
         private double topSpace = 10;
+        private bool disposedValue;
 
         public PlotWindow()
         {
@@ -232,6 +234,8 @@ namespace CapybaraVS.Controls
             double minPoint = StatisticsLib.Min(allList);
             double maxPoint = StatisticsLib.Max(allList);
 #endif
+            allList.Clear();
+            allList = null;
 
             var _baseLines = new List<double>(baseLines);
             if (_baseLines.Count == 0)
@@ -240,6 +244,7 @@ namespace CapybaraVS.Controls
                 _baseLines.Add(maxPoint);
                 _baseLines.Add(0);
             }
+            baseLines = null;
 
             PlotWindow plotWindow = new PlotWindow();
             plotWindow.Owner = CommandCanvasList.OwnerWindow;
@@ -319,6 +324,23 @@ namespace CapybaraVS.Controls
                     plotWindow.AddPlot(pair, _list[i], drawType, solidColorBrush, new Pair((i - 1) / count, 1 - listWithMaxMin[i - 1]));
                 }
             }
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!disposedValue)
+            {
+                if (disposing)
+                {
+                }
+                disposedValue = true;
+            }
+        }
+
+        public void Dispose()
+        {
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
         }
     }
 }

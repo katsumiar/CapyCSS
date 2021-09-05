@@ -110,7 +110,10 @@ namespace CapybaraVS.Script
     /// <summary>
     /// struct型
     /// </summary>
-    public class CbStruct<T> : BaseCbValueClass<T>, ICbValueClass<T>, ICbStruct
+    public class CbStruct<T> 
+        : BaseCbValueClass<T>
+        , ICbValueClass<T>
+        , ICbStruct
          where T : struct
     {
         public override Type MyType => typeof(CbStruct<T>);
@@ -202,5 +205,25 @@ namespace CapybaraVS.Script
 
         public static Func<ICbValue> TF = () => CbStruct<T>.Create();
         public static Func<string, ICbValue> NTF = (name) => CbStruct<T>.Create(name);
+
+        private bool disposedValue;
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!disposedValue)
+            {
+                if (disposing)
+                {
+                    ClearWork();
+                }
+                disposedValue = true;
+            }
+        }
+
+        public void Dispose()
+        {
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
+        }
     }
 }
