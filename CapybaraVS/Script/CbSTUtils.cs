@@ -566,9 +566,9 @@ namespace CapybaraVS.Script
         /// <summary>
         /// ジェネリック引数をストリップしたジェネリック引数を返します。
         /// </summary>
-        /// <param name="outName"></param>
+        /// <param name="name"></param>
         /// <returns></returns>
-        public static string StripParamater(string outName)
+        public static string StripParamater(string name)
         {
             string _StripParamater(string outName)
             {
@@ -581,38 +581,66 @@ namespace CapybaraVS.Script
                 while (count-- != 0)
                     repParam += ",";
                 repParam += ">";
-                outName = outName.Replace(param, repParam);
+                if (outName.Contains(", "))
+                    outName = outName.Replace(param, repParam);
+                else
+                    outName = outName.Replace(param.Replace(" ", ""), repParam);
                 return outName;
             }
 
-            if (!outName.Contains("<") || !outName.Contains(">"))
-                return outName;
+            if (!name.Contains("<") || !name.Contains(">"))
+                return name;
 
             string temp;
             do
             {
-                temp = outName;
-                outName = _StripParamater(outName);
+                temp = name;
+                name = _StripParamater(name);
             }
-            while (outName != temp);
+            while (name != temp);
 
-            return outName;
+            return name;
         }
 
-        public static string GetParamater(Tuple<char, char> tuple, string outName)
+        /// <summary>
+        /// ジェネリックパラメータに該当する文字列部分を取り出します。
+        /// ※「,」の後ろにスペースを入れます。
+        /// </summary>
+        /// <param name="name">対象文字列</param>
+        /// <returns>ジェネリックパラメータに該当する文字列部分</returns>
+        public static string GetParamater(string name)
         {
-            int sPos = outName.IndexOf(tuple.Item1);
-            int ePos = outName.IndexOf(tuple.Item2);
+            return CbSTUtils.GetParamater(new Tuple<char, char>('<', '>'), name);
+        }
+
+        public static string GetParamater(Tuple<char, char> tuple, string name)
+        {
+            int sPos = name.IndexOf(tuple.Item1);
+            int ePos = name.IndexOf(tuple.Item2);
             if (sPos != -1 && ePos != -1)
             {
-                return outName.Substring(sPos, ePos - sPos + 1);
+                string ret = name.Substring(sPos, ePos - sPos + 1);
+                if (!ret.Contains(", ") && ret.Contains(","))
+                {
+                    ret = ret.Replace(",", ", ");
+                }
+                return ret;
             }
             return null;
         }
 
-        public static string StartStrip(string str, string strip)
+        /// <summary>
+        /// 前方一致した文字列を削除した文字列を返します。
+        /// </summary>
+        /// <param name="str">対象の文字列</param>
+        /// <param name="strip">削除する文字列</param>
+        /// <param name="IgnoreCase">大文字小文字を無視するなら true</param>
+        /// <returns>前方一致した文字列を削除した文字列</returns>
+        public static string StartStrip(string str, string strip, bool IgnoreCase = false)
         {
-            if (str.StartsWith(strip))
+            if (str.StartsWith(strip)
+                || (IgnoreCase && str.ToUpper().StartsWith(strip.ToUpper()))
+                )
             {
                 return str.Substring(strip.Length);
             }

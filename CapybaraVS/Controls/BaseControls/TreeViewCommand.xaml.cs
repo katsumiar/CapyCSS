@@ -505,9 +505,23 @@ namespace CapybaraVS.Controls.BaseControls
                 }
                 if (currentLock != null)
                 {
-                    if (nodeName == name)
+                    //「<」以降を含まずに一致判定
+
+                    string target = nodeName;
+                    string paramStr = "";
+                    int pos = target.IndexOf('<');
+                    if (pos != -1)
                     {
-                        SetAll(viewer, token, node, currentLock.Path.Substring(0, currentLock.Path.LastIndexOf('.') + 1));
+                        paramStr = CbSTUtils.GetParamater(target);
+                        if (paramStr is null)
+                        {
+                            paramStr = "";
+                        }
+                        target = target.Substring(0, pos);
+                    }
+                    if (target == name)
+                    {
+                        SetAll(viewer, token, node, currentLock.Path.Substring(0, currentLock.Path.LastIndexOf('.') + 1) + stripName + paramStr + ".");
                     }
                     return;
                 }
@@ -617,7 +631,7 @@ namespace CapybaraVS.Controls.BaseControls
                     title = StripDotNetStandardGroupTitle(title);
                     if (frontCut != null)
                     {
-                        title = CbSTUtils.StartStrip(title, frontCut);
+                        title = CbSTUtils.StartStrip(title, frontCut, true);
                     }
                     title = CbSTUtils.StartStrip(title, ApiImporter.MENU_TITLE_DOT_NET_STANDERD_FULL_PATH);
                     title = CbSTUtils.StartStrip(title, ApiImporter.MENU_TITLE_DOT_NET_FUNCTION_FULL_PATH);
