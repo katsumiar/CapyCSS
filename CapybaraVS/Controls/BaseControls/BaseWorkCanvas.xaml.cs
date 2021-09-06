@@ -40,11 +40,6 @@ namespace CapybaraVS.Control.BaseControls
         public Action Update = null;
     }
 
-    interface IHaveLinePosList
-    {
-        List<LinePos> LinePosList { get; }
-    }
-
     /// <summary>
     /// 配置コントロールの移動可能キャンバス
     /// </summary>
@@ -65,7 +60,6 @@ namespace CapybaraVS.Control.BaseControls
     public partial class BaseWorkCanvas
         : UserControl
         , IMovableCanvas
-        , IHaveLinePosList
         , IList
         , INotifyCollectionChanged
         , IAsset
@@ -302,11 +296,6 @@ namespace CapybaraVS.Control.BaseControls
         /// </summary>
         public ObservableCollection<Movable> SelectedNodes = new ObservableCollection<Movable>();
 
-        /// <summary>
-        /// 接続線の交差管理用リスト
-        /// </summary>
-        public List<LinePos> LinePosList { get; } = new List<LinePos>();
-
         private CommandCanvas _OwnerCommandCanvas = null;
 
         public CommandCanvas OwnerCommandCanvas
@@ -393,8 +382,6 @@ namespace CapybaraVS.Control.BaseControls
                     target.Dispose();
             }
             InfoCanvas.Children.Clear();
-
-            LinePosList.Clear();
 
             ObjectSetCommand = null;
             ObjectSetExitCommand = null;

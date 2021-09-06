@@ -531,10 +531,7 @@ namespace CapybaraVS.Controls.BaseControls
                     UpdateEvent?.Invoke();
                 }
                 );
-            Edit.LostFocus += (sender, e) =>
-            {
-                ExitEditMode();
-            };
+            Edit.LostFocus += ExitEditMode;
         }
 
         private void ToolTipUpdate()
@@ -612,7 +609,7 @@ namespace CapybaraVS.Controls.BaseControls
             }
         }
 
-        private void ExitEditMode()
+        private void ExitEditMode(object sender = null, RoutedEventArgs e = null)
         {
             // 編集した後に正しい形式に変換する
 
@@ -648,6 +645,8 @@ namespace CapybaraVS.Controls.BaseControls
             {
                 if (disposing)
                 {
+                    Edit.LostFocus -= ExitEditMode;
+                    Edit.ToolTip = null;
                     AssetXML?.Dispose();
                     AssetXML = null;
                     _OwnerCommandCanvas = null;

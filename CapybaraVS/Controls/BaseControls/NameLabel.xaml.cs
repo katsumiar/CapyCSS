@@ -210,10 +210,7 @@ namespace CapybaraVS.Controls.BaseControls
         {
             InitializeComponent();
             AssetXML = new _AssetXML<NameLabel>(this);
-            LostFocus += (sender, e) =>
-            {
-                ExitEditMode();
-            };
+            LostFocus += ExitEditMode;
         }
 
         private void LabelControl_MouseDoubleClick(object sender, MouseButtonEventArgs e)
@@ -254,7 +251,7 @@ namespace CapybaraVS.Controls.BaseControls
             }
         }
 
-        private void ExitEditMode()
+        private void ExitEditMode(object sender = null, RoutedEventArgs e = null)
         {
             EditControl.Visibility = Visibility.Hidden;
             LabelControl.Visibility = Visibility.Visible;
@@ -278,6 +275,9 @@ namespace CapybaraVS.Controls.BaseControls
             {
                 if (disposing)
                 {
+                    EditControl.Text = null;
+                    UpdateEvent = null;
+                    LostFocus -= ExitEditMode;
                     AssetXML?.Dispose();
                     AssetXML = null;
                 }

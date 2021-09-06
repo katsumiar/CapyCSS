@@ -14,6 +14,7 @@ using System.Windows.Shapes;
 using System.Xml.Serialization;
 using CapybaraVS.Control.BaseControls;
 using System.Windows.Threading;
+using System.Windows.Input;
 
 namespace CapybaraVS
 {
@@ -713,7 +714,6 @@ namespace CapybaraVS
         private bool revert = false;
         private Path ellipsePath = null;
         private Path ellipseBorderPath = null;   // 縁取り用
-        private LinePos MyLinePos = null;   // 交差チェック用
 
         private Brush DEFAULT_COLOR => Brushes.DodgerBlue;
         private Brush DEFAULT_BORDER_COLOR => Brushes.Snow;
@@ -781,20 +781,6 @@ namespace CapybaraVS
             set
             {
                 targetEndPoint = value;
-
-                if (MyLinePos != null)
-                {
-                    LinePosList.Remove(MyLinePos);
-                    MyLinePos = null;
-                }
-                if (targetEndPoint != null)
-                {
-
-                    MyLinePos = new LinePos(startPoint.Value, endPoint.Value);
-                    MyLinePos.Update = new Action(() => UpdateColor());
-                    LinePosList.Add(MyLinePos);
-                    UpdateColors();
-                }
             }
         }
 
@@ -806,13 +792,11 @@ namespace CapybaraVS
         {
             if (ellipsePath != null)
             {
-                changeLineColor = false;
-                ellipsePath.Stroke = CreateMainBrush();
+                ellipsePath.Stroke = DEFAULT_COLOR;
             }
         }
 
         //-----------------------------------------------------------------------------------
-        private bool changeLineColor = false;
         /// <summary>
         /// 曲線の色を変更します。
         /// </summary>
@@ -824,7 +808,6 @@ namespace CapybaraVS
                 if (ellipsePath != null)
                 {
                     ellipsePath.Stroke = value;
-                    changeLineColor = true;
                 }
             }
         }
@@ -858,60 +841,7 @@ namespace CapybaraVS
                 ellipsePath.Data = Geometry.Parse(command);
                 ellipseBorderPath.Data = Geometry.Parse(command);
             }
-            UpdateColor();
-            UpdateColors(); // グループ移動したときに必要になる
             return true;
-        }
-
-        //-----------------------------------------------------------------------------------
-        private bool IsUpdateColors = false;
-        /// <summary>
-        /// すべての交差をチェックをし直します。
-        /// </summary>
-        private void UpdateColors()
-        {
-            if (IsUpdateColors)
-                return;
-            IsUpdateColors = true;
-
-            drawControl?.Dispatcher.BeginInvoke(new Action(() =>
-                {
-                    foreach (var node in LinePosList)
-                    {
-                        node.Update?.Invoke();
-                    }
-                    IsUpdateColors = false;
-                }), DispatcherPriority.ApplicationIdle);
-        }
-
-        //-----------------------------------------------------------------------------------
-        private bool IsUpdateColor = false;
-        /// <summary>
-        /// 交差チェックして交差しているならグラデーションで塗ります。
-        /// </summary>
-        private void UpdateColor()
-        {
-            if (ellipsePath is null)
-                return;
-
-            if (IsUpdateColor)
-                return;
-            IsUpdateColor = true;
-
-            drawControl?.Dispatcher.BeginInvoke(new Action(() =>
-            {
-                if (MyLinePos != null)
-                {
-                    if (startPoint.HasValue)
-                        MyLinePos.start = startPoint.Value;
-                    if (endPoint.HasValue)
-                        MyLinePos.end = endPoint.Value;
-                }
-                Brush brush = CreateMainBrush();
-                if (brush != null)
-                    ellipsePath.Stroke = brush;
-                IsUpdateColor = false;
-            }), DispatcherPriority.ApplicationIdle);
         }
 
         //-----------------------------------------------------------------------------------
@@ -928,30 +858,23 @@ namespace CapybaraVS
             //ellipsePath2.IsHitTestVisible = false;
             Canvas.SetZIndex(ellipseBorderPath, -1000);
 
-            ellipseBorderPath.MouseEnter += (s, e) =>
-            {
-                EntryMouseEvent();
-            };
-
-            ellipseBorderPath.MouseLeave += (s, e) =>
-            {
-                LeaveMouseEvent();
-            };
+            ellipseBorderPath.MouseEnter += EntryMouseEvent;
+            ellipseBorderPath.MouseLeave += LeaveMouseEvent;
 
             DrawControl.Children.Add(ellipseBorderPath);
         }
 
-        public void LeaveMouseEvent()
+        public void LeaveMouseEvent(object sender = null, MouseEventArgs e = null)
         {
             if (ellipsePath is null)
                 return; // 保険
 
-            Brush brush = CreateMainBrush(true);
+            Brush brush = DEFAULT_COLOR;
             if (brush != null)
                 ellipsePath.Stroke = brush;
         }
 
-        public void EntryMouseEvent()
+        public void EntryMouseEvent(object sender = null, MouseEventArgs e = null)
         {
             if (ellipsePath is null)
                 return;
@@ -959,58 +882,9 @@ namespace CapybaraVS
         }
 
         //-----------------------------------------------------------------------------------
-        //private static List<LinePos> _LinePosList = new List<LinePos>(); // DrawControl.Parent が IHaveLinePosList インターフェイスを持っていなかった場合用
-        private List<LinePos> LinePosListCache = null;
-        /// <summary>
-        /// 交差チェック用管理リストを参照します。
-        /// </summary>
-        private List<LinePos> LinePosList
-        {
-            get
-            {
-                if (LinePosListCache != null)
-                    return LinePosListCache;
-                if (DrawControl.Parent is Panel panel)
-                {
-                    if (panel.Parent is IHaveLinePosList haveLinePosList)
-                    {
-                        return LinePosListCache = haveLinePosList.LinePosList;
-                    }
-                }
-                Debug.Assert(false);
-                return null;
-                //return LinePosListCache = _LinePosList;
-            }
-        }
-
-        //-----------------------------------------------------------------------------------
-        /// <summary>
-        /// 交差チェックします。
-        /// </summary>
-        /// <param name="sp"></param>
-        /// <param name="ep"></param>
-        /// <returns></returns>
-        private bool CrossJudge(LinePos sp, LinePos ep)
-        {
-            return CrossJudge(sp.start, sp.end, ep.start, ep.end);
-        }
-
-        private bool CrossJudge(Point sx, Point sy, Point es, Point ey)
-        {
-            var ch1 = (es.X - ey.X) * (sx.Y - es.Y) + (es.Y - ey.Y) * (es.X - sx.X);
-            var ch2 = (es.X - ey.X) * (sy.Y - es.Y) + (es.Y - ey.Y) * (es.X - sy.X);
-            if (ch1 * ch2 >= 0)
-                return false;
-
-            var ch3 = (sx.X - sy.X) * (es.Y - sx.Y) + (sx.Y - sy.Y) * (sx.X - es.X);
-            var ch4 = (sx.X - sy.X) * (ey.Y - sx.Y) + (sx.Y - sy.Y) * (sx.X - ey.X);
-            return ch3 * ch4 < 0 && sx.Y < es.Y;
-        }
-
-        //-----------------------------------------------------------------------------------
         private void CreateMainPath(string command)
         {
-            Brush brush = CreateMainBrush(true);
+            Brush brush = DEFAULT_COLOR;
             ellipsePath = CreatePath(Geometry.Parse(command), brush);
             ellipsePath.Fill = null;
             ellipsePath.Stroke = brush;
@@ -1018,60 +892,6 @@ namespace CapybaraVS
             ellipsePath.IsHitTestVisible = false;
             Canvas.SetZIndex(ellipsePath, -1000);
             DrawControl.Children.Add(ellipsePath);
-        }
-
-        //-----------------------------------------------------------------------------------
-        static LinearGradientBrush LinearGradientBrushCashe = null;
-        /// <summary>
-        /// 交差チェックして色を作成します。
-        /// </summary>
-        /// <param name="create"></param>
-        /// <returns></returns>
-        private Brush CreateMainBrush(bool create = false)
-        {
-            if (changeLineColor)
-                return null;
-
-            bool gradiention = false;
-            LinePos myLinePos = new LinePos(startPoint.Value, endPoint.Value);
-            foreach (var node in LinePosList)
-            {
-                if (CrossJudge(node, myLinePos))
-                {
-                    gradiention = true;
-                    break;
-                }
-            }
-
-            if (!create)
-            {
-                if (ellipsePath is null)
-                    return null;    // グループがまるごと消された
-                if (ellipsePath.Stroke == DEFAULT_COLOR && !gradiention)
-                    return null;    // 変更不要
-                if (ellipsePath.Stroke != DEFAULT_COLOR && gradiention)
-                    return null;    // 変更不要
-            }
-
-            if (gradiention)
-            {
-                if (LinearGradientBrushCashe is null)
-                {
-                    LinearGradientBrushCashe = new LinearGradientBrush();
-                    LinearGradientBrushCashe.StartPoint = new Point(0, 0.5);
-                    LinearGradientBrushCashe.EndPoint = new Point(1, 0.5);
-                    LinearGradientBrushCashe.GradientStops.Add(
-                        new GradientStop(Colors.DodgerBlue, 0.0));
-                    LinearGradientBrushCashe.GradientStops.Add(
-                        new GradientStop(Colors.PowderBlue, 0.25));
-                    LinearGradientBrushCashe.GradientStops.Add(
-                        new GradientStop(Colors.PowderBlue, 0.75));
-                    LinearGradientBrushCashe.GradientStops.Add(
-                        new GradientStop(Colors.DodgerBlue, 1.0));
-                }
-                return LinearGradientBrushCashe;
-            }
-            return DEFAULT_COLOR;
         }
 
         //-----------------------------------------------------------------------------------
@@ -1191,15 +1011,6 @@ namespace CapybaraVS
         {
             try
             {
-                if (MyLinePos != null)
-                {
-                    if (MyLinePos != null)
-                    {
-                        LinePosList.Remove(MyLinePos);
-                        MyLinePos = null;
-                    }
-                    UpdateColors();
-                }
                 DrawControl.Children.Remove(ellipsePath);
                 DrawControl.Children.Remove(ellipseBorderPath);
             }
@@ -1317,11 +1128,6 @@ namespace CapybaraVS
 
         public void CloseLink()
         {
-            if (MyLinePos != null)
-            {
-                LinePosList.Remove(MyLinePos);
-                MyLinePos = null;
-            }
             Clear();
         }
 
@@ -1337,10 +1143,12 @@ namespace CapybaraVS
                     drawControl = null;
                     targetEndPoint = null;
                     ellipsePath = null;
-                    ellipseBorderPath = null;
-                    MyLinePos = null;
-                    LinePosListCache.Clear();
-                    LinePosListCache = null;
+                    if (ellipseBorderPath != null)
+                    {
+                        ellipseBorderPath.MouseEnter -= EntryMouseEvent;
+                        ellipseBorderPath.MouseLeave -= LeaveMouseEvent;
+                        ellipseBorderPath = null;
+                    }
                 }
                 // 開放する
                 disposedValue = true;

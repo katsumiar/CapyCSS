@@ -1217,6 +1217,9 @@ namespace CapybaraVS.Controls.BaseControls
                         OwnerCommandCanvas.CommandCanvasControl.RemoveAllExecuteEntryPointEnable(SetExecuteButtonEnable);
                     }
                     LayoutUpdated -= _LayoutUpdated;
+                    MouseMove -= Grid_MouseMove;
+                    MouseUp -= Grid_MouseLeftButtonUp;
+
                     foreach (var node in ListData)
                     {
                         node.Dispose();
