@@ -6,7 +6,7 @@
 * コマンドフィルタリングの調整
 * メモリリーク対応（何度かに分けて対応予定）
 
-![generic3](https://user-images.githubusercontent.com/63950487/132116814-bb7e6aa5-1b85-48aa-a231-dce46c1df4d7.gif)
+![generic3](https://user-images.githubusercontent.com/63950487/132211159-54a9ad84-a001-4236-b059-6eff0614b775.gif)
 
 ## 特徴
 * ビジュアルなスクリプトを作成することができます。
