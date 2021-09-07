@@ -157,7 +157,7 @@ namespace CapybaraVS.Controls.BaseControls
                         Value = null;
                         Connector?.Dispose();
                         Connector = null;
-                        Arguments?.GetEnumerator().Dispose();
+                        CbSTUtils.ForeachDispose(Arguments);
                         Arguments = null;
                     }
                     disposedValue = true;
@@ -1220,11 +1220,7 @@ namespace CapybaraVS.Controls.BaseControls
                     MouseMove -= Grid_MouseMove;
                     MouseUp -= Grid_MouseLeftButtonUp;
 
-                    foreach (var node in ListData)
-                    {
-                        node.Dispose();
-                    }
-                    ListData.Clear();
+                    CbSTUtils.ForeachDispose(ListData);
                     ListData = null;
 
                     rootCurveLinks?.CloseLink();

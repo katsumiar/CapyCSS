@@ -646,5 +646,47 @@ namespace CapybaraVS.Script
             }
             return str;
         }
+
+        /// <summary>
+        /// リスト内の要素を Dispose します。
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="list"></param>
+        public static void ForeachDispose<T>(ICollection<T> list)
+        {
+            if (list is null)
+                return;
+            foreach (var node in list)
+            {
+                if (node is IDisposable disposable)
+                {
+                    disposable.Dispose();
+                }
+            }
+            list.Clear();
+        }
+
+        /// <summary>
+        /// リスト内の要素を Dispose します。
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="list"></param>
+        public static void ForeachDispose<T1,T2>(IDictionary<T1,T2> list)
+        {
+            if (list is null)
+                return;
+            foreach (var node in list)
+            {
+                if (node.Key is IDisposable disposable)
+                {
+                    disposable.Dispose();
+                }
+                if (node.Value is IDisposable disposable2)
+                {
+                    disposable2.Dispose();
+                }
+            }
+            list.Clear();
+        }
     }
 }

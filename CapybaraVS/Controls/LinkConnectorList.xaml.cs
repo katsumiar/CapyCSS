@@ -103,7 +103,7 @@ namespace CapybaraVS.Controls
                         ReadAction = null;
 
                         // 以下、固有定義開放
-                        List?.GetEnumerator().Dispose();
+                        CbSTUtils.ForeachDispose(List);
                         List = null;
                     }
                     disposedValue = true;
@@ -337,6 +337,7 @@ namespace CapybaraVS.Controls
 
             // 渡された変数のリストをリンクする
             linkedListTypeVariable = listTypeVariable.Value;
+            CbSTUtils.ForeachDispose(ListData);
             ListData.Clear();
             for (var i = 0; i < listTypeVariable.Count; ++i)
             {
@@ -451,9 +452,14 @@ namespace CapybaraVS.Controls
             Debug.Assert(ListData == connectedListData);
 
             foreach (var node in ListData)
+            {
                 if (node is ICloseLink target)
+                {
                     target.CloseLink();
-            ListData.Clear();
+                }
+            }
+            CbSTUtils.ForeachDispose(ListData);
+            //ListData.Clear();
         }
 
         /// <summary>
@@ -728,25 +734,20 @@ namespace CapybaraVS.Controls
             {
                 if (disposing)
                 {
-                    foreach (var node in connectedListData)
-                    {
-                        node.Dispose();
-                    }
-                    foreach (var node in noneConnectedListData)
-                    {
-                        node.Dispose();
-                    }
-                    connectedListData?.Clear();
+                    CbSTUtils.ForeachDispose(connectedListData);
+                    CbSTUtils.ForeachDispose(noneConnectedListData);
+                    CbSTUtils.ForeachDispose(linkedListTypeVariable);
                     connectedListData = null;
-                    noneConnectedListData?.Clear();
                     noneConnectedListData = null;
+                    linkedListTypeVariable = null;
                     AssetXML?.Dispose();
                     AssetXML = null;
-                    ListData.Clear();
+                    CbSTUtils.ForeachDispose(ListData);
+                    //ListData?.Clear();
                     ListData = null;
                     _OwnerCommandCanvas = null;
-                    linkedListTypeVariable?.Clear();
-                    linkedListTypeVariable = null;
+
+
                 }
                 disposedValue = true;
             }

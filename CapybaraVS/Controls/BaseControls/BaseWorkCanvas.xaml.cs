@@ -229,7 +229,7 @@ namespace CapybaraVS.Control.BaseControls
                         ReadAction = null;
 
                         // 以下、固有定義開放
-                        WorkCanvasAssetList?.GetEnumerator().Dispose();
+                        CbSTUtils.ForeachDispose(WorkCanvasAssetList);
                         WorkCanvasAssetList = null;
                     }
                     disposedValue = true;
@@ -1291,7 +1291,7 @@ namespace CapybaraVS.Control.BaseControls
 
                 Add(movable);
 
-                movable.OwnerCommandCanvas = OwnerCommandCanvas;
+                movable.OwnerCommandCanvas = OwnerCommandCanvas;    // TODO 必要かチェックする
 
                 // ドロップ位置の座標でセットする
                 Canvas.SetLeft(movable, pos.X);

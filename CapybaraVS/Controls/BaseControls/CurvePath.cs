@@ -511,8 +511,7 @@ namespace CapybaraVS
         public void Dispose()
         {
             CloseLink();
-            CurveLinkData?.GetEnumerator().Dispose();
-            CurveLinkData.Clear();
+            CbSTUtils.ForeachDispose(CurveLinkData);
             CurveLinkData = null;
             AssetXML?.Dispose();
             AssetXML = null;

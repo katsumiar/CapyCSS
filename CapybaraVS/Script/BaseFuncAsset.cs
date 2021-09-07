@@ -1631,57 +1631,58 @@ namespace CapybaraVS.Script
 
         public bool ImplAsset(MultiRootConnector col, bool isReBuildMode = false)
         {
-            VariableGetter variableGetter = new VariableGetter(col);
-            if (variableGetter.IsError)
-                return false;
+            using (VariableGetter variableGetter = new VariableGetter(col))
+            {
+                if (variableGetter.IsError)
+                    return false;
 
-            col.MakeFunction(
-                variableGetter.MakeName,
-                HelpText,
-                CbST.CbCreateTF(col.SelectedVariableType[0]),  // 返し値の型
-                null,   // 引数はなし
-                new Func<List<ICbValue>, DummyArgumentsStack, ICbValue>(
-                    (argument, cagt) =>
-                    {
-                        try
+                col.MakeFunction(
+                    variableGetter.MakeName,
+                    HelpText,
+                    CbST.CbCreateTF(col.SelectedVariableType[0]),  // 返し値の型
+                    null,   // 引数はなし
+                    new Func<List<ICbValue>, DummyArgumentsStack, ICbValue>(
+                        (argument, cagt) =>
                         {
-                            ICbValue cbVSValue = col.OwnerCommandCanvas.ScriptWorkStack.Find(variableGetter.Id);
-                            col.LinkConnectorControl.UpdateValueData();
-                            if (!cbVSValue.IsDelegate)
+                            try
                             {
-                                if (!(cbVSValue is ICbClass))
+                                ICbValue cbVSValue = col.OwnerCommandCanvas.ScriptWorkStack.Find(variableGetter.Id);
+                                col.LinkConnectorControl.UpdateValueData();
+                                if (!cbVSValue.IsDelegate)
                                 {
-                                    cbVSValue.ReturnAction = (value) =>
+                                    if (!(cbVSValue is ICbClass))
                                     {
-                                        cbVSValue.Data = value;
-                                    };
-                                }
-                                else if (cbVSValue.IsList)
-                                {
-                                    ICbList cbList = cbVSValue.GetListValue;
-                                    cbVSValue.ReturnAction = (value) =>
+                                        cbVSValue.ReturnAction = (value) =>
+                                        {
+                                            cbVSValue.Data = value;
+                                        };
+                                    }
+                                    else if (cbVSValue.IsList)
                                     {
-                                        cbList.CopyFrom(value);
-                                    };
+                                        ICbList cbList = cbVSValue.GetListValue;
+                                        cbVSValue.ReturnAction = (value) =>
+                                        {
+                                            cbList.CopyFrom(value);
+                                        };
+                                    }
                                 }
+                                cbVSValue.IsLiteral = false;
+
+                                // スクリプト処理後に変数の値変化を反映する（参照渡し対応）
+                                col.OwnerCommandCanvas.ScriptWorkStack.UpdateValueData(variableGetter.Id);
+                                return cbVSValue;
                             }
-                            cbVSValue.IsLiteral = false;
-
-                            // スクリプト処理後に変数の値変化を反映する（参照渡し対応）
-                            col.OwnerCommandCanvas.ScriptWorkStack.UpdateValueData(variableGetter.Id);
-                            return cbVSValue;
+                            catch (Exception ex)
+                            {
+                                ICbValue ret = CbST.CbCreate(col.SelectedVariableType[0]);    // 返し値
+                                col.ExceptionFunc(ret, ex);
+                                return ret;
+                            }
                         }
-                        catch (Exception ex)
-                        {
-                            ICbValue ret = CbST.CbCreate(col.SelectedVariableType[0]);    // 返し値
-                            col.ExceptionFunc(ret, ex);
-                            return ret;
-                        }
-                    }
-                    )
-                );
-
-            return true;
+                        )
+                    );
+                return true;
+            }
         }
     }
 
@@ -1747,60 +1748,62 @@ namespace CapybaraVS.Script
 
         public bool ImplAsset(MultiRootConnector col, bool isReBuildMode = false)
         {
-            VariableGetter variableGetter = new VariableGetter(col);
-            if (variableGetter.IsError)
-                return false;
+            using (VariableGetter variableGetter = new VariableGetter(col))
+            {
+                if (variableGetter.IsError)
+                    return false;
 
-            col.MakeFunction(
-                variableGetter.MakeName,
-                HelpText,
-                CbVoid.TF,  // 返し値の型
-                new List<ICbValue>()  // 引数
-                {
-                    CbST.CbCreate(col.SelectedVariableType[0], "n"),
-                },
-                new Func<List<ICbValue>, DummyArgumentsStack, ICbValue>(
-                    (argument, cagt) =>
+                col.MakeFunction(
+                    variableGetter.MakeName,
+                    HelpText,
+                    CbVoid.TF,  // 返し値の型
+                    new List<ICbValue>()  // 引数
                     {
-                        try
+                    CbST.CbCreate(col.SelectedVariableType[0], "n"),
+                    },
+                    new Func<List<ICbValue>, DummyArgumentsStack, ICbValue>(
+                        (argument, cagt) =>
                         {
-                            ICbValue cbVSValue = col.OwnerCommandCanvas.ScriptWorkStack.Find(variableGetter.Id);
-                            if (argument[0].IsLiteral)
+                            try
                             {
-                                if (argument[0].IsList && cbVSValue.IsList)
+                                ICbValue cbVSValue = col.OwnerCommandCanvas.ScriptWorkStack.Find(variableGetter.Id);
+                                if (argument[0].IsLiteral)
                                 {
-                                    // リストのコピー
+                                    if (argument[0].IsList && cbVSValue.IsList)
+                                    {
+                                        // リストのコピー
 
-                                    ICbList cbList = argument[0].GetListValue;
-                                    ICbList toList = cbVSValue.GetListValue;
-                                    toList.CopyFrom(cbList);
+                                        ICbList cbList = argument[0].GetListValue;
+                                        ICbList toList = cbVSValue.GetListValue;
+                                        toList.CopyFrom(cbList);
+                                    }
+                                    else
+                                    {
+                                        // 値のコピー
+
+                                        cbVSValue.Set(argument[0]);
+                                    }
                                 }
                                 else
                                 {
-                                    // 値のコピー
+                                    // 変数の中身を代入
 
-                                    cbVSValue.Set(argument[0]);
+                                    col.OwnerCommandCanvas.ScriptWorkStack.FindSet(variableGetter.Id, argument[0]);
                                 }
+                                col.OwnerCommandCanvas.ScriptWorkStack.UpdateValueData(variableGetter.Id);
+                                col.LinkConnectorControl.UpdateValueData();
                             }
-                            else
+                            catch (Exception ex)
                             {
-                                // 変数の中身を代入
-
-                                col.OwnerCommandCanvas.ScriptWorkStack.FindSet(variableGetter.Id, argument[0]);
+                                col.ExceptionFunc(null, ex);
                             }
-                            col.OwnerCommandCanvas.ScriptWorkStack.UpdateValueData(variableGetter.Id);
-                            col.LinkConnectorControl.UpdateValueData();
+                            return null;
                         }
-                        catch (Exception ex)
-                        {
-                            col.ExceptionFunc(null, ex);
-                        }
-                        return null;
-                    }
-                    )
-                );
+                        )
+                    );
 
-            return true;
+                return true;
+            }
         }
     }
 
@@ -2222,41 +2225,42 @@ namespace CapybaraVS.Script
 
         public bool ImplAsset(MultiRootConnector col, bool isReBuildMode = false)
         {
-            VariableGetter variableGetter = new VariableGetter(col, (name) => "[ " + name + " [index] ]");
-            if (variableGetter.IsError)
-                return false;
+            using (VariableGetter variableGetter = new VariableGetter(col, (name) => "[ " + name + " [index] ]"))
+            {
+                if (variableGetter.IsError)
+                    return false;
 
-            col.MakeFunction(
-               variableGetter.MakeName,
-               HelpText,
-               CbST.CbCreateTF(col.SelectedVariableType[0]),  // 返し値の型
-               new List<ICbValue>()       // 引数
-               {
-                   CbST.CbCreate<int>("index", 0),
-               },
-               new Func<List<ICbValue>, DummyArgumentsStack, ICbValue>(
-                   (argument, cagt) =>
-                   {
-                       var ret = CbST.CbCreate(col.SelectedVariableType[0]);    // 返し値
-                       try
-                       {
-                           int index = GetArgument<int>(argument, 0);
+                col.MakeFunction(
+                    variableGetter.MakeName,
+                    HelpText,
+                    CbST.CbCreateTF(col.SelectedVariableType[0]),  // 返し値の型
+                    new List<ICbValue>()       // 引数
+                    {
+                        CbST.CbCreate<int>("index", 0),
+                    },
+                    new Func<List<ICbValue>, DummyArgumentsStack, ICbValue>(
+                        (argument, cagt) =>
+                        {
+                            var ret = CbST.CbCreate(col.SelectedVariableType[0]);    // 返し値
+                            try
+                            {
+                                int index = GetArgument<int>(argument, 0);
 
-                           ICbValue cbVSValue = col.OwnerCommandCanvas.ScriptWorkStack.Find(variableGetter.Id);
-                           var argList = cbVSValue.GetListValue.Value;
+                                ICbValue cbVSValue = col.OwnerCommandCanvas.ScriptWorkStack.Find(variableGetter.Id);
+                                var argList = cbVSValue.GetListValue.Value;
 
-                           ret.Set(argList[index]);
-                           col.LinkConnectorControl.UpdateValueData();
-                       }
-                       catch (Exception ex)
-                       {
-                           col.ExceptionFunc(ret, ex);
-                       }
-                       return ret;
-                   }
-                   )
-               );
-
+                                ret.Set(argList[index]);
+                                col.LinkConnectorControl.UpdateValueData();
+                            }
+                            catch (Exception ex)
+                            {
+                                col.ExceptionFunc(ret, ex);
+                            }
+                            return ret;
+                        }
+                        )
+                   );
+            }
             return true;
         }
     }
@@ -2277,44 +2281,45 @@ namespace CapybaraVS.Script
 
         public bool ImplAsset(MultiRootConnector col, bool isReBuildMode = false)
         {
-            VariableGetter variableGetter = new VariableGetter(col, (name) => "[ " + name + " [index] ]");
-            if (variableGetter.IsError)
-                return false;
+            using (VariableGetter variableGetter = new VariableGetter(col, (name) => "[ " + name + " [index] ]"))
+            {
+                if (variableGetter.IsError)
+                    return false;
 
-            col.MakeFunction(
-               variableGetter.MakeName,
-               HelpText,
-               CbST.CbCreateTF(col.SelectedVariableType[0]),   // 返し値の型
-               new List<ICbValue>()       // 引数
-               {
-                    CbST.CbCreate<int>("index", 0),
-                    CbST.CbCreate(col.SelectedVariableType[0].GenericTypeArguments[0], "n")
-               },
-               new Func<List<ICbValue>, DummyArgumentsStack, ICbValue>(
-                   (argument, cagt) =>
-                   {
-                       try
-                       {
-                           int index = GetArgument<int>(argument, 0);
+                col.MakeFunction(
+                    variableGetter.MakeName,
+                    HelpText,
+                    CbST.CbCreateTF(col.SelectedVariableType[0]),   // 返し値の型
+                    new List<ICbValue>()       // 引数
+                    {
+                        CbST.CbCreate<int>("index", 0),
+                        CbST.CbCreate(col.SelectedVariableType[0].GenericTypeArguments[0], "n")
+                    },
+                    new Func<List<ICbValue>, DummyArgumentsStack, ICbValue>(
+                        (argument, cagt) =>
+                        {
+                            try
+                            {
+                                int index = GetArgument<int>(argument, 0);
 
-                           ICbList cbVSValue = col.OwnerCommandCanvas.ScriptWorkStack.Find(variableGetter.Id).GetListValue;
-                           cbVSValue[index].Set(argument[1]);
+                                ICbList cbVSValue = col.OwnerCommandCanvas.ScriptWorkStack.Find(variableGetter.Id).GetListValue;
+                                cbVSValue[index].Set(argument[1]);
 
-                           col.OwnerCommandCanvas.ScriptWorkStack.UpdateValueData(variableGetter.Id);
-                           col.LinkConnectorControl.UpdateValueData();
-                           return cbVSValue;
-                       }
-                       catch (Exception ex)
-                       {
-                           var ret = CbST.CbCreate(col.SelectedVariableType[0]);    // 返し値
-                           col.ExceptionFunc(ret, ex);
-                           return ret;
-                       }
-                   }
-                   )
-               );
-
-            return true;
+                                col.OwnerCommandCanvas.ScriptWorkStack.UpdateValueData(variableGetter.Id);
+                                col.LinkConnectorControl.UpdateValueData();
+                                return cbVSValue;
+                            }
+                            catch (Exception ex)
+                            {
+                                var ret = CbST.CbCreate(col.SelectedVariableType[0]);    // 返し値
+                                col.ExceptionFunc(ret, ex);
+                                return ret;
+                            }
+                        }
+                        )
+                    );
+                return true;
+            }
         }
     }
 
@@ -2334,41 +2339,42 @@ namespace CapybaraVS.Script
 
         public bool ImplAsset(MultiRootConnector col, bool isReBuildMode = false)
         {
-            VariableGetter variableGetter = new VariableGetter(col, (name) => "Append [ " + name + " ]");
-            if (variableGetter.IsError)
-                return false;
+            using (VariableGetter variableGetter = new VariableGetter(col, (name) => "Append [ " + name + " ]"))
+            {
+                if (variableGetter.IsError)
+                    return false;
 
-            col.MakeFunction(
-               variableGetter.MakeName,
-               HelpText,
-               CbST.CbCreateTF(col.SelectedVariableType[0]),   // 返し値の型
-               new List<ICbValue>()   // 引数
-               {
-                   CbST.CbCreate(col.SelectedVariableType[0].GenericTypeArguments[0], "n")
-               },
-               new Func<List<ICbValue>, DummyArgumentsStack, ICbValue>(
-                   (argument, cagt) =>
-                   {
-                       try
-                       {
-                           ICbList cbVSValue = col.OwnerCommandCanvas.ScriptWorkStack.Find(variableGetter.Id).GetListValue;
-                           cbVSValue.Append(argument[0]);
+                col.MakeFunction(
+                    variableGetter.MakeName,
+                    HelpText,
+                    CbST.CbCreateTF(col.SelectedVariableType[0]),   // 返し値の型
+                    new List<ICbValue>()   // 引数
+                    {
+                        CbST.CbCreate(col.SelectedVariableType[0].GenericTypeArguments[0], "n")
+                    },
+                    new Func<List<ICbValue>, DummyArgumentsStack, ICbValue>(
+                        (argument, cagt) =>
+                        {
+                            try
+                            {
+                                ICbList cbVSValue = col.OwnerCommandCanvas.ScriptWorkStack.Find(variableGetter.Id).GetListValue;
+                                cbVSValue.Append(argument[0]);
 
-                           col.OwnerCommandCanvas.ScriptWorkStack.UpdateValueData(variableGetter.Id);
-                           col.LinkConnectorControl.UpdateValueData();
-                           return cbVSValue;
-                       }
-                       catch (Exception ex)
-                       {
-                           var ret = CbST.CbCreate(col.SelectedVariableType[0]);    // 返し値
-                           col.ExceptionFunc(ret, ex);
-                           return ret;
-                       }
-                   }
-                   )
-               );
-
-            return true;
+                                col.OwnerCommandCanvas.ScriptWorkStack.UpdateValueData(variableGetter.Id);
+                                col.LinkConnectorControl.UpdateValueData();
+                                return cbVSValue;
+                            }
+                            catch (Exception ex)
+                            {
+                                var ret = CbST.CbCreate(col.SelectedVariableType[0]);    // 返し値
+                                col.ExceptionFunc(ret, ex);
+                                return ret;
+                            }
+                        }
+                        )
+                    );
+                return true;
+            }
         }
     }
 

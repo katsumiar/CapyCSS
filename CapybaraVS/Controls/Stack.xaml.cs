@@ -264,7 +264,7 @@ namespace CapybaraVS.Controls
                         ReadAction = null;
 
                         // 以下、固有定義開放
-                        StackList?.GetEnumerator().Dispose();
+                        CbSTUtils.ForeachDispose(StackList);
                         StackList = null;
                     }
                     disposedValue = true;
@@ -538,10 +538,13 @@ namespace CapybaraVS.Controls
 
         public void Clear()
         {
-            StackData?.GetEnumerator().Dispose();
-            StackData?.Clear();
-            linkList?.GetEnumerator().Dispose();
-            linkList?.Clear();
+            CbSTUtils.ForeachDispose(StackData);
+            CbSTUtils.ForeachDispose(linkList);
+            foreach (var node in linkList)
+            {
+                CbSTUtils.ForeachDispose(node.Value);
+            }
+            linkList.Clear();
         }
 
         protected virtual void Dispose(bool disposing)

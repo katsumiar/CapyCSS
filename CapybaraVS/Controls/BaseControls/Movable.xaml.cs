@@ -1,4 +1,5 @@
-﻿using CapyCSS.Controls.BaseControls;
+﻿using CapybaraVS.Script;
+using CapyCSS.Controls.BaseControls;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -271,6 +272,10 @@ namespace CapybaraVS.Controls.BaseControls
                 }
                 MainGrid.Children.Add(myElement = element);
             }
+            else
+            {
+                Debug.Assert(false);
+            }
         }
 
         #region IDisposable Support
@@ -282,11 +287,17 @@ namespace CapybaraVS.Controls.BaseControls
             {
                 if (disposing)
                 {
-                    if (myElement is IDisposable obj)
-                        obj.Dispose();
-                    myElement = null;
+                    foreach (var node in MainGrid.Children)
+                    {
+                        if (node is IDisposable disposable)
+                        {
+                            disposable.Dispose();
+                        }
+                    }
+                    MainGrid.Children.Clear();
                     AssetXML?.Dispose();
                     AssetXML = null;
+                    myElement = null;
                     _OwnerCommandCanvas = null;
                 }
                 disposedValue = true;

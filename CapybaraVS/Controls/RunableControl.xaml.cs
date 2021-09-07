@@ -282,6 +282,7 @@ namespace CapybaraVS.Controls
                     SetGrid.Children.Clear();
                     AssetXML?.Dispose();
                     AssetXML = null;
+                    CaptionLabel.Dispose();
                     _OwnerCommandCanvas = null;
                     runCommand = null;
                 }

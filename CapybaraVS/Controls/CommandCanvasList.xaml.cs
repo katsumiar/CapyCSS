@@ -839,8 +839,7 @@ namespace CapyCSS.Controls
 
         public void Dispose()
         {
-            CanvasData?.GetEnumerator().Dispose();
-            CanvasData?.Clear();
+            CbSTUtils.ForeachDispose(CanvasData);
             CanvasData = null;
             CapybaraVS.Language.Instance.Dispose();
             ToolExec.KillProcess();

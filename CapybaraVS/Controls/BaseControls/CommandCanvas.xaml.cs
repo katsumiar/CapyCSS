@@ -224,7 +224,7 @@ namespace CapybaraVS.Controls.BaseControls
                         ImportNuGetModule = null;
                         WorkStack?.Dispose();
                         WorkStack = null;
-                        WorkCanvasAssetList?.GetEnumerator().Dispose();
+                        CbSTUtils.ForeachDispose(WorkCanvasAssetList);
                         WorkCanvasAssetList = null;
                     }
                     disposedValue = true;
