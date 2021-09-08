@@ -765,6 +765,7 @@ namespace CapybaraVS.Script
                 // メニュー用の名前を作成
                 string menuName = methodInfo.Name;
                 string className;
+                string addState = "";
                 if (classType.IsGenericType)
                 {
                     className = CbSTUtils.GetGenericTypeName(classType);
@@ -785,7 +786,7 @@ namespace CapybaraVS.Script
 
                     if (methodInfo.IsConstructor)
                     {
-                        menuName = className + ".(new)." + className;
+                        menuName = className + CbSTUtils.MENU_CONSTRUCTOR + className;
                     }
                     else
                     {
@@ -799,19 +800,19 @@ namespace CapybaraVS.Script
                         menuName += genericArgs;
                         if (methodInfo.IsStatic)
                         {
-                            menuName = "[s] " + menuName;
+                            addState = CbSTUtils.MENU_STATIC;
                         }
                         if (methodInfo.IsVirtual)
                         {
-                            menuName = "[v] " + menuName;
+                            addState = CbSTUtils.MENU_VIRTUAL;
                         }
                         switch (group)
                         {
                             case "get.":
-                                menuName = className + ".(getter)." + menuName;
+                                menuName = className + CbSTUtils.MENU_GETTER + menuName;
                                 break;
                             case "set.":
-                                menuName = className + ".(setter)." + menuName;
+                                menuName = className + CbSTUtils.MENU_SETTER + menuName;
                                 break;
                             default:
                                 {
@@ -881,6 +882,8 @@ namespace CapybaraVS.Script
                 }
 
                 string helpCode = $"{classType.Namespace}:{className}." + nodeName.Replace(" ", "_");
+                menuName = menuName + " " + addState;
+                helpCode = helpCode + " " + addState;
 
                 // スクリプトノード用のヒント
                 string nodeHint = null;

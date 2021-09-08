@@ -62,6 +62,13 @@ namespace CapybaraVS.Script
         public const string DELEGATE_STR = "[delegate]";    // dlegateの表現
         public const string UI_NULL_STR = "<null>";         // UI上のnullの表現
 
+        public const string MENU_STATIC = "[static]";       // コマンドメニュー上での静的表現
+        public const string MENU_VIRTUAL = "[override]";    // コマンドメニュー上でのオーバーライド表現
+
+        public const string MENU_GETTER = ".(getter).";     // コマンドメニュー上でのゲッターグループ表現
+        public const string MENU_SETTER = ".(setter).";     // コマンドメニュー上でのセッターグループ表現
+        public const string MENU_CONSTRUCTOR = ".(new).";   // コマンドメニュー上でのコンストラクタグループ表現
+
         /// <summary>
         /// ユーザーによる型作成時に組み込み型選択肢に出てくる型情報です。
         /// </summary>

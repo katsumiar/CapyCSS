@@ -616,10 +616,8 @@ namespace CapybaraVS.Controls.BaseControls
         {
             ObservableCollection<TreeMenuNode> treeView = viewer.TreeView.ItemsSource as ObservableCollection<TreeMenuNode>;
 
-            void _SetAll(TreeViewCommand viewer, CancellationToken token, TreeMenuNode node, string frontCut = null)
+            void _SetAll(Collection<TreeMenuNode> treeView, CancellationToken token, TreeMenuNode node, string frontCut = null)
             {
-                ObservableCollection<TreeMenuNode> treeView = viewer.TreeView.ItemsSource as ObservableCollection<TreeMenuNode>;
-
                 if (token.IsCancellationRequested)
                 {
                     return;
@@ -635,14 +633,53 @@ namespace CapybaraVS.Controls.BaseControls
                     }
                     title = CbSTUtils.StartStrip(title, ApiImporter.MENU_TITLE_DOT_NET_STANDERD_FULL_PATH);
                     title = CbSTUtils.StartStrip(title, ApiImporter.MENU_TITLE_DOT_NET_FUNCTION_FULL_PATH);
+                    string menuTitle = null;
+                    if (frontCut != null)
+                    {
+                        // 子メニューを用意する
+
+                        menuTitle = frontCut.Substring(0, frontCut.Length - 1);
+                        menuTitle = menuTitle.Substring(menuTitle.LastIndexOf('.') + 1);
+                    }
                     viewer.Dispatcher.Invoke(() =>
                     {
                         if (treeView.Count < FilteringMax)
                         {
-                            treeView.Add(new TreeMenuNode(title, node.HintText, OwnerCommandCanvas.CreateImmediateExecutionCanvasCommand(() =>
+                            var addNode = new TreeMenuNode(title, node.HintText, OwnerCommandCanvas.CreateImmediateExecutionCanvasCommand(() =>
                             {
                                 ExecuteFindCommand(node.Path);
-                            })));
+                            }));
+
+                            TreeMenuNode menuNode = null;
+                            if (menuTitle != null)
+                            {
+                                // 子メニューの中に追加する
+
+                                bool existMenu = false;
+                                foreach (var node in treeView)
+                                {
+                                    if (node.Name == menuTitle)
+                                    {
+                                        // 既存の子メニューが存在した
+
+                                        existMenu = true;
+                                        menuNode = node;
+                                        break;
+                                    }
+                                }
+                                if (!existMenu)
+                                {
+                                    // 新規の子メニューを追加
+
+                                    menuNode = new TreeMenuNode(menuTitle);
+                                    treeView.Add(menuNode);
+                                }
+                                menuNode.Child.Add(addNode);
+                            }
+                            else
+                            {
+                                treeView.Add(addNode);
+                            }
                         }
                     });
                     Thread.Sleep(FilteringWaitSleep);
@@ -654,13 +691,13 @@ namespace CapybaraVS.Controls.BaseControls
 
                 foreach (var child in node.Child)
                 {
-                    _SetAll(viewer, token, child, frontCut);
+                    _SetAll(treeView, token, child, frontCut);
                 }
             }
 
             foreach (var child in node.Child)
             {
-                _SetAll(viewer, token, child, frontCut);
+                _SetAll(treeView, token, child, frontCut);
             }
         }
 
