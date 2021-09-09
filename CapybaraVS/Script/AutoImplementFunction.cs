@@ -32,7 +32,8 @@ namespace CapybaraVS.Script
                 ArgumentTypeList = info.argumentTypeList,
                 DllModule = info.dllModule,
                 IsConstructor = info.isConstructor,
-                typeRequests = info.typeRequests
+                typeRequests = info.typeRequests,
+                GenericMethodParameters = info.genericMethodParameters,
             };
             return ret;
         }
@@ -87,6 +88,12 @@ namespace CapybaraVS.Script
         /// コンストラクターか？
         /// </summary>
         public bool IsConstructor = false;
+
+        /// <summary>
+        /// ジェネリックメソッドのパラメータ
+        /// ※ジェネリックメソッドでないなら null
+        /// </summary>
+        public Type[] GenericMethodParameters = null;
 
         /// <summary>
         /// メソッド呼び出し処理を実装する
@@ -246,7 +253,7 @@ namespace CapybaraVS.Script
             {
                 replaceArgumentType = MakeRequestGenericType(col, replaceArgumentType);
             }
-            else if (replaceArgumentType.IsGenericTypeParameter)
+            else if (replaceArgumentType.IsGenericParameter)
             {
                 replaceArgumentType = GetRequestType(col, replaceArgumentType.Name);
             }
@@ -329,6 +336,7 @@ namespace CapybaraVS.Script
                     );
 
                 object result = CallMethod(
+                    col,
                     classType,
                     callArguments,
                     isClassInstanceMethod, 
@@ -422,6 +430,7 @@ namespace CapybaraVS.Script
         /// <param name="methodArguments">メソッド呼び出し引数リスト</param>
         /// <returns>メソッドの返り値</returns>
         private object CallMethod(
+            MultiRootConnector col,
             Type classType,
             List<ICbValue> callArguments, 
             bool isClassInstanceMethod, 
@@ -458,17 +467,60 @@ namespace CapybaraVS.Script
                     ReturnArgumentsValue(callArguments, isClassInstanceMethod, args);
                 }
             }
+            else if (GenericMethodParameters != null)
+            {
+                // ジェネリックメソッド
+
+                List<Type> list = new List<Type>();
+                foreach (var atype in GenericMethodParameters)
+                {
+                    list.Add(GetRequestType(col, atype.Name));
+                }
+                if (methodArguments is null)
+                {
+                    // 引数のないメソッドを型で補完して呼ぶ
+
+                    result = classType
+                        .GetMethod(FuncCode)
+                        .MakeGenericMethod(list.ToArray())
+                        .Invoke(classType, new object[] { });
+                }
+                else
+                {
+                    // 引数ありのメソッド
+
+                    object[] args = methodArguments.ToArray();
+
+                    // 引数の型リストを作成
+                    List<Type> argTypes = new List<Type>();
+                    foreach (var cbArg in callArguments)
+                    {
+                        argTypes.Add(cbArg.OriginalType);
+                    }
+
+                    if (classType.GetMethod(FuncCode, argTypes.ToArray()) != null)
+                    {
+                        // 同じ型のメソッドが既に定義されているのでそちらを呼ぶ
+
+                        result = CallMethodWithArguments(classType, classInstance, args);
+                    }
+                    else
+                    {
+                        // ジェネリックメソッドを型で補完して呼ぶ
+
+                        result = classType
+                            .GetMethod(FuncCode)
+                            .MakeGenericMethod(list.ToArray())
+                            .Invoke(classType, args);
+                    }
+                    ReturnArgumentsValue(callArguments, isClassInstanceMethod, args);
+                }
+            }
             else if (methodArguments is null)
             {
                 // 引数のないメソッド
 
-                result = classType.InvokeMember(
-                                FuncCode,
-                                BindingFlags.InvokeMethod,
-                                null,
-                                classInstance,
-                                new object[] { }
-                                );
+                result = CallMethod(classType, classInstance);
             }
             else
             {
@@ -476,16 +528,10 @@ namespace CapybaraVS.Script
 
                 object[] args = methodArguments.ToArray();
 
-                result = classType.InvokeMember(
-                                FuncCode,
-                                BindingFlags.InvokeMethod,
-                                null,
-                                classInstance,
-                                args
-                                );
-
+                result = CallMethodWithArguments(classType, classInstance, args);
                 ReturnArgumentsValue(callArguments, isClassInstanceMethod, args);
             }
+
             if (isClassInstanceMethod)
             {
                 var scrArg = callArguments[0];
@@ -507,6 +553,43 @@ namespace CapybaraVS.Script
             }
 
             return result;
+        }
+
+        /// <summary>
+        /// 引数有りでメソッドを呼びます。
+        /// </summary>
+        /// <param name="classType">所属するクラスの型</param>
+        /// <param name="classInstance">クラスインスタンス</param>
+        /// <param name="args">引数リスト</param>
+        /// <returns>呼び出した引数の返し値</returns>
+        private object CallMethodWithArguments(Type classType, object classInstance, object[] args)
+        {
+            return classType.InvokeMember(
+                            FuncCode,
+                            BindingFlags.InvokeMethod,
+                            null,
+                            classInstance,
+                            args,
+                            Language.Culture
+                            );
+        }
+
+        /// <summary>
+        /// 引数無しでメソッドを呼びます。
+        /// </summary>
+        /// <param name="classType">所属するクラスの型</param>
+        /// <param name="classInstance">クラスインスタンス</param>
+        /// <returns>呼び出した引数の返し値</returns>
+        private object CallMethod(Type classType, object classInstance)
+        {
+            return classType.InvokeMember(
+                            FuncCode,
+                            BindingFlags.InvokeMethod,
+                            null,
+                            classInstance,
+                            new object[] { },
+                            Language.Culture
+                            );
         }
 
         /// <summary>

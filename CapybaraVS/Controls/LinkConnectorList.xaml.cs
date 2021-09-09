@@ -286,7 +286,7 @@ namespace CapybaraVS.Controls
                 return null;
             }
 
-            var linkConnector = new LinkConnector()
+            var linkConnector = new LinkConnector(this)
             {
                 OwnerCommandCanvas = this.OwnerCommandCanvas,
                 ValueData = variable,

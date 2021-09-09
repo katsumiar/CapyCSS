@@ -23,62 +23,6 @@
     <StackList />
   </WorkStack>
   <WorkCanvasAssetList>
-    <Asset Id="3" X="887" Y="139.04">
-      <MultiRootConnector>
-        <DataVersion>1</DataVersion>
-        <RootFunc AssetType="FuncType" AssetFuncType="ForeachIEnumerable">
-          <AttachVariableIds />
-          <AttachVariableId>0</AttachVariableId>
-          <AssetValueTypes>
-            <string>System.String</string>
-          </AssetValueTypes>
-          <RootConnector PointId="368">
-            <Caption>
-              <LabelString>Foreach Action&lt;string&gt;.Invoke</LabelString>
-            </Caption>
-            <Value>void</Value>
-            <ForcedChecked>false</ForcedChecked>
-            <Connector>
-              <LinkList>
-                <PointID>394</PointID>
-              </LinkList>
-            </Connector>
-            <Arguments>
-              <LinkConnector PointId="369">
-                <CastConnect>false</CastConnect>
-                <ParamInfo>
-                  <ParamName>sample</ParamName>
-                  <ParamNameLabelOverlap>sample</ParamNameLabelOverlap>
-                  <ParamNameLabel>
-                    <LabelString>sample</LabelString>
-                  </ParamNameLabel>
-                </ParamInfo>
-                <LinkConnectorList>
-                  <List />
-                  <IsOpenList>false</IsOpenList>
-                </LinkConnectorList>
-              </LinkConnector>
-              <LinkConnector PointId="370">
-                <Value>[Action&lt;string&gt;()]&lt;null&gt;</Value>
-                <CastConnect>false</CastConnect>
-                <ParamInfo>
-                  <ParamName>func f(node)</ParamName>
-                  <ParamNameLabelOverlap>func f(node)</ParamNameLabelOverlap>
-                  <ParamNameLabel>
-                    <LabelString>func f(node)</LabelString>
-                  </ParamNameLabel>
-                </ParamInfo>
-                <LinkConnectorList>
-                  <List />
-                  <IsOpenList>true</IsOpenList>
-                </LinkConnectorList>
-              </LinkConnector>
-            </Arguments>
-            <IsPublicExecute>false</IsPublicExecute>
-          </RootConnector>
-        </RootFunc>
-      </MultiRootConnector>
-    </Asset>
     <Asset Id="4" X="599.0529608138045" Y="70.98687513606966">
       <MultiRootConnector>
         <DataVersion>1</DataVersion>
@@ -88,18 +32,18 @@
           <AssetValueTypes>
             <string>System.Collections.Generic.List`1[[System.String, System.Private.CoreLib, Version=5.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]</string>
           </AssetValueTypes>
-          <RootConnector PointId="373">
+          <RootConnector PointId="290">
             <Caption>
               <LabelString>List&lt;string&gt;</LabelString>
             </Caption>
             <ForcedChecked>false</ForcedChecked>
             <Connector>
               <LinkList>
-                <PointID>369</PointID>
+                <PointID>313</PointID>
               </LinkList>
             </Connector>
             <Arguments>
-              <LinkConnector PointId="374">
+              <LinkConnector PointId="291">
                 <CastConnect>false</CastConnect>
                 <ParamInfo>
                   <ParamName> </ParamName>
@@ -110,7 +54,7 @@
                 </ParamInfo>
                 <LinkConnectorList>
                   <List>
-                    <LinkConnector PointId="376">
+                    <LinkConnector PointId="293">
                       <Value>Earth</Value>
                       <CastConnect>false</CastConnect>
                       <ParamInfo>
@@ -125,7 +69,7 @@
                         <IsOpenList>true</IsOpenList>
                       </LinkConnectorList>
                     </LinkConnector>
-                    <LinkConnector PointId="378">
+                    <LinkConnector PointId="295">
                       <Value>Mars</Value>
                       <CastConnect>false</CastConnect>
                       <ParamInfo>
@@ -140,7 +84,7 @@
                         <IsOpenList>true</IsOpenList>
                       </LinkConnectorList>
                     </LinkConnector>
-                    <LinkConnector PointId="380">
+                    <LinkConnector PointId="297">
                       <Value>Jupiter</Value>
                       <CastConnect>false</CastConnect>
                       <ParamInfo>
@@ -174,7 +118,7 @@
           <AssetValueTypes>
             <string>System.String</string>
           </AssetValueTypes>
-          <RootConnector PointId="383">
+          <RootConnector PointId="300">
             <Caption>
               <LabelString>DummyArguments&lt;string&gt;</LabelString>
             </Caption>
@@ -182,11 +126,11 @@
             <ForcedChecked>false</ForcedChecked>
             <Connector>
               <LinkList>
-                <PointID>388</PointID>
+                <PointID>305</PointID>
               </LinkList>
             </Connector>
             <Arguments>
-              <LinkConnector PointId="384">
+              <LinkConnector PointId="301">
                 <Value>INDEX.ARG_1</Value>
                 <CastConnect>false</CastConnect>
                 <ParamInfo>
@@ -216,7 +160,7 @@
           <AssetValueTypes>
             <string>System.String</string>
           </AssetValueTypes>
-          <RootConnector PointId="387">
+          <RootConnector PointId="304">
             <Caption>
               <LabelString>OutConsole</LabelString>
             </Caption>
@@ -224,11 +168,11 @@
             <ForcedChecked>false</ForcedChecked>
             <Connector>
               <LinkList>
-                <PointID>370</PointID>
+                <PointID>314</PointID>
               </LinkList>
             </Connector>
             <Arguments>
-              <LinkConnector PointId="388">
+              <LinkConnector PointId="305">
                 <Value />
                 <CastConnect>false</CastConnect>
                 <ParamInfo>
@@ -258,7 +202,7 @@
           <AssetValueTypes>
             <string>System.Collections.Generic.IEnumerable`1[[System.Object, System.Private.CoreLib, Version=5.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]</string>
           </AssetValueTypes>
-          <RootConnector PointId="391">
+          <RootConnector PointId="308">
             <Caption>
               <LabelString>Sequence</LabelString>
             </Caption>
@@ -268,7 +212,7 @@
               <LinkList />
             </Connector>
             <Arguments>
-              <LinkConnector PointId="392">
+              <LinkConnector PointId="309">
                 <CastConnect>false</CastConnect>
                 <ParamInfo>
                   <ParamName>call list</ParamName>
@@ -279,7 +223,7 @@
                 </ParamInfo>
                 <LinkConnectorList>
                   <List>
-                    <LinkConnector PointId="394">
+                    <LinkConnector PointId="311">
                       <Value>[object]&lt;null&gt;</Value>
                       <CastConnect>false</CastConnect>
                       <ParamInfo>
@@ -300,6 +244,62 @@
               </LinkConnector>
             </Arguments>
             <IsPublicExecute>true</IsPublicExecute>
+          </RootConnector>
+        </RootFunc>
+      </MultiRootConnector>
+    </Asset>
+    <Asset Id="1424" X="888.5894972191059" Y="132.65868191246597">
+      <MultiRootConnector>
+        <DataVersion>1</DataVersion>
+        <RootFunc AssetType="FuncType" AssetFuncType="Foreach">
+          <AttachVariableIds />
+          <AttachVariableId>0</AttachVariableId>
+          <AssetValueTypes>
+            <string>System.Collections.Generic.IEnumerable`1[[System.String, System.Private.CoreLib, Version=5.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]</string>
+          </AssetValueTypes>
+          <RootConnector PointId="312">
+            <Caption>
+              <LabelString>Foreach Action&lt;string&gt;.Invoke</LabelString>
+            </Caption>
+            <Value>void</Value>
+            <ForcedChecked>false</ForcedChecked>
+            <Connector>
+              <LinkList>
+                <PointID>311</PointID>
+              </LinkList>
+            </Connector>
+            <Arguments>
+              <LinkConnector PointId="313">
+                <CastConnect>false</CastConnect>
+                <ParamInfo>
+                  <ParamName>sample</ParamName>
+                  <ParamNameLabelOverlap>sample</ParamNameLabelOverlap>
+                  <ParamNameLabel>
+                    <LabelString>sample</LabelString>
+                  </ParamNameLabel>
+                </ParamInfo>
+                <LinkConnectorList>
+                  <List />
+                  <IsOpenList>false</IsOpenList>
+                </LinkConnectorList>
+              </LinkConnector>
+              <LinkConnector PointId="314">
+                <Value>[Action&lt;string&gt;()]&lt;null&gt;</Value>
+                <CastConnect>false</CastConnect>
+                <ParamInfo>
+                  <ParamName>func f(node)</ParamName>
+                  <ParamNameLabelOverlap>func f(node)</ParamNameLabelOverlap>
+                  <ParamNameLabel>
+                    <LabelString>func f(node)</LabelString>
+                  </ParamNameLabel>
+                </ParamInfo>
+                <LinkConnectorList>
+                  <List />
+                  <IsOpenList>true</IsOpenList>
+                </LinkConnectorList>
+              </LinkConnector>
+            </Arguments>
+            <IsPublicExecute>false</IsPublicExecute>
           </RootConnector>
         </RootFunc>
       </MultiRootConnector>

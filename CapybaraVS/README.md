@@ -34,7 +34,7 @@ CapyCSS.exe -ase script.cbs
 
 ## コンソール出力
 
-コンソールから起動した場合は、「Call File」や「ConsoleOut」系のノードからの出力は、コンソールにも出力されます。
+コンソールから起動した場合は、「Call File」や「OutConsole」系のノードからの出力は、コンソールにも出力されます。
 
 ## ノードのインポート
 本ツールでは、c# の多くのメソッドを簡単にノード化することができます。
@@ -132,7 +132,7 @@ Func<> および Action<> タイプの引数は、ノードを外部プロセス
 「Hello World!」と出力するサンプルです。<br>
 ![CapyCSS01](https://user-images.githubusercontent.com/63950487/97863495-6f7a3f00-1d4a-11eb-9ef4-0017be21d13e.png)
 <br>ホイールボタンをクリックするかスペースキーでコマンドウインドウが表示されます。
-その中からProgram→.Net Function→Input/Output→ConsoleOut→ConsoleOutをクリックします。
+その中からProgram→.Net Function→Input/Output→OutConsole→OutConsoleをクリックします。
 
 ![CapyCSS02](https://user-images.githubusercontent.com/63950487/97861283-d4cc3100-1d46-11eb-9aed-1bf981d57ad3.png)
 <br>作業エリアをクリックすると型選択ウインドウが表示されますので、その中からstringを選択します。

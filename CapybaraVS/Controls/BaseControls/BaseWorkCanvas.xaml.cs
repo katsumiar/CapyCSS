@@ -171,7 +171,7 @@ namespace CapybaraVS.Control.BaseControls
                     Point leftTopPoint = new Point(double.MaxValue, double.MaxValue);
                     foreach (var node in WorkCanvasAssetList)
                     {
-                        Movable movableAsset = new Movable();
+                        Movable movableAsset = new Movable(this);
                         self.Add(movableAsset);
                         movableAsset.OwnerCommandCanvas = self.OwnerCommandCanvas;
                         movableAsset.AssetXML = node;
@@ -884,7 +884,7 @@ namespace CapybaraVS.Control.BaseControls
                     // ObjectSetCommandがコントロールを返したのでCanvasにセットする
 
                     // ムーバブルコントロールに入れる
-                    Movable movable = new Movable();
+                    Movable movable = new Movable(this);
                     movable.OwnerCommandCanvas = OwnerCommandCanvas;
                     movable.SetControl(element);
 
@@ -1276,7 +1276,7 @@ namespace CapybaraVS.Control.BaseControls
 
         private void CreateTextAsset(Point pos, string contents)
         {
-            var obj = new MultiRootConnector();
+            var obj = new MultiRootConnector(this);
             obj.OwnerCommandCanvas = OwnerCommandCanvas;
             obj.AttachParam = new MultiRootConnector.AttachText(contents);
 
@@ -1285,7 +1285,7 @@ namespace CapybaraVS.Control.BaseControls
                 // ObjectSetCommandがコントロールを返したのでCanvasにセットする
 
                 // ムーバブルコントロールに入れる
-                Movable movable = new Movable();
+                Movable movable = new Movable(this);
                 movable.OwnerCommandCanvas = OwnerCommandCanvas;
                 movable.SetControl(element);
 

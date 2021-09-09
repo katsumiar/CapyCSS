@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
@@ -250,6 +251,13 @@ namespace CapybaraVS.Controls.BaseControls
 
         public LinkConnector()
         {
+            Debug.Assert(false);
+        }
+
+        private string debugCreateName = "";
+        public LinkConnector(object self, string _ext = "", [CallerMemberName] string callerMethodName = "")
+        {
+            CommandCanvas.SetDebugCreateList(ref debugCreateName, this, self, callerMethodName, _ext);
             InitializeComponent();
             ConnectorList.OwnerLinkConnector = this;
             pointIdProvider = new PointIdProvider(this);
@@ -828,6 +836,8 @@ namespace CapybaraVS.Controls.BaseControls
 
                     ParamTextBox.ValueData?.Dispose();
                     ParamTextBox.Dispose();
+
+                    CommandCanvas.RemoveDebugCreateList(debugCreateName);
                 }
                 disposedValue = true;
             }

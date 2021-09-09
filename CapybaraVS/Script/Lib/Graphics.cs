@@ -8,6 +8,7 @@ namespace CbVS.Script.Lib
 {
     public class Graphics
     {
+        private const string LIB_NAME = "Graphics";
         public enum BrushColors
         {
             None,
@@ -154,13 +155,13 @@ namespace CbVS.Script.Lib
             Transparent
         }
 
-        [ScriptMethod("Graphics" + "." + nameof(CreateBrushColors))]
+        [ScriptMethod(LIB_NAME)]
         public static BrushColors CreateBrushColors(BrushColors colors)
         {
             return colors;
         }
 
-        [ScriptMethod("Graphics" + "." + nameof(CreateBrushes))]
+        [ScriptMethod(LIB_NAME)]
         public static SolidColorBrush CreateBrushes(BrushColors colors)
         {
             switch (colors)

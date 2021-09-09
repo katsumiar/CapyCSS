@@ -18,7 +18,7 @@ namespace CapybaraVS.Script
         public const string FUNC_STR = "Func";
         public const string ACTION_STR = "Action";
         public const string LITERAL_LIST_STR = "List";
-        public const string LIST_STR = "ICollection";
+        public const string LIST_STR = "IEnumerable";
         public const string CLASS_STR = "Class";
         public const string ENUM_STR = "Enum";
         public const string STRUCT_STR = "Struct";

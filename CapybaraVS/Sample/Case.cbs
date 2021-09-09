@@ -28,7 +28,7 @@
     <Asset Id="38" X="163.1181699738641" Y="413.3041837882182">
       <MultiRootConnector>
         <DataVersion>1</DataVersion>
-        <RootFunc AssetType="FuncType" AssetFuncType="ConsoleOut">
+        <RootFunc AssetType="FuncType" AssetFuncType="OutConsole">
           <AttachVariableIds />
           <AttachVariableId>0</AttachVariableId>
           <AssetValueTypes>
@@ -36,7 +36,7 @@
           </AssetValueTypes>
           <RootConnector PointId="75">
             <Caption>
-              <LabelString>ConsoleOut</LabelString>
+              <LabelString>OutConsole</LabelString>
             </Caption>
             <Value>PlatformID.Win32Windows</Value>
             <ForcedChecked>false</ForcedChecked>
@@ -70,7 +70,7 @@
     <Asset Id="38" X="199.25334397356994" Y="576.1149361106636">
       <MultiRootConnector>
         <DataVersion>1</DataVersion>
-        <RootFunc AssetType="FuncType" AssetFuncType="ConsoleOut">
+        <RootFunc AssetType="FuncType" AssetFuncType="OutConsole">
           <AttachVariableIds />
           <AttachVariableId>0</AttachVariableId>
           <AssetValueTypes>
@@ -78,7 +78,7 @@
           </AssetValueTypes>
           <RootConnector PointId="79">
             <Caption>
-              <LabelString>ConsoleOut</LabelString>
+              <LabelString>OutConsole</LabelString>
             </Caption>
             <Value>PlatformID.Unix</Value>
             <ForcedChecked>false</ForcedChecked>
@@ -112,7 +112,7 @@
     <Asset Id="38" X="210.94426423221358" Y="740.7513749154477">
       <MultiRootConnector>
         <DataVersion>1</DataVersion>
-        <RootFunc AssetType="FuncType" AssetFuncType="ConsoleOut">
+        <RootFunc AssetType="FuncType" AssetFuncType="OutConsole">
           <AttachVariableIds />
           <AttachVariableId>0</AttachVariableId>
           <AssetValueTypes>
@@ -120,7 +120,7 @@
           </AssetValueTypes>
           <RootConnector PointId="83">
             <Caption>
-              <LabelString>ConsoleOut</LabelString>
+              <LabelString>OutConsole</LabelString>
             </Caption>
             <Value>default</Value>
             <ForcedChecked>false</ForcedChecked>
@@ -208,15 +208,15 @@
         <Text>switch (target)
 {
     case PlatformID.Win32Windows:
-        ConsoleOut(PlatformID.Win32Windows);
+        OutConsole(PlatformID.Win32Windows);
         break;
     case PlatformID.Unix:
-        ConsoleOut(PlatformID.Unix);
+        OutConsole(PlatformID.Unix);
         break;
     case PlatformID.XBox:
         break;
     default:
-        ConsoleOut("default");
+        OutConsole("default");
         break;
 }</Text>
         <Witdh>1038.6373153592015</Witdh>

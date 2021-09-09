@@ -100,7 +100,7 @@ namespace CapybaraVS
             App.Instance.SaveAppInfo();
         }
 
-        [ScriptMethod(nameof(SetExitCode))]
+        [ScriptMethod]
         public static void SetExitCode(int code)
         {
             Environment.Exit(code);

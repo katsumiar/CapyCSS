@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -339,8 +340,10 @@ namespace CapybaraVS.Controls.BaseControls
             }
         }
 
+        private string debugCreateName = "";
         public RootConnector()
         {
+            CommandCanvas.SetDebugCreateList(ref debugCreateName, this);
             InitializeComponent();
             pointIdProvider = new PointIdProvider(this);
             AssetXML = new _AssetXML<RootConnector>(this);
@@ -677,16 +680,21 @@ namespace CapybaraVS.Controls.BaseControls
         public void AppendArgument(ICbValue variable, bool literalType = false)
         {
             // 引数とリンクしたリンクコネクターを作成する
-            var linkConnector = new LinkConnector()
+
+            LinkConnector makeLinkConnector(int index)
             {
-                OwnerCommandCanvas = this.OwnerCommandCanvas,
-                ValueData = variable
-            };
+                return new LinkConnector(this, index.ToString())
+                {
+                    OwnerCommandCanvas = this.OwnerCommandCanvas,
+                    ValueData = variable
+                };
+            }
+
             if (variable.IsList)
             {
                 // リスト型の引数を追加する
 
-                AppendListArgument(linkConnector, variable, literalType);
+                AppendListArgument(makeLinkConnector(0), variable, literalType);
             }
             else
             {
@@ -698,7 +706,7 @@ namespace CapybaraVS.Controls.BaseControls
                 }
 
                 // 引数UIを追加する
-                AppendUIArgument(linkConnector);
+                AppendUIArgument(makeLinkConnector(1));
             }
         }
 
@@ -1240,6 +1248,8 @@ namespace CapybaraVS.Controls.BaseControls
                     ValueData = null;
                     NameText.Dispose();
                     FuncCaption.Dispose();
+
+                    CommandCanvas.RemoveDebugCreateList(debugCreateName);
                 }
                 disposedValue = true;
             }

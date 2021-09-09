@@ -380,7 +380,12 @@ namespace CapybaraVS.Script
                 if (!type.IsPublic)
                     return null;
 
-                return CbGeneMethArg.NTF(name, type, type.GetGenericArguments());
+                if (CbFunc.IsActionType(type) ||
+                    CbFunc.IsFuncType(type))
+                {
+                    return CbGeneMethArg.NTF(name, type, type.GetGenericArguments(), true);
+                }
+                return CbGeneMethArg.NTF(name, type, type.GetGenericArguments(), false);
             }
 
             if (type.IsGenericType)
@@ -703,14 +708,16 @@ namespace CapybaraVS.Script
     {
         public Type ArgumentType = null;
         public Type[] GeneArgTypes = null;
+        public bool IsEvent = false;
         public string DataString => "(GMA)";
         public static Func<ICbValue> TF = () => CbClass<CbGeneMethArg>.Create();
-        public static Func<string, Type, Type[], ICbValue> NTF = (name, argType, geneArgTypes) =>
+        public static Func<string, Type, Type[], bool, ICbValue> NTF = (name, argType, geneArgTypes, isEvent) =>
         {
             var ret = CbClass<CbGeneMethArg>.Create(name);
             ret.Value = new CbGeneMethArg();
             ret.Value.ArgumentType = argType;
             ret.Value.GeneArgTypes = geneArgTypes;
+            ret.Value.IsEvent = isEvent;
             return ret;
         };
         public static Type T => typeof(CbClass<CbGeneMethArg>);

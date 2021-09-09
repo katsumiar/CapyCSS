@@ -1,4 +1,4 @@
-﻿//#define DEBUG_IMPORT    // インポート機能のデバッグモード
+﻿#define DEBUG_IMPORT    // インポート機能のデバッグモード
 
 using CapybaraVS.Controls.BaseControls;
 using CapyCSS.Controls;
@@ -24,14 +24,18 @@ namespace CapybaraVS.Script
     [AttributeUsage(AttributeTargets.Method, AllowMultiple = true, Inherited = false)]
     public class ScriptMethodAttribute : Attribute
     {
-        private string menuName;    // メニュー用のメソッド名
-        private string funcName;    // ノード用のメソッド名
-        public string MenuName => menuName;
-        public string FuncName => funcName;
-        public ScriptMethodAttribute(string menuName = "", string funcName = "")
+        private string path;        // メニュー用のパス
+        private string methodName;    // メソッド名
+        public string Path => path;
+        public string MethodName => methodName;
+        public ScriptMethodAttribute(string path = "", string methodName = null)
         {
-            this.menuName = menuName;
-            this.funcName = funcName;
+            if (path != "" && !path.EndsWith("."))
+            {
+                path += ".";
+            }
+            this.path = path;
+            this.methodName = methodName;
         }
     }
 
@@ -762,10 +766,11 @@ namespace CapybaraVS.Script
 
                 string nodeCode = methodInfo.ReflectedType.Namespace + "." + methodInfo.ReflectedType.Name + "." + methodInfo.Name + addArg;
 
-                // メニュー用の名前を作成
-                string menuName = methodInfo.Name;
-                string className;
                 string addState = "";
+
+                //----------------------------------
+                // クラス名を作成
+                string className;
                 if (classType.IsGenericType)
                 {
                     className = CbSTUtils.GetGenericTypeName(classType);
@@ -774,11 +779,45 @@ namespace CapybaraVS.Script
                 {
                     className = classType.Name;
                 }
-                if (methodAttr != null && methodAttr.MenuName != "")
+
+                //----------------------------------
+                // メソッド名を作成
+                string nodeName;
+                if (methodAttr != null)
+                {
+                    // メソッド属性情報を持っている
+
+                    if (methodAttr.MethodName != null)
+                    {
+                        // 指定の名前を採用する
+
+                        nodeName = methodAttr.MethodName;
+                    }
+                    else
+                    {
+                        nodeName = methodInfo.Name;
+                    }
+                }
+                else
+                {
+                    if (methodInfo.IsConstructor)
+                    {
+                        nodeName = "new " + className;
+                    }
+                    else
+                    {
+                        nodeName = methodInfo.Name;
+                    }
+                }
+
+                //----------------------------------
+                // メニュー項目名を作成
+                string menuName = methodInfo.Name;
+                if (methodAttr != null)
                 {
                     // 指定の名前を採用する
 
-                    menuName = methodAttr.MenuName;
+                    menuName = methodAttr.Path + nodeName;
                 }
                 else if (methodAttr is null)
                 {
@@ -843,9 +882,6 @@ namespace CapybaraVS.Script
                     }
                 }
 
-                // ノード用の名前を作成
-                string nodeName = MakeScriptNodeName(menuName);
-
                 // 引数情報を追加する
                 menuName += MakeParamsString(methodInfo);
 
@@ -861,24 +897,6 @@ namespace CapybaraVS.Script
                         menuName += " : " + CbSTUtils.GetGenericTypeName((type.Data as CbGeneMethArg).ArgumentType);
                     else
                         menuName += " : " + type.TypeName;
-                }
-
-                if (methodAttr != null && methodAttr.FuncName != "")
-                {
-                    // 指定の名前を採用する
-
-                    nodeName = methodAttr.FuncName;
-                }
-                else if (methodAttr is null)
-                {
-                    if (methodInfo.IsConstructor)
-                    {
-                        nodeName = "new " + className;
-                    }
-                    else
-                    {
-                        nodeName = methodInfo.Name;
-                    }
                 }
 
                 string helpCode = $"{classType.Namespace}:{className}." + nodeName.Replace(" ", "_");
@@ -906,6 +924,11 @@ namespace CapybaraVS.Script
                 if (hint is null)
                     hint = "";
 
+                if (nodeName.EndsWith("Join"))
+                {
+
+                }
+
                 // ノード化依頼用の情報をセット
                 AutoImplementFunctionInfo autoImplementFunctionInfo = new AutoImplementFunctionInfo()
                 {
@@ -920,6 +943,7 @@ namespace CapybaraVS.Script
                     dllModule = module,
                     isConstructor = methodInfo.IsConstructor,
                     typeRequests = genericTypeRequests,
+                    genericMethodParameters = (methodInfo.IsGenericMethod) ? methodInfo.GetGenericArguments() : null,
                 };
 
                 return autoImplementFunctionInfo;

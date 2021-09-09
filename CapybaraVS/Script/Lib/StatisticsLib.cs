@@ -6,7 +6,9 @@ namespace CapybaraVS.Script.Lib
 {
     public class StatisticsLib
     {
-        [ScriptMethod("Statistics" + "." + "Normalize width of value")]
+        private const string LIB_NAME = "Statistics";
+
+        [ScriptMethod(LIB_NAME)]
         public static ICollection<double> NormalizeWidthOfValue(IEnumerable<double> sample)
         {
             double maxValue = double.MinValue;
@@ -37,7 +39,7 @@ namespace CapybaraVS.Script.Lib
         }
 
         //------------------------------------------------------------------
-        [ScriptMethod("Statistics" + "." + "Normalize abs width of value")]
+        [ScriptMethod(LIB_NAME)]
         public static ICollection<double> NormalizeAbsWidthOfValue(IEnumerable<double> sample)
         {
             double maxValue = double.MinValue;
@@ -57,7 +59,7 @@ namespace CapybaraVS.Script.Lib
         }
 
         //------------------------------------------------------------------
-        [ScriptMethod("Statistics" + ".Max." + "Max in List<int>")]
+        [ScriptMethod(LIB_NAME + ".Max")]
         public static int Max(IEnumerable<int> sample)
         {
             int maxValue = int.MinValue;
@@ -69,7 +71,7 @@ namespace CapybaraVS.Script.Lib
         }
 
         //------------------------------------------------------------------
-        [ScriptMethod("Statistics" + ".Max." + "Max in List<double>")]
+        [ScriptMethod(LIB_NAME + ".Max")]
         public static double Max(IEnumerable<double> sample)
         {
             double maxValue = double.MinValue;
@@ -81,7 +83,7 @@ namespace CapybaraVS.Script.Lib
         }
 
         //------------------------------------------------------------------
-        [ScriptMethod("Statistics" + ".Min." + "Min in List<int>")]
+        [ScriptMethod(LIB_NAME + ".Min")]
         public static int Min(IEnumerable<int> sample)
         {
             int minValue = int.MaxValue;
@@ -93,7 +95,7 @@ namespace CapybaraVS.Script.Lib
         }
 
         //------------------------------------------------------------------
-        [ScriptMethod("Statistics" + ".Min." + "Min in List<double>")]
+        [ScriptMethod(LIB_NAME + ".Min")]
         public static double Min(IEnumerable<double> sample)
         {
             double minValue = double.MaxValue;
@@ -105,7 +107,7 @@ namespace CapybaraVS.Script.Lib
         }
 
         //------------------------------------------------------------------
-        [ScriptMethod("Statistics" + "." + "Width of values in list")]
+        [ScriptMethod(LIB_NAME)]
         public static double WidthOfValue(IEnumerable<double> sample)
         {
             double maxValue = double.MinValue;
@@ -119,7 +121,7 @@ namespace CapybaraVS.Script.Lib
         }
 
         //------------------------------------------------------------------
-        [ScriptMethod("Statistics" + "." + "Squared Difference")]
+        [ScriptMethod(LIB_NAME)]
         public static double SquaredDifference(double n1, double n2)
         {
             return Math.Pow(Math.Abs(n1 - n2), 2);

@@ -366,10 +366,23 @@ namespace CbVS.Script
         {
             if (arguments is null)
                 return false;
+
             foreach (var node in arguments)
             {
-                if (node.CreateArgument() is ICbEvent)
+                var arg = node.CreateArgument();
+                if (arg is ICbEvent)
+                {
                     return true;
+                }
+
+                if (arg.MyType == typeof(CbClass<CbGeneMethArg>))
+                {
+                    var gma = (CbGeneMethArg)arg.Data;
+                    if (gma.IsEvent)
+                    {
+                        return true;
+                    }
+                }
             }
             return false;
         }
@@ -598,10 +611,11 @@ namespace CbVS.Script
             }
 
             // Func<> 用
-
+            var targetType = typeof(T);
+            var genericArguments = targetType.GetGenericArguments();
             return this.GetType()
                     .GetMethod("_ConvertOriginalFuncType" + typeof(T).GetGenericArguments().Length)
-                    .MakeGenericMethod(typeof(T).GetGenericArguments())
+                    .MakeGenericMethod(genericArguments)
                     .Invoke(this, new object[] { dummyArgumentsControl, cagt });
         }
 

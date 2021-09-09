@@ -73,7 +73,6 @@ namespace CapybaraVS.Script
                 CreateAssetMenu(ownerCommandCanvas, flowOperation, new For());
                 CreateAssetMenu(ownerCommandCanvas, flowOperation, new For_Until());
                 CreateAssetMenu(ownerCommandCanvas, flowOperation, new Foreach());
-                CreateAssetMenu(ownerCommandCanvas, flowOperation, new ForeachIEnumerable());
                 CreateAssetMenu(ownerCommandCanvas, flowOperation, new SwitchEnum());
             }
 
@@ -134,8 +133,7 @@ namespace CapybaraVS.Script
 
                 {
                     var io = CreateGroup(DotNet, "Input/Output");
-                    var conOut = CreateGroup(io, "ConsoleOut");
-                    CreateAssetMenu(ownerCommandCanvas, conOut, new ConsoleOut());
+                    var conOut = CreateGroup(io, "OutConsole");
                     CreateAssetMenu(ownerCommandCanvas, conOut, new OutConsole());
                 }
 
@@ -1922,62 +1920,6 @@ namespace CapybaraVS.Script
     }
 
     //-----------------------------------------------------------------
-    class ForeachIEnumerable : FuncAssetSub, IFuncAssetWithArgumentDef
-    {
-        public string AssetCode => nameof(ForeachIEnumerable);
-
-        public string HelpText => Language.Instance[ApiImporter.BASE_LIB_TAG_PRE + nameof(ForeachIEnumerable)];
-
-        public string MenuTitle => $"Foreach IEnumerable<{CbSTUtils.ACTION_STR}>";
-
-        public List<TypeRequest> typeRequests => new List<TypeRequest>()
-        {
-            new TypeRequest(t => CbScript.AcceptAll(t))
-        };
-
-        public bool ImplAsset(MultiRootConnector col, bool isReBuildMode = false)
-        {
-            // 仮引数コントロールを作成
-            DummyArgumentsControl dummyArgumentsControl = new DummyArgumentsControl(col);
-
-            col.MakeFunction(
-                $"Foreach {CbSTUtils.ACTION_STR}<{col.SelectedVariableTypeName[0]}>.Invoke",
-                HelpText,
-                CbVoid.TF,  // 返し値の型
-                new List<ICbValue>()  // 引数
-                {
-                    CbST.CbCreate(typeof(IEnumerable<>), col.SelectedVariableType[0], "sample"),
-                    CbFunc.CreateAction(col.SelectedVariableType[0], "func f(node)"),
-                },
-                new Func<List<ICbValue>, DummyArgumentsStack, ICbValue>(
-                    (argument, cagt) =>
-                    {
-                        if (dummyArgumentsControl.IsInvalid(cagt))
-                            return null; // 実行環境が有効でない
-
-                        try
-                        {
-                            dynamic sample = argument[0].Data;
-                            foreach (var node in sample)
-                            {
-                                TryCallCallBack(dummyArgumentsControl, cagt, argument[1], node);
-                            }
-                        }
-                        catch (Exception ex)
-                        {
-                            col.ExceptionFunc(null, ex);
-                        }
-
-                        return null;
-                    }
-                    )
-                );
-
-            return true;
-        }
-    }
-
-    //-----------------------------------------------------------------
     class SwitchEnum : FuncAssetSub, IFuncAssetWithArgumentDef
     {
         public string AssetCode => nameof(SwitchEnum);
@@ -2059,56 +2001,6 @@ namespace CapybaraVS.Script
                     }
                     )
                 );
-
-            return true;
-        }
-    }
-
-    //-----------------------------------------------------------------
-    class ConsoleOut : FuncAssetSub, IFuncAssetWithArgumentDef
-    {
-        public string AssetCode => nameof(ConsoleOut);
-
-        public string HelpText => Language.Instance[ApiImporter.BASE_LIB_TAG_PRE + nameof(ConsoleOut)];
-
-        public string MenuTitle => "ConsoleOut(!Old specifications!)";
-
-        public List<TypeRequest> typeRequests => new List<TypeRequest>()
-        {
-            new TypeRequest(t => CbScript.IsNotObject(t))
-        };
-
-        public bool ImplAsset(MultiRootConnector col, bool isReBuildMode = false)
-        {
-            col.MakeFunction(
-                MenuTitle,
-                HelpText,
-                CbST.CbCreateTF(col.SelectedVariableType[0]),  // 返し値の型
-                new List<ICbValue>()  // 引数
-                {
-                    CbST.CbCreate(col.SelectedVariableType[0], "n"),
-                },
-                new Func<List<ICbValue>, DummyArgumentsStack, ICbValue>(
-                    (argument, cagt) =>
-                    {
-                        var ret = CbST.CbCreate(col.SelectedVariableType[0]);    // 返し値
-                        try
-                        {
-                            ret.Set(argument[0]);
-                            string str = argument[0].ValueUIString;
-                            col.OwnerCommandCanvas.CommandCanvasControl.MainLog.OutLine(nameof(ConsoleOut), str);
-                        }
-                        catch (Exception ex)
-                        {
-                            col.ExceptionFunc(ret, ex);
-                        }
-                        return ret;
-                    }
-                    )
-                );
-
-            // 実行を可能にする
-            col.LinkConnectorControl.IsRunable = true;
 
             return true;
         }

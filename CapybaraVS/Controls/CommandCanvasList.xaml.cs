@@ -800,7 +800,7 @@ namespace CapyCSS.Controls
             helpWindow.ShowDialog();
         }
 
-        [ScriptMethod("System.Application." + nameof(SetWorkCanvasBG))]
+        [ScriptMethod("System.Application")]
         static public void SetWorkCanvasBG(string path, Stretch stretch = Stretch.UniformToFill, bool overwriteSettings = false)
         {
             if (overwriteSettings)

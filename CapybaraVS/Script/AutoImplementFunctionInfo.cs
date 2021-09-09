@@ -55,5 +55,10 @@ namespace CapybaraVS.Script
         /// 型選択要求情報
         /// </summary>
         public List<TypeRequest> typeRequests;
+        /// <summary>
+        /// ジェネリックメソッドのパラメータ
+        /// ※ジェネリックメソッドでないなら null
+        /// </summary>
+        public Type[] genericMethodParameters;
     }
 }

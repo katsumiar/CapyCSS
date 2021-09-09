@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
@@ -387,8 +388,10 @@ namespace CapybaraVS.Controls
             }
         }
 
-        public MultiRootConnector()
+        private string debugCreateName = "";
+        public MultiRootConnector(object self, string _ext = "", [CallerMemberName] string callerMethodName = "")
         {
+            CommandCanvas.SetDebugCreateList(ref debugCreateName, this, self, callerMethodName, _ext);
             InitializeComponent();
             AssetXML = new _AssetXML<MultiRootConnector>(this);
         }
@@ -739,6 +742,8 @@ namespace CapybaraVS.Controls
                     selectedVariableTypeName = null;
                     //AssetFunctionList = null; // static なので消しては駄目
                     GetVariableName = null;
+
+                    CommandCanvas.RemoveDebugCreateList(debugCreateName);
                 }
                 disposedValue = true;
             }

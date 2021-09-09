@@ -7,28 +7,30 @@ namespace CapybaraVS.Script.Lib
 {
     public class EnvironmentLib
     {
-        [ScriptMethod("Environment" + "." + nameof(MachineName))]
+        private const string LIB_NAME = "Environment";
+
+        [ScriptMethod(LIB_NAME)]
         public static string MachineName()
         {
             return Environment.MachineName;
         }
 
         //------------------------------------------------------------------
-        [ScriptMethod("Environment" + "." + nameof(UserName))]
+        [ScriptMethod(LIB_NAME)]
         public static string UserName()
         {
             return Environment.UserName;
         }
 
         //------------------------------------------------------------------
-        [ScriptMethod("Environment" + "." + nameof(GetEnvironmentVariable))]
+        [ScriptMethod(LIB_NAME)]
         public static string GetEnvironmentVariable(string name)
         {
             return Environment.GetEnvironmentVariable(name);
         }
 
         //------------------------------------------------------------------
-        [ScriptMethod("Environment" + "." + nameof(ReplaceEnvironmentVariable))]
+        [ScriptMethod(LIB_NAME)]
         public static string ReplaceEnvironmentVariable(string name)
         {
             string ret = name;
@@ -45,14 +47,16 @@ namespace CapybaraVS.Script.Lib
         }
 
         //------------------------------------------------------------------
-        [ScriptMethod("Input/Output" + "." + nameof(CommandLineArgs))]
+        private const string LIB_NAME2 = "Input/Output";
+
+        [ScriptMethod(LIB_NAME2)]
         public static ICollection<string> CommandLineArgs()
         {
             return new List<string>(Environment.GetCommandLineArgs());
         }
 
         //------------------------------------------------------------------
-        [ScriptMethod("Input/Output" + "." + nameof(CommandLineParam))]
+        [ScriptMethod(LIB_NAME2)]
         public static ICollection<string> CommandLineParam()
         {
             ICollection<string> arg = CommandLineArgs();
@@ -73,7 +77,7 @@ namespace CapybaraVS.Script.Lib
         }
 
         //------------------------------------------------------------------
-        [ScriptMethod("Input/Output" + "." + nameof(CommandLineOption))]
+        [ScriptMethod(LIB_NAME2)]
         public static ICollection<string> CommandLineOption()
         {
             ICollection<string> arg = CommandLineArgs();

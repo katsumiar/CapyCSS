@@ -22,7 +22,9 @@ namespace CapybaraVS.Script
                 ReturnType = info.returnType,
                 ArgumentTypeList = info.argumentTypeList,
                 DllModule = info.dllModule,
-                IsConstructor = info.isConstructor
+                IsConstructor = info.isConstructor,
+                typeRequests = info.typeRequests,
+                GenericMethodParameters = info.genericMethodParameters,
             };
             return ret;
         }

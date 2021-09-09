@@ -95,7 +95,7 @@
     <Asset Id="156" X="-383.10072421609834" Y="383.2800003625154">
       <MultiRootConnector>
         <DataVersion>1</DataVersion>
-        <RootFunc AssetType="FuncType" AssetFuncType="ConsoleOut">
+        <RootFunc AssetType="FuncType" AssetFuncType="OutConsole">
           <AttachVariableIds />
           <AttachVariableId>0</AttachVariableId>
           <AssetValueTypes>
@@ -103,7 +103,7 @@
           </AssetValueTypes>
           <RootConnector PointId="80">
             <Caption>
-              <LabelString>ConsoleOut</LabelString>
+              <LabelString>OutConsole</LabelString>
             </Caption>
             <Value>D:\dev\tttt.txt</Value>
             <ForcedChecked>false</ForcedChecked>

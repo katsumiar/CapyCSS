@@ -141,7 +141,7 @@ namespace CapybaraVS.Controls.BaseControls
                     {
                         try
                         {
-                            Movable movableNode = new Movable();
+                            Movable movableNode = new Movable(this);
                             self.WorkCanvas.Add(movableNode);
 
                             movableNode.OwnerCommandCanvas = self;
@@ -396,6 +396,8 @@ namespace CapybaraVS.Controls.BaseControls
             {
                 var cbType = CbST.CbCreate(type);
                 Debug.Assert(cbType != null);
+                if (cbType.OriginalType == typeof(CbGeneMethArg))
+                    return;
                 Debug.Assert(cbType.OriginalType == type);
                 if (ifc != null)
                     Debug.Assert(ifc.IsAssignableFrom(cbType.GetType()));
@@ -435,6 +437,8 @@ namespace CapybaraVS.Controls.BaseControls
                 }
             }
 
+            CheckCreateCbType(typeof(Func<>), typeof(ICbEvent));
+            CheckCreateCbType(typeof(Func<,>), typeof(ICbEvent));
             CheckGenericType(CbST.CbCreate(typeof(List<>)));
             CheckGenericType(CbST.CbCreate(typeof(IEnumerable<>)));
             CheckGenericType(CbST.CbCreate(typeof(Dictionary<,>)));
@@ -892,7 +896,92 @@ namespace CapybaraVS.Controls.BaseControls
             {
                 OpenFileName = "";
             }
+            OutDebugCreateList("leak clear");
         }
+
+        #region デバッグ用クリア管理
+        //※参照カウンターは勘案しない
+
+        public static Dictionary<string, int> DebugCreateNames = new Dictionary<string, int>();
+
+        [Conditional("DEBUG")]
+        public void OutDebugCreateList(string title)
+        {
+            bool isFirst = true;
+            foreach (var node in DebugCreateNames)
+            {
+                if (node.Value == 0)
+                    continue;
+                if (isFirst)
+                {
+                    CommandCanvasControl.MainLog.OutLine("System", $"---------------------- {title}");
+                    isFirst = false;
+                }
+                CommandCanvasControl.MainLog.OutLine("System", $"{node.Key} : {node.Value}");
+            }
+        }
+
+        [Conditional("DEBUG")]
+        public static void DebugMakeCreateTitle(ref string title, object self, object coller, string methodName, string ext)
+        {
+            if (methodName == "")
+            {
+                methodName = "(node)";
+            }
+            if (coller is null)
+            {
+                title = $"{self.GetType().Name} => {methodName}";
+            }
+            else if (coller is string str)
+            {
+                title = $"{self.GetType().Name} => {str}::{methodName}";
+            }
+            else
+            {
+                string collerName;
+                if (coller.GetType().IsGenericType)
+                {
+                    collerName = CbSTUtils.GetGenericTypeName(coller.GetType());
+                }
+                else
+                {
+                    collerName = coller.GetType().Name;
+                }
+                title = $"{self.GetType().Name} => {collerName}::{methodName}";
+            }
+            if (ext != "")
+            {
+                title += $"[{ext}]";
+            }
+        }
+
+        [Conditional("DEBUG")]
+        public static void SetDebugCreateList(ref string title, object self, object coller = null, string methodName = "", string ext = "")
+        {
+            DebugMakeCreateTitle(ref title, self, coller, methodName, ext);
+            if (!CommandCanvas.DebugCreateNames.ContainsKey(title))
+            {
+                CommandCanvas.DebugCreateNames.Add(title, 1);
+            }
+            else
+            {
+                CommandCanvas.DebugCreateNames[title]++;
+            }
+        }
+
+        [Conditional("DEBUG")]
+        public static void RemoveDebugCreateList(string name)
+        {
+            if (!CommandCanvas.DebugCreateNames.ContainsKey(name))
+            {
+                Debug.Assert(false);
+            }
+            else
+            {
+                CommandCanvas.DebugCreateNames[name]--;
+            }
+        }
+        #endregion
 
         /// <summary>
         /// 保存用ファイル選択ダイアログを表示します。

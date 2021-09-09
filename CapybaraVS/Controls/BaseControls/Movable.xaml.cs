@@ -3,6 +3,7 @@ using CapyCSS.Controls.BaseControls;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
@@ -56,7 +57,7 @@ namespace CapybaraVS.Controls.BaseControls
                     self.YPos = YPos;
                     if (MultiRootConnector != null)
                     {
-                        var obj = new MultiRootConnector();
+                        var obj = new MultiRootConnector(this);
                         self.SetControl(obj);
                         obj.AssetXML = MultiRootConnector;
                         obj.AssetXML.ReadAction?.Invoke(obj);
@@ -219,8 +220,10 @@ namespace CapybaraVS.Controls.BaseControls
         private UIElement myElement = null;
         public UIElement ControlObject => myElement;
 
-        public Movable()
+        private string debugCreateName = "";
+        public Movable(object self, string _ext = "", [CallerMemberName] string callerMethodName = "")
         {
+            CommandCanvas.SetDebugCreateList(ref debugCreateName, this, self, callerMethodName, _ext);
             InitializeComponent();
             assetIdProvider = new AssetIdProvider(this);
             AssetXML = new _AssetXML<Movable>(this);
@@ -299,6 +302,8 @@ namespace CapybaraVS.Controls.BaseControls
                     AssetXML = null;
                     myElement = null;
                     _OwnerCommandCanvas = null;
+
+                    CommandCanvas.RemoveDebugCreateList(debugCreateName);
                 }
                 disposedValue = true;
             }

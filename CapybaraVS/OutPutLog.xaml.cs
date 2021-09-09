@@ -23,7 +23,7 @@ namespace CapybaraVS
         {
             // コンソール出力対象のタグ名リスト
 
-            nameof(Script.ConsoleOut),
+            nameof(Script.OutConsole),
             nameof(ToolExec)
         };
 

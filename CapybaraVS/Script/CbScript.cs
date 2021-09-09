@@ -46,7 +46,7 @@ namespace CbVS.Script
         /// <returns>ノード</returns>
         public static MultiRootConnector CreateFunction(CommandCanvas OwnerCommandCanvas, string assetCode)
         {
-            var ret = new MultiRootConnector();
+            var ret = new MultiRootConnector(nameof(MultiRootConnector));
             ret.AssetFuncType = assetCode;
             ret.AssetType = FunctionType.FuncType;
             ret.OwnerCommandCanvas = OwnerCommandCanvas;
@@ -120,7 +120,7 @@ namespace CbVS.Script
                     ListSelectWindow.DefaultValue = null;
                 }
 
-                multiRootConnector = new MultiRootConnector();
+                multiRootConnector = new MultiRootConnector(nameof(CbScript));
                 multiRootConnector.OwnerCommandCanvas = OwnerCommandCanvas;
                 multiRootConnector.SelectedVariableTypes = typeNames.ToArray();
 
@@ -164,7 +164,7 @@ namespace CbVS.Script
             string assetCode,
             List<TypeRequest> typeRequests = null)
         {
-            var ret = new MultiRootConnector();
+            var ret = new MultiRootConnector(nameof(CbScript));
             ret.OwnerCommandCanvas = OwnerCommandCanvas;
             if (typeRequests != null)
             {
@@ -233,7 +233,7 @@ namespace CbVS.Script
             CommandCanvas OwnerCommandCanvas,
             List<TypeRequest> typeRequests = null)
         {
-            var ret = new MultiRootConnector();
+            var ret = new MultiRootConnector(nameof(CbScript));
             ret.OwnerCommandCanvas = OwnerCommandCanvas;
             if (typeRequests != null)
             {

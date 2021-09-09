@@ -56,7 +56,7 @@ namespace CapybaraVS.Controls
             }
             public PlotInfo(IEnumerable<int> list, DrawType drawType, SolidColorBrush solidColorBrush = null)
             {
-                this.list = ListFactory.ToDouble(list);
+                this.list = ListFactory.ConvertList(list, (n) => (double)n);
                 this.drawType = drawType;
                 this.solidColorBrush = solidColorBrush;
             }
