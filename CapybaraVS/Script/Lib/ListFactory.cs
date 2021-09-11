@@ -23,7 +23,7 @@ namespace CapybaraVS.Script.Lib
         /// <param name="converter">任意の変換処理</param>
         /// <returns>変換したリスト</returns>
         [ScriptMethod(LIB_NAME2)]
-        public static ICollection<T2> ConvertList<T1, T2>(IEnumerable<T1> list, Func<T1, T2> converter)
+        public static ICollection<T2> ConvertList<T1, T2>(IEnumerable<T1> list, Converter<T1, T2> converter)
         {
             ICollection<T2> result = new List<T2>();
             foreach (var node in list)
@@ -49,12 +49,12 @@ namespace CapybaraVS.Script.Lib
 
         //------------------------------------------------------------------
         [ScriptMethod(LIB_NAME5)]
-        public static int Counter<T>(ICollection<T> sample, T value)
+        public static int Counter<T>(IEnumerable<T> sample, Predicate<T> predicate)
         {
             int count = 0;
             foreach (var node in sample)
             {
-                if (sample.Contains(value))
+                if (predicate(node))
                 {
                     count++;
                 }
@@ -64,12 +64,12 @@ namespace CapybaraVS.Script.Lib
 
         //------------------------------------------------------------------
         [ScriptMethod(LIB_NAME5)]
-        public static int Counter<T>(IEnumerable<T> sample, Func<T, bool> predicate)
+        public static int ConteinsCounter<T>(ICollection<T> sample, T value)
         {
             int count = 0;
             foreach (var node in sample)
             {
-                if (predicate(node))
+                if (sample.Contains(value))
                 {
                     count++;
                 }
@@ -97,13 +97,15 @@ namespace CapybaraVS.Script.Lib
 
         //------------------------------------------------------------------
         [ScriptMethod(LIB_NAME8)]
-        public static ICollection<T> Filtering<T>(IEnumerable<T> sample, Func<T, bool> predicate)
+        public static ICollection<T> Filtering<T>(IEnumerable<T> sample, Predicate<T> predicate)
         {
             var ret = new List<T>();
             foreach (var node in sample)
             {
                 if (predicate(node))
+                {
                     ret.Add(node);
+                }
             }
             return ret;
         }
@@ -115,16 +117,16 @@ namespace CapybaraVS.Script.Lib
         /// <typeparam name="T"></typeparam>
         /// <param name="num">リストの個数</param>
         /// <param name="value">開始値</param>
-        /// <param name="next">value を受け取って次の要素に入れる値を求める変換処理</param>
+        /// <param name="converter">value を受け取って次の要素に入れる値の変換処理</param>
         /// <returns>作成したリスト</returns>
         [ScriptMethod(LIB_NAME)]
-        public static ICollection<T> MakeList<T>(int num, T value, Func<T,T> next)
+        public static ICollection<T> MakeList<T>(int num, T value, Converter<T, T> converter)
         {
             var vs = new List<T>();
             while (num-- != 0) 
             {
                 vs.Add(value);
-                value = next(value);
+                value = converter(value);
             }
             return vs;
         }

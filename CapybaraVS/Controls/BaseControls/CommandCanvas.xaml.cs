@@ -417,6 +417,8 @@ namespace CapybaraVS.Controls.BaseControls
             CheckCreateCbType(typeof(Action<ushort, Type>), typeof(ICbEvent));
             CheckCreateCbType(typeof(Func<object>), typeof(ICbEvent));
             CheckCreateCbType(typeof(Func<sbyte, decimal>), typeof(ICbEvent));
+            CheckCreateCbType(typeof(Converter<double, int>), typeof(ICbEvent));
+            CheckCreateCbType(typeof(Predicate<double>), typeof(ICbEvent));
 
             CheckCreateCbType(typeof(List<byte>), typeof(ICbList));
             CheckCreateCbType(typeof(IEnumerable<float>), typeof(ICbList));
@@ -439,6 +441,7 @@ namespace CapybaraVS.Controls.BaseControls
 
             CheckCreateCbType(typeof(Func<>), typeof(ICbEvent));
             CheckCreateCbType(typeof(Func<,>), typeof(ICbEvent));
+            CheckCreateCbType(typeof(Converter<,>), typeof(ICbEvent));
             CheckGenericType(CbST.CbCreate(typeof(List<>)));
             CheckGenericType(CbST.CbCreate(typeof(IEnumerable<>)));
             CheckGenericType(CbST.CbCreate(typeof(Dictionary<,>)));

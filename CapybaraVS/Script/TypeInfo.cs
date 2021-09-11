@@ -168,14 +168,17 @@ namespace CapybaraVS.Script
                 Debug.Assert(false);
             }
 
-            if (CbFunc.IsActionType(type))
+            if (CbSTUtils.IsDelegate(type))
             {
-                return CbFunc.GetFuncType(type, typeof(CbVoid));
-            }
-
-            if (CbFunc.IsFuncType(type))
-            {
-                return CbFunc.GetFuncType(type, type.GenericTypeArguments.Last());
+                var returnType = CbSTUtils.GetDelegateReturnType(type);
+                if (CbSTUtils.IsVoid(returnType))
+                {
+                    return CbFunc.GetFuncType(type, typeof(CbVoid));
+                }
+                else
+                {
+                    return CbFunc.GetFuncType(type, returnType);
+                }
             }
 
             return null;
@@ -363,14 +366,11 @@ namespace CapybaraVS.Script
                 return CbEnumTools.EnumValue(type, name);
             }
 
-            if (type == typeof(Action))
+            if (!type.IsGenericType && CbSTUtils.IsDelegate(type))
             {
-                // Action
+                // デリゲート型
 
-                if (CbFunc.IsActionType(type))
-                {
-                    return CbFunc.FuncValue(type, typeof(CbVoid), name);
-                }
+                return CbFunc.FuncValue(type, typeof(CbVoid), name);
             }
 
             if (HaveGenericParamater(type))
@@ -380,9 +380,10 @@ namespace CapybaraVS.Script
                 if (!type.IsPublic)
                     return null;
 
-                if (CbFunc.IsActionType(type) ||
-                    CbFunc.IsFuncType(type))
+                if (CbSTUtils.IsDelegate(type))
                 {
+                    // 確定していないデリゲート型
+
                     return CbGeneMethArg.NTF(name, type, type.GetGenericArguments(), true);
                 }
                 return CbGeneMethArg.NTF(name, type, type.GetGenericArguments(), false);
@@ -390,24 +391,31 @@ namespace CapybaraVS.Script
 
             if (type.IsGenericType)
             {
-                // ジェネリック
+                // ジェネリック型
 
                 if (CbList.HaveInterface(type, typeof(IEnumerable<>)))
                 {
+                    // リスト管理（UIで特別扱い）
+
                     if (type.GenericTypeArguments.Length > 1)
                         return null;
 
                     return CbList.Create(type, name);
                 }
 
-                if (CbFunc.IsActionType(type))
+                if (CbSTUtils.IsDelegate(type))
                 {
-                    return CbFunc.FuncValue(type, typeof(CbVoid), name);
-                }
+                    // デリゲート型
 
-                if (CbFunc.IsFuncType(type))
-                {
-                    return CbFunc.FuncValue(type, type.GenericTypeArguments.Last(), name);
+                    var returnType = CbSTUtils.GetDelegateReturnType(type);
+                    if (CbSTUtils.IsVoid(returnType))
+                    {
+                        return CbFunc.FuncValue(type, typeof(CbVoid), name);
+                    }
+                    else
+                    {
+                        return CbFunc.FuncValue(type, returnType, name);
+                    }
                 }
 
                 if (type.GetGenericTypeDefinition() == typeof(Nullable<>))

@@ -4,7 +4,8 @@
 ## 0.3.4.0 での変更
 
 * コマンドフィルタリングの調整
-* メモリリーク対応（何度かに分けて対応予定）
+* クリア時のメモリリーク対応（何度かに分けて対応予定）
+* Func, Action だけの限定ではなく、delegate に対応
 
 ![generic3](https://user-images.githubusercontent.com/63950487/132211159-54a9ad84-a001-4236-b059-6eff0614b775.gif)
 
@@ -35,19 +36,27 @@ CapyCSS.exe -ase script.cbs
 
 ## コンソール出力
 
-コンソールから起動した場合は、「Call File」や「ConsoleOut」系のノードからの出力は、コンソールにも出力されます。
+コンソールから起動した場合は、「Call File」や「OutConsole」系のノードからの出力は、コンソールにも出力されます。
 
 ## ノードのインポート
 本ツールでは、c# の多くのメソッドを簡単にノード化することができます。
 下記は、属性を使用してメソッドをノード化する例です。
 ```
 [ScriptMethod]
-public static System.IO.StreamReader GetReadStream(string path, string encoding = "utf-8")
+public static ICollection<T> Filtering<T>(IEnumerable<T> sample, Predicate<T> predicate)
 {
-    var encodingCode = Encoding.GetEncoding(encoding);
-    return new System.IO.StreamReader(path, encodingCode);
+    var result = new List<T>();
+    foreach (var node in sample)
+    {
+        if (predicate(node))
+        {
+            result.Add(node);
+        }
+    }
+    return result;
 }
 ```
+この他、dll をインポートして機能を取り込むこともできます。
 
 ## 操作方法
 * スペースキーもしくはホイールボタンの押下でコマンドウインドウを表示できます。
@@ -76,9 +85,7 @@ public static System.IO.StreamReader GetReadStream(string path, string encoding 
 ## スクリプトの便利な機能
 * 引数の上にカーソルを置くと内容を確認できます。
 * 数字と文字をドラッグアンドドロップするだけで定数ノードを作成できます。
-* ノードの接続時に型キャストが可能です。
-* object型から任意の型へのキャストができます。
-* ICollection型からArray型（この逆も）へのキャストができます。
+* ノードの接続時に柔軟なキャスト（接続）が可能です（実行を保証するものではありません）。
 
 ## ヒント表示
 英語と日本語をサポートします。ただし、初期状態では英語のみの機械翻訳です。
@@ -88,24 +95,28 @@ public static System.IO.StreamReader GetReadStream(string path, string encoding 
 ```<Language>ja-JP</Language>```
 再起動すると設定が適用されます。
 
-## メソッドのインポートでサポートされるメソッド
-* Static method
-* Class method(thisを受け取る引数が追加されます)
+## メソッドのインポートでサポートされる機能
+* クラスのコンストラクタ（new する機能が取り込まれます）
+* メソッド(thisを受け取る引数が追加されます)
+* 静的メソッド
+* ゲッター
+* セッター
 
 ※メソッドの所属するクラスは、パブリックである必要があります。
-<br>※メソッドはパブリックである必要があります。
-<br>※象徴クラスやジェネリッククラスのメソッド及びジェネリックなメソッドは、対象外です。
+<br>※象徴クラスは、対象外です。
+<br>※メソッドは、パブリックである必要があります。
 
 ## スクリプトが対応するメソッドの引数の型（及び修飾子など）
 * Type: int, string, double, byte, sbyte, long, short, ushort, uint, ulong, char, float, decimal, bool, object
 * 配列
-* ICollection（※UI上で要素を操作できます）
+* IEnumerableを持つ型（※UI上で要素を操作できます）
 * Class
 * Struct
 * Interface
+* Delegate
 * Enum
 * Generics
-* デフォルト値
+* 初期化値
 * ref（リファレンス）
 * outパラメーター修飾子
 * inパラメーター修飾子
@@ -121,19 +132,21 @@ public static System.IO.StreamReader GetReadStream(string path, string encoding 
 * Class
 * Struct
 * Interface
+* Delegate
 * Enum
 * Generics
 * void
 * null許容型
 
 ## メソッドからのメソッド呼び出し
-Func<> および Action<> タイプの引数は、ノードを外部プロセスとして呼び出すことができます。Func<> の場合、ノード型と戻り値型が一致した場合に接続できます。Action だと無条件に接続できます。
+delegate 型の引数は、返し値の型と一致する型のノードと接続できます。ただし、Action だと無条件に接続できます。
+デリゲートの呼び出しでは、接続されたノードの結果が返されます。
 
 ## Hello World!
 「Hello World!」と出力するサンプルです。<br>
 ![CapyCSS01](https://user-images.githubusercontent.com/63950487/97863495-6f7a3f00-1d4a-11eb-9ef4-0017be21d13e.png)
 <br>ホイールボタンをクリックするかスペースキーでコマンドウインドウが表示されます。
-その中からProgram→.Net Function→Input/Output→ConsoleOut→ConsoleOutをクリックします。
+その中からProgram→.Net Function→Input/Output→OutConsole→OutConsoleをクリックします。
 
 ![CapyCSS02](https://user-images.githubusercontent.com/63950487/97861283-d4cc3100-1d46-11eb-9aed-1bf981d57ad3.png)
 <br>作業エリアをクリックすると型選択ウインドウが表示されますので、その中からstringを選択します。

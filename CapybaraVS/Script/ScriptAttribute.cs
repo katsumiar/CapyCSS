@@ -63,8 +63,6 @@ namespace CapybaraVS.Script
             public Func<ICbValue> CreateArgument;
             public bool IsByRef = false;
             public bool IsSelf = false;
-            public bool IsFunc = false;
-            public Func<ICbValue> CreateFuncReturn;
         }
 
         /// <summary>
@@ -924,11 +922,6 @@ namespace CapybaraVS.Script
                 if (hint is null)
                     hint = "";
 
-                if (nodeName.EndsWith("Join"))
-                {
-
-                }
-
                 // ノード化依頼用の情報をセット
                 AutoImplementFunctionInfo autoImplementFunctionInfo = new AutoImplementFunctionInfo()
                 {
@@ -1161,16 +1154,6 @@ namespace CapybaraVS.Script
                 // リファレンス型をチェック
                 if (para.ParameterType.IsByRef)
                     argNode.IsByRef = true;
-
-                // イベント引数をチェック
-                if (para.ParameterType.IsGenericType)
-                {
-                    if (para.ParameterType.GetGenericTypeDefinition() == typeof(CbFunc<,>))
-                    {
-                        argNode.IsFunc = true;
-                        argNode.CreateFuncReturn = typeInfo("").NodeTF;
-                    }
-                }
 
                 // 引数名を取得
                 string name = para.Name;

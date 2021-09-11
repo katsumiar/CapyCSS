@@ -427,8 +427,27 @@ namespace CapybaraVS.Script
             if (toType == typeof(object))
                 return true;    // object型なら無条件に繋がる
             
-            if (CbFunc.IsActionType(toType))
-                return true;    // Action型なら無条件に繋がる
+            if (IsDelegate(toType))
+            {
+                // 接続先がデリゲート型
+
+                Type toRetType = GetDelegateReturnType(toType);
+
+                if (IsDelegate(fromType))
+                {
+                    // 接続元のデリゲート
+
+                    Type fromRetType = GetDelegateReturnType(fromType);
+                    return IsAssignment(toRetType, fromRetType, isCast);
+                }
+
+                if (IsVoid(toRetType))
+                {
+                    // 値を返さないデリゲートは、無条件で繋がる
+
+                    return true;
+                }
+            }
 
             if (fromType == typeof(CbVoid))
                 return false;   // object と Action 以外には繋がらない
@@ -439,11 +458,13 @@ namespace CapybaraVS.Script
             if (isCast && IsCastAssignment(toType, fromType))
                 return true;    // Cast接続なら繋がる
 
-            if (CbFunc.IsFuncType(toType))
+            if (IsDelegate(toType))
             {
-                Type argType = toType.GetGenericArguments()[0]; // Func の返り値の型
-                if (IsAssignment(argType, fromType, isCast))
-                    return true;    // Func の返り値の型に代入可能なら繋がる
+                // 接続先がデリゲート型
+
+                Type type = GetDelegateReturnType(toType);
+                Debug.Assert(!IsVoid(type));
+                return IsAssignment(type, fromType, isCast);
             }
 
             if (toType.IsAssignableFrom(fromType))
@@ -694,6 +715,74 @@ namespace CapybaraVS.Script
                 }
             }
             list.Clear();
+        }
+
+        /// <summary>
+        /// デリゲート型かどうかを判定します。
+        /// </summary>
+        /// <param name="type">対象の型</param>
+        /// <returns>デリゲート==true</returns>
+        public static bool IsDelegate(Type type)
+        {
+            return type != null && type.BaseType != null & type.BaseType == typeof(MulticastDelegate);
+        }
+
+        /// <summary>
+        /// デリゲート型の返し値の型を返します。
+        /// </summary>
+        /// <param name="type">対象の型</param>
+        /// <returns>デリゲートの返し値の型</returns>
+        public static Type GetDelegateReturnType(Type type)
+        {
+            if (!IsDelegate(type))
+            {
+                return null;
+            }
+            MethodInfo info = ((MethodInfo[])((TypeInfo)type).DeclaredMethods)[0];
+            return info.ReturnType;
+        }
+
+        /// <summary>
+        /// デリゲート型のパラメータの情報を返します。
+        /// </summary>
+        /// <param name="type">対象の型</param>
+        /// <returns>パラメータ情報配列</returns>
+        public static ParameterInfo[] GetDelegateParameterInfos(Type type)
+        {
+            if (!IsDelegate(type))
+            {
+                return null;
+            }
+            MethodInfo info = ((MethodInfo[])((TypeInfo)type).DeclaredMethods)[0];
+            return info.GetParameters();
+        }
+
+        /// <summary>
+        /// デリゲート型のパラメータの型を返します。
+        /// </summary>
+        /// <param name="type">対象の型</param>
+        /// <returns>型配列</returns>
+        public static Type[] GetDelegateParameterTypes(Type type)
+        {
+            var infos = GetDelegateParameterInfos(type);
+            if (infos is null)
+                return null;
+            List<Type> types = new List<Type>();
+            foreach (var info in infos)
+            {
+                types.Add(info.ParameterType);
+            }
+            return types.ToArray();
+        }
+
+        /// <summary>
+        /// 型が Void か判定します。
+        /// </summary>
+        /// <param name="type">対象の型</param>
+        /// <returns>Void型==true</returns>
+        public static bool IsVoid(Type type)
+        {
+            return type.Name == "Void";
         }
     }
 }

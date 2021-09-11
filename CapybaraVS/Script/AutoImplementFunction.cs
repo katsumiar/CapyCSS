@@ -538,6 +538,7 @@ namespace CapybaraVS.Script
                 if (scrArg.IsDelegate)
                 {
                     // デリゲートは無条件で更新値を捨てる
+
                     Debug.Assert(callArguments[0].ReturnAction is null);
                 }
                 else if (callArguments[0].IsLiteral)
@@ -643,10 +644,14 @@ namespace CapybaraVS.Script
             }
             else if (result != null && returnValue is ICbEvent cbEvent)
             {
-                // Func<> or Action<> 型の返し値
+                // デリゲート型の返し値
 
-                if (CbFunc.IsFuncType(result.GetType()))
+                Type resultType = CbSTUtils.GetDelegateReturnType(result.GetType());
+
+                if (!CbSTUtils.IsVoid(resultType))
                 {
+                    // 返し値のあるデリゲート型
+
                     cbEvent.CallBack = (cagt) =>
                     {
                         ICbValue retTypeValue = null;
@@ -666,9 +671,9 @@ namespace CapybaraVS.Script
                         return retTypeValue;
                     };
                 }
-                else if (CbFunc.IsActionType(result.GetType()))
+                else
                 {
-                    // Action 型だと考える
+                    // 返し値の無いデリゲート型
 
                     cbEvent.CallBack = (cagt) =>
                     {
@@ -687,8 +692,6 @@ namespace CapybaraVS.Script
                         return new CbVoid();
                     };
                 }
-                else
-                    throw new NotImplementedException();
             }
             else
                 returnValue.Data = result;
