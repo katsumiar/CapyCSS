@@ -422,12 +422,25 @@ namespace CapybaraVS.Controls.BaseControls
 
             Dictionary<string, string> keyValuePairs = new Dictionary<string, string>()
             {
-                { "STRING", "" },
+                { "STRING", "System" },
+                { "BOOL", "Script" },
+                { "BYTE", "Script" },
+                { "SBYTE", "Script" },
+                { "CHAR", "Script" },
+                { "SHORT", "Script" },
+                { "INT", "Script" },
+                { "LONG", "Script" },
+                { "FLOAT", "Script" },
+                { "DOUBLE", "Script" },
+                { "USHORT", "Script" },
+                { "UINT", "Script" },
+                { "ULONG", "Script" },
+                { "DECIMAL", "Script" },
             };
 
             if (keyValuePairs.ContainsKey(name.ToUpper()))
             {
-                name = "System" + keyValuePairs[name.ToUpper()] + "." + name;
+                name = keyValuePairs[name.ToUpper()] + "." + name;
             }
 
             string searchName = name.ToUpper().Replace(" ", "");
