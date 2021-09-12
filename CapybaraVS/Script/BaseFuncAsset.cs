@@ -1648,19 +1648,19 @@ namespace CapybaraVS.Script
                                 col.LinkConnectorControl.UpdateValueData();
                                 if (!cbVSValue.IsDelegate)
                                 {
-                                    if (!(cbVSValue is ICbClass))
-                                    {
-                                        cbVSValue.ReturnAction = (value) =>
-                                        {
-                                            cbVSValue.Data = value;
-                                        };
-                                    }
-                                    else if (cbVSValue.IsList)
+                                    if (cbVSValue.IsList)
                                     {
                                         ICbList cbList = cbVSValue.GetListValue;
                                         cbVSValue.ReturnAction = (value) =>
                                         {
                                             cbList.CopyFrom(value);
+                                        };
+                                    }
+                                    else if (!(cbVSValue is ICbClass))
+                                    {
+                                        cbVSValue.ReturnAction = (value) =>
+                                        {
+                                            cbVSValue.Data = value;
                                         };
                                     }
                                 }

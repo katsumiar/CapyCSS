@@ -539,9 +539,16 @@ namespace CapybaraVS.Controls.BaseControls
             string valueString = null;
             if (ValueData is CbObject cbObject)
             {
-                if (!cbObject.ValueTypeObject.IsNull && cbObject.ValueTypeObject.Data is ICbShowValue cbVSShow)
+                if (!cbObject.IsNull)
                 {
-                    valueString = cbVSShow.DataString;
+                    if (cbObject.Data is ICbShowValue cbVSShow)
+                    {
+                        valueString = cbVSShow.DataString;
+                    }
+                    else
+                    {
+                        valueString = CbSTUtils.DataToString(cbObject.Data);
+                    }
                 }
                 else
                 {
@@ -558,7 +565,7 @@ namespace CapybaraVS.Controls.BaseControls
                     }
                     else
                     {
-                        valueString = cbClass.Data.ToString();
+                        valueString = CbSTUtils.DataToString(cbClass.Data);
                     }
                 }
                 else

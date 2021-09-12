@@ -180,16 +180,7 @@ namespace CbVS.Script
         {
             get
             {
-#if !SHOW_LINK_ARRAY
-                string text = $"{CbSTUtils.CbTypeNameList[nameof(CbList)]} {Value.Count}-{ItemName}" + Environment.NewLine;
-                foreach (var node in Value)
-                {
-                    text += node.ValueUIString + Environment.NewLine;
-                }
-#else
-                string text = TypeName + Environment.NewLine;
-#endif
-                return text;
+                return CbSTUtils.DataToString(Data);
             }
         }
 

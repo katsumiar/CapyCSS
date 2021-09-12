@@ -813,5 +813,59 @@ namespace CapybaraVS.Script
             }
             return false;
         }
+
+        /// <summary>
+        /// object 型のデータの中身をできる限りわかりやすく文字列化します。
+        /// </summary>
+        /// <param name="data">データ</param>
+        /// <returns>データ内容</returns>
+        public static string DataToString(object data, int indent = 0)
+        {
+            string indentStr = new string(' ', indent);
+            if (data is null)
+            {
+                return NULL_STR;
+            }
+            if (data is CbObject cbObject)
+            {
+                return DataToString(cbObject.Data);
+            }
+            string valueString = "";
+            if (data is System.Collections.IEnumerable list)
+            {
+                string nodeTypeName = null;
+                int count = 0;
+                foreach (var node in list)
+                {
+                    valueString += DataToString(node, indent + 2) + Environment.NewLine;
+                    if (count == 0)
+                    {
+                        nodeTypeName = GetTypeName(node);
+                    }
+                    count++;
+                }
+                if (count != 0)
+                {
+                    valueString = $"IEnumerable {count}-{nodeTypeName}" + Environment.NewLine + valueString;
+                }
+                else
+                {
+                    valueString = "IEnumerable 0" + Environment.NewLine + valueString;
+                }
+            }
+            else if (data is ICbShowValue showValue)
+            {
+                valueString = showValue.DataString;
+            }
+            else if (data is ICbValue cbValue)
+            {
+                valueString = cbValue.ValueUIString;
+            }
+            else
+            {
+                valueString = data.ToString();
+            }
+            return indentStr + valueString.Trim('\r', '\n');
+        }
     }
 }
