@@ -640,7 +640,22 @@ namespace CapybaraVS.Script
                 // 参照渡しのため変更後の値を戻す（直接リファレンスが渡されていないケース）
 
                 var scrArg = callArguments[0];
-                scrArg.ReturnAction?.Invoke(classInstance);
+                if (scrArg.IsDelegate)
+                {
+                    // デリゲートは無条件で更新値を捨てる（ローカル変数の破棄に該当）
+
+                    Debug.Assert(callArguments[0].ReturnAction is null);
+                }
+                else if (callArguments[0].IsLiteral)
+                {
+                    // リレラルは更新情報を捨てる（ローカル変数の破棄に該当）
+                }
+                else
+                {
+                    // 変更後の値を戻す
+
+                    scrArg.ReturnAction?.Invoke(classInstance);
+                }
             }
             for (int i = 1; i < callArguments.Count; ++i)
             {
