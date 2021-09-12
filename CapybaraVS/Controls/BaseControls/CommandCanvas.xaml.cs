@@ -421,6 +421,7 @@ namespace CapybaraVS.Controls.BaseControls
             CheckCreateCbType(typeof(Predicate<double>), typeof(ICbEvent));
 
             CheckCreateCbType(typeof(List<byte>), typeof(ICbList));
+            CheckCreateCbType(typeof(IList<byte>), typeof(ICbList));
             CheckCreateCbType(typeof(IEnumerable<float>), typeof(ICbList));
             CheckCreateCbType(typeof(List<Dictionary<int, double>>), typeof(ICbList));
             CheckCreateCbType(typeof(IEnumerable<Dictionary<int, double>>), typeof(ICbList));

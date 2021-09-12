@@ -373,7 +373,7 @@ namespace CapybaraVS.Script
                 return CbFunc.FuncValue(type, typeof(CbVoid), name);
             }
 
-            if (HaveGenericParamater(type))
+            if (CbSTUtils.HaveGenericParamater(type))
             {
                 // 確定していない型なので仮の型に差し替える
 
@@ -471,35 +471,6 @@ namespace CapybaraVS.Script
             }
 
             return null;
-        }
-
-        /// <summary>
-        /// ジェネリックなパラメータかジェネリック型がジェネリックなパラメータを持つか判定します。
-        /// </summary>
-        /// <param name="type">型</param>
-        /// <returns>条件を満たす==true</returns>
-        private static bool HaveGenericParamater(Type type)
-        {
-            if (type.IsGenericParameter || type.IsGenericMethodParameter)
-            {
-                // ジェネリックパラメータを持つジェネリック型
-
-                return true;
-            }
-
-            if (type.IsGenericType)
-            {
-                // ジェネリック
-
-                foreach (var node in type.GetGenericArguments())
-                {
-                    if (HaveGenericParamater(node))
-                    {
-                        return true;
-                    }
-                }
-            }
-            return false;
         }
     }
 
@@ -608,7 +579,6 @@ namespace CapybaraVS.Script
         bool IsAssignment(ICbValue obj, bool isCast = false);
         bool IsError { get; set; }
         string ErrorMessage { get; set; }
-
         void Set(ICbValue n);
         void Add(ICbValue n);
         void Subtract(ICbValue n);

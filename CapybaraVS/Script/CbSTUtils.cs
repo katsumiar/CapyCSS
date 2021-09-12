@@ -784,5 +784,34 @@ namespace CapybaraVS.Script
         {
             return type.Name == "Void";
         }
+
+        /// <summary>
+        /// ジェネリックなパラメータかジェネリック型がジェネリックなパラメータを持つか判定します。
+        /// </summary>
+        /// <param name="type">型</param>
+        /// <returns>条件を満たす==true</returns>
+        public static bool HaveGenericParamater(Type type)
+        {
+            if (type.IsGenericParameter || type.IsGenericMethodParameter)
+            {
+                // ジェネリックパラメータを持つジェネリック型
+
+                return true;
+            }
+
+            if (type.IsGenericType)
+            {
+                // ジェネリック
+
+                foreach (var node in type.GetGenericArguments())
+                {
+                    if (HaveGenericParamater(node))
+                    {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
     }
 }
