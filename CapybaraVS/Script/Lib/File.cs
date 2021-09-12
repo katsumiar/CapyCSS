@@ -25,7 +25,7 @@ namespace CapybaraVS.Script.Lib
         public static int StreamReadLine(
             StreamReader stream,
             bool autoClose,
-            [param: ScriptParam("func f(line)")] Action<string> func)
+            Action<string> func)
         {
             int ret = 0;
             if (func is null)
@@ -213,7 +213,7 @@ namespace CapybaraVS.Script.Lib
         [ScriptMethod(LIB_NAME)]
         public static string CreateDirectory(
             string path
-            , [param: ScriptParam("add serial number")] bool addSerialNumber = false)
+            , bool addSerialNumber = false)
         {
             var newPath = path;
             if (Directory.Exists(newPath))
@@ -248,8 +248,8 @@ namespace CapybaraVS.Script.Lib
         [ScriptMethod(LIB_NAME)]
         public static ICollection<string> GetFiles(
             string path
-            , [param: ScriptParam("search pattern")] string searchPattern = "*.*"
-            , [param: ScriptParam("all directories")] bool allDirectories = false
+            , string searchPattern = "*.*"
+            , bool allDirectories = false
             , bool relativePath = false)
         {
             IEnumerable<string> files;
@@ -275,9 +275,9 @@ namespace CapybaraVS.Script.Lib
         [ScriptMethod(LIB_NAME)]
         public static int ForeachFilesInvoke(
             string path
-            , [param: ScriptParam("func f(path)")] Action<string> func
-            , [param: ScriptParam("search pattern")] string searchPattern
-            , [param: ScriptParam("all directories")] bool allDirectories = false
+            , Action<string> func
+            , string searchPattern
+            , bool allDirectories = false
             , bool relativePath = false)
         {
             if (func is null)
