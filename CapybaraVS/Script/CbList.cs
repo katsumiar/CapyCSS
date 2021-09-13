@@ -6,6 +6,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.Linq;
 using System.Reflection;
 using System.Text;
 
@@ -14,6 +15,11 @@ namespace CbVS.Script
     public interface ICbList
         : ICbValue
     {
+        /// <summary>
+        /// 元々のデータ形式のデータ
+        /// </summary>
+        object OriginalData { get; set; }
+
         /// <summary>
         /// List<適切な型> に変換します。
         /// </summary>
@@ -35,9 +41,15 @@ namespace CbVS.Script
         bool IsArrayType { get; set; }
 
         /// <summary>
-        /// 実際に取り込んだ型の情報
+        /// 実際の型
         /// </summary>
         Type SourceType { get; set; }
+
+        /// <summary>
+        /// キャストで再指定された実際の型
+        /// ※IEnumerableを持ったクラスの場合、UI上ではリスト（SourceType）として扱うが、実際にメソッドを呼ぶときは、真の（CastType）の型を振る舞う
+        /// </summary>
+        Type CastType { get; set; }
 
         /// <summary>
         /// リストの要素を追加できるか？
@@ -160,6 +172,8 @@ namespace CbVS.Script
         , ICbShowValue
         , ICbList
     {
+        public object OriginalData { get; set; } = null;
+
         private bool nullFlg = true;
 
         public override Type MyType => typeof(CbList<T>);
@@ -185,11 +199,19 @@ namespace CbVS.Script
         }
 
         public override bool IsList => true;
+
         public override ICbList GetListValue => this;
 
         public bool IsArrayType { get; set; } = false;
 
-        public Type SourceType { get; set; } = null;
+        private Type sourceType = null;
+        public Type SourceType
+        {
+            get => CastType != null ? CastType : sourceType;
+            set => sourceType = value;
+        }
+
+        public Type CastType { get; set; } = null;
 
         /// <summary>
         /// UI上で Add 可能か？
@@ -224,7 +246,8 @@ namespace CbVS.Script
                 {
                     return SourceType;
                 }
-                return typeof(ICollection<>).MakeGenericType(typeof(T));
+                Debug.Assert(false);
+                return typeof(ICollection<>).MakeGenericType(typeof(T));    // 古い仕様
             }
         }
 
@@ -257,8 +280,6 @@ namespace CbVS.Script
                 string typeName;
                 if (SourceType != null)
                 {
-                    // キャストされている
-
                     return CbSTUtils._GetTypeName(SourceType);
                 }
                 else
@@ -404,6 +425,13 @@ namespace CbVS.Script
         /// <returns></returns>
         public object ConvertOriginalTypeList(DummyArgumentsControl dummyArgumentsControl, DummyArgumentsStack cagt, MultiRootConnector col = null)
         {
+            if (CastType != null)
+            {
+                // ※IEnumerableを持ったクラスの場合、UI上ではリストとして扱うが、実際にメソッドを呼ぶときは、オリジナルの要素を使用する
+
+                return OriginalData;
+            }
+
             var listNodeType = NodeTF();
 
             var genericType = typeof(List<>).MakeGenericType(typeof(T));
@@ -464,6 +492,13 @@ namespace CbVS.Script
         /// <param name="list"></param>
         public void CopyFrom(object list)
         {
+            if (CastType != null)
+            {
+                // ※IEnumerableを持ったクラスの場合、UI上ではリストとして扱うが、実際にメソッドを呼ぶときは、オリジナルの要素を使用する
+
+                OriginalData = list;
+            }
+
             Clear();
 
             if (list is ICbValue cbValue && cbValue.IsList)
@@ -559,6 +594,8 @@ namespace CbVS.Script
                     Value = null;
                     _ListNodeType = null;
                     SourceType = null;
+                    CastType = null;
+                    OriginalData = null;
                 }
                 disposedValue = true;
             }

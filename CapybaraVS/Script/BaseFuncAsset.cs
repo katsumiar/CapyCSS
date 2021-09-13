@@ -1951,7 +1951,7 @@ namespace CapybaraVS.Script
                         ).Name = $":{name}";    // Append では名前がコピーされないので後から設定する
                 }
             }
-            caseList.SourceType = typeof(IEnumerable<Action>);  // キャスト
+            caseList.CastType = typeof(IEnumerable<Action>);  // キャスト
             args.Add(caseList);
             args.Add(
                 CbST.CbCreate<Action>("default")

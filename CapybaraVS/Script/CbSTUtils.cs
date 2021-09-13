@@ -867,5 +867,18 @@ namespace CapybaraVS.Script
             }
             return indentStr + valueString.Trim('\r', '\n');
         }
+
+        /// <summary>
+        /// IEnumerable<> インターフェイスを持つ場合、その要素の型を返します。
+        /// </summary>
+        /// <param name="type">対象の型</param>
+        /// <returns>要素の型</returns>
+        public static IEnumerable<Type> GetGenericIEnumerables(Type type)
+        {
+            return type
+                    .GetInterfaces()
+                    .Where(t => t.IsGenericType && t.GetGenericTypeDefinition() == typeof(IEnumerable<>))
+                    .Select(t => t.GetGenericArguments()[0]);
+        }
     }
 }

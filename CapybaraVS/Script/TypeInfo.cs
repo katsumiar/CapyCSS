@@ -459,6 +459,17 @@ namespace CapybaraVS.Script
             {
                 // クラス
 
+                var elements = CbSTUtils.GetGenericIEnumerables(type);
+                if (elements.Count() != 0)
+                {
+                    // IEnumerable<> を持っているのでリストとして扱う（ただし、オリジナルのデータ形式も保存する）
+
+                    var elementType = elements.First();    // 最初に見つかった要素のみを対象とする（妥協）
+                    var chgType = CbList.Create(typeof(IEnumerable<>).MakeGenericType(new Type[] { elementType }), name);
+                    (chgType as ICbList).CastType = type; // 元の型にキャスト（メソッドを呼ぶときは、オリジナルのデータ形式を参照する）
+                    return chgType;
+                }
+
                 if (!isCancelClass)
                 {
                     var ret = CbClass.ClassValue(type, name);
@@ -816,7 +827,14 @@ namespace CapybaraVS.Script
         /// <summary>
         /// リスト形式の値を返します。
         /// </summary>
-        public virtual ICbList GetListValue => this as ICbList;
+        public virtual ICbList GetListValue
+        {
+            get
+            {
+                Debug.Assert(IsList);
+                return this as ICbList;
+            }
+        }
 
         /// <summary>
         /// 変数名を参照します。
@@ -925,6 +943,12 @@ namespace CapybaraVS.Script
                 else
                 {
                     Value = (dynamic)n.Data;
+                }
+                if (IsList && n.IsList)
+                {
+                    // ※IEnumerableを持ったクラスの場合、リストにはオリジナルのデータがある場合があるのでコピーする
+
+                    (this as ICbList).OriginalData = (n as ICbList).OriginalData;
                 }
                 IsLiteral = n.IsLiteral;
                 if (IsError)
