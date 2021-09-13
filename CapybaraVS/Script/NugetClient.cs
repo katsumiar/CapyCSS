@@ -10,6 +10,7 @@ using System.Xml.Linq;
 using CapyCSS.Controls;
 using CapybaraVS;
 using CapybaraVS.Script.Lib;
+using System.Text.RegularExpressions;
 
 namespace CapyCSS.Script
 {
@@ -140,10 +141,20 @@ namespace CapyCSS.Script
                         continue;
                     }
                     loadedPackages.Add(libPath);
-                    packageList.Add(new PackageInfo(libPath, name, version));
+                    Match match = Regex.Match(libPath, @"\d+\.\d+\.\d+");
+                    if (match.Success)  // バージョン情報が見つかった
+                        packageList.Add(new PackageInfo(libPath, name.Replace(match.Value, ""), match.Value));
+                    else
+                        packageList.Add(new PackageInfo(libPath, name, ""));
                 }
             }
-            pkgId = packageVName;
+            {
+                Match match = Regex.Match(packageVName, @"\d+\.\d+\.\d+");
+                if (match.Success)  // バージョン情報が見つかった
+                    pkgId = packageVName.Replace("." + match.Value, "");
+                else
+                    pkgId = packageVName;
+            }
             return packageList;
         }
     }
