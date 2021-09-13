@@ -510,7 +510,7 @@ namespace CapybaraVS.Controls.BaseControls
                     }
                     else if (ValueData.TypeName == ret.TypeName)
                     {
-                        // メソッド処理結果をアセットに反映する
+                        // メソッド処理結果をスクリプトノードに反映する
                         // ValueData = ret;
                         // ↑管理情報まで上書きするのでまるごと上書きしてはダメ
 
@@ -518,7 +518,7 @@ namespace CapybaraVS.Controls.BaseControls
                     }
                     else
                     {
-                        // メソッド処理結果の値とアセットの値の型が異なる
+                        // メソッド処理結果の値とスクリプトノードの値の型が異なる
 
                         new NotImplementedException();
                     }

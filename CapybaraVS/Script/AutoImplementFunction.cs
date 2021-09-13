@@ -1,5 +1,6 @@
 ﻿using CapybaraVS.Controls;
 using CapybaraVS.Controls.BaseControls;
+using CapyCSS.Controls;
 using CbVS.Script;
 using System;
 using System.Collections.Generic;
@@ -235,13 +236,13 @@ namespace CapybaraVS.Script
                 returnType,
                 argumentTypeList,
                 new Func<List<ICbValue>, DummyArgumentsStack, ICbValue>(
-                    (argument, cagt) =>
+                    (arguments, cagt) =>
                     {
                         var ret = returnType();
                         if (dummyArgumentsControl != null && dummyArgumentsControl.IsInvalid(cagt))
                             return ret; // 実行環境が有効でない
 
-                        ImplCallMethod(col, classType, dummyArgumentsControl, argument, cagt, ret);
+                        ImplCallMethod(col, classType, dummyArgumentsControl, arguments, cagt, ret);
                         return ret;
                     }
                 )
@@ -504,6 +505,18 @@ namespace CapybaraVS.Script
         {
             object result;
 
+            if (classInstance != null && callArguments.Count == 1)
+            {
+                if (FuncCode == "Dispose")
+                {
+                    // Disposeメソッドを実行するとUI上で破棄された値を表示しようとするので Dispose は無視する
+                    // ※値は Data のリファレンスで繋がっているので、対策として状態を残すのは簡単では無い
+
+                    CommandCanvasList.OutPut.OutLine("Script", CapybaraVS.Language.Instance["Help:Dispose"]);
+                    return null;
+                }
+            }
+
             if (IsConstructor)
             {
                 // new されたコンストラクタとして振る舞う
@@ -524,19 +537,16 @@ namespace CapybaraVS.Script
             {
                 // ジェネリックメソッド
 
-                List<Type> list = new List<Type>();
+                List<Type> genericParams = new List<Type>();
                 foreach (var atype in GenericMethodParameters)
                 {
-                    list.Add(GetRequestType(col, atype.Name));
+                    genericParams.Add(GetRequestType(col, atype.Name));
                 }
                 if (methodArguments is null)
                 {
                     // 引数のないメソッドを型で補完して呼ぶ
 
-                    result = classType
-                        .GetMethod(FuncCode)
-                        .MakeGenericMethod(list.ToArray())
-                        .Invoke(classType, new object[] { });
+                    result = InvokeGenericMethod(classType, genericParams, new object[] { });
                 }
                 else
                 {
@@ -555,16 +565,13 @@ namespace CapybaraVS.Script
                     {
                         // 同じ型のメソッドが既に定義されているのでそちらを呼ぶ
 
-                        result = CallMethodWithArguments(classType, classInstance, args);
+                        result = InvokeMethodWithArguments(classType, classInstance, args);
                     }
                     else
                     {
                         // ジェネリックメソッドを型で補完して呼ぶ
 
-                        result = classType
-                            .GetMethod(FuncCode)
-                            .MakeGenericMethod(list.ToArray())
-                            .Invoke(classType, args);
+                        result = InvokeGenericMethod(classType, genericParams, args);
                     }
                     ReturnArgumentsValue(classInstance, callArguments, args);
                 }
@@ -573,14 +580,14 @@ namespace CapybaraVS.Script
             {
                 // 引数のないメソッド
 
-                result = CallMethod(classType, classInstance);
+                result = InvokeMethod(classType, classInstance);
             }
             else
             {
                 // 引数ありのメソッド
 
                 object[] args = methodArguments.ToArray();
-                result = CallMethodWithArguments(classType, classInstance, args);
+                result = InvokeMethodWithArguments(classType, classInstance, args);
                 ReturnArgumentsValue(classInstance, callArguments, args);
             }
 
@@ -588,13 +595,28 @@ namespace CapybaraVS.Script
         }
 
         /// <summary>
+        /// ジェネリックメソッドを作成して呼びます。
+        /// </summary>
+        /// <param name="classType">所属するクラスの型</param>
+        /// <param name="genericParams">ジェネリックパラメータ</param>
+        /// <param name="args">呼び出す時の引数リスト</param>
+        /// <returns>呼び出したメソッドの返し値</returns>
+        private object InvokeGenericMethod(Type classType, List<Type> genericParams, object[] args)
+        {
+            return classType
+                .GetMethod(FuncCode)
+                .MakeGenericMethod(genericParams.ToArray())
+                .Invoke(classType, args);
+        }
+
+        /// <summary>
         /// 引数有りでメソッドを呼びます。
         /// </summary>
         /// <param name="classType">所属するクラスの型</param>
         /// <param name="classInstance">クラスインスタンス</param>
-        /// <param name="args">引数リスト</param>
-        /// <returns>呼び出した引数の返し値</returns>
-        private object CallMethodWithArguments(Type classType, object classInstance, object[] args)
+        /// <param name="args">呼び出す時の引数リスト</param>
+        /// <returns>呼び出したメソッドの返し値</returns>
+        private object InvokeMethodWithArguments(Type classType, object classInstance, object[] args)
         {
             return classType.InvokeMember(
                             FuncCode,
@@ -611,8 +633,8 @@ namespace CapybaraVS.Script
         /// </summary>
         /// <param name="classType">所属するクラスの型</param>
         /// <param name="classInstance">クラスインスタンス</param>
-        /// <returns>呼び出した引数の返し値</returns>
-        private object CallMethod(Type classType, object classInstance)
+        /// <returns>呼び出したメソッドの返し値</returns>
+        private object InvokeMethod(Type classType, object classInstance)
         {
             return classType.InvokeMember(
                             FuncCode,
@@ -630,7 +652,7 @@ namespace CapybaraVS.Script
         /// <param name="classInstance">呼び出し時のクラスインスタンス（変更が入っている）</param>
         /// <param name="callArguments">呼び出し用に参照した引数リスト</param>
         /// <param name="args">呼び出し時の引数リスト（変更が入っている）</param>
-        private static void ReturnArgumentsValue(
+        private void ReturnArgumentsValue(
             object classInstance,
             List<ICbValue> callArguments,
             object[] args)
