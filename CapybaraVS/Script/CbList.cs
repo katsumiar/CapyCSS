@@ -242,12 +242,7 @@ namespace CbVS.Script
 
                     return CbST.GetTypeEx(OriginalReturnType.FullName + "[]");
                 }
-                else if (SourceType != null)
-                {
-                    return SourceType;
-                }
-                Debug.Assert(false);
-                return typeof(ICollection<>).MakeGenericType(typeof(T));    // 古い仕様
+                return SourceType;
             }
         }
 
@@ -277,23 +272,7 @@ namespace CbVS.Script
                         return $"{ItemName}[]";
                     }
                 }
-                string typeName;
-                if (SourceType != null)
-                {
-                    return CbSTUtils._GetTypeName(SourceType);
-                }
-                else
-                {
-                    typeName = CbSTUtils.CbTypeNameList[nameof(CbList)];
-                }
-                if (NodeTF is null)
-                {
-                    return $"{typeName}<>";
-                }
-                else
-                {
-                    return $"{typeName}<{ItemName}>";
-                }
+                return CbSTUtils._GetTypeName(SourceType);
             }
         }
 
