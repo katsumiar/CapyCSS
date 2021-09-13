@@ -546,7 +546,7 @@ namespace CapybaraVS.Controls.BaseControls
                 if (BoxMainPanel.Visibility == Visibility.Visible &&
                     value.IsList)
                 {
-                    // 接続可能かつリスト型の場合は、ノードを展開する
+                    // 接続可能かつリスト型の場合
 
                     ConnectorList.Connect(value);
                 }

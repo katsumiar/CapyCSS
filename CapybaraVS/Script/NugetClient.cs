@@ -60,24 +60,26 @@ namespace CapyCSS.Script
         /// <param name="version">バージョン</param>
         /// <param name="pkgId">正式なパッケージ名（name(var)）</param>
         /// <returns>dllリスト</returns>
-		public static List<PackageInfo> install(string packageDir, string packageName, string version, out string pkgId)
+		public static List<PackageInfo> install(string _packageDir, string packageName, string version, out string pkgId)
         {
             pkgId = "";
-            string toolPath = Path.Combine(packageDir, "nuget.exe");
+            string toolPath = Path.Combine(_packageDir, "nuget.exe");
             if (!File.Exists(toolPath))
             {
-                ControlTools.ShowErrorMessage($"Nuget.exe を {packageDir} に置いて下さい。");
+                string msg = Language.Instance["Help:NugetNotExist"] + Environment.NewLine;
+                ControlTools.ShowErrorMessage(msg.Replace("<DIR>", _packageDir));
                 return null;
             }
 
             string packageVName = $"{packageName}.{version}";
+            string packageDir = Path.Combine(_packageDir, packageName);
             string packageRoot = Path.Combine(packageDir, packageVName);
 
             if (!Directory.Exists(packageRoot))
             {
                 // nugetファイルをダウンロード
 
-                CommandCanvasList.OutPut.OutString(nameof(NugetClient), $"Get[{packageVName}]...");
+                CommandCanvasList.OutPut.OutLine(nameof(NugetClient), $"Get {packageVName}");
 
                 ToolExec toolExec = new ToolExec(toolPath);
                 toolExec.ParamList.Add("Install");
@@ -88,9 +90,17 @@ namespace CapyCSS.Script
                 toolExec.ParamList.Add("nuspec");
                 toolExec.ParamList.Add("-OutputDirectory");
                 toolExec.ParamList.Add(packageDir);
-                toolExec.Start(true);
-
-                CommandCanvasList.OutPut.OutString(nameof(NugetClient), $"OK");
+                int result = toolExec.Start(true);
+                if (result == 0)
+                {
+                    CommandCanvasList.OutPut.OutLine(nameof(NugetClient), "OK");
+                    CommandCanvasList.OutPut.Flush();
+                }
+                else
+                {
+                    CommandCanvasList.OutPut.OutLine(nameof(NugetClient), $"error({result})");
+                    return null;
+                }
             }
 
             List<string> dllList = new List<string>();
@@ -121,7 +131,7 @@ namespace CapyCSS.Script
                 foreach (var libPath in dllList)
                 {
                     // 内部に複数のサブディレクトリを持っている場合、サブディレクトリ名を名前に残す
-                    string name = libPath.Substring(libPath.LastIndexOf("\\")).Replace(".lib","").Replace(" ", "");
+                    string name = Path.GetFileNameWithoutExtension(libPath);
 
                     if (loadedPackages.Contains(libPath))
                     {

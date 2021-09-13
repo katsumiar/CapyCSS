@@ -257,11 +257,13 @@ namespace CapybaraVS.Script
                     );
                 if (version is null)
                 {
-                    CommandCanvasList.OutPut.OutLine(nameof(ScriptImplement), $"imported {System.IO.Path.GetFileNameWithoutExtension(name)} package.");
+                    CommandCanvasList.OutPut.OutLine(nameof(ScriptImplement), $"imported {Path.GetFileNameWithoutExtension(name)} package.");
+                    CommandCanvasList.OutPut.Flush();
                 }
                 else
                 {
                     CommandCanvasList.OutPut.OutLine(nameof(ScriptImplement), $"imported {version} package.");
+                    CommandCanvasList.OutPut.Flush();
                 }
                 return name;
             }
