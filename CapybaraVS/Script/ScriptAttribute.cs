@@ -982,7 +982,10 @@ namespace CapybaraVS.Script
                 {
                     foreach (var constraint in geneArg.GetGenericParameterConstraints())
                     {
-                        if (t.IsAssignableFrom(constraint))
+                        if (CbSTUtils.HaveGenericParamater(constraint) &&
+                            t.GetInterfaces().Any(t => t.Namespace + ":" + t.Name == constraint.Namespace + ":" + constraint.Name))
+                            return true;    // ジェネリックパラメータを持つインタフェースの判定（取り敢えず）
+                        if (constraint.IsAssignableFrom(t))
                             return true;
                     }
                     return false;
