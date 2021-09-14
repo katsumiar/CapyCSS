@@ -8,6 +8,7 @@ namespace CapybaraVS.Script.Lib
     public class EnvironmentLib
     {
         private const string LIB_NAME = "Environment";
+        public const string LIB_IO_NAME = "Input/Output";
 
         [ScriptMethod(LIB_NAME)]
         public static string MachineName()
@@ -47,16 +48,14 @@ namespace CapybaraVS.Script.Lib
         }
 
         //------------------------------------------------------------------
-        private const string LIB_NAME2 = "Input/Output";
-
-        [ScriptMethod(LIB_NAME2)]
+        [ScriptMethod(LIB_IO_NAME)]
         public static ICollection<string> CommandLineArgs()
         {
             return new List<string>(Environment.GetCommandLineArgs());
         }
 
         //------------------------------------------------------------------
-        [ScriptMethod(LIB_NAME2)]
+        [ScriptMethod(LIB_IO_NAME)]
         public static ICollection<string> CommandLineParam()
         {
             ICollection<string> arg = CommandLineArgs();
@@ -77,7 +76,7 @@ namespace CapybaraVS.Script.Lib
         }
 
         //------------------------------------------------------------------
-        [ScriptMethod(LIB_NAME2)]
+        [ScriptMethod(LIB_IO_NAME)]
         public static ICollection<string> CommandLineOption()
         {
             ICollection<string> arg = CommandLineArgs();

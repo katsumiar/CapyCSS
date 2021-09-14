@@ -65,6 +65,12 @@ namespace CapybaraVS.Controls
             {
                 ReadAction = (self) =>
                 {
+                    if (DataVersion != DATA_VERSION)
+                    {
+                        ControlTools.ShowErrorMessage(CapybaraVS.Language.Instance["Help:DataVersionError"]);
+                        return;
+                    }
+
                     self.attachVariableIds = RootFunc.AttachVariableIds;
 
                     if (RootFunc.AttachFileName != null)

@@ -406,7 +406,7 @@ namespace CapybaraVS.Script
                 if (fromType == typeof(object))
                     return true;    // 接続元が object なら無条件でキャスト可能
 
-                if (!CbScript.IsValueType(fromType) || !CbScript.IsValueType(toType))
+                if (!CbScript.IsCalcable(fromType) || !CbScript.IsCalcable(toType))
                     return false;
 
                 // 以下、値を表現する型のみ
@@ -542,15 +542,21 @@ namespace CapybaraVS.Script
 
         public static string GetGenericParamatersString(MethodBase type)
         {
-            return GetGenericParamatersString(type.GetGenericArguments());
+            var result = GetGenericParamatersString(type.GetGenericArguments());
+            if (result == "")
+                return "";
+            return "<" + result + ">";
         }
 
         public static string GetGenericParamatersString(Type type)
         {
-            return GetGenericParamatersString(type.GetGenericArguments());
+            var result = GetGenericParamatersString(type.GetGenericArguments());
+            if (result == "")
+                return "";
+            return "<" + result + ">";
         }
 
-        public static string GetGenericParamatersString(Type[] types)
+        private static string GetGenericParamatersString(Type[] types)
         {
             if (types.Length == 0)
                 return "";
@@ -571,11 +577,11 @@ namespace CapybaraVS.Script
                 }
 
                 if (ret is null)
-                    ret = $"<{name}";
+                    ret = $"{name}";
                 else
                     ret += $", {name}";
             }
-            return ret + ">";
+            return ret;
         }
 
         public static string GetClassNameOnly(Type type)
@@ -588,7 +594,16 @@ namespace CapybaraVS.Script
 
         public static string GetGenericTypeName(Type type)
         {
-            return GetClassNameOnly(type) + GetGenericParamatersString(type);
+            string result = GetClassNameOnly(type);
+            if (result == "Nullable")
+            {
+                result = GetGenericParamatersString(type.GetGenericArguments()) + "?";
+            }
+            else
+            {
+                result = result + GetGenericParamatersString(type);
+            }
+            return result;
         }
 
         /// <summary>

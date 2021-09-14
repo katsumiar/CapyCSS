@@ -874,7 +874,7 @@ namespace CapybaraVS.Script
             get => Value as object;
             set
             {
-                if (CbScript.IsValueType(typeof(T)))
+                if (CbScript.IsCalcable(typeof(T)))
                 {
                     // ただのキャストでは sbyte から int への変換などで例外が出るので ChangeType を使って変換する
 
@@ -916,7 +916,7 @@ namespace CapybaraVS.Script
                 {
                     n = (dynamic)cbObject.ValueTypeObject;
                 }
-                if (CbScript.IsValueType(typeof(T)))
+                if (CbScript.IsCalcable(typeof(T)))
                 {
                     // ただのキャストでは sbyte から int への変換などで例外が出るので ChangeType を使って変換する
 

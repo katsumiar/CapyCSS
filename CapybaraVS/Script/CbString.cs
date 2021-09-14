@@ -28,6 +28,13 @@ namespace CapybaraVS.Script
             {
                 if (IsError)
                     return CbSTUtils.ERROR_STR;
+                if (IsNull)
+                {
+                    if (IsNull)
+                    {
+                        return $"[{TypeName}]{CbSTUtils.UI_NULL_STR}";
+                    }
+                }
                 return Value;
             }
         }
@@ -37,7 +44,14 @@ namespace CapybaraVS.Script
         /// </summary>
         public override string ValueString
         {
-            get => Value;
+            get
+            {
+                if (IsNull)
+                {
+                    return $"[{TypeName}]{CbSTUtils.UI_NULL_STR}";
+                }
+                return Value;
+            }
             set
             {
                 Value = value;

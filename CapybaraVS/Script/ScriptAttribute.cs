@@ -4,6 +4,7 @@ using CapybaraVS.Controls.BaseControls;
 using CapyCSS.Controls;
 using CapyCSS.Controls.BaseControls;
 using CapyCSS.Script;
+using CapyCSS.Script.Lib;
 using CbVS.Script;
 using System;
 using System.Collections.Generic;
@@ -982,6 +983,15 @@ namespace CapybaraVS.Script
                 {
                     foreach (var constraint in geneArg.GetGenericParameterConstraints())
                     {
+                        // スクリプト用の拡張制限
+                        if (constraint == typeof(CbScript.ICalcable) && CbScript.IsCalcable(t))
+                            return true;
+                        if (constraint == typeof(CbScript.ISigned) && CbScript.IsSigned(t))
+                            return true;
+                        if (constraint == typeof(CbScript.IEnum) && CbScript.IsEnum(t))
+                            return true;
+
+                        // 通常の制限
                         if (CbSTUtils.HaveGenericParamater(constraint) &&
                             t.GetInterfaces().Any(t => t.Namespace + ":" + t.Name == constraint.Namespace + ":" + constraint.Name))
                             return true;    // ジェネリックパラメータを持つインタフェースの判定（取り敢えず）

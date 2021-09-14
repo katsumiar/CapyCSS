@@ -92,6 +92,12 @@ namespace CapybaraVS.Control.BaseControls
             {
                 ReadAction = (self) =>
                 {
+                    if (DataVersion != DATA_VERSION)
+                    {
+                        ControlTools.ShowErrorMessage(CapybaraVS.Language.Instance["Help:DataVersionError"]);
+                        return;
+                    }
+
                     self.AssetId = AssetId;
                     self.EnabelGridLine = EnabelGridLine;
                     self.EnableInfo = EnableInfo;

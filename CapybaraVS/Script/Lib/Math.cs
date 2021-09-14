@@ -6,9 +6,9 @@ namespace CapybaraVS.Script.Lib
 {
     public class MathLib
     {
-        private const string LIB_NAME = "Math";
-        private const string LIB_NAME2 = LIB_NAME + ".Literal";
-        private const string LIB_NAME3 = LIB_NAME + ".Trigonometric";
+        public const string LIB_MATH_NAME = "Math";
+        private const string LIB_NAME2 = LIB_MATH_NAME + ".Literal";
+        private const string LIB_NAME3 = LIB_MATH_NAME + ".Trigonometric";
 
         [ScriptMethod(LIB_NAME2)]
         public static double PI()
@@ -104,112 +104,112 @@ namespace CapybaraVS.Script.Lib
         }
 
         //------------------------------------------------------------------
-        [ScriptMethod(LIB_NAME)]
+        [ScriptMethod(LIB_MATH_NAME)]
         public static double Sqrt(double value)
         {
             return Math.Sqrt(value);
         }
 
         //------------------------------------------------------------------
-        [ScriptMethod(LIB_NAME)]
+        [ScriptMethod(LIB_MATH_NAME)]
         public static int Sign(double value)
         {
             return Math.Sign(value);
         }
 
         //------------------------------------------------------------------
-        [ScriptMethod(LIB_NAME)]
+        [ScriptMethod(LIB_MATH_NAME)]
         public static double Round(double value)
         {
             return Math.Round(value);
         }
 
         //------------------------------------------------------------------
-        [ScriptMethod(LIB_NAME)]
+        [ScriptMethod(LIB_MATH_NAME)]
         public static double Ceiling(double value)
         {
             return Math.Ceiling(value);
         }
 
         //------------------------------------------------------------------
-        [ScriptMethod(LIB_NAME)]
+        [ScriptMethod(LIB_MATH_NAME)]
         public static double Floor(double value)
         {
             return Math.Floor(value);
         }
 
         //------------------------------------------------------------------
-        [ScriptMethod(LIB_NAME)]
+        [ScriptMethod(LIB_MATH_NAME)]
         public static double Truncate(double value)
         {
             return Math.Truncate(value);
         }
 
         //------------------------------------------------------------------
-        [ScriptMethod(LIB_NAME)]
+        [ScriptMethod(LIB_MATH_NAME)]
         public static double Max(double value1, double value2)
         {
             return Math.Max(value1, value2);
         }
 
         //------------------------------------------------------------------
-        [ScriptMethod(LIB_NAME)]
+        [ScriptMethod(LIB_MATH_NAME)]
         public static double Min(double value1, double value2)
         {
             return Math.Min(value1, value2);
         }
 
         //------------------------------------------------------------------
-        [ScriptMethod(LIB_NAME)]
+        [ScriptMethod(LIB_MATH_NAME)]
         public static double ToRadian(double angle)
         {
             return angle * Math.PI / 180;
         }
 
         //------------------------------------------------------------------
-        [ScriptMethod(LIB_NAME)]
+        [ScriptMethod(LIB_MATH_NAME)]
         public static double ToAngle(double radian)
         {
             return radian * 180 / Math.PI;
         }
 
         //------------------------------------------------------------------
-        [ScriptMethod(LIB_NAME, "1/n")]
+        [ScriptMethod(LIB_MATH_NAME, "1/n")]
         public static double Reciprocal(double value)
         {
             return 1 / value;
         }
 
         //------------------------------------------------------------------
-        [ScriptMethod(LIB_NAME, "ax+b")]
+        [ScriptMethod(LIB_MATH_NAME, "ax+b")]
         public static double DimFunc(double a, double x, double b)
         {
             return a * x + b;
         }
 
         //------------------------------------------------------------------
-        [ScriptMethod(LIB_NAME, "kx^n")]
+        [ScriptMethod(LIB_MATH_NAME, "kx^n")]
         public static double DimFunc2(double k, double x, double n)
         {
             return k * Math.Pow(x, n);
         }
 
         //------------------------------------------------------------------
-        [ScriptMethod(LIB_NAME, "(m/d)x^n")]
+        [ScriptMethod(LIB_MATH_NAME, "(m/d)x^n")]
         public static double DimFunc3(double m, double d, double x, double n)
         {
             return (m * Math.Pow(x, n)) / d;
         }
 
         //------------------------------------------------------------------
-        [ScriptMethod(LIB_NAME, "n!")]
+        [ScriptMethod(LIB_MATH_NAME, "n!")]
         public static int Factorial(int n)
         {
             return Permutation(n, n);
         }
 
         //------------------------------------------------------------------
-        [ScriptMethod(LIB_NAME, "nPr")]
+        [ScriptMethod(LIB_MATH_NAME, "nPr")]
         public static int Permutation(int n, int r)
         {
             int ret = 1;
@@ -221,7 +221,7 @@ namespace CapybaraVS.Script.Lib
         }
 
         //------------------------------------------------------------------
-        [ScriptMethod(LIB_NAME, "nCr")]
+        [ScriptMethod(LIB_MATH_NAME, "nCr")]
         public static int Combination(int n, int r)
         {
             return Permutation(n, r) / Factorial(r);

@@ -82,7 +82,7 @@ namespace CapybaraVS.Controls.BaseControls
         , IAsset
         , IDisposable
     {
-        public static readonly int DATA_VERSION = 1;
+        public static readonly int DATA_VERSION = 2;
 
         #region ID管理
         private AssetIdProvider assetIdProvider = null;
@@ -131,6 +131,12 @@ namespace CapybaraVS.Controls.BaseControls
 
                 self.Dispatcher.BeginInvoke(new Action(() =>
                 {
+                    if (DataVersion != DATA_VERSION)
+                    {
+                        ControlTools.ShowErrorMessage(CapybaraVS.Language.Instance["Help:DataVersionError"]);
+                        return;
+                    }
+
                     if (WorkStack != null)
                     {
                         self.WorkStack.OwnerCommandCanvas = self;

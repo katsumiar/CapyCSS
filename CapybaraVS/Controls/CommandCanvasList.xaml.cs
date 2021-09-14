@@ -50,6 +50,12 @@ namespace CapyCSS.Controls
                 {
                     CapybaraVS.Language.Instance.LanguageType = Language;
 
+                    if (DataVersion != DATA_VERSION)
+                    {
+                        ControlTools.ShowErrorMessage(CapybaraVS.Language.Instance["Help:DataVersionError"]);
+                        return;
+                    }
+
                     if (BackGroundImagePath != null)
                     {
                         // 作業領域の背景イメージのパスをセットする

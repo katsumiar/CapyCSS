@@ -67,7 +67,7 @@ namespace CapyCSS.Script
             string toolPath = Path.Combine(_packageDir, "nuget.exe");
             if (!File.Exists(toolPath))
             {
-                string msg = Language.Instance["Help:NugetNotExist"] + Environment.NewLine;
+                string msg = Language.Instance["Help:NugetNotExist"];
                 ControlTools.ShowErrorMessage(msg.Replace("<DIR>", _packageDir));
                 return null;
             }

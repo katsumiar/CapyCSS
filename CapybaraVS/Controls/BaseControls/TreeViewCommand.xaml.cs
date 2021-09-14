@@ -423,7 +423,7 @@ namespace CapybaraVS.Controls.BaseControls
             Dictionary<string, string> keyValuePairs = new Dictionary<string, string>()
             {
                 { "STRING", "System" },
-                { "BOOL", "Script" },
+                { "BOOL", "Logical#" },
                 { "BYTE", "Script" },
                 { "SBYTE", "Script" },
                 { "CHAR", "Script" },
@@ -440,7 +440,15 @@ namespace CapybaraVS.Controls.BaseControls
 
             if (keyValuePairs.ContainsKey(name.ToUpper()))
             {
-                name = keyValuePairs[name.ToUpper()] + "." + name;
+                if (keyValuePairs[name.ToUpper()].EndsWith("#"))
+                {
+                    name = keyValuePairs[name.ToUpper()];
+                    name = name.Replace("#", "");
+                }
+                else
+                {
+                    name = keyValuePairs[name.ToUpper()] + "." + name;
+                }
             }
 
             string searchName = name.ToUpper().Replace(" ", "");
