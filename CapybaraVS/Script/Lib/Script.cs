@@ -415,4 +415,16 @@ namespace CapyCSS.Script.Lib
             return null;
         }
     }
+
+    //------------------------------------------------------------------
+    public class Script_Literal2
+    {
+        public const string LIB_Script_literal_NAME = "Literal";
+
+        [ScriptMethod(LIB_Script_literal_NAME)]
+        public static object Null()
+        {
+            return null;
+        }
+    }
 }

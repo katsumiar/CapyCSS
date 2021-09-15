@@ -760,7 +760,14 @@ namespace CapybaraVS.Script
         /// 変数の持つ値を参照します。
         /// ※ object として扱う場合は Data を参照します。
         /// </summary>
-        public virtual T Value { get => _value; set { _value = value; } }
+        public virtual T Value 
+        {
+            get => _value;
+            set
+            {
+                _value = value;
+            }
+        }
 
         /// <summary>
         /// 値の文字列表現
@@ -804,7 +811,18 @@ namespace CapybaraVS.Script
         /// <summary>
         /// オリジナルの型（Func, Action, List 以外は OriginalReturnType と同じ）を参照します。
         /// </summary>
-        public virtual Type OriginalType => typeof(T);
+        public virtual Type OriginalType
+        {
+            get
+            {
+                if (IsNullable)
+                {
+                    return typeof(Nullable<>).MakeGenericType(new Type[] { typeof(T) });
+                }
+                return typeof(T);
+            }
+        }
+
         /// <summary>
         /// 引数時参照修飾されているか？
         /// </summary>

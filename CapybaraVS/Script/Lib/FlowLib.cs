@@ -54,7 +54,7 @@ namespace CapyCSS.Script.Lib
         [ScriptMethod(LIB_OPERATION_NAME)]
         public static bool IsNullable<T>(Nullable<T> target) where T : struct
         {
-            if (!target.HasValue)
+            if (target.HasValue)
             {
                 return true;
             }
@@ -107,7 +107,7 @@ namespace CapyCSS.Script.Lib
         [ScriptMethod(LIB_ACTION_NAME)]
         public static void IsNullable<T>(Nullable<T> target, Action<T> action) where T : struct
         {
-            if (!target.HasValue)
+            if (target.HasValue)
             {
                 action?.Invoke(target.Value);
             }
@@ -199,7 +199,7 @@ namespace CapyCSS.Script.Lib
         [ScriptMethod(LIB_FLOW_NAME)]
         public static void If_Nullable<T>(Nullable<T> target, Action<T> trueAction, Action falseAction) where T : struct
         {
-            if (!target.HasValue)
+            if (target.HasValue)
             {
                 trueAction?.Invoke(target.Value);
             }

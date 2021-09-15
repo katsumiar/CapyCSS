@@ -55,6 +55,7 @@ namespace CapybaraVS.Script
         public static readonly Type FUNC_TYPE = typeof(Func<>);
         public static readonly Type FUNC2ARG_TYPE = typeof(Func<,>);
         public static readonly Type ACTION_TYPE = typeof(Action<>);
+        public static readonly Type NULLABLE_TYPE = typeof(Nullable<>);
         public static readonly Type DUMMY_TYPE = typeof(int); // ダミー
 
         public const string ERROR_STR = "[ERROR]";          // エラーの表現

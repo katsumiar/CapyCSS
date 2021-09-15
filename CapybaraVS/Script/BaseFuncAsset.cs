@@ -55,6 +55,7 @@ namespace CapybaraVS.Script
                 var variableNode = CreateGroup(ProgramNode, "Variable");
                 CreateAssetMenu(ownerCommandCanvas, variableNode, new CreateVariable());
                 CreateAssetMenu(ownerCommandCanvas, variableNode, new CreateVariableFunc());
+                CreateAssetMenu(ownerCommandCanvas, variableNode, new CreateNullableVariable());
                 CreateAssetMenu(ownerCommandCanvas, variableNode, new GetVariable());
                 CreateAssetMenu(ownerCommandCanvas, variableNode, new SetVariable());
 
@@ -1724,6 +1725,19 @@ namespace CapybaraVS.Script
         public List<TypeRequest> typeRequests => new List<TypeRequest>()
         {
             new TypeRequest(CbSTUtils.FUNC_TYPE, t => true)
+        };
+    }
+
+    //-----------------------------------------------------------------
+    class CreateNullableVariable : _GetVariable, IFuncCreateVariableAssetDef
+    {
+        public new string HelpText => Language.Instance[ApiImporter.BASE_LIB_TAG_PRE + nameof(CreateNullableVariable)];
+
+        public string MenuTitle => $"Create Variable : T?";
+
+        public List<TypeRequest> typeRequests => new List<TypeRequest>()
+        {
+            new TypeRequest(CbSTUtils.NULLABLE_TYPE, t => true)
         };
     }
 
