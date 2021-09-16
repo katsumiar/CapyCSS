@@ -12,10 +12,52 @@ namespace CapyCSS.Script.Lib
     {
         public const string LIB_FLOW_NAME = "Flow";
         public const string LIB_Fx_NAME = "f(x)";
+        public const string LIB_LOGICAL_NAME = "Logical";
         public const string LIB_OPERATION_NAME = "Comparison";
         public const string LIB_FUNC_NAME = LIB_Fx_NAME + ".Func";
         public const string LIB_ACTION_NAME = LIB_Fx_NAME + ".Action";
+        public const string LIB_NULLABLE_NAME = LIB_FLOW_NAME + ".Nullable";
 
+        //====================================================================================
+        [ScriptMethod(LIB_LOGICAL_NAME)]
+        public static bool And(IEnumerable<bool> samples, bool invert)
+        {
+            if (samples is null || samples.Count() == 0)
+                return false;
+            bool result = true;
+            foreach (var sample in samples)
+            {
+                result &= sample;
+            }
+            if (invert)
+                return !result;
+            return result;
+        }
+
+        //------------------------------------------------------------------
+        [ScriptMethod(LIB_LOGICAL_NAME)]
+        public static bool Or(IEnumerable<bool> samples, bool invert)
+        {
+            if (samples is null || samples.Count() == 0)
+                return false;
+            bool result = true;
+            foreach (var sample in samples)
+            {
+                result |= sample;
+            }
+            if (invert)
+                return !result;
+            return result;
+        }
+
+        //------------------------------------------------------------------
+        [ScriptMethod(LIB_LOGICAL_NAME)]
+        public static bool Not(bool sample)
+        {
+            return !sample;
+        }
+
+        //====================================================================================
         [ScriptMethod(LIB_OPERATION_NAME, "==")]
         public static bool Eq(IComparable a, IComparable b)
         {
@@ -50,18 +92,7 @@ namespace CapyCSS.Script.Lib
             return a.CompareTo(b) <= 0;
         }
 
-        //------------------------------------------------------------------
-        [ScriptMethod(LIB_OPERATION_NAME)]
-        public static bool IsNullable<T>(Nullable<T> target) where T : struct
-        {
-            if (target.HasValue)
-            {
-                return true;
-            }
-            return false;
-        }
-
-        //------------------------------------------------------------------
+        //====================================================================================
         [ScriptMethod(LIB_FUNC_NAME)]
         public static TResult Invoke<TResult>(Func<TResult> func)
         {
@@ -82,7 +113,7 @@ namespace CapyCSS.Script.Lib
             return func(arg1, arg2);
         }
 
-        //------------------------------------------------------------------
+        //====================================================================================
         [ScriptMethod(LIB_ACTION_NAME)]
         public static void Invoke(Action action)
         {
@@ -103,17 +134,7 @@ namespace CapyCSS.Script.Lib
             action?.Invoke(arg1, arg2);
         }
 
-        //------------------------------------------------------------------
-        [ScriptMethod(LIB_ACTION_NAME)]
-        public static void IsNullable<T>(Nullable<T> target, Action<T> action) where T : struct
-        {
-            if (target.HasValue)
-            {
-                action?.Invoke(target.Value);
-            }
-        }
-
-        //------------------------------------------------------------------
+        //====================================================================================
         [ScriptMethod(LIB_FLOW_NAME)]
         public static T If_Value<T>(bool sample, T trueValue, T falseValue)
         {
@@ -127,9 +148,30 @@ namespace CapyCSS.Script.Lib
             }
         }
 
+        //====================================================================================
+        [ScriptMethod(LIB_NULLABLE_NAME)]
+        public static bool HasValue<T>(T? sample) where T : struct
+        {
+            if (sample.HasValue)
+            {
+                return true;
+            }
+            return false;
+        }
+
         //------------------------------------------------------------------
-        [ScriptMethod(LIB_FLOW_NAME)]
-        public static Nullable<T> If_ResultNullable<T>(bool sample, T value) where T : struct
+        [ScriptMethod(LIB_NULLABLE_NAME)]
+        public static void HasValue<T>(T? sample, Action<T> hasValueAction) where T : struct
+        {
+            if (sample.HasValue)
+            {
+                hasValueAction?.Invoke(sample.Value);
+            }
+        }
+
+        //------------------------------------------------------------------
+        [ScriptMethod(LIB_NULLABLE_NAME)]
+        public static T? If_ResultNullable<T>(bool sample, T value) where T : struct
         {
             if (sample)
             {
@@ -142,6 +184,40 @@ namespace CapyCSS.Script.Lib
         }
 
         //------------------------------------------------------------------
+        [ScriptMethod(LIB_NULLABLE_NAME)]
+        public static void If_HasValue<T>(T? sample, Action<T> hasValueAction, Action othersAction) where T : struct
+        {
+            if (sample.HasValue)
+            {
+                hasValueAction?.Invoke(sample.Value);
+            }
+            else
+            {
+                othersAction?.Invoke();
+            }
+        }
+
+        //------------------------------------------------------------------
+        [ScriptMethod(LIB_NULLABLE_NAME)]
+        public static T? If_ResultNullable<T>(bool sample, Func<T> trueFunction, Func<T> falseFunction) where T : struct
+        {
+            if (sample)
+            {
+                if (trueFunction is null)
+                    return null;
+
+                return trueFunction();
+            }
+            else
+            {
+                if (trueFunction is null)
+                    return null;
+
+                return falseFunction();
+            }
+        }
+
+        //====================================================================================
         [ScriptMethod(LIB_FLOW_NAME)]
         public static void If(bool sample, Action trueAction, Action falseAction)
         {
@@ -177,40 +253,6 @@ namespace CapyCSS.Script.Lib
 
         //------------------------------------------------------------------
         [ScriptMethod(LIB_FLOW_NAME)]
-        public static Nullable<T> If_ResultNullable<T>(bool sample, Func<T> trueFunction, Func<T> falseFunction) where T : struct
-        {
-            if (sample)
-            {
-                if (trueFunction is null)
-                    return null;
-
-                return trueFunction();
-            }
-            else
-            {
-                if (trueFunction is null)
-                    return null;
-
-                return falseFunction();
-            }
-        }
-
-        //------------------------------------------------------------------
-        [ScriptMethod(LIB_FLOW_NAME)]
-        public static void If_Nullable<T>(Nullable<T> target, Action<T> trueAction, Action falseAction) where T : struct
-        {
-            if (target.HasValue)
-            {
-                trueAction?.Invoke(target.Value);
-            }
-            else
-            {
-                falseAction?.Invoke();
-            }
-        }
-
-        //------------------------------------------------------------------
-        [ScriptMethod(LIB_FLOW_NAME)]
         public static void For(int begin, int end, int step, Action<int> action)
         {
             if (action is null)
@@ -232,26 +274,38 @@ namespace CapyCSS.Script.Lib
 
         //------------------------------------------------------------------
         [ScriptMethod(LIB_FLOW_NAME)]
-        public static void Foreach<T>(IEnumerable<T> sample, Action<T> action)
+        public static void Foreach<T>(IEnumerable<T> samples, Action<T> action)
         {
-            if (sample is null || action is null)
+            if (samples is null || action is null)
                 return;
-            foreach (var node in sample)
+            foreach (var sample in samples)
             {
-                action(node);
+                action?.Invoke(sample);
             }
         }
 
         //------------------------------------------------------------------
         [ScriptMethod(LIB_FLOW_NAME)]
-        public static T ForeachReturn<T>(IEnumerable<T> sample, Func<T, T> func, T defalutReturn)
+        public static void ForeachAction(IEnumerable<Action> samples)
         {
-            if (sample is null || func is null)
+            if (samples is null)
+                return;
+            foreach (var sample in samples)
+            {
+                sample?.Invoke();
+            }
+        }
+
+        //------------------------------------------------------------------
+        [ScriptMethod(LIB_FLOW_NAME)]
+        public static T ForeachReturn<T>(IEnumerable<T> samples, Func<T, T> func, T defalutReturn)
+        {
+            if (samples is null || func is null)
                 return defalutReturn;
             T result = defalutReturn;
-            foreach (var node in sample)
+            foreach (var sample in samples)
             {
-                result = func(node);
+                result = func(sample);
             }
             return result;
         }

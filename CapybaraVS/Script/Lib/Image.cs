@@ -1797,7 +1797,7 @@ namespace CbVS.Script.Lib
                 else if (r.Equals(g) && g.Equals(b))
                 {
                     double avg = (r + g + b) / 3.0;
-                    Alpha = 1.0 - EasingFunction.InOutSine(avg);
+                    Alpha = 1.0 - EasingFunction.InOutSin(avg);
                 }
                 else
                 {
@@ -1885,7 +1885,7 @@ namespace CbVS.Script.Lib
             switch (type)
             {
                 case ContrastType.InOutSine:
-                    return new CRGBAContrastFilter((x) => EasingFunction.InOutSine(x));
+                    return new CRGBAContrastFilter((x) => EasingFunction.InOutSin(x));
                 case ContrastType.Linear:
                     return new CRGBAContrastFilter((x) => EasingFunction.Linear(x));
                 case ContrastType.OutExp:
@@ -1893,7 +1893,7 @@ namespace CbVS.Script.Lib
                 case ContrastType.OutCirc:
                     return new CRGBAContrastFilter((x) => EasingFunction.OutCirc(x));
                 case ContrastType.OutSine:
-                    return new CRGBAContrastFilter((x) => EasingFunction.OutSine(x));
+                    return new CRGBAContrastFilter((x) => EasingFunction.OutSin(x));
                 case ContrastType.InCubic:
                     return new CRGBAContrastFilter((x) => EasingFunction.InCubic(x));
                 case ContrastType.InQuad:

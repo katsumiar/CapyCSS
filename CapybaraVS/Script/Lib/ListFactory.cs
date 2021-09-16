@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using System.Text;
 
@@ -44,17 +45,17 @@ namespace CapybaraVS.Script.Lib
         [ScriptMethod(LIB_NAME2)]
         public static ICollection<T2> CastConvert<T1, T2>(IEnumerable<T1> list) where T2 : class
         {
-            return ConvertList(list, (n) => (T2)((dynamic)n));
+            return ConvertList(list, (n) => (T2)(dynamic)n);
         }
 
         //------------------------------------------------------------------
         [ScriptMethod(LIB_NAME5)]
-        public static int Counter<T>(IEnumerable<T> sample, Predicate<T> predicate)
+        public static int Counter<T>(IEnumerable<T> samples, Predicate<T> predicate)
         {
             int count = 0;
-            foreach (var node in sample)
+            foreach (var sample in samples)
             {
-                if (predicate(node))
+                if (predicate(sample))
                 {
                     count++;
                 }
@@ -64,12 +65,12 @@ namespace CapybaraVS.Script.Lib
 
         //------------------------------------------------------------------
         [ScriptMethod(LIB_NAME5)]
-        public static int ConteinsCounter<T>(ICollection<T> sample, T value)
+        public static int ConteinsCounter<T>(IEnumerable<T> samples, T value)
         {
             int count = 0;
-            foreach (var node in sample)
+            foreach (var node in samples)
             {
-                if (sample.Contains(value))
+                if (samples.Contains(value))
                 {
                     count++;
                 }
@@ -79,32 +80,32 @@ namespace CapybaraVS.Script.Lib
 
         //------------------------------------------------------------------
         [ScriptMethod(LIB_NAME6)]
-        public static ICollection<T> DescSort<T>(IEnumerable<T> sample)
+        public static ICollection<T> DescSort<T>(IEnumerable<T> list)
         {
-            var ret = new List<T>(sample);
+            var ret = new List<T>(list);
             ret.Sort();
             return ret;
         }
 
         //------------------------------------------------------------------
         [ScriptMethod(LIB_NAME6)]
-        public static ICollection<T> AscSort<T>(IEnumerable<T> sample) where T : IComparable
+        public static ICollection<T> AscSort<T>(IEnumerable<T> list) where T : IComparable
         {
-            var ret = new List<T>(sample);
+            var ret = new List<T>(list);
             ret.Sort((a, b) => b.CompareTo(a));
             return ret;
         }
 
         //------------------------------------------------------------------
         [ScriptMethod(LIB_NAME8)]
-        public static ICollection<T> Filtering<T>(IEnumerable<T> sample, Predicate<T> predicate)
+        public static ICollection<T> Filtering<T>(IEnumerable<T> samples, Predicate<T> predicate)
         {
             var ret = new List<T>();
-            foreach (var node in sample)
+            foreach (var sample in samples)
             {
-                if (predicate(node))
+                if (predicate(sample))
                 {
-                    ret.Add(node);
+                    ret.Add(sample);
                 }
             }
             return ret;
@@ -133,9 +134,9 @@ namespace CapybaraVS.Script.Lib
 
         //------------------------------------------------------------------
         [ScriptMethod(LIB_NAME)]
-        public static string Join<T>(string separator, IEnumerable<T> value)
+        public static string Join<T>(string separator, IEnumerable<T> values)
         {
-            return string.Join(separator, value);
+            return string.Join(separator, values);
         }
 
         //------------------------------------------------------------------
@@ -161,17 +162,24 @@ namespace CapybaraVS.Script.Lib
 
         //------------------------------------------------------------------
         [ScriptMethod(LIB_NAME)]
-        public static ICollection<T> Distinct<T>(IEnumerable<T> sample)
+        public static ICollection<T> Distinct<T>(IEnumerable<T> samples)
         {
             var ret = new List<T>();
-            foreach (var node in sample)
+            foreach (var sample in samples)
             {
-                if (!ret.Contains(node))
+                if (!ret.Contains(sample))
                 {
-                    ret.Add(node);
+                    ret.Add(sample);
                 }
             }
             return ret;
+        }
+
+        //------------------------------------------------------------------
+        [ScriptMethod(LIB_NAME)]
+        public static bool Contains<T>(IEnumerable<T> samples, T target)
+        {
+            return samples.Contains(target);
         }
     }
 }

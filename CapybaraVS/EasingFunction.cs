@@ -40,13 +40,13 @@ namespace CapybaraVS
         /// <summary>
         /// イージング関数
         /// </summary>
-        public static double InOutSine(double t, double totaltime, double max, double min)
+        public static double InOutSin(double t, double totaltime, double max, double min)
         {
             max -= min;
             return -max / 2 * (Math.Cos(t * Math.PI / totaltime) - 1) + min;
         }
         [ScriptMethod(LIB_NAME)]
-        public static double InOutSine(double t)
+        public static double InOutSin(double t)
         {
             return -1.0 / 2.0 * (Math.Cos(t * Math.PI) - 1.0);
         }
@@ -86,13 +86,13 @@ namespace CapybaraVS
         /// <summary>
         /// イージング関数
         /// </summary>
-        public static double OutSine(double t, double totaltime, double max, double min)
+        public static double OutSin(double t, double totaltime, double max, double min)
         {
             max -= min;
             return max * Math.Sin(t * (Math.PI / 2) / totaltime) + min;
         }
         [ScriptMethod(LIB_NAME)]
-        public static double OutSine(double t)
+        public static double OutSin(double t)
         {
             return Math.Sin(t * (Math.PI / 2.0));
         }

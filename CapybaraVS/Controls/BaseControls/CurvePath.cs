@@ -526,7 +526,7 @@ namespace CapybaraVS
     /// <summary>
     /// RootCurveSingleLinkと共通のインターフェイス（RootCurveLinks）を持つ複数のリンク先を持てるルートコネクター
     /// </summary>
-    public class RootCurveMulitiLink 
+    public class RootCurveMulitiLink
         : RootCurveLinks
         , ICloseLink
     {
@@ -1112,7 +1112,7 @@ namespace CapybaraVS
                     // 逆方向時適用率
                     EasingFunction.OutExp(y, spaceScaleForY, m, 0) / spaceScaleForX +
                     // 正方向時適用率
-                    EasingFunction.InOutSine(y, spaceScaleForY, p, 0) / spaceScaleForX
+                    EasingFunction.InOutSin(y, spaceScaleForY, p, 0) / spaceScaleForX
                 )
                 +
                 (int)k // 最低限の水平横伸び
