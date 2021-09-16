@@ -26,6 +26,8 @@ namespace CapybaraVS.Script
             {
                 if (IsError)
                     return CbSTUtils.ERROR_STR;
+                if (IsNull)
+                    return CbSTUtils.UI_NULL_STR;
 
                 if (Value == '\n') return "\\n";
                 if (Value == '\0') return "\\0";
@@ -48,6 +50,11 @@ namespace CapybaraVS.Script
             get => ValueUIString;
             set
             {
+                if (IsNullable && value == CbSTUtils.UI_NULL_STR)
+                {
+                    isNull = true;
+                    return;
+                }
                 if (value != null)
                 {
                     if (value.Contains('\\'))

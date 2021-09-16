@@ -766,6 +766,7 @@ namespace CapybaraVS.Script
             set
             {
                 _value = value;
+                isNull = false;
             }
         }
 
@@ -774,7 +775,7 @@ namespace CapybaraVS.Script
         /// </summary>
         public virtual string ValueString
         {
-            get => Value.ToString();
+            get => ValueUIString;
             set { }
         }
 
@@ -865,9 +866,20 @@ namespace CapybaraVS.Script
         public virtual bool IsReadOnlyName => false;
 
         /// <summary>
+        /// 値のUI上の文字列表現
         /// 変数の持つ値を文字列として参照します。
         /// </summary>
-        public virtual string ValueUIString { get; }
+        public virtual string ValueUIString
+        {
+            get
+            {
+                if (IsError)
+                    return CbSTUtils.ERROR_STR;
+                if (IsNull)
+                    return CbSTUtils.UI_NULL_STR;
+                return Value.ToString();
+            }
+        }
 
         /// <summary>
         /// 値の変化後に動かす必要のある処理です。
@@ -889,10 +901,18 @@ namespace CapybaraVS.Script
         /// ※ 型を厳密に扱う場合は Value を参照します。
         /// </summary>
         public virtual object Data {
-            get => Value as object;
+            get
+            {
+                Debug.Assert(!(IsNullable && IsNull));
+                return Value as object;
+            }
             set
             {
-                if (CbScript.IsCalcable(typeof(T)))
+                if (value == null)
+                {
+                    isNull = true;
+                }
+                else if (CbScript.IsCalcable(typeof(T)))
                 {
                     // ただのキャストでは sbyte から int への変換などで例外が出るので ChangeType を使って変換する
 
@@ -915,12 +935,14 @@ namespace CapybaraVS.Script
         /// <summary>
         /// 変数の持つ値は null か？
         /// </summary>
-        public virtual bool IsNull { get => Value is null; }
+        public virtual bool IsNull { get => isNull; }
 
         /// <summary>
         /// null許容型か？
         /// </summary>
         public bool IsNullable { get; set; } = false;
+
+        protected bool isNull = false;
 
         public virtual void Set(ICbValue n)
         {
@@ -930,43 +952,56 @@ namespace CapybaraVS.Script
                     throw new Exception(n.ErrorMessage);
 
                 ReturnAction = null;
-                if (n is CbObject cbObject)
+                if (IsNullable && n.IsNull)
                 {
-                    n = (dynamic)cbObject.ValueTypeObject;
-                }
-                if (CbScript.IsCalcable(typeof(T)))
-                {
-                    // ただのキャストでは sbyte から int への変換などで例外が出るので ChangeType を使って変換する
+                    // Nullable<> に null を代入
 
-                    Value = (T)Convert.ChangeType(n.Data, typeof(T));
-
-                    // 参照渡しの為のリアクションのコピー
-                    ReturnAction = n.ReturnAction;
-                }
-                else if (!this.IsList && n.IsList)
-                {
-                    // リストはオリジナルの型にしないと代入できない
-
-                    ICbList cbList = n.GetListValue;
-
-                    Value = (T)cbList.ConvertOriginalTypeList(null, null);
-
-                    if (this is ICbClass cbClass)
-                    {
-                        // List は、参照型なので Value の値が更新されると cbList に戻す必要がある。
-
-                        cbClass.ReturnAction = (val) => cbList.CopyFrom(val);
-                    }
+                    // 値型に null の状態を持つ必要がある
+                    isNull = true;
                 }
                 else
                 {
-                    Value = (dynamic)n.Data;
-                }
-                if (IsList && n.IsList)
-                {
-                    // ※IEnumerableを持ったクラスの場合、リストにはオリジナルのデータがある場合があるのでコピーする
+                    if (n is CbObject cbObject)
+                    {
+                        n = (dynamic)cbObject.ValueTypeObject;
+                    }
 
-                    (this as ICbList).OriginalData = (n as ICbList).OriginalData;
+                    if (CbScript.IsCalcable(typeof(T)))
+                    {
+                        // ただのキャストでは sbyte から int への変換などで例外が出るので ChangeType を使って変換する
+
+                        Value = (T)Convert.ChangeType(n.Data, typeof(T));
+
+                        // 参照渡しの為のリアクションのコピー
+                        ReturnAction = n.ReturnAction;
+                    }
+                    else if (!IsList && n.IsList)
+                    {
+                        // リストはオリジナルの型にしないと代入できない
+
+                        ICbList cbList = n.GetListValue;
+
+                        Value = (T)cbList.ConvertOriginalTypeList(null, null);
+
+                        if (this is ICbClass cbClass)
+                        {
+                            // List は、参照型なので Value の値が更新されると cbList に戻す必要がある。
+
+                            cbClass.ReturnAction = (val) => cbList.CopyFrom(val);
+                        }
+                    }
+                    else
+                    {
+                        Value = (dynamic)n.Data;
+                    }
+                    if (IsList && n.IsList)
+                    {
+                        // ※IEnumerableを持ったクラスの場合、リストにはオリジナルのデータがある場合があるのでコピーする
+
+                        (this as ICbList).OriginalData = (n as ICbList).OriginalData;
+                    }
+
+                    isNull = n.IsNull;
                 }
                 IsLiteral = n.IsLiteral;
                 if (IsError)

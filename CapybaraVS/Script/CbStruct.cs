@@ -166,6 +166,8 @@ namespace CapybaraVS.Script
                 string baseName = "[" + TypeName + "]";
                 if (IsError)
                     return CbSTUtils.ERROR_STR;
+                if (IsNull)
+                    return $"{baseName}{CbSTUtils.UI_NULL_STR}";
                 return baseName;
             }
         }
@@ -179,7 +181,8 @@ namespace CapybaraVS.Script
             {
                 if (IsNull)
                 {
-                    return CbSTUtils.NULL_STR;
+                    string baseName = "[" + TypeName + "]";
+                    return $"{baseName}{CbSTUtils.UI_NULL_STR}";
                 }
                 else
                 {

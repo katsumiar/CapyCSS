@@ -27,6 +27,8 @@ namespace CapybaraVS.Script
             {
                 if (IsError)
                     return CbSTUtils.ERROR_STR;
+                if (IsNull)
+                    return CbSTUtils.UI_NULL_STR;
                 return Value.ToString().ToLower();  // ElementList は小文字
             }
         }
@@ -39,6 +41,11 @@ namespace CapybaraVS.Script
             get => Value.ToString();
             set
             {
+                if (IsNullable && value == CbSTUtils.UI_NULL_STR)
+                {
+                    isNull = true;
+                    return;
+                }
                 if (value != null)
                     Value = bool.Parse(value);
             }

@@ -18,19 +18,6 @@ namespace CapybaraVS.Script
         }
 
         /// <summary>
-        /// 値のUI上の文字列表現
-        /// </summary>
-        public override string ValueUIString
-        {
-            get
-            {
-                if (IsError)
-                    return CbSTUtils.ERROR_STR;
-                return Value.ToString();
-            }
-        }
-
-        /// <summary>
         /// 値の文字列表現
         /// </summary>
         public override string ValueString
@@ -38,6 +25,11 @@ namespace CapybaraVS.Script
             get => Value.ToString();
             set
             {
+                if (IsNullable && value == CbSTUtils.UI_NULL_STR)
+                {
+                    isNull = true;
+                    return;
+                }
                 if (value != null)
                     Value = byte.Parse(value);
             }

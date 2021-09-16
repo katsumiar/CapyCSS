@@ -131,6 +131,8 @@ namespace CapybaraVS.Script
             {
                 if (IsError)
                     return CbSTUtils.ERROR_STR;
+                if (IsNull)
+                    return CbSTUtils.UI_NULL_STR;
                 return CbSTUtils._GetTypeName(typeof(T)) + "." + Value.ToString();
             }
         }
@@ -143,6 +145,12 @@ namespace CapybaraVS.Script
             get => ValueUIString;
             set
             {
+                if (IsNullable && value == CbSTUtils.UI_NULL_STR)
+                {
+                    isNull = true;
+                    return;
+                }
+
                 if (value.Contains("."))
                     value = value.Substring(value.IndexOf(".") + 1, value.Length - value.IndexOf(".") - 1);
 

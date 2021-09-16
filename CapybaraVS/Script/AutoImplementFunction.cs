@@ -482,6 +482,10 @@ namespace CapybaraVS.Script
                     return cbEvent.GetCallBackOriginalType(dummyArgumentsControl, dummyArgumentsStack);
                 }
             }
+            if (value.IsNull)
+            {
+                return null;
+            }
             return value.Data;
         }
 

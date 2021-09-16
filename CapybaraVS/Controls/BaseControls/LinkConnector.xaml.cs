@@ -671,8 +671,8 @@ namespace CapybaraVS.Controls.BaseControls
                 }
                 else if (connectValueData is CbObject cbObject)
                 {
-                    if (cbObject.Data is null)
-                        return; // 保険
+                    //if (cbObject.Data is null)
+                    //    return; // 保険
 
                     ValueData.Set(cbObject);
                 }
