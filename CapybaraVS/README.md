@@ -17,6 +17,10 @@
 * 過去のデータと互換性が無くなりました。
 
 ![generic3](https://user-images.githubusercontent.com/63950487/132211159-54a9ad84-a001-4236-b059-6eff0614b775.gif)
+Nullable Sample:
+![nullable](https://user-images.githubusercontent.com/63950487/133881922-56db8e76-faf7-4b5d-b2d5-a64abfcebec4.png)
+Delegate Sample:
+![Delegate](https://user-images.githubusercontent.com/63950487/133883145-12f0e241-7f0d-424a-b235-b1376b283698.png)
 
 ## 特徴
 * ビジュアルなスクリプトを作成することができます。
@@ -53,10 +57,10 @@ CapyCSS.exe -ase script.cbs
 下記は、属性を使用してメソッドをノード化する例です。
 ```
 [ScriptMethod]
-public static ICollection<T> Filtering<T>(IEnumerable<T> sample, Predicate<T> predicate)
+public static ICollection<T> Filtering<T>(IEnumerable<T> samples, Predicate<T> predicate)
 {
     var result = new List<T>();
-    foreach (var node in sample)
+    foreach (var node in samples)
     {
         if (predicate(node))
         {

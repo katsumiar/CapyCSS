@@ -57,10 +57,10 @@ CapyCSS.exe -ase script.cbs
 下記は、属性を使用してメソッドをノード化する例です。
 ```
 [ScriptMethod]
-public static ICollection<T> Filtering<T>(IEnumerable<T> sample, Predicate<T> predicate)
+public static ICollection<T> Filtering<T>(IEnumerable<T> samples, Predicate<T> predicate)
 {
     var result = new List<T>();
-    foreach (var node in sample)
+    foreach (var node in samples)
     {
         if (predicate(node))
         {
