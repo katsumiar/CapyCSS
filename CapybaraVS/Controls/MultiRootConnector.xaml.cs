@@ -621,6 +621,7 @@ namespace CapybaraVS.Controls
                 msg = ex.InnerException.Message;
             else
                 msg = ex.Message;
+            msg += Environment.NewLine;
             msg += ex.StackTrace;
             msg = caption + ": " + msg;
             CommandCanvasList.OutPut.OutLine("Script", msg);
