@@ -120,12 +120,6 @@ namespace CapybaraVS.Script
 
         public string ItemName => typeof(T).FullName;
 
-        public static Type GetItemType() { return typeof(T); }
-
-        public override Type OriginalReturnType => typeof(T);
-
-        public override Type OriginalType => typeof(T);
-
         public CbStruct(T n, string name = "")
         {
             Value = n;
@@ -146,15 +140,6 @@ namespace CapybaraVS.Script
         }
 
         public override Func<ICbValue> NodeTF => TF;
-
-        public override T Value
-        {
-            get => _value;
-            set
-            {
-                _value = value;
-            }
-        }
 
         /// <summary>
         /// 値のUI上の文字列表現
