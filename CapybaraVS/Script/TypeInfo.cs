@@ -966,7 +966,18 @@ namespace CapybaraVS.Script
                         n = (dynamic)cbObject.ValueTypeObject;
                     }
 
-                    if (CbScript.IsCalcable(typeof(T)))
+                    if (GetType() == typeof(CbBool))
+                    {
+                        if (n.GetType() == typeof(CbBool))
+                        {
+                            Data = n.Data;
+                        }
+                        else
+                        {
+                            Data = (dynamic)n.Data != 0;
+                        }
+                    }
+                    else if (CbScript.IsCalcable(typeof(T)))
                     {
                         // ただのキャストでは sbyte から int への変換などで例外が出るので ChangeType を使って変換する
 

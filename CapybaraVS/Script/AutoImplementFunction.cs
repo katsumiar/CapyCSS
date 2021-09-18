@@ -5,6 +5,7 @@ using CbVS.Script;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Reflection;
 using System.Windows;
 using System.Windows.Input;
@@ -607,6 +608,44 @@ namespace CapybaraVS.Script
         /// <returns>呼び出したメソッドの返し値</returns>
         private object InvokeGenericMethod(Type classType, List<Type> genericParams, object[] args)
         {
+            var attr = BindingFlags.Static | BindingFlags.Public;
+            var methods = classType.GetMethods(attr);
+
+            // 名前と引数の数だけでフィルタリング
+            var selectMethod = methods.Where(c =>
+            {
+                return c.Name == FuncCode && c.GetParameters().Length == args.Length;
+            });
+            if (selectMethod.Count() == 1)
+            {
+                // 該当が一件だけ有った
+
+                return selectMethod.First()
+                    .MakeGenericMethod(genericParams.ToArray())
+                    .Invoke(classType, args);
+            }
+
+            // 引数の型の一致でフィルタリング（null は除く）
+            selectMethod = selectMethod.Where(n =>
+            {
+                for (int i = 0; i < args.Length; ++i)
+                {
+                    if (args[i] != null &&
+                        (args[i].GetType() != n.GetParameters()[i].ParameterType))
+                        return false;
+                }
+                return true;
+            });
+            if (selectMethod.Count() == 1)
+            {
+                // 該当が一件だけ有った
+
+                return selectMethod.First()
+                    .MakeGenericMethod(genericParams.ToArray())
+                    .Invoke(classType, args);
+            }
+
+            // 運任せ...
             return classType
                 .GetMethod(FuncCode)
                 .MakeGenericMethod(genericParams.ToArray())

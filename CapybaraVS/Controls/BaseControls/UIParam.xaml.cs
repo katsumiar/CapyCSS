@@ -267,7 +267,7 @@ namespace CapybaraVS.Controls.BaseControls
             MediaPanel.Visibility = Visibility.Collapsed;
 
             // ※ valueData.Data が null でも表示は必要
-            if (valueData is ICbValueEnum selectValue)
+            if (!valueData.IsNull && valueData is ICbValueEnum selectValue)
             {
                 Select.Visibility = Visibility.Visible;
                 UpdateTypeEnum(valueData, selectValue);
@@ -627,10 +627,14 @@ namespace CapybaraVS.Controls.BaseControls
         private void Select_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             var selectedItem = (string)Select.SelectedItem;
-            if (selectedItem == null) 
+            if (selectedItem == null)
                 return;
 
-            ValueData.ValueString = selectedItem as string;
+            string value = selectedItem as string;
+            if (ValueData.ValueString.ToUpper() != value.ToUpper())
+            {
+                ValueData.ValueString = selectedItem as string;
+            }
             UpdateEvent?.Invoke();
         }
 
