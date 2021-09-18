@@ -225,6 +225,11 @@ namespace CapybaraVS.Script
 
         static public string __GetTypeName(Type type)
         {
+            if (type == typeof(Nullable))
+            {
+                return type.Name;
+            }
+
             bool isNotGeneName = false;
             if (type.IsGenericType)
             {
