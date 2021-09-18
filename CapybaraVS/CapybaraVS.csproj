@@ -91,6 +91,9 @@
     <None Update="Sample\CheckNullable.cbs">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="Sample\Delegate.cbs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="Sample\Dictionary.cbs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
