@@ -212,6 +212,20 @@ namespace CapyCSS.Script.Lib
 
         //====================================================================================
         [ScriptMethod(LIB_FLOW_NAME)]
+        public static T IsNull<T>(object sample, T trueValue, T falseValue)
+        {
+            if (sample is null)
+            {
+                return trueValue;
+            }
+            else
+            {
+                return falseValue;
+            }
+        }
+
+        //====================================================================================
+        [ScriptMethod(LIB_FLOW_NAME)]
         public static T If_Value<T>(bool sample, T trueValue, T falseValue)
         {
             if (sample)
