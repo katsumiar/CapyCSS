@@ -453,6 +453,16 @@ namespace CapybaraVS.Controls.BaseControls
             CheckGenericType(CbST.CbCreate(typeof(IEnumerable<>)));
             CheckGenericType(CbST.CbCreate(typeof(Dictionary<,>)));
 
+            // Nullable<T>型生成チェック
+            void CheckNullable(ICbValue cbType)
+            {
+                Debug.Assert(cbType.IsNullable);
+            }
+            CheckNullable(CbST.CbCreate(typeof(int?)));
+            CheckNullable(CbST.CbCreate(typeof(DateTime?)));
+            foreach (var valueType in valueTypes)
+                CheckNullable(CbST.CbCreate(typeof(Nullable<>).MakeGenericType(new Type[] { valueType })));
+
             CommandCanvasControl.MainLog.OutLine("System", "ok");
         }
         #endregion
