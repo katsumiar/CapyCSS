@@ -135,20 +135,6 @@ namespace CapyCSS.Script.Lib
         }
 
         //====================================================================================
-        [ScriptMethod(LIB_FLOW_NAME)]
-        public static T If_Value<T>(bool sample, T trueValue, T falseValue)
-        {
-            if (sample)
-            {
-                return trueValue;
-            }
-            else
-            {
-                return falseValue;
-            }
-        }
-
-        //====================================================================================
         [ScriptMethod(LIB_NULLABLE_NAME)]
         public static bool HasValue<T>(T? sample) where T : struct
         {
@@ -214,6 +200,27 @@ namespace CapyCSS.Script.Lib
                     return null;
 
                 return falseFunction();
+            }
+        }
+
+        //====================================================================================
+        [ScriptMethod(LIB_FLOW_NAME)]
+        public static bool IsNull(object sample)
+        {
+            return sample is null;
+        }
+
+        //====================================================================================
+        [ScriptMethod(LIB_FLOW_NAME)]
+        public static T If_Value<T>(bool sample, T trueValue, T falseValue)
+        {
+            if (sample)
+            {
+                return trueValue;
+            }
+            else
+            {
+                return falseValue;
             }
         }
 
