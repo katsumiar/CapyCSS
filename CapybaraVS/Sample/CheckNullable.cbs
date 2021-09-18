@@ -7,12 +7,12 @@
     <EnableInfo>false</EnableInfo>
     <CanvasScale>1</CanvasScale>
     <CanvasRenderTransform>
-      <M11>1.1146324544809543</M11>
+      <M11>0.5911133887334191</M11>
       <M12>0</M12>
       <M21>0</M21>
-      <M22>1.1146324544809543</M22>
-      <OffsetX>-1786.2101785607579</OffsetX>
-      <OffsetY>-606.0018338561204</OffsetY>
+      <M22>0.5911133887334191</M22>
+      <OffsetX>39.99912578599776</OffsetX>
+      <OffsetY>-510.4698310783207</OffsetY>
     </CanvasRenderTransform>
   </WorkCanvas>
   <ImportClassModule />
@@ -730,7 +730,7 @@
         </RootFunc>
       </MultiRootConnector>
     </Asset>
-    <Asset Id="17" X="1997.2622637294733" Y="828.2346940072321">
+    <Asset Id="17" X="1766.3135394946446" Y="1017.1927411084555">
       <MultiRootConnector>
         <DataVersion>1</DataVersion>
         <RootFunc AssetType="FuncType" AssetFuncType="CapyCSS.Script.Lib.Script_Literal2.Null#">
@@ -1331,10 +1331,10 @@
                       <Value>[object]&lt;null&gt;</Value>
                       <CastConnect>false</CastConnect>
                       <ParamInfo>
-                        <ParamName> </ParamName>
+                        <ParamName />
                         <ParamNameLabelOverlap />
                         <ParamNameLabel>
-                          <LabelString> </LabelString>
+                          <LabelString />
                         </ParamNameLabel>
                       </ParamInfo>
                       <LinkConnectorList>
@@ -2333,7 +2333,7 @@
         </RootFunc>
       </MultiRootConnector>
     </Asset>
-    <Asset Id="49" X="2193.6952224108722" Y="852.6093041365482">
+    <Asset Id="49" X="1962.7464981760436" Y="1041.5673512377716">
       <MultiRootConnector>
         <DataVersion>1</DataVersion>
         <RootFunc AssetType="FuncType" AssetFuncType="SetVariable">
@@ -2377,7 +2377,7 @@
         </RootFunc>
       </MultiRootConnector>
     </Asset>
-    <Asset Id="50" X="2053.2404059101523" Y="971.1066770263171">
+    <Asset Id="50" X="1822.2916816753236" Y="1160.0647241275406">
       <MultiRootConnector>
         <DataVersion>1</DataVersion>
         <RootFunc AssetType="LiteralType" AssetFuncType="none">
@@ -2401,7 +2401,7 @@
         </RootFunc>
       </MultiRootConnector>
     </Asset>
-    <Asset Id="52" X="1947.636312408169" Y="1180.1781930068619">
+    <Asset Id="52" X="1942.3874777664694" Y="2539.626365207326">
       <MultiRootConnector>
         <DataVersion>1</DataVersion>
         <RootFunc AssetType="FuncType" AssetFuncType="CapyCSS.Script.Lib.FlowLib.IsNull#_object">
@@ -2485,14 +2485,14 @@
         </RootFunc>
       </MultiRootConnector>
     </Asset>
-    <Asset Id="57" X="1971.2729848600338" Y="789.8141738757913">
+    <Asset Id="57" X="1740.3242606252052" Y="978.7722209770147">
       <GroupAreaControl>
         <Text>Null と 1 のどちらを繋いでも「SUCCESS.」を表示されます。</Text>
         <Witdh>503</Witdh>
         <Height>263</Height>
       </GroupAreaControl>
     </Asset>
-    <Asset Id="118" X="1808.0264207044916" Y="1226.9718020504085">
+    <Asset Id="118" X="1768.6601608917365" Y="2586.4199742508736">
       <MultiRootConnector>
         <DataVersion>1</DataVersion>
         <RootFunc AssetType="FuncType" AssetFuncType="GetVariable">
@@ -2713,7 +2713,7 @@
           <AttachVariableIds />
           <AttachVariableId>0</AttachVariableId>
           <AssetValueTypes />
-          <RootConnector PointId="253">
+          <RootConnector PointId="254">
             <Caption>
               <LabelString>Null</LabelString>
             </Caption>
@@ -2739,7 +2739,7 @@
           <AssetValueTypes>
             <string>System.DateTime</string>
           </AssetValueTypes>
-          <RootConnector PointId="254">
+          <RootConnector PointId="256">
             <Caption>
               <LabelString>DateTime</LabelString>
             </Caption>
