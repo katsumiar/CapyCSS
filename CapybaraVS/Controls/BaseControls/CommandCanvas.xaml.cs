@@ -912,6 +912,9 @@ namespace CapybaraVS.Controls.BaseControls
             ClearTypeImportMenu();
             ScriptCommandCanvas.HideWorkStack();
             InstalledMultiRootConnector = null;
+
+            ApiImporter.ImportBase();
+
             if (full)
             {
                 OpenFileName = "";
