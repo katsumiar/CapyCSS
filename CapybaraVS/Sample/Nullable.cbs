@@ -49,7 +49,7 @@
             <ForcedChecked>false</ForcedChecked>
             <Connector>
               <LinkList>
-                <PointID>48</PointID>
+                <PointID>44</PointID>
               </LinkList>
             </Connector>
             <Arguments />
@@ -169,7 +169,7 @@
             <ForcedChecked>false</ForcedChecked>
             <Connector>
               <LinkList>
-                <PointID>49</PointID>
+                <PointID>45</PointID>
               </LinkList>
             </Connector>
             <Arguments>
@@ -211,7 +211,7 @@
             <ForcedChecked>false</ForcedChecked>
             <Connector>
               <LinkList>
-                <PointID>50</PointID>
+                <PointID>46</PointID>
               </LinkList>
             </Connector>
             <Arguments>
@@ -291,7 +291,7 @@
             <Caption>
               <LabelString>Sequence&lt;IEnumerable&lt;object&gt;&gt;</LabelString>
             </Caption>
-            <Value>void</Value>
+            <Value>[object]&lt;null&gt;</Value>
             <ForcedChecked>false</ForcedChecked>
             <Connector>
               <LinkList />
@@ -312,10 +312,10 @@
                       <Value>[object]&lt;null&gt;</Value>
                       <CastConnect>false</CastConnect>
                       <ParamInfo>
-                        <ParamName> </ParamName>
+                        <ParamName />
                         <ParamNameLabelOverlap />
                         <ParamNameLabel>
-                          <LabelString> </LabelString>
+                          <LabelString />
                         </ParamNameLabel>
                       </ParamInfo>
                       <LinkConnectorList>
@@ -327,10 +327,10 @@
                       <Value>[object]&lt;null&gt;</Value>
                       <CastConnect>false</CastConnect>
                       <ParamInfo>
-                        <ParamName> </ParamName>
+                        <ParamName />
                         <ParamNameLabelOverlap />
                         <ParamNameLabel>
-                          <LabelString> </LabelString>
+                          <LabelString />
                         </ParamNameLabel>
                       </ParamInfo>
                       <LinkConnectorList>
@@ -342,10 +342,10 @@
                       <Value>[object]&lt;null&gt;</Value>
                       <CastConnect>false</CastConnect>
                       <ParamInfo>
-                        <ParamName> </ParamName>
+                        <ParamName />
                         <ParamNameLabelOverlap />
                         <ParamNameLabel>
-                          <LabelString> </LabelString>
+                          <LabelString />
                         </ParamNameLabel>
                       </ParamInfo>
                       <LinkConnectorList>
@@ -357,10 +357,10 @@
                       <Value>[object]&lt;null&gt;</Value>
                       <CastConnect>false</CastConnect>
                       <ParamInfo>
-                        <ParamName> </ParamName>
+                        <ParamName />
                         <ParamNameLabelOverlap />
                         <ParamNameLabel>
-                          <LabelString> </LabelString>
+                          <LabelString />
                         </ParamNameLabel>
                       </ParamInfo>
                       <LinkConnectorList>
@@ -424,7 +424,7 @@
     </Asset>
     <Asset Id="14" X="502.94631596698207" Y="333.68821625657745">
       <GroupAreaControl>
-        <Text>処理結果を再利用させないようにForcedにチェックを入れている。</Text>
+        <Text>２度呼ばれるので処理結果を再利用させないようにForcedにチェックを入れている。</Text>
         <Witdh>326.5528833882017</Witdh>
         <Height>286.77998108646466</Height>
       </GroupAreaControl>
@@ -447,7 +447,7 @@ null
           <AssetValueTypes>
             <string>System.Int32</string>
           </AssetValueTypes>
-          <RootConnector PointId="47">
+          <RootConnector PointId="43">
             <Caption>
               <LabelString>If_HasValue&lt;int&gt;</LabelString>
             </Caption>
@@ -460,7 +460,7 @@ null
               </LinkList>
             </Connector>
             <Arguments>
-              <LinkConnector PointId="48">
+              <LinkConnector PointId="44">
                 <Value>0</Value>
                 <CastConnect>false</CastConnect>
                 <ParamInfo>
@@ -475,7 +475,7 @@ null
                   <IsOpenList>true</IsOpenList>
                 </LinkConnectorList>
               </LinkConnector>
-              <LinkConnector PointId="49">
+              <LinkConnector PointId="45">
                 <Value>[Action&lt;int&gt;()]&lt;null&gt;</Value>
                 <CastConnect>false</CastConnect>
                 <ParamInfo>
@@ -490,7 +490,7 @@ null
                   <IsOpenList>true</IsOpenList>
                 </LinkConnectorList>
               </LinkConnector>
-              <LinkConnector PointId="50">
+              <LinkConnector PointId="46">
                 <Value>[Action()]&lt;null&gt;</Value>
                 <CastConnect>false</CastConnect>
                 <ParamInfo>
