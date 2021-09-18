@@ -17,6 +17,7 @@
 * 過去のデータと互換性が無くなりました。
 
 ![generic3](https://user-images.githubusercontent.com/63950487/132211159-54a9ad84-a001-4236-b059-6eff0614b775.gif)
+![nullable](https://user-images.githubusercontent.com/63950487/133881922-56db8e76-faf7-4b5d-b2d5-a64abfcebec4.png)
 
 ## 特徴
 * ビジュアルなスクリプトを作成することができます。
