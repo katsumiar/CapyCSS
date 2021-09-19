@@ -116,7 +116,10 @@ namespace CapybaraVS.Script
             }
         }
 
-        public static Type GetItemType() { return typeof(T); }  // ※リフレクションから参照されている
+        public static Type GetItemType() {
+            Debug.Assert(false);    // 参照されていない？
+            return typeof(T);
+        }  // ※リフレクションから参照されている
 
         public CbEnum(T n, string name = "")
         {
@@ -131,9 +134,15 @@ namespace CapybaraVS.Script
             Name = name;
         }
 
-        public override Func<ICbValue> NodeTF => TF;
+        public override string TypeName
+        {
+            get
+            {
+                return CbSTUtils._GetTypeName(typeof(T));
+            }
+        }
 
-        public override string TypeName => CbSTUtils._GetTypeName(typeof(T));
+        public override Func<ICbValue> NodeTF => TF;
 
         public string[] ElementList => Enum.GetNames(typeof(T));
 
@@ -223,7 +232,7 @@ namespace CapybaraVS.Script
     {
         public override Type MyType => typeof(CbNullableEnum<T>);
 
-        //public static Type GetItemType() { return typeof(T); }  // ※リフレクションから参照されている
+        public override Type OriginalType => typeof(Nullable<>).MakeGenericType(new Type[] { typeof(T) });
 
         public CbNullableEnum(T n, string name = "")
             : base(n, name) {}
@@ -231,7 +240,10 @@ namespace CapybaraVS.Script
         public CbNullableEnum(string name = "")
             : base(name) {}
 
-        //public override string TypeName => CbSTUtils._GetTypeName(typeof(T));
+        /// <summary>
+        /// null許容型か？
+        /// </summary>
+        public override bool IsNullable => true;
 
         /// <summary>
         /// 値の文字列表現

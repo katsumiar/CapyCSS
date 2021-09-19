@@ -2,6 +2,7 @@
 
 using CbVS.Script;
 using System;
+using System.Diagnostics;
 using System.Reflection;
 
 namespace CapybaraVS.Script
@@ -130,7 +131,10 @@ namespace CapybaraVS.Script
 
         public string ItemName => typeof(T).FullName;
 
-        public static Type GetItemType() { return typeof(T); }
+        public static Type GetItemType() {
+            Debug.Assert(false);    // 参照されていない？
+            return typeof(T);
+        }
 
         public override Type OriginalReturnType => typeof(T);
 

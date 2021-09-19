@@ -1036,7 +1036,7 @@ namespace CapybaraVS.Script
 
                     if (GetType() == typeof(CbBool) || GetType() == typeof(CbNullableBool))
                     {
-                        if (n.GetType() == typeof(CbBool) || n.GetType() == typeof(CbNullableBool))
+                        if (n.Data.GetType() == typeof(bool))
                         {
                             Data = n.Data;
                         }
