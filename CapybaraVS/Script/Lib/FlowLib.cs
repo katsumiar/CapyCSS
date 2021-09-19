@@ -210,7 +210,7 @@ namespace CapyCSS.Script.Lib
             return sample is null;
         }
 
-        //====================================================================================
+        //------------------------------------------------------------------
         [ScriptMethod(LIB_FLOW_NAME)]
         public static T IsNull<T>(object sample, T trueValue, T falseValue)
         {
@@ -224,7 +224,7 @@ namespace CapyCSS.Script.Lib
             }
         }
 
-        //====================================================================================
+        //------------------------------------------------------------------
         [ScriptMethod(LIB_FLOW_NAME)]
         public static T If_Value<T>(bool sample, T trueValue, T falseValue)
         {
@@ -238,7 +238,7 @@ namespace CapyCSS.Script.Lib
             }
         }
 
-        //====================================================================================
+        //------------------------------------------------------------------
         [ScriptMethod(LIB_FLOW_NAME)]
         public static void If(bool sample, Action trueAction, Action falseAction)
         {
@@ -285,15 +285,26 @@ namespace CapyCSS.Script.Lib
         }
 
         //------------------------------------------------------------------
+        /// <summary>
+        /// func が true を返すまで func を呼び続けます。
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="func"></param>
         [ScriptMethod(LIB_FLOW_NAME)]
-        public static void DoWhile<T>(Predicate<T> predicate, Func<T> func)
+        public static void DoWhile<T>(Func<bool> func)
         {
-            if (predicate is null || func is null)
+            if (func is null)
                 return;
-            do { } while (predicate(func()));
+            do { } while (func());
         }
 
         //------------------------------------------------------------------
+        /// <summary>
+        /// サンプルリストの各要素に対して要素を引数にactionを呼びます。
+        /// </summary>
+        /// <typeparam name="T">サンプルリストの型</typeparam>
+        /// <param name="samples">サンプルリスト</param>
+        /// <param name="action">サンプルリストの要素に対する処理</param>
         [ScriptMethod(LIB_FLOW_NAME)]
         public static void Foreach<T>(IEnumerable<T> samples, Action<T> action)
         {
@@ -301,11 +312,37 @@ namespace CapyCSS.Script.Lib
                 return;
             foreach (var sample in samples)
             {
-                action?.Invoke(sample);
+                action(sample);
             }
         }
 
         //------------------------------------------------------------------
+        /// <summary>
+        /// サンプルリストの各要素に対して要素を引数にpredicateを呼びます。
+        /// predicate が false を返したら抜けます。
+        /// </summary>
+        /// <typeparam name="T">サンプルリストの型</typeparam>
+        /// <param name="samples">サンプルリスト</param>
+        /// <param name="predicate">サンプルリストの要素に対する処理</param>
+        [ScriptMethod(LIB_FLOW_NAME)]
+        public static void BreakableForeach<T>(IEnumerable<T> samples, Predicate<T> predicate)
+        {
+            if (samples is null || predicate is null)
+                return;
+            foreach (var sample in samples)
+            {
+                if (!predicate(sample))
+                {
+                    break;
+                }
+            }
+        }
+
+        //------------------------------------------------------------------
+        /// <summary>
+        /// samples に登録されている Action を順番に実行します。
+        /// </summary>
+        /// <param name="samples"></param>
         [ScriptMethod(LIB_FLOW_NAME)]
         public static void ForeachAction(IEnumerable<Action> samples)
         {
@@ -318,15 +355,54 @@ namespace CapyCSS.Script.Lib
         }
 
         //------------------------------------------------------------------
+        /// <summary>
+        /// samples に登録されている Func<bool> を順番に実行します。
+        /// Func<bool> が false を返したら終了します。
+        /// </summary>
+        /// <param name="samples"></param>
         [ScriptMethod(LIB_FLOW_NAME)]
-        public static T ForeachReturn<T>(IEnumerable<T> samples, Func<T, T> func, T defalutReturn)
+        public static void BreakableForeachAction(IEnumerable<Func<bool>> samples)
+        {
+            if (samples is null)
+                return;
+            foreach (var sample in samples)
+            {
+                if (sample != null)
+                {
+                    if (!sample.Invoke())
+                    {
+                        break;
+                    }
+                }
+            }
+        }
+
+        //------------------------------------------------------------------
+        /// <summary>
+        /// サンプルリストの各要素に対して要素を引数にfuncを呼びます。
+        /// funcがnull以外を返したら抜けます。
+        /// func が返した値かデフォルト値が返ります。
+        /// </summary>
+        /// <typeparam name="T">サンプルリストの型</typeparam>
+        /// <typeparam name="TReturn">返し値の型</typeparam>
+        /// <param name="samples">サンプルリスト</param>
+        /// <param name="func">サンプルリストの要素に対する処理</param>
+        /// <param name="defalutReturn">デフォルトの返し値</param>
+        /// <returns>funcの返した値かデフォルト値</returns>
+        [ScriptMethod(LIB_FLOW_NAME)]
+        public static TReturn ForeachReturn<T, TReturn>(IEnumerable<T> samples, Func<T, Nullable<TReturn>> func, TReturn defalutReturn)
+            where TReturn : struct
         {
             if (samples is null || func is null)
                 return defalutReturn;
-            T result = defalutReturn;
+            TReturn result = defalutReturn;
             foreach (var sample in samples)
             {
-                result = func(sample);
+                var ret = func(sample);
+                if (ret.HasValue)
+                {
+                    return ret.Value;
+                }
             }
             return result;
         }
