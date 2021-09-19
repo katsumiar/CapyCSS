@@ -67,7 +67,16 @@ namespace CapybaraVS.Script
                 }
                 else
                 {
-                    Value = n.Data;
+                    if (n.IsNullable && n.IsNull)
+                    {
+                        // null許容型は、null のときに参照してはならない
+
+                        Value = null;
+                    }
+                    else
+                    {
+                        Value = n.Data;
+                    }
                 }
                 IsLiteral = n.IsLiteral;
                 if (IsError)

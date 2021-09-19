@@ -25,11 +25,6 @@ namespace CapybaraVS.Script
             get => Value.ToString();
             set
             {
-                if (IsNullable && value == CbSTUtils.UI_NULL_STR)
-                {
-                    isNull = true;
-                    return;
-                }
                 if (value != null)
                     Value = sbyte.Parse(value);
             }
@@ -69,5 +64,54 @@ namespace CapybaraVS.Script
             Dispose(disposing: true);
             GC.SuppressFinalize(this);
         }
+    }
+
+
+
+    /// <summary>
+    /// sbyte? 型
+    /// </summary>
+    public class CbNullableSByte
+        : CbSByte
+    {
+        public override Type MyType => typeof(CbNullableSByte);
+
+        public CbNullableSByte(sbyte n = 0, string name = "")
+            : base(n, name) {}
+
+        /// <summary>
+        /// null許容型か？
+        /// </summary>
+        public override bool IsNullable => true;
+
+        /// <summary>
+        /// 値の文字列表現
+        /// </summary>
+        public override string ValueString
+        {
+            get => Value.ToString();
+            set
+            {
+                if (IsNullable && value == CbSTUtils.UI_NULL_STR)
+                {
+                    isNull = true;
+                    return;
+                }
+                base.ValueString = value;
+            }
+        }
+
+        public static new CbNullableSByte Create(string name)
+        {
+            return new CbNullableSByte(0, name);
+        }
+
+        public static new CbNullableSByte Create(sbyte n = 0, string name = "")
+        {
+            return new CbNullableSByte(n, name);
+        }
+
+        public static new Func<ICbValue> TF = () => CbNullableSByte.Create();
+        public static new Func<string, ICbValue> NTF = (name) => CbNullableSByte.Create(name);
     }
 }

@@ -25,11 +25,6 @@ namespace CapybaraVS.Script
             get => Value.ToString();
             set
             {
-                if (IsNullable && value == CbSTUtils.UI_NULL_STR)
-                {
-                    isNull = true;
-                    return;
-                }
                 if (value != null)
                     Value = double.Parse(value);
             }
@@ -68,5 +63,54 @@ namespace CapybaraVS.Script
             Dispose(disposing: true);
             GC.SuppressFinalize(this);
         }
+    }
+
+
+
+    /// <summary>
+    /// double? 型
+    /// </summary>
+    public class CbNullableDouble
+        : CbDouble
+    {
+        public override Type MyType => typeof(CbNullableDouble);
+
+        public CbNullableDouble(double n = 0, string name = "")
+            : base(n, name) {}
+
+        /// <summary>
+        /// null許容型か？
+        /// </summary>
+        public override bool IsNullable => true;
+
+        /// <summary>
+        /// 値の文字列表現
+        /// </summary>
+        public override string ValueString
+        {
+            get => Value.ToString();
+            set
+            {
+                if (IsNullable && value == CbSTUtils.UI_NULL_STR)
+                {
+                    isNull = true;
+                    return;
+                }
+                base.ValueString = value;
+            }
+        }
+
+        public static new CbNullableDouble Create(string name)
+        {
+            return new CbNullableDouble(0, name);
+        }
+
+        public static new CbNullableDouble Create(double n = 0, string name = "")
+        {
+            return new CbNullableDouble(n, name);
+        }
+
+        public static new Func<ICbValue> TF = () => Create();
+        public static new Func<string, ICbValue> NTF = (name) => Create(name);
     }
 }

@@ -134,6 +134,46 @@ namespace CapybaraVS.Script
                     break;
             }
 
+            if (type.IsGenericType &&
+                type.GetGenericTypeDefinition() == typeof(Nullable<>))
+            {
+                Type param = type.GenericTypeArguments[0];
+                switch (param.Name)
+                {
+                    case nameof(Byte): return typeof(CbNullableByte);
+                    case nameof(SByte): return typeof(CbNullableSByte);
+                    case nameof(Int16): return typeof(CbNullableShort);
+                    case nameof(Int32): return typeof(CbNullableInt);
+                    case nameof(Int64): return typeof(CbNullableLong);
+                    case nameof(UInt16): return typeof(CbNullableUShort);
+                    case nameof(UInt32): return typeof(CbNullableUInt);
+                    case nameof(UInt64): return typeof(CbNullableULong);
+                    case nameof(Char): return typeof(CbNullableChar);
+                    case nameof(Single): return typeof(CbNullableFloat);
+                    case nameof(Double): return typeof(CbNullableDouble);
+                    case nameof(Decimal): return typeof(CbNullableDecimal);
+                    case nameof(Boolean): return typeof(CbNullableBool);
+                    default:
+                        break;
+                }
+                if (CbStruct.IsStruct(param))
+                {
+                    // 構造体
+
+                    Type cbStructType = typeof(CbNullableStruct<>).MakeGenericType(param);
+                    return cbStructType;
+                }
+                if (param.IsEnum)
+                {
+                    // 列挙型
+
+                    Type cbEnumType = typeof(CbNullableEnum<>).MakeGenericType(param);
+                    return cbEnumType;
+                }
+                Debug.Assert(false);
+                return null;
+            }
+
             if (type.IsEnum)
             {
                 Type openedType = typeof(CbEnum<>);
@@ -425,11 +465,39 @@ namespace CapybaraVS.Script
                     if (type.GenericTypeArguments.Length > 1)
                         return null;
 
-                    var ret = _CbCreate(type.GenericTypeArguments[0], name, false);
-                    if (ret is null)
-                        return null;
-                    ret.IsNullable = true;
-                    return ret;
+                    Type param = type.GenericTypeArguments[0];
+                    switch (param.Name)
+                    {
+                        case nameof(Byte): return CbNullableByte.Create(name);
+                        case nameof(SByte): return CbNullableSByte.Create(name);
+                        case nameof(Int16): return CbNullableShort.Create(name);
+                        case nameof(Int32): return CbNullableInt.Create(name);
+                        case nameof(Int64): return CbNullableLong.Create(name);
+                        case nameof(UInt16): return CbNullableUShort.Create(name);
+                        case nameof(UInt32): return CbNullableUInt.Create(name);
+                        case nameof(UInt64): return CbNullableULong.Create(name);
+                        case nameof(Char): return CbNullableChar.Create(name);
+                        case nameof(Single): return CbNullableFloat.Create(name);
+                        case nameof(Double): return CbNullableDouble.Create(name);
+                        case nameof(Decimal): return CbNullableDecimal.Create(name);
+                        case nameof(Boolean): return CbNullableBool.Create(name);
+                        default:
+                            break;
+                    }
+                    if (CbStruct.IsStruct(param))
+                    {
+                        // 構造体
+
+                        return CbStruct.NullableStructValue(param, name);
+                    }
+                    if (param.IsEnum)
+                    {
+                        // 列挙型
+
+                        return CbEnumTools.NullableEnumValue(param, name);
+                    }
+                    Debug.Assert(false);
+                    return null;
                 }
 
                 // その他のジェネリックは、構造体かクラスとして扱う
@@ -586,7 +654,7 @@ namespace CapybaraVS.Script
         /// <summary>
         /// null許容型か？
         /// </summary>
-        bool IsNullable { get; set; }
+        bool IsNullable { get; }
         bool IsAssignment(ICbValue obj, bool isCast = false);
         bool IsError { get; set; }
         string ErrorMessage { get; set; }
@@ -940,7 +1008,7 @@ namespace CapybaraVS.Script
         /// <summary>
         /// null許容型か？
         /// </summary>
-        public bool IsNullable { get; set; } = false;
+        public virtual bool IsNullable => false;
 
         protected bool isNull = false;
 
@@ -966,9 +1034,9 @@ namespace CapybaraVS.Script
                         n = (dynamic)cbObject.ValueTypeObject;
                     }
 
-                    if (GetType() == typeof(CbBool))
+                    if (GetType() == typeof(CbBool) || GetType() == typeof(CbNullableBool))
                     {
-                        if (n.GetType() == typeof(CbBool))
+                        if (n.GetType() == typeof(CbBool) || n.GetType() == typeof(CbNullableBool))
                         {
                             Data = n.Data;
                         }

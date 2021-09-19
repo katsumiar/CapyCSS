@@ -51,6 +51,22 @@ namespace CapybaraVS.Script
         /// <returns>CbStruct<T>型の変数</returns>
         public static ICbValue StructValue(Type type, string name)
         {
+            return _StructValue(type, name, typeof(CbStruct<>));
+        }
+
+        /// <summary>
+        /// オリジナル型情報から CbNullableStruct<type>型の変数を返します。
+        /// </summary>
+        /// <param name="type">オリジナルのクラスの型</param>
+        /// <param name="name"></param>
+        /// <returns>CbStruct<T>型の変数</returns>
+        public static ICbValue NullableStructValue(Type type, string name)
+        {
+            return _StructValue(type, name, typeof(CbNullableStruct<>));
+        }
+
+        private static ICbValue _StructValue(Type type, string name, Type openedType)
+        {
             if (type is null)
             {
                 return null;
@@ -70,7 +86,6 @@ namespace CapybaraVS.Script
                 return null;
             }
 
-            Type openedType = typeof(CbStruct<>); //CapybaraVS.Script.CbStruct`1
             Type cbStructType = openedType.MakeGenericType(type);
 
             object result = cbStructType.InvokeMember(
@@ -151,8 +166,6 @@ namespace CapybaraVS.Script
                 string baseName = "[" + TypeName + "]";
                 if (IsError)
                     return CbSTUtils.ERROR_STR;
-                if (IsNull)
-                    return $"{baseName}{CbSTUtils.UI_NULL_STR}";
                 return baseName;
             }
         }
@@ -162,18 +175,7 @@ namespace CapybaraVS.Script
         /// </summary>
         public override string ValueString
         {
-            get
-            {
-                if (IsNull)
-                {
-                    string baseName = "[" + TypeName + "]";
-                    return $"{baseName}{CbSTUtils.UI_NULL_STR}";
-                }
-                else
-                {
-                    return Value.ToString();
-                }
-            }
+            get => Value.ToString();
             set => new NotImplementedException();
         }
 
@@ -213,5 +215,74 @@ namespace CapybaraVS.Script
             Dispose(disposing: true);
             GC.SuppressFinalize(this);
         }
+    }
+
+
+
+    public class CbNullableStruct<T>
+        : CbStruct<T>
+     where T : struct
+    {
+        public override Type MyType => typeof(CbNullableStruct<T>);
+
+        public CbNullableStruct(T n, string name = "")
+            : base(n, name) {}
+
+        public CbNullableStruct(string name = "")
+            : base(name) {}
+
+        /// <summary>
+        /// null許容型か？
+        /// </summary>
+        public override bool IsNullable => true;
+
+        /// <summary>
+        /// 値のUI上の文字列表現
+        /// </summary>
+        public override string ValueUIString
+        {
+            get
+            {
+                string baseName = "[" + TypeName + "]";
+                if (IsError)
+                    return CbSTUtils.ERROR_STR;
+                if (IsNull)
+                    return $"{baseName}{CbSTUtils.UI_NULL_STR}";
+                return baseName;
+            }
+        }
+
+        /// <summary>
+        /// 値の文字列表現
+        /// </summary>
+        public override string ValueString
+        {
+            get
+            {
+                if (IsNull)
+                {
+                    string baseName = "[" + TypeName + "]";
+                    return $"{baseName}{CbSTUtils.UI_NULL_STR}";
+                }
+                else
+                {
+                    return Value.ToString();
+                }
+            }
+            set => new NotImplementedException();
+        }
+
+        public static new CbNullableStruct<T> Create(string name = "")
+        {
+            return new CbNullableStruct<T>(name);
+        }
+
+        public static new CbNullableStruct<T> Create(T n, string name = "")
+        {
+            return new CbNullableStruct<T>(n, name);
+        }
+
+        public static new Func<ICbValue> TF = () => CbNullableStruct<T>.Create();
+        public static new Func<string, ICbValue> NTF = (name) => CbNullableStruct<T>.Create(name);
     }
 }

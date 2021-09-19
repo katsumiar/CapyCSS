@@ -203,7 +203,7 @@ namespace CapyCSS.Script.Lib
             }
             else
             {
-                if (trueFunction is null)
+                if (falseFunction is null)
                     return null;
 
                 return falseFunction();

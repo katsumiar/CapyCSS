@@ -46,6 +46,22 @@ namespace CapybaraVS.Script
         /// <returns>CbEnum<type>型の変数</returns>
         public static ICbValue EnumValue(Type type, string name)
         {
+            return _EnumValue(type, name, typeof(CbEnum<>));
+        }
+
+        /// <summary>
+        /// オリジナル型情報から CbEnum<type>型の変数を返します。
+        /// </summary>
+        /// <param name="type">オリジナルの共用体の型</param>
+        /// <param name="name">変数名</param>
+        /// <returns>CbEnum<type>型の変数</returns>
+        public static ICbValue NullableEnumValue(Type type, string name)
+        {
+            return _EnumValue(type, name, typeof(CbNullableEnum<>));
+        }
+
+        public static ICbValue _EnumValue(Type type, string name, Type openedType)
+        {
             if (type is null)
             {
                 return null;
@@ -64,7 +80,6 @@ namespace CapybaraVS.Script
 
                 return null;
             }
-            Type openedType = typeof(CbEnum<>); //CapybaraVS.Script.CbEnum`1
             Type cbEnumType = openedType.MakeGenericType(type);
 
             if (CbST.GetTypeEx(type) is null)
@@ -145,12 +160,6 @@ namespace CapybaraVS.Script
             get => ValueUIString;
             set
             {
-                if (IsNullable && value == CbSTUtils.UI_NULL_STR)
-                {
-                    isNull = true;
-                    return;
-                }
-
                 if (value.Contains("."))
                     value = value.Substring(value.IndexOf(".") + 1, value.Length - value.IndexOf(".") - 1);
 
@@ -201,5 +210,71 @@ namespace CapybaraVS.Script
             Dispose(disposing: true);
             GC.SuppressFinalize(this);
         }
+    }
+
+
+
+    /// <summary>
+    /// enum型
+    /// </summary>
+    public class CbNullableEnum<T>
+        : CbEnum<T>
+         where T : struct
+    {
+        public override Type MyType => typeof(CbNullableEnum<T>);
+
+        //public static Type GetItemType() { return typeof(T); }  // ※リフレクションから参照されている
+
+        public CbNullableEnum(T n, string name = "")
+            : base(n, name) {}
+
+        public CbNullableEnum(string name = "")
+            : base(name) {}
+
+        //public override string TypeName => CbSTUtils._GetTypeName(typeof(T));
+
+        /// <summary>
+        /// 値の文字列表現
+        /// </summary>
+        public override string ValueString
+        {
+            get => ValueUIString;
+            set
+            {
+                if (IsNullable && value == CbSTUtils.UI_NULL_STR)
+                {
+                    isNull = true;
+                    return;
+                }
+
+                if (value.Contains("."))
+                    value = value.Substring(value.IndexOf(".") + 1, value.Length - value.IndexOf(".") - 1);
+
+                int num;
+                if (int.TryParse(value, out num))
+                {
+                    // 数字を要素へ変換する
+
+                    Value = Enum.ToObject(typeof(T), num) as Enum;
+                }
+                else
+                {
+                    Value = Enum.Parse(typeof(T), value) as Enum;
+                }
+            }
+        }
+
+        public static new CbNullableEnum<T> Create(string name = "")
+        {
+            return new CbNullableEnum<T>(name);
+        }
+
+        public static new CbNullableEnum<T> Create(T n, string name = "")
+        {
+            return new CbNullableEnum<T>(n, name);
+        }
+
+        public static new Func<ICbValue> TF = () => Create();
+        public static new Func<string, ICbValue> NTF = (name) => Create(name);
     }
 }

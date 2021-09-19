@@ -50,11 +50,6 @@ namespace CapybaraVS.Script
             get => ValueUIString;
             set
             {
-                if (IsNullable && value == CbSTUtils.UI_NULL_STR)
-                {
-                    isNull = true;
-                    return;
-                }
                 if (value != null)
                 {
                     if (value.Contains('\\'))
@@ -107,5 +102,54 @@ namespace CapybaraVS.Script
             Dispose(disposing: true);
             GC.SuppressFinalize(this);
         }
+    }
+
+
+
+    /// <summary>
+    /// char? 型
+    /// </summary>
+    public class CbNullableChar
+        : CbChar
+    {
+        public override Type MyType => typeof(CbNullableChar);
+
+        public CbNullableChar(char n = '*', string name = "")
+            : base(n, name) {}
+
+        /// <summary>
+        /// null許容型か？
+        /// </summary>
+        public override bool IsNullable => true;
+
+        /// <summary>
+        /// 値の文字列表現
+        /// </summary>
+        public override string ValueString
+        {
+            get => ValueUIString;
+            set
+            {
+                if (IsNullable && value == CbSTUtils.UI_NULL_STR)
+                {
+                    isNull = true;
+                    return;
+                }
+                base.ValueString = value;
+            }
+        }
+
+        public static new CbNullableChar Create(string name)
+        {
+            return new CbNullableChar('*', name);
+        }
+
+        public static new CbNullableChar Create(char n = '*', string name = "")    // 初期値は検討中
+        {
+            return new CbNullableChar(n, name);
+        }
+
+        public static new Func<ICbValue> TF = () => Create();
+        public static new Func<string, ICbValue> NTF = (name) => Create(name);
     }
 }
