@@ -499,7 +499,16 @@ namespace CbVS.Script
             }
             else
             {
-                Value = (RT)CallBack?.Invoke(cbPushList);
+                ICbValue result = CallBack?.Invoke(cbPushList) as ICbValue;
+                if (result.IsNull)
+                {
+                    Value = CbST.CbCreate(result.Data.GetType());
+                    Value.Set(result);
+                }
+                else
+                {
+                    Value = result;
+                }
             }
         }
 
