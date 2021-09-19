@@ -65,6 +65,13 @@ namespace CapyCSS.Script.Lib
         }
 
         //------------------------------------------------------------------
+        [ScriptMethod(LIB_OPERATION_NAME, "!=")]
+        public static bool Ne(IComparable a, IComparable b)
+        {
+            return a.CompareTo(b) != 0;
+        }
+
+        //------------------------------------------------------------------
         [ScriptMethod(LIB_OPERATION_NAME, ">")]
         public static bool Gt(IComparable a, IComparable b)
         {
