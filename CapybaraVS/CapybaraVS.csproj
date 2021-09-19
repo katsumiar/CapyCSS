@@ -82,6 +82,9 @@
     <None Update="Sample\ActionCall02.cbs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Update="Sample\BreakableForeach.cbs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="Sample\Case.cbs">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
