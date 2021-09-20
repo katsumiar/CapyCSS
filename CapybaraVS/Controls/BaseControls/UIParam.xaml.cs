@@ -220,7 +220,7 @@ namespace CapybaraVS.Controls.BaseControls
         {
             valueData ??= ValueData;
 
-            if (OwnerCommandCanvas.UIParamHoldAction.Enabled)
+            if (OwnerCommandCanvas.UIParamHoldAction != null && OwnerCommandCanvas.UIParamHoldAction.Enabled)
             {
                 // 画面反映はあとから一括で行う
 
