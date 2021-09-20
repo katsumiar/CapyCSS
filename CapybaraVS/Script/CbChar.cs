@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace CapybaraVS.Script
 {
@@ -17,6 +18,46 @@ namespace CapybaraVS.Script
             Name = name;
         }
 
+        private Dictionary<int, string> GetCodeDictionary()
+        {
+            return new Dictionary<int, string>()
+            {
+                { 0, "[NUL]" },
+                { 1, "[SOH]" },
+                { 2, "[STX]" },
+                { 3, "[ETX]" },
+                { 4, "[EOT]" },
+                { 5, "[ENQ]" },
+                { 6, "[ACK]" },
+                { 7, "[BEL]" },
+                { 8, "[BS]" },
+                { 9, "[HT]" },
+                { 10, "[LF]" },
+                { 11, "[VT]" },
+                { 12, "[FF]" },
+                { 13, "[CR]" },
+                { 14, "[SO]" },
+                { 15, "[SI]" },
+                { 16, "[DLE]" },
+                { 17, "[DC1]" },
+                { 18, "[DC2]" },
+                { 19, "[DC3]" },
+                { 20, "[DC4]" },
+                { 21, "[NAK]" },
+                { 22, "[SYN]" },
+                { 23, "[ETB]" },
+                { 24, "[CAN]" },
+                { 25, "[EM]" },
+                { 26, "[SUB]" },
+                { 27, "[ESC]" },
+                { 28, "[FS]" },
+                { 29, "[GS]" },
+                { 30, "[RS]" },
+                { 31, "[US]" },
+                { 127, "[DEL]" },
+            };
+        }
+
         /// <summary>
         /// 値のUI上の文字列表現
         /// </summary>
@@ -29,15 +70,11 @@ namespace CapybaraVS.Script
                 if (IsNull)
                     return CbSTUtils.UI_NULL_STR;
 
-                if (Value == '\n') return "\\n";
-                if (Value == '\0') return "\\0";
-                if (Value == '\a') return "\\a";
-                if (Value == '\b') return "\\b";
-                if (Value == '\f') return "\\f";
-                if (Value == '\n') return "\\n";
-                if (Value == '\r') return "\\r";
-                if (Value == '\t') return "\\t";
-                if (Value == '\v') return "\\v";
+                var dic = GetCodeDictionary();
+                if (dic.ContainsKey((int)Value))
+                {
+                    return dic[(int)Value];
+                }
                 return Value.ToString();
             }
         }
@@ -52,17 +89,42 @@ namespace CapybaraVS.Script
             {
                 if (value != null)
                 {
-                    if (value.Contains('\\'))
+                    value = value.Trim();
+                    if (value.StartsWith("\\x") && value.Length == 4)
                     {
-                        value = value.Replace("\\", "\\");
-                        value = value.Replace("\\0", "\0");
-                        value = value.Replace("\\a", "\a");
-                        value = value.Replace("\\b", "\b");
-                        value = value.Replace("\\f", "\f");
-                        value = value.Replace("\\n", "\n");
-                        value = value.Replace("\\r", "\r");
-                        value = value.Replace("\\t", "\t");
-                        value = value.Replace("\\v", "\v");
+                        // ASCII 16進数表現
+
+                        Value = (char)(int.Parse(value.Replace("\\x", ""), System.Globalization.NumberStyles.HexNumber));
+                        return;
+                    }
+                    var dic = new Dictionary<string, int>()
+                    {
+                        { "\\0", 0x0000 },
+                        { "\\a", 0x0007 },
+                        { "\\b", 0x0008 },
+                        { "\\f", 0x000c },
+                        { "\\n", 0x000a },
+                        { "\\r", 0x000d },
+                        { "\\t", 0x0009 },
+                        { "\\v", 0x000b },
+                    };
+                    foreach (var pair in dic)
+                    {
+                        if (pair.Key == value)
+                        {
+                            // エスケープシーケンス
+
+                            Value = (char)pair.Value;
+                            return;
+                        }
+                    }
+                    foreach (var pair in GetCodeDictionary())
+                    {
+                        if (pair.Value == value)
+                        {
+                            Value = (char)pair.Key;
+                            return;
+                        }
                     }
                     Value = char.Parse(value);
                 }
