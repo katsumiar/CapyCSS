@@ -440,14 +440,20 @@ namespace CbVS.Script
                 // CbList を List に変換する
                 foreach (var node in Value)
                 {
-                    if (node is CbObject cbObject)
+                    if (node.IsNull)
                     {
-                        ICbValue cbValue = cbObject.Data as ICbValue;
-                        originalCopyList.Add((T)cbValue.Data);
+                        originalCopyList.Add((dynamic)null);
                     }
                     else
                     {
-                        originalCopyList.Add((T)node.Data);
+                        if (node is CbObject cbObject && cbObject is ICbValue cbValue1)
+                        {
+                            originalCopyList.Add((T)cbValue1.Data);
+                        }
+                        else
+                        {
+                            originalCopyList.Add((T)node.Data);
+                        }
                     }
                 }
             }
