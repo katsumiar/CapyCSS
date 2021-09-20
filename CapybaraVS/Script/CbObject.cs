@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using CbVS.Script;
 
 namespace CapybaraVS.Script
@@ -96,6 +97,23 @@ namespace CapybaraVS.Script
         }
 
         public override string TypeName => CbSTUtils.OBJECT_STR;
+
+        /// <summary>
+        /// 変数の持つ値を object として参照します。
+        /// ※ 型を厳密に扱う場合は Value を参照します。
+        /// </summary>
+        public override object Data
+        {
+            get
+            {
+                Debug.Assert(!(IsNullable && IsNull));
+                return Value as object;
+            }
+            set
+            {
+                Value = value;
+            }
+        }
 
         public override object Value
         {
