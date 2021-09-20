@@ -14,6 +14,7 @@
 * スクリプト専用に Dispose を用意し、メソッドの Dispose は直接呼べないようにしました。
 * bool に 0 か null が代入されたら false を代入するようにしました（キャスト時）
 * bool に 0 以外が代入されたら true を代入するようにしました（キャスト時）
+* char型の初期値とUIの表示及び入力内容を見直しました。
 * 過去のデータと互換性が無くなりました。
 
 ![generic3](https://user-images.githubusercontent.com/63950487/132211159-54a9ad84-a001-4236-b059-6eff0614b775.gif)
