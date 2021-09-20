@@ -183,18 +183,12 @@ namespace CapybaraVS.Script
 
         public override bool IsReadOnlyValue { get; set; } = true;
 
-        public static CbStruct<T> Create(string name = "")
-        {
-            return new CbStruct<T>(name);
-        }
+        public static CbStruct<T> Create(string name = "") => new CbStruct<T>(name);
 
-        public static CbStruct<T> Create(T n, string name = "")
-        {
-            return new CbStruct<T>(n, name);
-        }
+        public static CbStruct<T> Create(T n, string name = "") => new CbStruct<T>(n, name);
 
-        public static Func<ICbValue> TF = () => CbStruct<T>.Create();
-        public static Func<string, ICbValue> NTF = (name) => CbStruct<T>.Create(name);
+        public static Func<ICbValue> TF = () => Create();
+        public static Func<string, ICbValue> NTF = (name) => Create(name);
 
         private bool disposedValue;
 
@@ -272,17 +266,11 @@ namespace CapybaraVS.Script
             set => new NotImplementedException();
         }
 
-        public static new CbNullableStruct<T> Create(string name = "")
-        {
-            return new CbNullableStruct<T>(name);
-        }
+        public static new CbNullableStruct<T> Create(string name = "") => new CbNullableStruct<T>(name);
 
-        public static new CbNullableStruct<T> Create(T n, string name = "")
-        {
-            return new CbNullableStruct<T>(n, name);
-        }
+        public static new CbNullableStruct<T> Create(T n, string name = "") => new CbNullableStruct<T>(n, name);
 
-        public static new Func<ICbValue> TF = () => CbNullableStruct<T>.Create();
-        public static new Func<string, ICbValue> NTF = (name) => CbNullableStruct<T>.Create(name);
+        public static new Func<ICbValue> TF = () => Create();
+        public static new Func<string, ICbValue> NTF = (name) => Create(name);
     }
 }

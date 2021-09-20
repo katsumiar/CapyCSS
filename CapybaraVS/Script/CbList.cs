@@ -548,21 +548,15 @@ namespace CbVS.Script
 
         public override bool IsNull => nullFlg;
 
-        public static CbList<T> Create(string name = "")
-        {
-            return new CbList<T>(new List<ICbValue>(), name);
-        }
+        public static CbList<T> Create(string name = "") => new CbList<T>(new List<ICbValue>(), name);
 
-        public static CbList<T> Create(List<ICbValue> n, string name = "")
-        {
-            return new CbList<T>(n, name);
-        }
+        public static CbList<T> Create(List<ICbValue> n, string name = "") => new CbList<T>(n, name);
 
         public Func<ICbValue> CreateTF => () => Create();
         public Func<ICbValue> CreateNTF(string name) => () => Create(name);
 
-        public static Func<ICbValue> TF => () => CbList<T>.Create();
-        public static Func<string, ICbValue> NTF => (name) => CbList<T>.Create(name);
+        public static Func<ICbValue> TF => () => Create();
+        public static Func<string, ICbValue> NTF => (name) => Create(name);
 
         public static ICbValue GetCbFunc(string name) => Create(name);    // リフレクションで参照されている。
 

@@ -69,20 +69,12 @@ namespace CapybaraVS.Script
             }
         }
 
-        public static CbChar Create(string name)
-        {
-            var ret = new CbChar('*', name);    // 初期値は検討中
-            return ret;
-        }
+        public static CbChar Create(string name) => new CbChar((char)0, name);
 
-        public static CbChar Create(char n = '*', string name = "")    // 初期値は検討中
-        {
-            var ret = new CbChar(n, name);
-            return ret;
-        }
+        public static CbChar Create(char n = (char)0, string name = "") => new CbChar(n, name);
 
-        public static Func<ICbValue> TF = () => CbChar.Create();
-        public static Func<string, ICbValue> NTF = (name) => CbChar.Create(name);
+        public static Func<ICbValue> TF = () => Create();
+        public static Func<string, ICbValue> NTF = (name) => Create(name);
         private bool disposedValue;
 
         protected virtual void Dispose(bool disposing)
@@ -114,7 +106,7 @@ namespace CapybaraVS.Script
     {
         public override Type MyType => typeof(CbNullableChar);
 
-        public CbNullableChar(char n = '*', string name = "")
+        public CbNullableChar(char n = (char)0, string name = "")
             : base(n, name) {}
 
         /// <summary>
@@ -139,15 +131,9 @@ namespace CapybaraVS.Script
             }
         }
 
-        public static new CbNullableChar Create(string name)
-        {
-            return new CbNullableChar('*', name);
-        }
+        public static new CbNullableChar Create(string name) => new CbNullableChar((char)0, name);
 
-        public static new CbNullableChar Create(char n = '*', string name = "")    // 初期値は検討中
-        {
-            return new CbNullableChar(n, name);
-        }
+        public static new CbNullableChar Create(char n = (char)0, string name = "") => new CbNullableChar(n, name);
 
         public static new Func<ICbValue> TF = () => Create();
         public static new Func<string, ICbValue> NTF = (name) => Create(name);

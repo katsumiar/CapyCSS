@@ -11,7 +11,6 @@ namespace CapybaraVS.Script
     {
         public override Type MyType => typeof(CbULong);
 
-
         public CbULong(ulong n = 0, string name = "")
         {
             Value = n;
@@ -31,20 +30,12 @@ namespace CapybaraVS.Script
             }
         }
 
-        public static CbULong Create(string name)
-        {
-            var ret = new CbULong(0, name);
-            return ret;
-        }
+        public static CbULong Create(string name) => new CbULong(0, name);
 
-        public static CbULong Create(ulong n = 0, string name = "")
-        {
-            var ret = new CbULong(n, name);
-            return ret;
-        }
+        public static CbULong Create(ulong n = 0, string name = "") => new CbULong(n, name);
 
-        public static Func<ICbValue> TF = () => CbULong.Create();
-        public static Func<string, ICbValue> NTF = (name) => CbULong.Create(name);
+        public static Func<ICbValue> TF = () => Create();
+        public static Func<string, ICbValue> NTF = (name) => Create(name);
 
         private bool disposedValue;
 
@@ -102,15 +93,9 @@ namespace CapybaraVS.Script
             }
         }
 
-        public static new CbNullableULong Create(string name)
-        {
-            return new CbNullableULong(0, name);
-        }
+        public static new CbNullableULong Create(string name) => new CbNullableULong(0, name);
 
-        public static new CbNullableULong Create(ulong n = 0, string name = "")
-        {
-            return new CbNullableULong(n, name);
-        }
+        public static new CbNullableULong Create(ulong n = 0, string name = "") => new CbNullableULong(n, name);
 
         public static new Func<ICbValue> TF = () => Create();
         public static new Func<string, ICbValue> NTF = (name) => Create(name);

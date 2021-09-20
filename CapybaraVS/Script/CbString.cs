@@ -85,20 +85,12 @@ namespace CapybaraVS.Script
             }
         }
 
-        public static CbString Create(string name = "")
-        {
-            var ret = new CbString("", name);
-            return ret;
-        }
+        public static CbString Create(string name = "") => new CbString("", name);
 
-        public static CbString Create(string n, string name)
-        {
-            var ret = new CbString(n, name);
-            return ret;
-        }
+        public static CbString Create(string n, string name) => new CbString(n, name);
 
-        public static Func<ICbValue> TF = () => CbString.Create();
-        public static Func<string, ICbValue> NTF = (name) => CbString.Create(name);
+        public static Func<ICbValue> TF = () => Create();
+        public static Func<string, ICbValue> NTF = (name) => Create(name);
 
         private bool disposedValue;
 

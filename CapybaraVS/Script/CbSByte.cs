@@ -30,20 +30,12 @@ namespace CapybaraVS.Script
             }
         }
 
-        public static CbSByte Create(string name)
-        {
-            var ret = new CbSByte(0, name);
-            return ret;
-        }
+        public static CbSByte Create(string name) => new CbSByte(0, name);
 
-        public static CbSByte Create(sbyte n = 0, string name = "")
-        {
-            var ret = new CbSByte(n, name);
-            return ret;
-        }
+        public static CbSByte Create(sbyte n = 0, string name = "") => new CbSByte(n, name);
 
-        public static Func<ICbValue> TF = () => CbSByte.Create();
-        public static Func<string, ICbValue> NTF = (name) => CbSByte.Create(name);
+        public static Func<ICbValue> TF = () => Create();
+        public static Func<string, ICbValue> NTF = (name) => Create(name);
 
         private bool disposedValue;
 
@@ -101,17 +93,11 @@ namespace CapybaraVS.Script
             }
         }
 
-        public static new CbNullableSByte Create(string name)
-        {
-            return new CbNullableSByte(0, name);
-        }
+        public static new CbNullableSByte Create(string name) => new CbNullableSByte(0, name);
 
-        public static new CbNullableSByte Create(sbyte n = 0, string name = "")
-        {
-            return new CbNullableSByte(n, name);
-        }
+        public static new CbNullableSByte Create(sbyte n = 0, string name = "") => new CbNullableSByte(n, name);
 
-        public static new Func<ICbValue> TF = () => CbNullableSByte.Create();
-        public static new Func<string, ICbValue> NTF = (name) => CbNullableSByte.Create(name);
+        public static new Func<ICbValue> TF = () => Create();
+        public static new Func<string, ICbValue> NTF = (name) => Create(name);
     }
 }

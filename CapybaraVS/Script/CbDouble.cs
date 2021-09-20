@@ -30,20 +30,12 @@ namespace CapybaraVS.Script
             }
         }
 
-        public static CbDouble Create(string name)
-        {
-            var ret = new CbDouble(0, name);
-            return ret;
-        }
+        public static CbDouble Create(string name) => new CbDouble(0, name);
 
-        public static CbDouble Create(double n = 0, string name = "")
-        {
-            var ret = new CbDouble(n, name);
-            return ret;
-        }
+        public static CbDouble Create(double n = 0, string name = "") => new CbDouble(n, name);
 
-        public static Func<ICbValue> TF = () => CbDouble.Create();
-        public static Func<string, ICbValue> NTF = (name) => CbDouble.Create(name);
+        public static Func<ICbValue> TF = () => Create();
+        public static Func<string, ICbValue> NTF = (name) => Create(name);
         private bool disposedValue;
 
         protected virtual void Dispose(bool disposing)
@@ -100,15 +92,9 @@ namespace CapybaraVS.Script
             }
         }
 
-        public static new CbNullableDouble Create(string name)
-        {
-            return new CbNullableDouble(0, name);
-        }
+        public static new CbNullableDouble Create(string name) => new CbNullableDouble(0, name);
 
-        public static new CbNullableDouble Create(double n = 0, string name = "")
-        {
-            return new CbNullableDouble(n, name);
-        }
+        public static new CbNullableDouble Create(double n = 0, string name = "") => new CbNullableDouble(n, name);
 
         public static new Func<ICbValue> TF = () => Create();
         public static new Func<string, ICbValue> NTF = (name) => Create(name);

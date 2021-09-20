@@ -30,20 +30,12 @@ namespace CapybaraVS.Script
             }
         }
 
-        public static CbUShort Create(string name)
-        {
-            var ret = new CbUShort(0, name);
-            return ret;
-        }
+        public static CbUShort Create(string name) => new CbUShort(0, name);
 
-        public static CbUShort Create(ushort n = 0, string name = "")
-        {
-            var ret = new CbUShort(n, name);
-            return ret;
-        }
+        public static CbUShort Create(ushort n = 0, string name = "") => new CbUShort(n, name);
 
-        public static Func<ICbValue> TF = () => CbUShort.Create();
-        public static Func<string, ICbValue> NTF = (name) => CbUShort.Create(name);
+        public static Func<ICbValue> TF = () => Create();
+        public static Func<string, ICbValue> NTF = (name) => Create(name);
 
         private bool disposedValue;
 
@@ -101,15 +93,9 @@ namespace CapybaraVS.Script
             }
         }
 
-        public static new CbNullableUShort Create(string name)
-        {
-            return new CbNullableUShort(0, name);
-        }
+        public static new CbNullableUShort Create(string name) => new CbNullableUShort(0, name);
 
-        public static new CbNullableUShort Create(ushort n = 0, string name = "")
-        {
-            return new CbNullableUShort(n, name);
-        }
+        public static new CbNullableUShort Create(ushort n = 0, string name = "") => new CbNullableUShort(n, name);
 
         public static new Func<ICbValue> TF = () => Create();
         public static new Func<string, ICbValue> NTF = (name) => Create(name);

@@ -134,13 +134,7 @@ namespace CapybaraVS.Script
             Name = name;
         }
 
-        public override string TypeName
-        {
-            get
-            {
-                return CbSTUtils._GetTypeName(typeof(T));
-            }
-        }
+        public override string TypeName => CbSTUtils._GetTypeName(typeof(T));
 
         public override Func<ICbValue> NodeTF => TF;
 
@@ -188,18 +182,12 @@ namespace CapybaraVS.Script
 
         public override bool IsStringableValue => true;
 
-        public static CbEnum<T> Create(string name = "")
-        {
-            return new CbEnum<T>(name);
-        }
+        public static CbEnum<T> Create(string name = "") => new CbEnum<T>(name);
 
-        public static CbEnum<T> Create(T n, string name = "")
-        {
-            return new CbEnum<T>(n, name);
-        }
+        public static CbEnum<T> Create(T n, string name = "") => new CbEnum<T>(n, name);
 
-        public static Func<ICbValue> TF = () => CbEnum<T>.Create();
-        public static Func<string, ICbValue> NTF = (name) => CbEnum<T>.Create(name);
+        public static Func<ICbValue> TF = () => Create();
+        public static Func<string, ICbValue> NTF = (name) => Create(name);
         private bool disposedValue;
 
         protected virtual void Dispose(bool disposing)
@@ -276,15 +264,9 @@ namespace CapybaraVS.Script
             }
         }
 
-        public static new CbNullableEnum<T> Create(string name = "")
-        {
-            return new CbNullableEnum<T>(name);
-        }
+        public static new CbNullableEnum<T> Create(string name = "") => new CbNullableEnum<T>(name);
 
-        public static new CbNullableEnum<T> Create(T n, string name = "")
-        {
-            return new CbNullableEnum<T>(n, name);
-        }
+        public static new CbNullableEnum<T> Create(T n, string name = "") => new CbNullableEnum<T>(n, name);
 
         public static new Func<ICbValue> TF = () => Create();
         public static new Func<string, ICbValue> NTF = (name) => Create(name);

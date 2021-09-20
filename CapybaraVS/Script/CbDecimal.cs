@@ -30,20 +30,12 @@ namespace CapybaraVS.Script
             }
         }
 
-        public static CbDecimal Create(string name)
-        {
-            var ret = new CbDecimal(0, name);
-            return ret;
-        }
+        public static CbDecimal Create(string name) => new CbDecimal(0, name);
 
-        public static CbDecimal Create(decimal n = 0, string name = "")
-        {
-            var ret = new CbDecimal(n, name);
-            return ret;
-        }
+        public static CbDecimal Create(decimal n = 0, string name = "") => new CbDecimal(n, name);
 
-        public static Func<ICbValue> TF = () => CbDecimal.Create();
-        public static Func<string, ICbValue> NTF = (name) => CbDecimal.Create(name);
+        public static Func<ICbValue> TF = () => Create();
+        public static Func<string, ICbValue> NTF = (name) => Create(name);
         private bool disposedValue;
 
         protected virtual void Dispose(bool disposing)
@@ -100,15 +92,9 @@ namespace CapybaraVS.Script
             }
         }
 
-        public static new CbNullableDecimal Create(string name)
-        {
-            return new CbNullableDecimal(0, name);
-        }
+        public static new CbNullableDecimal Create(string name) => new CbNullableDecimal(0, name);
 
-        public static new CbNullableDecimal Create(decimal n = 0, string name = "")
-        {
-            return new CbNullableDecimal(n, name);
-        }
+        public static new CbNullableDecimal Create(decimal n = 0, string name = "") => new CbNullableDecimal(n, name);
 
         public static new Func<ICbValue> TF = () => Create();
         public static new Func<string, ICbValue> NTF = (name) => Create(name);

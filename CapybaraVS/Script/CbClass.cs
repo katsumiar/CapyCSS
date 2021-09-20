@@ -244,24 +244,18 @@ namespace CapybaraVS.Script
         /// <summary>
         /// 変数の持つ値は null か？
         /// </summary>
-        public override bool IsNull { get => Value is null; }
+        public override bool IsNull => Value is null;
 
         public override bool IsStringableValue => true;
 
         public override bool IsReadOnlyValue { get; set; } = true;
 
-        public static CbClass<T> Create(string name = "")
-        {
-            return new CbClass<T>(name);
-        }
+        public static CbClass<T> Create(string name = "") => new CbClass<T>(name);
 
-        public static CbClass<T> Create(T n, string name = "")
-        {
-            return new CbClass<T>(n, name);
-        }
+        public static CbClass<T> Create(T n, string name = "") => new CbClass<T>(n, name);
 
-        public static Func<ICbValue> TF = () => CbClass<T>.Create();
-        public static Func<string, ICbValue> NTF = (name) => CbClass<T>.Create(name);
+        public static Func<ICbValue> TF = () => Create();
+        public static Func<string, ICbValue> NTF = (name) => Create(name);
         private bool disposedValue;
 
         protected virtual void Dispose(bool disposing)

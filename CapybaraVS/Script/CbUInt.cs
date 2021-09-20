@@ -32,18 +32,16 @@ namespace CapybaraVS.Script
 
         public static CbUInt Create(string name)
         {
-            var ret = new CbUInt(0, name);
-            return ret;
+            return new CbUInt(0, name);
         }
 
         public static CbUInt Create(uint n = 0, string name = "")
         {
-            var ret = new CbUInt(n, name);
-            return ret;
+            return new CbUInt(n, name);
         }
 
-        public static Func<ICbValue> TF = () => CbUInt.Create();
-        public static Func<string, ICbValue> NTF = (name) => CbUInt.Create(name);
+        public static Func<ICbValue> TF = () => Create();
+        public static Func<string, ICbValue> NTF = (name) => Create(name);
 
         private bool disposedValue;
 
@@ -101,15 +99,9 @@ namespace CapybaraVS.Script
             }
         }
 
-        public static new CbNullableUInt Create(string name)
-        {
-            return new CbNullableUInt(0, name);
-        }
+        public static new CbNullableUInt Create(string name) => new CbNullableUInt(0, name);
 
-        public static new CbNullableUInt Create(uint n = 0, string name = "")
-        {
-            return new CbNullableUInt(n, name);
-        }
+        public static new CbNullableUInt Create(uint n = 0, string name = "") => new CbNullableUInt(n, name);
 
         public static new Func<ICbValue> TF = () => Create();
         public static new Func<string, ICbValue> NTF = (name) => Create(name);

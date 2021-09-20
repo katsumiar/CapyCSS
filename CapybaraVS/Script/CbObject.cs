@@ -184,22 +184,14 @@ namespace CapybaraVS.Script
 
         public override bool IsReadOnlyValue { get; set; } = true;
 
-        public static CbObject Create(string name)
-        {
-            var ret = new CbObject(null, name);
-            return ret;
-        }
+        public static CbObject Create(string name) => new CbObject(null, name);
 
-        public static CbObject Create(object n = null, string name = "")
-        {
-            var ret = new CbObject(n, name);
-            return ret;
-        }
+        public static CbObject Create(object n = null, string name = "") => new CbObject(n, name);
 
         public override bool IsNull => nullFlg;
 
-        public static Func<ICbValue> TF = () => CbObject.Create();
-        public static Func<string, ICbValue> NTF = (name) => CbObject.Create(name);
+        public static Func<ICbValue> TF = () => Create();
+        public static Func<string, ICbValue> NTF = (name) => Create(name);
 
         private bool disposedValue;
 

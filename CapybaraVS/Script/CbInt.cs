@@ -39,20 +39,12 @@ namespace CapybaraVS.Script
             }
         }
 
-        public static CbInt Create(string name)
-        {
-            var ret = new CbInt(0, name);
-            return ret;
-        }
+        public static CbInt Create(string name) => new CbInt(0, name);
 
-        public static CbInt Create(int n = 0, string name = "")
-        {
-            var ret = new CbInt(n, name);
-            return ret;
-        }
+        public static CbInt Create(int n = 0, string name = "") => new CbInt(n, name);
 
-        public static Func<ICbValue> TF = () => CbInt.Create();
-        public static Func<string, ICbValue> NTF = (name) => CbInt.Create(name);
+        public static Func<ICbValue> TF = () => Create();
+        public static Func<string, ICbValue> NTF = (name) => Create(name);
 
         private bool disposedValue;
 
@@ -110,15 +102,9 @@ namespace CapybaraVS.Script
             }
         }
 
-        public static new CbNullableInt Create(string name)
-        {
-            return new CbNullableInt(0, name);
-        }
+        public static new CbNullableInt Create(string name) => new CbNullableInt(0, name);
 
-        public static new CbNullableInt Create(int n = 0, string name = "")
-        {
-            return new CbNullableInt(n, name);
-        }
+        public static new CbNullableInt Create(int n = 0, string name = "") => new CbNullableInt(n, name);
 
         public static new Func<ICbValue> TF = () => Create();
         public static new Func<string, ICbValue> NTF = (name) => Create(name);

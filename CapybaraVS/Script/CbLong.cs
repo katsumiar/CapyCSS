@@ -30,20 +30,12 @@ namespace CapybaraVS.Script
             }
         }
 
-        public static CbLong Create(string name)
-        {
-            var ret = new CbLong(0, name);
-            return ret;
-        }
+        public static CbLong Create(string name) => new CbLong(0, name);
 
-        public static CbLong Create(long n = 0, string name = "")
-        {
-            var ret = new CbLong(n, name);
-            return ret;
-        }
+        public static CbLong Create(long n = 0, string name = "") => new CbLong(n, name);
 
-        public static Func<ICbValue> TF = () => CbLong.Create();
-        public static Func<string, ICbValue> NTF = (name) => CbLong.Create(name);
+        public static Func<ICbValue> TF = () => Create();
+        public static Func<string, ICbValue> NTF = (name) => Create(name);
 
         private bool disposedValue;
 
@@ -111,7 +103,7 @@ namespace CapybaraVS.Script
             return new CbNullableLong(n, name);
         }
 
-        public static new Func<ICbValue> TF = () => CbNullableLong.Create();
-        public static new Func<string, ICbValue> NTF = (name) => CbNullableLong.Create(name);
+        public static new Func<ICbValue> TF = () => Create();
+        public static new Func<string, ICbValue> NTF = (name) => Create(name);
     }
 }

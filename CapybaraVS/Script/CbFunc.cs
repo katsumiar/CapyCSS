@@ -1015,22 +1015,16 @@ namespace CbVS.Script
         }
 
         //=====================================================================================
-        public static CbFunc<T, RT> Create(string name = "")
-        {
-            return new CbFunc<T, RT>(name);
-        }
+        public static CbFunc<T, RT> Create(string name = "") => new CbFunc<T, RT>(name);
 
-        public static CbFunc<T, RT> Create(RT n, string name = "")
-        {
-            return new CbFunc<T, RT>(n, name);
-        }
+        public static CbFunc<T, RT> Create(RT n, string name = "") => new CbFunc<T, RT>(n, name);
 
-        public static Func<ICbValue> TF = () => CbFunc<T, RT>.Create();
-        public static Func<string, ICbValue> NTF = (name) => CbFunc<T, RT>.Create(name);
+        public static Func<ICbValue> TF = () => Create();
+        public static Func<string, ICbValue> NTF = (name) => Create(name);
 
         public static ICbValue GetCbFunc(string name)  // ※リフレクションから参照されている
         {
-            return CbFunc<T, RT>.Create(name);
+            return Create(name);
         }
 
         private bool disposedValue;
