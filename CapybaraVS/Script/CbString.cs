@@ -20,6 +20,23 @@ namespace CapybaraVS.Script
         }
 
         /// <summary>
+        /// 変数の持つ値を object として参照します。
+        /// ※ 型を厳密に扱う場合は Value を参照します。
+        /// </summary>
+        public override object Data
+        {
+            get
+            {
+                Debug.Assert(!(IsNullable && IsNull));
+                return Value;
+            }
+            set
+            {
+                Value = (string)value;
+            }
+        }
+
+        /// <summary>
         /// 値のUI上の文字列表現
         /// </summary>
         public override string ValueUIString
@@ -58,6 +75,11 @@ namespace CapybaraVS.Script
             }
         }
 
+        /// <summary>
+        /// 変数の持つ値は null か？
+        /// </summary>
+        public override bool IsNull => Value is null;
+
         public override void Set(ICbValue n)
         {
             try
@@ -67,7 +89,14 @@ namespace CapybaraVS.Script
 
                 // 値を文字列にしてコピーする
 
-                ValueString = n.ValueString;
+                if (n.IsNull)
+                {
+                    Value = null;
+                }
+                else
+                {
+                    ValueString = n.ValueString;
+                }
                 IsLiteral = n.IsLiteral;
                 if (IsError)
                 {
