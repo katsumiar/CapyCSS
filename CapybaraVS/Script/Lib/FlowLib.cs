@@ -19,38 +19,73 @@ namespace CapyCSS.Script.Lib
         public const string LIB_NULLABLE_NAME = LIB_FLOW_NAME + ".Nullable";
 
         //====================================================================================
+        /// <summary>
+        /// サンプルリストのすべての要素が true のとき、true を返します。
+        /// ただし、invert が true のときは、要素の評価を逆にします。
+        /// </summary>
+        /// <param name="samples">評価対象リスト</param>
+        /// <param name="invert">要素の評価を逆にするか？</param>
+        /// <returns></returns>
         [ScriptMethod(LIB_LOGICAL_NAME)]
         public static bool And(IEnumerable<bool> samples, bool invert)
         {
             if (samples is null || samples.Count() == 0)
                 return false;
             bool result = true;
-            foreach (var sample in samples)
-            {
-                result &= sample;
-            }
             if (invert)
-                return !result;
+            {
+                foreach (var sample in samples)
+                {
+                    result = result && !sample;
+                }
+            }
+            else
+            {
+                foreach (var sample in samples)
+                {
+                    result = result && sample;
+                }
+            }
             return result;
         }
 
         //------------------------------------------------------------------
+        /// <summary>
+        /// サンプルリストの要素が一つでも true のとき、true を返します。
+        /// ただし、invert が true のときは、要素の評価を逆にします。
+        /// </summary>
+        /// <param name="samples">評価対象リスト</param>
+        /// <param name="invert">要素の評価を逆にするか？</param>
+        /// <returns></returns>
         [ScriptMethod(LIB_LOGICAL_NAME)]
         public static bool Or(IEnumerable<bool> samples, bool invert)
         {
             if (samples is null || samples.Count() == 0)
                 return false;
             bool result = true;
-            foreach (var sample in samples)
-            {
-                result |= sample;
-            }
             if (invert)
-                return !result;
+            {
+                foreach (var sample in samples)
+                {
+                    result = result || !sample;
+                }
+            }
+            else
+            {
+                foreach (var sample in samples)
+                {
+                    result = result || sample;
+                }
+            }
             return result;
         }
 
         //------------------------------------------------------------------
+        /// <summary>
+        /// 評価を逆転します。
+        /// </summary>
+        /// <param name="sample">真偽値</param>
+        /// <returns>sampleの逆の真偽値</returns>
         [ScriptMethod(LIB_LOGICAL_NAME)]
         public static bool Not(bool sample)
         {
