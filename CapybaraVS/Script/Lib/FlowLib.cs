@@ -25,7 +25,7 @@ namespace CapyCSS.Script.Lib
         /// </summary>
         /// <param name="samples">評価対象リスト</param>
         /// <param name="invert">要素の評価を逆にするか？</param>
-        /// <returns></returns>
+        /// <returns>すべての要素が true のとき true</returns>
         [ScriptMethod(LIB_LOGICAL_NAME)]
         public static bool And(IEnumerable<bool> samples, bool invert)
         {
@@ -56,7 +56,7 @@ namespace CapyCSS.Script.Lib
         /// </summary>
         /// <param name="samples">評価対象リスト</param>
         /// <param name="invert">要素の評価を逆にするか？</param>
-        /// <returns></returns>
+        /// <returns>要素が一つでも true のとき true</returns>
         [ScriptMethod(LIB_LOGICAL_NAME)]
         public static bool Or(IEnumerable<bool> samples, bool invert)
         {
@@ -135,6 +135,12 @@ namespace CapyCSS.Script.Lib
         }
 
         //====================================================================================
+        /// <summary>
+        /// Func<TResult> を Invoke して結果を返します。
+        /// </summary>
+        /// <typeparam name="TResult"></typeparam>
+        /// <param name="func"></param>
+        /// <returns></returns>
         [ScriptMethod(LIB_FUNC_NAME)]
         public static TResult Invoke<TResult>(Func<TResult> func)
         {
@@ -142,6 +148,14 @@ namespace CapyCSS.Script.Lib
         }
 
         //------------------------------------------------------------------
+        /// <summary>
+        /// 一つの引数を渡して Func<T, TResult> を Invoke して結果を返します。
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <typeparam name="TResult"></typeparam>
+        /// <param name="arg"></param>
+        /// <param name="func"></param>
+        /// <returns></returns>
         [ScriptMethod(LIB_FUNC_NAME)]
         public static TResult Invoke<T, TResult>(T arg, Func<T, TResult> func)
         {
@@ -149,6 +163,16 @@ namespace CapyCSS.Script.Lib
         }
 
         //------------------------------------------------------------------
+        /// <summary>
+        /// 一つの引数を渡して Func<T1, T2, TResult> を Invoke して結果を返します。
+        /// </summary>
+        /// <typeparam name="T1"></typeparam>
+        /// <typeparam name="T2"></typeparam>
+        /// <typeparam name="TResult"></typeparam>
+        /// <param name="arg1"></param>
+        /// <param name="arg2"></param>
+        /// <param name="func"></param>
+        /// <returns></returns>
         [ScriptMethod(LIB_FUNC_NAME)]
         public static TResult Invoke<T1, T2, TResult>(T1 arg1, T2 arg2, Func<T1, T2, TResult> func)
         {
@@ -156,6 +180,10 @@ namespace CapyCSS.Script.Lib
         }
 
         //====================================================================================
+        /// <summary>
+        /// Action を Invoke します。
+        /// </summary>
+        /// <param name="action"></param>
         [ScriptMethod(LIB_ACTION_NAME)]
         public static void Invoke(Action action)
         {
@@ -163,6 +191,12 @@ namespace CapyCSS.Script.Lib
         }
 
         //------------------------------------------------------------------
+        /// <summary>
+        /// 一つの引数を渡して Action<T> を Invoke します。
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="arg"></param>
+        /// <param name="action"></param>
         [ScriptMethod(LIB_ACTION_NAME)]
         public static void Invoke<T>(T arg, Action<T> action)
         {
@@ -170,6 +204,14 @@ namespace CapyCSS.Script.Lib
         }
 
         //------------------------------------------------------------------
+        /// <summary>
+        /// 二つの引数を渡して Action<T1, T2> を Invoke します。
+        /// </summary>
+        /// <typeparam name="T1"></typeparam>
+        /// <typeparam name="T2"></typeparam>
+        /// <param name="arg1"></param>
+        /// <param name="arg2"></param>
+        /// <param name="action"></param>
         [ScriptMethod(LIB_ACTION_NAME)]
         public static void Invoke<T1, T2>(T1 arg1, T2 arg2, Action<T1, T2> action)
         {
@@ -177,6 +219,12 @@ namespace CapyCSS.Script.Lib
         }
 
         //====================================================================================
+        /// <summary>
+        /// null許容型の変数を受け取り、値があれば true を返します。
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="sample"></param>
+        /// <returns></returns>
         [ScriptMethod(LIB_NULLABLE_NAME)]
         public static bool HasValue<T>(T? sample) where T : struct
         {
@@ -188,6 +236,12 @@ namespace CapyCSS.Script.Lib
         }
 
         //------------------------------------------------------------------
+        /// <summary>
+        /// null許容型の変数を受け取り、値があればその値を引数に Action<T> を呼びます。
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="sample"></param>
+        /// <param name="hasValueAction"></param>
         [ScriptMethod(LIB_NULLABLE_NAME)]
         public static void HasValue<T>(T? sample, Action<T> hasValueAction) where T : struct
         {
@@ -198,6 +252,14 @@ namespace CapyCSS.Script.Lib
         }
 
         //------------------------------------------------------------------
+        /// <summary>
+        /// sample が true のとき、value の値を持った null許容型の値を返します。
+        /// sample が false のときは、null 状態の null許容型の値を返します。
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="sample"></param>
+        /// <param name="value"></param>
+        /// <returns></returns>
         [ScriptMethod(LIB_NULLABLE_NAME)]
         public static T? If_ResultNullable<T>(bool sample, T value) where T : struct
         {
@@ -212,6 +274,14 @@ namespace CapyCSS.Script.Lib
         }
 
         //------------------------------------------------------------------
+        /// <summary>
+        /// null許容型の変数を受け取り、値があればその値を引数に Action<T> を呼びます。
+        /// 値がなければ Action を呼びます。
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="sample"></param>
+        /// <param name="hasValueAction"></param>
+        /// <param name="othersAction"></param>
         [ScriptMethod(LIB_NULLABLE_NAME)]
         public static void If_HasValue<T>(T? sample, Action<T> hasValueAction, Action othersAction) where T : struct
         {
@@ -246,6 +316,11 @@ namespace CapyCSS.Script.Lib
         }
 
         //====================================================================================
+        /// <summary>
+        /// null チェックし null なら true を返します。
+        /// </summary>
+        /// <param name="sample">null チェック対象</param>
+        /// <returns>null なら true</returns>
         [ScriptMethod(LIB_FLOW_NAME)]
         public static bool IsNull(object sample)
         {
@@ -328,12 +403,11 @@ namespace CapyCSS.Script.Lib
 
         //------------------------------------------------------------------
         /// <summary>
-        /// func が true を返すまで func を呼び続けます。
+        /// Func<bool> が true を返すまで Func<bool> を呼び続けます。
         /// </summary>
-        /// <typeparam name="T"></typeparam>
         /// <param name="func"></param>
         [ScriptMethod(LIB_FLOW_NAME)]
-        public static void DoWhile<T>(Func<bool> func)
+        public static void DoWhile(Func<bool> func)
         {
             if (func is null)
                 return;
@@ -342,7 +416,7 @@ namespace CapyCSS.Script.Lib
 
         //------------------------------------------------------------------
         /// <summary>
-        /// サンプルリストの各要素に対して要素を引数にactionを呼びます。
+        /// サンプルリストの各要素に対して要素を引数に Action を呼びます。
         /// </summary>
         /// <typeparam name="T">サンプルリストの型</typeparam>
         /// <param name="samples">サンプルリスト</param>
@@ -360,8 +434,8 @@ namespace CapyCSS.Script.Lib
 
         //------------------------------------------------------------------
         /// <summary>
-        /// サンプルリストの各要素に対して要素を引数にpredicateを呼びます。
-        /// predicate が false を返したら抜けます。
+        /// サンプルリストの各要素に対して要素を引数に Predicate を呼びます。
+        /// Predicate が false を返したら抜けます。
         /// </summary>
         /// <typeparam name="T">サンプルリストの型</typeparam>
         /// <param name="samples">サンプルリスト</param>
@@ -382,9 +456,9 @@ namespace CapyCSS.Script.Lib
 
         //------------------------------------------------------------------
         /// <summary>
-        /// samples に登録されている Action を順番に実行します。
+        /// サンプルリストに登録されている Action を順番に実行します。
         /// </summary>
-        /// <param name="samples"></param>
+        /// <param name="samples">サンプルリスト</param>
         [ScriptMethod(LIB_FLOW_NAME)]
         public static void ForeachAction(IEnumerable<Action> samples)
         {
@@ -398,10 +472,10 @@ namespace CapyCSS.Script.Lib
 
         //------------------------------------------------------------------
         /// <summary>
-        /// samples に登録されている Func<bool> を順番に実行します。
+        /// サンプルリストに登録されている Func<bool> を順番に実行します。
         /// Func<bool> が false を返したら終了します。
         /// </summary>
-        /// <param name="samples"></param>
+        /// <param name="samples">サンプルリスト</param>
         [ScriptMethod(LIB_FLOW_NAME)]
         public static void BreakableForeachAction(IEnumerable<Func<bool>> samples)
         {
@@ -421,7 +495,7 @@ namespace CapyCSS.Script.Lib
 
         //------------------------------------------------------------------
         /// <summary>
-        /// サンプルリストの各要素に対して要素を引数にfuncを呼びます。
+        /// サンプルリストの各要素に対して値を返すまで要素を引数にfuncを呼びます。
         /// funcがnull以外を返したら抜けます。
         /// func が返した値かデフォルト値が返ります。
         /// </summary>

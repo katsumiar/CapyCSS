@@ -902,7 +902,7 @@ namespace CapybaraVS.Script
 
                 string helpCode = $"{classType.Namespace}:{className}." + nodeName.Replace(" ", "_");
                 menuName = menuName + " " + addState;
-                helpCode = helpCode + " " + addState;
+                helpCode = nodeCode + " " + addState;
 
                 // スクリプトノード用のヒント
                 string nodeHint = null;

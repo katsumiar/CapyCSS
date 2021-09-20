@@ -49,6 +49,12 @@
     <None Update="hText\CapybaraVS-ja-JP.htxt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="hText\CapyCSS-en-US.htxt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="hText\CapyCSS-ja-JP.htxt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="hText\CbVS-en-US.htxt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
