@@ -167,6 +167,23 @@ namespace CapybaraVS.Script
 
         public override Func<ICbValue> NodeTF => TF;
 
+        /// <summary>
+        /// 変数の持つ値を object として参照します。
+        /// ※ 型を厳密に扱う場合は Value を参照します。
+        /// </summary>
+        public override object Data
+        {
+            get
+            {
+                Debug.Assert(!(IsNullable && IsNull));
+                return Value as object;
+            }
+            set
+            {
+                Value = (T)value;
+            }
+        }
+
         public override T Value
         {
             get => _value;
@@ -222,6 +239,12 @@ namespace CapybaraVS.Script
             }
             set => new NotImplementedException();
         }
+
+
+        /// <summary>
+        /// 変数の持つ値は null か？
+        /// </summary>
+        public override bool IsNull { get => Value is null; }
 
         public override bool IsStringableValue => true;
 

@@ -234,98 +234,6 @@ namespace CbVS.Script
             return CbSTUtils.IsDelegate(type);
         }
 
-        //public static bool IsFuncType(Type type)
-        //{
-        //    return FuncTypeArgCount(type) != -1;
-        //}
-
-        //public static int FuncTypeArgCount(Type type)
-        //{
-        //    if (!type.IsGenericType)
-        //        return -1;
-        //    if (type.GetGenericTypeDefinition() == typeof(Func<>))
-        //        return 1;
-        //    if (type.GetGenericTypeDefinition() == typeof(Func<,>))
-        //        return 2;
-        //    if (type.GetGenericTypeDefinition() == typeof(Func<,,>))
-        //        return 3;
-        //    if (type.GetGenericTypeDefinition() == typeof(Func<,,,>))
-        //        return 4;
-        //    if (type.GetGenericTypeDefinition() == typeof(Func<,,,,>))
-        //        return 5;
-        //    if (type.GetGenericTypeDefinition() == typeof(Func<,,,,,>))
-        //        return 6;
-        //    if (type.GetGenericTypeDefinition() == typeof(Func<,,,,,,>))
-        //        return 7;
-        //    if (type.GetGenericTypeDefinition() == typeof(Func<,,,,,,,>))
-        //        return 8;
-        //    if (type.GetGenericTypeDefinition() == typeof(Func<,,,,,,,,>))
-        //        return 9;
-        //    if (type.GetGenericTypeDefinition() == typeof(Func<,,,,,,,,,>))
-        //        return 10;
-        //    if (type.GetGenericTypeDefinition() == typeof(Func<,,,,,,,,,,>))
-        //        return 11;
-        //    if (type.GetGenericTypeDefinition() == typeof(Func<,,,,,,,,,,,>))
-        //        return 12;
-        //    if (type.GetGenericTypeDefinition() == typeof(Func<,,,,,,,,,,,,>))
-        //        return 13;
-        //    if (type.GetGenericTypeDefinition() == typeof(Func<,,,,,,,,,,,,,>))
-        //        return 14;
-        //    if (type.GetGenericTypeDefinition() == typeof(Func<,,,,,,,,,,,,,,>))
-        //        return 15;
-        //    if (type.GetGenericTypeDefinition() == typeof(Func<,,,,,,,,,,,,,,,>))
-        //        return 16;
-        //    if (type.GetGenericTypeDefinition() == typeof(Func<,,,,,,,,,,,,,,,,>))
-        //        return 17;
-        //    return -1;
-        //}
-
-        //public static bool IsActionType(Type type)
-        //{
-        //    return ActionTypeArgCount(type) != -1;
-        //}
-
-        //public static int ActionTypeArgCount(Type type)
-        //{
-        //    if (type == typeof(Action))
-        //        return 0;
-        //    if (!type.IsGenericType)
-        //        return -1;
-        //    if (type.GetGenericTypeDefinition() == typeof(Action<>))
-        //        return 1;
-        //    if (type.GetGenericTypeDefinition() == typeof(Action<,>))
-        //        return 2;
-        //    if (type.GetGenericTypeDefinition() == typeof(Action<,,>))
-        //        return 3;
-        //    if (type.GetGenericTypeDefinition() == typeof(Action<,,,>))
-        //        return 4;
-        //    if (type.GetGenericTypeDefinition() == typeof(Action<,,,,>))
-        //        return 5;
-        //    if (type.GetGenericTypeDefinition() == typeof(Action<,,,,,>))
-        //        return 6;
-        //    if (type.GetGenericTypeDefinition() == typeof(Action<,,,,,,>))
-        //        return 7;
-        //    if (type.GetGenericTypeDefinition() == typeof(Action<,,,,,,,>))
-        //        return 8;
-        //    if (type.GetGenericTypeDefinition() == typeof(Action<,,,,,,,,>))
-        //        return 9;
-        //    if (type.GetGenericTypeDefinition() == typeof(Action<,,,,,,,,,>))
-        //        return 10;
-        //    if (type.GetGenericTypeDefinition() == typeof(Action<,,,,,,,,,,>))
-        //        return 11;
-        //    if (type.GetGenericTypeDefinition() == typeof(Action<,,,,,,,,,,,>))
-        //        return 12;
-        //    if (type.GetGenericTypeDefinition() == typeof(Action<,,,,,,,,,,,,>))
-        //        return 13;
-        //    if (type.GetGenericTypeDefinition() == typeof(Action<,,,,,,,,,,,,,>))
-        //        return 14;
-        //    if (type.GetGenericTypeDefinition() == typeof(Action<,,,,,,,,,,,,,,>))
-        //        return 15;
-        //    if (type.GetGenericTypeDefinition() == typeof(Action<,,,,,,,,,,,,,,,>))
-        //        return 16;
-        //    return -1;
-        //}
-
         /// <summary>
         /// Func<object, type> 型の CbFunc<type> 型の変数を返します。
         /// </summary>
@@ -541,6 +449,11 @@ namespace CbVS.Script
                 return baseName;
             }
         }
+
+        /// <summary>
+        /// 変数の持つ値は null か？
+        /// </summary>
+        public override bool IsNull => CallBack is null;
 
         /// <summary>
         /// 値の文字列表現
@@ -1111,11 +1024,6 @@ namespace CbVS.Script
         {
             return new CbFunc<T, RT>(n, name);
         }
-
-        /// <summary>
-        /// イベントの返り値が null か？
-        /// </summary>
-        public override bool IsNull => CallBack is null;
 
         public static Func<ICbValue> TF = () => CbFunc<T, RT>.Create();
         public static Func<string, ICbValue> NTF = (name) => CbFunc<T, RT>.Create(name);
