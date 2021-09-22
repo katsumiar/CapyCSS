@@ -459,13 +459,11 @@ namespace CapyCSS.Controls
             DeleteButton.IsEnabled = enable;
         }
 
-        public bool IsLockExecute = false;
-
         class EntryPoint
         {
             public object owner = null;
-            public Action action = null;
-            public EntryPoint(object _owner, Action _action)
+            public Action<string> action = null;
+            public EntryPoint(object _owner, Action<string> _action)
             {
                 owner = _owner;
                 action = _action;
@@ -530,7 +528,7 @@ namespace CapyCSS.Controls
         /// <summary>
         /// スクリプト実行用公開エントリーポイントリストにエントリーポイントを追加します。
         /// </summary>
-        public void AddPublicExecuteEntryPoint(object owner, Action func)
+        public void AddPublicExecuteEntryPoint(object owner, Action<string> func)
         {
             PublicExecuteEntryPointList.Add(new EntryPoint(owner, func));
             UpdateButtonEnable();
@@ -552,7 +550,7 @@ namespace CapyCSS.Controls
         /// <summary>
         /// スクリプト実行用公開エントリーポイントリストからエントリーポイントを削除します。
         /// </summary>
-        public void RemovePublicExecuteEntryPoint(Action func)
+        public void RemovePublicExecuteEntryPoint(Action<string> func)
         {
             PublicExecuteEntryPointList.RemoveAll(s => s.action == func);
             UpdateButtonEnable();
@@ -561,29 +559,32 @@ namespace CapyCSS.Controls
         /// <summary>
         /// スクリプト実行用公開エントリーポイントリストからエントリーポイントをまとめて順次呼び出しします。
         /// </summary>
-        public void CallPublicExecuteEntryPoint(object owner = null)
+        public void CallPublicExecuteEntryPoint(object owner = null, string entryPointName = null)
         {
-            if (IsLockExecute)
+            if (CommandCanvasList.GetOwnerCursor() == Cursors.Wait)
                 return; // 再入を禁止する
+
+            if (entryPointName != null && entryPointName.Trim().Length == 0)
+            {
+                entryPointName = null;
+            }
 
             foreach (var act in PublicExecuteEntryPointList)
             {
                 if (owner is null)
                 {
-                    act.action?.Invoke();
+                    act.action?.Invoke(entryPointName);
                 }
                 else
                 {
                     if (act.owner == owner)
                     {
-                        act.action?.Invoke();
+                        act.action?.Invoke(entryPointName);
                     }
                 }
             }
             Dispatcher.BeginInvoke(new Action(() =>
             {
-                // アイドル状態になってから戻す
-
                 if (IsAutoExit)
                 {
                     // スクリプト実行後自動終了
@@ -669,7 +670,7 @@ namespace CapyCSS.Controls
         /// <param name="e"></param>
         private void ExecuteButton_Click(object sender, RoutedEventArgs e)
         {
-            CallPublicExecuteEntryPoint(CurrentScriptCanvas);
+            CallPublicExecuteEntryPoint(CurrentScriptCanvas, EntryPointName.Text.Trim());
         }
 
         /// <summary>
@@ -862,6 +863,11 @@ namespace CapyCSS.Controls
             ToolExec.KillProcess();
 
             GC.SuppressFinalize(this);
+        }
+
+        private void EntryPointName_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            EntryPointNamePh.Visibility = (EntryPointName.Text.Trim().Length != 0) ? Visibility.Hidden : Visibility.Visible;
         }
     }
 }

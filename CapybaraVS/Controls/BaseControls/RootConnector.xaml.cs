@@ -69,6 +69,10 @@ namespace CapybaraVS.Controls.BaseControls
 
                     self.ForcedChecked = ForcedChecked;
                     self.IsPublicExecute.IsChecked = IsPublicExecute;
+                    if (EntryPointName != null)
+                    {
+                        self.EntryPointName.Text = EntryPointName;
+                    }
 
                     for (int i = 0; i < Arguments.Count; ++i)
                     {
@@ -123,6 +127,7 @@ namespace CapybaraVS.Controls.BaseControls
                     Connector = self.rootCurveLinks.AssetXML;
 
                     IsPublicExecute = self.IsPublicExecute.IsChecked == true;
+                    EntryPointName = self.EntryPointName.Text;
 
                     Arguments = new List<LinkConnector._AssetXML<LinkConnector>>();
                     foreach (var node in self.ListData)
@@ -142,6 +147,7 @@ namespace CapybaraVS.Controls.BaseControls
             [XmlArrayItem("LinkConnector")]
             public List<LinkConnector._AssetXML<LinkConnector>> Arguments { get; set; } = null;
             public bool IsPublicExecute { get; set; } = false;
+            public string EntryPointName { get; set; } = "";
 
             protected virtual void Dispose(bool disposing)
             {
@@ -374,26 +380,33 @@ namespace CapybaraVS.Controls.BaseControls
                 {
                     // スクリプトを処理する
 
-                    ExecuteRoot();
+                    ExecuteRoot(EntryPointName.Text);
                 }
                 );
             
             LayoutUpdated += _LayoutUpdated;
         }
 
-        public void ExecuteRoot()
+        public void ExecuteRoot(string entryPointName = null)
         {
-            if (IsLockExecute)
+            if (CommandCanvasList.GetOwnerCursor() == Cursors.Wait)
                 return; // 再入を禁止する
 
+            OwnerCommandCanvas.CommandCanvasControl.MainLog.TryAutoClear();
+            GC.Collect();
+
+            if (!(entryPointName is null && EntryPointName.Text.Trim().Length == 0) &&
+                (entryPointName is null || entryPointName != EntryPointName.Text.Trim()))
+            {
+                // エントリーポイントに名前が付けられていて、且つ名前が一致しない
+                
+                return;
+            }
+
             CommandCanvasList.SetOwnerCursor(Cursors.Wait);
-            IsLockExecute = true;
 
             OwnerCommandCanvas.ScriptWorkCanvas.Dispatcher.BeginInvoke(new Action(() =>
             {
-                OwnerCommandCanvas.CommandCanvasControl.MainLog.TryAutoClear();
-                GC.Collect();
-
                 // スクリプトを実行する
 
                 OwnerCommandCanvas.CommandCanvasControl.CallAllExecuteEntryPointEnable(false);
@@ -417,7 +430,6 @@ namespace CapybaraVS.Controls.BaseControls
                 {
                     // アイドル状態になってから戻す
 
-                    IsLockExecute = false;
                     OwnerCommandCanvas.CommandCanvasControl.CallAllExecuteEntryPointEnable(true);
                     GC.Collect();
                     CommandCanvasList.SetOwnerCursor(null);
@@ -439,18 +451,6 @@ namespace CapybaraVS.Controls.BaseControls
         public void SetExecuteButtonEnable(bool enable)
         {
             ExecuteButtunControl.IsEnabled = enable;
-        }
-
-        /// <summary>
-        /// スクリプト実行ボタン再入禁止フラグ
-        /// </summary>
-        private bool IsLockExecute
-        {
-            get => OwnerCommandCanvas.CommandCanvasControl.IsLockExecute;
-            set
-            {
-                OwnerCommandCanvas.CommandCanvasControl.IsLockExecute = value;
-            }
         }
 
         /// <summary>
@@ -915,6 +915,7 @@ namespace CapybaraVS.Controls.BaseControls
             OwnerCommandCanvas.CommandCanvasControl.AddPublicExecuteEntryPoint(OwnerCommandCanvas, ExecuteRoot);
             IsPublicExecute.Foreground = Brushes.Tomato;
             RectBox.Fill = NodeEntryColor;
+            EntryPointName.Visibility = Visibility.Visible;
         }
 
         /// <summary>
@@ -927,6 +928,7 @@ namespace CapybaraVS.Controls.BaseControls
             OwnerCommandCanvas.CommandCanvasControl.RemovePublicExecuteEntryPoint(ExecuteRoot);
             IsPublicExecute.Foreground = Brushes.Black;
             RectBox.Fill = NodeNormalColor;
+            EntryPointName.Visibility = Visibility.Collapsed;
         }
 
         //-----------------------------------------------------------------------------------
