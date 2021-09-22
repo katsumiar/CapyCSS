@@ -180,11 +180,8 @@ namespace CapybaraVS.Controls.BaseControls
                     string text = getValue(self);
                     self.ParamNameLabel.LabelString = text;
                     if (self.ParamNameLabelOverlap.Length != 0 && !(self.ValueData is ParamNameOnly))
-                        self.ParamNameLabel.LabelString = self.ParamNameLabelOverlap;
-                    if (self.ValueData is ICbValue value)
                     {
-                        value.Name = text;
-                        self.ParamEdit = value.ValueUIString;
+                        self.ParamNameLabel.LabelString = self.ParamNameLabelOverlap;
                     }
                 });
 
@@ -600,12 +597,9 @@ namespace CapybaraVS.Controls.BaseControls
             }
             if (valueString is null)
             {
-                Edit.ToolTip = Edit.Text.Trim('\r', '\n');
+                valueString = Edit.Text;
             }
-            else
-            {
-                Edit.ToolTip = valueString.Trim('\r', '\n');
-            }
+            Edit.ToolTip = valueString.Trim('\r', '\n');
         }
 
         private void Edit_KeyDown(object sender, KeyEventArgs e)
