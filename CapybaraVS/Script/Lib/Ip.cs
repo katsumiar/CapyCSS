@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -12,49 +13,58 @@ namespace CapybaraVS.Script.Lib
         private const string LIB_NAME = "Net";
         private const string LIB_NAME2 = "Net.Web";
 
-        public enum WebMethod
-        {
-            GET,
-            POST
-        }
+        private static readonly HttpClient client = new HttpClient() { Timeout = TimeSpan.FromMilliseconds(5000) };
 
-        //------------------------------------------------------------------
-        [ScriptMethod(LIB_NAME2)]
-        public static string GetContents(string address, double timeout = 5000)
+        static void SetClient(string account, string passwd)
         {
-            var client = new HttpClient() { Timeout = TimeSpan.FromMilliseconds(timeout) };
-            var response = client.GetAsync(address);
-            var contens = response.Result.Content.ReadAsStringAsync();
-            return contens.Result;
-        }
-
-        //------------------------------------------------------------------
-        [ScriptMethod(LIB_NAME2)]
-        public static string GetHeaders(string address, double timeout = 5000)
-        {
-            var client = new HttpClient() { Timeout = TimeSpan.FromMilliseconds(timeout) };
-            var response = client.GetAsync(address);
-            var contens = response.Result.Headers.ToString();
-            return contens;
-        }
-
-        //------------------------------------------------------------------
-        [ScriptMethod(LIB_NAME2)]
-        public static HttpWebResponse WebAPI(string command, string account, string passwd, WebMethod method = WebMethod.GET)
-        {
-            WebRequest req = WebRequest.Create(command);
-            switch (method)
+            client.DefaultRequestHeaders.Accept.Clear();
+            if (account != null && passwd != null && account.Trim().Length != 0 && passwd.Trim().Length != 0)
             {
-                case WebMethod.GET:
-                    req.Method = "GET";
-                    break;
-
-                case WebMethod.POST:
-                    req.Method = "POST";
-                    break;
+                var authToken = Encoding.ASCII.GetBytes($"{account}:{passwd}");
+                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", Convert.ToBase64String(authToken));
             }
-            req.Headers["Authorization"] = "Basic " + Convert.ToBase64String(Encoding.Default.GetBytes(account + ":" + passwd));
-            return req.GetResponse() as HttpWebResponse;
+            client.DefaultRequestHeaders.Add("User-Agent", $"{MainWindow.AppName}-{MainWindow.AppVersion}");
+        }
+
+        //------------------------------------------------------------------
+        [ScriptMethod(LIB_NAME2)]
+        public static HttpResponseMessage WebGetAPI(string url, string account = null, string passwd = null)
+        {
+            if (url is null || url.Trim() == "")
+                return null;
+            SetClient(account, passwd);
+            var response = client.GetAsync(url);
+            return response.Result;
+        }
+
+        //------------------------------------------------------------------
+        [ScriptMethod(LIB_NAME2)]
+        public static HttpResponseMessage WebPostAPI(string url, HttpContent content, string account = null, string passwd = null)
+        {
+            if (url is null || url.Trim() == "" || content is null)
+                return null;
+            SetClient(account, passwd);
+            var response = client.PostAsync(url, content);
+            return response.Result;
+        }
+
+        //------------------------------------------------------------------
+        [ScriptMethod(LIB_NAME2)]
+        public static string GetHeaders(HttpResponseMessage httpResponseMessage)
+        {
+            if (httpResponseMessage is null)
+                return null;
+            return httpResponseMessage.Headers.ToString();
+        }
+
+        //------------------------------------------------------------------
+        [ScriptMethod(LIB_NAME2)]
+        public static string GetContents(HttpResponseMessage httpResponseMessage)
+        {
+            if (httpResponseMessage is null)
+                return null;
+            var contens = httpResponseMessage.Content.ReadAsStringAsync();
+            return contens.Result;
         }
 
         //------------------------------------------------------------------
