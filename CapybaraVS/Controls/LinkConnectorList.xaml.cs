@@ -2,6 +2,7 @@
 
 using CapybaraVS.Controls.BaseControls;
 using CapybaraVS.Script;
+using CapyCSS.Controls;
 using CbVS.Script;
 using System;
 using System.Collections.Generic;
@@ -717,12 +718,12 @@ namespace CapybaraVS.Controls
 
         private void AccordionOpenIcon_MouseEnter(object sender, MouseEventArgs e)
         {
-            Cursor = Cursors.Hand;
+            CommandCanvasList.SetOwnerCursor(Cursors.Hand);
         }
 
         private void AccordionOpenIcon_MouseLeave(object sender, MouseEventArgs e)
         {
-            Cursor = null;
+            CommandCanvasList.SetOwnerCursor(null);
         }
 
 #region IDisposable Support

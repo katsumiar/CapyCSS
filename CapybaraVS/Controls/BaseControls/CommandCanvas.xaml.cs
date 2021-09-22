@@ -260,7 +260,7 @@ namespace CapybaraVS.Controls.BaseControls
             ScriptWorkCanvas = WorkCanvas;
             ScriptWorkStack = WorkStack;
 
-            ScriptWorkCanvas.Cursor = Cursors.Wait;
+            CommandCanvasList.SetOwnerCursor(Cursors.Wait);
 
             TypeMenuWindow = CommandWindow.Create();
             TypeMenuWindow.Title = "Type";
@@ -275,20 +275,18 @@ namespace CapybaraVS.Controls.BaseControls
 
             ClickEntryEvent = new Action(() =>
             {
-                ScriptWorkCanvas.Cursor = null;
-                CommandMenu.Cursor = null;
+                CommandCanvasList.SetOwnerCursor(null);
             });
 
             ClickExitEvent = new Action(() =>
             {
                 CommandMenuWindow.CloseWindow();
-                ScriptWorkCanvas.Cursor = Cursors.Hand;
-                CommandMenu.Cursor = Cursors.Hand;
+                CommandCanvasList.SetOwnerCursor(Cursors.Hand);
             });
 
-            ScriptWorkCanvas.Cursor = null;
-
             DEBUG_Check();
+            
+            CommandCanvasList.SetOwnerCursor(null);
         }
 
         ~CommandCanvas()
@@ -565,7 +563,7 @@ namespace CapybaraVS.Controls.BaseControls
         {
             return new TreeMenuNodeCommand((a) =>
                 {
-                    if (CommandCanvasList.OwnerWindow.Cursor == Cursors.Wait)
+                    if (CommandCanvasList.GetOwnerCursor() == Cursors.Wait)
                         return; // 処理中は禁止
 
                     CommandMenuWindow.CloseWindow();
@@ -735,7 +733,7 @@ namespace CapybaraVS.Controls.BaseControls
         /// </summary>
         public void OverwriteSaveXML()
         {
-            if (CommandCanvasList.OwnerWindow.Cursor == Cursors.Wait)
+            if (CommandCanvasList.GetOwnerCursor() == Cursors.Wait)
                 return;
 
             if (OpenFileName == "")
@@ -775,7 +773,7 @@ namespace CapybaraVS.Controls.BaseControls
         /// </summary>
         public void SaveXML()
         {
-            if (CommandCanvasList.OwnerWindow.Cursor == Cursors.Wait)
+            if (CommandCanvasList.GetOwnerCursor() == Cursors.Wait)
                 return;
 
             string path = ShowSaveDialog();
@@ -795,10 +793,10 @@ namespace CapybaraVS.Controls.BaseControls
             if (path is null)
                 return;
 
-            if (CommandCanvasList.OwnerWindow.Cursor == Cursors.Wait)
+            if (CommandCanvasList.GetOwnerCursor() == Cursors.Wait)
                 return;
 
-            CommandCanvasList.OwnerWindow.Cursor = Cursors.Wait;
+            CommandCanvasList.SetOwnerCursor(Cursors.Wait);
 
             try
             {
@@ -820,7 +818,7 @@ namespace CapybaraVS.Controls.BaseControls
                 ControlTools.ShowErrorMessage(ex.Message);
             }
 
-            CommandCanvasList.OwnerWindow.Cursor = Cursors.Arrow;
+            CommandCanvasList.SetOwnerCursor(null);
         }
 
         /// <summary>
@@ -828,7 +826,7 @@ namespace CapybaraVS.Controls.BaseControls
         /// </summary>
         public void LoadXML()
         {
-            if (CommandCanvasList.OwnerWindow.Cursor == Cursors.Wait)
+            if (CommandCanvasList.GetOwnerCursor() == Cursors.Wait)
                 return;
 
             string path = ShowLoadDialog();
@@ -844,11 +842,11 @@ namespace CapybaraVS.Controls.BaseControls
         /// <param name="path">ファイルのパス</param>
         public void LoadXML(string path)
         {
-            if (CommandCanvasList.OwnerWindow.Cursor == Cursors.Wait)
+            if (CommandCanvasList.GetOwnerCursor() == Cursors.Wait)
                 return;
 
             OpenFileName = path;
-            CommandCanvasList.OwnerWindow.Cursor = Cursors.Wait;
+            CommandCanvasList.SetOwnerCursor(Cursors.Wait);
             ScriptWorkCanvas.Dispatcher.BeginInvoke(new Action(() =>
             {
                 using (StreamReader reader = new StreamReader(path))
@@ -881,7 +879,7 @@ namespace CapybaraVS.Controls.BaseControls
                     // アイドル状態になってから戻す
 
                     GC.Collect();
-                    CommandCanvasList.OwnerWindow.Cursor = Cursors.Arrow;
+                    CommandCanvasList.SetOwnerCursor(null);
                     if (CommandCanvasControl.IsAutoExecute)
                     {
                         CommandCanvasControl.CallPublicExecuteEntryPoint();
@@ -1558,7 +1556,7 @@ namespace CapybaraVS.Controls.BaseControls
                         CapybaraVS.Language.Instance["SYSTEM_Confirmation"],
                         MessageBoxButton.OKCancel) == MessageBoxResult.OK)
             {
-                CommandCanvasList.OwnerWindow.Cursor = Cursors.Wait;
+                CommandCanvasList.SetOwnerCursor(Cursors.Wait);
                 ScriptWorkCanvas.Dispatcher.BeginInvoke(new Action(() =>
                 {
                     ClearWorkCanvas();
@@ -1567,7 +1565,7 @@ namespace CapybaraVS.Controls.BaseControls
                         // アイドル状態になってから戻す
 
                         GC.Collect();
-                        CommandCanvasList.OwnerWindow.Cursor = Cursors.Arrow;
+                        CommandCanvasList.SetOwnerCursor(null);
 
                     }), DispatcherPriority.ApplicationIdle);
                 }), DispatcherPriority.ApplicationIdle);

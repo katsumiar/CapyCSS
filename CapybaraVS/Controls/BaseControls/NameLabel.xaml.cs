@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CapyCSS.Controls;
+using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Windows;
@@ -261,12 +262,12 @@ namespace CapybaraVS.Controls.BaseControls
 
         private void LabelControl_MouseEnter(object sender, MouseEventArgs e)
         {
-            Cursor = Cursors.Hand;
+            CommandCanvasList.SetOwnerCursor(Cursors.Hand);
         }
 
         private void LabelControl_MouseLeave(object sender, MouseEventArgs e)
         {
-            Cursor = null;
+            CommandCanvasList.SetOwnerCursor(null);
         }
 
         protected virtual void Dispose(bool disposing)

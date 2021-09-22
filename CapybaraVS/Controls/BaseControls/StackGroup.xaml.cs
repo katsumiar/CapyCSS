@@ -337,10 +337,10 @@ namespace CapybaraVS.Controls.BaseControls
         /// </summary>
         private void OpenAccordion()
         {
-            CommandCanvasList.OwnerWindow.Cursor = Cursors.Wait;
+            CommandCanvasList.SetOwnerCursor(Cursors.Wait);
             Dispatcher.BeginInvoke(new Action(() =>
                 {
-                    CommandCanvasList.OwnerWindow.Cursor = null;
+                    CommandCanvasList.SetOwnerCursor(null);
                 }),
                 DispatcherPriority.ApplicationIdle
             );
@@ -476,12 +476,12 @@ namespace CapybaraVS.Controls.BaseControls
 
         private void Accordion1_MouseEnter(object sender, MouseEventArgs e)
         {
-            Cursor = Cursors.Hand;
+            CommandCanvasList.SetOwnerCursor(Cursors.Hand);
         }
 
         private void Accordion1_MouseLeave(object sender, MouseEventArgs e)
         {
-            Cursor = null;
+            CommandCanvasList.SetOwnerCursor(null);
         }
 
         protected virtual void Dispose(bool disposing)

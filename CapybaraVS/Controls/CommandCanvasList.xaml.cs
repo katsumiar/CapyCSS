@@ -154,6 +154,16 @@ namespace CapyCSS.Controls
 
         public static Window OwnerWindow => ownerWindow;
 
+        public static void SetOwnerCursor(Cursor cursor)
+        {
+            OwnerWindow.Cursor = cursor;
+        }
+
+        public static Cursor GetOwnerCursor()
+        {
+            return OwnerWindow.Cursor;
+        }
+
         private TabItem CurrentTabItem
         {
             get
@@ -207,6 +217,7 @@ namespace CapyCSS.Controls
             bool isAutoExit = false)
         {
             ownerWindow = owner;
+            OwnerWindow.ForceCursor = true;
             SetTitleFunc = setTitleFunc;
 
             CAPYCSS_WORK_PATH = path;

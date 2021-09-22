@@ -386,7 +386,7 @@ namespace CapybaraVS.Controls.BaseControls
             if (IsLockExecute)
                 return; // 再入を禁止する
 
-            CommandCanvasList.OwnerWindow.Cursor = Cursors.Wait;
+            CommandCanvasList.SetOwnerCursor(Cursors.Wait);
             IsLockExecute = true;
 
             OwnerCommandCanvas.ScriptWorkCanvas.Dispatcher.BeginInvoke(new Action(() =>
@@ -420,7 +420,7 @@ namespace CapybaraVS.Controls.BaseControls
                     IsLockExecute = false;
                     OwnerCommandCanvas.CommandCanvasControl.CallAllExecuteEntryPointEnable(true);
                     GC.Collect();
-                    CommandCanvasList.OwnerWindow.Cursor = null;
+                    CommandCanvasList.SetOwnerCursor(null);
 
                 }), DispatcherPriority.ApplicationIdle);
 
@@ -1202,12 +1202,12 @@ namespace CapybaraVS.Controls.BaseControls
 
         private void EllipseType_MouseEnter(object sender, MouseEventArgs e)
         {
-            Cursor = Cursors.Hand;
+            CommandCanvasList.SetOwnerCursor(Cursors.Hand);
         }
 
         private void EllipseType_MouseLeave(object sender, MouseEventArgs e)
         {
-            Cursor = null;
+            CommandCanvasList.SetOwnerCursor(null);
         }
 
         //-----------------------------------------------------------------------------------
