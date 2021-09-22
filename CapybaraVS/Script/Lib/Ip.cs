@@ -28,7 +28,7 @@ namespace CapybaraVS.Script.Lib
 
         //------------------------------------------------------------------
         [ScriptMethod(LIB_NAME2)]
-        public static HttpResponseMessage WebGetAPI(string url, string account = null, string passwd = null)
+        public static HttpResponseMessage GetWebAPI(string url, string account = null, string passwd = null)
         {
             if (url is null || url.Trim() == "")
                 return null;
@@ -39,7 +39,7 @@ namespace CapybaraVS.Script.Lib
 
         //------------------------------------------------------------------
         [ScriptMethod(LIB_NAME2)]
-        public static HttpResponseMessage WebPostAPI(string url, HttpContent content, string account = null, string passwd = null)
+        public static HttpResponseMessage PostWebAPI(string url, HttpContent content, string account = null, string passwd = null)
         {
             if (url is null || url.Trim() == "" || content is null)
                 return null;
