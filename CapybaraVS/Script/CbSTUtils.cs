@@ -852,7 +852,8 @@ namespace CapybaraVS.Script
                 return DataToString(cbObject.Data);
             }
             string valueString = "";
-            if (data is System.Collections.IEnumerable list)
+            if (!(data is string) &&
+                data is System.Collections.IEnumerable list)
             {
                 string nodeTypeName = null;
                 int count = 0;
