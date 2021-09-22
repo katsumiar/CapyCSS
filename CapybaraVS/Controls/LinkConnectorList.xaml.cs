@@ -468,7 +468,7 @@ namespace CapybaraVS.Controls
         /// </summary>
         /// <param name="functionStack"></param>
         /// <param name="preArgument"></param>
-        public void RequestExecute(List<object> functionStack = null, DummyArgumentsStack preArgument = null)
+        public object RequestExecute(List<object> functionStack = null, DummyArgumentsStack preArgument = null)
         {
             foreach (var node in ListData)
             {
@@ -482,6 +482,7 @@ namespace CapybaraVS.Controls
                     node.RequestExecute(functionStack, preArgument);
                 }
             }
+            return null;
         }
 
         /// <summary>

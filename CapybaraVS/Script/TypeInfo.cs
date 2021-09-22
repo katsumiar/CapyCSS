@@ -730,7 +730,7 @@ namespace CapybaraVS.Script
     /// </summary>
     public interface ICbExecutable
     {
-        void RequestExecute(List<object> functionStack, DummyArgumentsStack preArgument);
+        object RequestExecute(List<object> functionStack, DummyArgumentsStack preArgument);
     }
 
     /// <summary>

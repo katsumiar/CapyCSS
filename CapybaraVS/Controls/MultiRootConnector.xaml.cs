@@ -412,9 +412,9 @@ namespace CapybaraVS.Controls
         /// Function イベント実行依頼
         /// </summary>
         /// <param name="functionStack"></param>
-        public void RequestExecute(List<object> functionStack = null, DummyArgumentsStack preArgument = null)
+        public object RequestExecute(List<object> functionStack = null, DummyArgumentsStack preArgument = null)
         {
-            LinkConnectorControl.RequestExecute(functionStack, preArgument);
+            return LinkConnectorControl.RequestExecute(functionStack, preArgument);
         }
 
         //--------------------------------------------------------------------------------

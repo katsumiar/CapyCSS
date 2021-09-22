@@ -387,11 +387,20 @@ namespace CapybaraVS.Controls.BaseControls
             LayoutUpdated += _LayoutUpdated;
         }
 
-        public void ExecuteRoot(string entryPointName = null)
+        /// <summary>
+        /// このスクリプトノードを起点にスクリプトを実行します。
+        /// </summary>
+        /// <param name="entryPointName">エントリーポイント名</param>
+        /// <returns>返り値</returns>
+        public object ExecuteRoot(string entryPointName = null)
         {
-            if (CommandCanvasList.GetOwnerCursor() == Cursors.Wait)
-                return; // 再入を禁止する
+            object result = null;
 
+            if (CommandCanvasList.GetOwnerCursor() == Cursors.Wait)
+                return result; // 再入を禁止する
+
+            CommandCanvasList.SetOwnerCursor(Cursors.Wait);
+            OwnerCommandCanvas.CommandCanvasControl.CallAllExecuteEntryPointEnable(false);
             OwnerCommandCanvas.CommandCanvasControl.MainLog.TryAutoClear();
             GC.Collect();
 
@@ -399,44 +408,45 @@ namespace CapybaraVS.Controls.BaseControls
                 (entryPointName is null || entryPointName != EntryPointName.Text.Trim()))
             {
                 // エントリーポイントに名前が付けられていて、且つ名前が一致しない
-                
-                return;
+
+                CommandCanvasList.SetOwnerCursor(null);
+                OwnerCommandCanvas.CommandCanvasControl.CallAllExecuteEntryPointEnable(true);
+                return null;
             }
 
-            CommandCanvasList.SetOwnerCursor(Cursors.Wait);
+            // スクリプトを実行する
 
-            OwnerCommandCanvas.ScriptWorkCanvas.Dispatcher.BeginInvoke(new Action(() =>
+            OwnerCommandCanvas.EnabledScriptHoldActionMode = true;  // 表示更新処理を保留する
+
+            var sw = new System.Diagnostics.Stopwatch();
+            sw.Start();
+
+            result = RequestExecute(null, null);
+
+            sw.Stop();
+            TimeSpan ts = sw.Elapsed;
+            OwnerCommandCanvas.CommandCanvasControl.MainLog.OutLine(
+                "system",
+                $"Execute Time: {sw.ElapsedMilliseconds} (ms)");
+            OwnerCommandCanvas.CommandCanvasControl.MainLog.Flush();
+
+            OwnerCommandCanvas.EnabledScriptHoldActionMode = false; // 保留した表示更新処理を実行する
+
+            this.Dispatcher.BeginInvoke(new Action(() =>
             {
-                // スクリプトを実行する
+                // アイドル状態（画面の更新処理が終わってから）になってから戻す
 
-                OwnerCommandCanvas.CommandCanvasControl.CallAllExecuteEntryPointEnable(false);
-                OwnerCommandCanvas.EnabledScriptHoldActionMode = true;  // 表示更新処理を保留する
-
-                var sw = new System.Diagnostics.Stopwatch();
-                sw.Start();
-
-                RequestExecute(null, null);
-
-                sw.Stop();
-                TimeSpan ts = sw.Elapsed;
-                OwnerCommandCanvas.CommandCanvasControl.MainLog.OutLine(
-                    "system",
-                    $"Execute Time: {sw.ElapsedMilliseconds} (ms)");
-                OwnerCommandCanvas.CommandCanvasControl.MainLog.Flush();
-
-                OwnerCommandCanvas.EnabledScriptHoldActionMode = false; // 保留した表示更新処理を実行する
-
-                this.Dispatcher.BeginInvoke(new Action(() =>
-                {
-                    // アイドル状態になってから戻す
-
-                    OwnerCommandCanvas.CommandCanvasControl.CallAllExecuteEntryPointEnable(true);
-                    GC.Collect();
-                    CommandCanvasList.SetOwnerCursor(null);
-
-                }), DispatcherPriority.ApplicationIdle);
+                OwnerCommandCanvas.CommandCanvasControl.CallAllExecuteEntryPointEnable(true);
+                GC.Collect();
+                CommandCanvasList.SetOwnerCursor(null);
 
             }), DispatcherPriority.ApplicationIdle);
+
+            if (result.GetType() == typeof(CbClass<CbVoid>) || result.GetType() == typeof(CbClass<CbClass<CbVoid>>))
+            {
+                return null;
+            }
+            return result;
         }
 
         ~RootConnector()
@@ -487,7 +497,7 @@ namespace CapybaraVS.Controls.BaseControls
             }
         }
 
-        public void RequestExecute(List<object> functionStack, DummyArgumentsStack preArgument)
+        public object RequestExecute(List<object> functionStack, DummyArgumentsStack preArgument)
         {
             functionStack ??= new List<object>();
             preArgument ??= new DummyArgumentsStack();
@@ -533,6 +543,12 @@ namespace CapybaraVS.Controls.BaseControls
 
             functionStack.Add(this);    // 実行済みであることを記録する
             arguments?.Clear();
+
+            if (ValueData.IsNullable && ValueData.IsNull)
+            {
+                return null;
+            }
+            return ValueData.Data;
         }
 
         /// <summary>

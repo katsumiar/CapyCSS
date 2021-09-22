@@ -325,9 +325,9 @@ namespace CapybaraVS
             curveLinkPoint?.UpdateRootValue();
         }
 
-        public void RequestExecute(List<object> functionStack, DummyArgumentsStack preArgument)
+        public object RequestExecute(List<object> functionStack, DummyArgumentsStack preArgument)
         {
-            curveLinkPoint?.RequestExecute(functionStack, preArgument);
+            return curveLinkPoint?.RequestExecute(functionStack, preArgument);
         }
 
         public void CloseLink()
@@ -493,10 +493,13 @@ namespace CapybaraVS
                 curveLink?.RequestUpdateRootValue();
         }
 
-        public void RequestExecute(List<object> functionStack, DummyArgumentsStack preArgument)
+        public object RequestExecute(List<object> functionStack, DummyArgumentsStack preArgument)
         {
             foreach (var curveLink in CurveLinkData)
+            {
                 curveLink?.RequestExecute(functionStack, preArgument);
+            }
+            return null;
         }
 
         public void CloseLink()
@@ -624,8 +627,9 @@ namespace CapybaraVS
             CurveLinkRootData.Remove(curveLinkRoot);
         }
 
-        public void RequestExecute(List<object> functionStack, DummyArgumentsStack preArgument)
+        public object RequestExecute(List<object> functionStack, DummyArgumentsStack preArgument)
         {
+            object result = null;
             foreach (var curveLinkRoot in CurveLinkRootData)
             {
                 if (curveLinkRoot is null)
@@ -637,9 +641,10 @@ namespace CapybaraVS
                 {
                     // 未実行かスコープ指定（ローカルスコープイメージ）の場合は、実行する
 
-                    curveLinkRoot?.RequestExecute(functionStack, preArgument);
+                    result = curveLinkRoot?.RequestExecute(functionStack, preArgument);
                 }
             }
+            return result;
         }
 
         public void CloseLink()

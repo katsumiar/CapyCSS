@@ -306,10 +306,15 @@ namespace CapybaraVS.Controls.BaseControls
         /// </summary>
         /// <param name="functionStack">スタック情報</param>
         /// <param name="preArgument"></param>
-        public void RequestExecute(List<object> functionStack = null, DummyArgumentsStack preArgument = null)
+        public object RequestExecute(List<object> functionStack = null, DummyArgumentsStack preArgument = null)
         {
+            object result = null;
             ConnectorList.RequestExecute(functionStack, preArgument);
-            linkCurveLinks?.RequestExecute(functionStack, preArgument);
+            if (linkCurveLinks != null)
+            {
+                result = linkCurveLinks.RequestExecute(functionStack, preArgument);
+            }
+            return result;
         }
 
         private bool hideLinkPoint = false;

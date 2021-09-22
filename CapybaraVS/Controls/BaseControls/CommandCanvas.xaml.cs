@@ -882,6 +882,8 @@ namespace CapybaraVS.Controls.BaseControls
                     CommandCanvasList.SetOwnerCursor(null);
                     if (CommandCanvasControl.IsAutoExecute)
                     {
+                        // 起動時自動実行
+
                         CommandCanvasControl.CallPublicExecuteEntryPoint();
                         CommandCanvasControl.IsAutoExecute = false;
                     }

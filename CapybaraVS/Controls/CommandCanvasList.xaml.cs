@@ -459,14 +459,19 @@ namespace CapyCSS.Controls
             DeleteButton.IsEnabled = enable;
         }
 
+        public delegate object NodeFunction(string entryPointName);
+
+        /// <summary>
+        /// エントリーポイント管理
+        /// </summary>
         class EntryPoint
         {
             public object owner = null;
-            public Action<string> action = null;
-            public EntryPoint(object _owner, Action<string> _action)
+            public NodeFunction function = null;
+            public EntryPoint(object owner, NodeFunction func)
             {
-                owner = _owner;
-                action = _action;
+                this.owner = owner;
+                this.function = func;
             }
         }
 
@@ -519,16 +524,16 @@ namespace CapyCSS.Controls
         /// </summary>
         public void CallAllExecuteEntryPointEnable(bool enable)
         {
-            foreach (var act in AllExecuteEntryPointList)
+            foreach (var enableAction in AllExecuteEntryPointList)
             {
-                act?.Invoke(enable);
+                enableAction?.Invoke(enable);
             }
         }
 
         /// <summary>
         /// スクリプト実行用公開エントリーポイントリストにエントリーポイントを追加します。
         /// </summary>
-        public void AddPublicExecuteEntryPoint(object owner, Action<string> func)
+        public void AddPublicExecuteEntryPoint(object owner, NodeFunction func)
         {
             PublicExecuteEntryPointList.Add(new EntryPoint(owner, func));
             UpdateButtonEnable();
@@ -550,37 +555,49 @@ namespace CapyCSS.Controls
         /// <summary>
         /// スクリプト実行用公開エントリーポイントリストからエントリーポイントを削除します。
         /// </summary>
-        public void RemovePublicExecuteEntryPoint(Action<string> func)
+        public void RemovePublicExecuteEntryPoint(NodeFunction func)
         {
-            PublicExecuteEntryPointList.RemoveAll(s => s.action == func);
+            PublicExecuteEntryPointList.RemoveAll(s => s.function == func);
             UpdateButtonEnable();
         }
 
         /// <summary>
         /// スクリプト実行用公開エントリーポイントリストからエントリーポイントをまとめて順次呼び出しします。
         /// </summary>
-        public void CallPublicExecuteEntryPoint(object owner = null, string entryPointName = null)
+        public object CallPublicExecuteEntryPoint(object owner = null, string entryPointName = null)
         {
+            object result = null;
+
             if (CommandCanvasList.GetOwnerCursor() == Cursors.Wait)
-                return; // 再入を禁止する
+                return result; // 再入を禁止する
 
             if (entryPointName != null && entryPointName.Trim().Length == 0)
             {
                 entryPointName = null;
             }
 
-            foreach (var act in PublicExecuteEntryPointList)
+            foreach (EntryPoint entryPoint in PublicExecuteEntryPointList)
             {
+                if (entryPoint.function is null)
+                {
+                    continue;
+                }
                 if (owner is null)
                 {
-                    act.action?.Invoke(entryPointName);
+                    result = entryPoint.function.Invoke(entryPointName);
                 }
                 else
                 {
-                    if (act.owner == owner)
+                    if (entryPoint.owner == owner)
                     {
-                        act.action?.Invoke(entryPointName);
+                        result = entryPoint.function.Invoke(entryPointName);
                     }
+                }
+                if (result != null)
+                {
+                    // 実行結果が返ってきた
+
+                    break;
                 }
             }
             Dispatcher.BeginInvoke(new Action(() =>
@@ -592,6 +609,8 @@ namespace CapyCSS.Controls
                     CallClosing?.Invoke();
                 }
             }), DispatcherPriority.ApplicationIdle);
+            
+            return result;
         }
 
         /// <summary>
@@ -660,7 +679,11 @@ namespace CapyCSS.Controls
         /// <param name="e"></param>
         private void ExecuteAllButton_Click(object sender, RoutedEventArgs e)
         {
-            CallPublicExecuteEntryPoint();
+            object result = CallPublicExecuteEntryPoint(null, EntryPointName.Text.Trim());
+            if (result != null)
+            {
+                ShowResultWindow(result);
+            }
         }
 
         /// <summary>
@@ -670,7 +693,18 @@ namespace CapyCSS.Controls
         /// <param name="e"></param>
         private void ExecuteButton_Click(object sender, RoutedEventArgs e)
         {
-            CallPublicExecuteEntryPoint(CurrentScriptCanvas, EntryPointName.Text.Trim());
+            object result = CallPublicExecuteEntryPoint(CurrentScriptCanvas, EntryPointName.Text.Trim());
+            if (result != null)
+            {
+                ShowResultWindow(result);
+            }
+        }
+
+        private static void ShowResultWindow(object result)
+        {
+            var resultWindow = new ResultWindow(result.ToString());
+            resultWindow.Owner = OwnerWindow;
+            resultWindow.Show();
         }
 
         /// <summary>
