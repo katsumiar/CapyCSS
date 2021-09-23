@@ -1021,7 +1021,7 @@ namespace CapybaraVS.Controls.BaseControls
             }
             else
             {
-                EntryPointName.Background = Brushes.PaleTurquoise;
+                EntryPointName.Background = Brushes.NavajoWhite;
             }
         }
 
