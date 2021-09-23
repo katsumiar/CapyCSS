@@ -318,7 +318,7 @@ namespace CapybaraVS.Control.BaseControls
                     {
                         if (BackGrountImagePath != null)
                         {
-                            // 作業領域の背景をセットする
+                            // スクリプトキャンバスの背景をセットする
 
                             CommandCanvasList.SetWorkCanvasBG(BackGrountImagePath);
                         }

@@ -380,7 +380,7 @@ namespace CapybaraVS.Controls.BaseControls
                 {
                     // スクリプトを処理する
 
-                    ExecuteRoot(EntryPointName.Text);
+                    ExecuteRoot(false, EntryPointName.Text);
                 }
                 );
             
@@ -388,24 +388,62 @@ namespace CapybaraVS.Controls.BaseControls
         }
 
         /// <summary>
+        /// エントリーポイント名を取得します。
+        /// </summary>
+        /// <returns></returns>
+        public string GetEntryPointName()
+        {
+            if (!IsPublicExecute.IsChecked.Value)
+            {
+                return "";
+            }
+            string entryPointName = EntryPointName.Text.Trim();
+            return entryPointName;
+        }
+
+        /// <summary>
         /// このスクリプトノードを起点にスクリプトを実行します。
         /// </summary>
+        /// <param name="fromScript">スクリプトから呼ぶ時==true</param>
         /// <param name="entryPointName">エントリーポイント名</param>
         /// <returns>返り値</returns>
-        public object ExecuteRoot(string entryPointName = null)
+        public object ExecuteRoot(bool fromScript, string entryPointName = null)
         {
             object result = null;
 
-            if (CommandCanvasList.GetOwnerCursor() == Cursors.Wait)
-                return result; // 再入を禁止する
+            if (!fromScript)
+            {
+                if (entryPointName != null && entryPointName.StartsWith(":"))
+                {
+                    if (entryPointName.StartsWith(":+"))
+                    {
+                        // エントリーポイント名の衝突チェック
 
-            CommandCanvasList.SetOwnerCursor(Cursors.Wait);
-            OwnerCommandCanvas.CommandCanvasControl.CallAllExecuteEntryPointEnable(false);
-            OwnerCommandCanvas.CommandCanvasControl.MainLog.TryAutoClear();
-            GC.Collect();
+                        SetPickupEntryPoint(OwnerCommandCanvas.CommandCanvasControl.IsExistEntryPoint(OwnerCommandCanvas, GetEntryPointName()));
+                        return null;
+                    }
 
-            if (!(entryPointName is null && EntryPointName.Text.Trim().Length == 0) &&
-                (entryPointName is null || entryPointName != EntryPointName.Text.Trim()))
+                    if (entryPointName.Substring(1) == GetEntryPointName())
+                    {
+                        // 名前が一致している
+
+                        return true;
+                    }
+                    return null;    // false
+                }
+
+                if (!fromScript && CommandCanvasList.GetOwnerCursor() == Cursors.Wait)
+                    return null;
+
+                CommandCanvasList.SetOwnerCursor(Cursors.Wait);
+                OwnerCommandCanvas.CommandCanvasControl.CallAllExecuteEntryPointEnable(false);
+                OwnerCommandCanvas.CommandCanvasControl.MainLog.TryAutoClear();
+                GC.Collect();
+            }
+
+            if (IsPublicExecute.IsChecked.Value &&
+                !(entryPointName is null && GetEntryPointName().Length == 0) &&
+                (entryPointName is null || entryPointName != GetEntryPointName()))
             {
                 // エントリーポイントに名前が付けられていて、且つ名前が一致しない
 
@@ -416,35 +454,46 @@ namespace CapybaraVS.Controls.BaseControls
 
             // スクリプトを実行する
 
-            OwnerCommandCanvas.EnabledScriptHoldActionMode = true;  // 表示更新処理を保留する
+            Stopwatch sw = null;
+            if (!fromScript)
+            {
+                OwnerCommandCanvas.EnabledScriptHoldActionMode = true;  // 表示更新処理を保留する
 
-            var sw = new System.Diagnostics.Stopwatch();
-            sw.Start();
+                sw = new Stopwatch();
+                sw.Start();
+            }
 
             result = RequestExecute(null, null);
 
-            sw.Stop();
-            TimeSpan ts = sw.Elapsed;
-            OwnerCommandCanvas.CommandCanvasControl.MainLog.OutLine(
-                "system",
-                $"Execute Time: {sw.ElapsedMilliseconds} (ms)");
-            OwnerCommandCanvas.CommandCanvasControl.MainLog.Flush();
-
-            OwnerCommandCanvas.EnabledScriptHoldActionMode = false; // 保留した表示更新処理を実行する
-
-            this.Dispatcher.BeginInvoke(new Action(() =>
+            if (!fromScript)
             {
+                sw.Stop();
+                TimeSpan ts = sw.Elapsed;
+                OwnerCommandCanvas.CommandCanvasControl.MainLog.OutLine(
+                    "system",
+                    $"Execute Time: {sw.ElapsedMilliseconds} (ms)");
+                OwnerCommandCanvas.CommandCanvasControl.MainLog.Flush();
+
+                OwnerCommandCanvas.EnabledScriptHoldActionMode = false; // 保留した表示更新処理を実行する
+
+
+                this.Dispatcher.BeginInvoke(new Action(() =>
+                {
                 // アイドル状態（画面の更新処理が終わってから）になってから戻す
 
                 OwnerCommandCanvas.CommandCanvasControl.CallAllExecuteEntryPointEnable(true);
-                GC.Collect();
-                CommandCanvasList.SetOwnerCursor(null);
+                    GC.Collect();
+                    CommandCanvasList.SetOwnerCursor(null);
 
-            }), DispatcherPriority.ApplicationIdle);
+                }), DispatcherPriority.ApplicationIdle);
+            }
 
-            if (result.GetType() == typeof(CbClass<CbVoid>) || result.GetType() == typeof(CbClass<CbClass<CbVoid>>))
+            if (result != null)
             {
-                return null;
+                if (result.GetType() == typeof(CbClass<CbVoid>) || result.GetType() == typeof(CbClass<CbClass<CbVoid>>))
+                {
+                    return null;
+                }
             }
             return result;
         }
@@ -932,6 +981,9 @@ namespace CapybaraVS.Controls.BaseControls
             IsPublicExecute.Foreground = Brushes.Tomato;
             RectBox.Fill = NodeEntryColor;
             EntryPointName.Visibility = Visibility.Visible;
+
+            // 名前の衝突チェック
+            CommandCanvasList.CheckPickupAllEntryPoint(OwnerCommandCanvas);
         }
 
         /// <summary>
@@ -945,6 +997,32 @@ namespace CapybaraVS.Controls.BaseControls
             IsPublicExecute.Foreground = Brushes.Black;
             RectBox.Fill = NodeNormalColor;
             EntryPointName.Visibility = Visibility.Collapsed;
+
+            // 名前の衝突チェック
+            CommandCanvasList.CheckPickupAllEntryPoint(OwnerCommandCanvas);
+        }
+
+        private void EntryPointName_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            // 名前の衝突チェック
+
+            CommandCanvasList.CheckPickupAllEntryPoint(OwnerCommandCanvas);
+        }
+
+        /// <summary>
+        /// エントリーポイント名の背景色の色替えを行います。
+        /// </summary>
+        /// <param name="flg">true==名前の衝突色</param>
+        private void SetPickupEntryPoint(bool flg)
+        {
+            if (flg)
+            {
+                EntryPointName.Background = Brushes.Tomato;
+            }
+            else
+            {
+                EntryPointName.Background = Brushes.PaleTurquoise;
+            }
         }
 
         //-----------------------------------------------------------------------------------

@@ -884,7 +884,7 @@ namespace CapybaraVS.Controls.BaseControls
                     {
                         // 起動時自動実行
 
-                        CommandCanvasControl.CallPublicExecuteEntryPoint();
+                        CommandCanvasControl.CallPublicExecuteEntryPoint(null, false);
                         CommandCanvasControl.IsAutoExecute = false;
                     }
                     else

@@ -26,7 +26,7 @@
         </Grid>
         <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
             <CheckBox x:Name="IsPublicExecute" Visibility="Collapsed" Content="Entry" Checked="IsPublicExecute_Checked" Unchecked="IsPublicExecute_Unchecked" HorizontalAlignment="Right" Margin="0,0,6,0"/>
-            <TextBox x:Name="EntryPointName" Width="80" Visibility="Collapsed" Height="24" Background="#FFBEF0CE" Margin="0,0,6,0" />
+            <TextBox x:Name="EntryPointName" TextChanged="EntryPointName_TextChanged" Width="80" Visibility="Collapsed" Height="24" Background="PaleTurquoise" Margin="0,0,6,0" />
             <Button x:Name="ExecuteButtunControl" Visibility="Collapsed" Content="Run" MinWidth="80" HorizontalAlignment="Right" Padding="6,1,6,1" />
         </StackPanel>
     </StackPanel>

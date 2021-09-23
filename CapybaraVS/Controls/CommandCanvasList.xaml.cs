@@ -459,7 +459,7 @@ namespace CapyCSS.Controls
             DeleteButton.IsEnabled = enable;
         }
 
-        public delegate object NodeFunction(string entryPointName);
+        public delegate object NodeFunction(bool fromScript, string entryPointName);
 
         /// <summary>
         /// エントリーポイント管理
@@ -561,15 +561,131 @@ namespace CapyCSS.Controls
             UpdateButtonEnable();
         }
 
+        [ScriptMethod]
         /// <summary>
-        /// スクリプト実行用公開エントリーポイントリストからエントリーポイントをまとめて順次呼び出しします。
+        /// エントリーポイントリストからエントリーポイントをまとめて順次呼び出しします。
+        /// ただし、スクリプトが返し値を返した場合は、そこで終了します。
+        /// エントリーポイント名を指定した場合は、一致したエントリーポイントのみ実行します。
+        /// スクリプト側にエントリーポイント名が設定されている場合は、エントリーポイント名が一致する必要があります。
+        /// ※スクリプトからの呼び出し用です。
         /// </summary>
-        public object CallPublicExecuteEntryPoint(object owner = null, string entryPointName = null)
+        /// <param name="entryPointName">エントリーポイント名</param>
+        /// <returns>スクリプトの返し値</returns>
+        public static object CallEntryPoint(string entryPointName = null)
         {
-            object result = null;
+            return Instance.CallPublicExecuteEntryPoint(null, true, entryPointName);
+        }
 
-            if (CommandCanvasList.GetOwnerCursor() == Cursors.Wait)
-                return result; // 再入を禁止する
+        [ScriptMethod]
+        /// <summary>
+        /// 所属するスクリプトキャンバスのエントリーポイントリストからエントリーポイントをまとめて順次呼び出しします。
+        /// ただし、スクリプトが返し値を返した場合は、そこで終了します。
+        /// エントリーポイント名を指定した場合は、一致したエントリーポイントのみ実行します。
+        /// スクリプト側にエントリーポイント名が設定されている場合は、エントリーポイント名が一致する必要があります。
+        /// ※スクリプトからの呼び出し用です。
+        /// </summary>
+        /// <param name="entryPointName">エントリーポイント名</param>
+        /// <returns>スクリプトの返し値</returns>
+        public static object CallCurrentWorkEntryPoint(string entryPointName = null)
+        {
+            return Instance.CallPublicExecuteEntryPoint(Instance.CurrentScriptCanvas, true, entryPointName);
+        }
+
+        /// <summary>
+        /// エントリーポイント名が存在するかチェックします。
+        /// </summary>
+        /// <param name="owner">対象インスタンスを限定</param>
+        /// <param name="entryPointName">エントリーポイント名</param>
+        /// <returns>存在する==true</returns>
+        public bool IsExistEntryPoint(object owner, string entryPointName)
+        {
+            if (entryPointName != null && entryPointName.Trim().Length == 0)
+            {
+                return false;
+            }
+
+            int count = 0;
+            foreach (EntryPoint entryPoint in PublicExecuteEntryPointList)
+            {
+                if (entryPoint.function is null)
+                {
+                    continue;
+                }
+                object result = null;
+                if (owner is null)
+                {
+                    result = entryPoint.function.Invoke(false, ":" + entryPointName);
+                }
+                else
+                {
+                    if (entryPoint.owner == owner)
+                    {
+                        result = entryPoint.function.Invoke(false, ":" + entryPointName);
+                    }
+                }
+                if (result != null)
+                {
+                    // 実行結果が返ってきた
+
+                    count++;
+                    if (count > 1)
+                    {
+                        // 自分以外にもう一つ有った
+
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
+
+        /// <summary>
+        /// すべてのエントリーポイントに名前の衝突チェックを依頼します。
+        /// </summary>
+        /// <param name="owner">対象インスタンスを限定</param>
+        public static void CheckPickupAllEntryPoint(object owner)
+        {
+            Instance._CheckPickupAllEntryPoint(owner);
+        }
+
+        public void _CheckPickupAllEntryPoint(object owner)
+        {
+            string command = ":+";
+            foreach (EntryPoint entryPoint in PublicExecuteEntryPointList)
+            {
+                if (entryPoint.function is null)
+                {
+                    continue;
+                }
+                if (owner is null)
+                {
+                    entryPoint.function.Invoke(false, command);
+                }
+                else
+                {
+                    if (entryPoint.owner == owner)
+                    {
+                        entryPoint.function.Invoke(false, command);
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// エントリーポイントリストからエントリーポイントをまとめて順次呼び出しします。
+        /// ただし、スクリプトが返し値を返した場合は、そこで終了します。
+        /// エントリーポイント名を指定した場合は、一致したエントリーポイントのみ実行します。
+        /// スクリプト側にエントリーポイント名が設定されている場合は、エントリーポイント名が一致する必要があります。
+        /// </summary>
+        /// <param name="owner">対象インスタンスを限定</param>
+        /// <param name="entryPointName">エントリーポイント名</param>
+        /// <returns>スクリプトの返し値</returns>
+        public object CallPublicExecuteEntryPoint(object owner, bool fromScript, string entryPointName = null)
+        {
+            if (!fromScript && CommandCanvasList.GetOwnerCursor() == Cursors.Wait)
+                return null;
+
+            object result = null;
 
             if (entryPointName != null && entryPointName.Trim().Length == 0)
             {
@@ -584,13 +700,13 @@ namespace CapyCSS.Controls
                 }
                 if (owner is null)
                 {
-                    result = entryPoint.function.Invoke(entryPointName);
+                    result = entryPoint.function.Invoke(fromScript, entryPointName);
                 }
                 else
                 {
                     if (entryPoint.owner == owner)
                     {
-                        result = entryPoint.function.Invoke(entryPointName);
+                        result = entryPoint.function.Invoke(fromScript, entryPointName);
                     }
                 }
                 if (result != null)
@@ -600,16 +716,20 @@ namespace CapyCSS.Controls
                     break;
                 }
             }
-            Dispatcher.BeginInvoke(new Action(() =>
+
+            if (!fromScript)
             {
-                if (IsAutoExit)
+                Dispatcher.BeginInvoke(new Action(() =>
                 {
+                    if (IsAutoExit)
+                    {
                     // スクリプト実行後自動終了
 
                     CallClosing?.Invoke();
-                }
-            }), DispatcherPriority.ApplicationIdle);
-            
+                    }
+                }), DispatcherPriority.ApplicationIdle);
+            }
+
             return result;
         }
 
@@ -679,7 +799,7 @@ namespace CapyCSS.Controls
         /// <param name="e"></param>
         private void ExecuteAllButton_Click(object sender, RoutedEventArgs e)
         {
-            object result = CallPublicExecuteEntryPoint(null, EntryPointName.Text.Trim());
+            object result = CallPublicExecuteEntryPoint(null, false, EntryPointName.Text.Trim());
             if (result != null)
             {
                 ShowResultWindow(result);
@@ -693,7 +813,7 @@ namespace CapyCSS.Controls
         /// <param name="e"></param>
         private void ExecuteButton_Click(object sender, RoutedEventArgs e)
         {
-            object result = CallPublicExecuteEntryPoint(CurrentScriptCanvas, EntryPointName.Text.Trim());
+            object result = CallPublicExecuteEntryPoint(CurrentScriptCanvas, false, EntryPointName.Text.Trim());
             if (result != null)
             {
                 ShowResultWindow(result);
@@ -737,7 +857,7 @@ namespace CapyCSS.Controls
                         break;
 
                     case Key.F5:    // 全スクリプト実行
-                        CallPublicExecuteEntryPoint();
+                        CallPublicExecuteEntryPoint(null, false, null);
                         e.Handled = true;
                         break;
                 }
@@ -755,7 +875,7 @@ namespace CapyCSS.Controls
                 switch (e.Key)
                 {
                     case Key.F5:    // スクリプト実行
-                        CallPublicExecuteEntryPoint(CurrentScriptCanvas);
+                        CallPublicExecuteEntryPoint(CurrentScriptCanvas, false);
                         e.Handled = true;
                         break;
                 }
