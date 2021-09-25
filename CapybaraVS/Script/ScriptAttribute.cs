@@ -8,6 +8,7 @@ using CapyCSS.Script.Lib;
 using CbVS.Script;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -993,23 +994,7 @@ namespace CapybaraVS.Script
 
                 if (geneArg.GetGenericParameterConstraints().Length > 0)
                 {
-                    foreach (var constraint in geneArg.GetGenericParameterConstraints())
-                    {
-                        // スクリプト用の拡張制限
-                        if (constraint == typeof(CbScript.ICalcable) && CbScript.IsCalcable(t))
-                            return true;
-                        if (constraint == typeof(CbScript.ISigned) && CbScript.IsSigned(t))
-                            return true;
-                        if (constraint == typeof(CbScript.IEnum) && CbScript.IsEnum(t))
-                            return true;
-
-                        if (CbSTUtils.HaveGenericParamater(constraint) &&
-                            t.GetInterfaces().Any(t => t.Namespace + ":" + t.Name == constraint.Namespace + ":" + constraint.Name))
-                            return true;    // constraint がジェネリックパラメータを持つインタフェースの判定（取り敢えず）
-                        if (constraint.IsAssignableFrom(t))
-                            return true;
-                    }
-                    return false;
+                    return IsConstraints(geneArg, t);
                 }
 
                 GenericParameterAttributes sConstraints =
@@ -1043,6 +1028,34 @@ namespace CapybaraVS.Script
                 return true;
             };
             return isAccept;
+        }
+
+        private static bool IsConstraints(Type geneArg, Type t)
+        {
+            foreach (var constraint in geneArg.GetGenericParameterConstraints())
+            {
+                // スクリプト用の拡張制限
+                if (constraint == typeof(CbScript.ICalcable) && CbScript.IsCalcable(t))
+                    return true;
+                if (constraint == typeof(CbScript.ISigned) && CbScript.IsSigned(t))
+                    return true;
+                if (constraint == typeof(CbScript.IEnum) && CbScript.IsEnum(t))
+                    return true;
+
+                if (constraint.IsAssignableFrom(t))
+                    return true;
+                if (constraint.IsGenericType)
+                {
+                    return IsConstraints(constraint, t);
+                }
+                if (CbSTUtils.HaveGenericParamater(constraint) &&
+                    t.GetInterfaces().Any(t => t.Namespace + ":" + t.Name == constraint.Namespace + ":" + constraint.Name))
+                {
+                    Debug.Assert(false);    // 不要になった筈
+                    return true;    // constraint がジェネリックパラメータを持つインタフェースの判定（取り敢えず）
+                }
+            }
+            return false;
         }
 
         /// <summary>
