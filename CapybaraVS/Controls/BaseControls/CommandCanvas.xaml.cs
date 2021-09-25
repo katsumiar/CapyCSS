@@ -1460,7 +1460,10 @@ namespace CapybaraVS.Controls.BaseControls
                     var argType = genericType.GetGenericArguments()[i];
 
                     // ジェネリック用パラメータ型制限用フィルターに更新する
-                    _CanTypeMenuExecuteEventIndex--;
+                    if (_CanTypeMenuExecuteEventIndex != 0)
+                    {
+                        _CanTypeMenuExecuteEventIndex--;
+                    }
                     _CanTypeMenuExecuteEvent[_CanTypeMenuExecuteEventIndex] = ScriptImplement.MakeParameterConstraintAccepter(argType);
                     TypeMenu.RefreshItem();
 
