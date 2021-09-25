@@ -201,7 +201,6 @@ namespace CapyCSS.Controls
         /// セットアップ処理です。
         /// </summary>
         /// <param name="owner">オーナーウインドウ</param>
-        /// <param name="settingFile">セッティングファイルパス</param>
         /// <param name="setTitleFunc">タイトル表示処理（func(filename)）</param>
         /// <param name="closingFunc">終了処理</param>
         /// <param name="autoLoadCbsFile">起動時読み込みcbsファイル</param>

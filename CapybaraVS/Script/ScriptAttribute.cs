@@ -964,7 +964,7 @@ namespace CapybaraVS.Script
         }
 
         /// <summary>
-        /// パラメータ型の制約判定をフィルターに登録します。
+        /// パラメータ型の型制約フィルターを登録します。
         /// </summary>
         /// <param name="genericTypeRequests">型リクエストリスト</param>
         /// <param name="geneArg">パラメータ型</param>
@@ -976,9 +976,21 @@ namespace CapybaraVS.Script
             if (genericTypeRequests.Any(n => n.Name == geneArg.Name))
                 return; // 二重登録拒否
 
-            // t には、判定対象の型が入ります。
+            Func<Type, bool> isAccept = MakeParameterConstraintAccepter(geneArg);
+            genericTypeRequests.Add(new TypeRequest(isAccept, geneArg.Name));
+        }
+
+        /// <summary>
+        /// パラメータ型の型制約フィルターを作成します。
+        /// </summary>
+        /// <param name="geneArg"></param>
+        /// <returns></returns>
+        public static Func<Type, bool> MakeParameterConstraintAccepter(Type geneArg)
+        {
             Func<Type, bool> isAccept = (t) =>
             {
+                // t には、判定対象の型が入ります。
+
                 if (geneArg.GetGenericParameterConstraints().Length > 0)
                 {
                     foreach (var constraint in geneArg.GetGenericParameterConstraints())
@@ -991,10 +1003,9 @@ namespace CapybaraVS.Script
                         if (constraint == typeof(CbScript.IEnum) && CbScript.IsEnum(t))
                             return true;
 
-                        // 通常の制限
                         if (CbSTUtils.HaveGenericParamater(constraint) &&
                             t.GetInterfaces().Any(t => t.Namespace + ":" + t.Name == constraint.Namespace + ":" + constraint.Name))
-                            return true;    // ジェネリックパラメータを持つインタフェースの判定（取り敢えず）
+                            return true;    // constraint がジェネリックパラメータを持つインタフェースの判定（取り敢えず）
                         if (constraint.IsAssignableFrom(t))
                             return true;
                     }
@@ -1013,7 +1024,7 @@ namespace CapybaraVS.Script
                         var query = t.GetMethods(BindingFlags.Public).Where(n => n.IsConstructor);
                         bool haveDefaultConstructer = query.Any(n => n.GetParameters().Length == 0);
                         if (!haveDefaultConstructer)
-                           return false;    // デフォルトコンストラクタを持っていなければ拒否
+                            return false;    // デフォルトコンストラクタを持っていなければ拒否
                     }
                     if (GenericParameterAttributes.None != (sConstraints &
                         GenericParameterAttributes.ReferenceTypeConstraint))
@@ -1031,8 +1042,7 @@ namespace CapybaraVS.Script
 
                 return true;
             };
-
-            genericTypeRequests.Add(new TypeRequest(isAccept, geneArg.Name));
+            return isAccept;
         }
 
         /// <summary>

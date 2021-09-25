@@ -1457,7 +1457,15 @@ namespace CapybaraVS.Controls.BaseControls
                 int argCount = Int32.Parse(cmc);
                 for (int i = 0; i < argCount; ++i)
                 {
+                    var argType = genericType.GetGenericArguments()[i];
+
+                    // ジェネリック用パラメータ型制限用フィルターに更新する
+                    _CanTypeMenuExecuteEventIndex--;
+                    _CanTypeMenuExecuteEvent[_CanTypeMenuExecuteEventIndex] = ScriptImplement.MakeParameterConstraintAccepter(argType);
+                    TypeMenu.RefreshItem();
+
                     Type arg = RequestType(checkType, positionSet);
+
                     if (arg is null)
                     {
                         return null;
