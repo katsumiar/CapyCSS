@@ -17,6 +17,7 @@
     <StartupObject>CapybaraVS.App</StartupObject>
     <PackageProjectUrl>https://katsumiar.github.io/CapyCSS/</PackageProjectUrl>
     <Description>A node-connected visual scripting tool that allows you to node c # methods.</Description>
+    <NoWin32Manifest>true</NoWin32Manifest>
   </PropertyGroup>
 
   <ItemGroup>

@@ -35,9 +35,9 @@ namespace CapyCSS
             Info.Text += "© 2021 Aradono Katsumi" + Environment.NewLine;
             Info.Text += "All rights reserved." + Environment.NewLine;
             Info.Text += Environment.NewLine;
-            Info.Text += "Packages:" + Environment.NewLine;
-            Info.Text += "  .NET " + Environment.Version.ToString() + " (" + (Environment.Is64BitProcess ? "64bit" : "32bit") + ")" + Environment.NewLine;
-            Info.Text += "  MaterialDesignThemes 4.2.1" + Environment.NewLine;
+            Info.Text += "Copyright notice:" + Environment.NewLine;
+            Info.Text += "  .NET Standard " + Environment.Version.ToString() + " (" + (Environment.Is64BitProcess ? "64bit" : "32bit") + ")" + Environment.NewLine;
+            Info.Text += "  Material Design In XAML Toolkit 4.2.1" + Environment.NewLine;
 
             Info.Text += Environment.NewLine;
             Info.Text += "Shortcut Key:" + Environment.NewLine;
