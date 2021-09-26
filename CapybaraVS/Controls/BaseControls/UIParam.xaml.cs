@@ -183,6 +183,11 @@ namespace CapybaraVS.Controls.BaseControls
                     {
                         self.ParamNameLabel.LabelString = self.ParamNameLabelOverlap;
                     }
+                    if (self.ValueData is ICbValue value)
+                    {
+                        value.Name = text;  // 変数に名前もコピーする
+                        //self.ParamEdit = value.ValueUIString;
+                    }
                 });
 
         public static readonly DependencyProperty ParamNameProperty = impParamName.Regist("ParamName");
