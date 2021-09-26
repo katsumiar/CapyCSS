@@ -461,7 +461,21 @@ namespace CapybaraVS.Controls.BaseControls
 
             var tokenSource = new CancellationTokenSource();
             var token = tokenSource.Token;
-            Task.Run(() => ActionFilter(treeMenuNodes, viewer, token, searchName));
+            string[] option = null;
+            if (searchName.Contains('&'))
+            {
+                string opt = searchName.Substring(searchName.IndexOf('&') + 1);
+                if (opt.Contains('&'))
+                {
+                    option = opt.Split('&');
+                }
+                else
+                {
+                    option = new string[] { opt };
+                }
+                searchName = searchName.Substring(0, searchName.IndexOf('&'));
+            }
+            Task.Run(() => ActionFilter(treeMenuNodes, viewer, token, searchName, option));
             return tokenSource;
         }
 
@@ -471,7 +485,7 @@ namespace CapybaraVS.Controls.BaseControls
         /// <param name="token"></param>
         /// <param name="treeView"></param>
         /// <param name="searchName"></param>
-        private void ActionFilter(List<TreeMenuNode> treeMenuNodes, TreeViewCommand viewer, CancellationToken token, string searchName)
+        private void ActionFilter(List<TreeMenuNode> treeMenuNodes, TreeViewCommand viewer, CancellationToken token, string searchName, string[] option)
         {
             foreach (var node in treeMenuNodes)
             {
@@ -486,7 +500,7 @@ namespace CapybaraVS.Controls.BaseControls
                 }
 
                 int counter = 0;
-                SetFilter(viewer, token, node, searchName, CbSTUtils.StripParamater(searchName), ref counter);
+                SetFilter(viewer, token, node, searchName, CbSTUtils.StripParamater(searchName), option, ref counter);
             }
         }
 
@@ -497,7 +511,7 @@ namespace CapybaraVS.Controls.BaseControls
         /// <param name="viewer">結果登録用リスト</param>
         /// <param name="node">メニューノード</param>
         /// <param name="name">メニュー名</param>
-        private void SetFilter(TreeViewCommand viewer, CancellationToken token, TreeMenuNode node, string name, string stripName, ref int counter, TreeMenuNode currentLock = null)
+        private void SetFilter(TreeViewCommand viewer, CancellationToken token, TreeMenuNode node, string name, string stripName, string[] option, ref int counter, TreeMenuNode currentLock = null)
         {
             if (token.IsCancellationRequested)
             {
@@ -521,7 +535,7 @@ namespace CapybaraVS.Controls.BaseControls
                 {
                     foreach (var child in node.Child)
                     {
-                        SetFilter(viewer, token, child, next, stripName, ref counter, node);
+                        SetFilter(viewer, token, child, next, stripName, option, ref counter, node);
                     }
                 }
                 if (currentLock != null)
@@ -542,7 +556,7 @@ namespace CapybaraVS.Controls.BaseControls
                     }
                     if (target == name)
                     {
-                        SetAll(viewer, token, node, currentLock.Path.Substring(0, currentLock.Path.LastIndexOf('.') + 1) + stripName + paramStr + ".");
+                        SetAll(viewer, token, node, option, currentLock.Path.Substring(0, currentLock.Path.LastIndexOf('.') + 1) + stripName + paramStr + ".");
                     }
                     return;
                 }
@@ -551,20 +565,20 @@ namespace CapybaraVS.Controls.BaseControls
             {
                 // 名前が完全一致したら下の階層すべてを対象とする
 
-                SetAll(viewer, token, node);
+                SetAll(viewer, token, node, option);
                 return;
             }
             else
             {
                 // 通常の一致判定
 
-                CurrentFilter(viewer, token, node, name, stripName, ref counter);
+                CurrentFilter(viewer, token, node, name, stripName, option, ref counter);
             }
             foreach (var child in node.Child)
             {
                 // 子の一致判定
 
-                SetFilter(viewer, token, child, name, stripName, ref counter);
+                SetFilter(viewer, token, child, name, stripName, option, ref counter);
                 if (counter % 100 == 99)
                     Thread.Sleep(FilteringWaitSleep);
             }
@@ -578,7 +592,7 @@ namespace CapybaraVS.Controls.BaseControls
         /// <param name="node"></param>
         /// <param name="name"></param>
         /// <param name="stripName"></param>
-        private void CurrentFilter(TreeViewCommand viewer, CancellationToken token, TreeMenuNode node, string name, string stripName, ref int counter)
+        private void CurrentFilter(TreeViewCommand viewer, CancellationToken token, TreeMenuNode node, string name, string stripName, string[] option, ref int counter)
         {
             ObservableCollection<TreeMenuNode> treeView = viewer.TreeView.ItemsSource as ObservableCollection<TreeMenuNode>;
 
@@ -595,10 +609,10 @@ namespace CapybaraVS.Controls.BaseControls
             {
                 // パラメータを取り除いた名前が完全一致したら下の階層すべてを対象とする
 
-                SetAll(viewer, token, node);
+                SetAll(viewer, token, node, option);
                 return;
             }
-            if (nodeName.Contains(name))
+            if (CheckOption(option, nodeName, nodeName.Contains(name)))
             {
                 if (node.LeftClickCommand != null && node.LeftClickCommand.CanExecute(null))
                 {
@@ -633,11 +647,11 @@ namespace CapybaraVS.Controls.BaseControls
         /// <param name="treeView"></param>
         /// <param name="node"></param>
         /// <param name="frontCut"></param>
-        private void SetAll(TreeViewCommand viewer, CancellationToken token, TreeMenuNode node, string frontCut = null)
+        private void SetAll(TreeViewCommand viewer, CancellationToken token, TreeMenuNode node, string[] option, string frontCut = null)
         {
             ObservableCollection<TreeMenuNode> treeView = viewer.TreeView.ItemsSource as ObservableCollection<TreeMenuNode>;
 
-            void _SetAll(Collection<TreeMenuNode> treeView, CancellationToken token, TreeMenuNode node, string frontCut = null)
+            void _SetAll(Collection<TreeMenuNode> treeView, CancellationToken token, TreeMenuNode node, string[] option, string frontCut = null)
             {
                 if (token.IsCancellationRequested)
                 {
@@ -712,14 +726,38 @@ namespace CapybaraVS.Controls.BaseControls
 
                 foreach (var child in node.Child)
                 {
-                    _SetAll(treeView, token, child, frontCut);
+                    if (CheckOption(option, child.Name.ToUpper().Replace(" ", ""), true))
+                    {
+                        _SetAll(treeView, token, child, option, frontCut);
+                    }
                 }
             }
 
             foreach (var child in node.Child)
             {
-                _SetAll(treeView, token, child, frontCut);
+                _SetAll(treeView, token, child, option, frontCut);
             }
+        }
+
+        /// <summary>
+        /// 対象文字列に指定のワードがすべて含まれているか調べます。
+        /// </summary>
+        /// <param name="words">アンド条件ワード</param>
+        /// <param name="title">対象ワード</param>
+        /// <param name="isHit">初期条件</param>
+        /// <returns>条件を満たした==true</returns>
+        private static bool CheckOption(string[] words, string title, bool isHit)
+        {
+            if (words != null)
+            {
+                foreach (var ck in words)
+                {
+                    isHit = isHit && title.Contains(ck);
+                    if (!isHit)
+                        break;
+                }
+            }
+            return isHit;
         }
 
         /// <summary>
