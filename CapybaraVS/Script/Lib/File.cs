@@ -10,8 +10,12 @@ namespace CapybaraVS.Script.Lib
 {
     public class FileLib
     {
-        //------------------------------------------------------------------
-        [ScriptMethod("File" + ".Reader" + "." + nameof(CreateReadStream))]
+        private const string LIB_NAME = "File";
+
+        //====================================================================================
+        private const string LIB_NAME1 = LIB_NAME + ".Read";
+
+        [ScriptMethod(LIB_NAME1)]
         public static StreamReader CreateReadStream(string fileName, string encoding = "utf-8")
         {
             var encodingCode = Encoding.GetEncoding(encoding);
@@ -19,11 +23,11 @@ namespace CapybaraVS.Script.Lib
         }
 
         //------------------------------------------------------------------
-        [ScriptMethod("File" + ".Reader." + nameof(StreamReadLine))]
+        [ScriptMethod(LIB_NAME1)]
         public static int StreamReadLine(
             StreamReader stream,
             bool autoClose,
-            [param: ScriptParam("func f(line)")] Action<string> func)
+            Action<string> func)
         {
             int ret = 0;
             if (func is null)
@@ -43,14 +47,16 @@ namespace CapybaraVS.Script.Lib
         }
 
         //------------------------------------------------------------------
-        [ScriptMethod("File" + ".Reader." + nameof(CloseReadStream))]
+        [ScriptMethod(LIB_NAME1)]
         public static void CloseReadStream(StreamReader stream)
         {
             stream?.Close();
         }
 
-        //------------------------------------------------------------------
-        [ScriptMethod("File" + ".Writer" + "." + nameof(CreateWriteStream))]
+        //====================================================================================
+        private const string LIB_NAME2 = LIB_NAME + ".Writer";
+
+        [ScriptMethod(LIB_NAME2)]
         public static StreamWriter CreateWriteStream(string fileName, bool append, string encoding = "utf-8")
         {
             var encodingCode = Encoding.GetEncoding(encoding);
@@ -58,7 +64,7 @@ namespace CapybaraVS.Script.Lib
         }
 
         //------------------------------------------------------------------
-        [ScriptMethod("File" + ".Writer" + "." + nameof(StreamWrite))]
+        [ScriptMethod(LIB_NAME2)]
         public static string StreamWrite(
             StreamWriter stream,
             string str,
@@ -77,57 +83,178 @@ namespace CapybaraVS.Script.Lib
         }
 
         //------------------------------------------------------------------
-        [ScriptMethod("File" + ".Writer." + nameof(CloseWriteStream))]
+        [ScriptMethod(LIB_NAME2)]
         public static void CloseWriteStream(StreamWriter stream)
         {
             stream?.Close();
         }
 
         //------------------------------------------------------------------
-        [ScriptMethod("File" + ".Writer." + nameof(FileOpenAddWriteAndClose))]
+        [ScriptMethod(LIB_NAME2)]
         public static void FileOpenAddWriteAndClose(string fileName, string str, bool lineMode, string encoding = "utf-8")
         {
             var stream = CreateWriteStream(fileName, true, encoding);
             StreamWrite(stream, str, lineMode, true);
         }
 
+        //====================================================================================
+        private const string LIB_NAME3 = LIB_NAME + ".Searcher";
+
+        [ScriptMethod(LIB_NAME3)]
+        public static long GetFilesSize(
+            string path
+            , string searchPattern = "*.*"
+            , bool allDirectories = false)
+        {
+            IEnumerable<string> files;
+            if (allDirectories)
+                files = Directory.EnumerateFiles(path, searchPattern, SearchOption.AllDirectories);
+            else
+                files = Directory.EnumerateFiles(path, searchPattern);
+            long size = 0;
+            foreach (var node in files)
+            {
+                size += GetFileSize(node);
+            }
+            return size;
+        }
+
         //------------------------------------------------------------------
-        [ScriptMethod("File" + "." + nameof(GetFileName))]
+        [ScriptMethod(LIB_NAME3)]
+        static ICollection<string> GetDirectories(
+            ICollection<string> list
+            , string path
+            , bool allDirectories
+            , ICollection<string> ignoreList)
+        {
+            list ??= new List<string>();
+            string[] dirs = Directory.GetDirectories(path);
+            foreach (var dir in dirs)
+            {
+                if (ignoreList != null && ignoreList.Contains(Path.GetFileName(dir)))
+                    continue;
+
+                list.Add(dir);
+                if (allDirectories)
+                {
+                    GetDirectories(list, dir, allDirectories, ignoreList);
+                }
+            }
+            return list;
+        }
+
+        [ScriptMethod(LIB_NAME3)]
+        public static ICollection<string> GetDirectories(
+            string path
+            , bool allDirectories = false
+            , ICollection<string> ignoreList = null)
+        {
+            var list = new List<string>();
+            return GetDirectories(list, path, allDirectories, ignoreList);
+        }
+
+        //------------------------------------------------------------------
+        [ScriptMethod(LIB_NAME3)]
+        public static ICollection<string> GetFilesFromDirectories(
+            IEnumerable<string> directories
+            , string searchPattern = "*.*"
+            , ICollection<string> ignoreList = null)
+        {
+            var list = new List<string>();
+            foreach (var dir in directories)
+            {
+                string[] files = Directory.GetFiles(dir, searchPattern);
+                if (ignoreList != null)
+                {
+                    foreach (var file in files)
+                    {
+                        if (ignoreList != null && ignoreList.Contains(file))
+                            continue;
+
+                        list.Add(file);
+                    }
+                }
+                else
+                    list.AddRange(files);
+            }
+            return list;
+        }
+
+        //====================================================================================
+        private const string LIB_NAME4 = LIB_NAME + ".Filtering";
+
+        [ScriptMethod(LIB_NAME4)]
+        public static ICollection<string> PathListToFileList(IEnumerable<string> pathList)
+        {
+            var list = new List<string>();
+            foreach (var path in pathList)
+            {
+                list.Add(Path.GetFileName(path));
+            }
+            return list;
+        }
+
+        //------------------------------------------------------------------
+        [ScriptMethod(LIB_NAME4)]
+        public static ICollection<string> PathListToExtensionList(IEnumerable<string> pathList)
+        {
+            var list = new List<string>();
+            foreach (var path in pathList)
+            {
+                list.Add(Path.GetExtension(path));
+            }
+            return list;
+        }
+
+        //------------------------------------------------------------------
+        [ScriptMethod(LIB_NAME4)]
+        public static ICollection<string> PathListToDirectoryList(IEnumerable<string> pathList)
+        {
+            var list = new List<string>();
+            foreach (var path in pathList)
+            {
+                list.Add(Path.GetDirectoryName(path));
+            }
+            return list;
+        }
+
+        //====================================================================================
+        [ScriptMethod(LIB_NAME)]
         public static string GetFileName(string path)
         {
             return Path.GetFileName(path);
         }
 
         //------------------------------------------------------------------
-        [ScriptMethod("File" + "." + nameof(GetExtension))]
+        [ScriptMethod(LIB_NAME)]
         public static string GetExtension(string path)
         {
             return Path.GetExtension(path);
         }
 
         //------------------------------------------------------------------
-        [ScriptMethod("File" + "." + nameof(GetDirectoryName))]
+        [ScriptMethod(LIB_NAME)]
         public static string GetDirectoryName(string path)
         {
             return Path.GetDirectoryName(path);
         }
 
         //------------------------------------------------------------------
-        [ScriptMethod("File" + "." + nameof(GetFileNameWithoutExtension))]
+        [ScriptMethod(LIB_NAME)]
         public static string GetFileNameWithoutExtension(string path)
         {
             return Path.GetFileNameWithoutExtension(path);
         }
 
         //------------------------------------------------------------------
-        [ScriptMethod("File" + "." + nameof(GetCurrentDirectory))]
+        [ScriptMethod(LIB_NAME)]
         public static string GetCurrentDirectory()
         {
             return Directory.GetCurrentDirectory();
         }
 
         //------------------------------------------------------------------
-        [ScriptMethod("File" + "." + nameof(SetCurrentDirectory))]
+        [ScriptMethod(LIB_NAME)]
         public static string SetCurrentDirectory(string path)
         {
             Directory.SetCurrentDirectory(path);
@@ -135,70 +262,70 @@ namespace CapybaraVS.Script.Lib
         }
 
         //------------------------------------------------------------------
-        [ScriptMethod("File" + "." + nameof(GetPathRoot))]
+        [ScriptMethod(LIB_NAME)]
         public static string GetPathRoot(string path)
         {
             return Path.GetPathRoot(path);
         }
 
         //------------------------------------------------------------------
-        [ScriptMethod("File" + "." + nameof(GetFullPath))]
+        [ScriptMethod(LIB_NAME)]
         public static string GetFullPath(string path)
         {
             return Path.GetFullPath(path);
         }
 
         //------------------------------------------------------------------
-        [ScriptMethod("File" + "." + nameof(HasExtension))]
+        [ScriptMethod(LIB_NAME)]
         public static bool HasExtension(string path)
         {
             return Path.HasExtension(path);
         }
 
         //------------------------------------------------------------------
-        [ScriptMethod("File" + "." + nameof(IsPathRooted))]
+        [ScriptMethod(LIB_NAME)]
         public static bool IsPathRooted(string path)
         {
             return Path.IsPathRooted(path);
         }
 
         //------------------------------------------------------------------
-        [ScriptMethod("File" + "." + "FileExists")]
+        [ScriptMethod(LIB_NAME)]
         public static bool Exists(string path)
         {
             return File.Exists(path);
         }
 
         //------------------------------------------------------------------
-        [ScriptMethod("File" + "." + "DirectoryExists")]
+        [ScriptMethod(LIB_NAME)]
         public static bool DirectoryExists(string path)
         {
             return Directory.Exists(path);
         }
 
         //------------------------------------------------------------------
-        [ScriptMethod("File" + "." + nameof(Delete))]
+        [ScriptMethod(LIB_NAME)]
         public static void Delete(string path)
         {
             File.Delete(path);
         }
 
         //------------------------------------------------------------------
-        [ScriptMethod("File" + "." + nameof(Copy))]
+        [ScriptMethod(LIB_NAME)]
         public static void Copy(string sourceFileName, string destFileName, bool overwrite = true)
         {
             File.Copy(sourceFileName, destFileName, overwrite);
         }
 
         //------------------------------------------------------------------
-        [ScriptMethod("File" + "." + nameof(Move))]
+        [ScriptMethod(LIB_NAME)]
         public static void Move(string sourceFileName, string destFileName, bool overwrite = true)
         {
             File.Move(sourceFileName, destFileName, overwrite);
         }
 
         //------------------------------------------------------------------
-        [ScriptMethod("File" + "." + nameof(GetFileSize))]
+        [ScriptMethod(LIB_NAME)]
         public static long GetFileSize(string path)
         {
             FileInfo file = new FileInfo(path);
@@ -206,10 +333,10 @@ namespace CapybaraVS.Script.Lib
         }
 
         //------------------------------------------------------------------
-        [ScriptMethod("File" + "." + nameof(CreateDirectory))]
+        [ScriptMethod(LIB_NAME)]
         public static string CreateDirectory(
             string path
-            , [param: ScriptParam("add serial number")] bool addSerialNumber = false)
+            , bool addSerialNumber = false)
         {
             var newPath = path;
             if (Directory.Exists(newPath))
@@ -229,7 +356,7 @@ namespace CapybaraVS.Script.Lib
         }
 
         //------------------------------------------------------------------
-        [ScriptMethod("File" + "." + nameof(Combine))]
+        [ScriptMethod(LIB_NAME)]
         public static string Combine(List<string> paths, bool slashSeparate = false)
         {
             string path = Path.Combine(paths.ToArray());
@@ -241,11 +368,11 @@ namespace CapybaraVS.Script.Lib
         }
 
         //------------------------------------------------------------------
-        [ScriptMethod("File" + ".Searcher." + nameof(GetFiles))]
+        [ScriptMethod(LIB_NAME)]
         public static ICollection<string> GetFiles(
             string path
-            , [param: ScriptParam("search pattern")] string searchPattern = "*.*"
-            , [param: ScriptParam("all directories")] bool allDirectories = false
+            , string searchPattern = "*.*"
+            , bool allDirectories = false
             , bool relativePath = false)
         {
             IEnumerable<string> files;
@@ -268,12 +395,12 @@ namespace CapybaraVS.Script.Lib
         }
 
         //------------------------------------------------------------------
-        [ScriptMethod("File" + ".Searcher." + "ForeachFiles Invoke")]
-        public static int ForeachFilesInvoke(
+        [ScriptMethod(LIB_NAME)]
+        public static int ForeachFiles(
             string path
-            , [param: ScriptParam("func f(path)")] Action<string> func
-            , [param: ScriptParam("search pattern")] string searchPattern
-            , [param: ScriptParam("all directories")] bool allDirectories = false
+            , Action<string> func
+            , string searchPattern = "*.*"
+            , bool allDirectories = false
             , bool relativePath = false)
         {
             if (func is null)
@@ -295,118 +422,6 @@ namespace CapybaraVS.Script.Lib
                 func.Invoke(_path);
             }
             return files.Count;
-        }
-
-        //------------------------------------------------------------------
-        [ScriptMethod("File" + ".Searcher." + nameof(GetFilesSize))]
-        public static long GetFilesSize(
-            string path
-            , [param: ScriptParam("search pattern")] string searchPattern = "*.*"
-            , [param: ScriptParam("all directories")] bool allDirectories = false)
-        {
-            IEnumerable<string> files;
-            if (allDirectories)
-                files = Directory.EnumerateFiles(path, searchPattern, SearchOption.AllDirectories);
-            else
-                files = Directory.EnumerateFiles(path, searchPattern);
-            long size = 0;
-            foreach (var node in files)
-            {
-                size += GetFileSize(node);
-            }
-            return size;
-        }
-
-        //------------------------------------------------------------------
-        static ICollection<string> GetDirectories(ICollection<string> list, string path, bool allDirectories, ICollection<string> ignoreList)
-        {
-            list ??= new List<string>();
-            string[] dirs = Directory.GetDirectories(path);
-            foreach (var dir in dirs)
-            {
-                if (ignoreList != null && ignoreList.Contains(Path.GetFileName(dir)))
-                    continue;
-
-                list.Add(dir);
-                if (allDirectories)
-                {
-                    GetDirectories(list, dir, allDirectories, ignoreList);
-                }
-            }
-            return list;
-        }
-
-        [ScriptMethod("File" + ".Searcher." + nameof(GetDirectories))]
-        public static ICollection<string> GetDirectories(
-            string path
-            , [param: ScriptParam("all directories")] bool allDirectories = false
-            , [param: ScriptParam("ignore list")] ICollection<string> ignoreList = null)
-        {
-            var list = new List<string>();
-            return GetDirectories(list, path, allDirectories, ignoreList);
-        }
-
-        //------------------------------------------------------------------
-        [ScriptMethod("File" + ".Searcher." + nameof(GetFilesFromDirectories))]
-        public static ICollection<string> GetFilesFromDirectories(
-            IEnumerable<string> directories
-            , [param: ScriptParam("search pattern")] string searchPattern = "*.*"
-            , [param: ScriptParam("ignore list")] ICollection<string> ignoreList = null)
-        {
-            var list = new List<string>();
-            foreach (var dir in directories)
-            {
-                string[] files = Directory.GetFiles(dir, searchPattern);
-                if (ignoreList != null)
-                {
-                    foreach (var file in files)
-                    {
-                        if (ignoreList != null && ignoreList.Contains(file))
-                            continue;
-
-                        list.Add(file);
-                    }
-                }
-                else
-                    list.AddRange(files);
-            }
-            return list;
-        }
-
-        //------------------------------------------------------------------
-        [ScriptMethod("File" + ".Filtering." + nameof(PathListToFileList))]
-        public static ICollection<string> PathListToFileList(IEnumerable<string> pathList)
-        {
-            var list = new List<string>();
-            foreach (var path in pathList)
-            {
-                list.Add(Path.GetFileName(path));
-            }
-            return list;
-        }
-
-        //------------------------------------------------------------------
-        [ScriptMethod("File" + ".Filtering." + nameof(PathListToExtensionList))]
-        public static ICollection<string> PathListToExtensionList(IEnumerable<string> pathList)
-        {
-            var list = new List<string>();
-            foreach (var path in pathList)
-            {
-                list.Add(Path.GetExtension(path));
-            }
-            return list;
-        }
-
-        //------------------------------------------------------------------
-        [ScriptMethod("File" + ".Filtering." + nameof(PathListToDirectoryList))]
-        public static ICollection<string> PathListToDirectoryList(IEnumerable<string> pathList)
-        {
-            var list = new List<string>();
-            foreach (var path in pathList)
-            {
-                list.Add(Path.GetDirectoryName(path));
-            }
-            return list;
         }
     }
 }

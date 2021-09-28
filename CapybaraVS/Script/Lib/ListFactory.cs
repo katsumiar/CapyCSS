@@ -1,37 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
 using System.Text;
 
 namespace CapybaraVS.Script.Lib
 {
     public class ListFactory
     {
-        [ScriptMethod(nameof(ListFactory) + "." + nameof(MakeListDouble))]
-        public static ICollection<double> MakeListDouble(int num, double value, double step)
-        {
-            var vs = new List<double>();
-            while (num-- != 0) 
-            {
-                vs.Add(value);
-                value += step;
-            }
-            return vs;
-        }
-
-        //------------------------------------------------------------------
-        [ScriptMethod(nameof(ListFactory) + "." + nameof(MakeListDouble))]
-        public static ICollection<double> MakeListDouble(int num, double value, double step, double power)
-        {
-            var vs = new List<double>();
-            double index = value;
-            while (num-- != 0)
-            {
-                vs.Add(index);
-                value += step;
-                index = Math.Pow(value, power);
-            }
-            return vs;
-        }
+        private const string LIB_NAME = "ListFactory";
+        private const string LIB_NAME2 = LIB_NAME + ".Convert";
+        private const string LIB_NAME3 = LIB_NAME + ".Parse";
+        private const string LIB_NAME5 = LIB_NAME + ".Counter";
+        private const string LIB_NAME6 = LIB_NAME + ".Sort";
+        private const string LIB_NAME8 = LIB_NAME + ".Filtering";
 
         //------------------------------------------------------------------
         /// <summary>
@@ -41,6 +23,7 @@ namespace CapybaraVS.Script.Lib
         /// <param name="list">対象のリスト</param>
         /// <param name="converter">任意の変換処理</param>
         /// <returns>変換したリスト</returns>
+        [ScriptMethod(LIB_NAME2)]
         public static ICollection<T2> ConvertList<T1, T2>(IEnumerable<T1> list, Converter<T1, T2> converter)
         {
             ICollection<T2> result = new List<T2>();
@@ -52,276 +35,151 @@ namespace CapybaraVS.Script.Lib
         }
 
         //------------------------------------------------------------------
-        [ScriptMethod(nameof(ListFactory) + ".Convert." + nameof(ToDouble))]
-        public static ICollection<double> ToDouble(IEnumerable<int> list)
+        /// <summary>
+        /// リストを T1 型から T2 型に変換します。
+        /// </summary>
+        /// <typeparam name="T1">変換前の型</typeparam>
+        /// <typeparam name="T2">変換後の型</typeparam>
+        /// <param name="list">変換対象のリスト</param>
+        /// <returns>変換したリスト</returns>
+        [ScriptMethod(LIB_NAME2)]
+        public static ICollection<T2> CastConvert<T1, T2>(IEnumerable<T1> list) where T2 : class
         {
-            return ConvertList(list, (n) => (double)n);
+            return ConvertList(list, (n) => (T2)(dynamic)n);
         }
 
         //------------------------------------------------------------------
-        [ScriptMethod(nameof(ListFactory) + ".Convert." + nameof(ToInteger))]
-        public static ICollection<int> ToInteger(IEnumerable<double> list)
+        [ScriptMethod(LIB_NAME5)]
+        public static int Counter<T>(IEnumerable<T> samples, Predicate<T> predicate)
         {
-            return ConvertList(list, (n) => (int)n);
+            int count = 0;
+            foreach (var sample in samples)
+            {
+                if (predicate(sample))
+                {
+                    count++;
+                }
+            }
+            return count;
         }
 
         //------------------------------------------------------------------
-        [ScriptMethod(nameof(ListFactory) + ".Convert." + nameof(ToString))]
-        public static ICollection<string> ToString(IEnumerable<int> list)
+        [ScriptMethod(LIB_NAME5)]
+        public static int ConteinsCounter<T>(IEnumerable<T> samples, T value)
         {
-            return ConvertList(list, (n) => n.ToString());
+            int count = 0;
+            foreach (var node in samples)
+            {
+                if (samples.Contains(value))
+                {
+                    count++;
+                }
+            }
+            return count;
         }
 
         //------------------------------------------------------------------
-        [ScriptMethod(nameof(ListFactory) + ".Convert." + nameof(ToString))]
-        public static ICollection<string> ToString(IEnumerable<double> list)
+        [ScriptMethod(LIB_NAME6)]
+        public static ICollection<T> DescSort<T>(IEnumerable<T> list)
         {
-            return ConvertList(list, (n) => n.ToString());
+            var ret = new List<T>(list);
+            ret.Sort();
+            return ret;
         }
 
         //------------------------------------------------------------------
-        [ScriptMethod(nameof(ListFactory) + ".Parse." + nameof(ParseIntegerCSV))]
-        public static ICollection<int> ParseIntegerCSV(string value)
+        [ScriptMethod(LIB_NAME6)]
+        public static ICollection<T> AscSort<T>(IEnumerable<T> list) where T : IComparable
         {
-            var ret = new List<int>();
+            var ret = new List<T>(list);
+            ret.Sort((a, b) => b.CompareTo(a));
+            return ret;
+        }
+
+        //------------------------------------------------------------------
+        [ScriptMethod(LIB_NAME8)]
+        public static ICollection<T> Filtering<T>(IEnumerable<T> samples, Predicate<T> predicate)
+        {
+            var ret = new List<T>();
+            foreach (var sample in samples)
+            {
+                if (predicate(sample))
+                {
+                    ret.Add(sample);
+                }
+            }
+            return ret;
+        }
+
+        //------------------------------------------------------------------
+        /// <summary>
+        /// value から始める num 個のリストを作成します。
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="num">リストの個数</param>
+        /// <param name="value">開始値</param>
+        /// <param name="converter">value を受け取って次の要素に入れる値の変換処理</param>
+        /// <returns>作成したリスト</returns>
+        [ScriptMethod(LIB_NAME)]
+        public static ICollection<T> MakeList<T>(int num, T value, Converter<T, T> converter)
+        {
+            var vs = new List<T>();
+            while (num-- != 0) 
+            {
+                vs.Add(value);
+                value = converter(value);
+            }
+            return vs;
+        }
+
+        //------------------------------------------------------------------
+        [ScriptMethod(LIB_NAME)]
+        public static string Join<T>(string separator, IEnumerable<T> values)
+        {
+            return string.Join(separator, values);
+        }
+
+        //------------------------------------------------------------------
+        [ScriptMethod(LIB_NAME)]
+        public static ICollection<T> ParseCSV<T>(string value)
+        {
+            var ret = new List<T>();
             var n = value.Split(",");
+            Type type = typeof(T);
             foreach (var node in n)
             {
-                ret.Add(int.Parse(node));
+                var parse = (T)type.InvokeMember(
+                    "Parse",
+                    BindingFlags.InvokeMethod,
+                    null,
+                    type,
+                    new object[] { node }
+                    );
+                ret.Add(parse);
             }
             return ret;
         }
 
         //------------------------------------------------------------------
-        [ScriptMethod(nameof(ListFactory) + ".Parse." + nameof(ParseDoubleCSV))]
-        public static ICollection<double> ParseDoubleCSV(string value)
+        [ScriptMethod(LIB_NAME)]
+        public static ICollection<T> Distinct<T>(IEnumerable<T> samples)
         {
-            var ret = new List<double>();
-            var n = value.Split(",");
-            foreach (var node in n)
+            var ret = new List<T>();
+            foreach (var sample in samples)
             {
-                ret.Add(double.Parse(node));
-            }
-            return ret;
-        }
-
-        //------------------------------------------------------------------
-        [ScriptMethod(nameof(ListFactory) + ".Join." + nameof(Join))]
-        public static string Join(string separator, IEnumerable<int> value)
-        {
-            return string.Join(separator, value);
-        }
-
-        //------------------------------------------------------------------
-        [ScriptMethod(nameof(ListFactory) + ".Join." + nameof(Join))]
-        public static string Join(string separator, IEnumerable<double> value)
-        {
-            return string.Join(separator, value);
-        }
-
-        //------------------------------------------------------------------
-        [ScriptMethod(nameof(ListFactory) + ".Join." + nameof(Join))]
-        public static string Join(string separator, IEnumerable<string> value)
-        {
-            return string.Join(separator, value);
-        }
-
-        //------------------------------------------------------------------
-        [ScriptMethod(nameof(ListFactory) + ".Counter." + nameof(Counter))]
-        public static int Counter(ICollection<int> sample, int value)
-        {
-            int count = 0;
-            foreach (var node in sample)
-            {
-                if (sample.Contains(value))
+                if (!ret.Contains(sample))
                 {
-                    count++;
-                }
-            }
-            return count;
-        }
-
-        //------------------------------------------------------------------
-        [ScriptMethod(nameof(ListFactory) + ".Counter." + nameof(Counter))]
-        public static int Counter(ICollection<double> sample, double value)
-        {
-            int count = 0;
-            foreach (var node in sample)
-            {
-                if (sample.Contains(value))
-                {
-                    count++;
-                }
-            }
-            return count;
-        }
-
-        //------------------------------------------------------------------
-        [ScriptMethod(nameof(ListFactory) + ".Counter." + nameof(Counter))]
-        public static int Counter(ICollection<string> sample, string value)
-        {
-            int count = 0;
-            foreach (var node in sample)
-            {
-                if (sample.Contains(value))
-                {
-                    count++;
-                }
-            }
-            return count;
-        }
-
-        //------------------------------------------------------------------
-        [ScriptMethod(nameof(ListFactory) + ".Counter." + nameof(Counter))]
-        public static int Counter(IEnumerable<int> sample, Func<int, bool> predicate)
-        {
-            int count = 0;
-            foreach (var node in sample)
-            {
-                if (predicate(node))
-                {
-                    count++;
-                }
-            }
-            return count;
-        }
-
-        //------------------------------------------------------------------
-        [ScriptMethod(nameof(ListFactory) + ".Counter." + nameof(Counter))]
-        public static int Counter(IEnumerable<double> sample, Func<double, bool> predicate)
-        {
-            int count = 0;
-            foreach (var node in sample)
-            {
-                if (predicate(node))
-                {
-                    count++;
-                }
-            }
-            return count;
-        }
-
-        //------------------------------------------------------------------
-        [ScriptMethod(nameof(ListFactory) + ".Counter." + nameof(Counter))]
-        public static int Counter(IEnumerable<string> sample, Func<string, bool> predicate)
-        {
-            int count = 0;
-            foreach (var node in sample)
-            {
-                if (predicate(node))
-                {
-                    count++;
-                }
-            }
-            return count;
-        }
-
-        //------------------------------------------------------------------
-        [ScriptMethod(nameof(ListFactory) + ".Sort.Desc." + nameof(DescSort))]
-        public static ICollection<int> DescSort(IEnumerable<int> sample)
-        {
-            var ret = new List<int>(sample);
-            ret.Sort();
-            return ret;
-        }
-
-        //------------------------------------------------------------------
-        [ScriptMethod(nameof(ListFactory) + ".Sort.Desc." + nameof(DescSort))]
-        public static ICollection<double> DescSort(IEnumerable<double> sample)
-        {
-            var ret = new List<double>(sample);
-            ret.Sort();
-            return ret;
-        }
-
-        //------------------------------------------------------------------
-        [ScriptMethod(nameof(ListFactory) + ".Sort.Desc." + nameof(DescSort))]
-        public static ICollection<string> DescSort(IEnumerable<string> sample)
-        {
-            var ret = new List<string>(sample);
-            ret.Sort();
-            return ret;
-        }
-
-        //------------------------------------------------------------------
-        [ScriptMethod(nameof(ListFactory) + ".Sort.Asc." + nameof(AscSort))]
-        public static ICollection<int> AscSort(IEnumerable<int> sample)
-        {
-            var ret = new List<int>(sample);
-            ret.Sort((a, b) => b.CompareTo(a));
-            return ret;
-        }
-
-        //------------------------------------------------------------------
-        [ScriptMethod(nameof(ListFactory) + ".Sort.Asc." + nameof(AscSort))]
-        public static ICollection<double> AscSort(IEnumerable<double> sample)
-        {
-            var ret = new List<double>(sample);
-            ret.Sort((a, b) => b.CompareTo(a));
-            return ret;
-        }
-
-        //------------------------------------------------------------------
-        [ScriptMethod(nameof(ListFactory) + ".Sort.Asc." + nameof(AscSort))]
-        public static ICollection<string> AscSort(IEnumerable<string> sample)
-        {
-            var ret = new List<string>(sample);
-            ret.Sort((a, b) => b.CompareTo(a));
-            return ret;
-        }
-
-        //------------------------------------------------------------------
-        [ScriptMethod(nameof(ListFactory) + ".Filtering." + nameof(Filtering))]
-        public static ICollection<int> Filtering(IEnumerable<int> sample, Func<int, bool> predicate)
-        {
-            var ret = new List<int>();
-            foreach (var node in sample)
-            {
-                if (predicate(node))
-                    ret.Add(node);
-            }
-            return ret;
-        }
-
-        //------------------------------------------------------------------
-        [ScriptMethod(nameof(ListFactory) + ".Filtering." + nameof(Filtering))]
-        public static ICollection<double> Filtering(IEnumerable<double> sample, Func<double, bool> predicate)
-        {
-            var ret = new List<double>();
-            foreach (var node in sample)
-            {
-                if (predicate(node))
-                    ret.Add(node);
-            }
-            return ret;
-        }
-
-        //------------------------------------------------------------------
-        [ScriptMethod(nameof(ListFactory) + ".Filtering." + nameof(Filtering))]
-        public static ICollection<string> Filtering(IEnumerable<string> sample, Func<string, bool> predicate)
-        {
-            var ret = new List<string>();
-            foreach (var node in sample)
-            {
-                if (predicate(node))
-                    ret.Add(node);
-            }
-            return ret;
-        }
-
-        //------------------------------------------------------------------
-        [ScriptMethod(nameof(ListFactory) + ".Filtering." + nameof(Distinct))]
-        public static ICollection<string> Distinct(IEnumerable<string> sample)
-        {
-            var ret = new List<string>();
-            foreach (var node in sample)
-            {
-                if (!ret.Contains(node))
-                {
-                    ret.Add(node);
+                    ret.Add(sample);
                 }
             }
             return ret;
+        }
+
+        //------------------------------------------------------------------
+        [ScriptMethod(LIB_NAME)]
+        public static bool Contains<T>(IEnumerable<T> samples, T target)
+        {
+            return samples.Contains(target);
         }
     }
 }

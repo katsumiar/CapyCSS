@@ -4,9 +4,11 @@ using CapybaraVS.Controls.BaseControls;
 using CapyCSS.Controls;
 using CapyCSS.Controls.BaseControls;
 using CapyCSS.Script;
+using CapyCSS.Script.Lib;
 using CbVS.Script;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -24,14 +26,18 @@ namespace CapybaraVS.Script
     [AttributeUsage(AttributeTargets.Method, AllowMultiple = true, Inherited = false)]
     public class ScriptMethodAttribute : Attribute
     {
-        private string menuName;    // メニュー用のメソッド名
-        private string funcName;    // ノード用のメソッド名
-        public string MenuName => menuName;
-        public string FuncName => funcName;
-        public ScriptMethodAttribute(string menuName = "", string funcName = "")
+        private string path;        // メニュー用のパス
+        private string methodName;    // メソッド名
+        public string Path => path;
+        public string MethodName => methodName;
+        public ScriptMethodAttribute(string path = "", string methodName = null)
         {
-            this.menuName = menuName;
-            this.funcName = funcName;
+            if (path != "" && !path.EndsWith("."))
+            {
+                path += ".";
+            }
+            this.path = path;
+            this.methodName = methodName;
         }
     }
 
@@ -59,8 +65,6 @@ namespace CapybaraVS.Script
             public Func<ICbValue> CreateArgument;
             public bool IsByRef = false;
             public bool IsSelf = false;
-            public bool IsFunc = false;
-            public Func<ICbValue> CreateFuncReturn;
         }
 
         /// <summary>
@@ -255,11 +259,13 @@ namespace CapybaraVS.Script
                     );
                 if (version is null)
                 {
-                    CommandCanvasList.OutPut.OutLine(nameof(ScriptImplement), $"imported {System.IO.Path.GetFileNameWithoutExtension(name)} package.");
+                    CommandCanvasList.OutPut.OutLine(nameof(ScriptImplement), $"imported {Path.GetFileNameWithoutExtension(name)} package.");
+                    CommandCanvasList.OutPut.Flush();
                 }
                 else
                 {
                     CommandCanvasList.OutPut.OutLine(nameof(ScriptImplement), $"imported {version} package.");
+                    CommandCanvasList.OutPut.Flush();
                 }
                 return name;
             }
@@ -762,8 +768,10 @@ namespace CapybaraVS.Script
 
                 string nodeCode = methodInfo.ReflectedType.Namespace + "." + methodInfo.ReflectedType.Name + "." + methodInfo.Name + addArg;
 
-                // メニュー用の名前を作成
-                string menuName = methodInfo.Name;
+                string addState = "";
+
+                //----------------------------------
+                // クラス名を作成
                 string className;
                 if (classType.IsGenericType)
                 {
@@ -773,11 +781,45 @@ namespace CapybaraVS.Script
                 {
                     className = classType.Name;
                 }
-                if (methodAttr != null && methodAttr.MenuName != "")
+
+                //----------------------------------
+                // メソッド名を作成
+                string nodeName;
+                if (methodAttr != null)
+                {
+                    // メソッド属性情報を持っている
+
+                    if (methodAttr.MethodName != null)
+                    {
+                        // 指定の名前を採用する
+
+                        nodeName = methodAttr.MethodName;
+                    }
+                    else
+                    {
+                        nodeName = methodInfo.Name;
+                    }
+                }
+                else
+                {
+                    if (methodInfo.IsConstructor)
+                    {
+                        nodeName = "new " + className;
+                    }
+                    else
+                    {
+                        nodeName = methodInfo.Name;
+                    }
+                }
+
+                //----------------------------------
+                // メニュー項目名を作成
+                string menuName = methodInfo.Name;
+                if (methodAttr != null)
                 {
                     // 指定の名前を採用する
 
-                    menuName = methodAttr.MenuName;
+                    menuName = methodAttr.Path + nodeName;
                 }
                 else if (methodAttr is null)
                 {
@@ -785,7 +827,7 @@ namespace CapybaraVS.Script
 
                     if (methodInfo.IsConstructor)
                     {
-                        menuName = className + ".(new)." + className;
+                        menuName = className + CbSTUtils.MENU_CONSTRUCTOR + className;
                     }
                     else
                     {
@@ -799,19 +841,19 @@ namespace CapybaraVS.Script
                         menuName += genericArgs;
                         if (methodInfo.IsStatic)
                         {
-                            menuName = "[s] " + menuName;
+                            addState = CbSTUtils.MENU_STATIC;
                         }
                         if (methodInfo.IsVirtual)
                         {
-                            menuName = "[v] " + menuName;
+                            addState = CbSTUtils.MENU_VIRTUAL;
                         }
                         switch (group)
                         {
                             case "get.":
-                                menuName = className + ".(getter)." + menuName;
+                                menuName = className + CbSTUtils.MENU_GETTER + menuName;
                                 break;
                             case "set.":
-                                menuName = className + ".(setter)." + menuName;
+                                menuName = className + CbSTUtils.MENU_SETTER + menuName;
                                 break;
                             default:
                                 {
@@ -842,9 +884,6 @@ namespace CapybaraVS.Script
                     }
                 }
 
-                // ノード用の名前を作成
-                string nodeName = MakeScriptNodeName(menuName);
-
                 // 引数情報を追加する
                 menuName += MakeParamsString(methodInfo);
 
@@ -862,25 +901,9 @@ namespace CapybaraVS.Script
                         menuName += " : " + type.TypeName;
                 }
 
-                if (methodAttr != null && methodAttr.FuncName != "")
-                {
-                    // 指定の名前を採用する
-
-                    nodeName = methodAttr.FuncName;
-                }
-                else if (methodAttr is null)
-                {
-                    if (methodInfo.IsConstructor)
-                    {
-                        nodeName = "new " + className;
-                    }
-                    else
-                    {
-                        nodeName = methodInfo.Name;
-                    }
-                }
-
                 string helpCode = $"{classType.Namespace}:{className}." + nodeName.Replace(" ", "_");
+                menuName = menuName + " " + addState;
+                helpCode = nodeCode + " " + addState;
 
                 // スクリプトノード用のヒント
                 string nodeHint = null;
@@ -917,6 +940,7 @@ namespace CapybaraVS.Script
                     dllModule = module,
                     isConstructor = methodInfo.IsConstructor,
                     typeRequests = genericTypeRequests,
+                    genericMethodParameters = (methodInfo.IsGenericMethod) ? methodInfo.GetGenericArguments() : null,
                 };
 
                 return autoImplementFunctionInfo;
@@ -941,7 +965,7 @@ namespace CapybaraVS.Script
         }
 
         /// <summary>
-        /// パラメータ型の制約判定をフィルターに登録します。
+        /// パラメータ型の型制約フィルターを登録します。
         /// </summary>
         /// <param name="genericTypeRequests">型リクエストリスト</param>
         /// <param name="geneArg">パラメータ型</param>
@@ -953,17 +977,24 @@ namespace CapybaraVS.Script
             if (genericTypeRequests.Any(n => n.Name == geneArg.Name))
                 return; // 二重登録拒否
 
-            // t には、判定対象の型が入ります。
+            Func<Type, bool> isAccept = MakeParameterConstraintAccepter(geneArg);
+            genericTypeRequests.Add(new TypeRequest(isAccept, geneArg.Name));
+        }
+
+        /// <summary>
+        /// パラメータ型の型制約フィルターを作成します。
+        /// </summary>
+        /// <param name="geneArg"></param>
+        /// <returns></returns>
+        public static Func<Type, bool> MakeParameterConstraintAccepter(Type geneArg)
+        {
             Func<Type, bool> isAccept = (t) =>
             {
+                // t には、判定対象の型が入ります。
+
                 if (geneArg.GetGenericParameterConstraints().Length > 0)
                 {
-                    foreach (var constraint in geneArg.GetGenericParameterConstraints())
-                    {
-                        if (t.IsAssignableFrom(constraint))
-                            return true;
-                    }
-                    return false;
+                    return IsConstraints(geneArg, t);
                 }
 
                 GenericParameterAttributes sConstraints =
@@ -978,7 +1009,7 @@ namespace CapybaraVS.Script
                         var query = t.GetMethods(BindingFlags.Public).Where(n => n.IsConstructor);
                         bool haveDefaultConstructer = query.Any(n => n.GetParameters().Length == 0);
                         if (!haveDefaultConstructer)
-                           return false;    // デフォルトコンストラクタを持っていなければ拒否
+                            return false;    // デフォルトコンストラクタを持っていなければ拒否
                     }
                     if (GenericParameterAttributes.None != (sConstraints &
                         GenericParameterAttributes.ReferenceTypeConstraint))
@@ -996,8 +1027,35 @@ namespace CapybaraVS.Script
 
                 return true;
             };
+            return isAccept;
+        }
 
-            genericTypeRequests.Add(new TypeRequest(isAccept, geneArg.Name));
+        private static bool IsConstraints(Type geneArg, Type t)
+        {
+            foreach (var constraint in geneArg.GetGenericParameterConstraints())
+            {
+                // スクリプト用の拡張制限
+                if (constraint == typeof(CbScript.ICalcable) && CbScript.IsCalcable(t))
+                    return true;
+                if (constraint == typeof(CbScript.ISigned) && CbScript.IsSigned(t))
+                    return true;
+                if (constraint == typeof(CbScript.IEnum) && CbScript.IsEnum(t))
+                    return true;
+
+                if (constraint.IsAssignableFrom(t))
+                    return true;
+                if (constraint.IsGenericType)
+                {
+                    return IsConstraints(constraint, t);
+                }
+                if (CbSTUtils.HaveGenericParamater(constraint) &&
+                    t.GetInterfaces().Any(t => t.Namespace + ":" + t.Name == constraint.Namespace + ":" + constraint.Name))
+                {
+                    Debug.Assert(false);    // 不要になった筈
+                    return true;    // constraint がジェネリックパラメータを持つインタフェースの判定（取り敢えず）
+                }
+            }
+            return false;
         }
 
         /// <summary>
@@ -1134,16 +1192,6 @@ namespace CapybaraVS.Script
                 // リファレンス型をチェック
                 if (para.ParameterType.IsByRef)
                     argNode.IsByRef = true;
-
-                // イベント引数をチェック
-                if (para.ParameterType.IsGenericType)
-                {
-                    if (para.ParameterType.GetGenericTypeDefinition() == typeof(CbFunc<,>))
-                    {
-                        argNode.IsFunc = true;
-                        argNode.CreateFuncReturn = typeInfo("").NodeTF;
-                    }
-                }
 
                 // 引数名を取得
                 string name = para.Name;

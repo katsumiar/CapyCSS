@@ -91,16 +91,16 @@ namespace CapybaraVS
             psInfo.UseShellExecute = !redirect;             // シェル機能を使用するか？
             psInfo.RedirectStandardOutput = redirect;       // 標準出力をリダイレクトするか？
 
-            Process p = Process.Start(psInfo);              // アプリの実行開始
+            Process p = new Process();
+            p.StartInfo = psInfo;
+            p.Start();
 
-            if (redirect)
+            if (psInfo.RedirectStandardOutput)
             {
                 p.WaitForExit();
-
                 string output = p.StandardOutput.ReadToEnd();   // 標準出力の読み取り
-
                 CommandCanvasList.OutPut.OutString(nameof(ToolExec), output);
-
+                CommandCanvasList.OutPut.Flush();
                 return p.ExitCode;
             }
 

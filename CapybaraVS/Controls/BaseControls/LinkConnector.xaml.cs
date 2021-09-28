@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
@@ -39,13 +40,15 @@ namespace CapybaraVS.Controls.BaseControls
 
         #region XML定義
         [XmlRoot(nameof(LinkConnector))]
-        public class _AssetXML<OwnerClass>
+        public class _AssetXML<OwnerClass> : IDisposable
             where OwnerClass : LinkConnector
         {
             [XmlIgnore]
             public Action WriteAction = null;
             [XmlIgnore]
             public Action<OwnerClass> ReadAction = null;
+            private bool disposedValue;
+
             public _AssetXML()
             {
                 ReadAction = (self) =>
@@ -110,6 +113,32 @@ namespace CapybaraVS.Controls.BaseControls
             public bool CastConnect { get; set; } = false;
             public UIParam._AssetXML<UIParam> ParamInfo { get; set; } = null;
             public LinkConnectorList._AssetXML<LinkConnectorList> LinkConnectorList { get; set; } = null;
+
+            protected virtual void Dispose(bool disposing)
+            {
+                if (!disposedValue)
+                {
+                    if (disposing)
+                    {
+                        WriteAction = null;
+                        ReadAction = null;
+
+                        // 以下、固有定義開放
+                        Value = null;
+                        ParamInfo?.Dispose();
+                        ParamInfo = null;
+                        LinkConnectorList?.Dispose();
+                        LinkConnectorList = null;
+                    }
+                    disposedValue = true;
+                }
+            }
+
+            public void Dispose()
+            {
+                Dispose(disposing: true);
+                GC.SuppressFinalize(this);
+            }
             #endregion
         }
         public _AssetXML<LinkConnector> AssetXML { get; set; } = null;
@@ -222,6 +251,13 @@ namespace CapybaraVS.Controls.BaseControls
 
         public LinkConnector()
         {
+            Debug.Assert(false);
+        }
+
+        private string debugCreateName = "";
+        public LinkConnector(object self, string _ext = "", [CallerMemberName] string callerMethodName = "")
+        {
+            CommandCanvas.SetDebugCreateList(ref debugCreateName, this, self, callerMethodName, _ext);
             InitializeComponent();
             ConnectorList.OwnerLinkConnector = this;
             pointIdProvider = new PointIdProvider(this);
@@ -270,10 +306,15 @@ namespace CapybaraVS.Controls.BaseControls
         /// </summary>
         /// <param name="functionStack">スタック情報</param>
         /// <param name="preArgument"></param>
-        public void RequestExecute(List<object> functionStack = null, DummyArgumentsStack preArgument = null)
+        public object RequestExecute(List<object> functionStack = null, DummyArgumentsStack preArgument = null)
         {
+            object result = null;
             ConnectorList.RequestExecute(functionStack, preArgument);
-            linkCurveLinks?.RequestExecute(functionStack, preArgument);
+            if (linkCurveLinks != null)
+            {
+                result = linkCurveLinks.RequestExecute(functionStack, preArgument);
+            }
+            return result;
         }
 
         private bool hideLinkPoint = false;
@@ -350,10 +391,10 @@ namespace CapybaraVS.Controls.BaseControls
                     linkCurveLinks ??= new LinkCurveMultiLinks(this);
                 }
                 if (HideLinkPoint)
-                    linkCurveLinks?.Dispose();
+                    linkCurveLinks?.CloseLink();
                 return;
             }
-            linkCurveLinks?.Dispose();
+            linkCurveLinks?.CloseLink();
             if (HideLinkPoint)
                 return;
             if (single)
@@ -510,7 +551,7 @@ namespace CapybaraVS.Controls.BaseControls
                 if (BoxMainPanel.Visibility == Visibility.Visible &&
                     value.IsList)
                 {
-                    // 接続可能かつリスト型の場合は、ノードを展開する
+                    // 接続可能かつリスト型の場合
 
                     ConnectorList.Connect(value);
                 }
@@ -635,8 +676,8 @@ namespace CapybaraVS.Controls.BaseControls
                 }
                 else if (connectValueData is CbObject cbObject)
                 {
-                    if (cbObject.Data is null)
-                        return; // 保険
+                    //if (cbObject.Data is null)
+                    //    return; // 保険
 
                     ValueData.Set(cbObject);
                 }
@@ -714,7 +755,7 @@ namespace CapybaraVS.Controls.BaseControls
                 ValueData.Set(backupValueData);
                 UpdateEvent?.Invoke();
                 backupValueData = null;
-                ConnectorList.Disconnect();
+                ConnectorList?.Disconnect();
             }
             if (!ClearLock)
                 RemoveQurveUpdate();
@@ -733,7 +774,7 @@ namespace CapybaraVS.Controls.BaseControls
 
         public void RequestRemoveQurve()
         {
-            linkCurveLinks?.Dispose();
+            linkCurveLinks?.CloseLink();
             if (backupValueData != null)
             {
                 ValueData = backupValueData;
@@ -787,6 +828,21 @@ namespace CapybaraVS.Controls.BaseControls
                     ConnectorList.Dispose();
                     linkCurveLinks?.Dispose();
                     linkCurveLinks = null;
+
+                    AssetXML?.Dispose();
+                    AssetXML = null;
+                    _OwnerCommandCanvas = null;
+                    defaultValueData?.Dispose();
+                    defaultValueData = null;
+                    backupValueData?.Dispose();
+                    backupValueData = null;
+                    connectValueData = null;
+                    eventLinkRootConnector = null;
+
+                    ParamTextBox.ValueData?.Dispose();
+                    ParamTextBox.Dispose();
+
+                    CommandCanvas.RemoveDebugCreateList(debugCreateName);
                 }
                 disposedValue = true;
             }
@@ -795,8 +851,7 @@ namespace CapybaraVS.Controls.BaseControls
         public void Dispose()
         {
             Dispose(true);
-            // TODO: 上のファイナライザーがオーバーライドされる場合は、次の行のコメントを解除してください。
-            // GC.SuppressFinalize(this);
+            GC.SuppressFinalize(this);
         }
 #endregion
     }

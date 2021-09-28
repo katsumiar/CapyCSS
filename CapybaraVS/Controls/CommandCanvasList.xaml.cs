@@ -37,7 +37,7 @@ namespace CapyCSS.Controls
 
         #region XML定義
         [XmlRoot("CapyCSS")]
-        public class _AssetXML<OwnerClass>
+        public class _AssetXML<OwnerClass> : IDisposable
             where OwnerClass : CommandCanvasList
         {
             [XmlIgnore]
@@ -49,6 +49,12 @@ namespace CapyCSS.Controls
                 ReadAction = (self) =>
                 {
                     CapybaraVS.Language.Instance.LanguageType = Language;
+
+                    if (DataVersion != DATA_VERSION)
+                    {
+                        ControlTools.ShowErrorMessage(CapybaraVS.Language.Instance["Help:DataVersionError"]);
+                        return;
+                    }
 
                     if (BackGroundImagePath != null)
                     {
@@ -85,7 +91,33 @@ namespace CapyCSS.Controls
             public string Language { get; set; } = "ja-JP";
             public string BackGroundImagePath { get; set; } = null;
 
-            public List<string> ScriptWorkRecentList = null;
+            public List<string> ScriptWorkRecentList = null;    // 意味無し？
+            private bool disposedValue;
+
+            protected virtual void Dispose(bool disposing)
+            {
+                if (!disposedValue)
+                {
+                    if (disposing)
+                    {
+                        WriteAction = null;
+                        ReadAction = null;
+
+                        // 以下、固有定義開放
+                        Language = null;
+                        BackGroundImagePath = null;
+                        ScriptWorkRecentList?.Clear();
+                        ScriptWorkRecentList = null;
+                    }
+                    disposedValue = true;
+                }
+            }
+
+            public void Dispose()
+            {
+                Dispose(disposing: true);
+                GC.SuppressFinalize(this);
+            }
             #endregion
         }
         public _AssetXML<CommandCanvasList> AssetXML { get; set; } = null;
@@ -121,6 +153,16 @@ namespace CapyCSS.Controls
         private static Window ownerWindow = null;
 
         public static Window OwnerWindow => ownerWindow;
+
+        public static void SetOwnerCursor(Cursor cursor)
+        {
+            OwnerWindow.Cursor = cursor;
+        }
+
+        public static Cursor GetOwnerCursor()
+        {
+            return OwnerWindow.Cursor;
+        }
 
         private TabItem CurrentTabItem
         {
@@ -159,7 +201,6 @@ namespace CapyCSS.Controls
         /// セットアップ処理です。
         /// </summary>
         /// <param name="owner">オーナーウインドウ</param>
-        /// <param name="settingFile">セッティングファイルパス</param>
         /// <param name="setTitleFunc">タイトル表示処理（func(filename)）</param>
         /// <param name="closingFunc">終了処理</param>
         /// <param name="autoLoadCbsFile">起動時読み込みcbsファイル</param>
@@ -175,6 +216,7 @@ namespace CapyCSS.Controls
             bool isAutoExit = false)
         {
             ownerWindow = owner;
+            OwnerWindow.ForceCursor = true;
             SetTitleFunc = setTitleFunc;
 
             CAPYCSS_WORK_PATH = path;
@@ -416,16 +458,19 @@ namespace CapyCSS.Controls
             DeleteButton.IsEnabled = enable;
         }
 
-        public bool IsLockExecute = false;
+        public delegate object NodeFunction(bool fromScript, string entryPointName);
 
+        /// <summary>
+        /// エントリーポイント管理
+        /// </summary>
         class EntryPoint
         {
             public object owner = null;
-            public Action action = null;
-            public EntryPoint(object _owner, Action _action)
+            public NodeFunction function = null;
+            public EntryPoint(object owner, NodeFunction func)
             {
-                owner = _owner;
-                action = _action;
+                this.owner = owner;
+                this.function = func;
             }
         }
 
@@ -478,16 +523,16 @@ namespace CapyCSS.Controls
         /// </summary>
         public void CallAllExecuteEntryPointEnable(bool enable)
         {
-            foreach (var act in AllExecuteEntryPointList)
+            foreach (var enableAction in AllExecuteEntryPointList)
             {
-                act?.Invoke(enable);
+                enableAction?.Invoke(enable);
             }
         }
 
         /// <summary>
         /// スクリプト実行用公開エントリーポイントリストにエントリーポイントを追加します。
         /// </summary>
-        public void AddPublicExecuteEntryPoint(object owner, Action func)
+        public void AddPublicExecuteEntryPoint(object owner, NodeFunction func)
         {
             PublicExecuteEntryPointList.Add(new EntryPoint(owner, func));
             UpdateButtonEnable();
@@ -509,45 +554,182 @@ namespace CapyCSS.Controls
         /// <summary>
         /// スクリプト実行用公開エントリーポイントリストからエントリーポイントを削除します。
         /// </summary>
-        public void RemovePublicExecuteEntryPoint(Action func)
+        public void RemovePublicExecuteEntryPoint(NodeFunction func)
         {
-            PublicExecuteEntryPointList.RemoveAll(s => s.action == func);
+            PublicExecuteEntryPointList.RemoveAll(s => s.function == func);
             UpdateButtonEnable();
         }
 
+        [ScriptMethod]
         /// <summary>
-        /// スクリプト実行用公開エントリーポイントリストからエントリーポイントをまとめて順次呼び出しします。
+        /// エントリーポイントリストからエントリーポイントをまとめて順次呼び出しします。
+        /// ただし、スクリプトが返し値を返した場合は、そこで終了します。
+        /// エントリーポイント名を指定した場合は、一致したエントリーポイントのみ実行します。
+        /// スクリプト側にエントリーポイント名が設定されている場合は、エントリーポイント名が一致する必要があります。
+        /// ※スクリプトからの呼び出し用です。
         /// </summary>
-        public void CallPublicExecuteEntryPoint(object owner = null)
+        /// <param name="entryPointName">エントリーポイント名</param>
+        /// <returns>スクリプトの返し値</returns>
+        public static object CallEntryPoint(string entryPointName = null)
         {
-            if (IsLockExecute)
-                return; // 再入を禁止する
+            return Instance.CallPublicExecuteEntryPoint(null, true, entryPointName);
+        }
 
-            foreach (var act in PublicExecuteEntryPointList)
+        [ScriptMethod]
+        /// <summary>
+        /// 所属するスクリプトキャンバスのエントリーポイントリストからエントリーポイントをまとめて順次呼び出しします。
+        /// ただし、スクリプトが返し値を返した場合は、そこで終了します。
+        /// エントリーポイント名を指定した場合は、一致したエントリーポイントのみ実行します。
+        /// スクリプト側にエントリーポイント名が設定されている場合は、エントリーポイント名が一致する必要があります。
+        /// ※スクリプトからの呼び出し用です。
+        /// </summary>
+        /// <param name="entryPointName">エントリーポイント名</param>
+        /// <returns>スクリプトの返し値</returns>
+        public static object CallCurrentWorkEntryPoint(string entryPointName = null)
+        {
+            return Instance.CallPublicExecuteEntryPoint(Instance.CurrentScriptCanvas, true, entryPointName);
+        }
+
+        /// <summary>
+        /// エントリーポイント名が存在するかチェックします。
+        /// </summary>
+        /// <param name="owner">対象インスタンスを限定</param>
+        /// <param name="entryPointName">エントリーポイント名</param>
+        /// <returns>存在する==true</returns>
+        public bool IsExistEntryPoint(object owner, string entryPointName)
+        {
+            if (entryPointName != null && entryPointName.Trim().Length == 0)
             {
+                return false;
+            }
+
+            int count = 0;
+            foreach (EntryPoint entryPoint in PublicExecuteEntryPointList)
+            {
+                if (entryPoint.function is null)
+                {
+                    continue;
+                }
+                object result = null;
                 if (owner is null)
                 {
-                    act.action?.Invoke();
+                    result = entryPoint.function.Invoke(false, ":" + entryPointName);
                 }
                 else
                 {
-                    if (act.owner == owner)
+                    if (entryPoint.owner == owner)
                     {
-                        act.action?.Invoke();
+                        result = entryPoint.function.Invoke(false, ":" + entryPointName);
+                    }
+                }
+                if (result != null)
+                {
+                    // 実行結果が返ってきた
+
+                    count++;
+                    if (count > 1)
+                    {
+                        // 自分以外にもう一つ有った
+
+                        return true;
                     }
                 }
             }
-            Dispatcher.BeginInvoke(new Action(() =>
-            {
-                // アイドル状態になってから戻す
+            return false;
+        }
 
-                if (IsAutoExit)
+        /// <summary>
+        /// すべてのエントリーポイントに名前の衝突チェックを依頼します。
+        /// </summary>
+        /// <param name="owner">対象インスタンスを限定</param>
+        public static void CheckPickupAllEntryPoint(object owner)
+        {
+            Instance._CheckPickupAllEntryPoint(owner);
+        }
+
+        public void _CheckPickupAllEntryPoint(object owner)
+        {
+            string command = ":+";
+            foreach (EntryPoint entryPoint in PublicExecuteEntryPointList)
+            {
+                if (entryPoint.function is null)
                 {
+                    continue;
+                }
+                if (owner is null)
+                {
+                    entryPoint.function.Invoke(false, command);
+                }
+                else
+                {
+                    if (entryPoint.owner == owner)
+                    {
+                        entryPoint.function.Invoke(false, command);
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// エントリーポイントリストからエントリーポイントをまとめて順次呼び出しします。
+        /// ただし、スクリプトが返し値を返した場合は、そこで終了します。
+        /// エントリーポイント名を指定した場合は、一致したエントリーポイントのみ実行します。
+        /// スクリプト側にエントリーポイント名が設定されている場合は、エントリーポイント名が一致する必要があります。
+        /// </summary>
+        /// <param name="owner">対象インスタンスを限定</param>
+        /// <param name="entryPointName">エントリーポイント名</param>
+        /// <returns>スクリプトの返し値</returns>
+        public object CallPublicExecuteEntryPoint(object owner, bool fromScript, string entryPointName = null)
+        {
+            if (!fromScript && CommandCanvasList.GetOwnerCursor() == Cursors.Wait)
+                return null;
+
+            object result = null;
+
+            if (entryPointName != null && entryPointName.Trim().Length == 0)
+            {
+                entryPointName = null;
+            }
+
+            foreach (EntryPoint entryPoint in PublicExecuteEntryPointList)
+            {
+                if (entryPoint.function is null)
+                {
+                    continue;
+                }
+                if (owner is null)
+                {
+                    result = entryPoint.function.Invoke(fromScript, entryPointName);
+                }
+                else
+                {
+                    if (entryPoint.owner == owner)
+                    {
+                        result = entryPoint.function.Invoke(fromScript, entryPointName);
+                    }
+                }
+                if (result != null)
+                {
+                    // 実行結果が返ってきた
+
+                    break;
+                }
+            }
+
+            if (!fromScript)
+            {
+                Dispatcher.BeginInvoke(new Action(() =>
+                {
+                    if (IsAutoExit)
+                    {
                     // スクリプト実行後自動終了
 
                     CallClosing?.Invoke();
-                }
-            }), DispatcherPriority.ApplicationIdle);
+                    }
+                }), DispatcherPriority.ApplicationIdle);
+            }
+
+            return result;
         }
 
         /// <summary>
@@ -616,7 +798,11 @@ namespace CapyCSS.Controls
         /// <param name="e"></param>
         private void ExecuteAllButton_Click(object sender, RoutedEventArgs e)
         {
-            CallPublicExecuteEntryPoint();
+            object result = CallPublicExecuteEntryPoint(null, false, EntryPointName.Text.Trim());
+            if (result != null)
+            {
+                ShowResultWindow(result);
+            }
         }
 
         /// <summary>
@@ -626,7 +812,18 @@ namespace CapyCSS.Controls
         /// <param name="e"></param>
         private void ExecuteButton_Click(object sender, RoutedEventArgs e)
         {
-            CallPublicExecuteEntryPoint(CurrentScriptCanvas);
+            object result = CallPublicExecuteEntryPoint(CurrentScriptCanvas, false, EntryPointName.Text.Trim());
+            if (result != null)
+            {
+                ShowResultWindow(result);
+            }
+        }
+
+        private static void ShowResultWindow(object result)
+        {
+            var resultWindow = new ResultWindow(result.ToString());
+            resultWindow.Owner = OwnerWindow;
+            resultWindow.Show();
         }
 
         /// <summary>
@@ -659,7 +856,7 @@ namespace CapyCSS.Controls
                         break;
 
                     case Key.F5:    // 全スクリプト実行
-                        CallPublicExecuteEntryPoint();
+                        CallPublicExecuteEntryPoint(null, false, null);
                         e.Handled = true;
                         break;
                 }
@@ -677,7 +874,7 @@ namespace CapyCSS.Controls
                 switch (e.Key)
                 {
                     case Key.F5:    // スクリプト実行
-                        CallPublicExecuteEntryPoint(CurrentScriptCanvas);
+                        CallPublicExecuteEntryPoint(CurrentScriptCanvas, false);
                         e.Handled = true;
                         break;
                 }
@@ -774,7 +971,7 @@ namespace CapyCSS.Controls
             helpWindow.ShowDialog();
         }
 
-        [ScriptMethod("System.Application." + nameof(SetWorkCanvasBG))]
+        [ScriptMethod("System.Application")]
         static public void SetWorkCanvasBG(string path, Stretch stretch = Stretch.UniformToFill, bool overwriteSettings = false)
         {
             if (overwriteSettings)
@@ -813,13 +1010,17 @@ namespace CapyCSS.Controls
 
         public void Dispose()
         {
-            foreach (var node in CanvasData)
-            {
-                node.Dispose();
-            }
-            CanvasData.Clear();
+            CbSTUtils.ForeachDispose(CanvasData);
+            CanvasData = null;
             CapybaraVS.Language.Instance.Dispose();
             ToolExec.KillProcess();
+
+            GC.SuppressFinalize(this);
+        }
+
+        private void EntryPointName_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            EntryPointNamePh.Visibility = (EntryPointName.Text.Trim().Length != 0) ? Visibility.Hidden : Visibility.Visible;
         }
     }
 }

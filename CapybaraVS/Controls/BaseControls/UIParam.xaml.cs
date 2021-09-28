@@ -27,16 +27,19 @@ namespace CapybaraVS.Controls.BaseControls
     public partial class UIParam 
         : UserControl
         , IHaveCommandCanvas
+        , IDisposable
     {
         #region XML定義
         [XmlRoot(nameof(UIParam))]
-        public class _AssetXML<OwnerClass>
+        public class _AssetXML<OwnerClass> : IDisposable
             where OwnerClass : UIParam
         {
             [XmlIgnore]
             public Action WriteAction = null;
             [XmlIgnore]
             public Action<OwnerClass> ReadAction = null;
+            private bool disposedValue;
+
             public _AssetXML()
             {
                 ReadAction = (self) =>
@@ -66,6 +69,31 @@ namespace CapybaraVS.Controls.BaseControls
             public string ParamName { get; set; } = "";
             public string ParamNameLabelOverlap { get; set; } = "";
             public NameLabel._AssetXML<NameLabel> ParamNameLabel { get; set; } = null;
+
+            protected virtual void Dispose(bool disposing)
+            {
+                if (!disposedValue)
+                {
+                    if (disposing)
+                    {
+                        WriteAction = null;
+                        ReadAction = null;
+
+                        // 以下、固有定義開放
+                        ParamName = null;
+                        ParamNameLabelOverlap = null;
+                        ParamNameLabel?.Dispose();
+                        ParamNameLabel = null;
+                    }
+                    disposedValue = true;
+                }
+            }
+
+            public void Dispose()
+            {
+                Dispose(disposing: true);
+                GC.SuppressFinalize(this);
+            }
             #endregion
         }
         public _AssetXML<UIParam> AssetXML { get; set; } = null;
@@ -152,11 +180,13 @@ namespace CapybaraVS.Controls.BaseControls
                     string text = getValue(self);
                     self.ParamNameLabel.LabelString = text;
                     if (self.ParamNameLabelOverlap.Length != 0 && !(self.ValueData is ParamNameOnly))
+                    {
                         self.ParamNameLabel.LabelString = self.ParamNameLabelOverlap;
+                    }
                     if (self.ValueData is ICbValue value)
                     {
-                        value.Name = text;
-                        self.ParamEdit = value.ValueUIString;
+                        value.Name = text;  // 変数に名前もコピーする
+                        //self.ParamEdit = value.ValueUIString;
                     }
                 });
 
@@ -192,7 +222,7 @@ namespace CapybaraVS.Controls.BaseControls
         {
             valueData ??= ValueData;
 
-            if (OwnerCommandCanvas.UIParamHoldAction.Enabled)
+            if (OwnerCommandCanvas.UIParamHoldAction != null && OwnerCommandCanvas.UIParamHoldAction.Enabled)
             {
                 // 画面反映はあとから一括で行う
 
@@ -239,7 +269,7 @@ namespace CapybaraVS.Controls.BaseControls
             MediaPanel.Visibility = Visibility.Collapsed;
 
             // ※ valueData.Data が null でも表示は必要
-            if (valueData is ICbValueEnum selectValue)
+            if (!valueData.IsNull && valueData is ICbValueEnum selectValue)
             {
                 Select.Visibility = Visibility.Visible;
                 UpdateTypeEnum(valueData, selectValue);
@@ -371,7 +401,7 @@ namespace CapybaraVS.Controls.BaseControls
         }
 #endregion
 
-#region UpdateEvent 添付プロパティ実装
+        #region UpdateEvent 添付プロパティ実装
 
         private static ImplementDependencyProperty<UIParam, Action> impUpdateEvent =
             new ImplementDependencyProperty<UIParam, Action>(
@@ -389,9 +419,9 @@ namespace CapybaraVS.Controls.BaseControls
             set { impUpdateEvent.SetValue(this, value); }
         }
 
-#endregion
+        #endregion
 
-#region ReadOnly 添付プロパティ実装
+        #region ReadOnly 添付プロパティ実装
 
         private static ImplementDependencyProperty<UIParam, bool> impReadOnly =
             new ImplementDependencyProperty<UIParam, bool>(
@@ -417,9 +447,9 @@ namespace CapybaraVS.Controls.BaseControls
             set { impReadOnly.SetValue(this, value); }
         }
 
-#endregion
+        #endregion
 
-#region ParamNameLabelOverlap 添付プロパティ実装
+        #region ParamNameLabelOverlap 添付プロパティ実装
         private static ImplementDependencyProperty<UIParam, string> impParamNameLabelOverlap =
             new ImplementDependencyProperty<UIParam, string>(
                 nameof(ParamNameLabelOverlap),
@@ -436,9 +466,9 @@ namespace CapybaraVS.Controls.BaseControls
             get { return impParamNameLabelOverlap.GetValue(this); }
             set { impParamNameLabelOverlap.SetValue(this, value); }
         }
-#endregion
+        #endregion
 
-#region TypeNameLabelOverlap 添付プロパティ実装
+        #region TypeNameLabelOverlap 添付プロパティ実装
         private static ImplementDependencyProperty<UIParam, string> impTypeNameLabelOverlap =
             new ImplementDependencyProperty<UIParam, string>(
                 nameof(TypeNameLabelOverlap),
@@ -455,9 +485,9 @@ namespace CapybaraVS.Controls.BaseControls
             get { return impTypeNameLabelOverlap.GetValue(this); }
             set { impTypeNameLabelOverlap.SetValue(this, value); }
         }
-#endregion
+        #endregion
 
-#region CastType 添付プロパティ実装
+        #region CastType 添付プロパティ実装
         private static ImplementDependencyProperty<UIParam, bool> impCastType =
             new ImplementDependencyProperty<UIParam, bool>(
                 nameof(CastType),
@@ -474,9 +504,10 @@ namespace CapybaraVS.Controls.BaseControls
             get { return impCastType.GetValue(this); }
             set { impCastType.SetValue(this, value); }
         }
-#endregion
+        #endregion
 
         private CommandCanvas _OwnerCommandCanvas = null;
+        private bool disposedValue;
 
         public CommandCanvas OwnerCommandCanvas
         {
@@ -502,10 +533,7 @@ namespace CapybaraVS.Controls.BaseControls
                     UpdateEvent?.Invoke();
                 }
                 );
-            Edit.LostFocus += (sender, e) =>
-            {
-                ExitEditMode();
-            };
+            Edit.LostFocus += ExitEditMode;
         }
 
         private void ToolTipUpdate()
@@ -513,9 +541,16 @@ namespace CapybaraVS.Controls.BaseControls
             string valueString = null;
             if (ValueData is CbObject cbObject)
             {
-                if (!cbObject.ValueTypeObject.IsNull && cbObject.ValueTypeObject.Data is ICbShowValue cbVSShow)
+                if (!cbObject.IsNull)
                 {
-                    valueString = cbVSShow.DataString;
+                    if (cbObject.Data is ICbShowValue cbVSShow)
+                    {
+                        valueString = cbVSShow.DataString;
+                    }
+                    else
+                    {
+                        valueString = CbSTUtils.DataToString(cbObject.Data);
+                    }
                 }
                 else
                 {
@@ -532,7 +567,7 @@ namespace CapybaraVS.Controls.BaseControls
                     }
                     else
                     {
-                        valueString = cbClass.Data.ToString();
+                        valueString = CbSTUtils.DataToString(cbClass.Data);
                     }
                 }
                 else
@@ -567,12 +602,9 @@ namespace CapybaraVS.Controls.BaseControls
             }
             if (valueString is null)
             {
-                Edit.ToolTip = Edit.Text.Trim('\r', '\n');
+                valueString = Edit.Text;
             }
-            else
-            {
-                Edit.ToolTip = valueString.Trim('\r', '\n');
-            }
+            Edit.ToolTip = valueString.Trim('\r', '\n');
         }
 
         private void Edit_KeyDown(object sender, KeyEventArgs e)
@@ -583,7 +615,7 @@ namespace CapybaraVS.Controls.BaseControls
             }
         }
 
-        private void ExitEditMode()
+        private void ExitEditMode(object sender = null, RoutedEventArgs e = null)
         {
             // 編集した後に正しい形式に変換する
 
@@ -594,10 +626,14 @@ namespace CapybaraVS.Controls.BaseControls
         private void Select_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             var selectedItem = (string)Select.SelectedItem;
-            if (selectedItem == null) 
+            if (selectedItem == null)
                 return;
 
-            ValueData.ValueString = selectedItem as string;
+            string value = selectedItem as string;
+            if (ValueData.ValueString.ToUpper() != value.ToUpper())
+            {
+                ValueData.ValueString = selectedItem as string;
+            }
             UpdateEvent?.Invoke();
         }
 
@@ -611,6 +647,31 @@ namespace CapybaraVS.Controls.BaseControls
         private void MediaBox_MouseLeave(object sender, MouseEventArgs e)
         {
             MediaBox.Stop();
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!disposedValue)
+            {
+                if (disposing)
+                {
+                    Edit.LostFocus -= ExitEditMode;
+                    Edit.ToolTip = null;
+                    AssetXML?.Dispose();
+                    AssetXML = null;
+                    _OwnerCommandCanvas = null;
+                    ParamNameLabel.Dispose();
+                    ValueData?.Dispose();
+                    ValueData = null;
+                }
+                disposedValue = true;
+            }
+        }
+
+        public void Dispose()
+        {
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
         }
     }
 }

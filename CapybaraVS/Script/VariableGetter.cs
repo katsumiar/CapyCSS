@@ -8,6 +8,8 @@ namespace CapybaraVS.Script
     /// 変数参照仲介クラス
     /// </summary>
     public class VariableGetter
+        : IDisposable
+
     {
         int id = 0;
         string valueName = "!ERROR!";
@@ -23,11 +25,13 @@ namespace CapybaraVS.Script
         /// </summary>
         public bool IsError => is_error;
         MultiRootConnector owner = null;
+        private bool disposedValue;
 
         /// <summary>
         /// 登録された適切な表示用の名前を返す
         /// </summary>
         public string MakeName => owner.GetVariableName(valueName);
+
         public VariableGetter(MultiRootConnector owner, Func<string, string> func = null, int index = 0)
         {
             this.owner = owner;
@@ -52,6 +56,24 @@ namespace CapybaraVS.Script
             {
                 this.owner.ExceptionFunc(ex);
             }
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!disposedValue)
+            {
+                if (disposing)
+                {
+                    this.owner = null;
+                }
+                disposedValue = true;
+            }
+        }
+
+        public void Dispose()
+        {
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
         }
     }
 }

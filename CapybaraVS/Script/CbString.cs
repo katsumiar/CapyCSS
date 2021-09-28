@@ -7,7 +7,9 @@ namespace CapybaraVS.Script
     /// <summary>
     /// string 型
     /// </summary>
-    public class CbString : BaseCbValueClass<string>, ICbValueClass<string>
+    public class CbString
+        : BaseCbValueClass<string>
+        , ICbValueClass<string>
     {
         public override Type MyType => typeof(CbString);
 
@@ -15,6 +17,23 @@ namespace CapybaraVS.Script
         {
             Value = n;
             Name = name;
+        }
+
+        /// <summary>
+        /// 変数の持つ値を object として参照します。
+        /// ※ 型を厳密に扱う場合は Value を参照します。
+        /// </summary>
+        public override object Data
+        {
+            get
+            {
+                Debug.Assert(!(IsNullable && IsNull));
+                return Value;
+            }
+            set
+            {
+                Value = (string)value;
+            }
         }
 
         /// <summary>
@@ -26,6 +45,13 @@ namespace CapybaraVS.Script
             {
                 if (IsError)
                     return CbSTUtils.ERROR_STR;
+                if (IsNull)
+                {
+                    if (IsNull)
+                    {
+                        return $"[{TypeName}]{CbSTUtils.UI_NULL_STR}";
+                    }
+                }
                 return Value;
             }
         }
@@ -35,12 +61,24 @@ namespace CapybaraVS.Script
         /// </summary>
         public override string ValueString
         {
-            get => Value;
+            get
+            {
+                if (IsNull)
+                {
+                    return $"[{TypeName}]{CbSTUtils.UI_NULL_STR}";
+                }
+                return Value;
+            }
             set
             {
                 Value = value;
             }
         }
+
+        /// <summary>
+        /// 変数の持つ値は null か？
+        /// </summary>
+        public override bool IsNull => Value is null;
 
         public override void Set(ICbValue n)
         {
@@ -51,7 +89,14 @@ namespace CapybaraVS.Script
 
                 // 値を文字列にしてコピーする
 
-                ValueString = n.ValueString;
+                if (n.IsNull)
+                {
+                    Value = null;
+                }
+                else
+                {
+                    ValueString = n.ValueString;
+                }
                 IsLiteral = n.IsLiteral;
                 if (IsError)
                 {
@@ -69,19 +114,31 @@ namespace CapybaraVS.Script
             }
         }
 
-        public static CbString Create(string name = "")
+        public static CbString Create(string name = "") => new CbString("", name);
+
+        public static CbString Create(string n, string name) => new CbString(n, name);
+
+        public static Func<ICbValue> TF = () => Create();
+        public static Func<string, ICbValue> NTF = (name) => Create(name);
+
+        private bool disposedValue;
+
+        protected virtual void Dispose(bool disposing)
         {
-            var ret = new CbString("", name);
-            return ret;
+            if (!disposedValue)
+            {
+                if (disposing)
+                {
+                    ClearWork();
+                }
+                disposedValue = true;
+            }
         }
 
-        public static CbString Create(string n, string name)
+        public void Dispose()
         {
-            var ret = new CbString(n, name);
-            return ret;
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
         }
-
-        public static Func<ICbValue> TF = () => CbString.Create();
-        public static Func<string, ICbValue> NTF = (name) => CbString.Create(name);
     }
 }

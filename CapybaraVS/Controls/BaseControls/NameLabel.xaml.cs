@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CapyCSS.Controls;
+using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Windows;
@@ -18,17 +19,21 @@ namespace CapybaraVS.Controls.BaseControls
     /// <summary>
     /// NameLabel.xaml の相互作用ロジック
     /// </summary>
-    public partial class NameLabel : UserControl
+    public partial class NameLabel 
+        : UserControl
+        , IDisposable
     {
         #region XML定義
         [XmlRoot(nameof(NameLabel))]
-        public class _AssetXML<OwnerClass>
+        public class _AssetXML<OwnerClass> : IDisposable
             where OwnerClass : NameLabel
         {
             [XmlIgnore]
             public Action WriteAction = null;
             [XmlIgnore]
             public Action<OwnerClass> ReadAction = null;
+            private bool disposedValue;
+
             public _AssetXML()
             {
                 ReadAction = (self) =>
@@ -48,6 +53,28 @@ namespace CapybaraVS.Controls.BaseControls
             }
             #region 固有定義
             public string LabelString { get; set; } = null;
+
+            protected virtual void Dispose(bool disposing)
+            {
+                if (!disposedValue)
+                {
+                    if (disposing)
+                    {
+                        WriteAction = null;
+                        ReadAction = null;
+
+                        // 以下、固有定義開放
+                        LabelString = null;
+                    }
+                    disposedValue = true;
+                }
+            }
+
+            public void Dispose()
+            {
+                Dispose(disposing: true);
+                GC.SuppressFinalize(this);
+            }
             #endregion
         }
         public _AssetXML<NameLabel> AssetXML { get; set; } = null;
@@ -169,7 +196,7 @@ namespace CapybaraVS.Controls.BaseControls
                 {
                     self.EditControl.IsReadOnly = getValue(self);
                 });
-
+        private bool disposedValue;
         public static readonly DependencyProperty ReadOnlyProperty = impReadOnly.Regist(false);
 
         public bool ReadOnly
@@ -184,10 +211,7 @@ namespace CapybaraVS.Controls.BaseControls
         {
             InitializeComponent();
             AssetXML = new _AssetXML<NameLabel>(this);
-            LostFocus += (sender, e) =>
-            {
-                ExitEditMode();
-            };
+            LostFocus += ExitEditMode;
         }
 
         private void LabelControl_MouseDoubleClick(object sender, MouseButtonEventArgs e)
@@ -228,7 +252,7 @@ namespace CapybaraVS.Controls.BaseControls
             }
         }
 
-        private void ExitEditMode()
+        private void ExitEditMode(object sender = null, RoutedEventArgs e = null)
         {
             EditControl.Visibility = Visibility.Hidden;
             LabelControl.Visibility = Visibility.Visible;
@@ -238,12 +262,34 @@ namespace CapybaraVS.Controls.BaseControls
 
         private void LabelControl_MouseEnter(object sender, MouseEventArgs e)
         {
-            Cursor = Cursors.Hand;
+            CommandCanvasList.SetOwnerCursor(Cursors.Hand);
         }
 
         private void LabelControl_MouseLeave(object sender, MouseEventArgs e)
         {
-            Cursor = null;
+            CommandCanvasList.SetOwnerCursor(null);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!disposedValue)
+            {
+                if (disposing)
+                {
+                    EditControl.Text = null;
+                    UpdateEvent = null;
+                    LostFocus -= ExitEditMode;
+                    AssetXML?.Dispose();
+                    AssetXML = null;
+                }
+                disposedValue = true;
+            }
+        }
+
+        public void Dispose()
+        {
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
         }
     }
 }

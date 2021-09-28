@@ -91,6 +91,13 @@ namespace CapyCSS.Controls
 
         #endregion
 
+        public CommandWindow()
+        {
+            InitializeComponent();
+            filterProcTimer.Tick += EventHandler;
+            filterProcTimer.IsEnabled = false;
+        }
+
         public void SetPos(Point? pos = null)
         {
             ControlTools.SetWindowPos(this, pos);
@@ -104,27 +111,25 @@ namespace CapyCSS.Controls
             Close();
         }
 
-        public CommandWindow()
-        {
-            InitializeComponent();
-            filterProcTimer.Tick += EventHandler;
-        }
-
         void EventHandler(object sender, EventArgs e)
         {
             filterProcTimer.Stop();
 
+            cancellationTokenSource?.Cancel();
+            searchTreeViewCommand.AssetTreeData.Clear();
+
             // 待機後の処理
-            treeViewCommand.SetFilter(
-                findTreeViewCommand,
+            cancellationTokenSource = treeViewCommand.SetFilter(
+                searchTreeViewCommand,
                 FilterText.Text);
+
             filterProcTimer.IsEnabled = false;
         }
 
         bool trueCloseing = false;
 
         /// <summary>
-        /// ウインドウ破棄をキャンセルします。
+        /// ウインドウを見せかけ上で消します。
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
@@ -132,11 +137,15 @@ namespace CapyCSS.Controls
         {
             if (!trueCloseing)
             {
+                cancellationTokenSource?.Cancel();
+                filterProcTimer.Stop();
+                filterProcTimer.IsEnabled = false;
                 Hide();
                 e.Cancel = true;
             }
         }
 
+        System.Threading.CancellationTokenSource cancellationTokenSource = null;
         DispatcherTimer filterProcTimer = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(300) };
 
         private void FilterText_KeyUp(object sender, KeyEventArgs e)
@@ -144,26 +153,45 @@ namespace CapyCSS.Controls
             FilterText.Text = FilterText.Text.Trim();
             if (FilterText.Text != "")
             {
-                // フィルタリング処理は、スレッドが使えないのでタイマーで時間差を置いて処理する
+                // フィルタリング処理は、タイマーで時間差を置いて処理する
 
+                if (filterProcTimer.IsEnabled)
+                {
+                    filterProcTimer.Stop();
+                    filterProcTimer.Start();
+                    return;
+                }
+
+                treeViewCommand.Visibility = Visibility.Collapsed;
+                searchTreeViewCommand.Visibility = Visibility.Visible;
                 filterProcTimer.IsEnabled = true;
                 filterProcTimer.Start();
-                treeViewCommand.Visibility = Visibility.Collapsed;
-                findTreeViewCommand.Visibility = Visibility.Visible;
             }
             else
             {
-                filterProcTimer.IsEnabled = false;
+                // フィルタリング解除
+
                 treeViewCommand.Visibility = Visibility.Visible;
-                findTreeViewCommand.Visibility = Visibility.Collapsed;
+                searchTreeViewCommand.Visibility = Visibility.Collapsed;
+                cancellationTokenSource?.Cancel();
+                cancellationTokenSource = null;
+                filterProcTimer.Stop();
+                filterProcTimer.IsEnabled = false;
             }
         }
 
         public void Dispose()
         {
+            cancellationTokenSource?.Cancel();
+            cancellationTokenSource = null;
             trueCloseing = true;
             Close();
             filterProcTimer.Tick -= EventHandler;
+            filterProcTimer = null;
+            searchTreeViewCommand.AssetTreeData.Clear();
+            treeViewCommand.AssetTreeData.Clear();
+
+            GC.SuppressFinalize(this);
         }
     }
 }

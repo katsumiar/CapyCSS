@@ -27,6 +27,7 @@ namespace CapybaraVS.Controls.BaseControls
     public partial class StackGroup
         : UserControl
         , IHaveCommandCanvas
+        , IDisposable
     {
         public ObservableCollection<StackGroup> ListData { get; set; } = new ObservableCollection<StackGroup>();
 
@@ -204,6 +205,7 @@ namespace CapybaraVS.Controls.BaseControls
 
                             while (remaining-- > 0)
                             {
+                                ListData[i].Dispose();
                                 ListData.RemoveAt(i);
                             }
                         }
@@ -231,6 +233,7 @@ namespace CapybaraVS.Controls.BaseControls
         }
 
         private bool IsCancelHoldAction = false;
+        private bool disposedValue;
 
         public StackNode AddListNode(StackNode node)
         {
@@ -334,10 +337,10 @@ namespace CapybaraVS.Controls.BaseControls
         /// </summary>
         private void OpenAccordion()
         {
-            CommandCanvasList.OwnerWindow.Cursor = Cursors.Wait;
+            CommandCanvasList.SetOwnerCursor(Cursors.Wait);
             Dispatcher.BeginInvoke(new Action(() =>
                 {
-                    CommandCanvasList.OwnerWindow.Cursor = null;
+                    CommandCanvasList.SetOwnerCursor(null);
                 }),
                 DispatcherPriority.ApplicationIdle
             );
@@ -473,12 +476,53 @@ namespace CapybaraVS.Controls.BaseControls
 
         private void Accordion1_MouseEnter(object sender, MouseEventArgs e)
         {
-            Cursor = Cursors.Hand;
+            CommandCanvasList.SetOwnerCursor(Cursors.Hand);
         }
 
         private void Accordion1_MouseLeave(object sender, MouseEventArgs e)
         {
-            Cursor = null;
+            CommandCanvasList.SetOwnerCursor(null);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!disposedValue)
+            {
+                if (disposing)
+                {
+                    foreach (var node in ListData)
+                    {
+                        node.Dispose();
+                    }
+                    if (ListPanel.Children.Count != 0)
+                    {
+                        if (ListPanel.Children[0] is StackNode stackNode)
+                        {
+                            stackNode.Dispose();
+                        }
+                    }
+
+                    ListData.Clear();
+                    ListData = null;
+                    addEvent = null;
+                    IsEnableDelete = null;
+                    DeleteEvent = null;
+                    CbValue?.Dispose();
+                    CbValue = null;
+                    CbListValue?.Dispose();
+                    CbListValue = null;
+                    _OwnerCommandCanvas = null;
+                    HoldAction.Dispose();
+                    HoldAction = null;
+                }
+                disposedValue = true;
+            }
+        }
+
+        public void Dispose()
+        {
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
         }
     }
 }

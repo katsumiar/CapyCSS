@@ -18,7 +18,7 @@ namespace CapybaraVS.Script
         public const string FUNC_STR = "Func";
         public const string ACTION_STR = "Action";
         public const string LITERAL_LIST_STR = "List";
-        public const string LIST_STR = "ICollection";
+        public const string LIST_STR = "IEnumerable";
         public const string CLASS_STR = "Class";
         public const string ENUM_STR = "Enum";
         public const string STRUCT_STR = "Struct";
@@ -55,12 +55,20 @@ namespace CapybaraVS.Script
         public static readonly Type FUNC_TYPE = typeof(Func<>);
         public static readonly Type FUNC2ARG_TYPE = typeof(Func<,>);
         public static readonly Type ACTION_TYPE = typeof(Action<>);
+        public static readonly Type NULLABLE_TYPE = typeof(Nullable<>);
         public static readonly Type DUMMY_TYPE = typeof(int); // ダミー
 
         public const string ERROR_STR = "[ERROR]";          // エラーの表現
         public const string NULL_STR = "null";              // nullの表現
         public const string DELEGATE_STR = "[delegate]";    // dlegateの表現
         public const string UI_NULL_STR = "<null>";         // UI上のnullの表現
+
+        public const string MENU_STATIC = "[static]";       // コマンドメニュー上での静的表現
+        public const string MENU_VIRTUAL = "[override]";    // コマンドメニュー上でのオーバーライド表現
+
+        public const string MENU_GETTER = ".(getter).";     // コマンドメニュー上でのゲッターグループ表現
+        public const string MENU_SETTER = ".(setter).";     // コマンドメニュー上でのセッターグループ表現
+        public const string MENU_CONSTRUCTOR = ".(new).";   // コマンドメニュー上でのコンストラクタグループ表現
 
         /// <summary>
         /// ユーザーによる型作成時に組み込み型選択肢に出てくる型情報です。
@@ -217,6 +225,11 @@ namespace CapybaraVS.Script
 
         static public string __GetTypeName(Type type)
         {
+            if (type == typeof(Nullable))
+            {
+                return type.Name;
+            }
+
             bool isNotGeneName = false;
             if (type.IsGenericType)
             {
@@ -399,7 +412,7 @@ namespace CapybaraVS.Script
                 if (fromType == typeof(object))
                     return true;    // 接続元が object なら無条件でキャスト可能
 
-                if (!CbScript.IsValueType(fromType) || !CbScript.IsValueType(toType))
+                if (!CbScript.IsCalcable(fromType) || !CbScript.IsCalcable(toType))
                     return false;
 
                 // 以下、値を表現する型のみ
@@ -420,8 +433,27 @@ namespace CapybaraVS.Script
             if (toType == typeof(object))
                 return true;    // object型なら無条件に繋がる
             
-            if (CbFunc.IsActionType(toType))
-                return true;    // Action型なら無条件に繋がる
+            if (IsDelegate(toType))
+            {
+                // 接続先がデリゲート型
+
+                Type toRetType = GetDelegateReturnType(toType);
+
+                if (IsDelegate(fromType))
+                {
+                    // 接続元のデリゲート
+
+                    Type fromRetType = GetDelegateReturnType(fromType);
+                    return IsAssignment(toRetType, fromRetType, isCast);
+                }
+
+                if (IsVoid(toRetType))
+                {
+                    // 値を返さないデリゲートは、無条件で繋がる
+
+                    return true;
+                }
+            }
 
             if (fromType == typeof(CbVoid))
                 return false;   // object と Action 以外には繋がらない
@@ -432,11 +464,13 @@ namespace CapybaraVS.Script
             if (isCast && IsCastAssignment(toType, fromType))
                 return true;    // Cast接続なら繋がる
 
-            if (CbFunc.IsFuncType(toType))
+            if (IsDelegate(toType))
             {
-                Type argType = toType.GetGenericArguments()[0]; // Func の返り値の型
-                if (IsAssignment(argType, fromType, isCast))
-                    return true;    // Func の返り値の型に代入可能なら繋がる
+                // 接続先がデリゲート型
+
+                Type type = GetDelegateReturnType(toType);
+                Debug.Assert(!IsVoid(type));
+                return IsAssignment(type, fromType, isCast);
             }
 
             if (toType.IsAssignableFrom(fromType))
@@ -514,15 +548,21 @@ namespace CapybaraVS.Script
 
         public static string GetGenericParamatersString(MethodBase type)
         {
-            return GetGenericParamatersString(type.GetGenericArguments());
+            var result = GetGenericParamatersString(type.GetGenericArguments());
+            if (result == "")
+                return "";
+            return "<" + result + ">";
         }
 
         public static string GetGenericParamatersString(Type type)
         {
-            return GetGenericParamatersString(type.GetGenericArguments());
+            var result = GetGenericParamatersString(type.GetGenericArguments());
+            if (result == "")
+                return "";
+            return "<" + result + ">";
         }
 
-        public static string GetGenericParamatersString(Type[] types)
+        private static string GetGenericParamatersString(Type[] types)
         {
             if (types.Length == 0)
                 return "";
@@ -543,11 +583,11 @@ namespace CapybaraVS.Script
                 }
 
                 if (ret is null)
-                    ret = $"<{name}";
+                    ret = $"{name}";
                 else
                     ret += $", {name}";
             }
-            return ret + ">";
+            return ret;
         }
 
         public static string GetClassNameOnly(Type type)
@@ -560,15 +600,24 @@ namespace CapybaraVS.Script
 
         public static string GetGenericTypeName(Type type)
         {
-            return GetClassNameOnly(type) + GetGenericParamatersString(type);
+            string result = GetClassNameOnly(type);
+            if (result == "Nullable")
+            {
+                result = GetGenericParamatersString(type.GetGenericArguments()) + "?";
+            }
+            else
+            {
+                result = result + GetGenericParamatersString(type);
+            }
+            return result;
         }
 
         /// <summary>
         /// ジェネリック引数をストリップしたジェネリック引数を返します。
         /// </summary>
-        /// <param name="outName"></param>
+        /// <param name="name"></param>
         /// <returns></returns>
-        public static string StripParamater(string outName)
+        public static string StripParamater(string name)
         {
             string _StripParamater(string outName)
             {
@@ -581,33 +630,277 @@ namespace CapybaraVS.Script
                 while (count-- != 0)
                     repParam += ",";
                 repParam += ">";
-                outName = outName.Replace(param, repParam);
+                if (outName.Contains(", "))
+                    outName = outName.Replace(param, repParam);
+                else
+                    outName = outName.Replace(param.Replace(" ", ""), repParam);
                 return outName;
             }
 
-            if (!outName.Contains("<") || !outName.Contains(">"))
-                return outName;
+            if (!name.Contains("<") || !name.Contains(">"))
+                return name;
 
             string temp;
             do
             {
-                temp = outName;
-                outName = _StripParamater(outName);
+                temp = name;
+                name = _StripParamater(name);
             }
-            while (outName != temp);
+            while (name != temp);
 
-            return outName;
+            return name;
         }
 
-        public static string GetParamater(Tuple<char, char> tuple, string outName)
+        /// <summary>
+        /// ジェネリックパラメータに該当する文字列部分を取り出します。
+        /// ※「,」の後ろにスペースを入れます。
+        /// </summary>
+        /// <param name="name">対象文字列</param>
+        /// <returns>ジェネリックパラメータに該当する文字列部分</returns>
+        public static string GetParamater(string name)
         {
-            int sPos = outName.IndexOf(tuple.Item1);
-            int ePos = outName.IndexOf(tuple.Item2);
+            return CbSTUtils.GetParamater(new Tuple<char, char>('<', '>'), name);
+        }
+
+        public static string GetParamater(Tuple<char, char> tuple, string name)
+        {
+            int sPos = name.IndexOf(tuple.Item1);
+            int ePos = name.IndexOf(tuple.Item2);
             if (sPos != -1 && ePos != -1)
             {
-                return outName.Substring(sPos, ePos - sPos + 1);
+                string ret = name.Substring(sPos, ePos - sPos + 1);
+                if (!ret.Contains(", ") && ret.Contains(","))
+                {
+                    ret = ret.Replace(",", ", ");
+                }
+                return ret;
             }
             return null;
+        }
+
+        /// <summary>
+        /// 前方一致した文字列を削除した文字列を返します。
+        /// </summary>
+        /// <param name="str">対象の文字列</param>
+        /// <param name="strip">削除する文字列</param>
+        /// <param name="IgnoreCase">大文字小文字を無視するなら true</param>
+        /// <returns>前方一致した文字列を削除した文字列</returns>
+        public static string StartStrip(string str, string strip, bool IgnoreCase = false)
+        {
+            if (str.StartsWith(strip)
+                || (IgnoreCase && str.ToUpper().StartsWith(strip.ToUpper()))
+                )
+            {
+                return str.Substring(strip.Length);
+            }
+            return str;
+        }
+
+        /// <summary>
+        /// リスト内の要素を Dispose します。
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="list"></param>
+        public static void ForeachDispose<T>(ICollection<T> list)
+        {
+            if (list is null)
+                return;
+            foreach (var node in list)
+            {
+                if (node is IDisposable disposable)
+                {
+                    disposable.Dispose();
+                }
+            }
+            list.Clear();
+        }
+
+        /// <summary>
+        /// リスト内の要素を Dispose します。
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="list"></param>
+        public static void ForeachDispose<T1,T2>(IDictionary<T1,T2> list)
+        {
+            if (list is null)
+                return;
+            foreach (var node in list)
+            {
+                if (node.Key is IDisposable disposable)
+                {
+                    disposable.Dispose();
+                }
+                if (node.Value is IDisposable disposable2)
+                {
+                    disposable2.Dispose();
+                }
+            }
+            list.Clear();
+        }
+
+        /// <summary>
+        /// デリゲート型かどうかを判定します。
+        /// </summary>
+        /// <param name="type">対象の型</param>
+        /// <returns>デリゲート==true</returns>
+        public static bool IsDelegate(Type type)
+        {
+            return type != null && type.BaseType != null & type.BaseType == typeof(MulticastDelegate);
+        }
+
+        /// <summary>
+        /// デリゲート型の返し値の型を返します。
+        /// </summary>
+        /// <param name="type">対象の型</param>
+        /// <returns>デリゲートの返し値の型</returns>
+        public static Type GetDelegateReturnType(Type type)
+        {
+            if (!IsDelegate(type))
+            {
+                return null;
+            }
+            MethodInfo info = ((MethodInfo[])((TypeInfo)type).DeclaredMethods)[0];
+            return info.ReturnType;
+        }
+
+        /// <summary>
+        /// デリゲート型のパラメータの情報を返します。
+        /// </summary>
+        /// <param name="type">対象の型</param>
+        /// <returns>パラメータ情報配列</returns>
+        public static ParameterInfo[] GetDelegateParameterInfos(Type type)
+        {
+            if (!IsDelegate(type))
+            {
+                return null;
+            }
+            MethodInfo info = ((MethodInfo[])((TypeInfo)type).DeclaredMethods)[0];
+            return info.GetParameters();
+        }
+
+        /// <summary>
+        /// デリゲート型のパラメータの型を返します。
+        /// </summary>
+        /// <param name="type">対象の型</param>
+        /// <returns>型配列</returns>
+        public static Type[] GetDelegateParameterTypes(Type type)
+        {
+            var infos = GetDelegateParameterInfos(type);
+            if (infos is null)
+                return null;
+            List<Type> types = new List<Type>();
+            foreach (var info in infos)
+            {
+                types.Add(info.ParameterType);
+            }
+            return types.ToArray();
+        }
+
+        /// <summary>
+        /// 型が Void か判定します。
+        /// </summary>
+        /// <param name="type">対象の型</param>
+        /// <returns>Void型==true</returns>
+        public static bool IsVoid(Type type)
+        {
+            return type.Name == "Void";
+        }
+
+        /// <summary>
+        /// ジェネリックなパラメータかジェネリック型がジェネリックなパラメータを持つか判定します。
+        /// </summary>
+        /// <param name="type">型</param>
+        /// <returns>条件を満たす==true</returns>
+        public static bool HaveGenericParamater(Type type)
+        {
+            if (type.IsGenericParameter || type.IsGenericMethodParameter)
+            {
+                // ジェネリックパラメータを持つジェネリック型
+
+                return true;
+            }
+
+            if (type.IsGenericType)
+            {
+                // ジェネリック
+
+                foreach (var node in type.GetGenericArguments())
+                {
+                    if (HaveGenericParamater(node))
+                    {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
+
+        /// <summary>
+        /// object 型のデータの中身をできる限りわかりやすく文字列化します。
+        /// </summary>
+        /// <param name="data">データ</param>
+        /// <returns>データ内容</returns>
+        public static string DataToString(object data, int indent = 0)
+        {
+            string indentStr = new string(' ', indent);
+            if (data is null)
+            {
+                return NULL_STR;
+            }
+            if (data is CbObject cbObject)
+            {
+                return DataToString(cbObject.Data);
+            }
+            string valueString = "";
+            if (!(data is string) &&
+                data is System.Collections.IEnumerable list)
+            {
+                string nodeTypeName = null;
+                int count = 0;
+                foreach (var node in list)
+                {
+                    valueString += DataToString(node, indent + 2) + Environment.NewLine;
+                    if (count == 0)
+                    {
+                        nodeTypeName = GetTypeName(node);
+                    }
+                    count++;
+                }
+                if (count != 0)
+                {
+                    valueString = $"IEnumerable {count}-{nodeTypeName}" + Environment.NewLine + valueString;
+                }
+                else
+                {
+                    valueString = "IEnumerable 0" + Environment.NewLine + valueString;
+                }
+            }
+            else if (data is ICbShowValue showValue)
+            {
+                valueString = showValue.DataString;
+            }
+            else if (data is ICbValue cbValue)
+            {
+                valueString = cbValue.ValueUIString;
+            }
+            else
+            {
+                valueString = data.ToString();
+            }
+            return indentStr + valueString.Trim('\r', '\n');
+        }
+
+        /// <summary>
+        /// IEnumerable<> インターフェイスを持つ場合、その要素の型を返します。
+        /// </summary>
+        /// <param name="type">対象の型</param>
+        /// <returns>要素の型</returns>
+        public static IEnumerable<Type> GetGenericIEnumerables(Type type)
+        {
+            return type
+                    .GetInterfaces()
+                    .Where(t => t.IsGenericType && t.GetGenericTypeDefinition() == typeof(IEnumerable<>))
+                    .Select(t => t.GetGenericArguments()[0]);
         }
     }
 }

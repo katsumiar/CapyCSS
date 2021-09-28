@@ -1,9 +1,11 @@
 ﻿using CapybaraVS.Controls;
 using CapybaraVS.Controls.BaseControls;
+using CapyCSS.Controls;
 using CbVS.Script;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Reflection;
 using System.Windows;
 using System.Windows.Input;
@@ -32,7 +34,8 @@ namespace CapybaraVS.Script
                 ArgumentTypeList = info.argumentTypeList,
                 DllModule = info.dllModule,
                 IsConstructor = info.isConstructor,
-                typeRequests = info.typeRequests
+                typeRequests = info.typeRequests,
+                GenericMethodParameters = info.genericMethodParameters,
             };
             return ret;
         }
@@ -87,6 +90,12 @@ namespace CapybaraVS.Script
         /// コンストラクターか？
         /// </summary>
         public bool IsConstructor = false;
+
+        /// <summary>
+        /// ジェネリックメソッドのパラメータ
+        /// ※ジェネリックメソッドでないなら null
+        /// </summary>
+        public Type[] GenericMethodParameters = null;
 
         /// <summary>
         /// メソッド呼び出し処理を実装する
@@ -174,6 +183,19 @@ namespace CapybaraVS.Script
                         }
                     }
                 }
+                else if (CbSTUtils.HaveGenericParamater(classType))
+                {
+                    // ユーザー選択ではなく直接 self からコピーされた型の場合は、そのまま内容を登録する
+
+                    List<Type> argTypes = new List<Type>();
+                    for (int i = 0; i < typeRequests.Count; ++i)
+                    {
+                        argTypes.Add(col.SelectedVariableType[i]);
+                    }
+
+                    //クラスの型を確定した型で差し替える
+                    classType = Type.GetType(classType.FullName).MakeGenericType(argTypes.ToArray());
+                }
             }
 
             {// 返し値の型を差し替える
@@ -215,17 +237,19 @@ namespace CapybaraVS.Script
                 returnType,
                 argumentTypeList,
                 new Func<List<ICbValue>, DummyArgumentsStack, ICbValue>(
-                    (argument, cagt) =>
+                    (arguments, cagt) =>
                     {
                         var ret = returnType();
                         if (dummyArgumentsControl != null && dummyArgumentsControl.IsInvalid(cagt))
                             return ret; // 実行環境が有効でない
 
-                        ImplCallMethod(col, classType, dummyArgumentsControl, argument, cagt, ret);
+                        ImplCallMethod(col, classType, dummyArgumentsControl, arguments, cagt, ret);
                         return ret;
                     }
                 )
             );
+
+            argumentTypeList.Clear();
 
             return true;
         }
@@ -244,7 +268,7 @@ namespace CapybaraVS.Script
             {
                 replaceArgumentType = MakeRequestGenericType(col, replaceArgumentType);
             }
-            else if (replaceArgumentType.IsGenericTypeParameter)
+            else if (replaceArgumentType.IsGenericParameter)
             {
                 replaceArgumentType = GetRequestType(col, replaceArgumentType.Name);
             }
@@ -326,7 +350,41 @@ namespace CapybaraVS.Script
                     methodArguments
                     );
 
+                object classInstance = null;
+                if (isClassInstanceMethod)
+                {
+                    // クラスメソッドの第一引数は、self（this）を受け取るのでクラスインスタンスとして扱う
+
+                    classInstance = getBindObject(callArguments[0], col, dummyArgumentsControl, dummyArgumentsStack);
+                    if (classInstance is null)
+                    {
+                        throw new Exception($"self(this) is invalid.");
+                    }
+                    // 返却方法が入っていないならセットしておく
+                    var cbVSValue = callArguments[0];
+                    if (!cbVSValue.IsDelegate && !cbVSValue.IsLiteral && cbVSValue.ReturnAction is null)
+                    {
+                        if (cbVSValue.IsList)
+                        {
+                            ICbList cbList = cbVSValue.GetListValue;
+                            cbVSValue.ReturnAction = (value) =>
+                            {
+                                cbList.CopyFrom(value);
+                            };
+                        }
+                        else if (!(cbVSValue is ICbClass))
+                        {
+                            cbVSValue.ReturnAction = (value) =>
+                            {
+                                cbVSValue.Data = value;
+                            };
+                        }
+                    }
+                }
+
                 object result = CallMethod(
+                    classInstance,
+                    col,
                     classType,
                     callArguments,
                     isClassInstanceMethod, 
@@ -375,39 +433,61 @@ namespace CapybaraVS.Script
                     continue;
                 }
 
-                if (node.IsList)
-                {
-                    ICbList cbList = node.GetListValue;
-
-                    // リストは、オリジナルの型のインスタンスに差し替える
-
-                    if (dummyArgumentsControl is null)
-                    {
-                        methodArguments.Add(cbList.ConvertOriginalTypeList(col, dummyArgumentsStack));
-                    }
-                    else
-                    {
-                        methodArguments.Add(cbList.ConvertOriginalTypeList(dummyArgumentsControl, dummyArgumentsStack));
-                    }
-                }
-                else if (dummyArgumentsControl != null && node is ICbEvent cbEvent)
-                {
-                    // Func<> 及び Action<> は、オリジナルの型のインスタンスに置き換える
-
-                    if (cbEvent.CallBack is null)
-                    {
-                        methodArguments.Add(null);
-                    }
-                    else
-                    {
-                        Debug.Assert(dummyArgumentsControl != null);
-                        methodArguments.Add(cbEvent.GetCallBackOriginalType(dummyArgumentsControl, dummyArgumentsStack));
-                    }
-                }
-                else methodArguments.Add(node.Data);
+                methodArguments.Add(getBindObject(node, col, dummyArgumentsControl, dummyArgumentsStack));
             }
 
             return methodArguments;
+        }
+
+        /// <summary>
+        /// オリジナル型の値に変換します。
+        /// </summary>
+        /// <param name="value"></param>
+        /// <param name="col"></param>
+        /// <param name="dummyArgumentsControl"></param>
+        /// <param name="dummyArgumentsStack"></param>
+        /// <returns></returns>
+        private object getBindObject(
+            ICbValue value,
+            MultiRootConnector col,
+            DummyArgumentsControl dummyArgumentsControl,
+            DummyArgumentsStack dummyArgumentsStack
+            )
+        {
+            if (value.IsList)
+            {
+                ICbList cbList = value.GetListValue;
+
+                // リストは、オリジナルの型のインスタンスを用意する
+
+                if (dummyArgumentsControl is null)
+                {
+                    return cbList.ConvertOriginalTypeList(col, dummyArgumentsStack);
+                }
+                else
+                {
+                    return cbList.ConvertOriginalTypeList(dummyArgumentsControl, dummyArgumentsStack);
+                }
+            }
+            else if (dummyArgumentsControl != null && value is ICbEvent cbEvent)
+            {
+                // Func<> 及び Action<> は、オリジナルの型のインスタンスを用意する
+
+                if (cbEvent.CallBack is null)
+                {
+                    return null;
+                }
+                else
+                {
+                    Debug.Assert(dummyArgumentsControl != null);
+                    return cbEvent.GetCallBackOriginalType(dummyArgumentsControl, dummyArgumentsStack);
+                }
+            }
+            if (value.IsNull)
+            {
+                return null;
+            }
+            return value.Data;
         }
 
         /// <summary>
@@ -420,26 +500,28 @@ namespace CapybaraVS.Script
         /// <param name="methodArguments">メソッド呼び出し引数リスト</param>
         /// <returns>メソッドの返り値</returns>
         private object CallMethod(
+            object classInstance,
+            MultiRootConnector col,
             Type classType,
             List<ICbValue> callArguments, 
             bool isClassInstanceMethod, 
             List<object> methodArguments
             )
         {
-            object classInstance = null;
+            object result;
 
-            if (isClassInstanceMethod)
+            if (classInstance != null && callArguments.Count == 1)
             {
-                // クラスメソッドの第一引数は、self（this）を受け取るのでクラスインスタンスとして扱う
-
-                classInstance = callArguments[0].Data;
-                if (classInstance is null)
+                if (FuncCode == "Dispose")
                 {
-                    throw new Exception($"self(this) is invalid.");
+                    // Disposeメソッドを実行するとUI上で破棄された値を表示しようとするので Dispose は無視する
+                    // ※値は Data のリファレンスで繋がっているので、対策として状態を残すのは簡単では無い
+
+                    CommandCanvasList.OutPut.OutLine("Script", CapybaraVS.Language.Instance["Help:Dispose"]);
+                    return null;
                 }
             }
 
-            object result;
             if (IsConstructor)
             {
                 // new されたコンストラクタとして振る舞う
@@ -453,76 +535,197 @@ namespace CapybaraVS.Script
                     object[] args = methodArguments.ToArray();
                     result = Activator.CreateInstance(classType, args);
 
-                    ReturnArgumentsValue(callArguments, isClassInstanceMethod, args);
+                    ReturnArgumentsValue(classInstance, callArguments, args);
+                }
+            }
+            else if (GenericMethodParameters != null)
+            {
+                // ジェネリックメソッド
+
+                List<Type> genericParams = new List<Type>();
+                foreach (var atype in GenericMethodParameters)
+                {
+                    genericParams.Add(GetRequestType(col, atype.Name));
+                }
+                if (methodArguments is null)
+                {
+                    // 引数のないメソッドを型で補完して呼ぶ
+
+                    result = InvokeGenericMethod(classType, genericParams, new object[] { });
+                }
+                else
+                {
+                    // 引数ありのメソッド
+
+                    object[] args = methodArguments.ToArray();
+
+                    // 引数の型リストを作成
+                    List<Type> argTypes = new List<Type>();
+                    foreach (var cbArg in callArguments)
+                    {
+                        argTypes.Add(cbArg.OriginalType);
+                    }
+
+                    if (classType.GetMethod(FuncCode, argTypes.ToArray()) != null)
+                    {
+                        // 同じ型のメソッドが既に定義されているのでそちらを呼ぶ
+
+                        result = InvokeMethodWithArguments(classType, classInstance, args);
+                    }
+                    else
+                    {
+                        // ジェネリックメソッドを型で補完して呼ぶ
+
+                        result = InvokeGenericMethod(classType, genericParams, args);
+                    }
+                    ReturnArgumentsValue(classInstance, callArguments, args);
                 }
             }
             else if (methodArguments is null)
             {
                 // 引数のないメソッド
 
-                result = classType.InvokeMember(
-                                FuncCode,
-                                BindingFlags.InvokeMethod,
-                                null,
-                                classInstance,
-                                new object[] { }
-                                );
+                result = InvokeMethod(classType, classInstance);
             }
             else
             {
                 // 引数ありのメソッド
 
                 object[] args = methodArguments.ToArray();
-
-                result = classType.InvokeMember(
-                                FuncCode,
-                                BindingFlags.InvokeMethod,
-                                null,
-                                classInstance,
-                                args
-                                );
-
-                ReturnArgumentsValue(callArguments, isClassInstanceMethod, args);
-            }
-            if (isClassInstanceMethod)
-            {
-                var scrArg = callArguments[0];
-                if (scrArg.IsDelegate)
-                {
-                    // デリゲートは無条件で更新値を捨てる
-                    Debug.Assert(callArguments[0].ReturnAction is null);
-                }
-                else if (callArguments[0].IsLiteral)
-                {
-                    // リレラルは更新情報を捨てる
-                }
-                else
-                {
-                    // 変更後の値を戻す
-
-                    callArguments[0].ReturnAction?.Invoke(classInstance);
-                }
+                result = InvokeMethodWithArguments(classType, classInstance, args);
+                ReturnArgumentsValue(classInstance, callArguments, args);
             }
 
             return result;
         }
 
         /// <summary>
+        /// ジェネリックメソッドを作成して呼びます。
+        /// </summary>
+        /// <param name="classType">所属するクラスの型</param>
+        /// <param name="genericParams">ジェネリックパラメータ</param>
+        /// <param name="args">呼び出す時の引数リスト</param>
+        /// <returns>呼び出したメソッドの返し値</returns>
+        private object InvokeGenericMethod(Type classType, List<Type> genericParams, object[] args)
+        {
+            var attr = BindingFlags.Static | BindingFlags.Public;
+            var methods = classType.GetMethods(attr);
+
+            // 名前と引数の数だけでフィルタリング
+            var selectMethod = methods.Where(c =>
+            {
+                return c.Name == FuncCode && c.GetParameters().Length == args.Length;
+            });
+            if (selectMethod.Count() == 1)
+            {
+                // 該当が一件だけ有った
+
+                return selectMethod.First()
+                    .MakeGenericMethod(genericParams.ToArray())
+                    .Invoke(classType, args);
+            }
+
+            // 引数の型の一致でフィルタリング（null は除く）
+            selectMethod = selectMethod.Where(n =>
+            {
+                for (int i = 0; i < args.Length; ++i)
+                {
+                    if (args[i] != null &&
+                        (args[i].GetType() != n.GetParameters()[i].ParameterType))
+                        return false;
+                }
+                return true;
+            });
+            if (selectMethod.Count() == 1)
+            {
+                // 該当が一件だけ有った
+
+                return selectMethod.First()
+                    .MakeGenericMethod(genericParams.ToArray())
+                    .Invoke(classType, args);
+            }
+
+            // 運任せ...
+            return classType
+                .GetMethod(FuncCode)
+                .MakeGenericMethod(genericParams.ToArray())
+                .Invoke(classType, args);
+        }
+
+        /// <summary>
+        /// 引数有りでメソッドを呼びます。
+        /// </summary>
+        /// <param name="classType">所属するクラスの型</param>
+        /// <param name="classInstance">クラスインスタンス</param>
+        /// <param name="args">呼び出す時の引数リスト</param>
+        /// <returns>呼び出したメソッドの返し値</returns>
+        private object InvokeMethodWithArguments(Type classType, object classInstance, object[] args)
+        {
+            return classType.InvokeMember(
+                            FuncCode,
+                            BindingFlags.InvokeMethod,
+                            null,
+                            classInstance,
+                            args,
+                            Language.Culture
+                            );
+        }
+
+        /// <summary>
+        /// 引数無しでメソッドを呼びます。
+        /// </summary>
+        /// <param name="classType">所属するクラスの型</param>
+        /// <param name="classInstance">クラスインスタンス</param>
+        /// <returns>呼び出したメソッドの返し値</returns>
+        private object InvokeMethod(Type classType, object classInstance)
+        {
+            return classType.InvokeMember(
+                            FuncCode,
+                            BindingFlags.InvokeMethod,
+                            null,
+                            classInstance,
+                            new object[] { },
+                            Language.Culture
+                            );
+        }
+
+        /// <summary>
         /// メソッド呼び出しの引数が参照渡しの場合、変更値を基の管理者に戻します。
         /// </summary>
-        /// <param name="col">スクリプトのルートノード</param>
-        /// <param name="callArguments">引数リスト</param>
-        /// <param name="variableIds">スクリプト変数IDリスト</param>
-        /// <param name="isClassInstanceMethod">インスタンスメソッドか？</param>
-        /// <param name="args">実際にメソッド呼び出しで渡した引数配列</param>
-        private static void ReturnArgumentsValue(
+        /// <param name="classInstance">呼び出し時のクラスインスタンス（変更が入っている）</param>
+        /// <param name="callArguments">呼び出し用に参照した引数リスト</param>
+        /// <param name="args">呼び出し時の引数リスト（変更が入っている）</param>
+        private void ReturnArgumentsValue(
+            object classInstance,
             List<ICbValue> callArguments,
-            bool isClassInstanceMethod,
             object[] args)
         {
-            for (int i = (isClassInstanceMethod ? 1 : 0); i < callArguments.Count; ++i)
+            if (classInstance != null)
+            {
+                // 参照渡しのため変更後の値を戻す（直接リファレンスが渡されていないケース）
+
+                var scrArg = callArguments[0];
+                if (scrArg.IsDelegate)
+                {
+                    // デリゲートは無条件で更新値を捨てる（ローカル変数の破棄に該当）
+
+                    Debug.Assert(callArguments[0].ReturnAction is null);
+                }
+                else if (callArguments[0].IsLiteral)
+                {
+                    // リレラルは更新情報を捨てる（ローカル変数の破棄に該当）
+                }
+                else
+                {
+                    // 変更後の値を戻す
+
+                    scrArg.ReturnAction?.Invoke(classInstance);
+                }
+            }
+            for (int i = 1; i < callArguments.Count; ++i)
             {
                 var scrArg = callArguments[i];
+
                 if (scrArg.IsDelegate)
                 {
                     // デリゲートは更新情報を捨てる
@@ -558,10 +761,14 @@ namespace CapybaraVS.Script
             }
             else if (result != null && returnValue is ICbEvent cbEvent)
             {
-                // Func<> or Action<> 型の返し値
+                // デリゲート型の返し値
 
-                if (CbFunc.IsFuncType(result.GetType()))
+                Type resultType = CbSTUtils.GetDelegateReturnType(result.GetType());
+
+                if (!CbSTUtils.IsVoid(resultType))
                 {
+                    // 返し値のあるデリゲート型
+
                     cbEvent.CallBack = (cagt) =>
                     {
                         ICbValue retTypeValue = null;
@@ -581,9 +788,9 @@ namespace CapybaraVS.Script
                         return retTypeValue;
                     };
                 }
-                else if (CbFunc.IsActionType(result.GetType()))
+                else
                 {
-                    // Action 型だと考える
+                    // 返し値の無いデリゲート型
 
                     cbEvent.CallBack = (cagt) =>
                     {
@@ -602,8 +809,6 @@ namespace CapybaraVS.Script
                         return new CbVoid();
                     };
                 }
-                else
-                    throw new NotImplementedException();
             }
             else
                 returnValue.Data = result;

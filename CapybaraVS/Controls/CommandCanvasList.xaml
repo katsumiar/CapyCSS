@@ -5,7 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:CapyCSS.Controls"
              mc:Ignorable="d" 
-             d:DesignHeight="450" d:DesignWidth="800">
+             d:DesignHeight="576.797" d:DesignWidth="913.672">
     <Grid KeyDown="Grid_KeyDown" Background="PeachPuff">
         <Grid.RowDefinitions>
             <RowDefinition Height="36" />
@@ -22,6 +22,10 @@
             <Button Content="Command Menu(Space)" x:Name="CommandMenuButton" Click="CommandMenuButton_Click" Height="30" Margin="12,2,0,2" />
             <Button Content="Execute All (Ctrl+F5)" x:Name="ExecuteAllButton" IsEnabled="False" Click="ExecuteAllButton_Click" Height="30" Margin="48,2,0,2" />
             <Button Content="Execute (F5)" x:Name="ExecuteButton" IsEnabled="False" Click="ExecuteButton_Click" Height="30" Margin="6,2,6,2" />
+            <Grid>
+                <TextBox x:Name="EntryPointName" Height="24" Width="90" TextChanged="EntryPointName_TextChanged"/>
+                <TextBlock x:Name="EntryPointNamePh" Text="Entry Point Name" Height="24" FontSize="11" Margin="2,8,0,0" Foreground="#99000000" IsHitTestVisible="False"/>
+            </Grid>
         </ToolBarPanel>
         <TabControl x:Name="Tab" Grid.Row="1" SelectionChanged="Tab_SelectionChanged">
             <TabItem Header="TabItem1">

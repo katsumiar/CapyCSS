@@ -6,13 +6,20 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.Linq;
 using System.Reflection;
 using System.Text;
 
 namespace CbVS.Script
 {
-    public interface ICbList : ICbValue
+    public interface ICbList
+        : ICbValue
     {
+        /// <summary>
+        /// 元々のデータ形式のデータ
+        /// </summary>
+        object OriginalData { get; set; }
+
         /// <summary>
         /// List<適切な型> に変換します。
         /// </summary>
@@ -34,9 +41,15 @@ namespace CbVS.Script
         bool IsArrayType { get; set; }
 
         /// <summary>
-        /// 実際に取り込んだ型の情報
+        /// 実際の型
         /// </summary>
         Type SourceType { get; set; }
+
+        /// <summary>
+        /// キャストで再指定された実際の型
+        /// ※IEnumerableを持ったクラスの場合、UI上ではリスト（SourceType）として扱うが、実際にメソッドを呼ぶときは、真の（CastType）の型を振る舞う
+        /// </summary>
+        Type CastType { get; set; }
 
         /// <summary>
         /// リストの要素を追加できるか？
@@ -153,8 +166,14 @@ namespace CbVS.Script
     /// ICollection<>型
     /// </summary>
     /// <typeparam name="T">オリジナルのList<T>のTの型</typeparam>
-    public class CbList<T> : BaseCbValueClass<List<ICbValue>>, ICbValueListClass<List<ICbValue>>, ICbShowValue, ICbList
+    public class CbList<T>
+        : BaseCbValueClass<List<ICbValue>>
+        , ICbValueListClass<List<ICbValue>>
+        , ICbShowValue
+        , ICbList
     {
+        public object OriginalData { get; set; } = null;
+
         private bool nullFlg = true;
 
         public override Type MyType => typeof(CbList<T>);
@@ -175,25 +194,24 @@ namespace CbVS.Script
         {
             get
             {
-#if !SHOW_LINK_ARRAY
-                string text = $"{CbSTUtils.CbTypeNameList[nameof(CbList)]} {Value.Count}-{ItemName}" + Environment.NewLine;
-                foreach (var node in Value)
-                {
-                    text += node.ValueUIString + Environment.NewLine;
-                }
-#else
-                string text = TypeName + Environment.NewLine;
-#endif
-                return text;
+                return CbSTUtils.DataToString(Data);
             }
         }
 
         public override bool IsList => true;
+
         public override ICbList GetListValue => this;
 
         public bool IsArrayType { get; set; } = false;
 
-        public Type SourceType { get; set; }
+        private Type sourceType = null;
+        public Type SourceType
+        {
+            get => CastType != null ? CastType : sourceType;
+            set => sourceType = value;
+        }
+
+        public Type CastType { get; set; } = null;
 
         /// <summary>
         /// UI上で Add 可能か？
@@ -224,11 +242,7 @@ namespace CbVS.Script
 
                     return CbST.GetTypeEx(OriginalReturnType.FullName + "[]");
                 }
-                else if (SourceType != null)
-                {
-                    return SourceType;
-                }
-                return typeof(ICollection<>).MakeGenericType(typeof(T));
+                return SourceType;
             }
         }
 
@@ -258,23 +272,7 @@ namespace CbVS.Script
                         return $"{ItemName}[]";
                     }
                 }
-                string typeName;
-                if (SourceType != null)
-                {
-                    return CbSTUtils._GetTypeName(SourceType);
-                }
-                else
-                {
-                    typeName = CbSTUtils.CbTypeNameList[nameof(CbList)];
-                }
-                if (NodeTF is null)
-                {
-                    return $"{typeName}<>";
-                }
-                else
-                {
-                    return $"{typeName}<{ItemName}>";
-                }
+                return CbSTUtils._GetTypeName(SourceType);
             }
         }
 
@@ -357,6 +355,7 @@ namespace CbVS.Script
         /// <param name="index">要素を取り除く位置</param>
         public void RemoveAt(int index)
         {
+            Value[index].Dispose();
             Value.RemoveAt(index);
         }
 
@@ -405,6 +404,13 @@ namespace CbVS.Script
         /// <returns></returns>
         public object ConvertOriginalTypeList(DummyArgumentsControl dummyArgumentsControl, DummyArgumentsStack cagt, MultiRootConnector col = null)
         {
+            if (CastType != null)
+            {
+                // ※IEnumerableを持ったクラスの場合、UI上ではリストとして扱うが、実際にメソッドを呼ぶときは、オリジナルの要素を使用する
+
+                return OriginalData;
+            }
+
             var listNodeType = NodeTF();
 
             var genericType = typeof(List<>).MakeGenericType(typeof(T));
@@ -434,14 +440,20 @@ namespace CbVS.Script
                 // CbList を List に変換する
                 foreach (var node in Value)
                 {
-                    if (node is CbObject cbObject)
+                    if (node.IsNull)
                     {
-                        ICbValue cbValue = cbObject.Data as ICbValue;
-                        originalCopyList.Add((T)cbValue.Data);
+                        originalCopyList.Add((dynamic)null);
                     }
                     else
                     {
-                        originalCopyList.Add((T)node.Data);
+                        if (node is CbObject cbObject && cbObject is ICbValue cbValue1)
+                        {
+                            originalCopyList.Add((T)cbValue1.Data);
+                        }
+                        else
+                        {
+                            originalCopyList.Add((T)node.Data);
+                        }
                     }
                 }
             }
@@ -465,6 +477,13 @@ namespace CbVS.Script
         /// <param name="list"></param>
         public void CopyFrom(object list)
         {
+            if (CastType != null)
+            {
+                // ※IEnumerableを持ったクラスの場合、UI上ではリストとして扱うが、実際にメソッドを呼ぶときは、オリジナルの要素を使用する
+
+                OriginalData = list;
+            }
+
             Clear();
 
             if (list is ICbValue cbValue && cbValue.IsList)
@@ -517,27 +536,54 @@ namespace CbVS.Script
         /// </summary>
         public void Clear()
         {
-            Value?.Clear();
+            if (!IsNull)
+            {
+                foreach (var node in Value)
+                {
+                    node?.Dispose();
+                }
+                Value.Clear();
+            }
         }
 
         public override bool IsNull => nullFlg;
 
-        public static CbList<T> Create(string name = "")
-        {
-            return new CbList<T>(new List<ICbValue>(), name);
-        }
+        public static CbList<T> Create(string name = "") => new CbList<T>(new List<ICbValue>(), name);
 
-        public static CbList<T> Create(List<ICbValue> n, string name = "")
-        {
-            return new CbList<T>(n, name);
-        }
+        public static CbList<T> Create(List<ICbValue> n, string name = "") => new CbList<T>(n, name);
 
         public Func<ICbValue> CreateTF => () => Create();
         public Func<ICbValue> CreateNTF(string name) => () => Create(name);
 
-        public static Func<ICbValue> TF => () => CbList<T>.Create();
-        public static Func<string, ICbValue> NTF => (name) => CbList<T>.Create(name);
+        public static Func<ICbValue> TF => () => Create();
+        public static Func<string, ICbValue> NTF => (name) => Create(name);
 
         public static ICbValue GetCbFunc(string name) => Create(name);    // リフレクションで参照されている。
+
+        private bool disposedValue;
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!disposedValue)
+            {
+                if (disposing)
+                {
+                    ClearWork();
+                    Clear();
+                    Value = null;
+                    _ListNodeType = null;
+                    SourceType = null;
+                    CastType = null;
+                    OriginalData = null;
+                }
+                disposedValue = true;
+            }
+        }
+
+        public void Dispose()
+        {
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
+        }
     }
 }

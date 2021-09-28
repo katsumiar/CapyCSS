@@ -2,6 +2,7 @@
 
 using CapybaraVS.Controls.BaseControls;
 using CapybaraVS.Script;
+using CapyCSS.Controls;
 using CbVS.Script;
 using System;
 using System.Collections.Generic;
@@ -32,13 +33,15 @@ namespace CapybaraVS.Controls
     {
         #region XML定義
         [XmlRoot(nameof(LinkConnectorList))]
-        public class _AssetXML<OwnerClass>
+        public class _AssetXML<OwnerClass> : IDisposable
             where OwnerClass : LinkConnectorList
         {
             [XmlIgnore]
             public Action WriteAction = null;
             [XmlIgnore]
             public Action<OwnerClass> ReadAction = null;
+            private bool disposedValue;
+
             public _AssetXML()
             {
                 ReadAction = (self) =>
@@ -90,6 +93,29 @@ namespace CapybaraVS.Controls
             [XmlArrayItem("LinkConnector")]
             public List<LinkConnector._AssetXML<LinkConnector>> List { get; set; } = null;
             public bool IsOpenList { get; set; } = true;
+
+            protected virtual void Dispose(bool disposing)
+            {
+                if (!disposedValue)
+                {
+                    if (disposing)
+                    {
+                        WriteAction = null;
+                        ReadAction = null;
+
+                        // 以下、固有定義開放
+                        CbSTUtils.ForeachDispose(List);
+                        List = null;
+                    }
+                    disposedValue = true;
+                }
+            }
+
+            public void Dispose()
+            {
+                Dispose(disposing: true);
+                GC.SuppressFinalize(this);
+            }
             #endregion
         }
         public _AssetXML<LinkConnectorList> AssetXML { get; set; } = null;
@@ -261,7 +287,7 @@ namespace CapybaraVS.Controls
                 return null;
             }
 
-            var linkConnector = new LinkConnector()
+            var linkConnector = new LinkConnector(this)
             {
                 OwnerCommandCanvas = this.OwnerCommandCanvas,
                 ValueData = variable,
@@ -312,6 +338,7 @@ namespace CapybaraVS.Controls
 
             // 渡された変数のリストをリンクする
             linkedListTypeVariable = listTypeVariable.Value;
+            CbSTUtils.ForeachDispose(ListData);
             ListData.Clear();
             for (var i = 0; i < listTypeVariable.Count; ++i)
             {
@@ -362,6 +389,7 @@ namespace CapybaraVS.Controls
 
                         while (remaining-- > 0)
                         {
+                            ListData[i].Dispose();
                             ListData.RemoveAt(i);
                         }
                     }
@@ -391,6 +419,8 @@ namespace CapybaraVS.Controls
         /// </summary>
         public void Disconnect()
         {
+            if (ListData is null)
+                return;
             foreach (var node in ListData)
             {
                 // 既存のノードへの接続を切る
@@ -416,16 +446,21 @@ namespace CapybaraVS.Controls
         }
 
         /// <summary>
-        /// ノードをDisposeしてリストをクリアします（外部接続用）。
+        /// ノードをCloseLinkしてリストをクリアします（外部接続用）。
         /// </summary>
         private void ClearList()
         {
             Debug.Assert(ListData == connectedListData);
 
             foreach (var node in ListData)
-                if (node is IDisposable target)
-                    target.Dispose();
-            ListData.Clear();
+            {
+                if (node is ICloseLink target)
+                {
+                    target.CloseLink();
+                }
+            }
+            CbSTUtils.ForeachDispose(ListData);
+            //ListData.Clear();
         }
 
         /// <summary>
@@ -433,7 +468,7 @@ namespace CapybaraVS.Controls
         /// </summary>
         /// <param name="functionStack"></param>
         /// <param name="preArgument"></param>
-        public void RequestExecute(List<object> functionStack = null, DummyArgumentsStack preArgument = null)
+        public object RequestExecute(List<object> functionStack = null, DummyArgumentsStack preArgument = null)
         {
             foreach (var node in ListData)
             {
@@ -447,6 +482,7 @@ namespace CapybaraVS.Controls
                     node.RequestExecute(functionStack, preArgument);
                 }
             }
+            return null;
         }
 
         /// <summary>
@@ -683,12 +719,12 @@ namespace CapybaraVS.Controls
 
         private void AccordionOpenIcon_MouseEnter(object sender, MouseEventArgs e)
         {
-            Cursor = Cursors.Hand;
+            CommandCanvasList.SetOwnerCursor(Cursors.Hand);
         }
 
         private void AccordionOpenIcon_MouseLeave(object sender, MouseEventArgs e)
         {
-            Cursor = null;
+            CommandCanvasList.SetOwnerCursor(null);
         }
 
 #region IDisposable Support
@@ -700,14 +736,20 @@ namespace CapybaraVS.Controls
             {
                 if (disposing)
                 {
-                    foreach (var node in connectedListData)
-                    {
-                        node.Dispose();
-                    }
-                    foreach (var node in noneConnectedListData)
-                    {
-                        node.Dispose();
-                    }
+                    CbSTUtils.ForeachDispose(connectedListData);
+                    CbSTUtils.ForeachDispose(noneConnectedListData);
+                    CbSTUtils.ForeachDispose(linkedListTypeVariable);
+                    connectedListData = null;
+                    noneConnectedListData = null;
+                    linkedListTypeVariable = null;
+                    AssetXML?.Dispose();
+                    AssetXML = null;
+                    CbSTUtils.ForeachDispose(ListData);
+                    //ListData?.Clear();
+                    ListData = null;
+                    _OwnerCommandCanvas = null;
+
+
                 }
                 disposedValue = true;
             }
@@ -716,8 +758,7 @@ namespace CapybaraVS.Controls
         public void Dispose()
         {
             Dispose(true);
-            // TODO: 上のファイナライザーがオーバーライドされる場合は、次の行のコメントを解除してください。
-            // GC.SuppressFinalize(this);
+            GC.SuppressFinalize(this);
         }
         #endregion
     }

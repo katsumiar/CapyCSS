@@ -82,7 +82,7 @@ namespace CapybaraVS.Controls.BaseControls
         , IAsset
         , IDisposable
     {
-        public static readonly int DATA_VERSION = 1;
+        public static readonly int DATA_VERSION = 2;
 
         #region ID管理
         private AssetIdProvider assetIdProvider = null;
@@ -95,13 +95,15 @@ namespace CapybaraVS.Controls.BaseControls
 
         #region XML定義
         [XmlRoot(nameof(CommandCanvas))]
-        public class _AssetXML<OwnerClass>
+        public class _AssetXML<OwnerClass> : IDisposable
             where OwnerClass : CommandCanvas
         {
             [XmlIgnore]
             public Action WriteAction = null;
             [XmlIgnore]
             public Action<OwnerClass> ReadAction = null;
+            private bool disposedValue;
+
             public _AssetXML()
             {
                 ReadAction = (self) =>
@@ -129,6 +131,12 @@ namespace CapybaraVS.Controls.BaseControls
 
                 self.Dispatcher.BeginInvoke(new Action(() =>
                 {
+                    if (DataVersion != DATA_VERSION)
+                    {
+                        ControlTools.ShowErrorMessage(CapybaraVS.Language.Instance["Help:DataVersionError"]);
+                        return;
+                    }
+
                     if (WorkStack != null)
                     {
                         self.WorkStack.OwnerCommandCanvas = self;
@@ -139,7 +147,7 @@ namespace CapybaraVS.Controls.BaseControls
                     {
                         try
                         {
-                            Movable movableNode = new Movable();
+                            Movable movableNode = new Movable(this);
                             self.WorkCanvas.Add(movableNode);
 
                             movableNode.OwnerCommandCanvas = self;
@@ -199,6 +207,41 @@ namespace CapybaraVS.Controls.BaseControls
             public Stack._AssetXML<Stack> WorkStack { get; set; } = null;
             [XmlArrayItem("Asset")]
             public List<Movable._AssetXML<Movable>> WorkCanvasAssetList { get; set; } = null;
+
+            protected virtual void Dispose(bool disposing)
+            {
+                if (!disposedValue)
+                {
+                    if (disposing)
+                    {
+                        WriteAction = null;
+                        ReadAction = null;
+
+                        // 以下、固有定義開放
+                        WorkCanvas?.Dispose();
+                        WorkCanvas = null;
+                        ImportClassModule?.Clear();
+                        ImportClassModule = null;
+                        ImportPackageModule?.Clear();
+                        ImportPackageModule = null;
+                        ImportDllModule?.Clear();
+                        ImportDllModule = null;
+                        ImportNuGetModule?.Clear();
+                        ImportNuGetModule = null;
+                        WorkStack?.Dispose();
+                        WorkStack = null;
+                        CbSTUtils.ForeachDispose(WorkCanvasAssetList);
+                        WorkCanvasAssetList = null;
+                    }
+                    disposedValue = true;
+                }
+            }
+
+            public void Dispose()
+            {
+                Dispose(disposing: true);
+                GC.SuppressFinalize(this);
+            }
             #endregion
         }
         public _AssetXML<CommandCanvas> AssetXML { get; set; } = null;
@@ -217,7 +260,7 @@ namespace CapybaraVS.Controls.BaseControls
             ScriptWorkCanvas = WorkCanvas;
             ScriptWorkStack = WorkStack;
 
-            ScriptWorkCanvas.Cursor = Cursors.Wait;
+            CommandCanvasList.SetOwnerCursor(Cursors.Wait);
 
             TypeMenuWindow = CommandWindow.Create();
             TypeMenuWindow.Title = "Type";
@@ -232,20 +275,18 @@ namespace CapybaraVS.Controls.BaseControls
 
             ClickEntryEvent = new Action(() =>
             {
-                ScriptWorkCanvas.Cursor = null;
-                CommandMenu.Cursor = null;
+                CommandCanvasList.SetOwnerCursor(null);
             });
 
             ClickExitEvent = new Action(() =>
             {
                 CommandMenuWindow.CloseWindow();
-                ScriptWorkCanvas.Cursor = Cursors.Hand;
-                CommandMenu.Cursor = Cursors.Hand;
+                CommandCanvasList.SetOwnerCursor(Cursors.Hand);
             });
 
-            ScriptWorkCanvas.Cursor = null;
-
             DEBUG_Check();
+            
+            CommandCanvasList.SetOwnerCursor(null);
         }
 
         ~CommandCanvas()
@@ -359,6 +400,8 @@ namespace CapybaraVS.Controls.BaseControls
             {
                 var cbType = CbST.CbCreate(type);
                 Debug.Assert(cbType != null);
+                if (cbType.OriginalType == typeof(CbGeneMethArg))
+                    return;
                 Debug.Assert(cbType.OriginalType == type);
                 if (ifc != null)
                     Debug.Assert(ifc.IsAssignableFrom(cbType.GetType()));
@@ -378,8 +421,11 @@ namespace CapybaraVS.Controls.BaseControls
             CheckCreateCbType(typeof(Action<ushort, Type>), typeof(ICbEvent));
             CheckCreateCbType(typeof(Func<object>), typeof(ICbEvent));
             CheckCreateCbType(typeof(Func<sbyte, decimal>), typeof(ICbEvent));
+            CheckCreateCbType(typeof(Converter<double, int>), typeof(ICbEvent));
+            CheckCreateCbType(typeof(Predicate<double>), typeof(ICbEvent));
 
             CheckCreateCbType(typeof(List<byte>), typeof(ICbList));
+            CheckCreateCbType(typeof(IList<byte>), typeof(ICbList));
             CheckCreateCbType(typeof(IEnumerable<float>), typeof(ICbList));
             CheckCreateCbType(typeof(List<Dictionary<int, double>>), typeof(ICbList));
             CheckCreateCbType(typeof(IEnumerable<Dictionary<int, double>>), typeof(ICbList));
@@ -398,9 +444,22 @@ namespace CapybaraVS.Controls.BaseControls
                 }
             }
 
+            CheckCreateCbType(typeof(Func<>), typeof(ICbEvent));
+            CheckCreateCbType(typeof(Func<,>), typeof(ICbEvent));
+            CheckCreateCbType(typeof(Converter<,>), typeof(ICbEvent));
             CheckGenericType(CbST.CbCreate(typeof(List<>)));
             CheckGenericType(CbST.CbCreate(typeof(IEnumerable<>)));
             CheckGenericType(CbST.CbCreate(typeof(Dictionary<,>)));
+
+            // Nullable<T>型生成チェック
+            void CheckNullable(ICbValue cbType)
+            {
+                Debug.Assert(cbType.IsNullable);
+            }
+            CheckNullable(CbST.CbCreate(typeof(int?)));
+            CheckNullable(CbST.CbCreate(typeof(DateTime?)));
+            foreach (var valueType in valueTypes)
+                CheckNullable(CbST.CbCreate(typeof(Nullable<>).MakeGenericType(new Type[] { valueType })));
 
             CommandCanvasControl.MainLog.OutLine("System", "ok");
         }
@@ -504,7 +563,7 @@ namespace CapybaraVS.Controls.BaseControls
         {
             return new TreeMenuNodeCommand((a) =>
                 {
-                    if (CommandCanvasList.OwnerWindow.Cursor == Cursors.Wait)
+                    if (CommandCanvasList.GetOwnerCursor() == Cursors.Wait)
                         return; // 処理中は禁止
 
                     CommandMenuWindow.CloseWindow();
@@ -674,7 +733,7 @@ namespace CapybaraVS.Controls.BaseControls
         /// </summary>
         public void OverwriteSaveXML()
         {
-            if (CommandCanvasList.OwnerWindow.Cursor == Cursors.Wait)
+            if (CommandCanvasList.GetOwnerCursor() == Cursors.Wait)
                 return;
 
             if (OpenFileName == "")
@@ -714,7 +773,7 @@ namespace CapybaraVS.Controls.BaseControls
         /// </summary>
         public void SaveXML()
         {
-            if (CommandCanvasList.OwnerWindow.Cursor == Cursors.Wait)
+            if (CommandCanvasList.GetOwnerCursor() == Cursors.Wait)
                 return;
 
             string path = ShowSaveDialog();
@@ -734,10 +793,10 @@ namespace CapybaraVS.Controls.BaseControls
             if (path is null)
                 return;
 
-            if (CommandCanvasList.OwnerWindow.Cursor == Cursors.Wait)
+            if (CommandCanvasList.GetOwnerCursor() == Cursors.Wait)
                 return;
 
-            CommandCanvasList.OwnerWindow.Cursor = Cursors.Wait;
+            CommandCanvasList.SetOwnerCursor(Cursors.Wait);
 
             try
             {
@@ -747,10 +806,10 @@ namespace CapybaraVS.Controls.BaseControls
                 namespaces.Add(string.Empty, string.Empty);
                 ScriptCommandCanvas.AssetXML.WriteAction();
                 serializer.Serialize(writer, ScriptCommandCanvas.AssetXML, namespaces);
-                StreamWriter swriter = new StreamWriter(path, false);
-                swriter.WriteLine(writer.ToString());
-                swriter.Close();
-
+                using (StreamWriter swriter = new StreamWriter(path, false))
+                {
+                    swriter.WriteLine(writer.ToString());
+                }
                 OpenFileName = path;
                 CommandCanvasList.OutPut.OutLine("System", $"Save...\"{path}.xml\"");
             }
@@ -759,7 +818,7 @@ namespace CapybaraVS.Controls.BaseControls
                 ControlTools.ShowErrorMessage(ex.Message);
             }
 
-            CommandCanvasList.OwnerWindow.Cursor = Cursors.Arrow;
+            CommandCanvasList.SetOwnerCursor(null);
         }
 
         /// <summary>
@@ -767,7 +826,7 @@ namespace CapybaraVS.Controls.BaseControls
         /// </summary>
         public void LoadXML()
         {
-            if (CommandCanvasList.OwnerWindow.Cursor == Cursors.Wait)
+            if (CommandCanvasList.GetOwnerCursor() == Cursors.Wait)
                 return;
 
             string path = ShowLoadDialog();
@@ -783,34 +842,31 @@ namespace CapybaraVS.Controls.BaseControls
         /// <param name="path">ファイルのパス</param>
         public void LoadXML(string path)
         {
-            if (CommandCanvasList.OwnerWindow.Cursor == Cursors.Wait)
+            if (CommandCanvasList.GetOwnerCursor() == Cursors.Wait)
                 return;
 
             OpenFileName = path;
-            CommandCanvasList.OwnerWindow.Cursor = Cursors.Wait;
+            CommandCanvasList.SetOwnerCursor(Cursors.Wait);
             ScriptWorkCanvas.Dispatcher.BeginInvoke(new Action(() =>
             {
-                StreamReader reader = null;
-                try
+                using (StreamReader reader = new StreamReader(path))
                 {
-                    reader = new StreamReader(path);
-                    XmlSerializer serializer = new XmlSerializer(ScriptCommandCanvas.AssetXML.GetType());
+                    try
+                    {
+                        XmlSerializer serializer = new XmlSerializer(ScriptCommandCanvas.AssetXML.GetType());
 
-                    XmlDocument doc = new XmlDocument();
-                    doc.PreserveWhitespace = true;
-                    doc.Load(reader);
-                    XmlNodeReader nodeReader = new XmlNodeReader(doc.DocumentElement);
+                        XmlDocument doc = new XmlDocument();
+                        doc.PreserveWhitespace = true;
+                        doc.Load(reader);
+                        XmlNodeReader nodeReader = new XmlNodeReader(doc.DocumentElement);
 
-                    object data = (CommandCanvas._AssetXML<CommandCanvas>)serializer.Deserialize(nodeReader);
-                    ScriptCommandCanvas.AssetXML = (CommandCanvas._AssetXML<CommandCanvas>)data;
-                }
-                catch (Exception ex)
-                {
-                    ControlTools.ShowErrorMessage(ex.Message);
-                }
-                finally
-                {
-                    reader?.Close();
+                        object data = (CommandCanvas._AssetXML<CommandCanvas>)serializer.Deserialize(nodeReader);
+                        ScriptCommandCanvas.AssetXML = (CommandCanvas._AssetXML<CommandCanvas>)data;
+                    }
+                    catch (Exception ex)
+                    {
+                        ControlTools.ShowErrorMessage(ex.Message);
+                    }
                 }
                 ClearWorkCanvas(false);
                 GC.Collect();
@@ -823,10 +879,12 @@ namespace CapybaraVS.Controls.BaseControls
                     // アイドル状態になってから戻す
 
                     GC.Collect();
-                    CommandCanvasList.OwnerWindow.Cursor = Cursors.Arrow;
+                    CommandCanvasList.SetOwnerCursor(null);
                     if (CommandCanvasControl.IsAutoExecute)
                     {
-                        CommandCanvasControl.CallPublicExecuteEntryPoint();
+                        // 起動時自動実行
+
+                        CommandCanvasControl.CallPublicExecuteEntryPoint(null, false);
                         CommandCanvasControl.IsAutoExecute = false;
                     }
                     else
@@ -846,14 +904,107 @@ namespace CapybaraVS.Controls.BaseControls
             ApiImporter.ClearModule();
             ScriptWorkCanvas.Clear();
             ScriptWorkStack.Clear();
+            WorkStack.Clear();
+            UIParamHoldAction.Clear();
+            StackGroupHoldAction.Clear();
+            PlotWindowHoldAction.Clear();
+            LinkConnectorListHoldAction.Clear();
             ClearTypeImportMenu();
             ScriptCommandCanvas.HideWorkStack();
             InstalledMultiRootConnector = null;
+
+            ApiImporter.ImportBase();
+
             if (full)
             {
                 OpenFileName = "";
             }
+            OutDebugCreateList("leak clear");
         }
+
+        #region デバッグ用クリア管理
+        //※参照カウンターは勘案しない
+
+        public static Dictionary<string, int> DebugCreateNames = new Dictionary<string, int>();
+
+        [Conditional("DEBUG")]
+        public void OutDebugCreateList(string title)
+        {
+            bool isFirst = true;
+            foreach (var node in DebugCreateNames)
+            {
+                if (node.Value == 0)
+                    continue;
+                if (isFirst)
+                {
+                    CommandCanvasControl.MainLog.OutLine("System", $"---------------------- {title}");
+                    isFirst = false;
+                }
+                CommandCanvasControl.MainLog.OutLine("System", $"{node.Key} : {node.Value}");
+            }
+        }
+
+        [Conditional("DEBUG")]
+        public static void DebugMakeCreateTitle(ref string title, object self, object coller, string methodName, string ext)
+        {
+            if (methodName == "")
+            {
+                methodName = "(node)";
+            }
+            if (coller is null)
+            {
+                title = $"{self.GetType().Name} => {methodName}";
+            }
+            else if (coller is string str)
+            {
+                title = $"{self.GetType().Name} => {str}::{methodName}";
+            }
+            else
+            {
+                string collerName;
+                if (coller.GetType().IsGenericType)
+                {
+                    collerName = CbSTUtils.GetGenericTypeName(coller.GetType());
+                }
+                else
+                {
+                    collerName = coller.GetType().Name;
+                }
+                title = $"{self.GetType().Name} => {collerName}::{methodName}";
+            }
+            if (ext != "")
+            {
+                title += $"[{ext}]";
+            }
+        }
+
+        [Conditional("DEBUG")]
+        public static void SetDebugCreateList(ref string title, object self, object coller = null, string methodName = "", string ext = "")
+        {
+            DebugMakeCreateTitle(ref title, self, coller, methodName, ext);
+            if (!CommandCanvas.DebugCreateNames.ContainsKey(title))
+            {
+                CommandCanvas.DebugCreateNames.Add(title, 1);
+            }
+            else
+            {
+                CommandCanvas.DebugCreateNames[title]++;
+            }
+        }
+
+        [Conditional("DEBUG")]
+        public static void RemoveDebugCreateList(string name)
+        {
+            if (!CommandCanvas.DebugCreateNames.ContainsKey(name))
+            {
+                Debug.Assert(false);
+            }
+            else
+            {
+                CommandCanvas.DebugCreateNames[name]--;
+            }
+        }
+        #endregion
 
         /// <summary>
         /// 保存用ファイル選択ダイアログを表示します。
@@ -1306,7 +1457,18 @@ namespace CapybaraVS.Controls.BaseControls
                 int argCount = Int32.Parse(cmc);
                 for (int i = 0; i < argCount; ++i)
                 {
+                    var argType = genericType.GetGenericArguments()[i];
+
+                    // ジェネリック用パラメータ型制限用フィルターに更新する
+                    if (_CanTypeMenuExecuteEventIndex != 0)
+                    {
+                        _CanTypeMenuExecuteEventIndex--;
+                    }
+                    _CanTypeMenuExecuteEvent[_CanTypeMenuExecuteEventIndex] = ScriptImplement.MakeParameterConstraintAccepter(argType);
+                    TypeMenu.RefreshItem();
+
                     Type arg = RequestType(checkType, positionSet);
+
                     if (arg is null)
                     {
                         return null;
@@ -1407,7 +1569,7 @@ namespace CapybaraVS.Controls.BaseControls
                         CapybaraVS.Language.Instance["SYSTEM_Confirmation"],
                         MessageBoxButton.OKCancel) == MessageBoxResult.OK)
             {
-                CommandCanvasList.OwnerWindow.Cursor = Cursors.Wait;
+                CommandCanvasList.SetOwnerCursor(Cursors.Wait);
                 ScriptWorkCanvas.Dispatcher.BeginInvoke(new Action(() =>
                 {
                     ClearWorkCanvas();
@@ -1416,7 +1578,7 @@ namespace CapybaraVS.Controls.BaseControls
                         // アイドル状態になってから戻す
 
                         GC.Collect();
-                        CommandCanvasList.OwnerWindow.Cursor = Cursors.Arrow;
+                        CommandCanvasList.SetOwnerCursor(null);
 
                     }), DispatcherPriority.ApplicationIdle);
                 }), DispatcherPriority.ApplicationIdle);
@@ -1547,15 +1709,21 @@ namespace CapybaraVS.Controls.BaseControls
 
                     ApiImporter = null;
                     moduleControler = null;
-                    CommandMenuWindow = null;
-                    TypeMenuWindow = null;
                     CommandCanvasControl = null;
                     ScriptCommandCanvas = null;
+                    ScriptWorkCanvas?.Dispose();
                     ScriptWorkCanvas = null;
+                    ScriptWorkStack?.Dispose();
                     ScriptWorkStack = null;
                     ScriptWorkClickEvent = null;
                     ClickEntryEvent = null;
                     ClickExitEvent = null;
+
+                    UIParamHoldAction?.Dispose();
+                    StackGroupHoldAction?.Dispose();
+                    PlotWindowHoldAction?.Dispose();
+                    LinkConnectorListHoldAction?.Dispose();
+
                     UIParamHoldAction = null;
                     StackGroupHoldAction = null;
                     PlotWindowHoldAction = null;
@@ -1568,6 +1736,9 @@ namespace CapybaraVS.Controls.BaseControls
                     typeWindow_import = null;
                     InstalledMultiRootConnector = null;
 
+                    WorkStack.Dispose();
+
+                    AssetXML?.Dispose();
                     AssetXML = null;
                 }
                 disposedValue = true;
@@ -1576,6 +1747,7 @@ namespace CapybaraVS.Controls.BaseControls
         public void Dispose()
         {
             Dispose(true);
+            GC.SuppressFinalize(this);
         }
         #endregion
 

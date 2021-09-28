@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -40,7 +41,7 @@ namespace CapybaraVS.Controls.BaseControls
 
         #region XML定義
         [XmlRoot(nameof(RootConnector))]
-        public class _AssetXML<OwnerClass>
+        public class _AssetXML<OwnerClass> : IDisposable
             where OwnerClass : RootConnector
         {
             private static int queueCounter = 0;
@@ -48,6 +49,8 @@ namespace CapybaraVS.Controls.BaseControls
             public Action WriteAction = null;
             [XmlIgnore]
             public Action<OwnerClass> ReadAction = null;
+            private bool disposedValue;
+
             public _AssetXML()
             {
                 ReadAction = (self) =>
@@ -66,6 +69,10 @@ namespace CapybaraVS.Controls.BaseControls
 
                     self.ForcedChecked = ForcedChecked;
                     self.IsPublicExecute.IsChecked = IsPublicExecute;
+                    if (EntryPointName != null)
+                    {
+                        self.EntryPointName.Text = EntryPointName;
+                    }
 
                     for (int i = 0; i < Arguments.Count; ++i)
                     {
@@ -120,6 +127,7 @@ namespace CapybaraVS.Controls.BaseControls
                     Connector = self.rootCurveLinks.AssetXML;
 
                     IsPublicExecute = self.IsPublicExecute.IsChecked == true;
+                    EntryPointName = self.EntryPointName.Text;
 
                     Arguments = new List<LinkConnector._AssetXML<LinkConnector>>();
                     foreach (var node in self.ListData)
@@ -139,6 +147,35 @@ namespace CapybaraVS.Controls.BaseControls
             [XmlArrayItem("LinkConnector")]
             public List<LinkConnector._AssetXML<LinkConnector>> Arguments { get; set; } = null;
             public bool IsPublicExecute { get; set; } = false;
+            public string EntryPointName { get; set; } = "";
+
+            protected virtual void Dispose(bool disposing)
+            {
+                if (!disposedValue)
+                {
+                    if (disposing)
+                    {
+                        WriteAction = null;
+                        ReadAction = null;
+
+                        // 以下、固有定義開放
+                        Caption?.Dispose();
+                        Caption = null;
+                        Value = null;
+                        Connector?.Dispose();
+                        Connector = null;
+                        CbSTUtils.ForeachDispose(Arguments);
+                        Arguments = null;
+                    }
+                    disposedValue = true;
+                }
+            }
+
+            public void Dispose()
+            {
+                Dispose(disposing: true);
+                GC.SuppressFinalize(this);
+            }
             #endregion
         }
         public _AssetXML<RootConnector> AssetXML { get; set; } = null;
@@ -284,7 +321,9 @@ namespace CapybaraVS.Controls.BaseControls
                 Debug.Assert(value != null);
                 SetOunerCanvas(ListData, value);
                 if (NameText.OwnerCommandCanvas is null)
+                {
                     NameText.OwnerCommandCanvas = value;
+                }
                 if (_OwnerCommandCanvas is null)
                 {
                     _OwnerCommandCanvas = value;
@@ -301,12 +340,16 @@ namespace CapybaraVS.Controls.BaseControls
             foreach (var node in list)
             {
                 if (node.OwnerCommandCanvas is null)
+                {
                     node.OwnerCommandCanvas = value;
+                }
             }
         }
 
+        private string debugCreateName = "";
         public RootConnector()
         {
+            CommandCanvas.SetDebugCreateList(ref debugCreateName, this);
             InitializeComponent();
             pointIdProvider = new PointIdProvider(this);
             AssetXML = new _AssetXML<RootConnector>(this);
@@ -337,36 +380,93 @@ namespace CapybaraVS.Controls.BaseControls
                 {
                     // スクリプトを処理する
 
-                    ExecuteRoot();
+                    ExecuteRoot(false, EntryPointName.Text);
                 }
                 );
             
             LayoutUpdated += _LayoutUpdated;
         }
 
-        public void ExecuteRoot()
+        /// <summary>
+        /// エントリーポイント名を取得します。
+        /// </summary>
+        /// <returns></returns>
+        public string GetEntryPointName()
         {
-            if (IsLockExecute)
-                return; // 再入を禁止する
-
-            CommandCanvasList.OwnerWindow.Cursor = Cursors.Wait;
-            IsLockExecute = true;
-
-            OwnerCommandCanvas.ScriptWorkCanvas.Dispatcher.BeginInvoke(new Action(() =>
+            if (!IsPublicExecute.IsChecked.Value)
             {
+                return "";
+            }
+            string entryPointName = EntryPointName.Text.Trim();
+            return entryPointName;
+        }
+
+        /// <summary>
+        /// このスクリプトノードを起点にスクリプトを実行します。
+        /// </summary>
+        /// <param name="fromScript">スクリプトから呼ぶ時==true</param>
+        /// <param name="entryPointName">エントリーポイント名</param>
+        /// <returns>返り値</returns>
+        public object ExecuteRoot(bool fromScript, string entryPointName = null)
+        {
+            object result = null;
+
+            if (!fromScript)
+            {
+                if (entryPointName != null && entryPointName.StartsWith(":"))
+                {
+                    if (entryPointName.StartsWith(":+"))
+                    {
+                        // エントリーポイント名の衝突チェック
+
+                        SetPickupEntryPoint(OwnerCommandCanvas.CommandCanvasControl.IsExistEntryPoint(OwnerCommandCanvas, GetEntryPointName()));
+                        return null;
+                    }
+
+                    if (entryPointName.Substring(1) == GetEntryPointName())
+                    {
+                        // 名前が一致している
+
+                        return true;
+                    }
+                    return null;    // false
+                }
+
+                if (!fromScript && CommandCanvasList.GetOwnerCursor() == Cursors.Wait)
+                    return null;
+
+                CommandCanvasList.SetOwnerCursor(Cursors.Wait);
+                OwnerCommandCanvas.CommandCanvasControl.CallAllExecuteEntryPointEnable(false);
                 OwnerCommandCanvas.CommandCanvasControl.MainLog.TryAutoClear();
                 GC.Collect();
+            }
 
-                // スクリプトを実行する
+            if (IsPublicExecute.IsChecked.Value &&
+                !(entryPointName is null && GetEntryPointName().Length == 0) &&
+                (entryPointName is null || entryPointName != GetEntryPointName()))
+            {
+                // エントリーポイントに名前が付けられていて、且つ名前が一致しない
 
-                OwnerCommandCanvas.CommandCanvasControl.CallAllExecuteEntryPointEnable(false);
+                CommandCanvasList.SetOwnerCursor(null);
+                OwnerCommandCanvas.CommandCanvasControl.CallAllExecuteEntryPointEnable(true);
+                return null;
+            }
+
+            // スクリプトを実行する
+
+            Stopwatch sw = null;
+            if (!fromScript)
+            {
                 OwnerCommandCanvas.EnabledScriptHoldActionMode = true;  // 表示更新処理を保留する
 
-                var sw = new System.Diagnostics.Stopwatch();
+                sw = new Stopwatch();
                 sw.Start();
+            }
 
-                RequestExecute(null, null);
+            result = RequestExecute(null, null);
 
+            if (!fromScript)
+            {
                 sw.Stop();
                 TimeSpan ts = sw.Elapsed;
                 OwnerCommandCanvas.CommandCanvasControl.MainLog.OutLine(
@@ -376,18 +476,26 @@ namespace CapybaraVS.Controls.BaseControls
 
                 OwnerCommandCanvas.EnabledScriptHoldActionMode = false; // 保留した表示更新処理を実行する
 
+
                 this.Dispatcher.BeginInvoke(new Action(() =>
                 {
-                    // アイドル状態になってから戻す
+                // アイドル状態（画面の更新処理が終わってから）になってから戻す
 
-                    IsLockExecute = false;
-                    OwnerCommandCanvas.CommandCanvasControl.CallAllExecuteEntryPointEnable(true);
+                OwnerCommandCanvas.CommandCanvasControl.CallAllExecuteEntryPointEnable(true);
                     GC.Collect();
-                    CommandCanvasList.OwnerWindow.Cursor = null;
+                    CommandCanvasList.SetOwnerCursor(null);
 
                 }), DispatcherPriority.ApplicationIdle);
+            }
 
-            }), DispatcherPriority.ApplicationIdle);
+            if (result != null)
+            {
+                if (result.GetType() == typeof(CbClass<CbVoid>) || result.GetType() == typeof(CbClass<CbClass<CbVoid>>))
+                {
+                    return null;
+                }
+            }
+            return result;
         }
 
         ~RootConnector()
@@ -402,18 +510,6 @@ namespace CapybaraVS.Controls.BaseControls
         public void SetExecuteButtonEnable(bool enable)
         {
             ExecuteButtunControl.IsEnabled = enable;
-        }
-
-        /// <summary>
-        /// スクリプト実行ボタン再入禁止フラグ
-        /// </summary>
-        private bool IsLockExecute
-        {
-            get => OwnerCommandCanvas.CommandCanvasControl.IsLockExecute;
-            set
-            {
-                OwnerCommandCanvas.CommandCanvasControl.IsLockExecute = value;
-            }
         }
 
         /// <summary>
@@ -450,7 +546,7 @@ namespace CapybaraVS.Controls.BaseControls
             }
         }
 
-        public void RequestExecute(List<object> functionStack, DummyArgumentsStack preArgument)
+        public object RequestExecute(List<object> functionStack, DummyArgumentsStack preArgument)
         {
             functionStack ??= new List<object>();
             preArgument ??= new DummyArgumentsStack();
@@ -473,7 +569,7 @@ namespace CapybaraVS.Controls.BaseControls
                     }
                     else if (ValueData.TypeName == ret.TypeName)
                     {
-                        // メソッド処理結果をアセットに反映する
+                        // メソッド処理結果をスクリプトノードに反映する
                         // ValueData = ret;
                         // ↑管理情報まで上書きするのでまるごと上書きしてはダメ
 
@@ -481,7 +577,7 @@ namespace CapybaraVS.Controls.BaseControls
                     }
                     else
                     {
-                        // メソッド処理結果の値とアセットの値の型が異なる
+                        // メソッド処理結果の値とスクリプトノードの値の型が異なる
 
                         new NotImplementedException();
                     }
@@ -496,6 +592,12 @@ namespace CapybaraVS.Controls.BaseControls
 
             functionStack.Add(this);    // 実行済みであることを記録する
             arguments?.Clear();
+
+            if (ValueData.IsNullable && ValueData.IsNull)
+            {
+                return null;
+            }
+            return ValueData.Data;
         }
 
         /// <summary>
@@ -624,7 +726,7 @@ namespace CapybaraVS.Controls.BaseControls
                 }
                 return;
             }
-            rootCurveLinks?.Dispose();
+            rootCurveLinks?.CloseLink();
             if (single)
             {
                 rootCurveLinks = new RootCurveSingleLink(this, CurveCanvas);
@@ -643,16 +745,21 @@ namespace CapybaraVS.Controls.BaseControls
         public void AppendArgument(ICbValue variable, bool literalType = false)
         {
             // 引数とリンクしたリンクコネクターを作成する
-            var linkConnector = new LinkConnector()
+
+            LinkConnector makeLinkConnector(int index)
             {
-                OwnerCommandCanvas = this.OwnerCommandCanvas,
-                ValueData = variable
-            };
+                return new LinkConnector(this, index.ToString())
+                {
+                    OwnerCommandCanvas = this.OwnerCommandCanvas,
+                    ValueData = variable
+                };
+            }
+
             if (variable.IsList)
             {
                 // リスト型の引数を追加する
 
-                AppendListArgument(linkConnector, variable, literalType);
+                AppendListArgument(makeLinkConnector(0), variable, literalType);
             }
             else
             {
@@ -664,7 +771,7 @@ namespace CapybaraVS.Controls.BaseControls
                 }
 
                 // 引数UIを追加する
-                AppendUIArgument(linkConnector);
+                AppendUIArgument(makeLinkConnector(1));
             }
         }
 
@@ -873,6 +980,10 @@ namespace CapybaraVS.Controls.BaseControls
             OwnerCommandCanvas.CommandCanvasControl.AddPublicExecuteEntryPoint(OwnerCommandCanvas, ExecuteRoot);
             IsPublicExecute.Foreground = Brushes.Tomato;
             RectBox.Fill = NodeEntryColor;
+            EntryPointName.Visibility = Visibility.Visible;
+
+            // 名前の衝突チェック
+            CommandCanvasList.CheckPickupAllEntryPoint(OwnerCommandCanvas);
         }
 
         /// <summary>
@@ -885,6 +996,33 @@ namespace CapybaraVS.Controls.BaseControls
             OwnerCommandCanvas.CommandCanvasControl.RemovePublicExecuteEntryPoint(ExecuteRoot);
             IsPublicExecute.Foreground = Brushes.Black;
             RectBox.Fill = NodeNormalColor;
+            EntryPointName.Visibility = Visibility.Collapsed;
+
+            // 名前の衝突チェック
+            CommandCanvasList.CheckPickupAllEntryPoint(OwnerCommandCanvas);
+        }
+
+        private void EntryPointName_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            // 名前の衝突チェック
+
+            CommandCanvasList.CheckPickupAllEntryPoint(OwnerCommandCanvas);
+        }
+
+        /// <summary>
+        /// エントリーポイント名の背景色の色替えを行います。
+        /// </summary>
+        /// <param name="flg">true==名前の衝突色</param>
+        private void SetPickupEntryPoint(bool flg)
+        {
+            if (flg)
+            {
+                EntryPointName.Background = Brushes.Tomato;
+            }
+            else
+            {
+                EntryPointName.Background = Brushes.NavajoWhite;
+            }
         }
 
         //-----------------------------------------------------------------------------------
@@ -1160,12 +1298,12 @@ namespace CapybaraVS.Controls.BaseControls
 
         private void EllipseType_MouseEnter(object sender, MouseEventArgs e)
         {
-            Cursor = Cursors.Hand;
+            CommandCanvasList.SetOwnerCursor(Cursors.Hand);
         }
 
         private void EllipseType_MouseLeave(object sender, MouseEventArgs e)
         {
-            Cursor = null;
+            CommandCanvasList.SetOwnerCursor(null);
         }
 
         //-----------------------------------------------------------------------------------
@@ -1183,12 +1321,31 @@ namespace CapybaraVS.Controls.BaseControls
                         OwnerCommandCanvas.CommandCanvasControl.RemoveAllExecuteEntryPointEnable(SetExecuteButtonEnable);
                     }
                     LayoutUpdated -= _LayoutUpdated;
-                    foreach (var node in ListData)
-                    {
-                        node.Dispose();
-                    }
+                    MouseMove -= Grid_MouseMove;
+                    MouseUp -= Grid_MouseLeftButtonUp;
+
+                    CbSTUtils.ForeachDispose(ListData);
+                    ListData = null;
+
+                    rootCurveLinks?.CloseLink();
                     rootCurveLinks?.Dispose();
                     rootCurveLinks = null;
+
+                    curvePath?.Dispose();
+                    curvePath = null;
+
+                    AssetXML?.Dispose();
+                    AssetXML = null;
+                    NodeNormalColor = null;
+                    NodeEntryColor = null;
+                    _OwnerCommandCanvas = null;
+
+                    ValueData?.Dispose();
+                    ValueData = null;
+                    NameText.Dispose();
+                    FuncCaption.Dispose();
+
+                    CommandCanvas.RemoveDebugCreateList(debugCreateName);
                 }
                 disposedValue = true;
             }
@@ -1196,6 +1353,7 @@ namespace CapybaraVS.Controls.BaseControls
         public void Dispose()
         {
             Dispose(true);
+            GC.SuppressFinalize(this);
         }
         #endregion
     }

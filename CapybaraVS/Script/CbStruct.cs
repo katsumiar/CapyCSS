@@ -51,6 +51,22 @@ namespace CapybaraVS.Script
         /// <returns>CbStruct<T>型の変数</returns>
         public static ICbValue StructValue(Type type, string name)
         {
+            return _StructValue(type, name, typeof(CbStruct<>));
+        }
+
+        /// <summary>
+        /// オリジナル型情報から CbNullableStruct<type>型の変数を返します。
+        /// </summary>
+        /// <param name="type">オリジナルのクラスの型</param>
+        /// <param name="name"></param>
+        /// <returns>CbStruct<T>型の変数</returns>
+        public static ICbValue NullableStructValue(Type type, string name)
+        {
+            return _StructValue(type, name, typeof(CbNullableStruct<>));
+        }
+
+        private static ICbValue _StructValue(Type type, string name, Type openedType)
+        {
             if (type is null)
             {
                 return null;
@@ -70,7 +86,6 @@ namespace CapybaraVS.Script
                 return null;
             }
 
-            Type openedType = typeof(CbStruct<>); //CapybaraVS.Script.CbStruct`1
             Type cbStructType = openedType.MakeGenericType(type);
 
             object result = cbStructType.InvokeMember(
@@ -110,18 +125,15 @@ namespace CapybaraVS.Script
     /// <summary>
     /// struct型
     /// </summary>
-    public class CbStruct<T> : BaseCbValueClass<T>, ICbValueClass<T>, ICbStruct
+    public class CbStruct<T> 
+        : BaseCbValueClass<T>
+        , ICbValueClass<T>
+        , ICbStruct
          where T : struct
     {
         public override Type MyType => typeof(CbStruct<T>);
 
         public string ItemName => typeof(T).FullName;
-
-        public static Type GetItemType() { return typeof(T); }
-
-        public override Type OriginalReturnType => typeof(T);
-
-        public override Type OriginalType => typeof(T);
 
         public CbStruct(T n, string name = "")
         {
@@ -144,15 +156,6 @@ namespace CapybaraVS.Script
 
         public override Func<ICbValue> NodeTF => TF;
 
-        public override T Value
-        {
-            get => _value;
-            set
-            {
-                _value = value;
-            }
-        }
-
         /// <summary>
         /// 値のUI上の文字列表現
         /// </summary>
@@ -172,11 +175,88 @@ namespace CapybaraVS.Script
         /// </summary>
         public override string ValueString
         {
+            get => Value.ToString();
+            set => new NotImplementedException();
+        }
+
+        public override bool IsStringableValue => false;
+
+        public override bool IsReadOnlyValue { get; set; } = true;
+
+        public static CbStruct<T> Create(string name = "") => new CbStruct<T>(name);
+
+        public static CbStruct<T> Create(T n, string name = "") => new CbStruct<T>(n, name);
+
+        public static Func<ICbValue> TF = () => Create();
+        public static Func<string, ICbValue> NTF = (name) => Create(name);
+
+        private bool disposedValue;
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!disposedValue)
+            {
+                if (disposing)
+                {
+                    ClearWork();
+                }
+                disposedValue = true;
+            }
+        }
+
+        public void Dispose()
+        {
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
+        }
+    }
+
+
+
+    public class CbNullableStruct<T>
+        : CbStruct<T>
+     where T : struct
+    {
+        public override Type MyType => typeof(CbNullableStruct<T>);
+
+        public CbNullableStruct(T n, string name = "")
+            : base(n, name) {}
+
+        public CbNullableStruct(string name = "")
+            : base(name) {}
+
+        /// <summary>
+        /// null許容型か？
+        /// </summary>
+        public override bool IsNullable => true;
+
+        /// <summary>
+        /// 値のUI上の文字列表現
+        /// </summary>
+        public override string ValueUIString
+        {
+            get
+            {
+                string baseName = "[" + TypeName + "]";
+                if (IsError)
+                    return CbSTUtils.ERROR_STR;
+                if (IsNull)
+                    return $"{baseName}{CbSTUtils.UI_NULL_STR}";
+                return baseName;
+            }
+        }
+
+        /// <summary>
+        /// 値の文字列表現
+        /// </summary>
+        public override string ValueString
+        {
             get
             {
                 if (IsNull)
                 {
-                    return CbSTUtils.NULL_STR;
+                    string baseName = "[" + TypeName + "]";
+                    return $"{baseName}{CbSTUtils.UI_NULL_STR}";
                 }
                 else
                 {
@@ -186,21 +266,11 @@ namespace CapybaraVS.Script
             set => new NotImplementedException();
         }
 
-        public override bool IsStringableValue => false;
+        public static new CbNullableStruct<T> Create(string name = "") => new CbNullableStruct<T>(name);
 
-        public override bool IsReadOnlyValue { get; set; } = true;
+        public static new CbNullableStruct<T> Create(T n, string name = "") => new CbNullableStruct<T>(n, name);
 
-        public static CbStruct<T> Create(string name = "")
-        {
-            return new CbStruct<T>(name);
-        }
-
-        public static CbStruct<T> Create(T n, string name = "")
-        {
-            return new CbStruct<T>(n, name);
-        }
-
-        public static Func<ICbValue> TF = () => CbStruct<T>.Create();
-        public static Func<string, ICbValue> NTF = (name) => CbStruct<T>.Create(name);
+        public static new Func<ICbValue> TF = () => Create();
+        public static new Func<string, ICbValue> NTF = (name) => Create(name);
     }
 }

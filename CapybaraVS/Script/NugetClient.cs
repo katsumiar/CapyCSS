@@ -8,6 +8,9 @@ using System.IO.Compression;
 using System.IO;
 using System.Xml.Linq;
 using CapyCSS.Controls;
+using CapybaraVS;
+using CapybaraVS.Script.Lib;
+using System.Text.RegularExpressions;
 
 namespace CapyCSS.Script
 {
@@ -58,51 +61,78 @@ namespace CapyCSS.Script
         /// <param name="version">バージョン</param>
         /// <param name="pkgId">正式なパッケージ名（name(var)）</param>
         /// <returns>dllリスト</returns>
-		public static List<PackageInfo> install(string packageDir, string packageName, string version, out string pkgId)
+		public static List<PackageInfo> install(string _packageDir, string packageName, string version, out string pkgId)
         {
-            string packageRoot = Path.Combine(packageDir, $"{packageName}.{version}");
-            var packageList = new List<PackageInfo>();
+            pkgId = "";
+            string toolPath = Path.Combine(_packageDir, "nuget.exe");
+            if (!File.Exists(toolPath))
+            {
+                string msg = Language.Instance["Help:NugetNotExist"];
+                ControlTools.ShowErrorMessage(msg.Replace("<DIR>", _packageDir));
+                return null;
+            }
+
+            string packageVName = $"{packageName}.{version}";
+            string packageDir = Path.Combine(_packageDir, packageName);
+            string packageRoot = Path.Combine(packageDir, packageVName);
 
             if (!Directory.Exists(packageRoot))
             {
                 // nugetファイルをダウンロード
 
-                string nupkg = $"{packageRoot}.nupkg";
-                var webClient = new WebClient();
-                CommandCanvasList.OutPut.OutString(nameof(NugetClient), $"Get..");
-                webClient.DownloadFile($"https://www.nuget.org/api/v2/package/{packageName}/{version}", nupkg);
-                CommandCanvasList.OutPut.OutString(nameof(NugetClient), $".");
-                ZipFile.ExtractToDirectory(nupkg, packageRoot); // zip展開
-                File.Delete(nupkg);
-                CommandCanvasList.OutPut.OutLine(nameof(NugetClient), $"{packageName}({version}) package.");
+                CommandCanvasList.OutPut.OutLine(nameof(NugetClient), $"Get {packageVName}");
+
+                ToolExec toolExec = new ToolExec(toolPath);
+                toolExec.ParamList.Add("Install");
+                toolExec.ParamList.Add(packageName);
+                toolExec.ParamList.Add("-Version");
+                toolExec.ParamList.Add(version);
+                toolExec.ParamList.Add("-PackageSaveMode");
+                toolExec.ParamList.Add("nuspec");
+                toolExec.ParamList.Add("-OutputDirectory");
+                toolExec.ParamList.Add(packageDir);
+                int result = toolExec.Start(true);
+                if (result == 0)
+                {
+                    CommandCanvasList.OutPut.OutLine(nameof(NugetClient), "OK");
+                    CommandCanvasList.OutPut.Flush();
+                }
+                else
+                {
+                    CommandCanvasList.OutPut.OutLine(nameof(NugetClient), $"error({result})");
+                    return null;
+                }
             }
 
-            // 依存パッケージを取得
-            pkgId = "";
-            IEnumerable<string> packages = GetDependencies(packageName, packageRoot, out string _pkgId, out string net_version);
-            if (packages is null)
+            List<string> dllList = new List<string>();
+            List<string> libPathList = new List<string>(FileLib.GetDirectories(packageDir, true));
+            libPathList.Sort((a, b) => b.CompareTo(a));
+            foreach (var dir in libPathList)
             {
-                return null;
-            }
-            foreach (var package in packages)
-            {
-                List<PackageInfo> list = install(packageDir, package, out pkgId);
-                if (list != null)
-                {
-                    packageList.AddRange(list);
+                if (dir.Contains(@"\ref\"))
+                    continue;
+                if (dir.Contains("netstandard"))
+                    {
+                    ICollection<string> dll = FileLib.GetFiles(dir, "*.dll");
+                    if (dll.Count != 0)
+                    {
+                        bool isHit = dllList.Any((n) => dir.StartsWith(n.Substring(0, n.IndexOf("netstandard"))));
+                        if (isHit)
+                            continue;
+                        dllList.Add(dll.First());
+                    } 
                 }
             }
 
             // dll をリストに登録
-            string[] libPathList = DllPath(packageName, packageRoot, net_version);
-            if (libPathList != null && libPathList.Length != 0)
+            var packageList = new List<PackageInfo>();
+            if (dllList != null && dllList.Count != 0)
             {
-                string basePass = System.IO.Path.GetDirectoryName(libPathList[libPathList.Length - 1]);
-                foreach (var libPath in libPathList)
+                string basePass = System.IO.Path.GetDirectoryName(dllList[dllList.Count - 1]);
+                foreach (var libPath in dllList)
                 {
                     // 内部に複数のサブディレクトリを持っている場合、サブディレクトリ名を名前に残す
-                    string name = libPath.Replace(basePass, "");
-                    name = name.Replace(@"\", "/").TrimStart('/');
+                    string name = Path.GetFileNameWithoutExtension(libPath);
 
                     if (loadedPackages.Contains(libPath))
                     {
@@ -111,136 +141,21 @@ namespace CapyCSS.Script
                         continue;
                     }
                     loadedPackages.Add(libPath);
-                    packageList.Add(new PackageInfo(libPath, name, version));
+                    Match match = Regex.Match(libPath, @"\d+\.\d+\.\d+");
+                    if (match.Success)  // バージョン情報が見つかった
+                        packageList.Add(new PackageInfo(libPath, name.Replace(match.Value, ""), match.Value));
+                    else
+                        packageList.Add(new PackageInfo(libPath, name, ""));
                 }
             }
-            pkgId = _pkgId;
+            {
+                Match match = Regex.Match(packageVName, @"\d+\.\d+\.\d+");
+                if (match.Success)  // バージョン情報が見つかった
+                    pkgId = packageVName.Replace("." + match.Value, "");
+                else
+                    pkgId = packageVName;
+            }
             return packageList;
-        }
-
-        /// <summary>
-        /// .net standard のバージョンリスト
-        /// </summary>
-        private static List<string> netStandardVerList = new List<string>()
-            {
-                "2.1",
-                "2.0",
-                "1.6",
-                "1.5",
-                "1.4",
-                "1.3",
-                "1.2",
-                "1.1",
-                "1.0"
-            };
-
-        /// <summary>
-        /// 依存パッケージを取得します。
-        /// ※個々の依存の中にも依存がある場合があるが無視している...
-        /// </summary>
-        /// <param name="packageName">パッケージ名</param>
-        /// <param name="packageRoot">ダウンロードしたパッケージディレクトリ</param>
-        /// <param name="pkgId">正式なパッケージ名（name(var)）</param>
-        /// <param name="net_version">バージョン（name(var)）</param>
-        /// <returns>パッケージ一覧</returns>
-        private static IEnumerable<string> GetDependencies(string packageName, string packageRoot, out string pkgId, out string net_version)
-        {
-            string nuspecFile = Path.Combine(packageRoot, $"{packageName}.nuspec");
-            XDocument nuspec = XDocument.Load(nuspecFile);
-            var xmlNs = nuspec.Root.Name.Namespace;
-            var dependencies = nuspec.Descendants(xmlNs + "dependencies");
-            net_version = "";
-            pkgId = "";
-            if (dependencies.Count() == 0)
-            {
-                return null;
-            }
-            IEnumerable<XElement> groups = null;
-            foreach (var ver in netStandardVerList)
-            {
-                // .NET Standard の最新バージョンを探す
-
-                groups = dependencies.Elements(xmlNs + "group").Where(n => n.Attribute("targetFramework").Value.StartsWith($".NETStandard{ver}"));
-                if (groups.Count() != 0)
-                {
-                    break;
-                }
-            }
-            if (groups.Count() == 0)
-            {
-                return null;
-            }
-            var group = groups.First();
-            var dependencys = group.Elements(xmlNs + "dependency");
-            var packageList = new List<string>();
-            foreach (var dependency in dependencys)
-            {
-                string id = dependency.Attribute("id").Value;
-                string version = dependency.Attribute("version").Value;
-                if (version.Contains(","))
-                {
-                    version = version.TrimStart('[').TrimEnd(']');
-                }
-                if (version.Contains(","))
-                {
-                    // バージョン, バージョン[, ...] 形式
-
-                    var tkn = version.Split(',');
-                    version = tkn[tkn.Length - 1].Trim();
-                }
-                packageList.Add($"{id}({version})");
-            }
-            // パッケージの正式名称を得る
-            pkgId = nuspec.Descendants(xmlNs + "id").First().Value;
-            // 正しいバージョンを取得する
-            net_version = group.Attribute("targetFramework").Value.Replace(".NETStandard", "");
-            return packageList;
-        }
-
-        /// <summary>
-        /// パッケージのdllパスを得ます。
-        /// </summary>
-        /// <param name="packageName">パッケージ名</param>
-        /// <param name="packageRoot">ダウンロードしたパッケージディレクトリ</param>
-        /// <param name="version">.net standard のバージョン</param>
-        /// <returns>dllリスト</returns>
-        private static string[] DllPath(string packageName, string packageRoot, string version)
-        {
-            string libPath = Path.Combine(packageRoot, "lib");
-            libPath = Path.Combine(libPath, "netstandard" + version);
-            string[] libPathList = null;
-            foreach (var ver in netStandardVerList)
-            {
-                // ディレクトリが存在しないことがある...
-
-                if (System.IO.Directory.Exists(libPath))
-                {
-                    libPathList = System.IO.Directory.GetFiles(libPath, "*.dll", SearchOption.AllDirectories);
-                }
-                if (libPath.EndsWith("1.0"))
-                {
-                    return null;
-                }
-                // 一先ず手抜き...
-                libPath.Replace("1.1", "1.0");
-                libPath.Replace("1.2", "1.1");
-                libPath.Replace("1.3", "1.2");
-                libPath.Replace("1.4", "1.3");
-                libPath.Replace("1.5", "1.4");
-                libPath.Replace("1.6", "1.5");
-                libPath.Replace("2.0", "1.6");
-                libPath.Replace("2.1", "2.0");
-            }
-            if (libPathList != null && libPathList.Length > 1)
-            {
-                // 最初のファイルを一番うしろに持っていく
-                //※一番最後のdllのメソッドが取り込まれる（すべて取り込む場合は、意味無し）
-
-                var temp = libPathList[0];
-                libPathList[0] = libPathList[libPathList.Length - 1];
-                libPathList[libPathList.Length - 1] = temp;
-            }
-            return libPathList;
         }
     }
 }

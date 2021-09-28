@@ -14,6 +14,7 @@ using System.Windows.Shapes;
 using System.Xml.Serialization;
 using CapybaraVS.Control.BaseControls;
 using System.Windows.Threading;
+using System.Windows.Input;
 
 namespace CapybaraVS
 {
@@ -127,6 +128,17 @@ namespace CapybaraVS
         }
     }
 
+    //-----------------------------------------------------------------------------------
+    /// <summary>
+    /// 接続解除インターフェイス
+    /// </summary>
+    public interface ICloseLink
+        : IDisposable
+    {
+        void CloseLink();
+    }
+
+    //-----------------------------------------------------------------------------------
     /// <summary>
     /// 接続ポイントインターフェイス
     /// </summary>
@@ -148,10 +160,13 @@ namespace CapybaraVS
         Point TargetPoint { get; }
     }
 
+    //-----------------------------------------------------------------------------------
     /// <summary>
     /// （接続先が保持する）接続元インターフェイス
     /// </summary>
-    public interface ICurveLinkRoot : ITargetPoint, ICbExecutable
+    public interface ICurveLinkRoot 
+        : ITargetPoint
+        , ICbExecutable
     {
         /// <summary>
         /// 接続元が保持するデータを参照する
@@ -185,10 +200,13 @@ namespace CapybaraVS
         void RequestRemoveCurveLinkRoot(ICurveLinkPoint point);
     }
 
+    //-----------------------------------------------------------------------------------
     /// <summary>
     /// （接続元が保持する）接続先インターフェイス
     /// </summary>
-    public interface ICurveLinkPoint : ITargetPoint, ICbExecutable
+    public interface ICurveLinkPoint 
+        : ITargetPoint
+        , ICbExecutable
     {
         /// <summary>
         /// データ参照更新依頼
@@ -209,10 +227,13 @@ namespace CapybaraVS
         void RequestRemoveCurveLinkPoint(ICurveLinkRoot root);
     }
 
+    //-----------------------------------------------------------------------------------
     /// <summary>
     /// コネクター接続クラス
     /// </summary>
-    public class CurveLink : IDisposable, ICbExecutable
+    public class CurveLink 
+        : ICloseLink
+        , ICbExecutable
     {
         public ICurveLinkPoint curveLinkPoint = null;
         public CurvePath curvePath = null;
@@ -266,7 +287,7 @@ namespace CapybaraVS
             else
             {
                 curveLinkPoint = null;
-                Dispose();
+                CloseLink();
             }
             return ret;
         }
@@ -296,7 +317,7 @@ namespace CapybaraVS
             var ontTime = curveLinkPoint;
             curveLinkPoint = null;
             ontTime?.RequestRemoveCurveLinkPoint(_self);
-            Dispose();
+            CloseLink();
         }
 
         public void RequestUpdateRootValue()
@@ -304,31 +325,48 @@ namespace CapybaraVS
             curveLinkPoint?.UpdateRootValue();
         }
 
-        public void RequestExecute(List<object> functionStack, DummyArgumentsStack preArgument)
+        public object RequestExecute(List<object> functionStack, DummyArgumentsStack preArgument)
         {
-            curveLinkPoint?.RequestExecute(functionStack, preArgument);
+            return curveLinkPoint?.RequestExecute(functionStack, preArgument);
         }
 
-        public void Dispose()
+        public void CloseLink()
         {
             curveLinkPoint?.RequestRemoveCurveLinkPoint(_self);
             curveLinkPoint = null;
             curvePath?.Dispose();
             curvePath = null;
         }
+
+        public void Dispose()
+        {
+            CloseLink();
+            curveLinkPoint = null;
+            curvePath?.Dispose();
+            curvePath = null;
+            _self = null;
+            _canvas = null;
+
+            GC.SuppressFinalize(this);
+        }
     }
 
-    public abstract class RootCurveLinks : IDisposable, ICbExecutable
+    //-----------------------------------------------------------------------------------
+    public abstract class RootCurveLinks
+        : ICloseLink
+        , ICbExecutable
     {
         #region XML定義
         [XmlRoot(nameof(RootCurveLinks))]
-        public class _AssetXML<OwnerClass>
+        public class _AssetXML<OwnerClass> : IDisposable
             where OwnerClass : RootCurveLinks
         {
             [XmlIgnore]
             public Action WriteAction = null;
             [XmlIgnore]
             public Action<OwnerClass> ReadAction = null;
+            private bool disposedValue;
+
             public _AssetXML()
             {
                 ReadAction = (self) =>
@@ -363,6 +401,29 @@ namespace CapybaraVS
             #region 固有定義
             [XmlArrayItem("PointID")]
             public List<int> LinkList { get; set; } = null;
+
+            protected virtual void Dispose(bool disposing)
+            {
+                if (!disposedValue)
+                {
+                    if (disposing)
+                    {
+                        WriteAction = null;
+                        ReadAction = null;
+
+                        // 以下、固有定義開放
+                        LinkList?.Clear();
+                        LinkList = null;
+                    }
+                    disposedValue = true;
+                }
+            }
+
+            public void Dispose()
+            {
+                Dispose(disposing: true);
+                GC.SuppressFinalize(this);
+            }
             #endregion
         }
         public _AssetXML<RootCurveLinks> AssetXML { get; set; } = null;
@@ -432,26 +493,45 @@ namespace CapybaraVS
                 curveLink?.RequestUpdateRootValue();
         }
 
-        public void RequestExecute(List<object> functionStack, DummyArgumentsStack preArgument)
+        public object RequestExecute(List<object> functionStack, DummyArgumentsStack preArgument)
         {
             foreach (var curveLink in CurveLinkData)
+            {
                 curveLink?.RequestExecute(functionStack, preArgument);
+            }
+            return null;
+        }
+
+        public void CloseLink()
+        {
+            while (CurveLinkData.Count != 0)
+            {
+                CurveLinkData[0]?.CloseLink();
+            }
+            CurveLinkData.Clear();
         }
 
         public void Dispose()
         {
-            while (CurveLinkData.Count != 0)
-            {
-                CurveLinkData[0]?.Dispose();
-            }
-            CurveLinkData.Clear();
+            CloseLink();
+            CbSTUtils.ForeachDispose(CurveLinkData);
+            CurveLinkData = null;
+            AssetXML?.Dispose();
+            AssetXML = null;
+            _self = null;
+            _canvas = null;
+
+            GC.SuppressFinalize(this);
         }
     }
 
+    //-----------------------------------------------------------------------------------
     /// <summary>
     /// RootCurveSingleLinkと共通のインターフェイス（RootCurveLinks）を持つ複数のリンク先を持てるルートコネクター
     /// </summary>
-    public class RootCurveMulitiLink : RootCurveLinks, IDisposable
+    public class RootCurveMulitiLink
+        : RootCurveLinks
+        , ICloseLink
     {
         public RootCurveMulitiLink(ICurveLinkRoot self, Canvas canvas)
             : base(self, canvas) { }
@@ -472,10 +552,13 @@ namespace CapybaraVS
         }
     }
 
+    //-----------------------------------------------------------------------------------
     /// <summary>
     /// RootCurveMulitiLinkと共通のインターフェイス（RootCurveLinks）を持つ単一のリンク先を持つルートコネクター
     /// </summary>
-    public class RootCurveSingleLink : RootCurveLinks, IDisposable
+    public class RootCurveSingleLink
+        : RootCurveLinks
+        , ICloseLink
     {
         public RootCurveSingleLink(ICurveLinkRoot self, Canvas canvas)
             : base(self, canvas) { }
@@ -489,7 +572,7 @@ namespace CapybaraVS
                 // 既存のリンクを解除
 
                 CurveLink _curveLink = CurveLinkData[0];
-                _curveLink.Dispose();
+                _curveLink.CloseLink();
             }
             CurveLink curveLink = new CurveLink(_self, _canvas);
             CurveLinkData.Add(curveLink);
@@ -497,12 +580,23 @@ namespace CapybaraVS
         }
     }
 
-    public abstract class LinkCurveLinks : IDisposable, ICbExecutable
+    //-----------------------------------------------------------------------------------
+    public abstract class LinkCurveLinks
+        : ICloseLink
+        , ICbExecutable
     {
         protected List<ICurveLinkRoot> CurveLinkRootData { get; set; } = new List<ICurveLinkRoot>();
 
         protected ICurveLinkPoint _self;
-        public int Count => CurveLinkRootData.Count;
+        public int Count
+        {
+            get
+            {
+                if (CurveLinkRootData is null)
+                    return 0;
+                return CurveLinkRootData.Count;
+            }
+        }
 
         public LinkCurveLinks(ICurveLinkPoint self)
         {
@@ -533,8 +627,9 @@ namespace CapybaraVS
             CurveLinkRootData.Remove(curveLinkRoot);
         }
 
-        public void RequestExecute(List<object> functionStack, DummyArgumentsStack preArgument)
+        public object RequestExecute(List<object> functionStack, DummyArgumentsStack preArgument)
         {
+            object result = null;
             foreach (var curveLinkRoot in CurveLinkRootData)
             {
                 if (curveLinkRoot is null)
@@ -546,41 +641,60 @@ namespace CapybaraVS
                 {
                     // 未実行かスコープ指定（ローカルスコープイメージ）の場合は、実行する
 
-                    curveLinkRoot?.RequestExecute(functionStack, preArgument);
+                    result = curveLinkRoot?.RequestExecute(functionStack, preArgument);
                 }
+            }
+            return result;
+        }
+
+        public void CloseLink()
+        {
+            if (CurveLinkRootData != null)
+            {
+                while (CurveLinkRootData.Count != 0)
+                {
+                    var curveLinkRoot = CurveLinkRootData[0];
+                    curveLinkRoot?.RequestRemoveCurveLinkRoot(_self);
+                }
+                CurveLinkRootData.Clear();
             }
         }
 
         public void Dispose()
         {
-            while (CurveLinkRootData.Count != 0)
-            {
-                var curveLinkRoot = CurveLinkRootData[0];
-                curveLinkRoot?.RequestRemoveCurveLinkRoot(_self);
-            }
-            CurveLinkRootData.Clear();
+            CloseLink();
+            CurveLinkRootData = null;
+            _self = null;
+
+            GC.SuppressFinalize(this);
         }
     }
 
+    //-----------------------------------------------------------------------------------
     /// <summary>
     /// LinkCurveMultiLinksと共通のインターフェイス（LinkCurveLinks）を持つ単一のリンク先を持つルートコネクター
     /// </summary>
-    public class LinkCurveSingleLinks : LinkCurveLinks, IDisposable
+    public class LinkCurveSingleLinks
+        : LinkCurveLinks
+        , ICloseLink
     {
         public LinkCurveSingleLinks(ICurveLinkPoint self)
             : base(self) { }
         public override bool RequestLinkCurve(ICurveLinkRoot root)
         {
-            Dispose();
+            CloseLink();
             CurveLinkRootData.Add(root);
             return true;
         }
     }
 
+    //-----------------------------------------------------------------------------------
     /// <summary>
     /// LinkCurveSingleLinksと共通のインターフェイス（LinkCurveLinks）を持つ単一のリンク先を持つルートコネクター
     /// </summary>
-    public class LinkCurveMultiLinks : LinkCurveLinks, IDisposable
+    public class LinkCurveMultiLinks
+        : LinkCurveLinks
+        , ICloseLink
     {
         public LinkCurveMultiLinks(ICurveLinkPoint self)
             : base(self) { }
@@ -591,11 +705,12 @@ namespace CapybaraVS
         }
     }
 
-
+    //-----------------------------------------------------------------------------------
     /// <summary>
     /// 曲線を描画するクラスです。
     /// </summary>
-    public class CurvePath : IDisposable
+    public class CurvePath
+        : ICloseLink
     {
         private ITargetPoint startTarget = null;
         private Panel drawControl = null;
@@ -603,7 +718,6 @@ namespace CapybaraVS
         private bool revert = false;
         private Path ellipsePath = null;
         private Path ellipseBorderPath = null;   // 縁取り用
-        private LinePos MyLinePos = null;   // 交差チェック用
 
         private Brush DEFAULT_COLOR => Brushes.DodgerBlue;
         private Brush DEFAULT_BORDER_COLOR => Brushes.Snow;
@@ -671,20 +785,6 @@ namespace CapybaraVS
             set
             {
                 targetEndPoint = value;
-
-                if (MyLinePos != null)
-                {
-                    LinePosList.Remove(MyLinePos);
-                    MyLinePos = null;
-                }
-                if (targetEndPoint != null)
-                {
-
-                    MyLinePos = new LinePos(startPoint.Value, endPoint.Value);
-                    MyLinePos.Update = new Action(() => UpdateColor());
-                    LinePosList.Add(MyLinePos);
-                    UpdateColors();
-                }
             }
         }
 
@@ -696,13 +796,11 @@ namespace CapybaraVS
         {
             if (ellipsePath != null)
             {
-                changeLineColor = false;
-                ellipsePath.Stroke = CreateMainBrush();
+                ellipsePath.Stroke = DEFAULT_COLOR;
             }
         }
 
         //-----------------------------------------------------------------------------------
-        private bool changeLineColor = false;
         /// <summary>
         /// 曲線の色を変更します。
         /// </summary>
@@ -714,7 +812,6 @@ namespace CapybaraVS
                 if (ellipsePath != null)
                 {
                     ellipsePath.Stroke = value;
-                    changeLineColor = true;
                 }
             }
         }
@@ -748,60 +845,7 @@ namespace CapybaraVS
                 ellipsePath.Data = Geometry.Parse(command);
                 ellipseBorderPath.Data = Geometry.Parse(command);
             }
-            UpdateColor();
-            UpdateColors(); // グループ移動したときに必要になる
             return true;
-        }
-
-        //-----------------------------------------------------------------------------------
-        private bool IsUpdateColors = false;
-        /// <summary>
-        /// すべての交差をチェックをし直します。
-        /// </summary>
-        private void UpdateColors()
-        {
-            if (IsUpdateColors)
-                return;
-            IsUpdateColors = true;
-
-            drawControl?.Dispatcher.BeginInvoke(new Action(() =>
-                {
-                    foreach (var node in LinePosList)
-                    {
-                        node.Update?.Invoke();
-                    }
-                    IsUpdateColors = false;
-                }), DispatcherPriority.ApplicationIdle);
-        }
-
-        //-----------------------------------------------------------------------------------
-        private bool IsUpdateColor = false;
-        /// <summary>
-        /// 交差チェックして交差しているならグラデーションで塗ります。
-        /// </summary>
-        private void UpdateColor()
-        {
-            if (ellipsePath is null)
-                return;
-
-            if (IsUpdateColor)
-                return;
-            IsUpdateColor = true;
-
-            drawControl?.Dispatcher.BeginInvoke(new Action(() =>
-            {
-                if (MyLinePos != null)
-                {
-                    if (startPoint.HasValue)
-                        MyLinePos.start = startPoint.Value;
-                    if (endPoint.HasValue)
-                        MyLinePos.end = endPoint.Value;
-                }
-                Brush brush = CreateMainBrush();
-                if (brush != null)
-                    ellipsePath.Stroke = brush;
-                IsUpdateColor = false;
-            }), DispatcherPriority.ApplicationIdle);
         }
 
         //-----------------------------------------------------------------------------------
@@ -818,87 +862,33 @@ namespace CapybaraVS
             //ellipsePath2.IsHitTestVisible = false;
             Canvas.SetZIndex(ellipseBorderPath, -1000);
 
-            ellipseBorderPath.MouseEnter += (s, e) =>
-            {
-                EntryMouseEvent();
-            };
-
-            ellipseBorderPath.MouseLeave += (s, e) =>
-            {
-                LeaveMouseEvent();
-            };
+            ellipseBorderPath.MouseEnter += EntryMouseEvent;
+            ellipseBorderPath.MouseLeave += LeaveMouseEvent;
 
             DrawControl.Children.Add(ellipseBorderPath);
         }
 
-        public void LeaveMouseEvent()
+        public void LeaveMouseEvent(object sender = null, MouseEventArgs e = null)
         {
             if (ellipsePath is null)
                 return; // 保険
 
-            Brush brush = CreateMainBrush(true);
+            Brush brush = DEFAULT_COLOR;
             if (brush != null)
                 ellipsePath.Stroke = brush;
         }
 
-        public void EntryMouseEvent()
+        public void EntryMouseEvent(object sender = null, MouseEventArgs e = null)
         {
+            if (ellipsePath is null)
+                return;
             ellipsePath.Stroke = DEFAULT_FOCUS_COLOR;
-        }
-
-        //-----------------------------------------------------------------------------------
-        //private static List<LinePos> _LinePosList = new List<LinePos>(); // DrawControl.Parent が IHaveLinePosList インターフェイスを持っていなかった場合用
-        private List<LinePos> LinePosListCache = null;
-        /// <summary>
-        /// 交差チェック用管理リストを参照します。
-        /// </summary>
-        private List<LinePos> LinePosList
-        {
-            get
-            {
-                if (LinePosListCache != null)
-                    return LinePosListCache;
-                if (DrawControl.Parent is Panel panel)
-                {
-                    if (panel.Parent is IHaveLinePosList haveLinePosList)
-                    {
-                        return LinePosListCache = haveLinePosList.LinePosList;
-                    }
-                }
-                Debug.Assert(false);
-                return null;
-                //return LinePosListCache = _LinePosList;
-            }
-        }
-
-        //-----------------------------------------------------------------------------------
-        /// <summary>
-        /// 交差チェックします。
-        /// </summary>
-        /// <param name="sp"></param>
-        /// <param name="ep"></param>
-        /// <returns></returns>
-        private bool CrossJudge(LinePos sp, LinePos ep)
-        {
-            return CrossJudge(sp.start, sp.end, ep.start, ep.end);
-        }
-
-        private bool CrossJudge(Point sx, Point sy, Point es, Point ey)
-        {
-            var ch1 = (es.X - ey.X) * (sx.Y - es.Y) + (es.Y - ey.Y) * (es.X - sx.X);
-            var ch2 = (es.X - ey.X) * (sy.Y - es.Y) + (es.Y - ey.Y) * (es.X - sy.X);
-            if (ch1 * ch2 >= 0)
-                return false;
-
-            var ch3 = (sx.X - sy.X) * (es.Y - sx.Y) + (sx.Y - sy.Y) * (sx.X - es.X);
-            var ch4 = (sx.X - sy.X) * (ey.Y - sx.Y) + (sx.Y - sy.Y) * (sx.X - ey.X);
-            return ch3 * ch4 < 0 && sx.Y < es.Y;
         }
 
         //-----------------------------------------------------------------------------------
         private void CreateMainPath(string command)
         {
-            Brush brush = CreateMainBrush(true);
+            Brush brush = DEFAULT_COLOR;
             ellipsePath = CreatePath(Geometry.Parse(command), brush);
             ellipsePath.Fill = null;
             ellipsePath.Stroke = brush;
@@ -906,60 +896,6 @@ namespace CapybaraVS
             ellipsePath.IsHitTestVisible = false;
             Canvas.SetZIndex(ellipsePath, -1000);
             DrawControl.Children.Add(ellipsePath);
-        }
-
-        //-----------------------------------------------------------------------------------
-        static LinearGradientBrush LinearGradientBrushCashe = null;
-        /// <summary>
-        /// 交差チェックして色を作成します。
-        /// </summary>
-        /// <param name="create"></param>
-        /// <returns></returns>
-        private Brush CreateMainBrush(bool create = false)
-        {
-            if (changeLineColor)
-                return null;
-
-            bool gradiention = false;
-            LinePos myLinePos = new LinePos(startPoint.Value, endPoint.Value);
-            foreach (var node in LinePosList)
-            {
-                if (CrossJudge(node, myLinePos))
-                {
-                    gradiention = true;
-                    break;
-                }
-            }
-
-            if (!create)
-            {
-                if (ellipsePath is null)
-                    return null;    // グループがまるごと消された
-                if (ellipsePath.Stroke == DEFAULT_COLOR && !gradiention)
-                    return null;    // 変更不要
-                if (ellipsePath.Stroke != DEFAULT_COLOR && gradiention)
-                    return null;    // 変更不要
-            }
-
-            if (gradiention)
-            {
-                if (LinearGradientBrushCashe is null)
-                {
-                    LinearGradientBrushCashe = new LinearGradientBrush();
-                    LinearGradientBrushCashe.StartPoint = new Point(0, 0.5);
-                    LinearGradientBrushCashe.EndPoint = new Point(1, 0.5);
-                    LinearGradientBrushCashe.GradientStops.Add(
-                        new GradientStop(Colors.DodgerBlue, 0.0));
-                    LinearGradientBrushCashe.GradientStops.Add(
-                        new GradientStop(Colors.PowderBlue, 0.25));
-                    LinearGradientBrushCashe.GradientStops.Add(
-                        new GradientStop(Colors.PowderBlue, 0.75));
-                    LinearGradientBrushCashe.GradientStops.Add(
-                        new GradientStop(Colors.DodgerBlue, 1.0));
-                }
-                return LinearGradientBrushCashe;
-            }
-            return DEFAULT_COLOR;
         }
 
         //-----------------------------------------------------------------------------------
@@ -1079,15 +1015,6 @@ namespace CapybaraVS
         {
             try
             {
-                if (MyLinePos != null)
-                {
-                    if (MyLinePos != null)
-                    {
-                        LinePosList.Remove(MyLinePos);
-                        MyLinePos = null;
-                    }
-                    UpdateColors();
-                }
                 DrawControl.Children.Remove(ellipsePath);
                 DrawControl.Children.Remove(ellipseBorderPath);
             }
@@ -1190,7 +1117,7 @@ namespace CapybaraVS
                     // 逆方向時適用率
                     EasingFunction.OutExp(y, spaceScaleForY, m, 0) / spaceScaleForX +
                     // 正方向時適用率
-                    EasingFunction.InOutSine(y, spaceScaleForY, p, 0) / spaceScaleForX
+                    EasingFunction.InOutSin(y, spaceScaleForY, p, 0) / spaceScaleForX
                 )
                 +
                 (int)k // 最低限の水平横伸び
@@ -1203,48 +1130,39 @@ namespace CapybaraVS
         #region IDisposable Support
         private bool disposedValue = false; // 重複する呼び出しを検出するには
 
+        public void CloseLink()
+        {
+            Clear();
+        }
+
         //-----------------------------------------------------------------------------------
-        /// <summary>
-        /// 安全に破棄します。
-        /// </summary>
-        /// <param name="disposing">管理オブジェクトを破棄するかならtrueを指定する。開放のみならfalseを指定する。</param>
         protected virtual void Dispose(bool disposing)
         {
             if (!disposedValue)
             {
                 if (disposing)
                 {
-                    // TODO: マネージ状態を破棄します (マネージ オブジェクト)。
-
-                    if (MyLinePos != null)
+                    CloseLink();
+                    startTarget = null;
+                    drawControl = null;
+                    targetEndPoint = null;
+                    ellipsePath = null;
+                    if (ellipseBorderPath != null)
                     {
-                        LinePosList.Remove(MyLinePos);
-                        MyLinePos = null;
+                        ellipseBorderPath.MouseEnter -= EntryMouseEvent;
+                        ellipseBorderPath.MouseLeave -= LeaveMouseEvent;
+                        ellipseBorderPath = null;
                     }
-                    Clear();
                 }
                 // 開放する
                 disposedValue = true;
             }
         }
 
-        //-----------------------------------------------------------------------------------
-        // TODO: 上の Dispose(bool disposing) にアンマネージ リソースを解放するコードが含まれる場合にのみ、ファイナライザーをオーバーライドします。
-        // ~CurvePath()
-        // {
-        //   // このコードを変更しないでください。クリーンアップ コードを上の Dispose(bool disposing) に記述します。
-        //   Dispose(false);
-        // }
-
-        //-----------------------------------------------------------------------------------
-        /// <summary>
-        /// 安全に破棄します。
-        /// </summary>
         public void Dispose()
         {
             Dispose(true);
-            // TODO: 上のファイナライザーがオーバーライドされる場合は、次の行のコメントを解除してください。
-            // GC.SuppressFinalize(this);
+            GC.SuppressFinalize(this);
         }
         #endregion
     }

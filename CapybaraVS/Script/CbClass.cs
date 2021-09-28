@@ -2,6 +2,7 @@
 
 using CbVS.Script;
 using System;
+using System.Diagnostics;
 using System.Reflection;
 
 namespace CapybaraVS.Script
@@ -120,14 +121,20 @@ namespace CapybaraVS.Script
     /// <summary>
     /// class型
     /// </summary>
-    public class CbClass<T> : BaseCbValueClass<T>, ICbValueClass<T>, ICbClass
+    public class CbClass<T> 
+        : BaseCbValueClass<T>
+        , ICbValueClass<T>
+        , ICbClass
          where T : class
     {
         public override Type MyType => typeof(CbClass<T>);
 
         public string ItemName => typeof(T).FullName;
 
-        public static Type GetItemType() { return typeof(T); }
+        public static Type GetItemType() {
+            Debug.Assert(false);    // 参照されていない？
+            return typeof(T);
+        }
 
         public override Type OriginalReturnType => typeof(T);
 
@@ -159,6 +166,23 @@ namespace CapybaraVS.Script
         }
 
         public override Func<ICbValue> NodeTF => TF;
+
+        /// <summary>
+        /// 変数の持つ値を object として参照します。
+        /// ※ 型を厳密に扱う場合は Value を参照します。
+        /// </summary>
+        public override object Data
+        {
+            get
+            {
+                Debug.Assert(!(IsNullable && IsNull));
+                return Value as object;
+            }
+            set
+            {
+                Value = (T)value;
+            }
+        }
 
         public override T Value
         {
@@ -216,21 +240,48 @@ namespace CapybaraVS.Script
             set => new NotImplementedException();
         }
 
+
+        /// <summary>
+        /// 変数の持つ値は null か？
+        /// </summary>
+        public override bool IsNull => Value is null;
+
         public override bool IsStringableValue => true;
 
         public override bool IsReadOnlyValue { get; set; } = true;
 
-        public static CbClass<T> Create(string name = "")
+        public static CbClass<T> Create(string name = "") => new CbClass<T>(name);
+
+        public static CbClass<T> Create(T n, string name = "") => new CbClass<T>(n, name);
+
+        public static Func<ICbValue> TF = () => Create();
+        public static Func<string, ICbValue> NTF = (name) => Create(name);
+        private bool disposedValue;
+
+        protected virtual void Dispose(bool disposing)
         {
-            return new CbClass<T>(name);
+            if (!disposedValue)
+            {
+                if (disposing)
+                {
+                    ClearWork();
+                    if (!IsNull)
+                    {
+                        if (Value != null && Value is IDisposable cbValue)
+                        {
+                            cbValue.Dispose();
+                        }
+                        Value = null;
+                    }
+                }
+                disposedValue = true;
+            }
         }
 
-        public static CbClass<T> Create(T n, string name = "")
+        public void Dispose()
         {
-            return new CbClass<T>(n, name);
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
         }
-
-        public static Func<ICbValue> TF = () => CbClass<T>.Create();
-        public static Func<string, ICbValue> NTF = (name) => CbClass<T>.Create(name);
     }
 }

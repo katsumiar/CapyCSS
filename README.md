@@ -1,11 +1,33 @@
 # CapyCSS
 ![sample](https://user-images.githubusercontent.com/63950487/132117205-85f0a709-10bf-4d5b-9dcd-b6d40b1c88aa.png)
 
-## 0.3.3.0 での変更
+## 0.3.4.0 での変更
 
-* ジェネリッククラスおよびジェネリックメソッドのインポートに対応
+* コマンドフィルタリングを調整しました。
+* コマンドのフィルタリングで「&」で区切って条件を複数追加できるようにしました（AND条件です）。
+* クリア時のメモリリーク対応しています（何度かに分けて対応予定）。
+* ノードの返し値から接続を開始して、何も無いところで離すと値の型で自動検索するようにしました（選択するとスクリプトノードが置かれます）。
+* NuGetでのダウンロードをNuGet.exeで行うようにしました（手動でのインストールが必要です）。
+* Func, Action だけの限定ではなく、delegate に対応しました。
+* スクリプト用API関連を見直しました。
+* フロー用スクリプトノードを見直しました。
+* null許容型に対してスクリプト上での扱いに対応しました（変数作成、HasValue判定等）。
+* スクリプト専用に Dispose を用意し、メソッドの Dispose は直接呼べないようにしました。
+* bool に 0 か null が代入されたら false を代入するようにしました（キャスト時）
+* bool に 0 以外が代入されたら true を代入するようにしました（キャスト時）
+* char型の初期値とUIの表示及び入力内容を見直しました。
+* 実行可能ノードにエントリーポイント名を設定できるようにしました。
+* F5（もしくは Ctrl+F5）実行時にエントリーポイント名を指定できるようにしました。
+* 実行可能ノードにエントリーポイント名が設定されているとき、F5（もしくは Ctrl+F5）実行時は、エントリーポイント名が一致してい場合に実行するようにしました。
+* F5（もしくは Ctrl+F5）実行時に結果をウインドウで表示するようにしました（ただし、void な結果は除く）。
+* スクリプトからエントリーポイントを呼び出す CallEntryPoint 及び CallCurrentWorkEntryPoint を追加しました。
+* 過去のデータと互換性が無くなりました。
 
-![generic](https://user-images.githubusercontent.com/63950487/131742437-1d6ec46a-7d06-4e6e-9fec-746d63051b6e.gif)
+![generic3](https://user-images.githubusercontent.com/63950487/132211159-54a9ad84-a001-4236-b059-6eff0614b775.gif)
+Nullable Sample:
+![nullable](https://user-images.githubusercontent.com/63950487/133881922-56db8e76-faf7-4b5d-b2d5-a64abfcebec4.png)
+Delegate Sample:
+![Delegate](https://user-images.githubusercontent.com/63950487/133883145-12f0e241-7f0d-424a-b235-b1376b283698.png)
 
 ## 特徴
 * ビジュアルなスクリプトを作成することができます。
@@ -14,6 +36,7 @@
 * クラス指定でメソッドをインポートしてスクリプトで使うことができます。
 * NuGetからパッケージをインポートしてスクリプトで使うことができます。
 * 作者の趣味とc#の勉強と気まぐれで制作されています。
+* 当面の間、気が向いたときに好き放題触るというスタンスです。
 
 ## ターゲット環境
 * .Net 5.0
@@ -34,19 +57,27 @@ CapyCSS.exe -ase script.cbs
 
 ## コンソール出力
 
-コンソールから起動した場合は、「Call File」や「ConsoleOut」系のノードからの出力は、コンソールにも出力されます。
+コンソールから起動した場合は、「Call File」や「OutConsole」系のノードからの出力は、コンソールにも出力されます。
 
 ## ノードのインポート
 本ツールでは、c# の多くのメソッドを簡単にノード化することができます。
 下記は、属性を使用してメソッドをノード化する例です。
 ```
 [ScriptMethod]
-public static System.IO.StreamReader GetReadStream(string path, string encoding = "utf-8")
+public static ICollection<T> Filtering<T>(IEnumerable<T> samples, Predicate<T> predicate)
 {
-    var encodingCode = Encoding.GetEncoding(encoding);
-    return new System.IO.StreamReader(path, encodingCode);
+    var result = new List<T>();
+    foreach (var node in samples)
+    {
+        if (predicate(node))
+        {
+            result.Add(node);
+        }
+    }
+    return result;
 }
 ```
+この他、dll をインポートして機能を取り込むこともできます。
 
 ## 操作方法
 * スペースキーもしくはホイールボタンの押下でコマンドウインドウを表示できます。
@@ -75,9 +106,7 @@ public static System.IO.StreamReader GetReadStream(string path, string encoding 
 ## スクリプトの便利な機能
 * 引数の上にカーソルを置くと内容を確認できます。
 * 数字と文字をドラッグアンドドロップするだけで定数ノードを作成できます。
-* ノードの接続時に型キャストが可能です。
-* object型から任意の型へのキャストができます。
-* ICollection型からArray型（この逆も）へのキャストができます。
+* ノードの接続時に柔軟なキャスト（接続）が可能です（実行を保証するものではありません）。
 
 ## ヒント表示
 英語と日本語をサポートします。ただし、初期状態では英語のみの機械翻訳です。
@@ -87,29 +116,33 @@ public static System.IO.StreamReader GetReadStream(string path, string encoding 
 ```<Language>ja-JP</Language>```
 再起動すると設定が適用されます。
 
-## メソッドのインポートでサポートされるメソッド
-* Static method
-* Class method(thisを受け取る引数が追加されます)
+## メソッドのインポートでサポートされる機能
+* クラスのコンストラクタ（new する機能が取り込まれます）
+* メソッド(thisを受け取る引数が追加されます)
+* 静的メソッド
+* ゲッター
+* セッター
 
 ※メソッドの所属するクラスは、パブリックである必要があります。
-<br>※メソッドはパブリックである必要があります。
-<br>※象徴クラスやジェネリッククラスのメソッド及びジェネリックなメソッドは、対象外です。
+<br>※象徴クラスは、対象外です。
+<br>※メソッドは、パブリックである必要があります。
 
 ## スクリプトが対応するメソッドの引数の型（及び修飾子など）
 * Type: int, string, double, byte, sbyte, long, short, ushort, uint, ulong, char, float, decimal, bool, object
 * 配列
-* ICollection（※UI上で要素を操作できます）
+* IEnumerableを持つ型（※UI上で要素を操作できます）
 * Class
 * Struct
 * Interface
+* Delegate
 * Enum
 * Generics
-* デフォルト値
+* 初期化値
 * ref（リファレンス）
 * outパラメーター修飾子
 * inパラメーター修飾子
 * paramsパラメータ配列
-* null許容型
+* null許容型（ver0.3.4.0 からスクリプト上での扱いにも対応）
 
 ※リテラルノードのみ独自のtext型を用意しています。string型とobject型へ代入可能です。
 <br>※オーバーロードに対応しています。
@@ -120,19 +153,22 @@ public static System.IO.StreamReader GetReadStream(string path, string encoding 
 * Class
 * Struct
 * Interface
+* Delegate
 * Enum
 * Generics
 * void
 * null許容型
 
 ## メソッドからのメソッド呼び出し
-Func<> および Action<> タイプの引数は、ノードを外部プロセスとして呼び出すことができます。Func<> の場合、ノード型と戻り値型が一致した場合に接続できます。Action だと無条件に接続できます。
+delegate 型の引数は、返し値の型と一致する型のノードと接続できます。ただし、Action だと無条件に接続できます。
+デリゲートの呼び出しでは、接続されたノードの結果が返されます。
 
 ## Hello World!
 「Hello World!」と出力するサンプルです。<br>
+※内容が古くなっています。<br>
 ![CapyCSS01](https://user-images.githubusercontent.com/63950487/97863495-6f7a3f00-1d4a-11eb-9ef4-0017be21d13e.png)
 <br>ホイールボタンをクリックするかスペースキーでコマンドウインドウが表示されます。
-その中からProgram→.Net Function→Input/Output→ConsoleOut→ConsoleOutをクリックします。
+その中からProgram→.Net Function→Input/Output→OutConsole→OutConsoleをクリックします。
 
 ![CapyCSS02](https://user-images.githubusercontent.com/63950487/97861283-d4cc3100-1d46-11eb-9aed-1bf981d57ad3.png)
 <br>作業エリアをクリックすると型選択ウインドウが表示されますので、その中からstringを選択します。

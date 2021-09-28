@@ -1,4 +1,5 @@
 ﻿using CapybaraVS.Controls.BaseControls;
+using CapyCSS.Controls;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -62,12 +63,12 @@ namespace CapybaraVS.Controls
 
         private void Grid_MouseEnter(object sender, MouseEventArgs e)
         {
-            Cursor = Cursors.Hand;
+            CommandCanvasList.SetOwnerCursor(Cursors.Hand);
         }
 
         private void Grid_MouseLeave(object sender, MouseEventArgs e)
         {
-            Cursor = null;
+            CommandCanvasList.SetOwnerCursor(null);
         }
     }
 }

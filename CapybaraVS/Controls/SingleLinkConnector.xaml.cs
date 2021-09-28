@@ -25,13 +25,15 @@ namespace CapybaraVS.Controls
     {
         #region XML定義
         [XmlRoot(nameof(SingleLinkConnector))]
-        public class _AssetXML<OwnerClass>
+        public class _AssetXML<OwnerClass> : IDisposable
             where OwnerClass : SingleLinkConnector
         {
             [XmlIgnore]
             public Action WriteAction = null;
             [XmlIgnore]
             public Action<OwnerClass> ReadAction = null;
+            private bool disposedValue;
+
             public _AssetXML()
             {
                 ReadAction = (self) =>
@@ -53,6 +55,29 @@ namespace CapybaraVS.Controls
             }
             #region 固有定義
             public LinkConnector._AssetXML<LinkConnector> LinkConnector { get; set; } = null;
+
+            protected virtual void Dispose(bool disposing)
+            {
+                if (!disposedValue)
+                {
+                    if (disposing)
+                    {
+                        WriteAction = null;
+                        ReadAction = null;
+
+                        // 以下、固有定義開放
+                        LinkConnector?.Dispose();
+                        LinkConnector = null;
+                    }
+                    disposedValue = true;
+                }
+            }
+
+            public void Dispose()
+            {
+                Dispose(disposing: true);
+                GC.SuppressFinalize(this);
+            }
             #endregion
         }
         public _AssetXML<SingleLinkConnector> AssetXML { get; set; } = null;
@@ -76,6 +101,9 @@ namespace CapybaraVS.Controls
                 if (disposing)
                 {
                     LinkConnectorControl.Dispose();
+                    AssetXML?.Dispose();
+                    AssetXML = null;
+                    OwnerCommandCanvas = null;
                 }
                 disposedValue = true;
             }
@@ -83,6 +111,7 @@ namespace CapybaraVS.Controls
         public void Dispose()
         {
             Dispose(true);
+            GC.SuppressFinalize(this);
         }
         #endregion
     }

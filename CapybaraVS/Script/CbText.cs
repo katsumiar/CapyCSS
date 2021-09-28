@@ -21,19 +21,11 @@ namespace CapyCSS.Script
         {
         }
 
-        public static new CbText Create(string name = "")
-        {
-            var ret = new CbText("", name);
-            return ret;
-        }
+        public static new CbText Create(string name = "") => new CbText("", name);
 
-        public static new CbText Create(string n, string name)
-        {
-            var ret = new CbText(n, name);
-            return ret;
-        }
+        public static new CbText Create(string n, string name) => new CbText(n, name);
 
-        public static new Func<ICbValue> TF = () => CbText.Create();
-        public static new Func<string, ICbValue> NTF = (name) => CbText.Create(name);
+        public static new Func<ICbValue> TF = () => Create();
+        public static new Func<string, ICbValue> NTF = (name) => Create(name);
     }
 }

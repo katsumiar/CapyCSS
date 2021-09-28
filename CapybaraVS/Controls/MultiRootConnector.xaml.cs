@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
@@ -51,17 +52,25 @@ namespace CapybaraVS.Controls
 
         #region XML定義
         [XmlRoot(nameof(MultiRootConnector))]
-        public class _AssetXML<OwnerClass>
+        public class _AssetXML<OwnerClass> : IDisposable
             where OwnerClass : MultiRootConnector
         {
             [XmlIgnore]
             public Action WriteAction = null;
             [XmlIgnore]
             public Action<OwnerClass> ReadAction = null;
+            private bool disposedValue;
+
             public _AssetXML()
             {
                 ReadAction = (self) =>
                 {
+                    if (DataVersion != DATA_VERSION)
+                    {
+                        ControlTools.ShowErrorMessage(CapybaraVS.Language.Instance["Help:DataVersionError"]);
+                        return;
+                    }
+
                     self.attachVariableIds = RootFunc.AttachVariableIds;
 
                     if (RootFunc.AttachFileName != null)
@@ -130,21 +139,59 @@ namespace CapybaraVS.Controls
                 };
             }
             #region 固有定義
-            public class RootFuncType
+            public class RootFuncType : IDisposable
             {
-                public List<int> AttachVariableIds { get; set; }
-                public string AttachFileName { get; set; }
+                public List<int> AttachVariableIds { get; set; } = null;
+                public string AttachFileName { get; set; } = null;
                 public int AttachVariableId { get; set; }
                 [XmlAttribute(nameof(AssetType))]
                 public FunctionType AssetType { get; set; }
-                public string AssetValueType { get; set; }
-                public List<string> AssetValueTypes { get; set; }
+                public string AssetValueType { get; set; } = null;
+                public List<string> AssetValueTypes { get; set; } = null;
                 [XmlAttribute(nameof(AssetFuncType))]
-                public string AssetFuncType { get; set; }
-                public RootConnector._AssetXML<RootConnector> RootConnector { get; set; }
+                public string AssetFuncType { get; set; } = null;
+                public RootConnector._AssetXML<RootConnector> RootConnector { get; set; } = null;
+
+                public void Dispose()
+                {
+                    AttachVariableIds?.Clear();
+                    AttachVariableIds = null;
+                    AttachFileName = null;
+                    AssetValueType = null;
+                    AssetValueTypes?.Clear();
+                    AssetValueTypes = null;
+                    AssetFuncType = null;
+                    RootConnector?.Dispose();
+                    RootConnector = null;
+
+                    GC.SuppressFinalize(this);
+                }
             }
             public int DataVersion { get; set; } = 0;
             public RootFuncType RootFunc { get; set; } = null;
+
+            protected virtual void Dispose(bool disposing)
+            {
+                if (!disposedValue)
+                {
+                    if (disposing)
+                    {
+                        WriteAction = null;
+                        ReadAction = null;
+
+                        // 以下、固有定義開放
+                        RootFunc?.Dispose();
+                        RootFunc = null;
+                    }
+                    disposedValue = true;
+                }
+            }
+
+            public void Dispose()
+            {
+                Dispose(disposing: true);
+                GC.SuppressFinalize(this);
+            }
             #endregion
         }
         public _AssetXML<MultiRootConnector> AssetXML { get; set; } = null;
@@ -347,8 +394,10 @@ namespace CapybaraVS.Controls
             }
         }
 
-        public MultiRootConnector()
+        private string debugCreateName = "";
+        public MultiRootConnector(object self, string _ext = "", [CallerMemberName] string callerMethodName = "")
         {
+            CommandCanvas.SetDebugCreateList(ref debugCreateName, this, self, callerMethodName, _ext);
             InitializeComponent();
             AssetXML = new _AssetXML<MultiRootConnector>(this);
         }
@@ -363,9 +412,9 @@ namespace CapybaraVS.Controls
         /// Function イベント実行依頼
         /// </summary>
         /// <param name="functionStack"></param>
-        public void RequestExecute(List<object> functionStack = null, DummyArgumentsStack preArgument = null)
+        public object RequestExecute(List<object> functionStack = null, DummyArgumentsStack preArgument = null)
         {
-            LinkConnectorControl.RequestExecute(functionStack, preArgument);
+            return LinkConnectorControl.RequestExecute(functionStack, preArgument);
         }
 
         //--------------------------------------------------------------------------------
@@ -572,6 +621,7 @@ namespace CapybaraVS.Controls
                 msg = ex.InnerException.Message;
             else
                 msg = ex.Message;
+            msg += Environment.NewLine;
             msg += ex.StackTrace;
             msg = caption + ": " + msg;
             CommandCanvasList.OutPut.OutLine("Script", msg);
@@ -681,7 +731,7 @@ namespace CapybaraVS.Controls
             {
                 if (disposing)
                 {
-                    LinkConnectorControl.Dispose();
+                    LinkConnectorControl?.Dispose();
 
                     if (AttachParam is AttachVariableId variable)
                     {
@@ -689,6 +739,18 @@ namespace CapybaraVS.Controls
 
                         OwnerCommandCanvas.ScriptWorkStack?.Unlink((int)variable.Value, this);
                     }
+                    //LinkConnectorControl = null;
+
+                    AssetXML?.Dispose();
+                    AssetXML = null;
+                    attachVariableIds = null;
+                    _OwnerCommandCanvas = null;
+                    selectedVariableType = null;
+                    selectedVariableTypeName = null;
+                    //AssetFunctionList = null; // static なので消しては駄目
+                    GetVariableName = null;
+
+                    CommandCanvas.RemoveDebugCreateList(debugCreateName);
                 }
                 disposedValue = true;
             }
@@ -696,6 +758,7 @@ namespace CapybaraVS.Controls
         public void Dispose()
         {
             Dispose(true);
+            GC.SuppressFinalize(this);
         }
         #endregion
     }

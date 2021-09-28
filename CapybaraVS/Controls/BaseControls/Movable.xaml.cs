@@ -1,7 +1,9 @@
-﻿using CapyCSS.Controls.BaseControls;
+﻿using CapybaraVS.Script;
+using CapyCSS.Controls.BaseControls;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
@@ -37,13 +39,15 @@ namespace CapybaraVS.Controls.BaseControls
 
         #region XML定義
         [XmlRoot(nameof(Movable))]
-        public class _AssetXML<OwnerClass>
+        public class _AssetXML<OwnerClass> : IDisposable
             where OwnerClass : Movable
         {
             [XmlIgnore]
             public Action WriteAction = null;
             [XmlIgnore]
             public Action<OwnerClass> ReadAction = null;
+            private bool disposedValue;
+
             public _AssetXML()
             {
                 ReadAction = (self) =>
@@ -53,7 +57,7 @@ namespace CapybaraVS.Controls.BaseControls
                     self.YPos = YPos;
                     if (MultiRootConnector != null)
                     {
-                        var obj = new MultiRootConnector();
+                        var obj = new MultiRootConnector(this);
                         self.SetControl(obj);
                         obj.AssetXML = MultiRootConnector;
                         obj.AssetXML.ReadAction?.Invoke(obj);
@@ -154,6 +158,39 @@ namespace CapybaraVS.Controls.BaseControls
             public SingleLinkConnector._AssetXML<SingleLinkConnector> SingleLinkConnector { get; set; } = null;
             public RunableControl._AssetXML<RunableControl> RunableControl { get; set; } = null;
             public GroupArea._AssetXML<GroupArea> GroupAreaControl { get; set; } = null;
+
+            protected virtual void Dispose(bool disposing)
+            {
+                if (!disposedValue)
+                {
+                    if (disposing)
+                    {
+                        WriteAction = null;
+                        ReadAction = null;
+
+                        // 以下、固有定義開放
+                        MultiRootConnector?.Dispose();
+                        MultiRootConnector = null; ;
+                        SingleRootConnector?.Dispose();
+                        SingleRootConnector = null;
+                        MultiLinkConnector?.Dispose();
+                        MultiLinkConnector = null;
+                        SingleLinkConnector?.Dispose();
+                        SingleLinkConnector = null;
+                        RunableControl?.Dispose();
+                        RunableControl = null;
+                        GroupAreaControl?.Dispose();
+                        GroupAreaControl = null;
+                    }
+                    disposedValue = true;
+                }
+            }
+
+            public void Dispose()
+            {
+                Dispose(disposing: true);
+                GC.SuppressFinalize(this);
+            }
             #endregion
         }
         public _AssetXML<Movable> AssetXML { get; set; } = null;
@@ -183,8 +220,10 @@ namespace CapybaraVS.Controls.BaseControls
         private UIElement myElement = null;
         public UIElement ControlObject => myElement;
 
-        public Movable()
+        private string debugCreateName = "";
+        public Movable(object self, string _ext = "", [CallerMemberName] string callerMethodName = "")
         {
+            CommandCanvas.SetDebugCreateList(ref debugCreateName, this, self, callerMethodName, _ext);
             InitializeComponent();
             assetIdProvider = new AssetIdProvider(this);
             AssetXML = new _AssetXML<Movable>(this);
@@ -236,6 +275,10 @@ namespace CapybaraVS.Controls.BaseControls
                 }
                 MainGrid.Children.Add(myElement = element);
             }
+            else
+            {
+                Debug.Assert(false);
+            }
         }
 
         #region IDisposable Support
@@ -247,8 +290,20 @@ namespace CapybaraVS.Controls.BaseControls
             {
                 if (disposing)
                 {
-                    if (myElement is IDisposable obj)
-                        obj.Dispose();
+                    foreach (var node in MainGrid.Children)
+                    {
+                        if (node is IDisposable disposable)
+                        {
+                            disposable.Dispose();
+                        }
+                    }
+                    MainGrid.Children.Clear();
+                    AssetXML?.Dispose();
+                    AssetXML = null;
+                    myElement = null;
+                    _OwnerCommandCanvas = null;
+
+                    CommandCanvas.RemoveDebugCreateList(debugCreateName);
                 }
                 disposedValue = true;
             }
@@ -257,6 +312,7 @@ namespace CapybaraVS.Controls.BaseControls
         public void Dispose()
         {
             Dispose(true);
+            GC.SuppressFinalize(this);
         }
         #endregion
     }

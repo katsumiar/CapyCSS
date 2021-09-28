@@ -5,7 +5,9 @@ namespace CapybaraVS.Script
     /// <summary>
     /// int 型
     /// </summary>
-    public class CbInt : BaseCbValueClass<int>, ICbValueClass<int>
+    public class CbInt 
+        : BaseCbValueClass<int>
+        , ICbValueClass<int>
     {
         public override Type MyType => typeof(CbInt);
 
@@ -25,19 +27,6 @@ namespace CapybaraVS.Script
         }
 
         /// <summary>
-        /// 値のUI上の文字列表現
-        /// </summary>
-        public override string ValueUIString
-        {
-            get
-            {
-                if (IsError)
-                    return CbSTUtils.ERROR_STR;
-                return Value.ToString();
-            }
-        }
-
-        /// <summary>
         /// 値の文字列表現
         /// </summary>
         public override string ValueString
@@ -50,19 +39,74 @@ namespace CapybaraVS.Script
             }
         }
 
-        public static CbInt Create(string name)
+        public static CbInt Create(string name) => new CbInt(0, name);
+
+        public static CbInt Create(int n = 0, string name = "") => new CbInt(n, name);
+
+        public static Func<ICbValue> TF = () => Create();
+        public static Func<string, ICbValue> NTF = (name) => Create(name);
+
+        private bool disposedValue;
+
+        protected virtual void Dispose(bool disposing)
         {
-            var ret = new CbInt(0, name);
-            return ret;
+            if (!disposedValue)
+            {
+                if (disposing)
+                {
+                    ClearWork();
+                }
+                disposedValue = true;
+            }
         }
 
-        public static CbInt Create(int n = 0, string name = "")
+        public void Dispose()
         {
-            var ret = new CbInt(n, name);
-            return ret;
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
+        }
+    }
+
+
+    /// <summary>
+    /// int? 型
+    /// </summary>
+    public class CbNullableInt
+        : CbInt
+    {
+        public override Type MyType => typeof(CbNullableInt);
+
+        public CbNullableInt(int n = 0, string name = "")
+            : base(n, name) {}
+
+        /// <summary>
+        /// null許容型か？
+        /// </summary>
+        public override bool IsNullable => true;
+
+        /// <summary>
+        /// 値の文字列表現
+        /// </summary>
+        public override string ValueString
+        {
+            get => Value.ToString();
+            set
+            {
+                if (IsNullable && value == CbSTUtils.UI_NULL_STR)
+                {
+                    isNull = true;
+                    return;
+                }
+                if (value != null)
+                    Value = int.Parse(value);
+            }
         }
 
-        public static Func<ICbValue> TF = () => CbInt.Create();
-        public static Func<string, ICbValue> NTF = (name) => CbInt.Create(name);
+        public static new CbNullableInt Create(string name) => new CbNullableInt(0, name);
+
+        public static new CbNullableInt Create(int n = 0, string name = "") => new CbNullableInt(n, name);
+
+        public static new Func<ICbValue> TF = () => Create();
+        public static new Func<string, ICbValue> NTF = (name) => Create(name);
     }
 }

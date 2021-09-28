@@ -5,23 +5,24 @@
     <TargetFramework>net5.0-windows</TargetFramework>
     <UseWPF>true</UseWPF>
     <ApplicationIcon>Image\cpbvs_mUG_icon.ico</ApplicationIcon>
-    <Copyright>Copyright (c) 2020 Katsumi Aradono</Copyright>
-    <Version>0.3.3.0</Version>
-    <AssemblyVersion>0.3.3.0</AssemblyVersion>
+    <Copyright>Copyright (c) 2020 - 2021 Katsumi Aradono</Copyright>
+    <Version>0.3.4.0</Version>
+    <AssemblyVersion>0.3.4.0</AssemblyVersion>
     <Authors>Katsumi Aradono</Authors>
     <PackageId>CapyCSS</PackageId>
     <AssemblyName>CapyCSS</AssemblyName>
     <RootNamespace>CapyCSS</RootNamespace>
-    <FileVersion>0.3.3.0</FileVersion>
+    <FileVersion>0.3.4.0</FileVersion>
     <Product>CapyCSS</Product>
     <StartupObject>CapybaraVS.App</StartupObject>
     <PackageProjectUrl>https://katsumiar.github.io/CapyCSS/</PackageProjectUrl>
     <Description>A node-connected visual scripting tool that allows you to node c # methods.</Description>
+    <NoWin32Manifest>true</NoWin32Manifest>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="MaterialDesignThemes" Version="3.2.0" />
-    <PackageReference Include="System.Drawing.Common" Version="5.0.0" />
+    <PackageReference Include="MaterialDesignThemes" Version="4.2.1" />
+    <PackageReference Include="System.Drawing.Common" Version="5.0.2" />
   </ItemGroup>
 
   <ItemGroup>
@@ -47,6 +48,12 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="hText\CapybaraVS-ja-JP.htxt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="hText\CapyCSS-en-US.htxt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="hText\CapyCSS-ja-JP.htxt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="hText\CbVS-en-US.htxt">
@@ -82,11 +89,20 @@
     <None Update="Sample\ActionCall02.cbs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Update="Sample\BreakableForeach.cbs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="Sample\Case.cbs">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="Sample\CaseCall.cbs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Sample\CheckNullable.cbs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Sample\Delegate.cbs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="Sample\Dictionary.cbs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -98,25 +114,28 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="Sample\Foreach.cbs">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </None>
-    <None Update="Sample\FuncVariable.cbs">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Sample\Graph.cbs">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Sample\IEnumerable.cbs">
+    <None Update="Sample\ForeachReturn.cbs">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="Sample\FuncVariable.cbs">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </None>
+    <None Update="Sample\Graph.cbs">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </None>
+    <None Update="Sample\IEnumerable.cbs">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </None>
     <None Update="Sample\IfFunc.cbs">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </None>
     <None Update="Sample\ImageSample.cbs">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </None>
     <None Update="Sample\Invoke.cbs">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </None>
     <None Update="Sample\LeastSquaresApproximation.cbs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -136,11 +155,14 @@
     <None Update="Sample\MetropolisMethod.cbs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Update="Sample\nullable.cbs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="Sample\ReferenceTest.cbs">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </None>
     <None Update="Sample\ReferenceTest2.cbs">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </None>
     <None Update="Sample\SumFunc.cbs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -150,6 +172,9 @@
     </None>
     <None Update="Sample\Union.cbs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Sample\Web.cbs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>
 

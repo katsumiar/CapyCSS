@@ -9,16 +9,18 @@ namespace CapybaraVS.Script.Lib
 {
     public class Graph
     {
+        private const string LIB_NAME = "Graph";
+
         const double TickGraph = 1.0 / 20.0;
 
-        [ScriptMethod(nameof(Graph) + "." + nameof(CreateDrawType))]
+        [ScriptMethod(LIB_NAME)]
         public static DrawType CreateDrawType(DrawType type = DrawType.NormalPlot)
         {
             return type;
         }
 
         //------------------------------------------------------------------
-        [ScriptMethod(nameof(Graph) + "." + nameof(MakePlotList))]
+        [ScriptMethod(LIB_NAME)]
         public static ICollection<double> MakePlotList(int count, Func<double, double> func, double step = TickGraph)
         {
             var list = new List<double>();
@@ -34,42 +36,44 @@ namespace CapybaraVS.Script.Lib
         }
 
         //------------------------------------------------------------------
-        [ScriptMethod(nameof(Graph) + "." + nameof(CreateErrorList))]
+        [ScriptMethod(LIB_NAME)]
         public static ICollection<double> CreateErrorList(IEnumerable<double> list, double errorValue)
         {
             return ListFactory.ConvertList(list, (n) => n + errorValue);
         }
 
         //------------------------------------------------------------------
-        [ScriptMethod(nameof(Graph) + "." + nameof(CreatePlotInfo) + "." + nameof(CreatePlotInfo))]
+        private const string LIB_NAME2 = "Graph.CreatePlotInfo";
+
+        [ScriptMethod(LIB_NAME2)]
         public static PlotInfo CreatePlotInfo(IEnumerable<double> list, DrawType drawType = DrawType.NormalPlot)
         {
             return new PlotInfo(list, drawType);
         }
 
         //------------------------------------------------------------------
-        [ScriptMethod(nameof(Graph) + "." + nameof(CreatePlotInfo) + "." + nameof(CreatePlotInfo))]
+        [ScriptMethod(LIB_NAME2)]
         public static PlotInfo CreatePlotInfo(IEnumerable<double> list, DrawType drawType = DrawType.NormalPlot, BrushColors colors = BrushColors.None)
         {
             return new PlotInfo(list, drawType, CreateBrushes(colors));
         }
 
         //------------------------------------------------------------------
-        [ScriptMethod(nameof(Graph) + "." + nameof(CreatePlotInfo) + "." + nameof(CreatePlotInfo))]
+        [ScriptMethod(LIB_NAME2)]
         public static PlotInfo CreatePlotInfo(IEnumerable<int> list, DrawType drawType = DrawType.NormalPlot)
         {
             return new PlotInfo(list, drawType);
         }
 
         //------------------------------------------------------------------
-        [ScriptMethod(nameof(Graph) + "." + nameof(CreatePlotInfo) + "." + nameof(CreatePlotInfo))]
+        [ScriptMethod(LIB_NAME2)]
         public static PlotInfo CreatePlotInfo(IEnumerable<int> list, DrawType drawType = DrawType.NormalPlot, BrushColors colors = BrushColors.None)
         {
             return new PlotInfo(list, drawType, CreateBrushes(colors));
         }
 
         //------------------------------------------------------------------
-        [ScriptMethod(nameof(Graph) + "." + nameof(OutPlot))]
+        [ScriptMethod(LIB_NAME)]
         public static void OutPlot(string msg, IEnumerable<PlotInfo> list, IEnumerable<double> guideLines = null)
         {
             if (list is null)

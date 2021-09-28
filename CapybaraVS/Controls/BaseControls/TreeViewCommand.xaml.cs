@@ -6,6 +6,8 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -15,6 +17,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.Windows.Threading;
 using System.Xml.Serialization;
 
 namespace CapybaraVS.Controls.BaseControls
@@ -316,6 +319,9 @@ namespace CapybaraVS.Controls.BaseControls
         const string RecentName = "Recent";
         const int MaxRecent = 10;
 
+        const int FilteringWaitSleep = 20;
+        const int FilteringMax = 5000;
+
         /// <summary>
         /// 名前を指定してコマンドを実行します。
         /// </summary>
@@ -410,39 +416,114 @@ namespace CapybaraVS.Controls.BaseControls
         /// コマンドをフィルタリングします。
         /// </summary>
         /// <param name="name">メニュー名</param>
-        public void SetFilter(TreeViewCommand viewer, string name)
+        public CancellationTokenSource SetFilter(TreeViewCommand viewer, string name)
         {
             ObservableCollection<TreeMenuNode> treeView = viewer.TreeView.ItemsSource as ObservableCollection<TreeMenuNode>;
-            treeView.Clear();   // これを起因にバインド系のエラーが出るが…無視して良い...
-            string searchName = name.ToUpper().Replace(" ", "");
-            int limit = 60;
-            foreach (var node in AssetTreeData)
+
+            Dictionary<string, string> keyValuePairs = new Dictionary<string, string>()
             {
+                { "STRING", "System" },
+                { "BOOL", "Logical#" },
+                { "BYTE", "Script" },
+                { "SBYTE", "Script" },
+                { "CHAR", "Script" },
+                { "SHORT", "Script" },
+                { "INT", "Script" },
+                { "LONG", "Script" },
+                { "FLOAT", "Script" },
+                { "DOUBLE", "Script" },
+                { "USHORT", "Script" },
+                { "UINT", "Script" },
+                { "ULONG", "Script" },
+                { "DECIMAL", "Script" },
+            };
+
+            if (keyValuePairs.ContainsKey(name.ToUpper()))
+            {
+                if (keyValuePairs[name.ToUpper()].EndsWith("#"))
+                {
+                    name = keyValuePairs[name.ToUpper()];
+                    name = name.Replace("#", "");
+                }
+                else
+                {
+                    name = keyValuePairs[name.ToUpper()] + "." + name;
+                }
+            }
+
+            string searchName = name.ToUpper().Replace(" ", "");
+
+            List<TreeMenuNode> treeMenuNodes = new List<TreeMenuNode>();
+            foreach (var assetData in AssetTreeData)
+            {
+                treeMenuNodes.Add(assetData);
+            }
+
+            var tokenSource = new CancellationTokenSource();
+            var token = tokenSource.Token;
+            string[] option = null;
+            if (searchName.Contains('&'))
+            {
+                string opt = searchName.Substring(searchName.IndexOf('&') + 1);
+                if (opt.Contains('&'))
+                {
+                    option = opt.Split('&');
+                }
+                else
+                {
+                    option = new string[] { opt };
+                }
+                searchName = searchName.Substring(0, searchName.IndexOf('&'));
+            }
+            Task.Run(() => ActionFilter(treeMenuNodes, viewer, token, searchName, option));
+            return tokenSource;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="token"></param>
+        /// <param name="treeView"></param>
+        /// <param name="searchName"></param>
+        private void ActionFilter(List<TreeMenuNode> treeMenuNodes, TreeViewCommand viewer, CancellationToken token, string searchName, string[] option)
+        {
+            foreach (var node in treeMenuNodes)
+            {
+                if (token.IsCancellationRequested)
+                {
+                    break;
+                }
+
                 if (node.Path == RecentName)
                 {
                     continue;
                 }
-                SetFilter(treeView, node, searchName, CbSTUtils.StripParamater(searchName), ref limit);
-                if (limit <= 0)
-                    return;
+
+                int counter = 0;
+                SetFilter(viewer, token, node, searchName, CbSTUtils.StripParamater(searchName), option, ref counter);
             }
         }
 
         /// <summary>
         /// コマンドをフィルタリングします。
+        /// 「.」を見つけた場合、そこを起点に一致判定を「.」区切りの完全一致に切り替えます。
         /// </summary>
         /// <param name="viewer">結果登録用リスト</param>
         /// <param name="node">メニューノード</param>
         /// <param name="name">メニュー名</param>
-        private void SetFilter(ObservableCollection<TreeMenuNode> treeView, TreeMenuNode node, string name, string stripName, ref int limit, TreeMenuNode currentLock = null)
+        private void SetFilter(TreeViewCommand viewer, CancellationToken token, TreeMenuNode node, string name, string stripName, string[] option, ref int counter, TreeMenuNode currentLock = null)
         {
-            if (limit <= 0)
+            if (token.IsCancellationRequested)
+            {
                 return;
+            }
 
             string nodeName = node.Name.ToUpper().Replace(" ", "");
 
             if (name.Contains(".") || currentLock != null)
             {
+                // 「.」区切りの完全一致で下の階層すべてを対象とする
+
                 string current = name;
                 string next = name;
                 if (name.Contains("."))
@@ -454,14 +535,28 @@ namespace CapybaraVS.Controls.BaseControls
                 {
                     foreach (var child in node.Child)
                     {
-                        SetFilter(treeView, child, next, stripName, ref limit, node);
+                        SetFilter(viewer, token, child, next, stripName, option, ref counter, node);
                     }
                 }
                 if (currentLock != null)
                 {
-                    if (nodeName == name)
+                    //「<」以降を含まずに一致判定
+
+                    string target = nodeName;
+                    string paramStr = "";
+                    int pos = target.IndexOf('<');
+                    if (pos != -1)
                     {
-                        SetAll(treeView, node, ref limit, currentLock.Path.Substring(0, currentLock.Path.LastIndexOf('.') + 1));
+                        paramStr = CbSTUtils.GetParamater(target);
+                        if (paramStr is null)
+                        {
+                            paramStr = "";
+                        }
+                        target = target.Substring(0, pos);
+                    }
+                    if (target == name)
+                    {
+                        SetAll(viewer, token, node, option, currentLock.Path.Substring(0, currentLock.Path.LastIndexOf('.') + 1) + stripName + paramStr + ".");
                     }
                     return;
                 }
@@ -470,23 +565,41 @@ namespace CapybaraVS.Controls.BaseControls
             {
                 // 名前が完全一致したら下の階層すべてを対象とする
 
-                SetAll(treeView, node, ref limit);
+                SetAll(viewer, token, node, option);
                 return;
             }
             else
             {
-                CurrentFilter(treeView, node, name, stripName, ref limit);
+                // 通常の一致判定
+
+                CurrentFilter(viewer, token, node, name, stripName, option, ref counter);
             }
             foreach (var child in node.Child)
             {
-                SetFilter(treeView, child, name, stripName, ref limit);
+                // 子の一致判定
+
+                SetFilter(viewer, token, child, name, stripName, option, ref counter);
+                if (counter % 100 == 99)
+                    Thread.Sleep(FilteringWaitSleep);
             }
         }
 
-        private void CurrentFilter(ObservableCollection<TreeMenuNode> treeView, TreeMenuNode node, string name, string stripName, ref int limit)
+        /// <summary>
+        /// コマンドをフィルタリングします。
+        /// </summary>
+        /// <param name="token"></param>
+        /// <param name="treeView"></param>
+        /// <param name="node"></param>
+        /// <param name="name"></param>
+        /// <param name="stripName"></param>
+        private void CurrentFilter(TreeViewCommand viewer, CancellationToken token, TreeMenuNode node, string name, string stripName, string[] option, ref int counter)
         {
-            if (limit <= 0)
+            ObservableCollection<TreeMenuNode> treeView = viewer.TreeView.ItemsSource as ObservableCollection<TreeMenuNode>;
+
+            if (token.IsCancellationRequested)
+            {
                 return;
+            }
 
             string nodeName = node.Name.ToUpper().Replace(" ", "");
 
@@ -496,55 +609,173 @@ namespace CapybaraVS.Controls.BaseControls
             {
                 // パラメータを取り除いた名前が完全一致したら下の階層すべてを対象とする
 
-                SetAll(treeView, node, ref limit);
+                SetAll(viewer, token, node, option);
                 return;
             }
-            if (nodeName.Contains(name))
+            if (CheckOption(option, nodeName, nodeName.Contains(name)))
             {
                 if (node.LeftClickCommand != null && node.LeftClickCommand.CanExecute(null))
                 {
-                    treeView.Add(new TreeMenuNode(node.Path, node.HintText, OwnerCommandCanvas.CreateImmediateExecutionCanvasCommand(() =>
+                    var title = node.Path;
+                    title = StripDotNetStandardGroupTitle(title);
+                    title = CbSTUtils.StartStrip(title, ApiImporter.MENU_TITLE_DOT_NET_STANDERD_FULL_PATH);
+                    title = CbSTUtils.StartStrip(title, ApiImporter.MENU_TITLE_DOT_NET_FUNCTION_FULL_PATH);
+                    viewer.Dispatcher.Invoke(() =>
                     {
-                        ExecuteFindCommand(node.Path);
-                    })));
+                        if (treeView.Count < FilteringMax)
+                        {
+                            treeView.Add(new TreeMenuNode(title, node.HintText, OwnerCommandCanvas.CreateImmediateExecutionCanvasCommand(() =>
+                            {
+                                ExecuteFindCommand(node.Path);
+                            })));
+                        }
+                    });
+                    Thread.Sleep(FilteringWaitSleep);
+                    counter = 0;
                 }
-                if (--limit == 0)
+                if (token.IsCancellationRequested)
+                {
                     return;
+                }
             }
         }
 
-        private void SetAll(ObservableCollection<TreeMenuNode> treeView, TreeMenuNode node, ref int limit, string frontCut = null)
+        /// <summary>
+        /// コマンドをまとめて取り込みます。
+        /// </summary>
+        /// <param name="token"></param>
+        /// <param name="treeView"></param>
+        /// <param name="node"></param>
+        /// <param name="frontCut"></param>
+        private void SetAll(TreeViewCommand viewer, CancellationToken token, TreeMenuNode node, string[] option, string frontCut = null)
         {
-            void _SetAll(ObservableCollection<TreeMenuNode> treeView, TreeMenuNode node, ref int limit, string frontCut = null)
+            ObservableCollection<TreeMenuNode> treeView = viewer.TreeView.ItemsSource as ObservableCollection<TreeMenuNode>;
+
+            void _SetAll(Collection<TreeMenuNode> treeView, CancellationToken token, TreeMenuNode node, string[] option, string frontCut = null)
             {
-                if (limit <= 0)
+                if (token.IsCancellationRequested)
+                {
                     return;
+                }
 
                 if (node.LeftClickCommand != null && node.LeftClickCommand.CanExecute(null))
                 {
                     var title = node.Path;
+                    title = StripDotNetStandardGroupTitle(title);
                     if (frontCut != null)
                     {
-                        title = title.Replace(frontCut, "");    // 頭の部分だけカットしたいのだが...
+                        title = CbSTUtils.StartStrip(title, frontCut, true);
                     }
-                    treeView.Add(new TreeMenuNode(title, node.HintText, OwnerCommandCanvas.CreateImmediateExecutionCanvasCommand(() =>
+                    title = CbSTUtils.StartStrip(title, ApiImporter.MENU_TITLE_DOT_NET_STANDERD_FULL_PATH);
+                    title = CbSTUtils.StartStrip(title, ApiImporter.MENU_TITLE_DOT_NET_FUNCTION_FULL_PATH);
+                    string menuTitle = null;
+                    if (frontCut != null)
                     {
-                        ExecuteFindCommand(node.Path);
-                    })));
+                        // 子メニューを用意する
+
+                        menuTitle = frontCut.Substring(0, frontCut.Length - 1);
+                        menuTitle = menuTitle.Substring(menuTitle.LastIndexOf('.') + 1);
+                    }
+                    viewer.Dispatcher.Invoke(() =>
+                    {
+                        if (treeView.Count < FilteringMax)
+                        {
+                            var addNode = new TreeMenuNode(title, node.HintText, OwnerCommandCanvas.CreateImmediateExecutionCanvasCommand(() =>
+                            {
+                                ExecuteFindCommand(node.Path);
+                            }));
+
+                            TreeMenuNode menuNode = null;
+                            if (menuTitle != null)
+                            {
+                                // 子メニューの中に追加する
+
+                                bool existMenu = false;
+                                foreach (var node in treeView)
+                                {
+                                    if (node.Name == menuTitle)
+                                    {
+                                        // 既存の子メニューが存在した
+
+                                        existMenu = true;
+                                        menuNode = node;
+                                        break;
+                                    }
+                                }
+                                if (!existMenu)
+                                {
+                                    // 新規の子メニューを追加
+
+                                    menuNode = new TreeMenuNode(menuTitle);
+                                    treeView.Add(menuNode);
+                                }
+                                menuNode.Child.Add(addNode);
+                            }
+                            else
+                            {
+                                treeView.Add(addNode);
+                            }
+                        }
+                    });
+                    Thread.Sleep(FilteringWaitSleep);
                 }
-                if (--limit <= 0)
+                if (token.IsCancellationRequested)
+                {
                     return;
+                }
 
                 foreach (var child in node.Child)
                 {
-                    _SetAll(treeView, child, ref limit, frontCut);
+                    if (CheckOption(option, child.Name.ToUpper().Replace(" ", ""), true))
+                    {
+                        _SetAll(treeView, token, child, option, frontCut);
+                    }
                 }
             }
 
             foreach (var child in node.Child)
             {
-                _SetAll(treeView, child, ref limit, frontCut);
+                _SetAll(treeView, token, child, option, frontCut);
             }
+        }
+
+        /// <summary>
+        /// 対象文字列に指定のワードがすべて含まれているか調べます。
+        /// </summary>
+        /// <param name="words">アンド条件ワード</param>
+        /// <param name="title">対象ワード</param>
+        /// <param name="isHit">初期条件</param>
+        /// <returns>条件を満たした==true</returns>
+        private static bool CheckOption(string[] words, string title, bool isHit)
+        {
+            if (words != null)
+            {
+                foreach (var ck in words)
+                {
+                    isHit = isHit && title.Contains(ck);
+                    if (!isHit)
+                        break;
+                }
+            }
+            return isHit;
+        }
+
+        /// <summary>
+        /// メソッドグループタイトルを削除します。
+        /// </summary>
+        /// <param name="title"></param>
+        /// <returns></returns>
+        private static string StripDotNetStandardGroupTitle(string title)
+        {
+            if (title.StartsWith(ApiImporter.MENU_TITLE_DOT_NET_STANDERD_FULL_PATH))
+            {
+                int pos1 = title.LastIndexOf('.');
+                string temp = title.Substring(0, pos1);
+                int pos2 = temp.LastIndexOf('.');
+                title = title.Substring(0, pos2) + title.Substring(pos1);
+            }
+
+            return title;
         }
 
         /// <summary>

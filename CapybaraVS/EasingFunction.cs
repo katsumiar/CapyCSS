@@ -12,10 +12,12 @@ namespace CapybaraVS
     /// </summary>
     public class EasingFunction
     {
+        private const string LIB_NAME = "EasingFunction";
+
         /// <summary>
         /// イージング関数
         /// </summary>
-        [ScriptMethod("Easing" + "." + nameof(Linear))]
+        [ScriptMethod(LIB_NAME)]
         public static double Linear(double t)
         {
             return t / 1.0;
@@ -29,7 +31,7 @@ namespace CapybaraVS
             max -= min;
             return t == totaltime ? max + min : max * (-Math.Pow(2, -10 * t / totaltime) + 1) + min;
         }
-        [ScriptMethod("Easing" + "." + nameof(OutExp))]
+        [ScriptMethod(LIB_NAME)]
         public static double OutExp(double t)
         {
             return 1 - Math.Pow(2, -10 * t);
@@ -38,13 +40,13 @@ namespace CapybaraVS
         /// <summary>
         /// イージング関数
         /// </summary>
-        public static double InOutSine(double t, double totaltime, double max, double min)
+        public static double InOutSin(double t, double totaltime, double max, double min)
         {
             max -= min;
             return -max / 2 * (Math.Cos(t * Math.PI / totaltime) - 1) + min;
         }
-        [ScriptMethod("Easing" + "." + nameof(InOutSine))]
-        public static double InOutSine(double t)
+        [ScriptMethod(LIB_NAME)]
+        public static double InOutSin(double t)
         {
             return -1.0 / 2.0 * (Math.Cos(t * Math.PI) - 1.0);
         }
@@ -58,7 +60,7 @@ namespace CapybaraVS
             t = t / totaltime - 1;
             return max * Math.Sqrt(1 - t * t) + min;
         }
-        [ScriptMethod("Easing" + "." + nameof(OutCirc))]
+        [ScriptMethod(LIB_NAME)]
         public static double OutCirc(double t)
         {
             t = t - 1;
@@ -74,7 +76,7 @@ namespace CapybaraVS
             t = t / totaltime - 1;
             return max * (t * t * t + 1) + min;
         }
-        [ScriptMethod("Easing" + "." + nameof(OutCubic))]
+        [ScriptMethod(LIB_NAME)]
         public static double OutCubic(double t)
         {
             t = t - 1;
@@ -84,13 +86,13 @@ namespace CapybaraVS
         /// <summary>
         /// イージング関数
         /// </summary>
-        public static double OutSine(double t, double totaltime, double max, double min)
+        public static double OutSin(double t, double totaltime, double max, double min)
         {
             max -= min;
             return max * Math.Sin(t * (Math.PI / 2) / totaltime) + min;
         }
-        [ScriptMethod("Easing" + "." + nameof(OutSine))]
-        public static double OutSine(double t)
+        [ScriptMethod(LIB_NAME)]
+        public static double OutSin(double t)
         {
             return Math.Sin(t * (Math.PI / 2.0));
         }
@@ -104,7 +106,7 @@ namespace CapybaraVS
             t /= totaltime;
             return max * t * t * t + min;
         }
-        [ScriptMethod("Easing" + "." + nameof(InCubic))]
+        [ScriptMethod(LIB_NAME)]
         public static double InCubic(double t)
         {
             return t * t * t;
@@ -113,7 +115,7 @@ namespace CapybaraVS
         /// <summary>
         /// イージング関数
         /// </summary>
-        [ScriptMethod("Easing" + "." + nameof(InQuad))]
+        [ScriptMethod(LIB_NAME)]
         public static double InQuad(double t)
         {
             return t * t;
@@ -122,7 +124,7 @@ namespace CapybaraVS
         /// <summary>
         /// イージング関数
         /// </summary>
-        [ScriptMethod("Easing" + "." + nameof(OutQuad))]
+        [ScriptMethod(LIB_NAME)]
         public static double OutQuad(double t)
         {
             return -1.0 * t * (t - 2.0);

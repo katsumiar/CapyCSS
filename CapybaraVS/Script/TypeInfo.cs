@@ -134,6 +134,46 @@ namespace CapybaraVS.Script
                     break;
             }
 
+            if (type.IsGenericType &&
+                type.GetGenericTypeDefinition() == typeof(Nullable<>))
+            {
+                Type param = type.GenericTypeArguments[0];
+                switch (param.Name)
+                {
+                    case nameof(Byte): return typeof(CbNullableByte);
+                    case nameof(SByte): return typeof(CbNullableSByte);
+                    case nameof(Int16): return typeof(CbNullableShort);
+                    case nameof(Int32): return typeof(CbNullableInt);
+                    case nameof(Int64): return typeof(CbNullableLong);
+                    case nameof(UInt16): return typeof(CbNullableUShort);
+                    case nameof(UInt32): return typeof(CbNullableUInt);
+                    case nameof(UInt64): return typeof(CbNullableULong);
+                    case nameof(Char): return typeof(CbNullableChar);
+                    case nameof(Single): return typeof(CbNullableFloat);
+                    case nameof(Double): return typeof(CbNullableDouble);
+                    case nameof(Decimal): return typeof(CbNullableDecimal);
+                    case nameof(Boolean): return typeof(CbNullableBool);
+                    default:
+                        break;
+                }
+                if (CbStruct.IsStruct(param))
+                {
+                    // 構造体
+
+                    Type cbStructType = typeof(CbNullableStruct<>).MakeGenericType(param);
+                    return cbStructType;
+                }
+                if (param.IsEnum)
+                {
+                    // 列挙型
+
+                    Type cbEnumType = typeof(CbNullableEnum<>).MakeGenericType(param);
+                    return cbEnumType;
+                }
+                Debug.Assert(false);
+                return null;
+            }
+
             if (type.IsEnum)
             {
                 Type openedType = typeof(CbEnum<>);
@@ -168,14 +208,17 @@ namespace CapybaraVS.Script
                 Debug.Assert(false);
             }
 
-            if (CbFunc.IsActionType(type))
+            if (CbSTUtils.IsDelegate(type))
             {
-                return CbFunc.GetFuncType(type, typeof(CbVoid));
-            }
-
-            if (CbFunc.IsFuncType(type))
-            {
-                return CbFunc.GetFuncType(type, type.GenericTypeArguments.Last());
+                var returnType = CbSTUtils.GetDelegateReturnType(type);
+                if (CbSTUtils.IsVoid(returnType))
+                {
+                    return CbFunc.GetFuncType(type, typeof(CbVoid));
+                }
+                else
+                {
+                    return CbFunc.GetFuncType(type, returnType);
+                }
             }
 
             return null;
@@ -363,46 +406,56 @@ namespace CapybaraVS.Script
                 return CbEnumTools.EnumValue(type, name);
             }
 
-            if (type == typeof(Action))
+            if (!type.IsGenericType && CbSTUtils.IsDelegate(type))
             {
-                // Action
+                // デリゲート型
 
-                if (CbFunc.IsActionType(type))
-                {
-                    return CbFunc.FuncValue(type, typeof(CbVoid), name);
-                }
+                return CbFunc.FuncValue(type, typeof(CbVoid), name);
             }
 
-            if (HaveGenericParamater(type))
+            if (CbSTUtils.HaveGenericParamater(type))
             {
                 // 確定していない型なので仮の型に差し替える
 
                 if (!type.IsPublic)
                     return null;
 
-                return CbGeneMethArg.NTF(name, type, type.GetGenericArguments());
+                if (CbSTUtils.IsDelegate(type))
+                {
+                    // 確定していないデリゲート型
+
+                    return CbGeneMethArg.NTF(name, type, type.GetGenericArguments(), true);
+                }
+                return CbGeneMethArg.NTF(name, type, type.GetGenericArguments(), false);
             }
 
             if (type.IsGenericType)
             {
-                // ジェネリック
+                // ジェネリック型
 
                 if (CbList.HaveInterface(type, typeof(IEnumerable<>)))
                 {
+                    // リスト管理（UIで特別扱い）
+
                     if (type.GenericTypeArguments.Length > 1)
                         return null;
 
                     return CbList.Create(type, name);
                 }
 
-                if (CbFunc.IsActionType(type))
+                if (CbSTUtils.IsDelegate(type))
                 {
-                    return CbFunc.FuncValue(type, typeof(CbVoid), name);
-                }
+                    // デリゲート型
 
-                if (CbFunc.IsFuncType(type))
-                {
-                    return CbFunc.FuncValue(type, type.GenericTypeArguments.Last(), name);
+                    var returnType = CbSTUtils.GetDelegateReturnType(type);
+                    if (CbSTUtils.IsVoid(returnType))
+                    {
+                        return CbFunc.FuncValue(type, typeof(CbVoid), name);
+                    }
+                    else
+                    {
+                        return CbFunc.FuncValue(type, returnType, name);
+                    }
                 }
 
                 if (type.GetGenericTypeDefinition() == typeof(Nullable<>))
@@ -412,11 +465,39 @@ namespace CapybaraVS.Script
                     if (type.GenericTypeArguments.Length > 1)
                         return null;
 
-                    var ret = _CbCreate(type.GenericTypeArguments[0], name, false);
-                    if (ret is null)
-                        return null;
-                    ret.IsNullable = true;
-                    return ret;
+                    Type param = type.GenericTypeArguments[0];
+                    switch (param.Name)
+                    {
+                        case nameof(Byte): return CbNullableByte.Create(name);
+                        case nameof(SByte): return CbNullableSByte.Create(name);
+                        case nameof(Int16): return CbNullableShort.Create(name);
+                        case nameof(Int32): return CbNullableInt.Create(name);
+                        case nameof(Int64): return CbNullableLong.Create(name);
+                        case nameof(UInt16): return CbNullableUShort.Create(name);
+                        case nameof(UInt32): return CbNullableUInt.Create(name);
+                        case nameof(UInt64): return CbNullableULong.Create(name);
+                        case nameof(Char): return CbNullableChar.Create(name);
+                        case nameof(Single): return CbNullableFloat.Create(name);
+                        case nameof(Double): return CbNullableDouble.Create(name);
+                        case nameof(Decimal): return CbNullableDecimal.Create(name);
+                        case nameof(Boolean): return CbNullableBool.Create(name);
+                        default:
+                            break;
+                    }
+                    if (CbStruct.IsStruct(param))
+                    {
+                        // 構造体
+
+                        return CbStruct.NullableStructValue(param, name);
+                    }
+                    if (param.IsEnum)
+                    {
+                        // 列挙型
+
+                        return CbEnumTools.NullableEnumValue(param, name);
+                    }
+                    Debug.Assert(false);
+                    return null;
                 }
 
                 // その他のジェネリックは、構造体かクラスとして扱う
@@ -446,6 +527,17 @@ namespace CapybaraVS.Script
             {
                 // クラス
 
+                var elements = CbSTUtils.GetGenericIEnumerables(type);
+                if (elements.Count() != 0)
+                {
+                    // IEnumerable<> を持っているのでリストとして扱う（ただし、オリジナルのデータ形式も保存する）
+
+                    var elementType = elements.First();    // 最初に見つかった要素のみを対象とする（妥協）
+                    var chgType = CbList.Create(typeof(IEnumerable<>).MakeGenericType(new Type[] { elementType }), name);
+                    (chgType as ICbList).CastType = type; // 元の型にキャスト（メソッドを呼ぶときは、オリジナルのデータ形式を参照する）
+                    return chgType;
+                }
+
                 if (!isCancelClass)
                 {
                     var ret = CbClass.ClassValue(type, name);
@@ -459,39 +551,11 @@ namespace CapybaraVS.Script
 
             return null;
         }
-
-        /// <summary>
-        /// ジェネリックなパラメータかジェネリック型がジェネリックなパラメータを持つか判定します。
-        /// </summary>
-        /// <param name="type">型</param>
-        /// <returns>条件を満たす==true</returns>
-        private static bool HaveGenericParamater(Type type)
-        {
-            if (type.IsGenericParameter || type.IsGenericMethodParameter)
-            {
-                // ジェネリックパラメータを持つジェネリック型
-
-                return true;
-            }
-
-            if (type.IsGenericType)
-            {
-                // ジェネリック
-
-                foreach (var node in type.GetGenericArguments())
-                {
-                    if (HaveGenericParamater(node))
-                    {
-                        return true;
-                    }
-                }
-            }
-            return false;
-        }
     }
 
     //----------------------------------------------------------------------------------------
     public interface ICbVSValueBase
+        : IDisposable
     {
         /// <summary>
         /// 自分の型情報を参照します。
@@ -510,6 +574,7 @@ namespace CapybaraVS.Script
     }
 
     public interface IUIShowValue
+        : IDisposable
     {
         /// <summary>
         /// 値のUI上の文字列表現
@@ -525,7 +590,9 @@ namespace CapybaraVS.Script
     /// <summary>
     /// CbVSValue機能インターフェイス
     /// </summary>
-    public interface ICbValue : ICbVSValueBase, IUIShowValue
+    public interface ICbValue 
+        : ICbVSValueBase
+        , IUIShowValue
     {
         /// <summary>
         /// 変数生成用型情報
@@ -587,11 +654,10 @@ namespace CapybaraVS.Script
         /// <summary>
         /// null許容型か？
         /// </summary>
-        bool IsNullable { get; set; }
+        bool IsNullable { get; }
         bool IsAssignment(ICbValue obj, bool isCast = false);
         bool IsError { get; set; }
         string ErrorMessage { get; set; }
-
         void Set(ICbValue n);
         void Add(ICbValue n);
         void Subtract(ICbValue n);
@@ -609,7 +675,8 @@ namespace CapybaraVS.Script
     /// 指定の型にCbVSValue機能インターフェイスを指定する
     /// </summary>
     /// <typeparam name="T">CbVSValue機能インターフェイスを指定する型</typeparam>
-    public interface ICbValueClass<T> : ICbValue
+    public interface ICbValueClass<T> 
+        : ICbValue
     {
         //ICbYSValueClass<T> Create(T n);
         T Value { get; set; }
@@ -630,14 +697,17 @@ namespace CapybaraVS.Script
     /// CbVSValue機能インターフェイスを持ったリスト用インターフェイス
     /// </summary>
     /// <typeparam name="T"></typeparam>
-    public interface ICbValueListClass<T> : ICbValueList, ICbValueClass<T>
+    public interface ICbValueListClass<T> 
+        : ICbValueList
+        , ICbValueClass<T>
     {
     }
 
     /// <summary>
     /// enum型用インターフェイス
     /// </summary>
-    public interface ICbValueEnum : ICbValue
+    public interface ICbValueEnum
+        : ICbValue
     {
         /// <summary>
         /// enum型の要素リスト
@@ -649,7 +719,9 @@ namespace CapybaraVS.Script
     /// CbVSValue機能インターフェイスを持ったenum型用インターフェイス
     /// </summary>
     /// <typeparam name="T">enum型</typeparam>
-    public interface ICbValueEnumClass<T> : ICbValueEnum, ICbValueClass<T>
+    public interface ICbValueEnumClass<T> 
+        : ICbValueEnum
+        , ICbValueClass<T>
     {
     }
 
@@ -658,7 +730,7 @@ namespace CapybaraVS.Script
     /// </summary>
     public interface ICbExecutable
     {
-        void RequestExecute(List<object> functionStack, DummyArgumentsStack preArgument);
+        object RequestExecute(List<object> functionStack, DummyArgumentsStack preArgument);
     }
 
     /// <summary>
@@ -672,7 +744,8 @@ namespace CapybaraVS.Script
     /// <summary>
     /// void型を表現するクラスです。
     /// </summary>
-    public class CbVoid : ICbShowValue
+    public class CbVoid
+        : ICbShowValue
     {
         public string DataString => "(void)";
         public static Func<ICbValue> TF = () => CbClass<CbVoid>.Create();
@@ -687,18 +760,21 @@ namespace CapybaraVS.Script
     /// <summary>
     /// ジェネリックメソッドの引数型を表現するクラスです。
     /// </summary>
-    public class CbGeneMethArg : ICbShowValue
+    public class CbGeneMethArg 
+        : ICbShowValue
     {
         public Type ArgumentType = null;
         public Type[] GeneArgTypes = null;
+        public bool IsEvent = false;
         public string DataString => "(GMA)";
         public static Func<ICbValue> TF = () => CbClass<CbGeneMethArg>.Create();
-        public static Func<string, Type, Type[], ICbValue> NTF = (name, argType, geneArgTypes) =>
+        public static Func<string, Type, Type[], bool, ICbValue> NTF = (name, argType, geneArgTypes, isEvent) =>
         {
             var ret = CbClass<CbGeneMethArg>.Create(name);
             ret.Value = new CbGeneMethArg();
             ret.Value.ArgumentType = argType;
             ret.Value.GeneArgTypes = geneArgTypes;
+            ret.Value.IsEvent = isEvent;
             return ret;
         };
         public static Type T => typeof(CbClass<CbGeneMethArg>);
@@ -752,14 +828,22 @@ namespace CapybaraVS.Script
         /// 変数の持つ値を参照します。
         /// ※ object として扱う場合は Data を参照します。
         /// </summary>
-        public virtual T Value { get => _value; set { _value = value; } }
+        public virtual T Value 
+        {
+            get => _value;
+            set
+            {
+                _value = value;
+                isNull = false;
+            }
+        }
 
         /// <summary>
         /// 値の文字列表現
         /// </summary>
         public virtual string ValueString
         {
-            get => Value.ToString();
+            get => ValueUIString;
             set { }
         }
 
@@ -796,7 +880,18 @@ namespace CapybaraVS.Script
         /// <summary>
         /// オリジナルの型（Func, Action, List 以外は OriginalReturnType と同じ）を参照します。
         /// </summary>
-        public virtual Type OriginalType => typeof(T);
+        public virtual Type OriginalType
+        {
+            get
+            {
+                if (IsNullable)
+                {
+                    return typeof(Nullable<>).MakeGenericType(new Type[] { typeof(T) });
+                }
+                return typeof(T);
+            }
+        }
+
         /// <summary>
         /// 引数時参照修飾されているか？
         /// </summary>
@@ -819,7 +914,14 @@ namespace CapybaraVS.Script
         /// <summary>
         /// リスト形式の値を返します。
         /// </summary>
-        public virtual ICbList GetListValue => this as ICbList;
+        public virtual ICbList GetListValue
+        {
+            get
+            {
+                Debug.Assert(IsList);
+                return this as ICbList;
+            }
+        }
 
         /// <summary>
         /// 変数名を参照します。
@@ -832,9 +934,20 @@ namespace CapybaraVS.Script
         public virtual bool IsReadOnlyName => false;
 
         /// <summary>
+        /// 値のUI上の文字列表現
         /// 変数の持つ値を文字列として参照します。
         /// </summary>
-        public virtual string ValueUIString { get; }
+        public virtual string ValueUIString
+        {
+            get
+            {
+                if (IsError)
+                    return CbSTUtils.ERROR_STR;
+                if (IsNull)
+                    return CbSTUtils.UI_NULL_STR;
+                return Value.ToString();
+            }
+        }
 
         /// <summary>
         /// 値の変化後に動かす必要のある処理です。
@@ -856,10 +969,18 @@ namespace CapybaraVS.Script
         /// ※ 型を厳密に扱う場合は Value を参照します。
         /// </summary>
         public virtual object Data {
-            get => Value as object;
+            get
+            {
+                Debug.Assert(!(IsNullable && IsNull));
+                return Value as object;
+            }
             set
             {
-                if (CbScript.IsValueType(typeof(T)))
+                if (value == null)
+                {
+                    isNull = true;
+                }
+                else if (CbScript.IsCalcable(typeof(T)))
                 {
                     // ただのキャストでは sbyte から int への変換などで例外が出るので ChangeType を使って変換する
 
@@ -882,12 +1003,14 @@ namespace CapybaraVS.Script
         /// <summary>
         /// 変数の持つ値は null か？
         /// </summary>
-        public virtual bool IsNull { get => Value is null; }
+        public virtual bool IsNull { get => isNull; }
 
         /// <summary>
         /// null許容型か？
         /// </summary>
-        public bool IsNullable { get; set; } = false;
+        public virtual bool IsNullable => false;
+
+        protected bool isNull = false;
 
         public virtual void Set(ICbValue n)
         {
@@ -897,37 +1020,67 @@ namespace CapybaraVS.Script
                     throw new Exception(n.ErrorMessage);
 
                 ReturnAction = null;
-                if (n is CbObject cbObject)
+                if (IsNullable && n.IsNull)
                 {
-                    n = (dynamic)cbObject.ValueTypeObject;
-                }
-                if (CbScript.IsValueType(typeof(T)))
-                {
-                    // ただのキャストでは sbyte から int への変換などで例外が出るので ChangeType を使って変換する
+                    // Nullable<> に null を代入
 
-                    Value = (T)Convert.ChangeType(n.Data, typeof(T));
-
-                    // 参照渡しの為のリアクションのコピー
-                    ReturnAction = n.ReturnAction;
-                }
-                else if (!this.IsList && n.IsList)
-                {
-                    // リストはオリジナルの型にしないと代入できない
-
-                    ICbList cbList = n.GetListValue;
-
-                    Value = (T)cbList.ConvertOriginalTypeList(null, null);
-
-                    if (this is ICbClass cbClass)
-                    {
-                        // List は、参照型なので Value の値が更新されると cbList に戻す必要がある。
-
-                        cbClass.ReturnAction = (val) => cbList.CopyFrom(val);
-                    }
+                    // 値型に null の状態を持つ必要がある
+                    isNull = true;
                 }
                 else
                 {
-                    Value = (dynamic)n.Data;
+                    if (n is CbObject cbObject)
+                    {
+                        n = (dynamic)cbObject.ValueTypeObject;
+                    }
+
+                    if (GetType() == typeof(CbBool) || GetType() == typeof(CbNullableBool))
+                    {
+                        if (n.Data.GetType() == typeof(bool))
+                        {
+                            Data = n.Data;
+                        }
+                        else
+                        {
+                            Data = (dynamic)n.Data != 0;
+                        }
+                    }
+                    else if (CbScript.IsCalcable(typeof(T)))
+                    {
+                        // ただのキャストでは sbyte から int への変換などで例外が出るので ChangeType を使って変換する
+
+                        Value = (T)Convert.ChangeType(n.Data, typeof(T));
+
+                        // 参照渡しの為のリアクションのコピー
+                        ReturnAction = n.ReturnAction;
+                    }
+                    else if (!IsList && n.IsList)
+                    {
+                        // リストはオリジナルの型にしないと代入できない
+
+                        ICbList cbList = n.GetListValue;
+
+                        Value = (T)cbList.ConvertOriginalTypeList(null, null);
+
+                        if (this is ICbClass cbClass)
+                        {
+                            // List は、参照型なので Value の値が更新されると cbList に戻す必要がある。
+
+                            cbClass.ReturnAction = (val) => cbList.CopyFrom(val);
+                        }
+                    }
+                    else
+                    {
+                        Value = (dynamic)n.Data;
+                    }
+                    if (IsList && n.IsList)
+                    {
+                        // ※IEnumerableを持ったクラスの場合、リストにはオリジナルのデータがある場合があるのでコピーする
+
+                        (this as ICbList).OriginalData = (n as ICbList).OriginalData;
+                    }
+
+                    isNull = n.IsNull;
                 }
                 IsLiteral = n.IsLiteral;
                 if (IsError)
@@ -1093,13 +1246,22 @@ namespace CapybaraVS.Script
                 throw;
             }
         }
+        public void ClearWork()
+        {
+            ReturnAction = null;
+            if (IsNullable)
+            {
+                Data = null;
+            }
+        }
     }
 
     //----------------------------------------------------------------------------------------
     /// <summary>
     /// 型がstringでデータとして名前を扱う名前だけのパラメータクラス
     /// </summary>
-    public class ParamNameOnly : ICbValue
+    public class ParamNameOnly
+        : ICbValue
     {
         public Func<ICbValue> NodeTF { get => throw new NotImplementedException(); }
 
@@ -1187,5 +1349,23 @@ namespace CapybaraVS.Script
         public bool LessThan(ICbValue n) { return false; }
 
         public Func<ICbValue> TF = () => ParamNameOnly.Create();
+        private bool disposedValue;
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!disposedValue)
+            {
+                if (disposing)
+                {
+                }
+                disposedValue = true;
+            }
+        }
+
+        public void Dispose()
+        {
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
+        }
     }
 }

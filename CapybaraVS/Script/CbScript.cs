@@ -15,6 +15,22 @@ namespace CbVS.Script
     public class CbScript
     {
         /// <summary>
+        /// スクリプト用の演算可能な型制限
+        /// </summary>
+        public interface ICalcable { }
+
+        /// <summary>
+        /// スクリプト用のSigned型制限
+        /// </summary>
+        public interface ISigned { }
+
+        /// <summary>
+        /// スクリプト用のenum型制限
+        /// </summary>
+        public interface IEnum { }
+
+
+        /// <summary>
         /// object 型を除く
         /// </summary>
         public static Func<Type, bool> AcceptAll => t => true;
@@ -32,12 +48,17 @@ namespace CbVS.Script
         /// <summary>
         // 演算可能な型
         /// </summary>
-        public static Func<Type, bool> IsValueType => t => t == typeof(decimal) || (t.IsValueType && !t.IsEnum && t.IsPrimitive && t != typeof(bool));
+        public static Func<Type, bool> IsCalcable => t => t == typeof(decimal) || (t.IsValueType && !t.IsEnum && t.IsPrimitive && t != typeof(bool));
 
         /// <summary>
         /// signed型
         /// </summary>
-        public static Func<Type, bool> IsSigned => t => IsValueType(t) && (t == typeof(short) || t == typeof(int) || t == typeof(long) || t == typeof(float) || t == typeof(double) || t == typeof(sbyte) || t == typeof(decimal));
+        public static Func<Type, bool> IsSigned => t => IsCalcable(t) && (t == typeof(short) || t == typeof(int) || t == typeof(long) || t == typeof(float) || t == typeof(double) || t == typeof(sbyte) || t == typeof(decimal));
+
+        /// <summary>
+        /// IDisposable インターフェイスを持っている型
+        /// </summary>
+        public static Func<Type, bool> IsDisposable => t => typeof(IDisposable).IsAssignableFrom(t);
 
         /// <summary>
         /// アセットコードでノードを作成します。
@@ -46,7 +67,7 @@ namespace CbVS.Script
         /// <returns>ノード</returns>
         public static MultiRootConnector CreateFunction(CommandCanvas OwnerCommandCanvas, string assetCode)
         {
-            var ret = new MultiRootConnector();
+            var ret = new MultiRootConnector(nameof(MultiRootConnector));
             ret.AssetFuncType = assetCode;
             ret.AssetType = FunctionType.FuncType;
             ret.OwnerCommandCanvas = OwnerCommandCanvas;
@@ -120,7 +141,7 @@ namespace CbVS.Script
                     ListSelectWindow.DefaultValue = null;
                 }
 
-                multiRootConnector = new MultiRootConnector();
+                multiRootConnector = new MultiRootConnector(nameof(CbScript));
                 multiRootConnector.OwnerCommandCanvas = OwnerCommandCanvas;
                 multiRootConnector.SelectedVariableTypes = typeNames.ToArray();
 
@@ -164,7 +185,7 @@ namespace CbVS.Script
             string assetCode,
             List<TypeRequest> typeRequests = null)
         {
-            var ret = new MultiRootConnector();
+            var ret = new MultiRootConnector(nameof(CbScript));
             ret.OwnerCommandCanvas = OwnerCommandCanvas;
             if (typeRequests != null)
             {
@@ -233,7 +254,7 @@ namespace CbVS.Script
             CommandCanvas OwnerCommandCanvas,
             List<TypeRequest> typeRequests = null)
         {
-            var ret = new MultiRootConnector();
+            var ret = new MultiRootConnector(nameof(CbScript));
             ret.OwnerCommandCanvas = OwnerCommandCanvas;
             if (typeRequests != null)
             {

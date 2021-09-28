@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using CbVS.Script;
 
 namespace CapybaraVS.Script
@@ -6,7 +7,9 @@ namespace CapybaraVS.Script
     /// <summary>
     /// object 型
     /// </summary>
-    public class CbObject : BaseCbValueClass<object>, ICbValueClass<object>
+    public class CbObject 
+        : BaseCbValueClass<object>
+        , ICbValueClass<object>
     {
         public override Type MyType => typeof(CbObject);
 
@@ -65,7 +68,16 @@ namespace CapybaraVS.Script
                 }
                 else
                 {
-                    Value = n.Data;
+                    if (n.IsNullable && n.IsNull)
+                    {
+                        // null許容型は、null のときに参照してはならない
+
+                        Value = null;
+                    }
+                    else
+                    {
+                        Value = n.Data;
+                    }
                 }
                 IsLiteral = n.IsLiteral;
                 if (IsError)
@@ -85,6 +97,23 @@ namespace CapybaraVS.Script
         }
 
         public override string TypeName => CbSTUtils.OBJECT_STR;
+
+        /// <summary>
+        /// 変数の持つ値を object として参照します。
+        /// ※ 型を厳密に扱う場合は Value を参照します。
+        /// </summary>
+        public override object Data
+        {
+            get
+            {
+                Debug.Assert(!(IsNullable && IsNull));
+                return Value as object;
+            }
+            set
+            {
+                Value = value;
+            }
+        }
 
         public override object Value
         {
@@ -155,21 +184,41 @@ namespace CapybaraVS.Script
 
         public override bool IsReadOnlyValue { get; set; } = true;
 
-        public static CbObject Create(string name)
-        {
-            var ret = new CbObject(null, name);
-            return ret;
-        }
+        public static CbObject Create(string name) => new CbObject(null, name);
 
-        public static CbObject Create(object n = null, string name = "")
-        {
-            var ret = new CbObject(n, name);
-            return ret;
-        }
+        public static CbObject Create(object n = null, string name = "") => new CbObject(n, name);
 
         public override bool IsNull => nullFlg;
 
-        public static Func<ICbValue> TF = () => CbObject.Create();
-        public static Func<string, ICbValue> NTF = (name) => CbObject.Create(name);
+        public static Func<ICbValue> TF = () => Create();
+        public static Func<string, ICbValue> NTF = (name) => Create(name);
+
+        private bool disposedValue;
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!disposedValue)
+            {
+                if (disposing)
+                {
+                    ClearWork();
+                    if (!IsNull)
+                    {
+                        if (Value != null && Value is IDisposable cbValue)
+                        {
+                            cbValue.Dispose();
+                        }
+                        Value = null;
+                    }
+                }
+                disposedValue = true;
+            }
+        }
+
+        public void Dispose()
+        {
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
+        }
     }
 }

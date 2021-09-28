@@ -46,6 +46,22 @@ namespace CapybaraVS.Script
         /// <returns>CbEnum<type>型の変数</returns>
         public static ICbValue EnumValue(Type type, string name)
         {
+            return _EnumValue(type, name, typeof(CbEnum<>));
+        }
+
+        /// <summary>
+        /// オリジナル型情報から CbEnum<type>型の変数を返します。
+        /// </summary>
+        /// <param name="type">オリジナルの共用体の型</param>
+        /// <param name="name">変数名</param>
+        /// <returns>CbEnum<type>型の変数</returns>
+        public static ICbValue NullableEnumValue(Type type, string name)
+        {
+            return _EnumValue(type, name, typeof(CbNullableEnum<>));
+        }
+
+        public static ICbValue _EnumValue(Type type, string name, Type openedType)
+        {
             if (type is null)
             {
                 return null;
@@ -64,7 +80,6 @@ namespace CapybaraVS.Script
 
                 return null;
             }
-            Type openedType = typeof(CbEnum<>); //CapybaraVS.Script.CbEnum`1
             Type cbEnumType = openedType.MakeGenericType(type);
 
             if (CbST.GetTypeEx(type) is null)
@@ -79,7 +94,10 @@ namespace CapybaraVS.Script
     /// <summary>
     /// enum型
     /// </summary>
-    public class CbEnum<T> : BaseCbValueClass<Enum>, ICbValueEnumClass<Enum>, ICbEnum
+    public class CbEnum<T> 
+        : BaseCbValueClass<Enum>
+        , ICbValueEnumClass<Enum>
+        , ICbEnum
          where T : struct
     {
         public override Type MyType => typeof(CbEnum<T>);
@@ -98,7 +116,10 @@ namespace CapybaraVS.Script
             }
         }
 
-        public static Type GetItemType() { return typeof(T); }  // ※リフレクションから参照されている
+        public static Type GetItemType() {
+            Debug.Assert(false);    // 参照されていない？
+            return typeof(T);
+        }  // ※リフレクションから参照されている
 
         public CbEnum(T n, string name = "")
         {
@@ -113,9 +134,9 @@ namespace CapybaraVS.Script
             Name = name;
         }
 
-        public override Func<ICbValue> NodeTF => TF;
-
         public override string TypeName => CbSTUtils._GetTypeName(typeof(T));
+
+        public override Func<ICbValue> NodeTF => TF;
 
         public string[] ElementList => Enum.GetNames(typeof(T));
 
@@ -128,6 +149,8 @@ namespace CapybaraVS.Script
             {
                 if (IsError)
                     return CbSTUtils.ERROR_STR;
+                if (IsNull)
+                    return CbSTUtils.UI_NULL_STR;
                 return CbSTUtils._GetTypeName(typeof(T)) + "." + Value.ToString();
             }
         }
@@ -159,17 +182,93 @@ namespace CapybaraVS.Script
 
         public override bool IsStringableValue => true;
 
-        public static CbEnum<T> Create(string name = "")
+        public static CbEnum<T> Create(string name = "") => new CbEnum<T>(name);
+
+        public static CbEnum<T> Create(T n, string name = "") => new CbEnum<T>(n, name);
+
+        public static Func<ICbValue> TF = () => Create();
+        public static Func<string, ICbValue> NTF = (name) => Create(name);
+        private bool disposedValue;
+
+        protected virtual void Dispose(bool disposing)
         {
-            return new CbEnum<T>(name);
+            if (!disposedValue)
+            {
+                if (disposing)
+                {
+                    ClearWork();
+                }
+                disposedValue = true;
+            }
         }
 
-        public static CbEnum<T> Create(T n, string name = "")
+        public void Dispose()
         {
-            return new CbEnum<T>(n, name);
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
+        }
+    }
+
+
+
+    /// <summary>
+    /// enum型
+    /// </summary>
+    public class CbNullableEnum<T>
+        : CbEnum<T>
+         where T : struct
+    {
+        public override Type MyType => typeof(CbNullableEnum<T>);
+
+        public override Type OriginalType => typeof(Nullable<>).MakeGenericType(new Type[] { typeof(T) });
+
+        public CbNullableEnum(T n, string name = "")
+            : base(n, name) {}
+
+        public CbNullableEnum(string name = "")
+            : base(name) {}
+
+        /// <summary>
+        /// null許容型か？
+        /// </summary>
+        public override bool IsNullable => true;
+
+        /// <summary>
+        /// 値の文字列表現
+        /// </summary>
+        public override string ValueString
+        {
+            get => ValueUIString;
+            set
+            {
+                if (IsNullable && value == CbSTUtils.UI_NULL_STR)
+                {
+                    isNull = true;
+                    return;
+                }
+
+                if (value.Contains("."))
+                    value = value.Substring(value.IndexOf(".") + 1, value.Length - value.IndexOf(".") - 1);
+
+                int num;
+                if (int.TryParse(value, out num))
+                {
+                    // 数字を要素へ変換する
+
+                    Value = Enum.ToObject(typeof(T), num) as Enum;
+                }
+                else
+                {
+                    Value = Enum.Parse(typeof(T), value) as Enum;
+                }
+            }
         }
 
-        public static Func<ICbValue> TF = () => CbEnum<T>.Create();
-        public static Func<string, ICbValue> NTF = (name) => CbEnum<T>.Create(name);
+        public static new CbNullableEnum<T> Create(string name = "") => new CbNullableEnum<T>(name);
+
+        public static new CbNullableEnum<T> Create(T n, string name = "") => new CbNullableEnum<T>(n, name);
+
+        public static new Func<ICbValue> TF = () => Create();
+        public static new Func<string, ICbValue> NTF = (name) => Create(name);
     }
 }
