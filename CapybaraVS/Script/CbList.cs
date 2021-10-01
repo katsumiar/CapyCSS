@@ -429,10 +429,10 @@ namespace CbVS.Script
                 foreach (var node in Value)
                 {
                     ICbEvent cbEvent2 = node as ICbEvent;
-                    if (cbEvent2.CallBack is null)
+                    if (cbEvent2.Callback is null)
                         ((dynamic)originalCopyList).Add(null);
                     else
-                        originalCopyList.Add((T)cbEvent2.GetCallBackOriginalType(dummyArgumentsControl, cagt));
+                        originalCopyList.Add((T)cbEvent2.GetCallbackOriginalType(dummyArgumentsControl, cagt));
                 }
             }
             else

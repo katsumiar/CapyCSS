@@ -739,7 +739,7 @@ namespace CapybaraVS.Script
                                     toolExec.ParamList.Add(GetArgument<string>(valueData));
                                 });
 
-                            ret.CallBack = (cagt2) =>
+                            ret.Callback = (cagt2) =>
                             {
                                 return CbInt.Create(toolExec.Start(redirect));
                             };

@@ -87,11 +87,11 @@ namespace CbVS.Script
         /// <summary>
         /// イベント型を判定します。
         /// </summary>
-        bool IsCallBack { get; }
+        bool IsCallback { get; }
         /// <summary>
         /// Func<> もしくは Action<> の内包したコールバックを参照します。
         /// </summary>
-        Func<DummyArgumentsStack, object> CallBack { get; set; }
+        Func<DummyArgumentsStack, object> Callback { get; set; }
         /// <summary>
         /// コールバックの返し値を参照します。
         /// </summary>
@@ -100,14 +100,14 @@ namespace CbVS.Script
         /// コールバックを呼び出します。
         /// </summary>
         /// <param name="cbPushList"></param>
-        void CallCallBack(DummyArgumentsStack cbPushList);
+        void InvokeCallback(DummyArgumentsStack cbPushList);
         /// <summary>
         /// オリジナルの型でコールバックを取得します。
         /// </summary>
         /// <param name="dummyArgumentsControl"></param>
         /// <param name="cagt"></param>
         /// <returns></returns>
-        object GetCallBackOriginalType(DummyArgumentsControl dummyArgumentsControl, DummyArgumentsStack cagt);
+        object GetCallbackOriginalType(DummyArgumentsControl dummyArgumentsControl, DummyArgumentsStack cagt);
     }
 
     public class CbFunc
@@ -334,7 +334,7 @@ namespace CbVS.Script
         /// <summary>
         /// Func<> もしくは Action<> を内包したコールバックを参照します。
         /// </summary>
-        public Func<DummyArgumentsStack, object> CallBack { get; set; } = null;
+        public Func<DummyArgumentsStack, object> Callback { get; set; } = null;
 
         public CbFunc(ICbValue n, string name = "")
         {
@@ -361,7 +361,7 @@ namespace CbVS.Script
                 }
                 else if (n is ICbEvent cbEvent)
                 {
-                    CallBack = cbEvent.CallBack;
+                    Callback = cbEvent.Callback;
                 }
                 if (IsError)
                 {
@@ -387,27 +387,27 @@ namespace CbVS.Script
             }
         }
 
-        public bool IsCallBack => CallBack != null;
+        public bool IsCallback => Callback != null;
 
-        public void CallCallBack(DummyArgumentsStack cbPushList)
+        public void InvokeCallback(DummyArgumentsStack cbPushList)
         {
             if (CbVoid.Is(typeof(RT)))
             {
-                CallBack?.Invoke(cbPushList);
+                Callback?.Invoke(cbPushList);
             }
             else if (typeof(RT) == typeof(CbObject))
             {
-                Data = (ICbValue)CallBack?.Invoke(cbPushList);
+                Data = (ICbValue)Callback?.Invoke(cbPushList);
             }
             else if (typeof(RT).IsGenericType && typeof(RT).GetGenericTypeDefinition() == typeof(CbFunc<,>))
             {
-                ICbEvent cbEvent = (ICbEvent)CallBack?.Invoke(cbPushList);
+                ICbEvent cbEvent = (ICbEvent)Callback?.Invoke(cbPushList);
                 Data = cbEvent.Data;
-                CallBack = cbEvent.CallBack;
+                Callback = cbEvent.Callback;
             }
             else
             {
-                ICbValue result = CallBack?.Invoke(cbPushList) as ICbValue;
+                ICbValue result = Callback?.Invoke(cbPushList) as ICbValue;
                 if (!result.IsNull)
                 {
                     Value = CbST.CbCreate(result.Data.GetType());
@@ -424,7 +424,7 @@ namespace CbVS.Script
         {
             get
             {
-                if (CallBack is null)
+                if (Callback is null)
                     return null;
                 return _value;
             }
@@ -453,7 +453,7 @@ namespace CbVS.Script
         /// <summary>
         /// 変数の持つ値は null か？
         /// </summary>
-        public override bool IsNull => CallBack is null;
+        public override bool IsNull => Callback is null;
 
         /// <summary>
         /// 値の文字列表現
@@ -480,7 +480,7 @@ namespace CbVS.Script
 
         public override bool IsStringableValue => false;
 
-        public object GetCallBackOriginalType(DummyArgumentsControl dummyArgumentsControl, DummyArgumentsStack cagt)
+        public object GetCallbackOriginalType(DummyArgumentsControl dummyArgumentsControl, DummyArgumentsStack cagt)
         {
             return ConvertOriginalType(dummyArgumentsControl, cagt);
         }
@@ -536,31 +536,31 @@ namespace CbVS.Script
                 {
                     // Action を作成し、デリゲートにバインドする
 
-                    var instanceType1 = typeof(MakeAction);
+                    var instanceType1 = typeof(DelegateAction);
                     var instance1 = Activator.CreateInstance(instanceType1, new object[] { this, dummyArgumentsControl, cagt });
                     MethodInfo method1 = instanceType1.GetMethod("Method");
                     return Delegate.CreateDelegate(OriginalType, instance1, method1);
                 }
 
-                // Action<> を作成し、デリゲートにバインドする
+                // Action<...> を作成し、デリゲートにバインドする
                 Type[] actionTypes = new Type[]
                 {
-                    typeof(MakeAction<>),
-                    typeof(MakeAction<,>),
-                    typeof(MakeAction<,,>),
-                    typeof(MakeAction<,,,>),
-                    typeof(MakeAction<,,,,>),
-                    typeof(MakeAction<,,,,,>),
-                    typeof(MakeAction<,,,,,,>),
-                    typeof(MakeAction<,,,,,,,>),
-                    typeof(MakeAction<,,,,,,,,>),
-                    typeof(MakeAction<,,,,,,,,,>),
-                    typeof(MakeAction<,,,,,,,,,,>),
-                    typeof(MakeAction<,,,,,,,,,,,>),
-                    typeof(MakeAction<,,,,,,,,,,,,>),
-                    typeof(MakeAction<,,,,,,,,,,,,,>),
-                    typeof(MakeAction<,,,,,,,,,,,,,,>),
-                    typeof(MakeAction<,,,,,,,,,,,,,,,>),
+                    typeof(DelegateAction<>),
+                    typeof(DelegateAction<,>),
+                    typeof(DelegateAction<,,>),
+                    typeof(DelegateAction<,,,>),
+                    typeof(DelegateAction<,,,,>),
+                    typeof(DelegateAction<,,,,,>),
+                    typeof(DelegateAction<,,,,,,>),
+                    typeof(DelegateAction<,,,,,,,>),
+                    typeof(DelegateAction<,,,,,,,,>),
+                    typeof(DelegateAction<,,,,,,,,,>),
+                    typeof(DelegateAction<,,,,,,,,,,>),
+                    typeof(DelegateAction<,,,,,,,,,,,>),
+                    typeof(DelegateAction<,,,,,,,,,,,,>),
+                    typeof(DelegateAction<,,,,,,,,,,,,,>),
+                    typeof(DelegateAction<,,,,,,,,,,,,,,>),
+                    typeof(DelegateAction<,,,,,,,,,,,,,,,>),
                 };
 
                 var instanceType2 = actionTypes[index].MakeGenericType(selfParams.ToArray());
@@ -569,26 +569,26 @@ namespace CbVS.Script
                 return Delegate.CreateDelegate(OriginalType, instance2, method2);
             }
 
-            // Func<> を作成し、デリゲートにバインドする
+            // Func<...> を作成し、デリゲートにバインドする
             Type[] funcTypes = new Type[]
             {
-                typeof(MakeFunction<>),
-                typeof(MakeFunction<,>),
-                typeof(MakeFunction<,,>),
-                typeof(MakeFunction<,,,>),
-                typeof(MakeFunction<,,,,>),
-                typeof(MakeFunction<,,,,,>),
-                typeof(MakeFunction<,,,,,,>),
-                typeof(MakeFunction<,,,,,,,>),
-                typeof(MakeFunction<,,,,,,,,>),
-                typeof(MakeFunction<,,,,,,,,,>),
-                typeof(MakeFunction<,,,,,,,,,,>),
-                typeof(MakeFunction<,,,,,,,,,,,>),
-                typeof(MakeFunction<,,,,,,,,,,,,>),
-                typeof(MakeFunction<,,,,,,,,,,,,,>),
-                typeof(MakeFunction<,,,,,,,,,,,,,,>),
-                typeof(MakeFunction<,,,,,,,,,,,,,,,>),
-                typeof(MakeFunction<,,,,,,,,,,,,,,,,>),
+                typeof(DelegateFunction<>),
+                typeof(DelegateFunction<,>),
+                typeof(DelegateFunction<,,>),
+                typeof(DelegateFunction<,,,>),
+                typeof(DelegateFunction<,,,,>),
+                typeof(DelegateFunction<,,,,,>),
+                typeof(DelegateFunction<,,,,,,>),
+                typeof(DelegateFunction<,,,,,,,>),
+                typeof(DelegateFunction<,,,,,,,,>),
+                typeof(DelegateFunction<,,,,,,,,,>),
+                typeof(DelegateFunction<,,,,,,,,,,>),
+                typeof(DelegateFunction<,,,,,,,,,,,>),
+                typeof(DelegateFunction<,,,,,,,,,,,,>),
+                typeof(DelegateFunction<,,,,,,,,,,,,,>),
+                typeof(DelegateFunction<,,,,,,,,,,,,,,>),
+                typeof(DelegateFunction<,,,,,,,,,,,,,,,>),
+                typeof(DelegateFunction<,,,,,,,,,,,,,,,,>),
             };
 
             var instanceType = funcTypes[index].MakeGenericType(selfParams.ToArray());
@@ -597,420 +597,420 @@ namespace CbVS.Script
             return Delegate.CreateDelegate(OriginalType, instance, method);
         }
         //=====================================================================================
-        public class MakeActionBase
+        public class DelegateActionBase
         {
             private CbFunc<T, RT> self;
             protected DummyArgumentsControl dummyArgumentsControl;
             protected DummyArgumentsStack cagt;
-            protected MakeActionBase(CbFunc<T, RT> self, DummyArgumentsControl dummyArgumentsControl, DummyArgumentsStack cagt)
+            protected DelegateActionBase(CbFunc<T, RT> self, DummyArgumentsControl dummyArgumentsControl, DummyArgumentsStack cagt)
             {
                 this.self = self;
                 this.dummyArgumentsControl = dummyArgumentsControl;
                 this.cagt = cagt;
             }
-            protected void CallBack()
+            protected void Callback()
             {
-                self.CallCallBack(cagt);
+                self.InvokeCallback(cagt);
                 dummyArgumentsControl.Invalidated(cagt);    // 仮引数後処理
             }
-            protected void NoArgumentsCallBack()
+            protected void ArgumentlessCallback()
             {
-                self.CallCallBack(cagt);
+                self.InvokeCallback(cagt);
             }
         }
         //=====================================================================================
-        public class MakeFunctionBase<TResult>
+        public class DelegateFunctionBase<TResult>
         {
             private CbFunc<T, RT> self;
             protected DummyArgumentsControl dummyArgumentsControl;
             protected DummyArgumentsStack cagt;
-            protected MakeFunctionBase(CbFunc<T, RT> self, DummyArgumentsControl dummyArgumentsControl, DummyArgumentsStack cagt)
+            protected DelegateFunctionBase(CbFunc<T, RT> self, DummyArgumentsControl dummyArgumentsControl, DummyArgumentsStack cagt)
             {
                 this.self = self;
                 this.dummyArgumentsControl = dummyArgumentsControl;
                 this.cagt = cagt;
             }
-            protected TResult CallBack()
+            protected TResult Callback()
             {
-                self.CallCallBack(cagt);
+                self.InvokeCallback(cagt);
                 dummyArgumentsControl.Invalidated(cagt);    // 仮引数後処理
                 return (TResult)self.Value.Data;
             }
         }
 
         //=====================================================================================
-        public class MakeAction
-            : MakeActionBase
+        public class DelegateAction
+            : DelegateActionBase
         {
-            public MakeAction(CbFunc<T, RT> self, DummyArgumentsControl dummyArgumentsControl, DummyArgumentsStack cagt) : base(self, dummyArgumentsControl, cagt) { }
+            public DelegateAction(CbFunc<T, RT> self, DummyArgumentsControl dummyArgumentsControl, DummyArgumentsStack cagt) : base(self, dummyArgumentsControl, cagt) { }
             public void Method()
             {
-                NoArgumentsCallBack();
+                ArgumentlessCallback();
             }
         }
         //=====================================================================================
-        public class MakeAction<T1>
-            : MakeActionBase
+        public class DelegateAction<T1>
+            : DelegateActionBase
         {
-            public MakeAction(CbFunc<T, RT> self, DummyArgumentsControl dummyArgumentsControl, DummyArgumentsStack cagt) : base(self, dummyArgumentsControl, cagt) { }
+            public DelegateAction(CbFunc<T, RT> self, DummyArgumentsControl dummyArgumentsControl, DummyArgumentsStack cagt) : base(self, dummyArgumentsControl, cagt) { }
             public void Method(T1 arg)
             {
                 dummyArgumentsControl.Enable(cagt, arg);    // 仮引数に引数を登録
-                CallBack();
+                Callback();
             }
         }
         //------------------------------------------------------
-        public class MakeAction<T1, T2>
-            : MakeActionBase
+        public class DelegateAction<T1, T2>
+            : DelegateActionBase
         {
-            public MakeAction(CbFunc<T, RT> self, DummyArgumentsControl dummyArgumentsControl, DummyArgumentsStack cagt) : base(self, dummyArgumentsControl, cagt) { }
+            public DelegateAction(CbFunc<T, RT> self, DummyArgumentsControl dummyArgumentsControl, DummyArgumentsStack cagt) : base(self, dummyArgumentsControl, cagt) { }
             public void Method(T1 arg1, T2 arg2)
             {
                 dummyArgumentsControl.Enable(cagt, arg1, arg2);    // 仮引数に引数を登録
-                CallBack();
+                Callback();
             }
         }
         //------------------------------------------------------
-        public class MakeAction<T1, T2, T3>
-            : MakeActionBase
+        public class DelegateAction<T1, T2, T3>
+            : DelegateActionBase
         {
-            public MakeAction(CbFunc<T, RT> self, DummyArgumentsControl dummyArgumentsControl, DummyArgumentsStack cagt) : base(self, dummyArgumentsControl, cagt) { }
+            public DelegateAction(CbFunc<T, RT> self, DummyArgumentsControl dummyArgumentsControl, DummyArgumentsStack cagt) : base(self, dummyArgumentsControl, cagt) { }
             public void Method(T1 arg1, T2 arg2, T3 arg3)
             {
                 dummyArgumentsControl.Enable(cagt, arg1, arg2, arg3);    // 仮引数に引数を登録
-                CallBack();
+                Callback();
             }
         }
         //------------------------------------------------------
-        public class MakeAction<T1, T2, T3, T4>
-            : MakeActionBase
+        public class DelegateAction<T1, T2, T3, T4>
+            : DelegateActionBase
         {
-            public MakeAction(CbFunc<T, RT> self, DummyArgumentsControl dummyArgumentsControl, DummyArgumentsStack cagt) : base(self, dummyArgumentsControl, cagt) { }
+            public DelegateAction(CbFunc<T, RT> self, DummyArgumentsControl dummyArgumentsControl, DummyArgumentsStack cagt) : base(self, dummyArgumentsControl, cagt) { }
             public void Method(T1 arg1, T2 arg2, T3 arg3, T4 arg4)
             {
                 dummyArgumentsControl.Enable(cagt, arg1, arg2, arg3, arg4);    // 仮引数に引数を登録
-                CallBack();
+                Callback();
             }
         }
         //------------------------------------------------------
-        public class MakeAction<T1, T2, T3, T4, T5>
-            : MakeActionBase
+        public class DelegateAction<T1, T2, T3, T4, T5>
+            : DelegateActionBase
         {
-            public MakeAction(CbFunc<T, RT> self, DummyArgumentsControl dummyArgumentsControl, DummyArgumentsStack cagt) : base(self, dummyArgumentsControl, cagt) { }
+            public DelegateAction(CbFunc<T, RT> self, DummyArgumentsControl dummyArgumentsControl, DummyArgumentsStack cagt) : base(self, dummyArgumentsControl, cagt) { }
             public void Method(T1 arg1, T2 arg2, T3 arg3, T4 arg4, T5 arg5)
             {
                 dummyArgumentsControl.Enable(cagt, arg1, arg2, arg3, arg4, arg5);    // 仮引数に引数を登録
-                CallBack();
+                Callback();
             }
         }
         //------------------------------------------------------
-        public class MakeAction<T1, T2, T3, T4, T5, T6>
-            : MakeActionBase
+        public class DelegateAction<T1, T2, T3, T4, T5, T6>
+            : DelegateActionBase
         {
-            public MakeAction(CbFunc<T, RT> self, DummyArgumentsControl dummyArgumentsControl, DummyArgumentsStack cagt) : base(self, dummyArgumentsControl, cagt) { }
+            public DelegateAction(CbFunc<T, RT> self, DummyArgumentsControl dummyArgumentsControl, DummyArgumentsStack cagt) : base(self, dummyArgumentsControl, cagt) { }
             public void Method(T1 arg1, T2 arg2, T3 arg3, T4 arg4, T5 arg5, T6 arg6)
             {
                 dummyArgumentsControl.Enable(cagt, arg1, arg2, arg3, arg4, arg5, arg6);    // 仮引数に引数を登録
-                CallBack();
+                Callback();
             }
         }
         //------------------------------------------------------
-        public class MakeAction<T1, T2, T3, T4, T5, T6, T7>
-            : MakeActionBase
+        public class DelegateAction<T1, T2, T3, T4, T5, T6, T7>
+            : DelegateActionBase
         {
-            public MakeAction(CbFunc<T, RT> self, DummyArgumentsControl dummyArgumentsControl, DummyArgumentsStack cagt) : base(self, dummyArgumentsControl, cagt) { }
+            public DelegateAction(CbFunc<T, RT> self, DummyArgumentsControl dummyArgumentsControl, DummyArgumentsStack cagt) : base(self, dummyArgumentsControl, cagt) { }
             public void Method(T1 arg1, T2 arg2, T3 arg3, T4 arg4, T5 arg5, T6 arg6, T7 arg7)
             {
                 dummyArgumentsControl.Enable(cagt, arg1, arg2, arg3, arg4, arg5, arg6, arg7);    // 仮引数に引数を登録
-                CallBack();
+                Callback();
             }
         }
         //------------------------------------------------------
-        public class MakeAction<T1, T2, T3, T4, T5, T6, T7, T8>
-            : MakeActionBase
+        public class DelegateAction<T1, T2, T3, T4, T5, T6, T7, T8>
+            : DelegateActionBase
         {
-            public MakeAction(CbFunc<T, RT> self, DummyArgumentsControl dummyArgumentsControl, DummyArgumentsStack cagt) : base(self, dummyArgumentsControl, cagt) { }
+            public DelegateAction(CbFunc<T, RT> self, DummyArgumentsControl dummyArgumentsControl, DummyArgumentsStack cagt) : base(self, dummyArgumentsControl, cagt) { }
             public void Method(T1 arg1, T2 arg2, T3 arg3, T4 arg4, T5 arg5, T6 arg6, T7 arg7, T8 arg8)
             {
                 dummyArgumentsControl.Enable(cagt, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8);    // 仮引数に引数を登録
-                CallBack();
+                Callback();
             }
         }
         //------------------------------------------------------
-        public class MakeAction<T1, T2, T3, T4, T5, T6, T7, T8, T9>
-            : MakeActionBase
+        public class DelegateAction<T1, T2, T3, T4, T5, T6, T7, T8, T9>
+            : DelegateActionBase
         {
-            public MakeAction(CbFunc<T, RT> self, DummyArgumentsControl dummyArgumentsControl, DummyArgumentsStack cagt) : base(self, dummyArgumentsControl, cagt) { }
+            public DelegateAction(CbFunc<T, RT> self, DummyArgumentsControl dummyArgumentsControl, DummyArgumentsStack cagt) : base(self, dummyArgumentsControl, cagt) { }
             public void Method(T1 arg1, T2 arg2, T3 arg3, T4 arg4, T5 arg5, T6 arg6, T7 arg7, T8 arg8, T9 arg9)
             {
                 dummyArgumentsControl.Enable(cagt, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9);    // 仮引数に引数を登録
-                CallBack();
+                Callback();
             }
         }
         //------------------------------------------------------
-        public class MakeAction<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10>
-            : MakeActionBase
+        public class DelegateAction<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10>
+            : DelegateActionBase
         {
-            public MakeAction(CbFunc<T, RT> self, DummyArgumentsControl dummyArgumentsControl, DummyArgumentsStack cagt) : base(self, dummyArgumentsControl, cagt) { }
+            public DelegateAction(CbFunc<T, RT> self, DummyArgumentsControl dummyArgumentsControl, DummyArgumentsStack cagt) : base(self, dummyArgumentsControl, cagt) { }
             public void Method(T1 arg1, T2 arg2, T3 arg3, T4 arg4, T5 arg5, T6 arg6, T7 arg7, T8 arg8, T9 arg9, T10 arg10)
             {
                 dummyArgumentsControl.Enable(cagt, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10);    // 仮引数に引数を登録
-                CallBack();
+                Callback();
             }
         }
         //------------------------------------------------------
-        public class MakeAction<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11>
-            : MakeActionBase
+        public class DelegateAction<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11>
+            : DelegateActionBase
         {
-            public MakeAction(CbFunc<T, RT> self, DummyArgumentsControl dummyArgumentsControl, DummyArgumentsStack cagt) : base(self, dummyArgumentsControl, cagt) { }
+            public DelegateAction(CbFunc<T, RT> self, DummyArgumentsControl dummyArgumentsControl, DummyArgumentsStack cagt) : base(self, dummyArgumentsControl, cagt) { }
             public void Method(T1 arg1, T2 arg2, T3 arg3, T4 arg4, T5 arg5, T6 arg6, T7 arg7, T8 arg8, T9 arg9, T10 arg10, T11 arg11)
             {
                 dummyArgumentsControl.Enable(cagt, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11);    // 仮引数に引数を登録
-                CallBack();
+                Callback();
             }
         }
         //------------------------------------------------------
-        public class MakeAction<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12>
-            : MakeActionBase
+        public class DelegateAction<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12>
+            : DelegateActionBase
         {
-            public MakeAction(CbFunc<T, RT> self, DummyArgumentsControl dummyArgumentsControl, DummyArgumentsStack cagt) : base(self, dummyArgumentsControl, cagt) { }
+            public DelegateAction(CbFunc<T, RT> self, DummyArgumentsControl dummyArgumentsControl, DummyArgumentsStack cagt) : base(self, dummyArgumentsControl, cagt) { }
             public void Method(T1 arg1, T2 arg2, T3 arg3, T4 arg4, T5 arg5, T6 arg6, T7 arg7, T8 arg8, T9 arg9, T10 arg10, T11 arg11, T12 arg12)
             {
                 dummyArgumentsControl.Enable(cagt, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12);    // 仮引数に引数を登録
-                CallBack();
+                Callback();
             }
         }
         //------------------------------------------------------
-        public class MakeAction<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13>
-            : MakeActionBase
+        public class DelegateAction<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13>
+            : DelegateActionBase
         {
-            public MakeAction(CbFunc<T, RT> self, DummyArgumentsControl dummyArgumentsControl, DummyArgumentsStack cagt) : base(self, dummyArgumentsControl, cagt) { }
+            public DelegateAction(CbFunc<T, RT> self, DummyArgumentsControl dummyArgumentsControl, DummyArgumentsStack cagt) : base(self, dummyArgumentsControl, cagt) { }
             public void Method(T1 arg1, T2 arg2, T3 arg3, T4 arg4, T5 arg5, T6 arg6, T7 arg7, T8 arg8, T9 arg9, T10 arg10, T11 arg11, T12 arg12, T13 arg13)
             {
                 dummyArgumentsControl.Enable(cagt, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13);    // 仮引数に引数を登録
-                CallBack();
+                Callback();
             }
         }
         //------------------------------------------------------
-        public class MakeAction<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14>
-            : MakeActionBase
+        public class DelegateAction<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14>
+            : DelegateActionBase
         {
-            public MakeAction(CbFunc<T, RT> self, DummyArgumentsControl dummyArgumentsControl, DummyArgumentsStack cagt) : base(self, dummyArgumentsControl, cagt) { }
+            public DelegateAction(CbFunc<T, RT> self, DummyArgumentsControl dummyArgumentsControl, DummyArgumentsStack cagt) : base(self, dummyArgumentsControl, cagt) { }
             public void Method(T1 arg1, T2 arg2, T3 arg3, T4 arg4, T5 arg5, T6 arg6, T7 arg7, T8 arg8, T9 arg9, T10 arg10, T11 arg11, T12 arg12, T13 arg13, T14 arg14)
             {
                 dummyArgumentsControl.Enable(cagt, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14);    // 仮引数に引数を登録
-                CallBack();
+                Callback();
             }
         }
         //------------------------------------------------------
-        public class MakeAction<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15>
-            : MakeActionBase
+        public class DelegateAction<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15>
+            : DelegateActionBase
         {
-            public MakeAction(CbFunc<T, RT> self, DummyArgumentsControl dummyArgumentsControl, DummyArgumentsStack cagt) : base(self, dummyArgumentsControl, cagt) { }
+            public DelegateAction(CbFunc<T, RT> self, DummyArgumentsControl dummyArgumentsControl, DummyArgumentsStack cagt) : base(self, dummyArgumentsControl, cagt) { }
             public void Method(T1 arg1, T2 arg2, T3 arg3, T4 arg4, T5 arg5, T6 arg6, T7 arg7, T8 arg8, T9 arg9, T10 arg10, T11 arg11, T12 arg12, T13 arg13, T14 arg14, T15 arg15)
             {
                 dummyArgumentsControl.Enable(cagt, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14, arg15);    // 仮引数に引数を登録
-                CallBack();
+                Callback();
             }
         }
         //------------------------------------------------------
-        public class MakeAction<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16>
-            : MakeActionBase
+        public class DelegateAction<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16>
+            : DelegateActionBase
         {
-            public MakeAction(CbFunc<T, RT> self, DummyArgumentsControl dummyArgumentsControl, DummyArgumentsStack cagt) : base(self, dummyArgumentsControl, cagt) { }
+            public DelegateAction(CbFunc<T, RT> self, DummyArgumentsControl dummyArgumentsControl, DummyArgumentsStack cagt) : base(self, dummyArgumentsControl, cagt) { }
             public void Method(T1 arg1, T2 arg2, T3 arg3, T4 arg4, T5 arg5, T6 arg6, T7 arg7, T8 arg8, T9 arg9, T10 arg10, T11 arg11, T12 arg12, T13 arg13, T14 arg14, T15 arg15, T16 arg16)
             {
                 dummyArgumentsControl.Enable(cagt, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14, arg15, arg16);    // 仮引数に引数を登録
-                CallBack();
+                Callback();
             }
         }
 
 
         //=====================================================================================
-        public class MakeFunction<TResult>
-           : MakeFunctionBase<TResult>
+        public class DelegateFunction<TResult>
+           : DelegateFunctionBase<TResult>
         {
-            public MakeFunction(CbFunc<T, RT> self, DummyArgumentsControl dummyArgumentsControl, DummyArgumentsStack cagt) : base(self, dummyArgumentsControl, cagt) { }
+            public DelegateFunction(CbFunc<T, RT> self, DummyArgumentsControl dummyArgumentsControl, DummyArgumentsStack cagt) : base(self, dummyArgumentsControl, cagt) { }
             public TResult Method()
             {
                 dummyArgumentsControl.Enable(cagt);    // 仮引数に引数を登録
-                return CallBack();
+                return Callback();
             }
         }
         //------------------------------------------------------
-        public class MakeFunction<T1, TResult>
-            : MakeFunctionBase<TResult>
+        public class DelegateFunction<T1, TResult>
+            : DelegateFunctionBase<TResult>
         {
-            public MakeFunction(CbFunc<T, RT> self, DummyArgumentsControl dummyArgumentsControl, DummyArgumentsStack cagt) : base(self, dummyArgumentsControl, cagt) { }
+            public DelegateFunction(CbFunc<T, RT> self, DummyArgumentsControl dummyArgumentsControl, DummyArgumentsStack cagt) : base(self, dummyArgumentsControl, cagt) { }
             public TResult Method(T1 arg)
             {
                 dummyArgumentsControl.Enable(cagt, arg);    // 仮引数に引数を登録
-                return CallBack();
+                return Callback();
             }
         }
         //------------------------------------------------------
-        public class MakeFunction<T1, T2, TResult>
-            : MakeFunctionBase<TResult>
+        public class DelegateFunction<T1, T2, TResult>
+            : DelegateFunctionBase<TResult>
         {
-            public MakeFunction(CbFunc<T, RT> self, DummyArgumentsControl dummyArgumentsControl, DummyArgumentsStack cagt) : base(self, dummyArgumentsControl, cagt) { }
+            public DelegateFunction(CbFunc<T, RT> self, DummyArgumentsControl dummyArgumentsControl, DummyArgumentsStack cagt) : base(self, dummyArgumentsControl, cagt) { }
             public TResult Method(T1 arg1, T2 arg2)
             {
                 dummyArgumentsControl.Enable(cagt, arg1, arg2);    // 仮引数に引数を登録
-                return CallBack();
+                return Callback();
             }
         }
         //------------------------------------------------------
-        public class MakeFunction<T1, T2, T3, TResult>
-            : MakeFunctionBase<TResult>
+        public class DelegateFunction<T1, T2, T3, TResult>
+            : DelegateFunctionBase<TResult>
         {
-            public MakeFunction(CbFunc<T, RT> self, DummyArgumentsControl dummyArgumentsControl, DummyArgumentsStack cagt) : base(self, dummyArgumentsControl, cagt) { }
+            public DelegateFunction(CbFunc<T, RT> self, DummyArgumentsControl dummyArgumentsControl, DummyArgumentsStack cagt) : base(self, dummyArgumentsControl, cagt) { }
             public TResult Method(T1 arg1, T2 arg2, T3 arg3)
             {
                 dummyArgumentsControl.Enable(cagt, arg1, arg2, arg3);    // 仮引数に引数を登録
-                return CallBack();
+                return Callback();
             }
         }
         //------------------------------------------------------
-        public class MakeFunction<T1, T2, T3, T4, TResult>
-            : MakeFunctionBase<TResult>
+        public class DelegateFunction<T1, T2, T3, T4, TResult>
+            : DelegateFunctionBase<TResult>
         {
-            public MakeFunction(CbFunc<T, RT> self, DummyArgumentsControl dummyArgumentsControl, DummyArgumentsStack cagt) : base(self, dummyArgumentsControl, cagt) { }
+            public DelegateFunction(CbFunc<T, RT> self, DummyArgumentsControl dummyArgumentsControl, DummyArgumentsStack cagt) : base(self, dummyArgumentsControl, cagt) { }
             public TResult Method(T1 arg1, T2 arg2, T3 arg3, T4 arg4)
             {
                 dummyArgumentsControl.Enable(cagt, arg1, arg2, arg3, arg4);    // 仮引数に引数を登録
-                return CallBack();
+                return Callback();
             }
         }
         //------------------------------------------------------
-        public class MakeFunction<T1, T2, T3, T4, T5, TResult>
-            : MakeFunctionBase<TResult>
+        public class DelegateFunction<T1, T2, T3, T4, T5, TResult>
+            : DelegateFunctionBase<TResult>
         {
-            public MakeFunction(CbFunc<T, RT> self, DummyArgumentsControl dummyArgumentsControl, DummyArgumentsStack cagt) : base(self, dummyArgumentsControl, cagt) { }
+            public DelegateFunction(CbFunc<T, RT> self, DummyArgumentsControl dummyArgumentsControl, DummyArgumentsStack cagt) : base(self, dummyArgumentsControl, cagt) { }
             public TResult Method(T1 arg1, T2 arg2, T3 arg3, T4 arg4, T5 arg5)
             {
                 dummyArgumentsControl.Enable(cagt, arg1, arg2, arg3, arg4, arg5);    // 仮引数に引数を登録
-                return CallBack();
+                return Callback();
             }
         }
         //------------------------------------------------------
-        public class MakeFunction<T1, T2, T3, T4, T5, T6, TResult>
-            : MakeFunctionBase<TResult>
+        public class DelegateFunction<T1, T2, T3, T4, T5, T6, TResult>
+            : DelegateFunctionBase<TResult>
         {
-            public MakeFunction(CbFunc<T, RT> self, DummyArgumentsControl dummyArgumentsControl, DummyArgumentsStack cagt) : base(self, dummyArgumentsControl, cagt) { }
+            public DelegateFunction(CbFunc<T, RT> self, DummyArgumentsControl dummyArgumentsControl, DummyArgumentsStack cagt) : base(self, dummyArgumentsControl, cagt) { }
             public TResult Method(T1 arg1, T2 arg2, T3 arg3, T4 arg4, T5 arg5, T6 arg6)
             {
                 dummyArgumentsControl.Enable(cagt, arg1, arg2, arg3, arg4, arg5, arg6);    // 仮引数に引数を登録
-                return CallBack();
+                return Callback();
             }
         }
         //------------------------------------------------------
-        public class MakeFunction<T1, T2, T3, T4, T5, T6, T7, TResult>
-            : MakeFunctionBase<TResult>
+        public class DelegateFunction<T1, T2, T3, T4, T5, T6, T7, TResult>
+            : DelegateFunctionBase<TResult>
         {
-            public MakeFunction(CbFunc<T, RT> self, DummyArgumentsControl dummyArgumentsControl, DummyArgumentsStack cagt) : base(self, dummyArgumentsControl, cagt) { }
+            public DelegateFunction(CbFunc<T, RT> self, DummyArgumentsControl dummyArgumentsControl, DummyArgumentsStack cagt) : base(self, dummyArgumentsControl, cagt) { }
             public TResult Method(T1 arg1, T2 arg2, T3 arg3, T4 arg4, T5 arg5, T6 arg6, T7 arg7)
             {
                 dummyArgumentsControl.Enable(cagt, arg1, arg2, arg3, arg4, arg5, arg6, arg7);    // 仮引数に引数を登録
-                return CallBack();
+                return Callback();
             }
         }
         //------------------------------------------------------
-        public class MakeFunction<T1, T2, T3, T4, T5, T6, T7, T8, TResult>
-            : MakeFunctionBase<TResult>
+        public class DelegateFunction<T1, T2, T3, T4, T5, T6, T7, T8, TResult>
+            : DelegateFunctionBase<TResult>
         {
-            public MakeFunction(CbFunc<T, RT> self, DummyArgumentsControl dummyArgumentsControl, DummyArgumentsStack cagt) : base(self, dummyArgumentsControl, cagt) { }
+            public DelegateFunction(CbFunc<T, RT> self, DummyArgumentsControl dummyArgumentsControl, DummyArgumentsStack cagt) : base(self, dummyArgumentsControl, cagt) { }
             public TResult Method(T1 arg1, T2 arg2, T3 arg3, T4 arg4, T5 arg5, T6 arg6, T7 arg7, T8 arg8)
             {
                 dummyArgumentsControl.Enable(cagt, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8);    // 仮引数に引数を登録
-                return CallBack();
+                return Callback();
             }
         }
         //------------------------------------------------------
-        public class MakeFunction<T1, T2, T3, T4, T5, T6, T7, T8, T9, TResult>
-            : MakeFunctionBase<TResult>
+        public class DelegateFunction<T1, T2, T3, T4, T5, T6, T7, T8, T9, TResult>
+            : DelegateFunctionBase<TResult>
         {
-            public MakeFunction(CbFunc<T, RT> self, DummyArgumentsControl dummyArgumentsControl, DummyArgumentsStack cagt) : base(self, dummyArgumentsControl, cagt) { }
+            public DelegateFunction(CbFunc<T, RT> self, DummyArgumentsControl dummyArgumentsControl, DummyArgumentsStack cagt) : base(self, dummyArgumentsControl, cagt) { }
             public TResult Method(T1 arg1, T2 arg2, T3 arg3, T4 arg4, T5 arg5, T6 arg6, T7 arg7, T8 arg8, T9 arg9)
             {
                 dummyArgumentsControl.Enable(cagt, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9);    // 仮引数に引数を登録
-                return CallBack();
+                return Callback();
             }
         }
         //------------------------------------------------------
-        public class MakeFunction<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, TResult>
-            : MakeFunctionBase<TResult>
+        public class DelegateFunction<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, TResult>
+            : DelegateFunctionBase<TResult>
         {
-            public MakeFunction(CbFunc<T, RT> self, DummyArgumentsControl dummyArgumentsControl, DummyArgumentsStack cagt) : base(self, dummyArgumentsControl, cagt) { }
+            public DelegateFunction(CbFunc<T, RT> self, DummyArgumentsControl dummyArgumentsControl, DummyArgumentsStack cagt) : base(self, dummyArgumentsControl, cagt) { }
             public TResult Method(T1 arg1, T2 arg2, T3 arg3, T4 arg4, T5 arg5, T6 arg6, T7 arg7, T8 arg8, T9 arg9, T10 arg10)
             {
                 dummyArgumentsControl.Enable(cagt, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10);    // 仮引数に引数を登録
-                return CallBack();
+                return Callback();
             }
         }
         //------------------------------------------------------
-        public class MakeFunction<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, TResult>
-            : MakeFunctionBase<TResult>
+        public class DelegateFunction<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, TResult>
+            : DelegateFunctionBase<TResult>
         {
-            public MakeFunction(CbFunc<T, RT> self, DummyArgumentsControl dummyArgumentsControl, DummyArgumentsStack cagt) : base(self, dummyArgumentsControl, cagt) { }
+            public DelegateFunction(CbFunc<T, RT> self, DummyArgumentsControl dummyArgumentsControl, DummyArgumentsStack cagt) : base(self, dummyArgumentsControl, cagt) { }
             public TResult Method(T1 arg1, T2 arg2, T3 arg3, T4 arg4, T5 arg5, T6 arg6, T7 arg7, T8 arg8, T9 arg9, T10 arg10, T11 arg11)
             {
                 dummyArgumentsControl.Enable(cagt, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11);    // 仮引数に引数を登録
-                return CallBack();
+                return Callback();
             }
         }
         //------------------------------------------------------
-        public class MakeFunction<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, TResult>
-            : MakeFunctionBase<TResult>
+        public class DelegateFunction<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, TResult>
+            : DelegateFunctionBase<TResult>
         {
-            public MakeFunction(CbFunc<T, RT> self, DummyArgumentsControl dummyArgumentsControl, DummyArgumentsStack cagt) : base(self, dummyArgumentsControl, cagt) { }
+            public DelegateFunction(CbFunc<T, RT> self, DummyArgumentsControl dummyArgumentsControl, DummyArgumentsStack cagt) : base(self, dummyArgumentsControl, cagt) { }
             public TResult Method(T1 arg1, T2 arg2, T3 arg3, T4 arg4, T5 arg5, T6 arg6, T7 arg7, T8 arg8, T9 arg9, T10 arg10, T11 arg11, T12 arg12)
             {
                 dummyArgumentsControl.Enable(cagt, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12);    // 仮引数に引数を登録
-                return CallBack();
+                return Callback();
             }
         }
         //------------------------------------------------------
-        public class MakeFunction<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, TResult>
-            : MakeFunctionBase<TResult>
+        public class DelegateFunction<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, TResult>
+            : DelegateFunctionBase<TResult>
         {
-            public MakeFunction(CbFunc<T, RT> self, DummyArgumentsControl dummyArgumentsControl, DummyArgumentsStack cagt) : base(self, dummyArgumentsControl, cagt) { }
+            public DelegateFunction(CbFunc<T, RT> self, DummyArgumentsControl dummyArgumentsControl, DummyArgumentsStack cagt) : base(self, dummyArgumentsControl, cagt) { }
             public TResult Method(T1 arg1, T2 arg2, T3 arg3, T4 arg4, T5 arg5, T6 arg6, T7 arg7, T8 arg8, T9 arg9, T10 arg10, T11 arg11, T12 arg12, T13 arg13)
             {
                 dummyArgumentsControl.Enable(cagt, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13);    // 仮引数に引数を登録
-                return CallBack();
+                return Callback();
             }
         }
         //------------------------------------------------------
-        public class MakeFunction<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, TResult>
-            : MakeFunctionBase<TResult>
+        public class DelegateFunction<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, TResult>
+            : DelegateFunctionBase<TResult>
         {
-            public MakeFunction(CbFunc<T, RT> self, DummyArgumentsControl dummyArgumentsControl, DummyArgumentsStack cagt) : base(self, dummyArgumentsControl, cagt) { }
+            public DelegateFunction(CbFunc<T, RT> self, DummyArgumentsControl dummyArgumentsControl, DummyArgumentsStack cagt) : base(self, dummyArgumentsControl, cagt) { }
             public TResult Method(T1 arg1, T2 arg2, T3 arg3, T4 arg4, T5 arg5, T6 arg6, T7 arg7, T8 arg8, T9 arg9, T10 arg10, T11 arg11, T12 arg12, T13 arg13, T14 arg14)
             {
                 dummyArgumentsControl.Enable(cagt, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14);    // 仮引数に引数を登録
-                return CallBack();
+                return Callback();
             }
         }
         //------------------------------------------------------
-        public class MakeFunction<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, TResult>
-            : MakeFunctionBase<TResult>
+        public class DelegateFunction<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, TResult>
+            : DelegateFunctionBase<TResult>
         {
-            public MakeFunction(CbFunc<T, RT> self, DummyArgumentsControl dummyArgumentsControl, DummyArgumentsStack cagt) : base(self, dummyArgumentsControl, cagt) { }
+            public DelegateFunction(CbFunc<T, RT> self, DummyArgumentsControl dummyArgumentsControl, DummyArgumentsStack cagt) : base(self, dummyArgumentsControl, cagt) { }
             public TResult Method(T1 arg1, T2 arg2, T3 arg3, T4 arg4, T5 arg5, T6 arg6, T7 arg7, T8 arg8, T9 arg9, T10 arg10, T11 arg11, T12 arg12, T13 arg13, T14 arg14, T15 arg15)
             {
                 dummyArgumentsControl.Enable(cagt, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14, arg15);    // 仮引数に引数を登録
-                return CallBack();
+                return Callback();
             }
         }
         //------------------------------------------------------
-        public class MakeFunction<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, TResult>
-            : MakeFunctionBase<TResult>
+        public class DelegateFunction<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, TResult>
+            : DelegateFunctionBase<TResult>
         {
-            public MakeFunction(CbFunc<T, RT> self, DummyArgumentsControl dummyArgumentsControl, DummyArgumentsStack cagt) : base(self, dummyArgumentsControl, cagt) { }
+            public DelegateFunction(CbFunc<T, RT> self, DummyArgumentsControl dummyArgumentsControl, DummyArgumentsStack cagt) : base(self, dummyArgumentsControl, cagt) { }
             public TResult Method(T1 arg1, T2 arg2, T3 arg3, T4 arg4, T5 arg5, T6 arg6, T7 arg7, T8 arg8, T9 arg9, T10 arg10, T11 arg11, T12 arg12, T13 arg13, T14 arg14, T15 arg15, T16 arg16)
             {
                 dummyArgumentsControl.Enable(cagt, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14, arg15, arg16);    // 仮引数に引数を登録
-                return CallBack();
+                return Callback();
             }
         }
 

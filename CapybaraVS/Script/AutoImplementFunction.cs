@@ -473,14 +473,14 @@ namespace CapybaraVS.Script
             {
                 // Func<> 及び Action<> は、オリジナルの型のインスタンスを用意する
 
-                if (cbEvent.CallBack is null)
+                if (cbEvent.Callback is null)
                 {
                     return null;
                 }
                 else
                 {
                     Debug.Assert(dummyArgumentsControl != null);
-                    return cbEvent.GetCallBackOriginalType(dummyArgumentsControl, dummyArgumentsStack);
+                    return cbEvent.GetCallbackOriginalType(dummyArgumentsControl, dummyArgumentsStack);
                 }
             }
             if (value.IsNull)
@@ -769,7 +769,7 @@ namespace CapybaraVS.Script
                 {
                     // 返し値のあるデリゲート型
 
-                    cbEvent.CallBack = (cagt) =>
+                    cbEvent.Callback = (cagt) =>
                     {
                         ICbValue retTypeValue = null;
                         try
@@ -792,7 +792,7 @@ namespace CapybaraVS.Script
                 {
                     // 返し値の無いデリゲート型
 
-                    cbEvent.CallBack = (cagt) =>
+                    cbEvent.Callback = (cagt) =>
                     {
                         try
                         {
