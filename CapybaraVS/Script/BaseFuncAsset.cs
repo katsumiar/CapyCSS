@@ -360,7 +360,7 @@ namespace CapybaraVS.Script
         public bool ImplAsset(MultiRootConnector col, bool isReBuildMode = false)
         {
             col.MakeFunction(
-                $"{AssetCode}<{col.SelectedVariableTypeName[0]}>",
+                $"{AssetCode}<{CbSTUtils.GetTypeName(col.SelectedVariableType[0].GenericTypeArguments[0])}>",
                 HelpText,
                 CbST.CbCreateTF(col.SelectedVariableType[0].GenericTypeArguments[0]),  // 返し値の型
                 new List<ICbValue>()  // 引数

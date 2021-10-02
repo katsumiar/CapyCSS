@@ -30,7 +30,7 @@
           <AttachVariableIds />
           <AttachVariableId>0</AttachVariableId>
           <AssetValueTypes />
-          <RootConnector PointId="3">
+          <RootConnector PointId="731">
             <Caption>
               <LabelString>GetHeaders</LabelString>
             </Caption>
@@ -59,7 +59,7 @@ X-Fastly-Request-ID: 84efd81e595c58935e87b552f34afe4ee7e88ef6
               <LinkList />
             </Connector>
             <Arguments>
-              <LinkConnector PointId="4">
+              <LinkConnector PointId="732">
                 <Value>[HttpResponseMessage]&lt;null&gt;</Value>
                 <CastConnect>false</CastConnect>
                 <ParamInfo>
@@ -90,7 +90,7 @@ X-Fastly-Request-ID: 84efd81e595c58935e87b552f34afe4ee7e88ef6
           <AssetValueTypes>
             <string>System.String</string>
           </AssetValueTypes>
-          <RootConnector PointId="7">
+          <RootConnector PointId="735">
             <Caption>
               <LabelString>OutConsole&lt;string&gt;</LabelString>
             </Caption>
@@ -324,11 +324,11 @@ public static System.IO.StreamReader GetReadStream(string path, string encoding 
             <ForcedChecked>false</ForcedChecked>
             <Connector>
               <LinkList>
-                <PointID>14</PointID>
+                <PointID>742</PointID>
               </LinkList>
             </Connector>
             <Arguments>
-              <LinkConnector PointId="8">
+              <LinkConnector PointId="736">
                 <Value />
                 <CastConnect>false</CastConnect>
                 <ParamInfo>
@@ -350,7 +350,7 @@ public static System.IO.StreamReader GetReadStream(string path, string encoding 
         </RootFunc>
       </MultiRootConnector>
     </Asset>
-    <Asset Id="6" X="1209" Y="243.04">
+    <Asset Id="6" X="1209.0000000000002" Y="243.04000000000002">
       <MultiRootConnector>
         <DataVersion>1</DataVersion>
         <RootFunc AssetType="FuncType" AssetFuncType="Sequence">
@@ -359,243 +359,17 @@ public static System.IO.StreamReader GetReadStream(string path, string encoding 
           <AssetValueTypes>
             <string>System.Collections.Generic.IEnumerable`1[[System.Object, System.Private.CoreLib, Version=5.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]</string>
           </AssetValueTypes>
-          <RootConnector PointId="11">
+          <RootConnector PointId="739">
             <Caption>
-              <LabelString>Sequence&lt;IEnumerable&lt;object&gt;&gt;</LabelString>
+              <LabelString>Sequence&lt;object&gt;</LabelString>
             </Caption>
-            <Value>&lt;!DOCTYPE html&gt;
-&lt;html lang="en-US"&gt;
-  &lt;head&gt;
-    &lt;meta charset="UTF-8"&gt;
-    &lt;meta http-equiv="X-UA-Compatible" content="IE=edge"&gt;
-    &lt;meta name="viewport" content="width=device-width, initial-scale=1"&gt;
-
-&lt;!-- Begin Jekyll SEO tag v2.7.1 --&gt;
-&lt;title&gt;CapyCSS | A node-connected visual scripting tool that allows you to node c # methods.&lt;/title&gt;
-&lt;meta name="generator" content="Jekyll v3.9.0" /&gt;
-&lt;meta property="og:title" content="CapyCSS" /&gt;
-&lt;meta property="og:locale" content="en_US" /&gt;
-&lt;meta name="description" content="A node-connected visual scripting tool that allows you to node c # methods." /&gt;
-&lt;meta property="og:description" content="A node-connected visual scripting tool that allows you to node c # methods." /&gt;
-&lt;link rel="canonical" href="https://katsumiar.github.io/CapyCSS/" /&gt;
-&lt;meta property="og:url" content="https://katsumiar.github.io/CapyCSS/" /&gt;
-&lt;meta property="og:site_name" content="CapyCSS" /&gt;
-&lt;meta name="twitter:card" content="summary" /&gt;
-&lt;meta property="twitter:title" content="CapyCSS" /&gt;
-&lt;script type="application/ld+json"&gt;
-{"description":"A node-connected visual scripting tool that allows you to node c # methods.","url":"https://katsumiar.github.io/CapyCSS/","@type":"WebSite","headline":"CapyCSS","name":"CapyCSS","@context":"https://schema.org"}&lt;/script&gt;
-&lt;!-- End Jekyll SEO tag --&gt;
-
-    &lt;link rel="stylesheet" href="/CapyCSS/assets/css/style.css?v=e2c1239b8d65896b377e4fc09217ece0d24557b2"&gt;
-    &lt;!-- start custom head snippets, customize with your own _includes/head-custom.html file --&gt;
-
-&lt;!-- Setup Google Analytics --&gt;
-
-
-
-&lt;!-- You can set your favicon here --&gt;
-&lt;!-- link rel="shortcut icon" type="image/x-icon" href="/CapyCSS/favicon.ico" --&gt;
-
-&lt;!-- end custom head snippets --&gt;
-
-  &lt;/head&gt;
-  &lt;body&gt;
-    &lt;div class="container-lg px-3 my-5 markdown-body"&gt;
-      
-
-      &lt;h1 id="capycss"&gt;CapyCSS&lt;/h1&gt;
-&lt;p&gt;&lt;img src="https://user-images.githubusercontent.com/63950487/132117205-85f0a709-10bf-4d5b-9dcd-b6d40b1c88aa.png" alt="sample" /&gt;&lt;/p&gt;
-
-&lt;h2 id="0330-での変更"&gt;0.3.3.0 での変更&lt;/h2&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;ジェネリッククラスおよびジェネリックメソッドのインポートに対応&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;&lt;img src="https://user-images.githubusercontent.com/63950487/131742437-1d6ec46a-7d06-4e6e-9fec-746d63051b6e.gif" alt="generic" /&gt;&lt;/p&gt;
-
-&lt;h2 id="特徴"&gt;特徴&lt;/h2&gt;
-&lt;ul&gt;
-  &lt;li&gt;ビジュアルなスクリプトを作成することができます。&lt;/li&gt;
-  &lt;li&gt;c#で書かれたソースを修正してメソッドを追加することでノードとして使用できるようにインポートする機能があります（属性の指定とビルドが必要です）。&lt;/li&gt;
-  &lt;li&gt;dllをインポートしてメソッドをスクリプトで使うことができます。&lt;/li&gt;
-  &lt;li&gt;クラス指定でメソッドをインポートしてスクリプトで使うことができます。&lt;/li&gt;
-  &lt;li&gt;NuGetからパッケージをインポートしてスクリプトで使うことができます。&lt;/li&gt;
-  &lt;li&gt;作者の趣味とc#の勉強と気まぐれで制作されています。&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h2 id="ターゲット環境"&gt;ターゲット環境&lt;/h2&gt;
-&lt;ul&gt;
-  &lt;li&gt;.Net 5.0&lt;/li&gt;
-  &lt;li&gt;c＃&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h2 id="実行オプション"&gt;実行オプション&lt;/h2&gt;
-&lt;p&gt;保存したスクリプトファイルをコマンド引数で指定すると、起動時に自動的に読み込まれます。
-オプションとして-asが併せて指定されている場合、「Entry」をチェックされたノードは、スクリプトのロード後に自動で実行されます。
-オプションとして-aeを指定した場合、スクリプト実行後に自動的に終了します。
-オプションとして-aseを指定した場合、-asと-aeを併せて実行した場合と同様になります。&lt;/p&gt;
-&lt;div class="language-plaintext highlighter-rouge"&gt;&lt;div class="highlight"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;CapyCSS.exe script.cbs
-CapyCSS.exe -as script.cbs
-CapyCSS.exe -as -ae script.cbs
-CapyCSS.exe -ase script.cbs
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-&lt;p&gt;「SetExitCode」ノードを使って終了コードをセットできます。&lt;/p&gt;
-
-&lt;h2 id="コンソール出力"&gt;コンソール出力&lt;/h2&gt;
-
-&lt;p&gt;コンソールから起動した場合は、「Call File」や「ConsoleOut」系のノードからの出力は、コンソールにも出力されます。&lt;/p&gt;
-
-&lt;h2 id="ノードのインポート"&gt;ノードのインポート&lt;/h2&gt;
-&lt;p&gt;本ツールでは、c# の多くのメソッドを簡単にノード化することができます。
-下記は、属性を使用してメソッドをノード化する例です。&lt;/p&gt;
-&lt;div class="language-plaintext highlighter-rouge"&gt;&lt;div class="highlight"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;[ScriptMethod]
-public static System.IO.StreamReader GetReadStream(string path, string encoding = "utf-8")
-{
-    var encodingCode = Encoding.GetEncoding(encoding);
-    return new System.IO.StreamReader(path, encodingCode);
-}
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;h2 id="操作方法"&gt;操作方法&lt;/h2&gt;
-&lt;ul&gt;
-  &lt;li&gt;スペースキーもしくはホイールボタンの押下でコマンドウインドウを表示できます。&lt;/li&gt;
-  &lt;li&gt;コマンドウインドウを表示し、コマンドメニューの「Program」下から項目をクリックしてノードを配置できます。&lt;/li&gt;
-  &lt;li&gt;ノードの○を左クリックしてドラッグし、ノードの□に接続できます。&lt;/li&gt;
-  &lt;li&gt;Ctrlキーを押しながら□を左クリックすると、接続しているノードを切断できます。&lt;/li&gt;
-  &lt;li&gt;Shiftキーを押しながらマウスをドラッグして範囲内のノードを複数選択します。&lt;/li&gt;
-  &lt;li&gt;Deleteキーで選択されているノードを削除できます。&lt;/li&gt;
-  &lt;li&gt;ノード名を左クリックしてノードをドラッグ移動できます（Ctrlキーを押下した状態だと、ガイドに沿って移動します）。&lt;/li&gt;
-  &lt;li&gt;画面を左クリックして画面全体をドラッグ移動できます（選択されたノードがある場合、選択されているノードが移動します）。&lt;/li&gt;
-  &lt;li&gt;ホイールボタンの回転で表示を拡大もしくは縮小できます。&lt;/li&gt;
-  &lt;li&gt;Ctrl + Aで全選択&lt;/li&gt;
-  &lt;li&gt;Ctrl + Spaceで選択解除&lt;/li&gt;
-  &lt;li&gt;Ctrl + Cで選択したノードをコピーできます。&lt;/li&gt;
-  &lt;li&gt;Ctrl + Vでコピーされているノードを貼り付けられます。&lt;/li&gt;
-  &lt;li&gt;Ctrl + Sでスクリプトを上書き保存できます。&lt;/li&gt;
-  &lt;li&gt;Ctrl + Oでスクリプトの読み込みができます。&lt;/li&gt;
-  &lt;li&gt;Ctrl + Nで新規にスクリプトを作成できます。&lt;/li&gt;
-  &lt;li&gt;Ctrl + Shift + Nでスクリプトをクリアできます。&lt;/li&gt;
-  &lt;li&gt;jキーでスクリプトの表示を画面の中央に画面に収まるように調整します。&lt;/li&gt;
-  &lt;li&gt;Ctrl + jキーでスクリプトの表示位置を画面の左上に調整します。&lt;/li&gt;
-  &lt;li&gt;F5でEntryをチェックされたノードをすべて実行できます。&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;※ノード名、引数名はダブルクリックで編集できます。ただし、変数名は画面左側の変数名一覧でのみダブルクリックで編集できます。&lt;/p&gt;
-
-&lt;h2 id="スクリプトの便利な機能"&gt;スクリプトの便利な機能&lt;/h2&gt;
-&lt;ul&gt;
-  &lt;li&gt;引数の上にカーソルを置くと内容を確認できます。&lt;/li&gt;
-  &lt;li&gt;数字と文字をドラッグアンドドロップするだけで定数ノードを作成できます。&lt;/li&gt;
-  &lt;li&gt;ノードの接続時に型キャストが可能です。&lt;/li&gt;
-  &lt;li&gt;object型から任意の型へのキャストができます。&lt;/li&gt;
-  &lt;li&gt;ICollection型からArray型（この逆も）へのキャストができます。&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h2 id="ヒント表示"&gt;ヒント表示&lt;/h2&gt;
-&lt;p&gt;英語と日本語をサポートします。ただし、初期状態では英語のみの機械翻訳です。
-日本語で表示するには、実行後に作成されるapp.xmlファイルの内容を変更します。
-&lt;code class="language-plaintext highlighter-rouge"&gt;&amp;lt;Language&amp;gt;en-US&amp;lt;/Language&amp;gt;&lt;/code&gt;
-上記の内容を次のように変更します。
-&lt;code class="language-plaintext highlighter-rouge"&gt;&amp;lt;Language&amp;gt;ja-JP&amp;lt;/Language&amp;gt;&lt;/code&gt;
-再起動すると設定が適用されます。&lt;/p&gt;
-
-&lt;h2 id="メソッドのインポートでサポートされるメソッド"&gt;メソッドのインポートでサポートされるメソッド&lt;/h2&gt;
-&lt;ul&gt;
-  &lt;li&gt;Static method&lt;/li&gt;
-  &lt;li&gt;Class method(thisを受け取る引数が追加されます)&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;※メソッドの所属するクラスは、パブリックである必要があります。
-&lt;br /&gt;※メソッドはパブリックである必要があります。
-&lt;br /&gt;※象徴クラスやジェネリッククラスのメソッド及びジェネリックなメソッドは、対象外です。&lt;/p&gt;
-
-&lt;h2 id="スクリプトが対応するメソッドの引数の型及び修飾子など"&gt;スクリプトが対応するメソッドの引数の型（及び修飾子など）&lt;/h2&gt;
-&lt;ul&gt;
-  &lt;li&gt;Type: int, string, double, byte, sbyte, long, short, ushort, uint, ulong, char, float, decimal, bool, object&lt;/li&gt;
-  &lt;li&gt;配列&lt;/li&gt;
-  &lt;li&gt;ICollection（※UI上で要素を操作できます）&lt;/li&gt;
-  &lt;li&gt;Class&lt;/li&gt;
-  &lt;li&gt;Struct&lt;/li&gt;
-  &lt;li&gt;Interface&lt;/li&gt;
-  &lt;li&gt;Enum&lt;/li&gt;
-  &lt;li&gt;Generics&lt;/li&gt;
-  &lt;li&gt;デフォルト値&lt;/li&gt;
-  &lt;li&gt;ref（リファレンス）&lt;/li&gt;
-  &lt;li&gt;outパラメーター修飾子&lt;/li&gt;
-  &lt;li&gt;inパラメーター修飾子&lt;/li&gt;
-  &lt;li&gt;paramsパラメータ配列&lt;/li&gt;
-  &lt;li&gt;null許容型&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;※リテラルノードのみ独自のtext型を用意しています。string型とobject型へ代入可能です。
-&lt;br /&gt;※オーバーロードに対応しています。&lt;/p&gt;
-
-&lt;h2 id="スクリプトが対応するメソッドの戻り値の型"&gt;スクリプトが対応するメソッドの戻り値の型&lt;/h2&gt;
-&lt;ul&gt;
-  &lt;li&gt;Type: int, string, double, byte, sbyte, long, short, ushort, uint, ulong, char, float, decimal, bool, object&lt;/li&gt;
-  &lt;li&gt;配列&lt;/li&gt;
-  &lt;li&gt;Class&lt;/li&gt;
-  &lt;li&gt;Struct&lt;/li&gt;
-  &lt;li&gt;Interface&lt;/li&gt;
-  &lt;li&gt;Enum&lt;/li&gt;
-  &lt;li&gt;Generics&lt;/li&gt;
-  &lt;li&gt;void&lt;/li&gt;
-  &lt;li&gt;null許容型&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h2 id="メソッドからのメソッド呼び出し"&gt;メソッドからのメソッド呼び出し&lt;/h2&gt;
-&lt;p&gt;Func&amp;lt;&amp;gt; および Action&amp;lt;&amp;gt; タイプの引数は、ノードを外部プロセスとして呼び出すことができます。Func&amp;lt;&amp;gt; の場合、ノード型と戻り値型が一致した場合に接続できます。Action だと無条件に接続できます。&lt;/p&gt;
-
-&lt;h2 id="hello-world"&gt;Hello World!&lt;/h2&gt;
-&lt;p&gt;「Hello World!」と出力するサンプルです。&lt;br /&gt;
-&lt;img src="https://user-images.githubusercontent.com/63950487/97863495-6f7a3f00-1d4a-11eb-9ef4-0017be21d13e.png" alt="CapyCSS01" /&gt;
-&lt;br /&gt;ホイールボタンをクリックするかスペースキーでコマンドウインドウが表示されます。
-その中からProgram→.Net Function→Input/Output→ConsoleOut→ConsoleOutをクリックします。&lt;/p&gt;
-
-&lt;p&gt;&lt;img src="https://user-images.githubusercontent.com/63950487/97861283-d4cc3100-1d46-11eb-9aed-1bf981d57ad3.png" alt="CapyCSS02" /&gt;
-&lt;br /&gt;作業エリアをクリックすると型選択ウインドウが表示されますので、その中からstringを選択します。&lt;/p&gt;
-
-&lt;p&gt;&lt;img src="https://user-images.githubusercontent.com/63950487/97861311-deee2f80-1d46-11eb-8352-ef904e6d8818.png" alt="CapyCSS03" /&gt;
-&lt;br /&gt;引数nの部分に「Hello World!」と入力し、Runをクリックするとスクリプトが実行されます。&lt;/p&gt;
-
-&lt;p&gt;&lt;img src="https://user-images.githubusercontent.com/63950487/97861328-e7df0100-1d46-11eb-9f44-2c72d97f86a1.png" alt="CapyCSS04" /&gt;
-&lt;br /&gt;このように「Hello World!」と出力されます。&lt;/p&gt;
-
-&lt;p&gt;&lt;img src="https://user-images.githubusercontent.com/63950487/97861338-eca3b500-1d46-11eb-8c6e-5cc957366621.png" alt="CapyCSS05" /&gt;
-&lt;br /&gt;EntryをチェックするとF5キーで実行できるようになります。&lt;/p&gt;
-
-&lt;h2 id="簡単な足し算"&gt;簡単な足し算&lt;/h2&gt;
-
-&lt;p&gt;&lt;img src="https://user-images.githubusercontent.com/63950487/98212435-ef8ce880-1f86-11eb-9e4b-d2a6612d86ac.gif" alt="CapyCSS" /&gt;
-&lt;br /&gt;ノードを繋ぐことによって、一連のノードを実行できます。&lt;/p&gt;
-
-&lt;h2 id="グループ化及びテキスト"&gt;グループ化及びテキスト&lt;/h2&gt;
-
-&lt;p&gt;&lt;img src="https://user-images.githubusercontent.com/63950487/98465611-6b986200-220d-11eb-8184-bd8b6a2e9bca.gif" alt="CapyCSS02" /&gt;
-&lt;br /&gt;Test Areaを使うとノードのグループ化とテキストの書き込みが行えます。&lt;/p&gt;
-
-&lt;h2 id="ライセンス"&gt;ライセンス&lt;/h2&gt;
-&lt;p&gt;MITライセンス&lt;/p&gt;
-
-
-      
-      &lt;div class="footer border-top border-gray-light mt-5 pt-3 text-right text-gray"&gt;
-        This site is open source. &lt;a href="https://github.com/katsumiar/CapyCSS/edit/master/README.md"&gt;Improve this page&lt;/a&gt;.
-      &lt;/div&gt;
-      
-    &lt;/div&gt;
-    &lt;script src="https://cdnjs.cloudflare.com/ajax/libs/anchor-js/4.1.0/anchor.min.js" integrity="sha256-lZaRhKri35AyJSypXXs4o6OPFTbTmUoltBbDCbdzegg=" crossorigin="anonymous"&gt;&lt;/script&gt;
-    &lt;script&gt;anchors.add();&lt;/script&gt;
-  &lt;/body&gt;
-&lt;/html&gt;
-</Value>
+            <Value>[object]&lt;null&gt;</Value>
             <ForcedChecked>false</ForcedChecked>
             <Connector>
               <LinkList />
             </Connector>
             <Arguments>
-              <LinkConnector PointId="12">
+              <LinkConnector PointId="740">
                 <CastConnect>false</CastConnect>
                 <ParamInfo>
                   <ParamName>call list</ParamName>
@@ -606,14 +380,14 @@ public static System.IO.StreamReader GetReadStream(string path, string encoding 
                 </ParamInfo>
                 <LinkConnectorList>
                   <List>
-                    <LinkConnector PointId="14">
+                    <LinkConnector PointId="742">
                       <Value>[object]&lt;null&gt;</Value>
                       <CastConnect>false</CastConnect>
                       <ParamInfo>
-                        <ParamName> </ParamName>
+                        <ParamName />
                         <ParamNameLabelOverlap />
                         <ParamNameLabel>
-                          <LabelString> </LabelString>
+                          <LabelString />
                         </ParamNameLabel>
                       </ParamInfo>
                       <LinkConnectorList>
@@ -639,7 +413,7 @@ public static System.IO.StreamReader GetReadStream(string path, string encoding 
           <AttachVariableIds />
           <AttachVariableId>0</AttachVariableId>
           <AssetValueTypes />
-          <RootConnector PointId="17">
+          <RootConnector PointId="745">
             <Caption>
               <LabelString>GetContents</LabelString>
             </Caption>
@@ -873,11 +647,11 @@ public static System.IO.StreamReader GetReadStream(string path, string encoding 
             <ForcedChecked>false</ForcedChecked>
             <Connector>
               <LinkList>
-                <PointID>8</PointID>
+                <PointID>736</PointID>
               </LinkList>
             </Connector>
             <Arguments>
-              <LinkConnector PointId="18">
+              <LinkConnector PointId="746">
                 <Value>[HttpResponseMessage]&lt;null&gt;</Value>
                 <CastConnect>false</CastConnect>
                 <ParamInfo>
@@ -906,20 +680,20 @@ public static System.IO.StreamReader GetReadStream(string path, string encoding 
           <AttachVariableIds />
           <AttachVariableId>0</AttachVariableId>
           <AssetValueTypes />
-          <RootConnector PointId="23">
+          <RootConnector PointId="751">
             <Caption>
               <LabelString>GetWebAPI</LabelString>
             </Caption>
-            <Value>[HttpResponseMessage]</Value>
+            <Value>[HttpResponseMessage]&lt;null&gt;</Value>
             <ForcedChecked>false</ForcedChecked>
             <Connector>
               <LinkList>
-                <PointID>18</PointID>
-                <PointID>4</PointID>
+                <PointID>746</PointID>
+                <PointID>732</PointID>
               </LinkList>
             </Connector>
             <Arguments>
-              <LinkConnector PointId="24">
+              <LinkConnector PointId="752">
                 <Value>https://katsumiar.github.io/CapyCSS/</Value>
                 <CastConnect>false</CastConnect>
                 <ParamInfo>
@@ -934,7 +708,7 @@ public static System.IO.StreamReader GetReadStream(string path, string encoding 
                   <IsOpenList>true</IsOpenList>
                 </LinkConnectorList>
               </LinkConnector>
-              <LinkConnector PointId="25">
+              <LinkConnector PointId="753">
                 <Value />
                 <CastConnect>false</CastConnect>
                 <ParamInfo>
@@ -949,7 +723,7 @@ public static System.IO.StreamReader GetReadStream(string path, string encoding 
                   <IsOpenList>true</IsOpenList>
                 </LinkConnectorList>
               </LinkConnector>
-              <LinkConnector PointId="26">
+              <LinkConnector PointId="754">
                 <Value />
                 <CastConnect>false</CastConnect>
                 <ParamInfo>
