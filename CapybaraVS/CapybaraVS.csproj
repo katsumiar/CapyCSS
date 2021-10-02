@@ -6,13 +6,13 @@
     <UseWPF>true</UseWPF>
     <ApplicationIcon>Image\cpbvs_mUG_icon.ico</ApplicationIcon>
     <Copyright>Copyright (c) 2020 - 2021 Katsumi Aradono</Copyright>
-    <Version>0.3.4.0</Version>
-    <AssemblyVersion>0.3.4.0</AssemblyVersion>
+    <Version>0.3.5.0</Version>
+    <AssemblyVersion>0.3.5.0</AssemblyVersion>
     <Authors>Katsumi Aradono</Authors>
     <PackageId>CapyCSS</PackageId>
     <AssemblyName>CapyCSS</AssemblyName>
     <RootNamespace>CapyCSS</RootNamespace>
-    <FileVersion>0.3.4.0</FileVersion>
+    <FileVersion>0.3.5.0</FileVersion>
     <Product>CapyCSS</Product>
     <StartupObject>CapybaraVS.App</StartupObject>
     <PackageProjectUrl>https://katsumiar.github.io/CapyCSS/</PackageProjectUrl>
@@ -22,6 +22,10 @@
 
   <ItemGroup>
     <PackageReference Include="MaterialDesignThemes" Version="4.2.1" />
+    <PackageReference Include="Microsoft.ML" Version="1.6.0" />
+    <PackageReference Include="Microsoft.ML.ImageAnalytics" Version="1.6.0" />
+    <PackageReference Include="Microsoft.ML.OnnxRuntime" Version="1.9.0" />
+    <PackageReference Include="Microsoft.ML.OnnxTransformer" Version="1.6.0" />
     <PackageReference Include="System.Drawing.Common" Version="5.0.2" />
   </ItemGroup>
 
@@ -79,6 +83,18 @@
     </None>
     <None Update="MaterialDesign.LICENSE">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Microsoft.ML.ImageAnalytics.LICENSE">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Microsoft.ML.LICENSE">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Microsoft.ML.OnnxRuntime.LICENSE">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Microsoft.ML.OnnxTransformer.LICENSE">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="README.md">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

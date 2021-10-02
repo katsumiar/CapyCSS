@@ -7,6 +7,6 @@
         mc:Ignorable="d"
         Title="HelpWindow" Height="550" Width="654" WindowStyle="ToolWindow">
     <Grid>
-        <TextBlock x:Name="Info" HorizontalAlignment="Left" VerticalAlignment="Center" Grid.Column="1" Margin="34,0,0,0" />
+        <TextBox x:Name="Info" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="6,6,6,6" IsReadOnly="True" VerticalScrollBarVisibility="Auto" BorderBrush="{x:Null}" Background="{x:Null}" />
     </Grid>
 </Window>
