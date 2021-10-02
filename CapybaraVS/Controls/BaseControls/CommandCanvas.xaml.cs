@@ -1063,7 +1063,7 @@ namespace CapybaraVS.Controls.BaseControls
         /// sample ディレクトリのフルパスを取得します。
         /// </summary>
         /// <returns>sampleディレクトリのフルパス</returns>
-        private static string GetSamplePath()
+        public static string GetSamplePath()
         {
             string exexPath = System.Environment.CommandLine;
             System.IO.FileInfo fi = new System.IO.FileInfo(exexPath.Replace("\"", ""));
