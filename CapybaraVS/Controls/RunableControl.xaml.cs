@@ -248,13 +248,13 @@ namespace CapybaraVS.Controls
                                         node.RequestExecute(null, null);
                                         ICbValue value = node.ValueData;
                                         if (value != null)
-                                            OwnerCommandCanvas.CommandCanvasControl.MainLog.OutLine(OwnerCommandCanvas.ScriptWorkCanvas.Name, value.ValueUIString);
+                                            Console.WriteLine(value.ValueUIString);
                                     }
-                                    OwnerCommandCanvas.CommandCanvasControl.MainLog.OutLine(OwnerCommandCanvas.ScriptWorkCanvas.Name, "[Total Count] " + count);
+                                    Console.WriteLine("[Total Count] " + count);
                                 }
                                 else
                                 {
-                                    OwnerCommandCanvas.CommandCanvasControl.MainLog.OutLine(OwnerCommandCanvas.ScriptWorkCanvas.Name, "not found data!!!");
+                                    Console.WriteLine("not found data!!!");
                                 }
                             });
                     }

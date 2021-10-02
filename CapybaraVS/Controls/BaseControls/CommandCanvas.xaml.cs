@@ -299,7 +299,7 @@ namespace CapybaraVS.Controls.BaseControls
         [Conditional("DEBUG")]
         private void DEBUG_Check()
         {
-            CommandCanvasControl.MainLog.OutString("System", nameof(CommandCanvas) + $": check...");
+            Console.Write(nameof(CommandCanvas) + $": check...");
 
             Type[] valueTypes = new Type[]
             {
@@ -461,7 +461,7 @@ namespace CapybaraVS.Controls.BaseControls
             foreach (var valueType in valueTypes)
                 CheckNullable(CbST.CbCreate(typeof(Nullable<>).MakeGenericType(new Type[] { valueType })));
 
-            CommandCanvasControl.MainLog.OutLine("System", "ok");
+            Console.WriteLine("ok");
         }
         #endregion
 
@@ -937,10 +937,10 @@ namespace CapybaraVS.Controls.BaseControls
                     continue;
                 if (isFirst)
                 {
-                    CommandCanvasControl.MainLog.OutLine("System", $"---------------------- {title}");
+                    Console.WriteLine($"---------------------- {title}");
                     isFirst = false;
                 }
-                CommandCanvasControl.MainLog.OutLine("System", $"{node.Key} : {node.Value}");
+                Console.WriteLine($"{node.Key} : {node.Value}");
             }
         }
 
@@ -1295,7 +1295,7 @@ namespace CapybaraVS.Controls.BaseControls
             }
             catch (Exception ex)
             {
-                CommandCanvasControl.MainLog.OutLine("System", nameof(CommandCanvas) + ":" + ex.Message);
+                Console.WriteLine(nameof(CommandCanvas) + ":" + ex.Message);
             }
             return ret;
         }
@@ -1317,7 +1317,7 @@ namespace CapybaraVS.Controls.BaseControls
             }
             catch (Exception ex)
             {
-                CommandCanvasControl.MainLog.OutLine("System", nameof(CommandCanvas) + ":" + ex.Message);
+                Console.WriteLine(nameof(CommandCanvas) + ":" + ex.Message);
             }
             return ret;
         }
@@ -1378,7 +1378,7 @@ namespace CapybaraVS.Controls.BaseControls
             Type type = CbST.GetTypeEx(SelectType);
             if (type is null)
             {
-                CommandCanvasControl.MainLog.OutLine("System", nameof(CommandCanvas) + $": {SelectType} was an unsupportable type.");
+                Console.WriteLine(nameof(CommandCanvas) + $": {SelectType} was an unsupportable type.");
                 return null;
             }
 

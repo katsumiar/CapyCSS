@@ -684,7 +684,7 @@ namespace CapybaraVS.Controls
                 {
                     // 存在しないアセットコード
 
-                    OwnerCommandCanvas.CommandCanvasControl.MainLog.OutLine("System", "Implement Error: " + AssetFuncType);
+                    Console.WriteLine("Implement Error: " + AssetFuncType);
                     return;
                 }
                 AssetFuncType = asset.AssetCode;    // 正しいアセットコードにリセットする
