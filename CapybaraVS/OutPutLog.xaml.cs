@@ -114,5 +114,11 @@ namespace CapybaraVS
         }
         public override void Write(string value) => CommandCanvasList.Instance.MainLog.OutString(TAG, value);
         public override void WriteLine(string value) => CommandCanvasList.Instance.MainLog.OutLine(TAG, value);
+
+        public override void Flush()
+        {
+            base.Flush();
+            CommandCanvasList.OutPut.Flush();
+        }
     }
 }

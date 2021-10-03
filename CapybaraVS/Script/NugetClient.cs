@@ -80,7 +80,7 @@ namespace CapyCSS.Script
             {
                 // nugetファイルをダウンロード
 
-                CommandCanvasList.OutPut.OutLine(nameof(NugetClient), $"Get {packageVName}");
+                Console.WriteLine($"Get {packageVName}");
 
                 ToolExec toolExec = new ToolExec(toolPath);
                 toolExec.ParamList.Add("Install");
@@ -94,12 +94,12 @@ namespace CapyCSS.Script
                 int result = toolExec.Start(true);
                 if (result == 0)
                 {
-                    CommandCanvasList.OutPut.OutLine(nameof(NugetClient), "OK");
+                    Console.WriteLine("OK");
                     CommandCanvasList.OutPut.Flush();
                 }
                 else
                 {
-                    CommandCanvasList.OutPut.OutLine(nameof(NugetClient), $"error({result})");
+                    Console.WriteLine($"error({result})");
                     return null;
                 }
             }

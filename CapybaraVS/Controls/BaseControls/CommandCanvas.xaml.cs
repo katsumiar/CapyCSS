@@ -811,7 +811,7 @@ namespace CapybaraVS.Controls.BaseControls
                     swriter.WriteLine(writer.ToString());
                 }
                 OpenFileName = path;
-                CommandCanvasList.OutPut.OutLine("System", $"Save...\"{path}.xml\"");
+                Console.WriteLine($"Save...\"{path}.xml\"");
             }
             catch (Exception ex)
             {

@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Text;
+using System.Windows.Input;
 using static CapybaraVS.Controls.BaseControls.CommandCanvas;
 using static CapybaraVS.Controls.MultiRootConnector;
 
@@ -229,6 +230,7 @@ namespace CapybaraVS.Script
             {
                 return true;
             }
+            CommandCanvasList.SetOwnerCursor(Cursors.Wait);
             if (NuGetNode is null)
             {
                 NuGetNode = CreateGroup(ProgramNode, "NuGet Package");
@@ -238,10 +240,12 @@ namespace CapybaraVS.Script
             {
                 ModulueNameList.Add(name);  // インポートリストに表示
                 NuGetModuleList.Add(pkgName);
-                CommandCanvasList.OutPut.OutLine(nameof(ScriptImplement), $"NuGet successed.");
+                Console.WriteLine($"NuGet successed.");
+                CommandCanvasList.SetOwnerCursor(null);
                 return true;
             }
-            CommandCanvasList.OutPut.OutLine(nameof(ScriptImplement), $"faild.");
+            Console.WriteLine($"faild.");
+            CommandCanvasList.SetOwnerCursor(null);
             return false;
         }
 

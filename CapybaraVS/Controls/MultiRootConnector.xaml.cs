@@ -624,7 +624,7 @@ namespace CapybaraVS.Controls
             msg += Environment.NewLine;
             msg += ex.StackTrace;
             msg = caption + ": " + msg;
-            CommandCanvasList.OutPut.OutLine("Script", msg);
+            Console.WriteLine(msg);
             System.Diagnostics.Debug.WriteLine(msg);
             return msg;
         }

@@ -83,7 +83,7 @@ namespace CapybaraVS.Script
         {
             string pkgId;
             string ver = "(" + packageName.Split("(")[1];
-            CommandCanvasList.OutPut.OutLine(nameof(ScriptImplement), $"NuGet {packageName}.");
+            Console.WriteLine($"NuGet {packageName}.");
 #if !DEBUG_IMPORT
             try
 #endif
@@ -113,7 +113,7 @@ namespace CapybaraVS.Script
 #if !DEBUG_IMPORT
             catch (WebException)
             {
-                CommandCanvasList.OutPut.OutLine(nameof(ScriptImplement), $"NG.");
+                Console.WriteLine($"NG.");
                 return null;
             }
 #endif
@@ -169,7 +169,7 @@ namespace CapybaraVS.Script
                 ControlTools.ShowErrorMessage(ex.Message, "Import Error.");
             }
 #endif
-            CommandCanvasList.OutPut.OutLine(nameof(ScriptImplement), $"imported {name} package.");
+            Console.WriteLine($"imported {name} package.");
             return outputName;
         }
 
@@ -223,7 +223,7 @@ namespace CapybaraVS.Script
                 null,
                 (t) => OwnerCommandCanvas.AddImportTypeMenu(t)
                 );
-            CommandCanvasList.OutPut.OutLine(nameof(ScriptImplement), $"imported {name} class.");
+            Console.WriteLine($"imported {name} class.");
             return outputName;
         }
 
@@ -259,12 +259,12 @@ namespace CapybaraVS.Script
                     );
                 if (version is null)
                 {
-                    CommandCanvasList.OutPut.OutLine(nameof(ScriptImplement), $"imported {Path.GetFileNameWithoutExtension(name)} package.");
+                    Console.WriteLine($"imported {Path.GetFileNameWithoutExtension(name)} package.");
                     CommandCanvasList.OutPut.Flush();
                 }
                 else
                 {
-                    CommandCanvasList.OutPut.OutLine(nameof(ScriptImplement), $"imported {version} package.");
+                    Console.WriteLine($"imported {version} package.");
                     CommandCanvasList.OutPut.Flush();
                 }
                 return name;
@@ -272,7 +272,7 @@ namespace CapybaraVS.Script
 #if !DEBUG_IMPORT
             catch (Exception ex)
             {
-                CommandCanvasList.OutPut.OutLine(nameof(ScriptImplement), $"Import Dll Error: {ex.Message}.");
+                Console.WriteLine($"Import Dll Error: {ex.Message}.");
             }
             return null;
 #endif

@@ -517,7 +517,7 @@ namespace CapybaraVS.Script
                     // Disposeメソッドを実行するとUI上で破棄された値を表示しようとするので Dispose は無視する
                     // ※値は Data のリファレンスで繋がっているので、対策として状態を残すのは簡単では無い
 
-                    CommandCanvasList.OutPut.OutLine("Script", CapybaraVS.Language.Instance["Help:Dispose"]);
+                    Console.WriteLine(CapybaraVS.Language.Instance["Help:Dispose"]);
                     return null;
                 }
             }
