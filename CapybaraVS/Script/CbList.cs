@@ -56,6 +56,11 @@ namespace CbVS.Script
         /// </summary>
         bool HaveAdd { get; }
 
+        /// <summary>
+        /// リストを開閉できるか？
+        /// </summary>
+        bool IsOpen { get; }
+
         bool AddLock { get; set; }
 
         List<ICbValue> Value { get; set; }
@@ -220,7 +225,7 @@ namespace CbVS.Script
         {
             get
             {
-                if (AddLock)
+                if (AddLock || IsOut)
                 {
                     return false;
                 }
@@ -229,6 +234,11 @@ namespace CbVS.Script
         }
 
         public bool AddLock { get; set; } = false;
+
+        /// <summary>
+        /// リストを開閉できるか？
+        /// </summary>
+        public bool IsOpen => !IsOut;
 
         public override Type OriginalReturnType => typeof(T);
 
@@ -452,7 +462,15 @@ namespace CbVS.Script
                         }
                         else
                         {
-                            originalCopyList.Add((T)node.Data);
+                            if (node.IsList)
+                            {
+                                var arrayData = (node as ICbList).ConvertOriginalTypeList(null, null);
+                                originalCopyList.Add((T)arrayData);
+                            }
+                            else
+                            {
+                                originalCopyList.Add((T)node.Data);
+                            }
                         }
                     }
                 }
@@ -517,7 +535,14 @@ namespace CbVS.Script
                 foreach (var nd in (Array)list)
                 {
                     ICbValue val = NodeTF();
-                    val.Data = nd; 
+                    if (val.IsList)
+                    {
+                        (val as ICbList).CopyFrom(nd);
+                    }
+                    else
+                    {
+                        val.Data = nd;
+                    }
                     Append(val);
                 }
                 return;
@@ -525,8 +550,15 @@ namespace CbVS.Script
 
             foreach (var nd in (IEnumerable<T>)list)
             {
-                ICbValue val = NodeTF();
-                val.Data = nd;
+                ICbValue val = CbST.CbCreate(OriginalReturnType);
+                if (val.IsList)
+                {
+                    (val as ICbList).CopyFrom(nd);
+                }
+                else
+                {
+                    val.Data = nd;
+                }
                 Append(val);
             }
         }

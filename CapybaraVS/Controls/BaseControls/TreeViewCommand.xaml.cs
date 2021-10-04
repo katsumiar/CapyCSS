@@ -436,6 +436,20 @@ namespace CapybaraVS.Controls.BaseControls
                 { "UINT", "Script" },
                 { "ULONG", "Script" },
                 { "DECIMAL", "Script" },
+
+                { "BOOL[]", "Script.Array" },
+                { "BYTE[]", "Script.Array" },
+                { "SBYTE[]", "Script.Array" },
+                { "CHAR[]", "Script.Array" },
+                { "SHORT[]", "Script.Array" },
+                { "INT[]", "Script.Array" },
+                { "LONG[]", "Script.Array" },
+                { "FLOAT[]", "Script.Array" },
+                { "DOUBLE[]", "Script.Array" },
+                { "USHORT[]", "Script.Array" },
+                { "UINT[]", "Script.Array" },
+                { "ULONG[]", "Script.Array" },
+                { "DECIMAL[]", "Script.Array" },
             };
 
             if (keyValuePairs.ContainsKey(name.ToUpper()))
@@ -447,7 +461,7 @@ namespace CapybaraVS.Controls.BaseControls
                 }
                 else
                 {
-                    name = keyValuePairs[name.ToUpper()] + "." + name;
+                    name = keyValuePairs[name.ToUpper()] + "." + name.Replace("[]", "");
                 }
             }
 

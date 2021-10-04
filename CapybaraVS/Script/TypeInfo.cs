@@ -611,9 +611,17 @@ namespace CapybaraVS.Script
         /// </summary>
         bool IsReadOnlyName { get; }
         /// <summary>
-        /// 引数時参照修飾されているか？
+        /// 引数時ref修飾されているか？
         /// </summary>
         bool IsByRef { get; set; }
+        /// <summary>
+        /// 引数時out修飾されているか？
+        /// </summary>
+        bool IsOut { get; set; }
+        /// <summary>
+        /// 引数時in修飾されているか？
+        /// </summary>
+        bool IsIn { get; set; }
         /// <summary>
         /// リテラルかどうか？
         /// </summary>
@@ -893,9 +901,25 @@ namespace CapybaraVS.Script
         }
 
         /// <summary>
-        /// 引数時参照修飾されているか？
+        /// 引数時ref修飾されているか？
         /// </summary>
-        public bool IsByRef { get; set; } = false;
+        public bool IsByRef 
+        {
+            get => isByRef || IsOut;
+            set 
+            {
+                isByRef = value;
+            }
+        }
+        private bool isByRef = false;
+        /// <summary>
+        /// 引数時out修飾されているか？
+        /// </summary>
+        public bool IsOut { get; set; } = false;
+        /// <summary>
+        /// 引数時in修飾されているか？
+        /// </summary>
+        public bool IsIn { get; set; } = false;
         /// <summary>
         /// リテラルかどうか？
         /// ※変数以外は、原則リテラル
@@ -1078,6 +1102,7 @@ namespace CapybaraVS.Script
                         // ※IEnumerableを持ったクラスの場合、リストにはオリジナルのデータがある場合があるのでコピーする
 
                         (this as ICbList).OriginalData = (n as ICbList).OriginalData;
+                        ReturnAction = n.ReturnAction;
                     }
 
                     isNull = n.IsNull;
@@ -1323,6 +1348,9 @@ namespace CapybaraVS.Script
                     throw new NotImplementedException();
             }
         }
+
+        public bool IsOut { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        public bool IsIn { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 
         public ParamNameOnly(string name, bool readOnly = false)
         {

@@ -50,6 +50,7 @@ namespace CapybaraVS.Script
                 var literalNode = CreateGroup(ProgramNode, Script_Literal.LIB_Script_literal_NAME);
                 CreateAssetMenu(ownerCommandCanvas, literalNode, new LiteralType());
                 CreateAssetMenu(ownerCommandCanvas, literalNode, new LiteralListType());
+                CreateAssetMenu(ownerCommandCanvas, literalNode, new LiteralArrayType());
             }
 
             {
@@ -63,6 +64,7 @@ namespace CapybaraVS.Script
                 {
                     var variableListNode = CreateGroup(variableNode, "Variable List");
                     CreateAssetMenu(ownerCommandCanvas, variableListNode, new CreateVariableList());
+                    CreateAssetMenu(ownerCommandCanvas, variableListNode, new CreateVariableArray());
                     CreateAssetMenu(ownerCommandCanvas, variableListNode, new GetVariableFromIndex());
                     CreateAssetMenu(ownerCommandCanvas, variableListNode, new SetVariableToIndex());
                     CreateAssetMenu(ownerCommandCanvas, variableListNode, new AppendVariableList());
@@ -281,7 +283,7 @@ namespace CapybaraVS.Script
 
         public List<TypeRequest> typeRequests => new List<TypeRequest>()
         {
-            new TypeRequest(t => !t.IsAbstract)
+            new TypeRequest(t => !t.IsAbstract || t == CbSTUtils.ARRAY_TYPE)
         };
     }
 
@@ -295,6 +297,19 @@ namespace CapybaraVS.Script
         public List<TypeRequest> typeRequests => new List<TypeRequest>()
         { 
             new TypeRequest(CbSTUtils.LIST_TYPE, t => CbScript.AcceptAll(t))
+        };
+    }
+
+    //-----------------------------------------------------------------
+    class LiteralArrayType : IFuncAssetLiteralDef
+    {
+        public string MenuTitle => $"Literal Array : T[]";
+
+        public string HelpText => Language.Instance[ApiImporter.BASE_LIB_TAG_PRE + nameof(LiteralArrayType)];
+
+        public List<TypeRequest> typeRequests => new List<TypeRequest>()
+        {
+            new TypeRequest(CbSTUtils.ARRAY_TYPE, t => CbScript.AcceptAll(t))
         };
     }
 
@@ -852,6 +867,19 @@ namespace CapybaraVS.Script
     }
 
     //-----------------------------------------------------------------
+    class CreateVariableArray : _GetVariable, IFuncCreateVariableAssetDef
+    {
+        public string MenuTitle => $"Create Variable Array : T[]";
+
+        public new string HelpText => Language.Instance[ApiImporter.BASE_LIB_TAG_PRE + nameof(CreateVariableArray)];
+
+        public List<TypeRequest> typeRequests => new List<TypeRequest>()
+        {
+            new TypeRequest(CbSTUtils.ARRAY_TYPE, t => true)
+        };
+    }
+
+    //-----------------------------------------------------------------
     class CreateFuncVariable : _GetVariable, IFuncCreateVariableAssetDef
     {
         public new string HelpText => Language.Instance[ApiImporter.BASE_LIB_TAG_PRE + nameof(CreateFuncVariable)];
@@ -1266,10 +1294,20 @@ namespace CapybaraVS.Script
                 if (variableGetter.IsError)
                     return false;
 
+                Func<ICbValue> resultValue;
+                if (col.SelectedVariableType[0].IsArray)
+                {
+                    resultValue = CbST.CbCreateTF(col.SelectedVariableType[0].GetElementType());
+                }
+                else
+                {
+                    resultValue = CbST.CbCreateTF(col.SelectedVariableType[0].GenericTypeArguments[0]);
+                }
+
                 col.MakeFunction(
                     variableGetter.MakeName,
                     HelpText,
-                    CbST.CbCreateTF(col.SelectedVariableType[0]),  // 返し値の型
+                    resultValue,  // 返し値の型
                     new List<ICbValue>()       // 引数
                     {
                         CbST.CbCreate<int>("index", 0),
@@ -1277,7 +1315,7 @@ namespace CapybaraVS.Script
                     new Func<List<ICbValue>, DummyArgumentsStack, ICbValue>(
                         (argument, cagt) =>
                         {
-                            var ret = CbST.CbCreate(col.SelectedVariableType[0]);    // 返し値
+                            var ret = resultValue();    // 返し値
                             try
                             {
                                 int index = GetArgument<int>(argument, 0);
@@ -1322,6 +1360,16 @@ namespace CapybaraVS.Script
                 if (variableGetter.IsError)
                     return false;
 
+                ICbValue resultValue;
+                if (col.SelectedVariableType[0].IsArray)
+                {
+                    resultValue = CbST.CbCreate(col.SelectedVariableType[0].GetElementType(), "n");
+                }
+                else
+                {
+                    resultValue = CbST.CbCreate(col.SelectedVariableType[0].GenericTypeArguments[0], "n");
+                }
+
                 col.MakeFunction(
                     variableGetter.MakeName,
                     HelpText,
@@ -1329,7 +1377,7 @@ namespace CapybaraVS.Script
                     new List<ICbValue>()       // 引数
                     {
                         CbST.CbCreate<int>("index", 0),
-                        CbST.CbCreate(col.SelectedVariableType[0].GenericTypeArguments[0], "n")
+                        resultValue
                     },
                     new Func<List<ICbValue>, DummyArgumentsStack, ICbValue>(
                         (argument, cagt) =>
@@ -1380,13 +1428,23 @@ namespace CapybaraVS.Script
                 if (variableGetter.IsError)
                     return false;
 
+                ICbValue resultValue;
+                if (col.SelectedVariableType[0].IsArray)
+                {
+                    resultValue = CbST.CbCreate(col.SelectedVariableType[0].GetElementType(), "n");
+                }
+                else
+                {
+                    resultValue = CbST.CbCreate(col.SelectedVariableType[0].GenericTypeArguments[0], "n");
+                }
+
                 col.MakeFunction(
                     variableGetter.MakeName,
                     HelpText,
                     CbST.CbCreateTF(col.SelectedVariableType[0]),   // 返し値の型
                     new List<ICbValue>()   // 引数
                     {
-                        CbST.CbCreate(col.SelectedVariableType[0].GenericTypeArguments[0], "n")
+                        resultValue
                     },
                     new Func<List<ICbValue>, DummyArgumentsStack, ICbValue>(
                         (argument, cagt) =>

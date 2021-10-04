@@ -41,7 +41,7 @@ namespace CapybaraVS.Script
         public const string STRING_STR = "string";
         public const string TEXT_STR = "text";
 
-        public const string GENELICS_GROUP_STR = "genelics.";
+        public const string ARRAY_GROUP_STR = "array.";
         public const string INTERFACE_GROUP_STR = "interface.";
         public const string SIGNED_GROUP_STR = "signed.";
         public const string UNSIGNED_GROUP_STR = "unsigned.";
@@ -56,6 +56,7 @@ namespace CapybaraVS.Script
         public static readonly Type FUNC2ARG_TYPE = typeof(Func<,>);
         public static readonly Type ACTION_TYPE = typeof(Action<>);
         public static readonly Type NULLABLE_TYPE = typeof(Nullable<>);
+        public static readonly Type ARRAY_TYPE = typeof(Array);
         public static readonly Type DUMMY_TYPE = typeof(int); // ダミー
 
         public const string ERROR_STR = "[ERROR]";          // エラーの表現
@@ -63,8 +64,16 @@ namespace CapybaraVS.Script
         public const string DELEGATE_STR = "[delegate]";    // dlegateの表現
         public const string UI_NULL_STR = "<null>";         // UI上のnullの表現
 
+        public const string UI_REF_STR = "[ref]";           // UI上の ref の表現
+        public const string UI_OUT_STR = "[out]";           // UI上の out の表現
+        public const string UI_IN_STR = "[in]";             // UI上の in の表現
+
         public const string MENU_STATIC = "[static]";       // コマンドメニュー上での静的表現
         public const string MENU_VIRTUAL = "[override]";    // コマンドメニュー上でのオーバーライド表現
+
+        public const string MENU_REF_STR = "ref";           // UI上の ref の表現
+        public const string MENU_OUT_STR = "out";           // UI上の out の表現
+        public const string MENU_IN_STR = "in";             // UI上の in の表現
 
         public const string MENU_GETTER = ".(getter).";     // コマンドメニュー上でのゲッターグループ表現
         public const string MENU_SETTER = ".(setter).";     // コマンドメニュー上でのセッターグループ表現
@@ -75,11 +84,12 @@ namespace CapybaraVS.Script
         /// </summary>
         static public readonly Dictionary<string, string> BuiltInTypeList = new Dictionary<string, string>()
         {
-            { typeof(List<>).FullName, GENELICS_GROUP_STR + "List<>" },
-            { typeof(IList<>).FullName, INTERFACE_GROUP_STR + "IList<>" },
-            { typeof(ICollection<>).FullName, INTERFACE_GROUP_STR + "ICollection<>" },
-            { typeof(IEnumerable<>).FullName, INTERFACE_GROUP_STR + "IEnumerable<>" },
-            { typeof(IDictionary<,>).FullName, INTERFACE_GROUP_STR + "IDictionary<,>" },
+            { typeof(List<>).FullName, ARRAY_GROUP_STR + "List<T>" },
+            { ARRAY_TYPE.FullName, ARRAY_GROUP_STR + "T[]" },
+            { typeof(IList<>).FullName, INTERFACE_GROUP_STR + "IList<T>" },
+            { typeof(ICollection<>).FullName, INTERFACE_GROUP_STR + "ICollection<T>" },
+            { typeof(IEnumerable<>).FullName, INTERFACE_GROUP_STR + "IEnumerable<T>" },
+            { typeof(IDictionary<,>).FullName, INTERFACE_GROUP_STR + "IDictionary<TKey,TValue>" },
 
             { typeof(Action).FullName, ACTION_GROUP_STR + "Action" },
             { typeof(Action<>).FullName, ACTION_GROUP_STR + "Action<>" },
@@ -230,6 +240,7 @@ namespace CapybaraVS.Script
                 return type.Name;
             }
 
+            bool isGeneName = false;
             bool isNotGeneName = false;
             if (type.IsGenericType)
             {
@@ -241,6 +252,13 @@ namespace CapybaraVS.Script
                 {
                     isNotGeneName = true;
                 }
+                isGeneName = true;
+            }
+            else if (type.Name.Contains("`"))
+            {
+                // out 修飾されていた場合あり得る
+
+                isGeneName = true;
             }
 
             string typeName = type.FullName;
@@ -248,6 +266,14 @@ namespace CapybaraVS.Script
             {
                 typeName = type.Name;
             }
+
+            if (type.IsByRef)
+            {
+                // リファレンスは一先ず外す
+
+                typeName = typeName.Replace("&", "");
+            }
+
             string geneString = "";
 
             if (type.IsArray)
@@ -270,7 +296,7 @@ namespace CapybaraVS.Script
                 CbTypeNameListRwLock.ReleaseReaderLock();
             }
 
-            if (type.IsGenericType && typeName.Contains("`"))
+            if (isGeneName)
             {
                 if (typeName.Contains("`"))
                 {
@@ -292,9 +318,30 @@ namespace CapybaraVS.Script
                 {
                     if (geneString == "")
                     {
-                        // IsClass だと思われる
+                        string cname = type.FullName;
+                        if (cname != null && cname.StartsWith("System.ArraySegment`"))
+                        {
+                            // ArraySegment は、強引に対応
 
-                        // TODO 詳細を調べる
+                            cname = cname.Substring(cname.IndexOf('['));
+                            cname = cname.Substring(0, cname.IndexOf(','));
+                            cname = cname.Replace("[", "");
+                            return $"ArraySegment<{__GetTypeName(CbST.GetTypeEx(cname))}>";
+                        }
+                        else
+                        {
+                            if (cname.Last() == '&')
+                            {
+                                // リファレンスを取った型で試してみる
+
+                                cname = cname.TrimEnd('&');
+                                return __GetTypeName(CbST.GetTypeEx(cname));
+                            }
+                            else
+                            {
+                                Debug.Assert(false);
+                            }
+                        }
                     }
                     else
                     {
@@ -868,11 +915,11 @@ namespace CapybaraVS.Script
                 }
                 if (count != 0)
                 {
-                    valueString = $"IEnumerable {count}-{nodeTypeName}" + Environment.NewLine + valueString;
+                    valueString = $"{nameof(System.Collections.IEnumerable)} {count}-{nodeTypeName}" + Environment.NewLine + valueString;
                 }
                 else
                 {
-                    valueString = "IEnumerable 0" + Environment.NewLine + valueString;
+                    valueString = $"{nameof(System.Collections.IEnumerable)} 0" + Environment.NewLine + valueString;
                 }
             }
             else if (data is ICbShowValue showValue)

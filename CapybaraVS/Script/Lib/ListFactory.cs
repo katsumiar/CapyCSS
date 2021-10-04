@@ -100,6 +100,8 @@ namespace CapybaraVS.Script.Lib
         [ScriptMethod(LIB_NAME8)]
         public static ICollection<T> Filtering<T>(IEnumerable<T> samples, Predicate<T> predicate)
         {
+            if (predicate is null)
+                return null;
             var ret = new List<T>();
             foreach (var sample in samples)
             {

@@ -1257,6 +1257,13 @@ namespace CapybaraVS.Controls.BaseControls
 
                     typeName = RequestGenericTypeName(typeRequest.InitType.FullName, typeRequest.IsAccepts, title, positionSet);
                 }
+                else if (typeRequest.InitType == CbSTUtils.ARRAY_TYPE)
+                {
+                    // 配列型
+
+                    typeName = RequestTypeName(typeRequest.IsAccepts, title, positionSet);
+                    typeName += "[]";
+                }
                 else
                 {
                     // 指定された型
@@ -1442,6 +1449,19 @@ namespace CapybaraVS.Controls.BaseControls
             if (genericType is null)
             {
                 return null;
+            }
+            if (genericType == CbSTUtils.ARRAY_TYPE)
+            {
+                if (_CanTypeMenuExecuteEventIndex != 0)
+                {
+                    _CanTypeMenuExecuteEventIndex--;
+                }
+                _CanTypeMenuExecuteEvent[_CanTypeMenuExecuteEventIndex] = t => CbScript.AcceptAll(t);
+                TypeMenu.RefreshItem();
+                Type result = RequestType(checkType, positionSet);
+                if (result is null)
+                    return null;
+                return result.MakeArrayType();
             }
             if (genericType.IsGenericType)
             {

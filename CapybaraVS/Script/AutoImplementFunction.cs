@@ -194,7 +194,7 @@ namespace CapybaraVS.Script
                     }
 
                     //クラスの型を確定した型で差し替える
-                    classType = Type.GetType(classType.FullName).MakeGenericType(argTypes.ToArray());
+                    classType = CbST.GetTypeEx(classType.FullName).MakeGenericType(argTypes.ToArray());
                 }
             }
 
@@ -315,7 +315,7 @@ namespace CapybaraVS.Script
                 }
             }
             // 確定した型を返す（repType を使って MakeGenericType しては駄目）
-            Type nType = Type.GetType(type.Namespace + "." + type.Name);
+            Type nType = CbST.GetTypeEx(type.Namespace + "." + type.Name);
             return nType.MakeGenericType(argTypes.ToArray());
         }
 

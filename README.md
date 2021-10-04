@@ -5,6 +5,13 @@
 
 * Console の出力先をツール画面のログに出力するようにしました。
 * Sequenceスクリプトノードの名前の表示を「Sequence<型>」に変更しました。
+* 引数のin及びout修飾でUI上でrefとそれぞれ分けて表示するようにしました。
+* 参照渡しの引数の型名が正しく取得できない問題に対応しました。
+* IEnumerableを持つ引数の型がout修飾されている場合は、UI上で要素に子を追加できないようにしました。
+* 限定的だった配列対応を広範に対応しました。
+* Variable ListのGet VariableListの不具合対応。
+* Variable ListのSet VariableListの不具合対応。
+* Variable ListのAppend VariableListの不具合対応。
 
 ## 特徴
 * ビジュアルなスクリプトを作成することができます。
@@ -106,7 +113,7 @@ public static ICollection<T> Filtering<T>(IEnumerable<T> samples, Predicate<T> p
 
 ## スクリプトが対応するメソッドの引数の型（及び修飾子など）
 * Type: int, string, double, byte, sbyte, long, short, ushort, uint, ulong, char, float, decimal, bool, object
-* 配列
+* 配列（ver0.3.5.0 からスクリプト上での扱いにも対応）
 * IEnumerableを持つ型（※UI上で要素を操作できます）
 * Class
 * Struct

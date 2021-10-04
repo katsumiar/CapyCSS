@@ -1,4 +1,4 @@
-﻿//#define SHOW_LINK_ARRAY   // リスト型を接続したときにリストの要素をコピーして表示する
+﻿#define SHOW_LINK_ARRAY   // リスト型を接続したときにリストの要素をコピーして表示する
 
 using CapybaraVS.Script;
 using CapyCSS.Script;
@@ -143,17 +143,22 @@ namespace CapybaraVS.Controls.BaseControls
                     {
                         self.TypeNameLabel.Content = self.TypeNameLabelOverlap;
                     }
-                    if (self.ValueData.IsByRef || self.ValueData.IsNullable)
+                    self.TypeNameLabel.FontWeight = FontWeights.UltraBold;
+                    if (self.ValueData.IsIn)
                     {
-                        self.TypeNameLabel.FontWeight = FontWeights.UltraBold;
-                        if (self.ValueData.IsByRef)
-                        {
-                            value = $"[ref] {value}";
-                        }
-                        if (self.ValueData.IsNullable)
-                        {
-                            value = $"{value}?";
-                        }
+                        value = $"{CbSTUtils.UI_IN_STR} {value}";
+                    }
+                    else if (self.ValueData.IsOut)
+                    {
+                        value = $"{CbSTUtils.UI_OUT_STR} {value}";
+                    }
+                    else if (self.ValueData.IsByRef)
+                    {
+                        value = $"{CbSTUtils.UI_REF_STR} {value}";
+                    }
+                    else if (self.ValueData.IsNullable)
+                    {
+                        value = $"{value}?";
                     }
                     else
                     {

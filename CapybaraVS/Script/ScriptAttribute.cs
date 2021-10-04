@@ -64,6 +64,8 @@ namespace CapybaraVS.Script
         {
             public Func<ICbValue> CreateArgument;
             public bool IsByRef = false;
+            public bool IsOut = false;
+            public bool IsIn = false;
             public bool IsSelf = false;
         }
 
@@ -1108,13 +1110,39 @@ namespace CapybaraVS.Script
                         paramsStr += ",";
                     }
 
-                    paramsStr += CbSTUtils._GetTypeName(para.ParameterType);
+                    string argStr = CbSTUtils._GetTypeName(para.ParameterType);
+                    argStr = ReplaceModifier(para, argStr);
+                    paramsStr += argStr;
 
                     isFirst = false;
                 }
                 paramsStr += ")";
             }
             return paramsStr;
+        }
+
+        /// <summary>
+        /// 修飾子を置き換えます。
+        /// </summary>
+        /// <param name="para">パラメータ情報</param>
+        /// <param name="argStr">置き換える前の名前</param>
+        /// <returns>置き換えた文字列</returns>
+        private static string ReplaceModifier(ParameterInfo para, string argStr)
+        {
+            argStr = argStr.Replace("&", "");
+            if (para.IsIn)
+            {
+                argStr = $"{CbSTUtils.MENU_IN_STR} " + argStr;
+            }
+            else if (para.IsOut)
+            {
+                argStr = $"{CbSTUtils.MENU_OUT_STR} " + argStr;
+            }
+            else if (para.ParameterType.IsByRef)
+            {
+                argStr = $"{CbSTUtils.MENU_REF_STR} " + argStr;
+            }
+            return argStr;
         }
 
         /// <summary>
@@ -1189,9 +1217,21 @@ namespace CapybaraVS.Script
 
                 ArgumentInfoNode argNode = new ArgumentInfoNode();
 
-                // リファレンス型をチェック
-                if (para.ParameterType.IsByRef)
+                // 引数の修飾をチェック
+                if (para.IsIn)
+                {
+                    argNode.IsIn = true;
+                }
+                else if (para.IsOut)
+                {
+                    argNode.IsOut = true;
+                }
+                else if (para.ParameterType.IsByRef)
+                {
+                    // IsIn と IsOut が false
+
                     argNode.IsByRef = true;
+                }
 
                 // 引数名を取得
                 string name = para.Name;
@@ -1210,6 +1250,8 @@ namespace CapybaraVS.Script
                 {
                     ICbValue addParam = typeInfo(name);
                     addParam.IsByRef = argNode.IsByRef;
+                    addParam.IsOut = argNode.IsOut;
+                    addParam.IsIn = argNode.IsIn;
                     if (para.HasDefaultValue)
                     {
                         if (para.DefaultValue != null)
