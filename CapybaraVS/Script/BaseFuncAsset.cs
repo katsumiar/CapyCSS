@@ -22,6 +22,7 @@ namespace CapybaraVS.Script
     {
         private TreeMenuNode ProgramNode = null;
         private TreeMenuNode DotNet = null;
+        private TreeMenuNode Standard = null;
         private TreeMenuNode DllNode = null;
         private TreeMenuNode NuGetNode = null;
         private CommandCanvas OwnerCommandCanvas = null;
@@ -126,7 +127,8 @@ namespace CapybaraVS.Script
         /// <returns>true==成功</returns>
         public bool ImportBase()
         {
-            ScriptImplement.ImportScriptMethodsForBase(OwnerCommandCanvas, CreateGroup(DotNet, MENU_TITLE_DOT_NET_STANDERD));
+            Standard = CreateGroup(DotNet, MENU_TITLE_DOT_NET_STANDERD);
+            ScriptImplement.ImportScriptMethodsForBase(OwnerCommandCanvas, Standard);
             return true;
         }
 
@@ -261,6 +263,11 @@ namespace CapybaraVS.Script
             PackageModuleList.Clear();
             ClassModuleList.Clear();
             NuGetModuleList.Clear();
+            if (Standard != null)
+            {
+                DotNet.Child.Remove(Standard);
+                Standard = null;
+            }
             if (DllNode != null)
             {
                 ProgramNode.Child.Remove(DllNode);

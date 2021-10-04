@@ -608,7 +608,6 @@ namespace CapybaraVS.Controls.BaseControls
                 );
 
             ApiImporter.ImportBase();
-
             ImportModule();
         }
 
@@ -618,7 +617,6 @@ namespace CapybaraVS.Controls.BaseControls
         /// <returns>成功したらtrue</returns>
         public bool ImportModule()
         {
-            ApiImporter.ClearModule();
             if (_inportClassModule != null)
             {
                 // クラスインポートの復元
