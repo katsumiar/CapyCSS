@@ -109,7 +109,9 @@ namespace CapybaraVS.Controls.BaseControls
                     try
                     {
                         if (self.ValueData.IsStringableValue)
+                        {
                             self.ValueData.ValueString = text;
+                        }
                         self.Edit.Text = self.ValueData.ValueUIString.Trim('\r', '\n');
                         self.Edit.Background = Brushes.White;
                         self.ToolTipUpdate();
@@ -190,7 +192,6 @@ namespace CapybaraVS.Controls.BaseControls
                     if (self.ValueData is ICbValue value)
                     {
                         value.Name = text;  // 変数に名前もコピーする
-                        //self.ParamEdit = value.ValueUIString;
                     }
                 });
 
@@ -211,7 +212,9 @@ namespace CapybaraVS.Controls.BaseControls
                 {
                     ICbValue valueData = getValue(self);
                     if (valueData != null)
+                    {
                         self.UpdateValueData(valueData);
+                    }
                 });
 
         public static readonly DependencyProperty ValueDataProperty = impValueData.Regist(null);
@@ -262,17 +265,19 @@ namespace CapybaraVS.Controls.BaseControls
                 ParamName = " ";
             }
 
-            TypeNameLabel.Visibility = (TypeName.Length != 0 ? Visibility.Visible : Visibility.Collapsed);
-            ParamNameLabel.Visibility = (ParamName.Length != 0 ? Visibility.Visible : Visibility.Collapsed);
+            TypeNameLabel.Visibility = TypeName.Length != 0 ? Visibility.Visible : Visibility.Collapsed;
+            ParamNameLabel.Visibility = ParamName.Length != 0 ? Visibility.Visible : Visibility.Collapsed;
             if (ParamNameLabelOverlap.Length != 0)
+            {
                 ParamNameLabel.Visibility = Visibility.Visible;
+            }
 
             Edit.Visibility = Visibility.Collapsed;
             Select.Visibility = Visibility.Collapsed;
             ImagePanel.Visibility = Visibility.Collapsed;
             MediaPanel.Visibility = Visibility.Collapsed;
 
-            // ※ valueData.Data が null でも表示は必要
+            // valueData.Data が null でも表示は必要
             if (!valueData.IsNull && valueData is ICbValueEnum selectValue)
             {
                 Select.Visibility = Visibility.Visible;
@@ -299,9 +304,7 @@ namespace CapybaraVS.Controls.BaseControls
 
                 if (valueData.Data != null)
                 {
-                    //var image = (valueData.Data as BitmapSource).Clone();
-                    var image = (valueData.Data as BitmapSource);
-
+                    var image = valueData.Data as BitmapSource;
                     ImageBox.Source = image;
                 }
 
@@ -313,8 +316,7 @@ namespace CapybaraVS.Controls.BaseControls
 
                 if (valueData.Data != null)
                 {
-                    MediaPlayer image = (MediaPlayer)(valueData.Data as MediaPlayer);
-                    //MediaPlayer image = (MediaPlayer)(valueData.Data as MediaPlayer).Clone();
+                    MediaPlayer image = valueData.Data as MediaPlayer;
                     MediaBox.Source = image.Source;
                     MediaBox.LoadedBehavior = MediaState.Stop;
                     MediaBox.Visibility = Visibility.Visible;
@@ -340,7 +342,9 @@ namespace CapybaraVS.Controls.BaseControls
                 Edit.IsReadOnly = valueData.IsReadOnlyValue || ReadOnly || valueData.IsNull;
 
                 if (Edit.IsReadOnly)
+                {
                     Edit.Background = Brushes.Lavender;
+                }
 
                 if (valueData is CbText cbText)
                 {
@@ -353,13 +357,17 @@ namespace CapybaraVS.Controls.BaseControls
                     Edit.HorizontalScrollBarVisibility = ScrollBarVisibility.Auto;
                     //Edit.TextWrapping = TextWrapping.Wrap;
                     if (!Edit.IsReadOnly)
+                    {
                         Edit.Background = Brushes.Honeydew;
+                    }
                 }
                 else
                 {
                     Edit.MaxHeight = 36;
                     if (!Edit.IsReadOnly)
+                    {
                         Edit.Background = Brushes.White;
+                    }
                 }
             }
             if (!valueData.IsVisibleValue)
@@ -399,9 +407,13 @@ namespace CapybaraVS.Controls.BaseControls
             Select.IsHitTestVisible = !Select.IsReadOnly;
             Select.IsTabStop = !Select.IsReadOnly;
             if (Select.IsReadOnly)
+            {
                 Select.Foreground = Brushes.DarkGray;
+            }
             else
+            {
                 Select.Foreground = Brushes.Black;
+            }
         }
 #endregion
 
