@@ -106,19 +106,18 @@ namespace CapybaraVS.Controls.BaseControls
                 (self, getValue) =>
                 {
                     string text = getValue(self);
-                    string backup = self.ValueData.ValueUIString;
                     try
                     {
                         if (self.ValueData.IsStringableValue)
                             self.ValueData.ValueString = text;
                         self.Edit.Text = self.ValueData.ValueUIString.Trim('\r', '\n');
+                        self.Edit.Background = Brushes.White;
                         self.ToolTipUpdate();
                     }
                     catch (Exception ex)
                     {
                         System.Diagnostics.Debug.WriteLine(ex.Message);
-
-                        self.Edit.Text = backup;
+                        self.Edit.Background = Brushes.Salmon;
                     }
                     self.ParamName = self.ValueData.Name;
                 });
