@@ -41,7 +41,6 @@ namespace CapybaraVS.Script
         public const string STRING_STR = "string";
         public const string TEXT_STR = "text";
 
-        public const string ARRAY_GROUP_STR = "array.";
         public const string INTERFACE_GROUP_STR = "interface.";
         public const string SIGNED_GROUP_STR = "signed.";
         public const string UNSIGNED_GROUP_STR = "unsigned.";
@@ -84,8 +83,9 @@ namespace CapybaraVS.Script
         /// </summary>
         static public readonly Dictionary<string, string> BuiltInTypeList = new Dictionary<string, string>()
         {
-            { typeof(List<>).FullName, ARRAY_GROUP_STR + "List<T>" },
-            { ARRAY_TYPE.FullName, ARRAY_GROUP_STR + "T[]" },
+            { ARRAY_TYPE.FullName, "T[]" },
+            { typeof(List<>).FullName, "List<T>" },
+            { NULLABLE_TYPE.FullName, "T?" },
             { typeof(IList<>).FullName, INTERFACE_GROUP_STR + "IList<T>" },
             { typeof(ICollection<>).FullName, INTERFACE_GROUP_STR + "ICollection<T>" },
             { typeof(IEnumerable<>).FullName, INTERFACE_GROUP_STR + "IEnumerable<T>" },
