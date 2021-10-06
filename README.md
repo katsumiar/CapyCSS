@@ -12,19 +12,24 @@
 * Variable ListのGet VariableListの不具合対応。
 * Variable ListのSet VariableListの不具合対応。
 * Variable ListのAppend VariableListの不具合対応。
+* Text型が正しく動かなくなっていた問題に対応しました。
+* 起動時に「以前に表示されていないWindowにOwnerプロパティを設定することはできません」というエラーが出る場合がある問題対応を行いました。
 
 ## 特徴
 * ビジュアルなスクリプトを作成することができます。
 * c#で書かれたソースを修正してメソッドを追加することでノードとして使用できるようにインポートする機能があります（属性の指定とビルドが必要です）。
 * dllをインポートしてメソッドをスクリプトで使うことができます。
 * クラス指定でメソッドをインポートしてスクリプトで使うことができます。
-* NuGetからパッケージをインポートしてスクリプトで使うことができます。
-* 作者の趣味とc#の勉強と気まぐれで制作されています。
+* NuGetからパッケージをインポートしてスクリプトで使うことができます（NuGet.exe のダウンロードが必要）。
+* 作者の趣味とc#をwpfの勉強と気まぐれで制作されています。
 * 当面の間、気が向いたときに好き放題触るというスタンスです。
 
 ## ターゲット環境
 * .Net 5.0（6.0 preview でもビルド可）
 * c＃
+
+##「The data version are incompatible.」と表示される場合の対処方法
+Documentフォルダにある古い「CapyCSS」フォルダを削除して下さい。
 
 ## 実行オプション
 保存したスクリプトファイルをコマンド引数で指定すると、起動時に自動的に読み込まれます。
@@ -50,6 +55,10 @@ CapyCSS.exe -ase script.cbs
 [ScriptMethod]
 public static ICollection<T> Filtering<T>(IEnumerable<T> samples, Predicate<T> predicate)
 {
+    if (predicate is null)
+    {
+        return null;
+    }
     var result = new List<T>();
     foreach (var node in samples)
     {
@@ -61,7 +70,7 @@ public static ICollection<T> Filtering<T>(IEnumerable<T> samples, Predicate<T> p
     return result;
 }
 ```
-この他、dll をインポートして機能を取り込むこともできます。
+この他、dll をインポートして機能を取り込むこともできます（こちらを推奨します）。
 
 ## 操作方法
 * スペースキーもしくはホイールボタンの押下でコマンドウインドウを表示できます。

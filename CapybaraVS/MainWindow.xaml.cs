@@ -43,7 +43,11 @@ namespace CapybaraVS
             InitializeComponent();
             instance = this;
             Closing += MainWindow_Closing;
+            SourceInitialized += MainWindow_SourceInitialized;
+        }
 
+        private void MainWindow_SourceInitialized(object sender, EventArgs e)
+        {
             CommandControl.Setup(
                 this,
                 App.CAPY_CSS_PATH,
