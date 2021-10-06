@@ -393,48 +393,12 @@ namespace CapybaraVS.Script
         /// <returns></returns>
         private static string Optimisation(string typeName)
         {
-#if true
             int pos = typeName.LastIndexOf(".");
             if (pos != -1)
             {
                 typeName = typeName.Substring(pos + 1);
             }
             return typeName;
-#else
-            string[] arr = typeName.Split('.');
-            List<string> testName = new List<string>();
-            foreach (var node in arr)
-            {
-                testName.Add(node);
-            }
-            testName.Reverse();
-            string reverseName = testName[0];
-            for (int i = 1; i < testName.Count; ++i)
-            {
-                try
-                {
-                    CbTypeNameListRwLock.AcquireReaderLock(Timeout.Infinite);
-                    if (!CbTypeNameList.ContainsValue(reverseName))
-                    {
-                        break;
-                    }
-                }
-                finally
-                {
-                    CbTypeNameListRwLock.ReleaseReaderLock();
-                }
-                reverseName += "." + testName[i];
-            }
-            string[] arr2 = reverseName.Split('.');
-            List<string> reverseWork = new List<string>();
-            foreach (var node in arr2)
-            {
-                reverseWork.Add(node);
-            }
-            reverseWork.Reverse();
-            string newName = string.Join(".", reverseWork);
-            return newName;
-#endif
         }
 
         /// <summary>
