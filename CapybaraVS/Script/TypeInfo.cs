@@ -130,6 +130,7 @@ namespace CapybaraVS.Script
                 case nameof(Boolean): return typeof(CbBool);
                 case nameof(String): return typeof(CbString);
                 case nameof(Object): return typeof(CbObject);
+                case nameof(CbText): return typeof(CbText);
                 default:
                     break;
             }
@@ -369,6 +370,7 @@ namespace CapybaraVS.Script
                 case nameof(Boolean): return CbBool.Create(name);
                 case nameof(String): return CbString.Create(name);
                 case nameof(Object): return CbObject.Create(name);
+                case nameof(CbText): return CbText.Create(name);
                 default:
                     break;
             }

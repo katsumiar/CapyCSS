@@ -86,6 +86,7 @@ namespace CapybaraVS.Script
             { ARRAY_TYPE.FullName, "T[]" },
             { typeof(List<>).FullName, "List<T>" },
             { NULLABLE_TYPE.FullName, "T?" },
+            { typeof(CbText).FullName, "Text" },
             { typeof(IList<>).FullName, INTERFACE_GROUP_STR + "IList<T>" },
             { typeof(ICollection<>).FullName, INTERFACE_GROUP_STR + "ICollection<T>" },
             { typeof(IEnumerable<>).FullName, INTERFACE_GROUP_STR + "IEnumerable<T>" },

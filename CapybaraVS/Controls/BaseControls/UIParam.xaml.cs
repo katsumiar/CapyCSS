@@ -113,7 +113,7 @@ namespace CapybaraVS.Controls.BaseControls
                             self.ValueData.ValueString = text;
                         }
                         self.Edit.Text = self.ValueData.ValueUIString.Trim('\r', '\n');
-                        self.Edit.Background = Brushes.White;
+                        self.Edit.Background = Brushes.Honeydew;
                         self.ToolTipUpdate();
                     }
                     catch (Exception ex)
@@ -366,7 +366,7 @@ namespace CapybaraVS.Controls.BaseControls
                     Edit.MaxHeight = 36;
                     if (!Edit.IsReadOnly)
                     {
-                        Edit.Background = Brushes.White;
+                        Edit.Background = Brushes.Honeydew;
                     }
                 }
             }
