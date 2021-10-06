@@ -131,6 +131,7 @@ namespace CapybaraVS.Script
                 case nameof(String): return typeof(CbString);
                 case nameof(Object): return typeof(CbObject);
                 case nameof(CbText): return typeof(CbText);
+                case nameof(CbImagePath): return typeof(CbImagePath);
                 default:
                     break;
             }
@@ -371,6 +372,7 @@ namespace CapybaraVS.Script
                 case nameof(String): return CbString.Create(name);
                 case nameof(Object): return CbObject.Create(name);
                 case nameof(CbText): return CbText.Create(name);
+                case nameof(CbImagePath): return CbImagePath.Create(name);
                 default:
                     break;
             }

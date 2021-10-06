@@ -1,6 +1,7 @@
 ﻿#define SHOW_LINK_ARRAY   // リスト型を接続したときにリストの要素をコピーして表示する
 
 using CapybaraVS.Script;
+using CapybaraVS.Script.Lib;
 using CapyCSS.Script;
 using CbVS.Script;
 using System;
@@ -327,6 +328,16 @@ namespace CapybaraVS.Controls.BaseControls
                 }
             }
 
+            if (valueData is CbImagePath cbImagePath)
+            {
+                // イメージを表示する
+
+                if (ShowImagePathTypeParamViewer(cbImagePath))
+                {
+                    return;
+                }
+            }
+
             Edit.Visibility = Visibility.Visible;
             if (valueData.ValueUIString != null)
             {
@@ -402,6 +413,24 @@ namespace CapybaraVS.Controls.BaseControls
         {
             ImageBox = image;
             ImagePanel.Visibility = Visibility.Visible;
+        }
+
+        /// <summary>
+        /// ImagePath型のパラメータを表示します。
+        /// </summary>
+        /// <param name="imagePath"></param>
+        private bool ShowImagePathTypeParamViewer(CbImagePath cbImagePath)
+        {
+            if (!FileLib.Exists(cbImagePath.Value))
+            {
+                return false;
+            }
+            ImageBox.ToolTip = cbImagePath.Value;
+            ImageBox.Source = new BitmapImage(new Uri(cbImagePath.Value));
+            ImageBox.Width = 240;
+            ImageBox.Height = 240;
+            ImagePanel.Visibility = Visibility.Visible;
+            return true;
         }
 
         /// <summary>

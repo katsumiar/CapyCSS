@@ -1,6 +1,7 @@
 ﻿using CapybaraVS.Control.BaseControls;
 using CapybaraVS.Controls.BaseControls;
 using CapybaraVS.Script;
+using CapybaraVS.Script.Lib;
 using CapyCSS.Controls;
 using CapyCSS.Script;
 using CbVS.Script;
@@ -325,8 +326,9 @@ namespace CapybaraVS.Controls
                 });
 
         /// <summary>
+        /// 画像のパスとして有効なら ImagePath 型に変換します。
         /// string型に変換します。
-        /// ただし、複数行の場合は、text型に変換します。
+        /// 複数行の場合は、text型に変換します。
         /// </summary>
         /// <param name="self">所属のクラスインスタンス</param>
         /// <param name="text">テキスト</param>
@@ -341,7 +343,15 @@ namespace CapybaraVS.Controls
             }
             else
             {
-                setValue = CbString.Create(text, "");
+                var imageExtensions = new List<string>() { ".png", ".gif", ".jpg", ".bmp" };
+                if (FileLib.Exists(text) && imageExtensions.Contains(FileLib.GetExtension(text.ToLower())))
+                {
+                    setValue = CbImagePath.Create(text, "");
+                }
+                else
+                {
+                    setValue = CbString.Create(text, "");
+                }
             }
             if (text.Length > 20)
             {

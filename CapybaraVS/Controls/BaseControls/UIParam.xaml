@@ -11,7 +11,7 @@
             <TextBox x:Name="Edit" Text="" KeyDown="Edit_KeyDown" MinWidth="32" Margin="0,2,0,2" MaxWidth="128" Background="Honeydew" HorizontalAlignment="Left" MaxHeight="160" />
             <ComboBox x:Name="Select" HorizontalAlignment="Left" Margin="0,2,0,2" Visibility="Collapsed" Background="Honeydew" SelectionChanged="Select_SelectionChanged" />
             <Grid x:Name="ImagePanel" Visibility="Collapsed" Background="DarkGray" >
-                <Image x:Name="ImageBox" HorizontalAlignment="Left" Width="100" Height="100" Margin="2,2,2,2" />
+                <Image x:Name="ImageBox" Width="100" Height="100" Margin="2,2,2,2" />
             </Grid>
             <Grid x:Name="MediaPanel" Visibility="Collapsed" Background="DarkGray" >
                 <MediaElement x:Name="MediaBox" HorizontalAlignment="Left" Width="100" Height="100" Margin="2,2,2,2" MouseEnter="MediaBox_MouseEnter" MouseLeave="MediaBox_MouseLeave" />

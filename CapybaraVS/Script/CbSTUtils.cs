@@ -40,6 +40,7 @@ namespace CapybaraVS.Script
         public const string BOOL_STR = "bool";
         public const string STRING_STR = "string";
         public const string TEXT_STR = "text";
+        public const string IMAGE_PATH_STR = "ImagePath";
 
         public const string INTERFACE_GROUP_STR = "interface.";
         public const string SIGNED_GROUP_STR = "signed.";
@@ -84,9 +85,10 @@ namespace CapybaraVS.Script
         static public readonly Dictionary<string, string> BuiltInTypeList = new Dictionary<string, string>()
         {
             { ARRAY_TYPE.FullName, "T[]" },
-            { typeof(List<>).FullName, "List<T>" },
+            { LIST_TYPE.FullName, "List<T>" },
             { NULLABLE_TYPE.FullName, "T?" },
-            { typeof(CbText).FullName, "Text" },
+            { typeof(CbText).FullName, TEXT_STR },
+            { typeof(CbImagePath).FullName, IMAGE_PATH_STR },
             { typeof(IList<>).FullName, INTERFACE_GROUP_STR + "IList<T>" },
             { typeof(ICollection<>).FullName, INTERFACE_GROUP_STR + "ICollection<T>" },
             { typeof(IEnumerable<>).FullName, INTERFACE_GROUP_STR + "IEnumerable<T>" },
@@ -166,7 +168,6 @@ namespace CapybaraVS.Script
 
             { nameof(CbInt), INT_STR },
             { nameof(CbString), STRING_STR},
-            { nameof(CbText), TEXT_STR },
             { nameof(CbDouble), DOUBLE_STR },
             { nameof(CbByte), BYTE_STR },
             { nameof(CbSByte), SBYTE_STR },
@@ -181,6 +182,8 @@ namespace CapybaraVS.Script
             { nameof(CbBool), BOOL_STR },
             { nameof(CbObject), OBJECT_STR },
             { nameof(CbList), LIST_STR },
+            { nameof(CbText), TEXT_STR },
+            { nameof(CbImagePath), IMAGE_PATH_STR },
 
             { nameof(CbVoid), VOID_STR },
         };
