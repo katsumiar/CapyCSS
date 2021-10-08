@@ -341,6 +341,14 @@ namespace CapybaraVS.Script
                                 cname = cname.TrimEnd('&');
                                 return __GetTypeName(CbST.GetTypeEx(cname));
                             }
+                            else if (cname.EndsWith("[]"))
+                            {
+                                // 配列を取った型で試してみる
+
+                                cname = cname.TrimEnd(']');
+                                cname = cname.TrimEnd('[');
+                                return __GetTypeName(CbST.GetTypeEx(cname));
+                            }
                             else
                             {
                                 Debug.Assert(false);
