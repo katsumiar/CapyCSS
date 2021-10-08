@@ -78,7 +78,17 @@ namespace CapybaraVS.Script
                 {
                     type = module.GetType(name);
                     if (type != null)
-                        break;
+                        return type;
+                }
+                foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies())
+                {
+                    foreach (var ct in assembly.GetTypes())
+                    {
+                        if (ct.FullName == name)
+                        {
+                            return ct;
+                        }
+                    }
                 }
             }
             return type;
