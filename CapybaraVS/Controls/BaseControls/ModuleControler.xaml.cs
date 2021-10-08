@@ -28,15 +28,23 @@ namespace CapyCSS.Controls.BaseControls
         private string InstallDllDirectory = null;
         private string InstallNuGetDirectory = null;
 
-        private const string MESSAGE_TITLE = "Dll Import";
+        private const string DLL_MESSAGE_TITLE = "Dll Import";
 
+        // 過去のインポートの再取り込み時の識別用文字列
         public const string HEADER_PACKAGE = "Package ";
-        public const string HEADER_CLASS = "Class ";
+        public const string HEADER_NAMESPACE = "namespace ";
         public const string HEADER_NUGET = "NuGet ";
 
-        private const int SELECT_INSTALL_DLL = 0;
-        private const int SELECT_IMPORT_CLASS = 1;
-        private const int SELECT_INSTALL_NUGET = 2;
+        // メニュー定義
+        private enum ImportMenu
+        {
+            NameSpace,
+            DLL,
+            NuGet,
+            //
+            End,                // メニュー終了
+            Init = NameSpace,   // 基本表示項目
+        }
 
         public ModuleControler(ApiImporter apiImporter, string installDllDirectory, string installNuGetDirectory)
         {
@@ -60,7 +68,7 @@ namespace CapyCSS.Controls.BaseControls
                 // TODO フォルダを指定してもらいファイルのパスを特定してもらう
 
                 string msg = string.Format(CapybaraVS.Language.Instance["SYSTEM_ModuleControler_04"], filter);
-                ControlTools.ShowErrorMessage(msg, MESSAGE_TITLE);
+                ControlTools.ShowErrorMessage(msg, DLL_MESSAGE_TITLE);
                 return null;    // 失敗
             }
 
@@ -84,104 +92,102 @@ namespace CapyCSS.Controls.BaseControls
         /// <param name="e"></param>
         private void AddLabel_MouseDown(object sender, MouseButtonEventArgs e)
         {
-            if (InportList.SelectedIndex == SELECT_INSTALL_DLL)
+            CommandCanvasList.SetOwnerCursor(Cursors.Wait);
+            if (AddLabel_MouseDown())
             {
-                // 新規にdllをインストールしてからインポートする
+                InportList.SelectedIndex = (int)ImportMenu.Init;
+                InstallDllList_SelectionChanged(null, null);
+            }
+            CommandCanvasList.SetOwnerCursor(null);
+        }
+        private bool AddLabel_MouseDown()
+        {
+            string selectedValue = (string)InportList.SelectedValue;
+            if (selectedValue is null)
+            {
+                return false;
+            }
+
+            if (selectedValue == "[ " + ImportMenu.DLL.ToString() + " ]")
+            {
+                // dllをインストールしてからインポートする
 
                 string installDllPath = InstallDll();
-                if (installDllPath is null)
+                if (installDllPath != null)
                 {
-                    // dll のインストールに失敗
+                    // dllをインポートする
 
-                    return;
+                    ApiImporter.ImportDll(installDllPath);
+                    return true;
                 }
-
-                // dllをインポートする
-                ApiImporter.ImportDll(installDllPath);
-                return;
+                return false;
             }
-            else if (InportList.SelectedIndex == SELECT_IMPORT_CLASS)
+            else if (selectedValue == "[ " + ImportMenu.NameSpace.ToString() + " ]")
             {
-                // 新規にクラス指定でインポートする
+                // ネームスペース指定でインポートする
 
-                string imputText = ClassName.Text.Trim();
+                string imputText = NameSpaceName.Text.Trim();
                 if (imputText == "")
-                    return;
+                    return false;
 
-                // クラスをインポートする
-                if (ApiImporter.ImportClass(imputText))
+                // ネームスペースをインポートする
+                if (ApiImporter.ImportNameSpace(imputText))
                 {
                     // 成功
 
-                    InportList.SelectedIndex = SELECT_INSTALL_DLL;
-                    closeInputClassName();
+                    InportList.SelectedIndex = (int)ImportMenu.Init;
+                    return true;
                 }
-                else
-                {
-                    // 失敗
-                }
-                return;
+                return false;
             }
-            else if (InportList.SelectedIndex == SELECT_INSTALL_NUGET)
+            else if (selectedValue == "[ " + ImportMenu.NuGet.ToString() + " ]")
             {
                 string nugetName = PackageName.Text.Trim();
                 if (nugetName == "")
-                    return;
+                    return false;
                 string version = Version.Text.Trim();
                 if (version == "")
-                    return;
+                    return false;
 
                 // NuGetをインポートする
                 if (ApiImporter.ImportNuGet(InstallNuGetDirectory, nugetName, version))
                 {
                     // 成功
 
-                    InportList.SelectedIndex = SELECT_INSTALL_DLL;
-                    closeInputNuGet();
+                    InportList.SelectedIndex = (int)ImportMenu.Init;
+                    return true;
                 }
-                else
-                {
-                    // 失敗
-                }
-                return;
+                return false;
             }
 
             // 既存のインポート
 
-            string selected = (string)InportList.SelectedItem;
-
-            if (IsPackage(selected))
+            if (IsPackage(selectedValue))
             {
                 // パッケージをインポートする
 
-                ApiImporter.ImportPackage(selected.Split(" ")[1]);
-                return;
+                ApiImporter.ImportPackage(selectedValue.Split(" ")[1]);
+                return true;
             }
-            if (IsClass(selected))
-            {
-                // クラスをインポートする
-
-                ApiImporter.ImportClass(selected.Split(" ")[1]);
-                return;
-            }
-            if (IsNuGet(selected))
+            if (IsNuGet(selectedValue))
             {
                 // NeGetをインポートする
 
-                ApiImporter.ImportNuGet(InstallDllDirectory, selected.Split(" ")[1]);
-                return;
+                ApiImporter.ImportNuGet(InstallDllDirectory, selectedValue.Split(" ")[1]);
+                return true;
             }
 
-            string dllPath = System.IO.Path.Combine(InstallDllDirectory, selected);
-            if (File.Exists(selected))
+            string dllPath = System.IO.Path.Combine(InstallDllDirectory, selectedValue);
+            if (File.Exists(selectedValue))
             {
                 string msg = string.Format(CapybaraVS.Language.Instance["SYSTEM_ModuleControler_04"], dllPath);
-                ControlTools.ShowErrorMessage(msg, MESSAGE_TITLE);
-                return;
+                ControlTools.ShowErrorMessage(msg, DLL_MESSAGE_TITLE);
+                return true;
             }
 
             // インストール済みのdllをインポートする
             ApiImporter.ImportDll(dllPath);
+            return true;
         }
 
         /// <summary>
@@ -192,16 +198,6 @@ namespace CapyCSS.Controls.BaseControls
         private static bool IsPackage(string selected)
         {
             return selected.StartsWith(HEADER_PACKAGE);
-        }
-
-        /// <summary>
-        /// クラスを判定します。
-        /// </summary>
-        /// <param name="selected">名前</param>
-        /// <returns>true==クラス</returns>
-        private static bool IsClass(string selected)
-        {
-            return selected.StartsWith(HEADER_CLASS);
         }
 
         /// <summary>
@@ -272,7 +268,7 @@ namespace CapyCSS.Controls.BaseControls
                 // dll は既にインポート済み
 
                 string msg = string.Format(CapybaraVS.Language.Instance["SYSTEM_ModuleControler_01"], dllFileName);
-                var ret = ControlTools.ShowSelectMessage(msg, MESSAGE_TITLE, MessageBoxButton.YesNo);
+                var ret = ControlTools.ShowSelectMessage(msg, DLL_MESSAGE_TITLE, MessageBoxButton.YesNo);
                 if (ret == MessageBoxResult.No)
                 {
                     return null;
@@ -287,7 +283,7 @@ namespace CapyCSS.Controls.BaseControls
                 // 上書きインストール成功
 
                 string msg = string.Format(CapybaraVS.Language.Instance["SYSTEM_ModuleControler_02"], dllFileName);
-                ControlTools.ShowMessage(msg, MESSAGE_TITLE);
+                ControlTools.ShowMessage(msg, DLL_MESSAGE_TITLE);
 
                 // アプリケーションの終了
                 CommandCanvasList.CallClosing?.Invoke();
@@ -298,7 +294,7 @@ namespace CapyCSS.Controls.BaseControls
                 // インストール成功
 
                 string msg = string.Format(CapybaraVS.Language.Instance["SYSTEM_ModuleControler_03"], dllFileName);
-                ControlTools.ShowMessage(msg, MESSAGE_TITLE);
+                ControlTools.ShowMessage(msg, DLL_MESSAGE_TITLE);
             }
 
             // ドロップダウンリストに登録
@@ -312,10 +308,15 @@ namespace CapyCSS.Controls.BaseControls
         private void ListFetchInstallDll()
         {
             InportList.Items.Clear();
-            InportList.Items.Add("[ Install dll ]");
-            InportList.Items.Add("[ Import class ]");
-            InportList.Items.Add("[ NuGet ]");
-            InportList.SelectedIndex = SELECT_INSTALL_DLL;
+            foreach (ImportMenu value in Enum.GetValues(typeof(ImportMenu)))
+            {
+                if (value == ImportMenu.End)
+                {
+                    break;
+                }
+                InportList.Items.Add($"[ {Enum.GetName(typeof(ImportMenu), value)} ]");
+            }
+            InportList.SelectedIndex = (int)ImportMenu.Init;
             string[] paths = Directory.GetFiles(InstallDllDirectory, "*.dll");
             foreach (string path in paths)
             {
@@ -329,12 +330,12 @@ namespace CapyCSS.Controls.BaseControls
         }
 
         /// <summary>
-        /// クラス名入力欄を閉じます。
+        /// ネームスペース名入力欄を閉じます。
         /// </summary>
-        private void closeInputClassName()
+        private void closeInputNameSpaceName()
         {
-            ClassName.Text = "";
-            imputClassName.Visibility = Visibility.Collapsed;
+            NameSpaceName.Text = "";
+            imputNameSpaceName.Visibility = Visibility.Collapsed;
         }
 
         /// <summary>
@@ -349,24 +350,24 @@ namespace CapyCSS.Controls.BaseControls
 
         private void InstallDllList_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (InportList.SelectedIndex == SELECT_IMPORT_CLASS)
+            string selectedValue = (string)InportList.SelectedValue;
+            if (selectedValue is null)
             {
-                // クラス名入力欄を表示する
-
-                imputClassName.Visibility = Visibility.Visible;
+                return;
             }
-            else if (InportList.SelectedIndex == SELECT_INSTALL_NUGET)
+            closeInputNameSpaceName();
+            closeInputNuGet();
+            if (selectedValue == "[ " + ImportMenu.NameSpace.ToString() + " ]")
+            {
+                // ネームスペース名入力欄を表示する
+
+                imputNameSpaceName.Visibility = Visibility.Visible;
+            }
+            else if (selectedValue == "[ " + ImportMenu.NuGet.ToString() + " ]")
             {
                 // NuGet入力欄を表示する
 
                 imputNuGetName.Visibility = Visibility.Visible;
-            }
-            else
-            {
-                // 特設入力欄を閉じる
-
-                closeInputClassName();
-                closeInputNuGet();
             }
         }
     }

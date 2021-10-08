@@ -109,7 +109,7 @@ namespace CapybaraVS.Controls.BaseControls
                 ReadAction = (self) =>
                 {
                     self.AssetId = AssetId;
-                    self._inportClassModule = ImportClassModule;
+                    self._inportNameSpaceModule = ImportNameSpaceModule;
                     self._inportPackageModule = ImportPackageModule;
                     self._inportDllModule = ImportDllModule;
                     self._inportNuGetModule = ImportNuGetModule;
@@ -175,7 +175,7 @@ namespace CapybaraVS.Controls.BaseControls
                 {
                     AssetId = self.AssetId;
                     DataVersion = DATA_VERSION;
-                    ImportClassModule = self.ApiImporter.ClassModuleList;
+                    ImportNameSpaceModule = self.ApiImporter.NameSpaceModuleList;
                     ImportPackageModule = self.ApiImporter.PackageModuleList;
                     ImportDllModule = self.ApiImporter.DllModulePathList;
                     ImportNuGetModule = self.ApiImporter.NuGetModuleList;
@@ -200,7 +200,7 @@ namespace CapybaraVS.Controls.BaseControls
             #region 固有定義
             public int DataVersion { get; set; } = 0;
             public BaseWorkCanvas._AssetXML<BaseWorkCanvas> WorkCanvas { get; set; } = null;
-            public List<string> ImportClassModule { get; set; } = null;
+            public List<string> ImportNameSpaceModule { get; set; } = null;
             public List<string> ImportPackageModule { get; set; } = null;
             public List<string> ImportDllModule { get; set; } = null;
             public List<string> ImportNuGetModule { get; set; } = null;
@@ -220,8 +220,8 @@ namespace CapybaraVS.Controls.BaseControls
                         // 以下、固有定義開放
                         WorkCanvas?.Dispose();
                         WorkCanvas = null;
-                        ImportClassModule?.Clear();
-                        ImportClassModule = null;
+                        ImportNameSpaceModule?.Clear();
+                        ImportNameSpaceModule = null;
                         ImportPackageModule?.Clear();
                         ImportPackageModule = null;
                         ImportDllModule?.Clear();
@@ -467,7 +467,7 @@ namespace CapybaraVS.Controls.BaseControls
 
         //----------------------------------------------------------------------
         #region スクリプト内共有
-        public List<string> _inportClassModule = null;
+        public List<string> _inportNameSpaceModule = null;
         public List<string> _inportPackageModule = null;
         public List<string> _inportDllModule = null;
         public List<string> _inportNuGetModule = null;
@@ -617,15 +617,15 @@ namespace CapybaraVS.Controls.BaseControls
         /// <returns>成功したらtrue</returns>
         public bool ImportModule()
         {
-            if (_inportClassModule != null)
+            if (_inportNameSpaceModule != null)
             {
-                // クラスインポートの復元
+                // ネームスペースインポートの復元
 
-                foreach (var imp in _inportClassModule)
+                foreach (var imp in _inportNameSpaceModule)
                 {
-                    ApiImporter.ImportClass(imp);
+                    ApiImporter.ImportNameSpace(imp);
                 }
-                _inportClassModule = null;
+                _inportNameSpaceModule = null;
             }
             if (_inportPackageModule != null)
             {
@@ -1109,7 +1109,7 @@ namespace CapybaraVS.Controls.BaseControls
                 treeViewCommand.AssetTreeData.Add(typeWindow_interfaceMenu = new TreeMenuNode(CbSTUtils.INTERFACE_STR));
                 treeViewCommand.AssetTreeData.Add(typeWindow_structMenu = new TreeMenuNode(CbSTUtils.STRUCT_STR));
                 treeViewCommand.AssetTreeData.Add(typeWindow_enumMenu = new TreeMenuNode(CbSTUtils.ENUM_STR));
-                treeViewCommand.AssetTreeData.Add(typeWindow_import = new TreeMenuNode("Import"));
+                treeViewCommand.AssetTreeData.Add(typeWindow_import = new TreeMenuNode(ApiImporter.MENU_TITLE_IMPORT));
             }
         }
 
@@ -1720,7 +1720,7 @@ namespace CapybaraVS.Controls.BaseControls
                     TypeMenuWindow.Dispose();
                     TypeMenuWindow = null;
 
-                    _inportClassModule = null;
+                    _inportNameSpaceModule = null;
                     _inportPackageModule = null;
                     _inportDllModule = null;
                     _inportNuGetModule = null;

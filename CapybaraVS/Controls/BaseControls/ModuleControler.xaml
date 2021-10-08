@@ -9,9 +9,9 @@
     <Grid>
         <StackPanel>
             <ComboBox x:Name="InportList" DropDownOpened="ComboBox_DropDownOpened" SelectionChanged="InstallDllList_SelectionChanged" />
-            <StackPanel x:Name="imputClassName" Orientation="Horizontal" Visibility="Collapsed">
-                <Label Content="Class Name" />
-                <TextBox x:Name="ClassName" Width="200" />
+            <StackPanel x:Name="imputNameSpaceName" Orientation="Horizontal" Visibility="Collapsed">
+                <Label Content="NameSpace" />
+                <TextBox x:Name="NameSpaceName" Width="200" />
             </StackPanel>
             <StackPanel x:Name="imputNuGetName" Orientation="Horizontal" Visibility="Collapsed">
                 <Label Content="Package Name" />
@@ -20,7 +20,14 @@
                 <TextBox x:Name="Version" Width="60" />
             </StackPanel>
             <BaseControls:AddLabel Caption="Import" HorizontalAlignment="Left" MouseDown="AddLabel_MouseDown" />
-            <ListView x:Name="ImportList" />
+            <ListView x:Name="ImportList" Margin="0,6,0,3">
+                <ListView.ItemContainerStyle>
+                    <Style TargetType="ListViewItem">
+                        <Setter Property="Height" Value="20" />
+                        <Setter Property="FontWeight" Value="Bold" />
+                    </Style>
+                </ListView.ItemContainerStyle>
+            </ListView>
         </StackPanel>
     </Grid>
 </UserControl>

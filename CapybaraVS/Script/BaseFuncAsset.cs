@@ -22,23 +22,22 @@ namespace CapybaraVS.Script
     {
         private TreeMenuNode ProgramNode = null;
         private TreeMenuNode DotNet = null;
-        private TreeMenuNode Standard = null;
         private TreeMenuNode DllNode = null;
         private TreeMenuNode NuGetNode = null;
         private CommandCanvas OwnerCommandCanvas = null;
         public ObservableCollection<string> ModulueNameList = new ObservableCollection<string>();
         public List<string> DllModulePathList = new List<string>();
         public List<string> PackageModuleList = new List<string>();
-        public List<string> ClassModuleList = new List<string>();
+        public List<string> NameSpaceModuleList = new List<string>();
         public List<string> NuGetModuleList = new List<string>();
 
         public const string BASE_LIB_TAG_PRE = "BaseLib:";
 
         public const string MENU_TITLE_PROGRAM = "Program";
+        public const string MENU_TITLE_IMPORT = "Import";
         public const string MENU_TITLE_DOT_NET_FUNCTION = "Function";
-        public const string MENU_TITLE_DOT_NET_STANDERD = "Standard";
         public const string MENU_TITLE_DOT_NET_FUNCTION_FULL_PATH = MENU_TITLE_PROGRAM + "." + MENU_TITLE_DOT_NET_FUNCTION + ".";
-        public const string MENU_TITLE_DOT_NET_STANDERD_FULL_PATH = MENU_TITLE_PROGRAM + "." + MENU_TITLE_DOT_NET_FUNCTION + "." + MENU_TITLE_DOT_NET_STANDERD + ".";
+        public const string MENU_TITLE_IMPORT_FUNCTION_FULL_PATH = MENU_TITLE_PROGRAM + "." + MENU_TITLE_IMPORT + ".";
 
         public ApiImporter(CommandCanvas ownerCommandCanvas)
         {
@@ -127,8 +126,9 @@ namespace CapybaraVS.Script
         /// <returns>true==成功</returns>
         public bool ImportBase()
         {
-            Standard = CreateGroup(DotNet, MENU_TITLE_DOT_NET_STANDERD);
-            ScriptImplement.ImportScriptMethodsForBase(OwnerCommandCanvas, Standard);
+            ImportNameSpace("System");
+            ImportNameSpace("System.Collections.Generic");
+
             return true;
         }
 
@@ -145,7 +145,7 @@ namespace CapybaraVS.Script
             }
             if (DllNode is null)
             {
-                DllNode = CreateGroup(ProgramNode, "Import");
+                DllNode = CreateGroup(ProgramNode, MENU_TITLE_IMPORT);
             }
             string name = ScriptImplement.ImportScriptMethodsFromDllFile(OwnerCommandCanvas, DllNode, path, ignoreClassList);
             if (name != null)
@@ -168,7 +168,7 @@ namespace CapybaraVS.Script
             }
             if (DllNode is null)
             {
-                DllNode = CreateGroup(ProgramNode, "Import");
+                DllNode = CreateGroup(ProgramNode, MENU_TITLE_IMPORT);
             }
             string name = ScriptImplement.ImportScriptMethodsFromPackage(OwnerCommandCanvas, DllNode, packageName, ignoreClassList);
             if (name != null)
@@ -179,32 +179,25 @@ namespace CapybaraVS.Script
         }
 
         /// <summary>
-        /// スクリプトにクラスをインポートします。
+        /// スクリプトにネームスペースをインポートします。
         /// </summary>
-        /// <param name="className">クラス名</param>
+        /// <param name="nameSpaceName">ネームスペース名</param>
         /// <returns>true==成功</returns>
-        public bool ImportClass(string className)
+        public bool ImportNameSpace(string nameSpaceName)
         {
-            if (ClassModuleList.Contains(className))
+            if (NameSpaceModuleList.Contains(nameSpaceName))
             {
                 return true;
             }
-            Type classType = CbST.GetTypeEx(className);
-            if (classType is null)
-            {
-                // クラスが見つからない
-
-                return false;
-            }
             if (DllNode is null)
             {
-                DllNode = CreateGroup(ProgramNode, "Import");
+                DllNode = CreateGroup(ProgramNode, MENU_TITLE_IMPORT);
             }
-            string name = ScriptImplement.ImportScriptMethodsFromClass(OwnerCommandCanvas, DllNode, className);
+            string name = ScriptImplement.ImportScriptMethodsFromNameSpace(OwnerCommandCanvas, DllNode, nameSpaceName);
             if (name != null)
             {
                 ModulueNameList.Add(name);  // インポートリストに表示
-                ClassModuleList.Add(className);
+                NameSpaceModuleList.Add(nameSpaceName);
                 return true;
             }
             return false;
@@ -261,13 +254,8 @@ namespace CapybaraVS.Script
             ModulueNameList.Clear();
             DllModulePathList.Clear();
             PackageModuleList.Clear();
-            ClassModuleList.Clear();
+            NameSpaceModuleList.Clear();
             NuGetModuleList.Clear();
-            if (Standard != null)
-            {
-                DotNet.Child.Remove(Standard);
-                Standard = null;
-            }
             if (DllNode != null)
             {
                 ProgramNode.Child.Remove(DllNode);

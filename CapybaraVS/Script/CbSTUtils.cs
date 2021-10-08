@@ -720,6 +720,23 @@ namespace CapybaraVS.Script
         }
 
         /// <summary>
+        /// 前方一致した文字列を削除した後の最初の「.」文字以降の文字列を返します。
+        /// </summary>
+        /// <param name="str">対象の文字列</param>
+        /// <param name="strip">削除する文字列</param>
+        /// <param name="IgnoreCase">大文字小文字を無視するなら true</param>
+        /// <returns>前方一致した文字列を削除した後の最初の「.」文字以降の文字列</returns>
+        public static string StartStripNext(string str, string strip, bool IgnoreCase = false)
+        {
+            string result = StartStrip(str, strip, IgnoreCase);
+            if (result.Contains('.'))
+            {
+                return result.Substring(result.IndexOf('.') + 1);
+            }
+            return result;
+        }
+
+        /// <summary>
         /// リスト内の要素を Dispose します。
         /// </summary>
         /// <typeparam name="T"></typeparam>

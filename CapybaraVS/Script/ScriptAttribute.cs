@@ -176,56 +176,39 @@ namespace CapybaraVS.Script
         }
 
         /// <summary>
-        /// スクリプトに基本のクラスをインポートします。
-        /// </summary>
-        /// <param name="OwnerCommandCanvas">オーナーキャンバス</param>
-        /// <param name="node">登録先のノード</param>
-        /// <param name="name">クラス名</param>
-        public static void ImportScriptMethodsForBase(
-            CommandCanvas OwnerCommandCanvas,
-            TreeMenuNode node)
-        {
-            ImportScriptMethods(
-                OwnerCommandCanvas,
-                node,
-                typeof(System.Object).GetTypeInfo().Assembly,
-                null,
-                new List<string>() {
-                    "System."
-                },
-                (t) => OwnerCommandCanvas.AddImportTypeMenu(t)
-                );
-        }
-
-        /// <summary>
         /// クラス名からメソッドをスクリプトで使えるように取り込みます。
         /// </summary>
         /// <param name="OwnerCommandCanvas">オーナーキャンバス</param>
         /// <param name="node">登録先のノード</param>
-        /// <param name="name">クラス名</param>
-        /// <returns>インポートしたクラス名</returns>
-        public static string ImportScriptMethodsFromClass(
+        /// <param name="name">ネームスペース名</param>
+        /// <returns>インポートしたネームスペース名</returns>
+        public static string ImportScriptMethodsFromNameSpace(
             CommandCanvas OwnerCommandCanvas,
             TreeMenuNode node,
             string name)
         {
-            Type classType = CbST.GetTypeEx(name);
-            if (classType is null)
+            string outputName = ModuleControler.HEADER_NAMESPACE + name;
+            TreeMenuNode functionNode = ImplementAsset.CreateGroup(node, outputName);
+            List<Type> types = new List<Type>();
+            foreach (Assembly assembly in AppDomain.CurrentDomain.GetAssemblies())
             {
-                return null;
+                foreach (Type ct in assembly.GetTypes())
+                {
+                    if (ct.Namespace == name)
+                    {
+                        types.Add(ct);
+                    }
+                }
             }
-            var asm = classType.GetTypeInfo().Assembly;
-            string outputName = ModuleControler.HEADER_CLASS + name;
-            var functionNode = ImplementAsset.CreateGroup(node, outputName);
             ImportScriptMethods(
-                OwnerCommandCanvas, 
-                functionNode, 
-                asm, 
-                null, 
+                OwnerCommandCanvas,
+                functionNode,
                 null,
-                (t) => OwnerCommandCanvas.AddImportTypeMenu(t)
+                null,
+                (t) => OwnerCommandCanvas.AddImportTypeMenu(t),
+                types.ToArray()
                 );
-            Console.WriteLine($"imported {name} class.");
+            Console.WriteLine($"imported {name} namespace.");
             return outputName;
         }
 
@@ -379,6 +362,11 @@ namespace CapybaraVS.Script
                 CbST.AddModule(module);
             }
 
+            ImportScriptMethods(OwnerCommandCanvas, node, module, importNameList, inportTypeMenu, types);
+        }
+
+        private static void ImportScriptMethods(CommandCanvas OwnerCommandCanvas, TreeMenuNode node, Module module, List<string> importNameList, Action<Type> inportTypeMenu, Type[] types)
+        {
             Task<List<Type>> tcTask = null;
             if (inportTypeMenu != null)
             {
@@ -451,6 +439,8 @@ namespace CapybaraVS.Script
                 if (!IsAcceptClass(classType))
                     continue;   // 扱えない
 
+                if (classType.Name.EndsWith("Exception"))
+                    continue;   // 例外は扱わない
                 if (classType == typeof(Action))
                     continue;   // 本システムで特殊な扱いをしているので扱わない
                 if (classType.Name.StartsWith("Action`"))
