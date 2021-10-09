@@ -90,7 +90,6 @@ namespace CapybaraVS.Script
             { LIST_TYPE.FullName, "List<T>" },
             { NULLABLE_TYPE.FullName, "T?" },
             { typeof(CbText).FullName, TEXT_STR },
-            { typeof(CbImagePath).FullName, IMAGE_PATH_STR },
             { typeof(IList<>).FullName, INTERFACE_GROUP_STR + "IList<T>" },
             { typeof(ICollection<>).FullName, INTERFACE_GROUP_STR + "ICollection<T>" },
             { typeof(IEnumerable<>).FullName, INTERFACE_GROUP_STR + "IEnumerable<T>" },
