@@ -357,6 +357,16 @@ namespace CapyCSS.Script.Lib
 
         //------------------------------------------------------------------
         [ScriptMethod(LIB_FLOW_NAME)]
+        public static void NotNull<T>(T sample, Action<T> action)
+        {
+            if (sample != null)
+            {
+                action?.Invoke(sample);
+            }
+        }
+
+        //------------------------------------------------------------------
+        [ScriptMethod(LIB_FLOW_NAME)]
         public static void If(bool sample, Action trueAction, Action falseAction)
         {
             if (sample)
