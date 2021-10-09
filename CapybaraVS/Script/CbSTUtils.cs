@@ -79,6 +79,8 @@ namespace CapybaraVS.Script
         public const string MENU_SETTER = ".(setter).";     // コマンドメニュー上でのセッターグループ表現
         public const string MENU_CONSTRUCTOR = ".(new).";   // コマンドメニュー上でのコンストラクタグループ表現
 
+        public const string MENU_OLD_SPECIFICATION = "**OLD**"; // 古い仕様
+
         /// <summary>
         /// ユーザーによる型作成時に組み込み型選択肢に出てくる型情報です。
         /// </summary>

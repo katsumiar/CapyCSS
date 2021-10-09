@@ -944,7 +944,7 @@ namespace CapybaraVS.Script
                     _oldSpecification = methodAttr.OldSpecification;
                     if (_oldSpecification)
                     {
-                        _oldSpecificationMsg = " **OLD**";
+                        _oldSpecificationMsg = " " + CbSTUtils.MENU_OLD_SPECIFICATION;
                     }
                 }
 

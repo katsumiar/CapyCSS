@@ -631,6 +631,10 @@ namespace CapybaraVS.Controls.BaseControls
                 if (node.LeftClickCommand != null && node.LeftClickCommand.CanExecute(null))
                 {
                     var title = node.Path;
+                    if (title.Contains(CbSTUtils.MENU_OLD_SPECIFICATION))
+                    {
+                        return;
+                    }
                     title = StripDotNetStandardGroupTitle(title);
                     title = CbSTUtils.StripNameSpace(title, ApiImporter.MENU_TITLE_IMPORT_FUNCTION_FULL_PATH);
                     title = CbSTUtils.StartStrip(title, ApiImporter.MENU_TITLE_DOT_NET_FUNCTION_FULL_PATH);
@@ -675,6 +679,10 @@ namespace CapybaraVS.Controls.BaseControls
                 if (node.LeftClickCommand != null && node.LeftClickCommand.CanExecute(null))
                 {
                     var title = node.Path;
+                    if (title.Contains(CbSTUtils.MENU_OLD_SPECIFICATION))
+                    {
+                        return;
+                    }
                     title = StripDotNetStandardGroupTitle(title);
                     if (frontCut != null)
                     {
