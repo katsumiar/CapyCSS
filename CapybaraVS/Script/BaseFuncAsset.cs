@@ -49,22 +49,16 @@ namespace CapybaraVS.Script
             {
                 var literalNode = CreateGroup(ProgramNode, Script_Literal.LIB_Script_literal_NAME);
                 CreateAssetMenu(ownerCommandCanvas, literalNode, new LiteralType());
-                CreateAssetMenu(ownerCommandCanvas, literalNode, new LiteralListType());
-                CreateAssetMenu(ownerCommandCanvas, literalNode, new LiteralArrayType());
             }
 
             {
                 var variableNode = CreateGroup(ProgramNode, "Variable");
                 CreateAssetMenu(ownerCommandCanvas, variableNode, new CreateVariable());
-                CreateAssetMenu(ownerCommandCanvas, variableNode, new CreateFuncVariable());
-                CreateAssetMenu(ownerCommandCanvas, variableNode, new CreateNullableVariable());
                 CreateAssetMenu(ownerCommandCanvas, variableNode, new GetVariable());
                 CreateAssetMenu(ownerCommandCanvas, variableNode, new SetVariable());
 
                 {
                     var variableListNode = CreateGroup(variableNode, "Variable List");
-                    CreateAssetMenu(ownerCommandCanvas, variableListNode, new CreateVariableList());
-                    CreateAssetMenu(ownerCommandCanvas, variableListNode, new CreateVariableArray());
                     CreateAssetMenu(ownerCommandCanvas, variableListNode, new GetVariableFromIndex());
                     CreateAssetMenu(ownerCommandCanvas, variableListNode, new SetVariableToIndex());
                     CreateAssetMenu(ownerCommandCanvas, variableListNode, new AppendVariableList());
@@ -279,32 +273,6 @@ namespace CapybaraVS.Script
         public List<TypeRequest> typeRequests => new List<TypeRequest>()
         {
             new TypeRequest(t => !t.IsAbstract || t == CbSTUtils.ARRAY_TYPE)
-        };
-    }
-
-    //-----------------------------------------------------------------
-    class LiteralListType : IFuncAssetLiteralDef
-    {
-        public string MenuTitle => $"Literal List : {CbSTUtils.LITERAL_LIST_STR}<T>";
-
-        public string HelpText => Language.Instance[ApiImporter.BASE_LIB_TAG_PRE + nameof(LiteralListType)];
-
-        public List<TypeRequest> typeRequests => new List<TypeRequest>()
-        { 
-            new TypeRequest(CbSTUtils.LIST_TYPE, t => CbScript.AcceptAll(t))
-        };
-    }
-
-    //-----------------------------------------------------------------
-    class LiteralArrayType : IFuncAssetLiteralDef
-    {
-        public string MenuTitle => $"Literal Array : T[]";
-
-        public string HelpText => Language.Instance[ApiImporter.BASE_LIB_TAG_PRE + nameof(LiteralArrayType)];
-
-        public List<TypeRequest> typeRequests => new List<TypeRequest>()
-        {
-            new TypeRequest(CbSTUtils.ARRAY_TYPE, t => CbScript.AcceptAll(t))
         };
     }
 
@@ -849,58 +817,6 @@ namespace CapybaraVS.Script
     }
 
     //-----------------------------------------------------------------
-    class CreateVariableList : _GetVariable, IFuncCreateVariableAssetDef
-    {
-        public string MenuTitle => $"Create Variable List : {CbSTUtils.LITERAL_LIST_STR}<T>";
-
-        public new string HelpText => Language.Instance[ApiImporter.BASE_LIB_TAG_PRE + nameof(CreateVariableList)];
-
-        public List<TypeRequest> typeRequests => new List<TypeRequest>()
-        {
-            new TypeRequest(CbSTUtils.LIST_TYPE, t => true)
-        };
-    }
-
-    //-----------------------------------------------------------------
-    class CreateVariableArray : _GetVariable, IFuncCreateVariableAssetDef
-    {
-        public string MenuTitle => $"Create Variable Array : T[]";
-
-        public new string HelpText => Language.Instance[ApiImporter.BASE_LIB_TAG_PRE + nameof(CreateVariableArray)];
-
-        public List<TypeRequest> typeRequests => new List<TypeRequest>()
-        {
-            new TypeRequest(CbSTUtils.ARRAY_TYPE, t => true)
-        };
-    }
-
-    //-----------------------------------------------------------------
-    class CreateFuncVariable : _GetVariable, IFuncCreateVariableAssetDef
-    {
-        public new string HelpText => Language.Instance[ApiImporter.BASE_LIB_TAG_PRE + nameof(CreateFuncVariable)];
-
-        public string MenuTitle => $"Create Variable : {CbSTUtils.FUNC_STR}<T>";
-
-        public List<TypeRequest> typeRequests => new List<TypeRequest>()
-        {
-            new TypeRequest(CbSTUtils.FUNC_TYPE, t => true)
-        };
-    }
-
-    //-----------------------------------------------------------------
-    class CreateNullableVariable : _GetVariable, IFuncCreateVariableAssetDef
-    {
-        public new string HelpText => Language.Instance[ApiImporter.BASE_LIB_TAG_PRE + nameof(CreateNullableVariable)];
-
-        public string MenuTitle => $"Create Variable : T?";
-
-        public List<TypeRequest> typeRequests => new List<TypeRequest>()
-        {
-            new TypeRequest(CbSTUtils.NULLABLE_TYPE, t => true)
-        };
-    }
-
-    //-----------------------------------------------------------------
     class GetVariable : _GetVariable, IFuncCreateVariableAssetDef
     {
         public string MenuTitle => "Get Variable";
@@ -1407,9 +1323,9 @@ namespace CapybaraVS.Script
     {
         public string AssetCode => nameof(AppendVariableList);
 
-        public string HelpText => Language.Instance[ApiImporter.BASE_LIB_TAG_PRE + AssetCode];
+        public string MenuTitle => "Append VariableList " + CbSTUtils.MENU_OLD_SPECIFICATION;
 
-        public string MenuTitle => "Append VariableList";
+        public string HelpText => Language.Instance[ApiImporter.BASE_LIB_TAG_PRE + AssetCode];
 
         public List<TypeRequest> typeRequests => new List<TypeRequest>()
         {

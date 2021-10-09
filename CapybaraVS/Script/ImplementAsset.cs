@@ -49,7 +49,14 @@ namespace CapybaraVS.Script
             group.AddChild(menu);
             menu.LeftClickCommand = OwnerCommandCanvas.CreateEventCanvasCommand(
                 menu.Path, 
-                () => CbScript.CreateFunction(OwnerCommandCanvas, funcAssetDef.AssetCode)
+                () => {
+                    var result = CbScript.CreateFunction(OwnerCommandCanvas, funcAssetDef.AssetCode);
+                    if (funcAssetDef.MenuTitle.Contains(CbSTUtils.MENU_OLD_SPECIFICATION))
+                    {
+                        result.OldSpecification = true;
+                    }
+                    return result;
+                }
                 );
         }
 
@@ -66,7 +73,15 @@ namespace CapybaraVS.Script
             group.AddChild(menu);
             menu.LeftClickCommand = OwnerCommandCanvas.CreateEventCanvasCommand(
                 menu.Path,
-                () => CbScript.CreateFreeTypeVariableFunction(OwnerCommandCanvas, funcAssetDef.AssetCode, funcAssetDef.typeRequests)
+                () => 
+                { 
+                    var result = CbScript.CreateFreeTypeVariableFunction(OwnerCommandCanvas, funcAssetDef.AssetCode, funcAssetDef.typeRequests);
+                    if (funcAssetDef.MenuTitle.Contains(CbSTUtils.MENU_OLD_SPECIFICATION))
+                    {
+                        result.OldSpecification = true;
+                    }
+                    return result;
+                }
                 );
         }
 
@@ -83,7 +98,15 @@ namespace CapybaraVS.Script
             group.AddChild(menu);
             menu.LeftClickCommand = OwnerCommandCanvas.CreateEventCanvasCommand(
                 menu.Path,
-                () => CbScript.CreateFreeTypeVariableFunction(OwnerCommandCanvas, funcAssetDef.AssetCode, null, true)
+                () =>
+                { 
+                    var result = CbScript.CreateFreeTypeVariableFunction(OwnerCommandCanvas, funcAssetDef.AssetCode, null, true);
+                    if (funcAssetDef.MenuTitle.Contains(CbSTUtils.MENU_OLD_SPECIFICATION))
+                    {
+                        result.OldSpecification = true;
+                    }
+                    return result;
+                }
                 );
         }
 
@@ -100,7 +123,15 @@ namespace CapybaraVS.Script
             group.AddChild(menu);
             menu.LeftClickCommand = OwnerCommandCanvas.CreateEventCanvasCommand(
                 menu.Path, 
-                () => CbScript.CreateFreeTypeFunction(OwnerCommandCanvas, funcAssetDef.AssetCode, funcAssetDef.typeRequests)
+                () =>
+                {
+                    var result = CbScript.CreateFreeTypeFunction(OwnerCommandCanvas, funcAssetDef.AssetCode, funcAssetDef.typeRequests);
+                    if (funcAssetDef.MenuTitle.Contains(CbSTUtils.MENU_OLD_SPECIFICATION))
+                    {
+                        result.OldSpecification = true;
+                    }
+                    return result;
+                }
                 );
         }
 
@@ -117,7 +148,14 @@ namespace CapybaraVS.Script
             group.AddChild(menu);
             menu.LeftClickCommand = OwnerCommandCanvas.CreateEventCanvasCommand(
                 menu.Path,
-                () => CbScript.SelectVariableType(OwnerCommandCanvas, funcAssetDef.typeRequests)
+                () => { 
+                    var result = CbScript.SelectVariableType(OwnerCommandCanvas, funcAssetDef.typeRequests);
+                    if (funcAssetDef.MenuTitle.Contains(CbSTUtils.MENU_OLD_SPECIFICATION))
+                    {
+                        result.OldSpecification = true;
+                    }
+                    return result;
+                }
                 );
         }
     }
