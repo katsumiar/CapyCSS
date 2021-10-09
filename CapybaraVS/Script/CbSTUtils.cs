@@ -349,6 +349,12 @@ namespace CapybaraVS.Script
                                 cname = cname.TrimEnd('[');
                                 return __GetTypeName(CbST.GetTypeEx(cname));
                             }
+                            else if (type.ContainsGenericParameters)
+                            {
+                                // ジェネリックなパラメータを持っている
+
+                                return GetGenericTypeName(type);
+                            }
                             else
                             {
                                 Debug.Assert(false);

@@ -296,12 +296,20 @@ namespace CapybaraVS.Script
             if (classType.IsInterface)
                 return true;    // インターフェイスは扱う
 
+            if (classType.IsValueType)
+                return true;    // 値型は扱う
+
             if (!classType.IsClass)
                 return false;   // クラス以外は、扱わない
 
             return true;
         }
 
+        /// <summary>
+        /// 受け入れる型を判定します。
+        /// </summary>
+        /// <param name="type"></param>
+        /// <returns></returns>
         private static bool IsAcceptTypeMenuType(Type type)
         {
             if (type.IsNestedPrivate)
@@ -330,6 +338,9 @@ namespace CapybaraVS.Script
                 return true;
 
             if (type.IsClass)
+                return true;
+
+            if (type.IsValueType)
                 return true;
 
             return false;
