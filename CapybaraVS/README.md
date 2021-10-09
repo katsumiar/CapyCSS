@@ -19,6 +19,12 @@
 * デフォルトで「System」及び「System.Collections.Generic」のnamespaceをインポートするようにしました。
 * classでのインポート機能を無くしました。
 * コマンドウインドウの「Function」下の「Standard」を無くしました。
+* 静的クラスのメソッドがインポートできなかった問題に対応しました。
+* スクリプトのgetterから頭のget_を無くしました。
+* スクリプトのsetterから頭のset_を無くしました。
+* インポートしたメソッド名等諸々の名前の表現を調整しました。
+* namespace仕様に合わせてサンプルを修正しました。
+* スクリプトノードに古い仕様であることを表示する機能を追加しました。
 
 ## 特徴
 * ビジュアルなスクリプトを作成することができます。
@@ -33,7 +39,7 @@
 * .Net 5.0（6.0 preview でもビルド可）
 * c＃
 
-##「The data version are incompatible.」と表示される場合の対処方法
+## 「The data version are incompatible.」と表示される場合の対処方法
 Documentフォルダにある古い「CapyCSS」フォルダを削除して下さい。
 
 ## 実行オプション

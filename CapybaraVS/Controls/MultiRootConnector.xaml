@@ -6,7 +6,14 @@
              xmlns:local="clr-namespace:CapybaraVS.Controls"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800" HorizontalAlignment="Center" VerticalAlignment="Center" FocusVisualStyle="{x:Null}">
-    <StackPanel x:Name="MainPanel" HorizontalAlignment="Center" VerticalAlignment="Center">
-        <BaseControls:RootConnector x:Name="LinkConnectorControl" HorizontalAlignment="Right" />
-    </StackPanel>
+    <Grid HorizontalAlignment="Center" VerticalAlignment="Center">
+        <Grid x:Name="oldSpecification" Visibility="Hidden" ToolTip="This is an old specification method.">
+            <Rectangle RadiusX="10" RadiusY="20" StrokeThickness="8" Fill="#4CD89431"/>
+            <Rectangle Stroke="#FFE2B61E" RadiusX="10" RadiusY="20" StrokeThickness="8"/>
+            <Label Content="OLD" HorizontalAlignment="Left" VerticalAlignment="Top" FontSize="30" Foreground="#FFDA8115" FontWeight="Bold" />
+        </Grid>
+        <StackPanel x:Name="MainPanel" HorizontalAlignment="Center" VerticalAlignment="Center">
+            <BaseControls:RootConnector x:Name="LinkConnectorControl" HorizontalAlignment="Right" />
+        </StackPanel>
+    </Grid>
 </UserControl>

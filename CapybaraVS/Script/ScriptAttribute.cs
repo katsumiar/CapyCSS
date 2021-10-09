@@ -26,11 +26,13 @@ namespace CapybaraVS.Script
     [AttributeUsage(AttributeTargets.Method, AllowMultiple = true, Inherited = false)]
     public class ScriptMethodAttribute : Attribute
     {
-        private string path;        // メニュー用のパス
-        private string methodName;    // メソッド名
+        private string path;            // メニュー用のパス
+        private string methodName;      // メソッド名
+        private bool oldSpecification;  // 古い仕様
         public string Path => path;
         public string MethodName => methodName;
-        public ScriptMethodAttribute(string path = "", string methodName = null)
+        public bool OldSpecification => oldSpecification;
+        public ScriptMethodAttribute(string path = "", string methodName = null, bool oldSpecification = false)
         {
             if (path != "" && !path.EndsWith("."))
             {
@@ -38,6 +40,7 @@ namespace CapybaraVS.Script
             }
             this.path = path;
             this.methodName = methodName;
+            this.oldSpecification = oldSpecification;
         }
     }
 
@@ -918,13 +921,20 @@ namespace CapybaraVS.Script
                 nodeHint = Language.Instance[$"Assembly.{helpCode}/node"];
                 nodeHint = $"【{nodeHintTitle}】" + (nodeHint is null ? "" : Environment.NewLine + nodeHint);
 
-                // メニュー用のヒント
                 string hint = null;
+                bool _oldSpecification = false;
+                string _oldSpecificationMsg = "";
                 if (methodAttr != null)
                 {
                     // メニュー用ヒントをリソースから取得
-
                     hint = Language.Instance[$"Assembly.{helpCode}/menu"];
+
+                    // 古い仕様か？
+                    _oldSpecification = methodAttr.OldSpecification;
+                    if (_oldSpecification)
+                    {
+                        _oldSpecificationMsg = " **OLD**";
+                    }
                 }
 
                 if (hint is null)
@@ -936,7 +946,7 @@ namespace CapybaraVS.Script
                 AutoImplementFunctionInfo autoImplementFunctionInfo = new AutoImplementFunctionInfo()
                 {
                     assetCode = nodeCode,
-                    menuTitle = menuName,
+                    menuTitle = menuName + _oldSpecificationMsg,
                     funcTitle = nodeTitle,
                     hint = hint,
                     nodeHint = nodeHint,
@@ -947,6 +957,7 @@ namespace CapybaraVS.Script
                     isConstructor = methodInfo.IsConstructor,
                     typeRequests = genericTypeRequests,
                     genericMethodParameters = (methodInfo.IsGenericMethod) ? methodInfo.GetGenericArguments() : null,
+                    oldSpecification = _oldSpecification,
                 };
 
                 return autoImplementFunctionInfo;

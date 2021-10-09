@@ -36,6 +36,7 @@ namespace CapybaraVS.Script
                 IsConstructor = info.isConstructor,
                 typeRequests = info.typeRequests,
                 GenericMethodParameters = info.genericMethodParameters,
+                oldSpecification = info.oldSpecification,
             };
             return ret;
         }
@@ -96,6 +97,11 @@ namespace CapybaraVS.Script
         /// ※ジェネリックメソッドでないなら null
         /// </summary>
         public Type[] GenericMethodParameters = null;
+
+        /// <summary>
+        /// 古い仕様のノードか？
+        /// </summary>
+        public bool oldSpecification;
 
         /// <summary>
         /// メソッド呼び出し処理を実装する
@@ -231,6 +237,7 @@ namespace CapybaraVS.Script
                 }
             }
 
+            col.OldSpecification = oldSpecification;
             col.MakeFunction(
                 funcTitle + exTitle,
                 NodeHelpText,

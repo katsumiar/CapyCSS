@@ -504,6 +504,27 @@ namespace CapybaraVS.Controls
 
         #endregion
 
+        #region OldSpecification 添付プロパティ実装
+
+        private static ImplementDependencyProperty<MultiRootConnector, bool> impOldSpecification =
+            new ImplementDependencyProperty<MultiRootConnector, bool>(
+                nameof(OldSpecification),
+                (self, getValue) =>
+                {
+                    bool value = getValue(self);
+                    self.oldSpecification.Visibility = value ? Visibility.Visible : Visibility.Hidden;
+                });
+
+        public static readonly DependencyProperty OldSpecificationProperty = impOldSpecification.Regist(false);
+
+        public bool OldSpecification
+        {
+            get { return impOldSpecification.GetValue(this); }
+            set { impOldSpecification.SetValue(this, value); }
+        }
+
+        #endregion
+
         /// <summary>
         /// アセットリスト
         /// </summary>

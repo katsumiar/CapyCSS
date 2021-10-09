@@ -25,6 +25,7 @@ namespace CapybaraVS.Script
                 IsConstructor = info.isConstructor,
                 typeRequests = info.typeRequests,
                 GenericMethodParameters = info.genericMethodParameters,
+                oldSpecification = info.oldSpecification,
             };
             return ret;
         }
