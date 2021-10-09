@@ -720,18 +720,37 @@ namespace CapybaraVS.Script
         }
 
         /// <summary>
-        /// 前方一致した文字列を削除した後の最初の「.」文字以降の文字列を返します。
+        /// 前方一致した文字列を削除した後のnamespace情報を削除します。
         /// </summary>
         /// <param name="str">対象の文字列</param>
         /// <param name="strip">削除する文字列</param>
         /// <param name="IgnoreCase">大文字小文字を無視するなら true</param>
-        /// <returns>前方一致した文字列を削除した後の最初の「.」文字以降の文字列</returns>
-        public static string StartStripNext(string str, string strip, bool IgnoreCase = false)
+        /// <returns>前方一致した文字列を削除した後のnamespace情報を削除した文字列</returns>
+        public static string StripNameSpace(string str, string strip, bool IgnoreCase = false)
         {
             string result = StartStrip(str, strip, IgnoreCase);
-            if (result.Contains('.'))
+            if (result.StartsWith("namespace "))
             {
-                return result.Substring(result.IndexOf('.') + 1);
+                string stripName = result.Substring(result.IndexOf(" ") + 1);
+                string[] dotSep = stripName.Split('.');
+                for (int i = 0; i < dotSep.Length; ++i)
+                {
+                    for (int j = i + 1; j < dotSep.Length; ++j)
+                    {
+                        if (dotSep[i] != dotSep[j])
+                        {
+                            // 同一パターンの先頭では無い
+
+                            continue;
+                        }
+                        // 同一パターンの片方（namespace）を取り除く
+                        while (j-- != 0)
+                        {
+                            stripName = stripName.Substring(stripName.IndexOf('.') + 1);
+                        }
+                        return stripName;
+                    }
+                }
             }
             return result;
         }

@@ -296,9 +296,6 @@ namespace CapybaraVS.Script
             if (!classType.IsClass)
                 return false;   // クラス以外は、扱わない
 
-            if (classType.IsAbstract)
-                return false;   // 象徴クラスは、扱えない
-
             return true;
         }
 
@@ -777,6 +774,7 @@ namespace CapybaraVS.Script
                 //----------------------------------
                 // メソッド名を作成
                 string nodeName;
+                string nodeTitle;
                 if (methodAttr != null)
                 {
                     // メソッド属性情報を持っている
@@ -785,22 +783,30 @@ namespace CapybaraVS.Script
                     {
                         // 指定の名前を採用する
 
-                        nodeName = methodAttr.MethodName;
+                        nodeTitle = nodeName = methodAttr.MethodName;
+
                     }
                     else
                     {
-                        nodeName = methodInfo.Name;
+                        nodeTitle = nodeName = methodInfo.Name;
                     }
                 }
                 else
                 {
                     if (methodInfo.IsConstructor)
                     {
+                        if (methodInfo.IsAbstract)
+                        {
+                            // 象徴クラスは new できない
+
+                            return null;
+                        }
                         nodeName = "new " + className;
+                        nodeTitle = className;
                     }
                     else
                     {
-                        nodeName = methodInfo.Name;
+                        nodeTitle = nodeName = methodInfo.Name;
                     }
                 }
 
@@ -824,7 +830,7 @@ namespace CapybaraVS.Script
                     else
                     {
                         string group = "";
-                        if (methodInfo.Name.Contains("_"))
+                        if (methodInfo.Name.Contains("_") && methodInfo.IsSpecialName)
                         {
                             // 最初に見つかった _ までの文字列でグループを分ける
 
@@ -842,9 +848,13 @@ namespace CapybaraVS.Script
                         switch (group)
                         {
                             case "get.":
+                                menuName = menuName.Replace("get_","");
+                                nodeTitle = nodeTitle.Replace("get_","");
                                 menuName = className + CbSTUtils.MENU_GETTER + menuName;
                                 break;
                             case "set.":
+                                menuName = menuName.Replace("set_", "");
+                                nodeTitle = nodeTitle.Replace("set_", "");
                                 menuName = className + CbSTUtils.MENU_SETTER + menuName;
                                 break;
                             default:
@@ -877,7 +887,9 @@ namespace CapybaraVS.Script
                 }
 
                 // 引数情報を追加する
-                menuName += MakeParamsString(methodInfo);
+                string paramString = MakeParamsString(methodInfo);
+                menuName += paramString;
+                string nodeHintTitle = $"{classType.Namespace}.{className}.{nodeTitle}{paramString}";
 
                 // 返り値の型名を追加する
                 if (methodInfo.IsConstructor && classType.IsGenericType)
@@ -887,10 +899,13 @@ namespace CapybaraVS.Script
                 else
                 {
                     var type = retType("");
+                    string returnTypeString;
                     if (type.MyType == typeof(CbClass<CbGeneMethArg>))
-                        menuName += " : " + CbSTUtils.GetGenericTypeName((type.Data as CbGeneMethArg).ArgumentType);
+                        returnTypeString = CbSTUtils.GetGenericTypeName((type.Data as CbGeneMethArg).ArgumentType);
                     else
-                        menuName += " : " + type.TypeName;
+                        returnTypeString = type.TypeName;
+                    menuName += " : " + returnTypeString;
+                    nodeHintTitle += " : " + returnTypeString;
                 }
 
                 string helpCode = $"{classType.Namespace}:{className}." + nodeName.Replace(" ", "_");
@@ -899,7 +914,6 @@ namespace CapybaraVS.Script
 
                 // スクリプトノード用のヒント
                 string nodeHint = null;
-                string nodeHintTitle = menuName;
                 // ノード用ヒントを取得
                 nodeHint = Language.Instance[$"Assembly.{helpCode}/node"];
                 nodeHint = $"【{nodeHintTitle}】" + (nodeHint is null ? "" : Environment.NewLine + nodeHint);
@@ -923,7 +937,7 @@ namespace CapybaraVS.Script
                 {
                     assetCode = nodeCode,
                     menuTitle = menuName,
-                    funcTitle = nodeName,
+                    funcTitle = nodeTitle,
                     hint = hint,
                     nodeHint = nodeHint,
                     classType = classType,

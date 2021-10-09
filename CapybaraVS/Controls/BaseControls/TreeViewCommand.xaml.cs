@@ -632,7 +632,7 @@ namespace CapybaraVS.Controls.BaseControls
                 {
                     var title = node.Path;
                     title = StripDotNetStandardGroupTitle(title);
-                    title = CbSTUtils.StartStripNext(title, ApiImporter.MENU_TITLE_IMPORT_FUNCTION_FULL_PATH);
+                    title = CbSTUtils.StripNameSpace(title, ApiImporter.MENU_TITLE_IMPORT_FUNCTION_FULL_PATH);
                     title = CbSTUtils.StartStrip(title, ApiImporter.MENU_TITLE_DOT_NET_FUNCTION_FULL_PATH);
                     viewer.Dispatcher.Invoke(() =>
                     {
@@ -680,7 +680,7 @@ namespace CapybaraVS.Controls.BaseControls
                     {
                         title = CbSTUtils.StartStrip(title, frontCut, true);
                     }
-                    title = CbSTUtils.StartStripNext(title, ApiImporter.MENU_TITLE_IMPORT_FUNCTION_FULL_PATH);
+                    title = CbSTUtils.StripNameSpace(title, ApiImporter.MENU_TITLE_IMPORT_FUNCTION_FULL_PATH);
                     title = CbSTUtils.StartStrip(title, ApiImporter.MENU_TITLE_DOT_NET_FUNCTION_FULL_PATH);
                     string menuTitle = null;
                     if (frontCut != null)
