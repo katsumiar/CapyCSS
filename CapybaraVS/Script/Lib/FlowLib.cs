@@ -8,7 +8,8 @@ using System.Threading.Tasks;
 
 namespace CapyCSS.Script.Lib
 {
-    public class FlowLib
+    [ScriptClass]
+    public static class FlowLib
     {
         public const string LIB_FLOW_NAME = "Flow";
         public const string LIB_Fx_NAME = "f(x)";

@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 
 namespace CapybaraVS
 {
+    [ScriptClass]
     /// <summary>
     /// イージング関数
     /// </summary>

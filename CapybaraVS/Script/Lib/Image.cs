@@ -21,7 +21,8 @@ using static CbVS.Script.Lib.Media;
 
 namespace CbVS.Script.Lib
 {
-    public class Image
+    [ScriptClass]
+    public static class Image
     {
         private const string LIB_NAME = "Graphics.Image";
         private const string LIB_NAME2 = LIB_NAME + ".Def";

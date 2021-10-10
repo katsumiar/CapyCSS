@@ -23,6 +23,7 @@ using System.Windows.Threading;
 
 namespace CapybaraVS
 {
+    [ScriptClass]
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>

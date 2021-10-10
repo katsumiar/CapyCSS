@@ -10,6 +10,7 @@ using System.Windows.Media.Imaging;
 
 namespace CapybaraVS.Script.Lib
 {
+    [ScriptClass]
     public static class FileLib
     {
         private const string LIB_NAME = "File";

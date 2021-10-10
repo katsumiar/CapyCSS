@@ -4,7 +4,8 @@ using System.Text;
 
 namespace CapybaraVS.Script.Lib
 {
-    public class Union
+    [ScriptClass]
+    public static class Union
     {
         private const string LIB_NAME = "Union";
 

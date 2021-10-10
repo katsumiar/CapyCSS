@@ -4,7 +4,8 @@ using System.Text;
 
 namespace CapybaraVS.Script.Lib
 {
-    public class MathLib
+    [ScriptClass]
+    public static class MathLib
     {
         public const string LIB_MATH_NAME = "Math";
         private const string LIB_NAME2 = LIB_MATH_NAME + ".Literal";

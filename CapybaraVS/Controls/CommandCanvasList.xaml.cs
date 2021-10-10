@@ -26,6 +26,7 @@ using Path = System.IO.Path;
 
 namespace CapyCSS.Controls
 {
+    [ScriptClass]
     /// <summary>
     /// CommandCanvasList.xaml の相互作用ロジック
     /// </summary>

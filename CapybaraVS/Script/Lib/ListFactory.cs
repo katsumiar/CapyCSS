@@ -6,7 +6,8 @@ using System.Text;
 
 namespace CapybaraVS.Script.Lib
 {
-    public class ListFactory
+    [ScriptClass]
+    public static class ListFactory
     {
         private const string LIB_NAME = "ListFactory";
         private const string LIB_NAME2 = LIB_NAME + ".Convert";

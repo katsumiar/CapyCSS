@@ -20,11 +20,44 @@ using static CapybaraVS.Controls.BaseControls.CommandCanvas;
 
 namespace CapybaraVS.Script
 {
+    public interface IScriptArribute
+    {
+        string Path { get; }
+        string MethodName { get; }
+        bool OldSpecification { get; }
+        bool DefaultHide { get; }
+    }
+
+    /// <summary>
+    /// リフレクションによるメソッドのスクリプトノード化用のメソッド用属性です。
+    /// </summary>
+    [AttributeUsage(AttributeTargets.Class, AllowMultiple = false, Inherited = true)]
+    public class ScriptClassAttribute : Attribute, IScriptArribute
+    {
+        private string path;            // メニュー用のパス
+        private bool oldSpecification;  // 古い仕様
+        private bool defaultHide;
+        public string Path => path;
+        public string MethodName => null;
+        public bool OldSpecification => oldSpecification;
+        public bool DefaultHide => defaultHide;
+        public ScriptClassAttribute(string path = "", bool defaultHide = true, bool oldSpecification = false)
+        {
+            if (path != "" && !path.EndsWith("."))
+            {
+                path += ".";
+            }
+            this.path = path;
+            this.oldSpecification = oldSpecification;
+            this.defaultHide = defaultHide;
+        }
+    }
+
     /// <summary>
     /// リフレクションによるメソッドのスクリプトノード化用のメソッド用属性です。
     /// </summary>
     [AttributeUsage(AttributeTargets.Method, AllowMultiple = true, Inherited = false)]
-    public class ScriptMethodAttribute : Attribute
+    public class ScriptMethodAttribute : Attribute, IScriptArribute
     {
         private string path;            // メニュー用のパス
         private string methodName;      // メソッド名
@@ -32,6 +65,7 @@ namespace CapybaraVS.Script
         public string Path => path;
         public string MethodName => methodName;
         public bool OldSpecification => oldSpecification;
+        public bool DefaultHide => false;
         public ScriptMethodAttribute(string path = "", string methodName = null, bool oldSpecification = false)
         {
             if (path != "" && !path.EndsWith("."))
@@ -570,6 +604,12 @@ namespace CapybaraVS.Script
 
             foreach (Type classType in types)
             {
+                var classAttr = classType.GetCustomAttribute(typeof(ScriptClassAttribute)) as ScriptClassAttribute;
+                if (classAttr is null)
+                {
+                    continue;
+                }
+
                 if (!IsAcceptClass(classType))
                     continue;   // 扱えない
 
@@ -586,7 +626,7 @@ namespace CapybaraVS.Script
                             if (!IsAcceptMethod(classType, constructorInfo))
                                 continue;   // 未対応
 
-                            importScriptMethodAttributeMethods(OwnerCommandCanvas, node, classType, constructorInfo, null);
+                            importScriptMethodAttributeMethods(OwnerCommandCanvas, node, classType, constructorInfo, classAttr, null);
                         }
 #if !DEBUG_IMPORT
                         catch (Exception ex)
@@ -607,7 +647,7 @@ namespace CapybaraVS.Script
                         if (!IsAcceptMethod(classType, methodInfo))
                             continue;   // 未対応
 
-                        importScriptMethodAttributeMethods(OwnerCommandCanvas, node, classType, methodInfo, methodInfo.ReturnType);
+                        importScriptMethodAttributeMethods(OwnerCommandCanvas, node, classType, methodInfo, classAttr, methodInfo.ReturnType);
                     }
 #if !DEBUG_IMPORT
                     catch (Exception ex)
@@ -632,9 +672,15 @@ namespace CapybaraVS.Script
             TreeMenuNode node, 
             Type classType,
             MethodBase methodInfo,
+            IScriptArribute methodAttr,
             Type returnType)
         {
-            List<Task<AutoImplementFunctionInfo>> tasks = CreateMakeInportFunctionInfoTasks(classType, methodInfo, returnType);
+            List<Task<AutoImplementFunctionInfo>> tasks = CreateMakeInportFunctionInfoTasks(classType, methodInfo, methodAttr, returnType);
+
+            if (tasks is null)
+            {
+                return;
+            }
 
             // ノード化
             foreach (var info in tasks)
@@ -646,6 +692,14 @@ namespace CapybaraVS.Script
             }
         }
 
+        public class ScriptArributeInfo : IScriptArribute
+        {
+            public string Path { get; set; } = null;
+            public string MethodName { get; set; } = null;
+            public bool OldSpecification { get; set; } = false;
+            public bool DefaultHide { get; set; } = false;
+        }
+
         /// <summary>
         /// メソッド取り込み用情報収集タスクリストを作成します。
         /// </summary>
@@ -653,24 +707,53 @@ namespace CapybaraVS.Script
         /// <param name="methodInfo">メソッド情報</param>
         /// <param name="returnType">メソッドの返り値の型情報</param>
         /// <returns>タスクリスト</returns>
-        private static List<Task<AutoImplementFunctionInfo>> CreateMakeInportFunctionInfoTasks(Type classType, MethodBase methodInfo, Type returnType)
+        private static List<Task<AutoImplementFunctionInfo>> CreateMakeInportFunctionInfoTasks(
+            Type classType, 
+            MethodBase methodInfo,
+            IScriptArribute methodAttr,
+            Type returnType)
         {
             var tasks = new List<Task<AutoImplementFunctionInfo>>();
-            var methods = methodInfo.GetCustomAttributes(typeof(ScriptMethodAttribute));
-            foreach (Attribute att in methods)
+
+            var bbb = new ScriptArributeInfo()
             {
-                ScriptMethodAttribute methodAttr = att as ScriptMethodAttribute;
-                if (methodAttr != null)
+                Path = methodAttr.Path,
+                MethodName = methodAttr.MethodName,
+                OldSpecification = methodAttr.OldSpecification,
+                DefaultHide = methodAttr.DefaultHide,
+            };
+
+            var ovrMethodAttr = methodInfo.GetCustomAttribute(typeof(ScriptMethodAttribute)) as ScriptMethodAttribute;
+            if (ovrMethodAttr != null)
+            {
+                if (!String.IsNullOrEmpty(ovrMethodAttr.Path))
                 {
-                    Task<AutoImplementFunctionInfo> task = Task.Run(() =>
-                    {
-                        return MakeInportFunctionInfo(classType, methodInfo, returnType, methodAttr);
-                    });
-                    tasks.Add(task);
-#if DEBUG_IMPORT
-                    task.Wait();
-#endif
+                    bbb.Path = ovrMethodAttr.Path;
                 }
+                if (!String.IsNullOrEmpty(ovrMethodAttr.MethodName))
+                {
+                    bbb.MethodName = ovrMethodAttr.MethodName;
+                }
+                if (ovrMethodAttr.OldSpecification)
+                {
+                    bbb.OldSpecification = ovrMethodAttr.OldSpecification;
+                }
+            }
+            else if (bbb.DefaultHide)
+            {
+                return null;
+            }
+
+            if (methodAttr != null)
+            {
+                Task<AutoImplementFunctionInfo> task = Task.Run(() =>
+                {
+                    return MakeInportFunctionInfo(classType, methodInfo, returnType, bbb);
+                });
+                tasks.Add(task);
+#if DEBUG_IMPORT
+                task.Wait();
+#endif
             }
             return tasks;
         }
@@ -690,7 +773,7 @@ namespace CapybaraVS.Script
             Type classType,
             MethodBase methodInfo, 
             Type returnType,
-            ScriptMethodAttribute methodAttr = null,
+            IScriptArribute methodAttr = null,
             Module module = null)
         {
             if (returnType != null && returnType.IsGenericType && returnType.GetGenericTypeDefinition() == typeof(Task<>))

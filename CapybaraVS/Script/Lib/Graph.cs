@@ -8,7 +8,8 @@ using static CbVS.Script.Lib.Graphics;
 
 namespace CapybaraVS.Script.Lib
 {
-    public class Graph
+    [ScriptClass]
+    public static class Graph
     {
         private const string LIB_NAME = "Graph";
 

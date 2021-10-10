@@ -8,7 +8,8 @@ using System.Threading.Tasks;
 
 namespace CapybaraVS.Script.Lib
 {
-    public class Ip
+    [ScriptClass]
+    public static class Ip
     {
         private const string LIB_NAME = "Net";
         private const string LIB_NAME2 = "Net.Web";

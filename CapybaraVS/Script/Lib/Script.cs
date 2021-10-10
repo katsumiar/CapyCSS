@@ -9,7 +9,8 @@ using System.Windows;
 
 namespace CapyCSS.Script.Lib
 {
-    public class Script
+    [ScriptClass]
+    public static class Script
     {
         public const string LIB_Script_NAME = "Script";
 
@@ -27,7 +28,8 @@ namespace CapyCSS.Script.Lib
     }
 
     //------------------------------------------------------------------
-    public class Script_bool
+    [ScriptClass]
+    public static class Script_bool
     {
         private const string LIB_NAME = Script.LIB_Script_NAME + ".bool";
 
@@ -45,7 +47,8 @@ namespace CapyCSS.Script.Lib
     }
 
     //------------------------------------------------------------------
-    public class Script_byte
+    [ScriptClass]
+    public static class Script_byte
     {
         private const string LIB_NAME = Script.LIB_Script_NAME + ".byte";
 
@@ -75,7 +78,8 @@ namespace CapyCSS.Script.Lib
     }
 
     //------------------------------------------------------------------
-    public class Script_sbyte
+    [ScriptClass]
+    public static class Script_sbyte
     {
         private const string LIB_NAME = Script.LIB_Script_NAME + ".sbyte";
 
@@ -105,7 +109,8 @@ namespace CapyCSS.Script.Lib
     }
 
     //------------------------------------------------------------------
-    public class Script_char
+    [ScriptClass]
+    public static class Script_char
     {
         private const string LIB_NAME = Script.LIB_Script_NAME + ".char";
 
@@ -135,7 +140,8 @@ namespace CapyCSS.Script.Lib
     }
 
     //------------------------------------------------------------------
-    public class Script_short
+    [ScriptClass]
+    public static class Script_short
     {
         private const string LIB_NAME = Script.LIB_Script_NAME + ".short";
 
@@ -165,7 +171,8 @@ namespace CapyCSS.Script.Lib
     }
 
     //------------------------------------------------------------------
-    public class Script_int
+    [ScriptClass]
+    public static class Script_int
     {
         private const string LIB_NAME = Script.LIB_Script_NAME + ".int";
 
@@ -195,7 +202,8 @@ namespace CapyCSS.Script.Lib
     }
 
     //------------------------------------------------------------------
-    public class Script_long
+    [ScriptClass]
+    public static class Script_long
     {
         private const string LIB_NAME = Script.LIB_Script_NAME + ".long";
 
@@ -225,7 +233,8 @@ namespace CapyCSS.Script.Lib
     }
 
     //------------------------------------------------------------------
-    public class Script_float
+    [ScriptClass]
+    public static class Script_float
     {
         private const string LIB_NAME = Script.LIB_Script_NAME + ".float";
 
@@ -255,7 +264,8 @@ namespace CapyCSS.Script.Lib
     }
 
     //------------------------------------------------------------------
-    public class Script_double
+    [ScriptClass]
+    public static class Script_double
     {
         private const string LIB_NAME = Script.LIB_Script_NAME + ".double";
 
@@ -285,7 +295,8 @@ namespace CapyCSS.Script.Lib
     }
 
     //------------------------------------------------------------------
-    public class Script_ushort
+    [ScriptClass]
+    public static class Script_ushort
     {
         private const string LIB_NAME = Script.LIB_Script_NAME + ".ushort";
 
@@ -315,7 +326,8 @@ namespace CapyCSS.Script.Lib
     }
 
     //------------------------------------------------------------------
-    public class Script_uint
+    [ScriptClass]
+    public static class Script_uint
     {
         private const string LIB_NAME = Script.LIB_Script_NAME + ".uint";
 
@@ -345,7 +357,8 @@ namespace CapyCSS.Script.Lib
     }
 
     //------------------------------------------------------------------
-    public class Script_ulong
+    [ScriptClass]
+    public static class Script_ulong
     {
         private const string LIB_NAME = Script.LIB_Script_NAME + ".ulong";
 
@@ -375,7 +388,8 @@ namespace CapyCSS.Script.Lib
     }
 
     //------------------------------------------------------------------
-    public class Script_decimal
+    [ScriptClass]
+    public static class Script_decimal
     {
         private const string LIB_NAME = Script.LIB_Script_NAME + ".decimal";
 
@@ -405,354 +419,385 @@ namespace CapyCSS.Script.Lib
     }
 
     //------------------------------------------------------------------
-    public static class Script_Array<T>
-    {
-        private const string LIB_NAME = Script.LIB_Script_NAME + ".Array.base";
-
-        [ScriptMethod(LIB_NAME)]
-        public static int Length(T[] array)
-        {
-            return array.Length;
-        }
-
-        [ScriptMethod(LIB_NAME)]
-        public static bool All(T[] array, Func<T, bool> predicate)
-        {
-            return array.All(predicate);
-        }
-
-        [ScriptMethod(LIB_NAME)]
-        public static bool Any(T[] array, Func<T, bool> predicate)
-        {
-            return array.Any(predicate);
-        }
-
-        [ScriptMethod(LIB_NAME)]
-        public static IEnumerable<T> CreateList(IEnumerable<T> array)
-        {
-            return new List<T>(array);
-        }
-    }
-
-    //------------------------------------------------------------------
+    [ScriptClass(Script.LIB_Script_NAME + ".Array.bool")]
     public static class Script_boolArray
     {
-        private const string LIB_NAME = Script.LIB_Script_NAME + ".Array.bool";
-
-        [ScriptMethod(LIB_NAME, null, true)]
+        [ScriptMethod]
         public static int Length(bool[] array)
         {
             return array.Length;
         }
 
-        [ScriptMethod(LIB_NAME, null, true)]
+        [ScriptMethod]
         public static bool All(bool[] array, Func<bool, bool> predicate)
         {
             return array.All(predicate);
         }
 
-        [ScriptMethod(LIB_NAME, null, true)]
+        [ScriptMethod]
         public static bool Any(bool[] array, Func<bool, bool> predicate)
         {
             return array.Any(predicate);
         }
 
-        [ScriptMethod(LIB_NAME, null, true)]
-        public static IEnumerable<bool> CreateList(IEnumerable<bool> array)
+        [ScriptMethod]
+        public static IEnumerable<bool> ConvertList(IEnumerable<bool> array)
         {
             return new List<bool>(array);
         }
     }
 
     //------------------------------------------------------------------
-    public class Script_byteArray
+    [ScriptClass(Script.LIB_Script_NAME + ".Array.byte")]
+    public static class Script_byteArray
     {
-        private const string LIB_NAME = Script.LIB_Script_NAME + ".Array.byte";
-
-        [ScriptMethod(LIB_NAME, null, true)]
+        [ScriptMethod]
         public static int Length(byte[] array)
         {
             return array.Length;
         }
 
-        [ScriptMethod(LIB_NAME, null, true)]
+        [ScriptMethod]
         public static bool All(byte[] array, Func<byte, bool> predicate)
         {
             return array.All(predicate);
         }
 
-        [ScriptMethod(LIB_NAME, null, true)]
+        [ScriptMethod]
         public static bool Any(byte[] array, Func<byte, bool> predicate)
         {
             return array.Any(predicate);
         }
+
+        [ScriptMethod]
+        public static IEnumerable<byte> ConvertList(IEnumerable<byte> array)
+        {
+            return new List<byte>(array);
+        }
     }
 
     //------------------------------------------------------------------
-    public class Script_sbyteArray
+    [ScriptClass(Script.LIB_Script_NAME + ".Array.sbyte")]
+    public static class Script_sbyteArray
     {
-        private const string LIB_NAME = Script.LIB_Script_NAME + ".Array.sbyte";
-
-        [ScriptMethod(LIB_NAME, null, true)]
-        public static int Length(byte[] array)
+        [ScriptMethod]
+        public static int Length(sbyte[] array)
         {
             return array.Length;
         }
 
-        [ScriptMethod(LIB_NAME, null, true)]
+        [ScriptMethod]
         public static bool All(sbyte[] array, Func<sbyte, bool> predicate)
         {
             return array.All(predicate);
         }
 
-        [ScriptMethod(LIB_NAME, null, true)]
+        [ScriptMethod]
         public static bool Any(sbyte[] array, Func<sbyte, bool> predicate)
         {
             return array.Any(predicate);
         }
-    }
-    //------------------------------------------------------------------
-    public class Script_charArray
-    {
-        private const string LIB_NAME = Script.LIB_Script_NAME + ".Array.char";
 
-        [ScriptMethod(LIB_NAME, null, true)]
+        [ScriptMethod]
+        public static IEnumerable<sbyte> ConvertList(IEnumerable<sbyte> array)
+        {
+            return new List<sbyte>(array);
+        }
+    }
+
+    //------------------------------------------------------------------
+    [ScriptClass(Script.LIB_Script_NAME + ".Array.char")]
+    public static class Script_charArray
+    {
+        [ScriptMethod]
         public static int Length(char[] array)
         {
             return array.Length;
         }
 
-        [ScriptMethod(LIB_NAME, null, true)]
+        [ScriptMethod]
         public static bool All(char[] array, Func<char, bool> predicate)
         {
             return array.All(predicate);
         }
 
-        [ScriptMethod(LIB_NAME, null, true)]
+        [ScriptMethod]
         public static bool Any(char[] array, Func<char, bool> predicate)
         {
             return array.Any(predicate);
         }
+
+        [ScriptMethod]
+        public static IEnumerable<char> ConvertList(IEnumerable<char> array)
+        {
+            return new List<char>(array);
+        }
     }
 
     //------------------------------------------------------------------
-    public class Script_shortArray
+    [ScriptClass(Script.LIB_Script_NAME + ".Array.short")]
+    public static class Script_shortArray
     {
-        private const string LIB_NAME = Script.LIB_Script_NAME + ".Array.short";
-
-        [ScriptMethod(LIB_NAME, null, true)]
+        [ScriptMethod]
         public static int Length(short[] array)
         {
             return array.Length;
         }
 
-        [ScriptMethod(LIB_NAME, null, true)]
+        [ScriptMethod]
         public static bool All(short[] array, Func<short, bool> predicate)
         {
             return array.All(predicate);
         }
 
-        [ScriptMethod(LIB_NAME, null, true)]
+        [ScriptMethod]
         public static bool Any(short[] array, Func<short, bool> predicate)
         {
             return array.Any(predicate);
         }
+
+        [ScriptMethod]
+        public static IEnumerable<short> ConvertList(IEnumerable<short> array)
+        {
+            return new List<short>(array);
+        }
     }
 
     //------------------------------------------------------------------
-    public class Script_intArray
+    [ScriptClass(Script.LIB_Script_NAME + ".Array.int")]
+    public static class Script_intArray
     {
-        private const string LIB_NAME = Script.LIB_Script_NAME + ".Array.int";
-
-        [ScriptMethod(LIB_NAME, null, true)]
+        [ScriptMethod]
         public static int Length(int[] array)
         {
             return array.Length;
         }
 
-        [ScriptMethod(LIB_NAME, null, true)]
+        [ScriptMethod]
         public static bool All(int[] array, Func<int, bool> predicate)
         {
             return array.All(predicate);
         }
 
-        [ScriptMethod(LIB_NAME, null, true)]
+        [ScriptMethod]
         public static bool Any(int[] array, Func<int, bool> predicate)
         {
             return array.Any(predicate);
         }
+
+        [ScriptMethod]
+        public static IEnumerable<int> ConvertList(IEnumerable<int> array)
+        {
+            return new List<int>(array);
+        }
     }
 
     //------------------------------------------------------------------
-    public class Script_longArray
+    [ScriptClass(Script.LIB_Script_NAME + ".Array.long")]
+    public static class Script_longArray
     {
-        private const string LIB_NAME = Script.LIB_Script_NAME + ".Array.long";
-
-        [ScriptMethod(LIB_NAME, null, true)]
+        [ScriptMethod]
         public static int Length(long[] array)
         {
             return array.Length;
         }
 
-        [ScriptMethod(LIB_NAME, null, true)]
+        [ScriptMethod]
         public static bool All(long[] array, Func<long, bool> predicate)
         {
             return array.All(predicate);
         }
 
-        [ScriptMethod(LIB_NAME, null, true)]
+        [ScriptMethod]
         public static bool Any(long[] array, Func<long, bool> predicate)
         {
             return array.Any(predicate);
         }
+
+        [ScriptMethod]
+        public static IEnumerable<long> ConvertList(IEnumerable<long> array)
+        {
+            return new List<long>(array);
+        }
     }
 
     //------------------------------------------------------------------
-    public class Script_floatArray
+    [ScriptClass(Script.LIB_Script_NAME + ".Array.float")]
+    public static class Script_floatArray
     {
-        private const string LIB_NAME = Script.LIB_Script_NAME + ".Array.float";
-
-        [ScriptMethod(LIB_NAME, null, true)]
+        [ScriptMethod]
         public static int Length(float[] array)
         {
             return array.Length;
         }
 
-        [ScriptMethod(LIB_NAME, null, true)]
+        [ScriptMethod]
         public static bool All(float[] array, Func<float, bool> predicate)
         {
             return array.All(predicate);
         }
 
-        [ScriptMethod(LIB_NAME, null, true)]
+        [ScriptMethod]
         public static bool Any(float[] array, Func<float, bool> predicate)
         {
             return array.Any(predicate);
         }
+
+        [ScriptMethod]
+        public static IEnumerable<float> ConvertList(IEnumerable<float> array)
+        {
+            return new List<float>(array);
+        }
     }
 
     //------------------------------------------------------------------
-    public class Script_doubleArray
+    [ScriptClass(Script.LIB_Script_NAME + ".Array.double")]
+    public static class Script_doubleArray
     {
-        private const string LIB_NAME = Script.LIB_Script_NAME + ".Array.double";
-
-        [ScriptMethod(LIB_NAME, null, true)]
+        [ScriptMethod]
         public static int Length(double[] array)
         {
             return array.Length;
         }
 
-        [ScriptMethod(LIB_NAME, null, true)]
+        [ScriptMethod]
         public static bool All(double[] array, Func<double, bool> predicate)
         {
             return array.All(predicate);
         }
 
-        [ScriptMethod(LIB_NAME, null, true)]
+        [ScriptMethod]
         public static bool Any(double[] array, Func<double, bool> predicate)
         {
             return array.Any(predicate);
         }
+
+        [ScriptMethod]
+        public static IEnumerable<double> ConvertList(IEnumerable<double> array)
+        {
+            return new List<double>(array);
+        }
     }
 
     //------------------------------------------------------------------
-    public class Script_ushortArray
+    [ScriptClass(Script.LIB_Script_NAME + ".Array.ushort")]
+    public static class Script_ushortArray
     {
-        private const string LIB_NAME = Script.LIB_Script_NAME + ".Array.ushort";
-
-        [ScriptMethod(LIB_NAME, null, true)]
+        [ScriptMethod]
         public static int Length(ushort[] array)
         {
             return array.Length;
         }
 
-        [ScriptMethod(LIB_NAME, null, true)]
+        [ScriptMethod]
         public static bool All(ushort[] array, Func<ushort, bool> predicate)
         {
             return array.All(predicate);
         }
 
-        [ScriptMethod(LIB_NAME, null, true)]
+        [ScriptMethod]
         public static bool Any(ushort[] array, Func<ushort, bool> predicate)
         {
             return array.Any(predicate);
         }
+
+        [ScriptMethod]
+        public static IEnumerable<ushort> ConvertList(IEnumerable<ushort> array)
+        {
+            return new List<ushort>(array);
+        }
     }
 
     //------------------------------------------------------------------
-    public class Script_uintArray
+    [ScriptClass(Script.LIB_Script_NAME + ".Array.uint")]
+    public static class Script_uintArray
     {
-        private const string LIB_NAME = Script.LIB_Script_NAME + ".Array.uint";
-
-        [ScriptMethod(LIB_NAME, null, true)]
+        [ScriptMethod]
         public static int Length(uint[] array)
         {
             return array.Length;
         }
 
-        [ScriptMethod(LIB_NAME, null, true)]
+        [ScriptMethod]
         public static bool All(uint[] array, Func<uint, bool> predicate)
         {
             return array.All(predicate);
         }
 
-        [ScriptMethod(LIB_NAME, null, true)]
+        [ScriptMethod]
         public static bool Any(uint[] array, Func<uint, bool> predicate)
         {
             return array.Any(predicate);
         }
+
+        [ScriptMethod]
+        public static IEnumerable<uint> ConvertList(IEnumerable<uint> array)
+        {
+            return new List<uint>(array);
+        }
     }
 
     //------------------------------------------------------------------
-    public class Script_ulongArray
+    [ScriptClass(Script.LIB_Script_NAME + ".Array.ulong")]
+    public static class Script_ulongArray
     {
-        private const string LIB_NAME = Script.LIB_Script_NAME + ".Array.ulong";
-
-        [ScriptMethod(LIB_NAME, null, true)]
+        [ScriptMethod]
         public static int Length(ulong[] array)
         {
             return array.Length;
         }
 
-        [ScriptMethod(LIB_NAME, null, true)]
+        [ScriptMethod]
         public static bool All(ulong[] array, Func<ulong, bool> predicate)
         {
             return array.All(predicate);
         }
 
-        [ScriptMethod(LIB_NAME, null, true)]
+        [ScriptMethod]
         public static bool Any(ulong[] array, Func<ulong, bool> predicate)
         {
             return array.Any(predicate);
         }
+
+        [ScriptMethod]
+        public static IEnumerable<ulong> ConvertList(IEnumerable<ulong> array)
+        {
+            return new List<ulong>(array);
+        }
     }
 
     //------------------------------------------------------------------
-    public class Script_decimalArray
+    [ScriptClass(Script.LIB_Script_NAME + ".Array.decimal")]
+    public static class Script_decimalArray
     {
-        private const string LIB_NAME = Script.LIB_Script_NAME + ".Array.decimal";
-
-        [ScriptMethod(LIB_NAME, null, true)]
+        [ScriptMethod]
         public static int Length(decimal[] array)
         {
             return array.Length;
         }
 
-        [ScriptMethod(LIB_NAME, null, true)]
+        [ScriptMethod]
         public static bool All(decimal[] array, Func<decimal, bool> predicate)
         {
             return array.All(predicate);
         }
 
-        [ScriptMethod(LIB_NAME, null, true)]
+        [ScriptMethod]
         public static bool Any(decimal[] array, Func<decimal, bool> predicate)
         {
             return array.Any(predicate);
         }
+
+        [ScriptMethod]
+        public static IEnumerable<decimal> ConvertList(IEnumerable<decimal> array)
+        {
+            return new List<decimal>(array);
+        }
     }
 
     //------------------------------------------------------------------
-    public class Script_IEnumerable
+    [ScriptClass]
+    public static class Script_IEnumerable
     {
         private const string LIB_NAME = Script.LIB_Script_NAME + ".IEnumerable";
 
@@ -765,7 +810,8 @@ namespace CapyCSS.Script.Lib
     }
 
     //------------------------------------------------------------------
-    public class Script_Literal
+    [ScriptClass]
+    public static class Script_Literal
     {
         public const string LIB_Script_literal_NAME = "Literal";
 
@@ -778,7 +824,8 @@ namespace CapyCSS.Script.Lib
     }
 
     //------------------------------------------------------------------
-    public class Script_Literal2
+    [ScriptClass]
+    public static class Script_Literal2
     {
         public const string LIB_Script_literal_NAME = "Literal";
 
