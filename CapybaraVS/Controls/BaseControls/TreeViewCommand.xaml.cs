@@ -184,6 +184,14 @@ namespace CapybaraVS.Controls.BaseControls
                 node.Path = Path + ".";
             }
             node.Path = node.Path + node.Name;
+
+            if (node.Name.Contains(CbSTUtils.MENU_OLD_SPECIFICATION))
+            {
+                // 古い仕様は、登録しない
+
+                return;
+            }
+
             Child.Add(node);
         }
 
@@ -437,19 +445,19 @@ namespace CapybaraVS.Controls.BaseControls
                 { "ULONG", "System" },
                 { "DECIMAL", "System" },
 
-                { "BOOL[]", "Script.Array" },
-                { "BYTE[]", "Script.Array" },
-                { "SBYTE[]", "Script.Array" },
-                { "CHAR[]", "Script.Array" },
-                { "SHORT[]", "Script.Array" },
-                { "INT[]", "Script.Array" },
-                { "LONG[]", "Script.Array" },
-                { "FLOAT[]", "Script.Array" },
-                { "DOUBLE[]", "Script.Array" },
-                { "USHORT[]", "Script.Array" },
-                { "UINT[]", "Script.Array" },
-                { "ULONG[]", "Script.Array" },
-                { "DECIMAL[]", "Script.Array" },
+                { "BOOL[]", "Script.Array.base#" },
+                { "BYTE[]", "Script.Array.base#" },
+                { "SBYTE[]", "Script.Array.base#" },
+                { "CHAR[]", "Script.Array.base#" },
+                { "SHORT[]", "Script.Array.base#" },
+                { "INT[]", "Script.Array.base#" },
+                { "LONG[]", "Script.Array.base#" },
+                { "FLOAT[]", "Script.Array.base#" },
+                { "DOUBLE[]", "Script.Array.base#" },
+                { "USHORT[]", "Script.Array.base#" },
+                { "UINT[]", "Script.Array.base#" },
+                { "ULONG[]", "Script.Array.base#" },
+                { "DECIMAL[]", "Script.Array.base#" },
             };
 
             if (keyValuePairs.ContainsKey(name.ToUpper()))
