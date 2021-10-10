@@ -22,6 +22,11 @@ namespace CapybaraVS.Script
         /// </summary>
         string ItemName { get; }
 
+        /// <summary>
+        /// null か？
+        /// </summary>
+        bool IsNull { get; }
+
         Type OriginalReturnType { get; }
 
         /// <summary>
@@ -140,7 +145,7 @@ namespace CapybaraVS.Script
 
         public override Type OriginalType => typeof(T);
 
-#pragma warning disable 414  // 使っているのに使っていないと言われる
+#pragma warning disable 414  // 「割り当てられていますが、値は使用されていません」と言われる
         private bool nullFlg = true;
 
         public CbClass(T n, string name = "")

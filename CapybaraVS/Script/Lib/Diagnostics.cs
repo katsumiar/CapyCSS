@@ -4,11 +4,9 @@ using System.Text;
 
 namespace CapybaraVS.Script.Lib
 {
-    public class DiagnosticsLib
+    [ScriptClass("Diagnostics")]
+    public static class DiagnosticsLib
     {
-        private const string LIB_NAME = "Diagnostics";
-
-        [ScriptMethod(LIB_NAME)]
         public static ICollection<string> GetListOfRunningProcesses(bool distinct = false)
         {
             ICollection<string> processNameList = new List<string>();

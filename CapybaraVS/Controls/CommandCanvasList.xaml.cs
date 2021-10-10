@@ -26,6 +26,7 @@ using Path = System.IO.Path;
 
 namespace CapyCSS.Controls
 {
+    [ScriptClass]
     /// <summary>
     /// CommandCanvasList.xaml の相互作用ロジック
     /// </summary>
@@ -181,6 +182,9 @@ namespace CapyCSS.Controls
             AssetXML = new _AssetXML<CommandCanvasList>(this);
             ClearPublicExecuteEntryPoint(null);
             Instance = this;
+
+            // Consoleの出力先を変更する
+            Console.SetOut(new SystemTextWriter());
 
             Tab.Items.Clear();
             Dispatcher.BeginInvoke(new Action(() =>

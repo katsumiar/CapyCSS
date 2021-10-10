@@ -164,7 +164,7 @@ namespace CapybaraVS.Script
         protected ICbValue CallEvent(ICbValue variable, DummyArgumentsStack dummyArgumentstack)
         {
             ICbEvent cbEvent = variable as ICbEvent;
-            cbEvent.CallCallBack(dummyArgumentstack);
+            cbEvent.InvokeCallback(dummyArgumentstack);
             return cbEvent.Value;
         }
 
@@ -178,7 +178,7 @@ namespace CapybaraVS.Script
             ICbEvent cbEvent = variable as ICbEvent;
             if (cbEvent is null)
                 return false;
-            return cbEvent.IsCallBack;
+            return cbEvent.IsCallback;
         }
 
         /// <summary>

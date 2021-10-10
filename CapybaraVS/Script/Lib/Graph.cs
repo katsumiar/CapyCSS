@@ -2,12 +2,14 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Windows.Media;
 using static CapybaraVS.Controls.PlotWindow;
 using static CbVS.Script.Lib.Graphics;
 
 namespace CapybaraVS.Script.Lib
 {
-    public class Graph
+    [ScriptClass]
+    public static class Graph
     {
         private const string LIB_NAME = "Graph";
 
@@ -52,10 +54,17 @@ namespace CapybaraVS.Script.Lib
         }
 
         //------------------------------------------------------------------
-        [ScriptMethod(LIB_NAME2)]
+        [ScriptMethod(LIB_NAME2, null, true)]
         public static PlotInfo CreatePlotInfo(IEnumerable<double> list, DrawType drawType = DrawType.NormalPlot, BrushColors colors = BrushColors.None)
         {
             return new PlotInfo(list, drawType, CreateBrushes(colors));
+        }
+
+        //------------------------------------------------------------------
+        [ScriptMethod(LIB_NAME2)]
+        public static PlotInfo CreatePlotInfo(IEnumerable<double> list, SolidColorBrush brushes, DrawType drawType = DrawType.NormalPlot)
+        {
+            return new PlotInfo(list, drawType, brushes);
         }
 
         //------------------------------------------------------------------
@@ -66,10 +75,17 @@ namespace CapybaraVS.Script.Lib
         }
 
         //------------------------------------------------------------------
-        [ScriptMethod(LIB_NAME2)]
+        [ScriptMethod(LIB_NAME2, null, true)]
         public static PlotInfo CreatePlotInfo(IEnumerable<int> list, DrawType drawType = DrawType.NormalPlot, BrushColors colors = BrushColors.None)
         {
             return new PlotInfo(list, drawType, CreateBrushes(colors));
+        }
+
+        //------------------------------------------------------------------
+        [ScriptMethod(LIB_NAME2)]
+        public static PlotInfo CreatePlotInfo(IEnumerable<int> list, SolidColorBrush brushes, DrawType drawType = DrawType.NormalPlot)
+        {
+            return new PlotInfo(list, drawType, brushes);
         }
 
         //------------------------------------------------------------------

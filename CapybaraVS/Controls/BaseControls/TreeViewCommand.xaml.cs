@@ -184,6 +184,14 @@ namespace CapybaraVS.Controls.BaseControls
                 node.Path = Path + ".";
             }
             node.Path = node.Path + node.Name;
+
+            if (node.Name.Contains(CbSTUtils.MENU_OLD_SPECIFICATION))
+            {
+                // 古い仕様は、登録しない
+
+                return;
+            }
+
             Child.Add(node);
         }
 
@@ -423,19 +431,33 @@ namespace CapybaraVS.Controls.BaseControls
             Dictionary<string, string> keyValuePairs = new Dictionary<string, string>()
             {
                 { "STRING", "System" },
-                { "BOOL", "Logical#" },
-                { "BYTE", "Script" },
-                { "SBYTE", "Script" },
-                { "CHAR", "Script" },
-                { "SHORT", "Script" },
-                { "INT", "Script" },
-                { "LONG", "Script" },
-                { "FLOAT", "Script" },
-                { "DOUBLE", "Script" },
-                { "USHORT", "Script" },
-                { "UINT", "Script" },
-                { "ULONG", "Script" },
-                { "DECIMAL", "Script" },
+                { "BOOL", "System" },
+                { "BYTE", "System" },
+                { "SBYTE", "System" },
+                { "CHAR", "System" },
+                { "SHORT", "System" },
+                { "INT", "System" },
+                { "LONG", "System" },
+                { "FLOAT", "System" },
+                { "DOUBLE", "System" },
+                { "USHORT", "System" },
+                { "UINT", "System" },
+                { "ULONG", "System" },
+                { "DECIMAL", "System" },
+
+                { "BOOL[]", "Script.Array" },
+                { "BYTE[]", "Script.Array" },
+                { "SBYTE[]", "Script.Array" },
+                { "CHAR[]", "Script.Array" },
+                { "SHORT[]", "Script.Array" },
+                { "INT[]", "Script.Array" },
+                { "LONG[]", "Script.Array" },
+                { "FLOAT[]", "Script.Array" },
+                { "DOUBLE[]", "Script.Array" },
+                { "USHORT[]", "Script.Array" },
+                { "UINT[]", "Script.Array" },
+                { "ULONG[]", "Script.Array" },
+                { "DECIMAL[]", "Script.Array" },
             };
 
             if (keyValuePairs.ContainsKey(name.ToUpper()))
@@ -447,7 +469,7 @@ namespace CapybaraVS.Controls.BaseControls
                 }
                 else
                 {
-                    name = keyValuePairs[name.ToUpper()] + "." + name;
+                    name = keyValuePairs[name.ToUpper()] + "." + name.Replace("[]", "");
                 }
             }
 
@@ -617,8 +639,12 @@ namespace CapybaraVS.Controls.BaseControls
                 if (node.LeftClickCommand != null && node.LeftClickCommand.CanExecute(null))
                 {
                     var title = node.Path;
+                    if (title.Contains(CbSTUtils.MENU_OLD_SPECIFICATION))
+                    {
+                        return;
+                    }
                     title = StripDotNetStandardGroupTitle(title);
-                    title = CbSTUtils.StartStrip(title, ApiImporter.MENU_TITLE_DOT_NET_STANDERD_FULL_PATH);
+                    title = CbSTUtils.StripNameSpace(title, ApiImporter.MENU_TITLE_IMPORT_FUNCTION_FULL_PATH);
                     title = CbSTUtils.StartStrip(title, ApiImporter.MENU_TITLE_DOT_NET_FUNCTION_FULL_PATH);
                     viewer.Dispatcher.Invoke(() =>
                     {
@@ -661,12 +687,16 @@ namespace CapybaraVS.Controls.BaseControls
                 if (node.LeftClickCommand != null && node.LeftClickCommand.CanExecute(null))
                 {
                     var title = node.Path;
+                    if (title.Contains(CbSTUtils.MENU_OLD_SPECIFICATION))
+                    {
+                        return;
+                    }
                     title = StripDotNetStandardGroupTitle(title);
                     if (frontCut != null)
                     {
                         title = CbSTUtils.StartStrip(title, frontCut, true);
                     }
-                    title = CbSTUtils.StartStrip(title, ApiImporter.MENU_TITLE_DOT_NET_STANDERD_FULL_PATH);
+                    title = CbSTUtils.StripNameSpace(title, ApiImporter.MENU_TITLE_IMPORT_FUNCTION_FULL_PATH);
                     title = CbSTUtils.StartStrip(title, ApiImporter.MENU_TITLE_DOT_NET_FUNCTION_FULL_PATH);
                     string menuTitle = null;
                     if (frontCut != null)
@@ -767,7 +797,7 @@ namespace CapybaraVS.Controls.BaseControls
         /// <returns></returns>
         private static string StripDotNetStandardGroupTitle(string title)
         {
-            if (title.StartsWith(ApiImporter.MENU_TITLE_DOT_NET_STANDERD_FULL_PATH))
+            if (title.StartsWith(ApiImporter.MENU_TITLE_IMPORT_FUNCTION_FULL_PATH))
             {
                 int pos1 = title.LastIndexOf('.');
                 string temp = title.Substring(0, pos1);

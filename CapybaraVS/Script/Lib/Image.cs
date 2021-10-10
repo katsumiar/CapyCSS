@@ -21,7 +21,8 @@ using static CbVS.Script.Lib.Media;
 
 namespace CbVS.Script.Lib
 {
-    public class Image
+    [ScriptClass]
+    public static class Image
     {
         private const string LIB_NAME = "Graphics.Image";
         private const string LIB_NAME2 = LIB_NAME + ".Def";
@@ -863,9 +864,8 @@ namespace CbVS.Script.Lib
         /// 画像のヒストグラムを取得します。
         /// </summary>
         /// <param name="image">対象の画像</param>
-        /// <returns>画素値の分布配列</returns>
         [ScriptMethod(nameSpace5)]
-        public static void OutHistogram(string msg, BitmapSource image, GlayScaleType glayScale = GlayScaleType.BT_601, bool R = true, bool G = true, bool B = true)
+        public static void OutHistogram(string msg, BitmapSource image, GlayScaleType glayScale = GlayScaleType.NONE, bool R = true, bool G = true, bool B = true)
         {
             if (image is null)
                 return;
@@ -927,24 +927,35 @@ namespace CbVS.Script.Lib
 
             if (isTotalEq)
             {
-                plotList.Add(Graph.CreatePlotInfo(listGry, DrawType.BarGraph, Graphics.BrushColors.Black));
+                plotList.Add(Graph.CreatePlotInfo(listGry, System.Windows.Media.Brushes.Black, DrawType.BarGraph));
             }
             else
             {
                 if (listGry.Sum() > 0)
-                    plotList.Add(Graph.CreatePlotInfo(listGry, DrawType.Line, Graphics.BrushColors.Gray));
+                    plotList.Add(Graph.CreatePlotInfo(listGry, System.Windows.Media.Brushes.Gray, DrawType.Line));
 
                 if (listR.Sum() > 0)
-                    plotList.Add(Graph.CreatePlotInfo(listR, DrawType.Line, Graphics.BrushColors.Red));
+                    plotList.Add(Graph.CreatePlotInfo(listR, System.Windows.Media.Brushes.Red, DrawType.Line));
 
                 if (listG.Sum() > 0)
-                    plotList.Add(Graph.CreatePlotInfo(listG, DrawType.Line, Graphics.BrushColors.Green));
+                    plotList.Add(Graph.CreatePlotInfo(listG, System.Windows.Media.Brushes.Green, DrawType.Line));
 
                 if (listB.Sum() > 0)
-                    plotList.Add(Graph.CreatePlotInfo(listB, DrawType.Line, Graphics.BrushColors.Blue));
+                    plotList.Add(Graph.CreatePlotInfo(listB, System.Windows.Media.Brushes.Blue, DrawType.Line));
             }
 
             Graph.OutPlot(msg, plotList);
+        }
+
+        //------------------------------------------------------------------
+        /// <summary>
+        /// 画像のヒストグラムを取得します。
+        /// </summary>
+        /// <param name="imagePath">対象の画像へのパス</param>
+        [ScriptMethod(nameSpace5)]
+        public static void OutHistogram(string msg, string imagePath, GlayScaleType glayScale = GlayScaleType.NONE, bool R = true, bool G = true, bool B = true)
+        {
+            OutHistogram(msg, OpenImage(imagePath), glayScale, R, G, B);
         }
 
         //------------------------------------------------------------------

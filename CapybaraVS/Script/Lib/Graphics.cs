@@ -6,9 +6,9 @@ using System.Windows.Media;
 
 namespace CbVS.Script.Lib
 {
-    public class Graphics
+    [ScriptClass("Graphics", true, true)]
+    public static class Graphics
     {
-        private const string LIB_NAME = "Graphics";
         public enum BrushColors
         {
             None,
@@ -155,13 +155,11 @@ namespace CbVS.Script.Lib
             Transparent
         }
 
-        [ScriptMethod(LIB_NAME)]
         public static BrushColors CreateBrushColors(BrushColors colors)
         {
             return colors;
         }
 
-        [ScriptMethod(LIB_NAME)]
         public static SolidColorBrush CreateBrushes(BrushColors colors)
         {
             switch (colors)

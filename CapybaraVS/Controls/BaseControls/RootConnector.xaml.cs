@@ -469,9 +469,7 @@ namespace CapybaraVS.Controls.BaseControls
             {
                 sw.Stop();
                 TimeSpan ts = sw.Elapsed;
-                OwnerCommandCanvas.CommandCanvasControl.MainLog.OutLine(
-                    "system",
-                    $"Execute Time: {sw.ElapsedMilliseconds} (ms)");
+                Console.WriteLine($"Execute Time: {sw.ElapsedMilliseconds} (ms)");
                 OwnerCommandCanvas.CommandCanvasControl.MainLog.Flush();
 
                 OwnerCommandCanvas.EnabledScriptHoldActionMode = false; // 保留した表示更新処理を実行する
@@ -593,7 +591,7 @@ namespace CapybaraVS.Controls.BaseControls
             functionStack.Add(this);    // 実行済みであることを記録する
             arguments?.Clear();
 
-            if (ValueData.IsNullable && ValueData.IsNull)
+            if (ValueData is null || (ValueData.IsNullable && ValueData.IsNull))
             {
                 return null;
             }
@@ -1148,7 +1146,7 @@ namespace CapybaraVS.Controls.BaseControls
         {
             foreach (var node in ListData)
             {
-                if (node.ValueData.OriginalType == type)
+                if (node.ValueData.OriginalType.IsAssignableFrom(type))
                 {
                     return node;
                 }

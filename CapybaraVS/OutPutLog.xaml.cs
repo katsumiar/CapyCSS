@@ -1,5 +1,7 @@
-﻿using System;
+﻿using CapyCSS.Controls;
+using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
@@ -44,7 +46,7 @@ namespace CapybaraVS
             {
                 // コンソールからの起動であればコンソールにも出力する
 
-                Console.Write(msg);
+                SystemTextWriter.StdOut?.Write(msg);
             }
         }
 
@@ -96,6 +98,27 @@ namespace CapybaraVS
             afterPutTimer = new DispatcherTimer();
             afterPutTimer.Interval = new TimeSpan(0, 0, 1);
             afterPutTimer.Tick += (x,e) => { Flush(); };
+        }
+    }
+
+    public class SystemTextWriter
+        : TextWriter
+    {
+        public static TextWriter StdOut = null;
+        private const string TAG = "System";
+        public override Encoding Encoding => Encoding.UTF8;
+        public SystemTextWriter(IFormatProvider formatProvider) : base(formatProvider) { }
+        public SystemTextWriter() 
+        {
+            StdOut = Console.Out;
+        }
+        public override void Write(string value) => CommandCanvasList.Instance.MainLog.OutString(TAG, value);
+        public override void WriteLine(string value) => CommandCanvasList.Instance.MainLog.OutLine(TAG, value);
+
+        public override void Flush()
+        {
+            base.Flush();
+            CommandCanvasList.OutPut.Flush();
         }
     }
 }

@@ -1,6 +1,7 @@
-﻿//#define SHOW_LINK_ARRAY   // リスト型を接続したときにリストの要素をコピーして表示する
+﻿#define SHOW_LINK_ARRAY   // リスト型を接続したときにリストの要素をコピーして表示する
 
 using CapybaraVS.Script;
+using CapybaraVS.Script.Lib;
 using CapyCSS.Script;
 using CbVS.Script;
 using System;
@@ -106,19 +107,20 @@ namespace CapybaraVS.Controls.BaseControls
                 (self, getValue) =>
                 {
                     string text = getValue(self);
-                    string backup = self.ValueData.ValueUIString;
                     try
                     {
                         if (self.ValueData.IsStringableValue)
+                        {
                             self.ValueData.ValueString = text;
+                        }
                         self.Edit.Text = self.ValueData.ValueUIString.Trim('\r', '\n');
+                        self.Edit.Background = Brushes.Honeydew;
                         self.ToolTipUpdate();
                     }
                     catch (Exception ex)
                     {
                         System.Diagnostics.Debug.WriteLine(ex.Message);
-
-                        self.Edit.Text = backup;
+                        self.Edit.Background = Brushes.Salmon;
                     }
                     self.ParamName = self.ValueData.Name;
                 });
@@ -143,17 +145,22 @@ namespace CapybaraVS.Controls.BaseControls
                     {
                         self.TypeNameLabel.Content = self.TypeNameLabelOverlap;
                     }
-                    if (self.ValueData.IsByRef || self.ValueData.IsNullable)
+                    self.TypeNameLabel.FontWeight = FontWeights.UltraBold;
+                    if (self.ValueData.IsIn)
                     {
-                        self.TypeNameLabel.FontWeight = FontWeights.UltraBold;
-                        if (self.ValueData.IsByRef)
-                        {
-                            value = $"[ref] {value}";
-                        }
-                        if (self.ValueData.IsNullable)
-                        {
-                            value = $"{value}?";
-                        }
+                        value = $"{CbSTUtils.UI_IN_STR} {value}";
+                    }
+                    else if (self.ValueData.IsOut)
+                    {
+                        value = $"{CbSTUtils.UI_OUT_STR} {value}";
+                    }
+                    else if (self.ValueData.IsByRef)
+                    {
+                        value = $"{CbSTUtils.UI_REF_STR} {value}";
+                    }
+                    else if (self.ValueData.IsNullable)
+                    {
+                        value = $"{value}?";
                     }
                     else
                     {
@@ -186,7 +193,6 @@ namespace CapybaraVS.Controls.BaseControls
                     if (self.ValueData is ICbValue value)
                     {
                         value.Name = text;  // 変数に名前もコピーする
-                        //self.ParamEdit = value.ValueUIString;
                     }
                 });
 
@@ -207,7 +213,9 @@ namespace CapybaraVS.Controls.BaseControls
                 {
                     ICbValue valueData = getValue(self);
                     if (valueData != null)
+                    {
                         self.UpdateValueData(valueData);
+                    }
                 });
 
         public static readonly DependencyProperty ValueDataProperty = impValueData.Regist(null);
@@ -218,6 +226,10 @@ namespace CapybaraVS.Controls.BaseControls
             set { impValueData.SetValue(this, value); }
         }
 
+        /// <summary>
+        /// パラメータを更新します。
+        /// </summary>
+        /// <param name="valueData"></param>
         public void UpdateValueData(ICbValue valueData = null)
         {
             valueData ??= ValueData;
@@ -251,113 +263,10 @@ namespace CapybaraVS.Controls.BaseControls
                 ParamName = valueData.Name;
             }
 
-            if (ParamName.Length == 0)
-            {
-                // 何もないと編集もできなくなるので空白を入れておく
+            ShowNameLabels();
+            HideParamViewers();
+            ShowParam(valueData);
 
-                ParamName = " ";
-            }
-
-            TypeNameLabel.Visibility = (TypeName.Length != 0 ? Visibility.Visible : Visibility.Collapsed);
-            ParamNameLabel.Visibility = (ParamName.Length != 0 ? Visibility.Visible : Visibility.Collapsed);
-            if (ParamNameLabelOverlap.Length != 0)
-                ParamNameLabel.Visibility = Visibility.Visible;
-
-            Edit.Visibility = Visibility.Collapsed;
-            Select.Visibility = Visibility.Collapsed;
-            ImagePanel.Visibility = Visibility.Collapsed;
-            MediaPanel.Visibility = Visibility.Collapsed;
-
-            // ※ valueData.Data が null でも表示は必要
-            if (!valueData.IsNull && valueData is ICbValueEnum selectValue)
-            {
-                Select.Visibility = Visibility.Visible;
-                UpdateTypeEnum(valueData, selectValue);
-            }
-            else if (valueData is ICbClass cbClass && cbClass.OriginalReturnType == typeof(BitmapImage))
-            {
-                // Bitmapイメージを表示する
-
-                if (valueData.Data != null)
-                {
-                    var image = (valueData.Data as BitmapImage).Clone();
-
-                    image.DecodePixelWidth = (int)ImageBox.Width;
-                    image.DecodePixelHeight = (int)ImageBox.Height;
-                    ImageBox.Source = image;
-                }
-
-                ImagePanel.Visibility = Visibility.Visible;
-            }
-            else if (valueData is ICbClass cbClass2 && cbClass2.OriginalReturnType == typeof(BitmapSource))
-            {
-                // Bitmapイメージを表示する
-
-                if (valueData.Data != null)
-                {
-                    //var image = (valueData.Data as BitmapSource).Clone();
-                    var image = (valueData.Data as BitmapSource);
-
-                    ImageBox.Source = image;
-                }
-
-                ImagePanel.Visibility = Visibility.Visible;
-            }
-            else if (valueData is ICbClass cbClass3 && cbClass3.OriginalReturnType == typeof(MediaPlayer))
-            {
-                // MediaPlayerイメージを表示する
-
-                if (valueData.Data != null)
-                {
-                    MediaPlayer image = (MediaPlayer)(valueData.Data as MediaPlayer);
-                    //MediaPlayer image = (MediaPlayer)(valueData.Data as MediaPlayer).Clone();
-                    MediaBox.Source = image.Source;
-                    MediaBox.LoadedBehavior = MediaState.Stop;
-                    MediaBox.Visibility = Visibility.Visible;
-                }
-                else
-                {
-                    MediaBox.LoadedBehavior = MediaState.Close;
-                    MediaBox.Visibility = Visibility.Hidden;
-                }
-
-                MediaPanel.Visibility = Visibility.Visible;
-            }
-            else
-            {
-                Edit.Visibility = Visibility.Visible;
-
-                if (valueData.ValueUIString != null)
-                {
-                    ParamEdit = valueData.ValueUIString;
-                }
-                ToolTipUpdate();    // 必ず更新確認が必要
-
-                Edit.IsReadOnly = valueData.IsReadOnlyValue || ReadOnly || valueData.IsNull;
-
-                if (Edit.IsReadOnly)
-                    Edit.Background = Brushes.Lavender;
-
-                if (valueData is CbText cbText)
-                {
-                    Edit.ToolTip = null;
-                    Edit.MaxWidth = Edit.MinWidth = Edit.Width = 360;
-                    Edit.MaxHeight = Edit.MinHeight = Edit.Height = 300;
-                    Edit.AcceptsReturn = true;
-                    Edit.AcceptsTab = true;
-                    Edit.VerticalScrollBarVisibility = ScrollBarVisibility.Auto;
-                    Edit.HorizontalScrollBarVisibility = ScrollBarVisibility.Auto;
-                    //Edit.TextWrapping = TextWrapping.Wrap;
-                    if (!Edit.IsReadOnly)
-                        Edit.Background = Brushes.Honeydew;
-                }
-                else
-                {
-                    Edit.MaxHeight = 36;
-                    if (!Edit.IsReadOnly)
-                        Edit.Background = Brushes.White;
-                }
-            }
             if (!valueData.IsVisibleValue)
             {
                 Select.Visibility = Edit.Visibility = Visibility.Collapsed;
@@ -373,8 +282,193 @@ namespace CapybaraVS.Controls.BaseControls
             }
         }
 
-        private void UpdateTypeEnum(ICbValue valueData, ICbValueEnum selectValue)
+        /// <summary>
+        /// パラメータを表示します。
+        /// </summary>
+        /// <param name="valueData"></param>
+        private void ShowParam(ICbValue valueData)
         {
+            if (!valueData.IsNull && valueData is ICbValueEnum selectValue)
+            {
+                // enum型を表示する
+
+                ShowEnumTypeParamViewer(valueData, selectValue);
+                return;
+            }
+
+            if (valueData is ICbClass cbClass)
+            {
+                if (!cbClass.IsNull)
+                {
+                    object cbClassData = cbClass.Data;
+                    if (cbClassData != null)
+                    {
+                        if (cbClassData is ImageSource imageSource)
+                        {
+                            // イメージを表示する
+
+                            ShowImageSourceTypeParamViewer(imageSource);
+                            return;
+                        }
+                        if (cbClassData is Image image)
+                        {
+                            // イメージを表示する
+
+                            ShowImageTypeParamViewer(image);
+                            return;
+                        }
+                        if (cbClassData is MediaPlayer mediaPlayer)
+                        {
+                            // MediaPlayerイメージを表示する
+
+                            ShowMediaPlayerTypeParamViewer(mediaPlayer);
+                            return;
+                        }
+                    }
+                }
+            }
+
+            if (valueData is CbImagePath cbImagePath)
+            {
+                // イメージを表示する
+
+                if (ShowImagePathTypeParamViewer(cbImagePath))
+                {
+                    return;
+                }
+            }
+
+            Edit.Visibility = Visibility.Visible;
+            if (valueData.ValueUIString != null)
+            {
+                ParamEdit = valueData.ValueUIString;
+            }
+            ToolTipUpdate();    // 必ず更新確認が必要
+            if (valueData is CbText cbText)
+            {
+                // cbText型の場合は、編集領域を広げる
+
+                ShowTextTypeParamEdit();
+            }
+            else
+            {
+                // 通常の編集領域
+
+                ShowOthersTypeParamEdit();
+            }
+            Edit.IsReadOnly = valueData.IsReadOnlyValue || ReadOnly || valueData.IsNull;
+            if (!Edit.IsReadOnly)
+            {
+                Edit.Background = Brushes.Honeydew;
+            }
+            else
+            {
+                Edit.Background = Brushes.Lavender;
+            }
+        }
+
+        /// <summary>
+        /// パラメータ名及び型名を表示します。
+        /// </summary>
+        private void ShowNameLabels()
+        {
+            if (ParamName.Length == 0)
+            {
+                // 何もないと編集もできなくなるので空白を入れておく
+
+                ParamName = " ";
+            }
+
+            TypeNameLabel.Visibility = TypeName.Length != 0 ? Visibility.Visible : Visibility.Collapsed;
+            ParamNameLabel.Visibility = ParamName.Length != 0 ? Visibility.Visible : Visibility.Collapsed;
+            if (ParamNameLabelOverlap.Length != 0)
+            {
+                ParamNameLabel.Visibility = Visibility.Visible;
+            }
+        }
+
+        /// <summary>
+        /// 一般的なパラメータ表示を行います。
+        /// </summary>
+        private void ShowOthersTypeParamEdit()
+        {
+            Edit.MaxHeight = 36;
+        }
+
+        /// <summary>
+        /// ImageSource型のパラメータを表示します。
+        /// </summary>
+        /// <param name="imageSource"></param>
+        private void ShowImageSourceTypeParamViewer(ImageSource imageSource)
+        {
+            ImageBox.Source = imageSource;
+            ImagePanel.Visibility = Visibility.Visible;
+        }
+
+        /// <summary>
+        /// Image型のパラメータを表示します。
+        /// </summary>
+        /// <param name="image"></param>
+        private void ShowImageTypeParamViewer(Image image)
+        {
+            ImageBox = image;
+            ImagePanel.Visibility = Visibility.Visible;
+        }
+
+        /// <summary>
+        /// ImagePath型のパラメータを表示します。
+        /// </summary>
+        /// <param name="imagePath"></param>
+        private bool ShowImagePathTypeParamViewer(CbImagePath cbImagePath)
+        {
+            if (!FileLib.Exists(cbImagePath.Value))
+            {
+                return false;
+            }
+            ImageBox.ToolTip = cbImagePath.Value;
+            ImageBox.Source = new BitmapImage(new Uri(cbImagePath.Value));
+            ImageBox.Width = 240;
+            ImageBox.Height = 240;
+            ImagePanel.Visibility = Visibility.Visible;
+            return true;
+        }
+
+        /// <summary>
+        /// MediaPlayer型のパラメータを表示します。
+        /// </summary>
+        /// <param name="mediaPlayer"></param>
+        private void ShowMediaPlayerTypeParamViewer(MediaPlayer mediaPlayer)
+        {
+            MediaPlayer image = mediaPlayer;
+            MediaBox.Source = image.Source;
+            MediaBox.LoadedBehavior = MediaState.Stop;
+            MediaBox.Visibility = Visibility.Visible;
+            MediaPanel.Visibility = Visibility.Visible;
+        }
+
+        /// <summary>
+        /// Text型のパラメータを表示します。
+        /// </summary>
+        private void ShowTextTypeParamEdit()
+        {
+            Edit.ToolTip = null;
+            Edit.MaxWidth = Edit.MinWidth = Edit.Width = 360;
+            Edit.MaxHeight = Edit.MinHeight = Edit.Height = 300;
+            Edit.AcceptsReturn = true;
+            Edit.AcceptsTab = true;
+            Edit.VerticalScrollBarVisibility = ScrollBarVisibility.Auto;
+            Edit.HorizontalScrollBarVisibility = ScrollBarVisibility.Auto;
+            //Edit.TextWrapping = TextWrapping.Wrap;
+        }
+
+        /// <summary>
+        /// enum型のパラメータを表示します。
+        /// </summary>
+        /// <param name="valueData"></param>
+        /// <param name="selectValue"></param>
+        private void ShowEnumTypeParamViewer(ICbValue valueData, ICbValueEnum selectValue)
+        {
+            Select.Visibility = Visibility.Visible;
             Select.Items.Clear();
 
             int selectIndex = 0;
@@ -395,10 +489,26 @@ namespace CapybaraVS.Controls.BaseControls
             Select.IsHitTestVisible = !Select.IsReadOnly;
             Select.IsTabStop = !Select.IsReadOnly;
             if (Select.IsReadOnly)
+            {
                 Select.Foreground = Brushes.DarkGray;
+            }
             else
+            {
                 Select.Foreground = Brushes.Black;
+            }
         }
+
+        /// <summary>
+        /// パラメータービュアー類を非表示にします。
+        /// </summary>
+        private void HideParamViewers()
+        {
+            Edit.Visibility = Visibility.Collapsed;
+            Select.Visibility = Visibility.Collapsed;
+            ImagePanel.Visibility = Visibility.Collapsed;
+            MediaPanel.Visibility = Visibility.Collapsed;
+        }
+
 #endregion
 
         #region UpdateEvent 添付プロパティ実装
@@ -516,7 +626,9 @@ namespace CapybaraVS.Controls.BaseControls
             {
                 Debug.Assert(value != null);
                 if (_OwnerCommandCanvas is null)
+                {
                     _OwnerCommandCanvas = value;
+                }
             }
         }
 

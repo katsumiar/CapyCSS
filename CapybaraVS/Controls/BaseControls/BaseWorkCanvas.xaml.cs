@@ -325,7 +325,7 @@ namespace CapybaraVS.Control.BaseControls
                     }
                     catch (Exception ex)
                     {
-                        OwnerCommandCanvas.CommandCanvasControl.MainLog.OutLine("System", nameof(BaseWorkCanvas) + ":" + ex.Message);
+                        Console.WriteLine(nameof(BaseWorkCanvas) + ":" + ex.Message);
                     }
                 }), DispatcherPriority.Loaded);
             }

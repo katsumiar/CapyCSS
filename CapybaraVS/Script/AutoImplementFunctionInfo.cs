@@ -60,5 +60,9 @@ namespace CapybaraVS.Script
         /// ※ジェネリックメソッドでないなら null
         /// </summary>
         public Type[] genericMethodParameters;
+        /// <summary>
+        /// 古い仕様のノードか？
+        /// </summary>
+        public bool oldSpecification;
     }
 }

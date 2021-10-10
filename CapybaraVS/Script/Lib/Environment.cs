@@ -5,7 +5,8 @@ using System.Text.RegularExpressions;
 
 namespace CapybaraVS.Script.Lib
 {
-    public class EnvironmentLib
+    [ScriptClass]
+    public static class EnvironmentLib
     {
         private const string LIB_NAME = "Environment";
         public const string LIB_IO_NAME = "Input/Output";

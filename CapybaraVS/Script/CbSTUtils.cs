@@ -40,8 +40,8 @@ namespace CapybaraVS.Script
         public const string BOOL_STR = "bool";
         public const string STRING_STR = "string";
         public const string TEXT_STR = "text";
+        public const string IMAGE_PATH_STR = "ImagePath";
 
-        public const string GENELICS_GROUP_STR = "genelics.";
         public const string INTERFACE_GROUP_STR = "interface.";
         public const string SIGNED_GROUP_STR = "signed.";
         public const string UNSIGNED_GROUP_STR = "unsigned.";
@@ -56,6 +56,7 @@ namespace CapybaraVS.Script
         public static readonly Type FUNC2ARG_TYPE = typeof(Func<,>);
         public static readonly Type ACTION_TYPE = typeof(Action<>);
         public static readonly Type NULLABLE_TYPE = typeof(Nullable<>);
+        public static readonly Type ARRAY_TYPE = typeof(Array);
         public static readonly Type DUMMY_TYPE = typeof(int); // ダミー
 
         public const string ERROR_STR = "[ERROR]";          // エラーの表現
@@ -63,23 +64,36 @@ namespace CapybaraVS.Script
         public const string DELEGATE_STR = "[delegate]";    // dlegateの表現
         public const string UI_NULL_STR = "<null>";         // UI上のnullの表現
 
+        public const string UI_REF_STR = "[ref]";           // UI上の ref の表現
+        public const string UI_OUT_STR = "[out]";           // UI上の out の表現
+        public const string UI_IN_STR = "[in]";             // UI上の in の表現
+
         public const string MENU_STATIC = "[static]";       // コマンドメニュー上での静的表現
         public const string MENU_VIRTUAL = "[override]";    // コマンドメニュー上でのオーバーライド表現
+
+        public const string MENU_REF_STR = "ref";           // UI上の ref の表現
+        public const string MENU_OUT_STR = "out";           // UI上の out の表現
+        public const string MENU_IN_STR = "in";             // UI上の in の表現
 
         public const string MENU_GETTER = ".(getter).";     // コマンドメニュー上でのゲッターグループ表現
         public const string MENU_SETTER = ".(setter).";     // コマンドメニュー上でのセッターグループ表現
         public const string MENU_CONSTRUCTOR = ".(new).";   // コマンドメニュー上でのコンストラクタグループ表現
+
+        public const string MENU_OLD_SPECIFICATION = "**OLD**"; // 古い仕様
 
         /// <summary>
         /// ユーザーによる型作成時に組み込み型選択肢に出てくる型情報です。
         /// </summary>
         static public readonly Dictionary<string, string> BuiltInTypeList = new Dictionary<string, string>()
         {
-            { typeof(List<>).FullName, GENELICS_GROUP_STR + "List<>" },
-            { typeof(IList<>).FullName, INTERFACE_GROUP_STR + "IList<>" },
-            { typeof(ICollection<>).FullName, INTERFACE_GROUP_STR + "ICollection<>" },
-            { typeof(IEnumerable<>).FullName, INTERFACE_GROUP_STR + "IEnumerable<>" },
-            { typeof(IDictionary<,>).FullName, INTERFACE_GROUP_STR + "IDictionary<,>" },
+            { ARRAY_TYPE.FullName, "T[]" },
+            { LIST_TYPE.FullName, "List<T>" },
+            { NULLABLE_TYPE.FullName, "T?" },
+            { typeof(CbText).FullName, TEXT_STR },
+            { typeof(IList<>).FullName, INTERFACE_GROUP_STR + "IList<T>" },
+            { typeof(ICollection<>).FullName, INTERFACE_GROUP_STR + "ICollection<T>" },
+            { typeof(IEnumerable<>).FullName, INTERFACE_GROUP_STR + "IEnumerable<T>" },
+            { typeof(IDictionary<,>).FullName, INTERFACE_GROUP_STR + "IDictionary<TKey,TValue>" },
 
             { typeof(Action).FullName, ACTION_GROUP_STR + "Action" },
             { typeof(Action<>).FullName, ACTION_GROUP_STR + "Action<>" },
@@ -155,7 +169,6 @@ namespace CapybaraVS.Script
 
             { nameof(CbInt), INT_STR },
             { nameof(CbString), STRING_STR},
-            { nameof(CbText), TEXT_STR },
             { nameof(CbDouble), DOUBLE_STR },
             { nameof(CbByte), BYTE_STR },
             { nameof(CbSByte), SBYTE_STR },
@@ -170,6 +183,8 @@ namespace CapybaraVS.Script
             { nameof(CbBool), BOOL_STR },
             { nameof(CbObject), OBJECT_STR },
             { nameof(CbList), LIST_STR },
+            { nameof(CbText), TEXT_STR },
+            { nameof(CbImagePath), IMAGE_PATH_STR },
 
             { nameof(CbVoid), VOID_STR },
         };
@@ -230,6 +245,7 @@ namespace CapybaraVS.Script
                 return type.Name;
             }
 
+            bool isGeneName = false;
             bool isNotGeneName = false;
             if (type.IsGenericType)
             {
@@ -241,6 +257,13 @@ namespace CapybaraVS.Script
                 {
                     isNotGeneName = true;
                 }
+                isGeneName = true;
+            }
+            else if (type.Name.Contains("`"))
+            {
+                // out 修飾されていた場合あり得る
+
+                isGeneName = true;
             }
 
             string typeName = type.FullName;
@@ -248,6 +271,14 @@ namespace CapybaraVS.Script
             {
                 typeName = type.Name;
             }
+
+            if (type.IsByRef)
+            {
+                // リファレンスは一先ず外す
+
+                typeName = typeName.Replace("&", "");
+            }
+
             string geneString = "";
 
             if (type.IsArray)
@@ -270,7 +301,7 @@ namespace CapybaraVS.Script
                 CbTypeNameListRwLock.ReleaseReaderLock();
             }
 
-            if (type.IsGenericType && typeName.Contains("`"))
+            if (isGeneName)
             {
                 if (typeName.Contains("`"))
                 {
@@ -292,9 +323,55 @@ namespace CapybaraVS.Script
                 {
                     if (geneString == "")
                     {
-                        // IsClass だと思われる
+                        string cname = type.FullName;
+                        if (cname is null)
+                        {
+                            // どうにもならない？
 
-                        // TODO 詳細を調べる
+                            return "*Unsupported type*";
+                        }
+                        if (cname != null && cname.StartsWith("System.ArraySegment`"))
+                        {
+                            // ArraySegment は、強引に対応
+
+                            if (type.IsGenericType)
+                            {
+                                return GetGenericTypeName(type);
+                            }
+
+                            cname = cname.Substring(cname.IndexOf('['));
+                            cname = cname.Substring(0, cname.IndexOf(','));
+                            cname = cname.Replace("[", "");
+                            return $"ArraySegment<{__GetTypeName(CbST.GetTypeEx(cname))}>";
+                        }
+                        else
+                        {
+                            if (cname.Last() == '&')
+                            {
+                                // リファレンスを取った型で試してみる
+
+                                cname = cname.TrimEnd('&');
+                                return __GetTypeName(CbST.GetTypeEx(cname));
+                            }
+                            else if (cname.EndsWith("[]"))
+                            {
+                                // 配列を取った型で試してみる
+
+                                cname = cname.TrimEnd(']');
+                                cname = cname.TrimEnd('[');
+                                return __GetTypeName(CbST.GetTypeEx(cname));
+                            }
+                            else if (type.ContainsGenericParameters)
+                            {
+                                // ジェネリックなパラメータを持っている
+
+                                return GetGenericTypeName(type);
+                            }
+                            else
+                            {
+                                Debug.Assert(false);
+                            }
+                        }
                     }
                     else
                     {
@@ -345,48 +422,12 @@ namespace CapybaraVS.Script
         /// <returns></returns>
         private static string Optimisation(string typeName)
         {
-#if true
             int pos = typeName.LastIndexOf(".");
             if (pos != -1)
             {
                 typeName = typeName.Substring(pos + 1);
             }
             return typeName;
-#else
-            string[] arr = typeName.Split('.');
-            List<string> testName = new List<string>();
-            foreach (var node in arr)
-            {
-                testName.Add(node);
-            }
-            testName.Reverse();
-            string reverseName = testName[0];
-            for (int i = 1; i < testName.Count; ++i)
-            {
-                try
-                {
-                    CbTypeNameListRwLock.AcquireReaderLock(Timeout.Infinite);
-                    if (!CbTypeNameList.ContainsValue(reverseName))
-                    {
-                        break;
-                    }
-                }
-                finally
-                {
-                    CbTypeNameListRwLock.ReleaseReaderLock();
-                }
-                reverseName += "." + testName[i];
-            }
-            string[] arr2 = reverseName.Split('.');
-            List<string> reverseWork = new List<string>();
-            foreach (var node in arr2)
-            {
-                reverseWork.Add(node);
-            }
-            reverseWork.Reverse();
-            string newName = string.Join(".", reverseWork);
-            return newName;
-#endif
         }
 
         /// <summary>
@@ -697,6 +738,42 @@ namespace CapybaraVS.Script
         }
 
         /// <summary>
+        /// 前方一致した文字列を削除した後のnamespace情報を削除します。
+        /// </summary>
+        /// <param name="str">対象の文字列</param>
+        /// <param name="strip">削除する文字列</param>
+        /// <param name="IgnoreCase">大文字小文字を無視するなら true</param>
+        /// <returns>前方一致した文字列を削除した後のnamespace情報を削除した文字列</returns>
+        public static string StripNameSpace(string str, string strip, bool IgnoreCase = false)
+        {
+            string result = StartStrip(str, strip, IgnoreCase);
+            if (result.StartsWith("namespace "))
+            {
+                string stripName = result.Substring(result.IndexOf(" ") + 1);
+                string[] dotSep = stripName.Split('.');
+                for (int i = 0; i < dotSep.Length; ++i)
+                {
+                    for (int j = i + 1; j < dotSep.Length; ++j)
+                    {
+                        if (dotSep[i] != dotSep[j])
+                        {
+                            // 同一パターンの先頭では無い
+
+                            continue;
+                        }
+                        // 同一パターンの片方（namespace）を取り除く
+                        while (j-- != 0)
+                        {
+                            stripName = stripName.Substring(stripName.IndexOf('.') + 1);
+                        }
+                        return stripName;
+                    }
+                }
+            }
+            return result;
+        }
+
+        /// <summary>
         /// リスト内の要素を Dispose します。
         /// </summary>
         /// <typeparam name="T"></typeparam>
@@ -868,11 +945,11 @@ namespace CapybaraVS.Script
                 }
                 if (count != 0)
                 {
-                    valueString = $"IEnumerable {count}-{nodeTypeName}" + Environment.NewLine + valueString;
+                    valueString = $"{nameof(System.Collections.IEnumerable)} {count}-{nodeTypeName}" + Environment.NewLine + valueString;
                 }
                 else
                 {
-                    valueString = "IEnumerable 0" + Environment.NewLine + valueString;
+                    valueString = $"{nameof(System.Collections.IEnumerable)} 0" + Environment.NewLine + valueString;
                 }
             }
             else if (data is ICbShowValue showValue)

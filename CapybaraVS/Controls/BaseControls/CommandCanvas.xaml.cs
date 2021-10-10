@@ -109,7 +109,7 @@ namespace CapybaraVS.Controls.BaseControls
                 ReadAction = (self) =>
                 {
                     self.AssetId = AssetId;
-                    self._inportClassModule = ImportClassModule;
+                    self._inportNameSpaceModule = ImportNameSpaceModule;
                     self._inportPackageModule = ImportPackageModule;
                     self._inportDllModule = ImportDllModule;
                     self._inportNuGetModule = ImportNuGetModule;
@@ -175,7 +175,7 @@ namespace CapybaraVS.Controls.BaseControls
                 {
                     AssetId = self.AssetId;
                     DataVersion = DATA_VERSION;
-                    ImportClassModule = self.ApiImporter.ClassModuleList;
+                    ImportNameSpaceModule = self.ApiImporter.NameSpaceModuleList;
                     ImportPackageModule = self.ApiImporter.PackageModuleList;
                     ImportDllModule = self.ApiImporter.DllModulePathList;
                     ImportNuGetModule = self.ApiImporter.NuGetModuleList;
@@ -200,7 +200,7 @@ namespace CapybaraVS.Controls.BaseControls
             #region 固有定義
             public int DataVersion { get; set; } = 0;
             public BaseWorkCanvas._AssetXML<BaseWorkCanvas> WorkCanvas { get; set; } = null;
-            public List<string> ImportClassModule { get; set; } = null;
+            public List<string> ImportNameSpaceModule { get; set; } = null;
             public List<string> ImportPackageModule { get; set; } = null;
             public List<string> ImportDllModule { get; set; } = null;
             public List<string> ImportNuGetModule { get; set; } = null;
@@ -220,8 +220,8 @@ namespace CapybaraVS.Controls.BaseControls
                         // 以下、固有定義開放
                         WorkCanvas?.Dispose();
                         WorkCanvas = null;
-                        ImportClassModule?.Clear();
-                        ImportClassModule = null;
+                        ImportNameSpaceModule?.Clear();
+                        ImportNameSpaceModule = null;
                         ImportPackageModule?.Clear();
                         ImportPackageModule = null;
                         ImportDllModule?.Clear();
@@ -299,7 +299,7 @@ namespace CapybaraVS.Controls.BaseControls
         [Conditional("DEBUG")]
         private void DEBUG_Check()
         {
-            CommandCanvasControl.MainLog.OutString("System", nameof(CommandCanvas) + $": check...");
+            Console.Write(nameof(CommandCanvas) + $": check...");
 
             Type[] valueTypes = new Type[]
             {
@@ -461,13 +461,13 @@ namespace CapybaraVS.Controls.BaseControls
             foreach (var valueType in valueTypes)
                 CheckNullable(CbST.CbCreate(typeof(Nullable<>).MakeGenericType(new Type[] { valueType })));
 
-            CommandCanvasControl.MainLog.OutLine("System", "ok");
+            Console.WriteLine("ok");
         }
         #endregion
 
         //----------------------------------------------------------------------
         #region スクリプト内共有
-        public List<string> _inportClassModule = null;
+        public List<string> _inportNameSpaceModule = null;
         public List<string> _inportPackageModule = null;
         public List<string> _inportDllModule = null;
         public List<string> _inportNuGetModule = null;
@@ -608,7 +608,6 @@ namespace CapybaraVS.Controls.BaseControls
                 );
 
             ApiImporter.ImportBase();
-
             ImportModule();
         }
 
@@ -618,16 +617,15 @@ namespace CapybaraVS.Controls.BaseControls
         /// <returns>成功したらtrue</returns>
         public bool ImportModule()
         {
-            ApiImporter.ClearModule();
-            if (_inportClassModule != null)
+            if (_inportNameSpaceModule != null)
             {
-                // クラスインポートの復元
+                // ネームスペースインポートの復元
 
-                foreach (var imp in _inportClassModule)
+                foreach (var imp in _inportNameSpaceModule)
                 {
-                    ApiImporter.ImportClass(imp);
+                    ApiImporter.ImportNameSpace(imp);
                 }
-                _inportClassModule = null;
+                _inportNameSpaceModule = null;
             }
             if (_inportPackageModule != null)
             {
@@ -811,7 +809,7 @@ namespace CapybaraVS.Controls.BaseControls
                     swriter.WriteLine(writer.ToString());
                 }
                 OpenFileName = path;
-                CommandCanvasList.OutPut.OutLine("System", $"Save...\"{path}.xml\"");
+                Console.WriteLine($"Save...\"{path}.xml\"");
             }
             catch (Exception ex)
             {
@@ -937,10 +935,10 @@ namespace CapybaraVS.Controls.BaseControls
                     continue;
                 if (isFirst)
                 {
-                    CommandCanvasControl.MainLog.OutLine("System", $"---------------------- {title}");
+                    Console.WriteLine($"---------------------- {title}");
                     isFirst = false;
                 }
-                CommandCanvasControl.MainLog.OutLine("System", $"{node.Key} : {node.Value}");
+                Console.WriteLine($"{node.Key} : {node.Value}");
             }
         }
 
@@ -1063,7 +1061,7 @@ namespace CapybaraVS.Controls.BaseControls
         /// sample ディレクトリのフルパスを取得します。
         /// </summary>
         /// <returns>sampleディレクトリのフルパス</returns>
-        private static string GetSamplePath()
+        public static string GetSamplePath()
         {
             string exexPath = System.Environment.CommandLine;
             System.IO.FileInfo fi = new System.IO.FileInfo(exexPath.Replace("\"", ""));
@@ -1111,7 +1109,7 @@ namespace CapybaraVS.Controls.BaseControls
                 treeViewCommand.AssetTreeData.Add(typeWindow_interfaceMenu = new TreeMenuNode(CbSTUtils.INTERFACE_STR));
                 treeViewCommand.AssetTreeData.Add(typeWindow_structMenu = new TreeMenuNode(CbSTUtils.STRUCT_STR));
                 treeViewCommand.AssetTreeData.Add(typeWindow_enumMenu = new TreeMenuNode(CbSTUtils.ENUM_STR));
-                treeViewCommand.AssetTreeData.Add(typeWindow_import = new TreeMenuNode("Import"));
+                treeViewCommand.AssetTreeData.Add(typeWindow_import = new TreeMenuNode(ApiImporter.MENU_TITLE_IMPORT));
             }
         }
 
@@ -1257,6 +1255,13 @@ namespace CapybaraVS.Controls.BaseControls
 
                     typeName = RequestGenericTypeName(typeRequest.InitType.FullName, typeRequest.IsAccepts, title, positionSet);
                 }
+                else if (typeRequest.InitType == CbSTUtils.ARRAY_TYPE)
+                {
+                    // 配列型
+
+                    typeName = RequestTypeName(typeRequest.IsAccepts, title, positionSet);
+                    typeName += "[]";
+                }
                 else
                 {
                     // 指定された型
@@ -1295,7 +1300,7 @@ namespace CapybaraVS.Controls.BaseControls
             }
             catch (Exception ex)
             {
-                CommandCanvasControl.MainLog.OutLine("System", nameof(CommandCanvas) + ":" + ex.Message);
+                Console.WriteLine(nameof(CommandCanvas) + ":" + ex.Message);
             }
             return ret;
         }
@@ -1317,7 +1322,7 @@ namespace CapybaraVS.Controls.BaseControls
             }
             catch (Exception ex)
             {
-                CommandCanvasControl.MainLog.OutLine("System", nameof(CommandCanvas) + ":" + ex.Message);
+                Console.WriteLine(nameof(CommandCanvas) + ":" + ex.Message);
             }
             return ret;
         }
@@ -1378,7 +1383,7 @@ namespace CapybaraVS.Controls.BaseControls
             Type type = CbST.GetTypeEx(SelectType);
             if (type is null)
             {
-                CommandCanvasControl.MainLog.OutLine("System", nameof(CommandCanvas) + $": {SelectType} was an unsupportable type.");
+                Console.WriteLine(nameof(CommandCanvas) + $": {SelectType} was an unsupportable type.");
                 return null;
             }
 
@@ -1442,6 +1447,20 @@ namespace CapybaraVS.Controls.BaseControls
             if (genericType is null)
             {
                 return null;
+            }
+            if (genericType == CbSTUtils.ARRAY_TYPE)
+            {
+                bool andPositionSet = _CanTypeMenuExecuteEventIndex == 0;
+                if (_CanTypeMenuExecuteEventIndex != 0)
+                {
+                    _CanTypeMenuExecuteEventIndex--;
+                }
+                _CanTypeMenuExecuteEvent[_CanTypeMenuExecuteEventIndex] = t => CbScript.AcceptAll(t);
+                TypeMenu.RefreshItem();
+                Type result = RequestType(checkType, positionSet && andPositionSet);
+                if (result is null)
+                    return null;
+                return result.MakeArrayType();
             }
             if (genericType.IsGenericType)
             {
@@ -1702,7 +1721,7 @@ namespace CapybaraVS.Controls.BaseControls
                     TypeMenuWindow.Dispose();
                     TypeMenuWindow = null;
 
-                    _inportClassModule = null;
+                    _inportNameSpaceModule = null;
                     _inportPackageModule = null;
                     _inportDllModule = null;
                     _inportNuGetModule = null;

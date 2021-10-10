@@ -78,7 +78,17 @@ namespace CapybaraVS.Script
                 {
                     type = module.GetType(name);
                     if (type != null)
-                        break;
+                        return type;
+                }
+                foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies())
+                {
+                    foreach (var ct in assembly.GetTypes())
+                    {
+                        if (ct.FullName == name)
+                        {
+                            return ct;
+                        }
+                    }
                 }
             }
             return type;
@@ -130,6 +140,8 @@ namespace CapybaraVS.Script
                 case nameof(Boolean): return typeof(CbBool);
                 case nameof(String): return typeof(CbString);
                 case nameof(Object): return typeof(CbObject);
+                case nameof(CbText): return typeof(CbText);
+                case nameof(CbImagePath): return typeof(CbImagePath);
                 default:
                     break;
             }
@@ -369,6 +381,8 @@ namespace CapybaraVS.Script
                 case nameof(Boolean): return CbBool.Create(name);
                 case nameof(String): return CbString.Create(name);
                 case nameof(Object): return CbObject.Create(name);
+                case nameof(CbText): return CbText.Create(name);
+                case nameof(CbImagePath): return CbImagePath.Create(name);
                 default:
                     break;
             }
@@ -383,19 +397,24 @@ namespace CapybaraVS.Script
                 else if (type.Name != null)
                     _mame = type.Name;
                 Type tType = CbST.GetTypeEx(_mame);
-                if (tType is null)
-                    return null;
-                Type element = tType.GetElementType();
-                if (element != null)
+                if (tType != null)
                 {
-                    Type collectionType = typeof(List<>).MakeGenericType(element);
-                    var ret = CbList.Create(collectionType, name);
-                    if (ret.IsList)
+                    Type element = tType.GetElementType();
+                    if (element != null)
                     {
-                        ICbList cbList = ret.GetListValue;
-                        cbList.IsArrayType = true;
+                        Type collectionType = typeof(List<>).MakeGenericType(element);
+                        var ret = CbList.Create(collectionType, name);
+                        if (ret.IsList)
+                        {
+                            ICbList cbList = ret.GetListValue;
+                            cbList.IsArrayType = true;
+                        }
+                        return ret;
                     }
-                    return ret;
+                }
+                if (type.ContainsGenericParameters)
+                {
+                    return CbGeneMethArg.NTF(name, type, type.GetGenericArguments(), false);
                 }
             }
 
@@ -512,6 +531,12 @@ namespace CapybaraVS.Script
             {
                 // 構造体
 
+                if (type.FullName == "System.Void")
+                {
+                    Debug.Assert(false);
+                    return null;
+                }
+
                 if (!isCancelClass)
                 {
                     var ret = CbStruct.StructValue(type, name);
@@ -611,9 +636,17 @@ namespace CapybaraVS.Script
         /// </summary>
         bool IsReadOnlyName { get; }
         /// <summary>
-        /// 引数時参照修飾されているか？
+        /// 引数時ref修飾されているか？
         /// </summary>
         bool IsByRef { get; set; }
+        /// <summary>
+        /// 引数時out修飾されているか？
+        /// </summary>
+        bool IsOut { get; set; }
+        /// <summary>
+        /// 引数時in修飾されているか？
+        /// </summary>
+        bool IsIn { get; set; }
         /// <summary>
         /// リテラルかどうか？
         /// </summary>
@@ -893,9 +926,25 @@ namespace CapybaraVS.Script
         }
 
         /// <summary>
-        /// 引数時参照修飾されているか？
+        /// 引数時ref修飾されているか？
         /// </summary>
-        public bool IsByRef { get; set; } = false;
+        public bool IsByRef 
+        {
+            get => isByRef || IsOut;
+            set 
+            {
+                isByRef = value;
+            }
+        }
+        private bool isByRef = false;
+        /// <summary>
+        /// 引数時out修飾されているか？
+        /// </summary>
+        public bool IsOut { get; set; } = false;
+        /// <summary>
+        /// 引数時in修飾されているか？
+        /// </summary>
+        public bool IsIn { get; set; } = false;
         /// <summary>
         /// リテラルかどうか？
         /// ※変数以外は、原則リテラル
@@ -1078,6 +1127,7 @@ namespace CapybaraVS.Script
                         // ※IEnumerableを持ったクラスの場合、リストにはオリジナルのデータがある場合があるのでコピーする
 
                         (this as ICbList).OriginalData = (n as ICbList).OriginalData;
+                        ReturnAction = n.ReturnAction;
                     }
 
                     isNull = n.IsNull;
@@ -1323,6 +1373,9 @@ namespace CapybaraVS.Script
                     throw new NotImplementedException();
             }
         }
+
+        public bool IsOut { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        public bool IsIn { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 
         public ParamNameOnly(string name, bool readOnly = false)
         {

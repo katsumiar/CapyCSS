@@ -4,7 +4,8 @@ using System.Text;
 
 namespace CapybaraVS.Script.Lib
 {
-    public class StatisticsLib
+    [ScriptClass]
+    public static class StatisticsLib
     {
         private const string LIB_NAME = "Statistics";
 

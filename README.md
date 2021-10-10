@@ -1,46 +1,54 @@
 # CapyCSS
 ![sample](https://user-images.githubusercontent.com/63950487/132117205-85f0a709-10bf-4d5b-9dcd-b6d40b1c88aa.png)
 
-## 0.3.4.0 での変更
+## 0.3.5.0 での変更
 
-* コマンドフィルタリングを調整しました。
-* コマンドのフィルタリングで「&」で区切って条件を複数追加できるようにしました（AND条件です）。
-* クリア時のメモリリーク対応しています（何度かに分けて対応予定）。
-* ノードの返し値から接続を開始して、何も無いところで離すと値の型で自動検索するようにしました（選択するとスクリプトノードが置かれます）。
-* NuGetでのダウンロードをNuGet.exeで行うようにしました（手動でのインストールが必要です）。
-* Func, Action だけの限定ではなく、delegate に対応しました。
-* スクリプト用API関連を見直しました。
-* フロー用スクリプトノードを見直しました。
-* null許容型に対してスクリプト上での扱いに対応しました（変数作成、HasValue判定等）。
-* スクリプト専用に Dispose を用意し、メソッドの Dispose は直接呼べないようにしました。
-* bool に 0 か null が代入されたら false を代入するようにしました（キャスト時）
-* bool に 0 以外が代入されたら true を代入するようにしました（キャスト時）
-* char型の初期値とUIの表示及び入力内容を見直しました。
-* 実行可能ノードにエントリーポイント名を設定できるようにしました。
-* F5（もしくは Ctrl+F5）実行時にエントリーポイント名を指定できるようにしました。
-* 実行可能ノードにエントリーポイント名が設定されているとき、F5（もしくは Ctrl+F5）実行時は、エントリーポイント名が一致してい場合に実行するようにしました。
-* F5（もしくは Ctrl+F5）実行時に結果をウインドウで表示するようにしました（ただし、void な結果は除く）。
-* スクリプトからエントリーポイントを呼び出す CallEntryPoint 及び CallCurrentWorkEntryPoint を追加しました。
-* 過去のデータと互換性が無くなりました。
-
-![generic3](https://user-images.githubusercontent.com/63950487/132211159-54a9ad84-a001-4236-b059-6eff0614b775.gif)
-Nullable Sample:
-![nullable](https://user-images.githubusercontent.com/63950487/133881922-56db8e76-faf7-4b5d-b2d5-a64abfcebec4.png)
-Delegate Sample:
-![Delegate](https://user-images.githubusercontent.com/63950487/133883145-12f0e241-7f0d-424a-b235-b1376b283698.png)
+* Console の出力先をツール画面のログに出力するようにしました。
+* Sequenceスクリプトノードの名前の表示を「Sequence<型>」に変更しました。
+* 引数のin及びout修飾でUI上でrefとそれぞれ分けて表示するようにしました。
+* 参照渡しの引数の型名が正しく取得できない問題に対応しました。
+* IEnumerableを持つ引数の型がout修飾されている場合は、UI上で要素に子を追加できないようにしました。
+* 限定的だった配列対応を広範に対応しました。
+* Variable ListのGet VariableListの不具合対応。
+* Variable ListのSet VariableListの不具合対応。
+* Variable ListのAppend VariableListの不具合対応。
+* Text型が正しく動かなくなっていた問題に対応しました。
+* 起動時に「以前に表示されていないWindowにOwnerプロパティを設定することはできません」というエラーが出る場合がある問題対応を行いました。
+* Pathの先にある画像を表示するスクリプトノード（ImagePath）を追加しました。
+* namespaceでインポートできるようにしました。
+* デフォルトで「System」及び「System.Collections.Generic」のnamespaceをインポートするようにしました。
+* classでのインポート機能を無くしました。
+* コマンドウインドウの「Function」下の「Standard」を無くしました。
+* 静的クラスのメソッドがインポートできなかった問題に対応しました。
+* スクリプトのgetterから頭のget_を無くしました。
+* スクリプトのsetterから頭のset_を無くしました。
+* インポートしたメソッド名等諸々の名前の表現を調整しました。
+* namespace仕様に合わせてサンプルを修正しました。
+* スクリプトノードに古い仕様であることを表示する機能を追加しました。
+* インポートの対象に値型も加えました。
+* コマンドウインドウで古い仕様のノードは、検索にヒットしないようにしました。
+* サンプルから古い仕様のノードを取り除きました。
+* 当面の間、気が向いたときに好き放題触るというスタンスです。
+* 他で代用できるようになったノードスクリプト作成コマンドを削除しました。
+* ジェネリックな配列引数を持つメソッドのインポートに対応しました。
+* ノードの自動接続が働かない場合がある問題に対応しました。
+* System.Void に所属するものは、インポートしないようにしました。
+* 型名作成時の例外に対応しました。
 
 ## 特徴
 * ビジュアルなスクリプトを作成することができます。
 * c#で書かれたソースを修正してメソッドを追加することでノードとして使用できるようにインポートする機能があります（属性の指定とビルドが必要です）。
 * dllをインポートしてメソッドをスクリプトで使うことができます。
 * クラス指定でメソッドをインポートしてスクリプトで使うことができます。
-* NuGetからパッケージをインポートしてスクリプトで使うことができます。
-* 作者の趣味とc#の勉強と気まぐれで制作されています。
-* 当面の間、気が向いたときに好き放題触るというスタンスです。
+* NuGetからパッケージをインポートしてスクリプトで使うことができます（NuGet.exe のダウンロードが必要）。
+* 作者の趣味とc#をwpfの勉強と気まぐれで制作されています。
 
 ## ターゲット環境
-* .Net 5.0
+* .Net 5.0（6.0 preview でもビルド可）
 * c＃
+
+## 「The data version are incompatible.」と表示される場合の対処方法
+Documentフォルダにある古い「CapyCSS」フォルダを削除して下さい。
 
 ## 実行オプション
 保存したスクリプトファイルをコマンド引数で指定すると、起動時に自動的に読み込まれます。
@@ -66,6 +74,10 @@ CapyCSS.exe -ase script.cbs
 [ScriptMethod]
 public static ICollection<T> Filtering<T>(IEnumerable<T> samples, Predicate<T> predicate)
 {
+    if (predicate is null)
+    {
+        return null;
+    }
     var result = new List<T>();
     foreach (var node in samples)
     {
@@ -77,7 +89,7 @@ public static ICollection<T> Filtering<T>(IEnumerable<T> samples, Predicate<T> p
     return result;
 }
 ```
-この他、dll をインポートして機能を取り込むこともできます。
+この他、dll をインポートして機能を取り込むこともできます（こちらを推奨します）。
 
 ## 操作方法
 * スペースキーもしくはホイールボタンの押下でコマンドウインドウを表示できます。
@@ -129,7 +141,7 @@ public static ICollection<T> Filtering<T>(IEnumerable<T> samples, Predicate<T> p
 
 ## スクリプトが対応するメソッドの引数の型（及び修飾子など）
 * Type: int, string, double, byte, sbyte, long, short, ushort, uint, ulong, char, float, decimal, bool, object
-* 配列
+* 配列（ver0.3.5.0 からスクリプト上での扱いにも対応）
 * IEnumerableを持つ型（※UI上で要素を操作できます）
 * Class
 * Struct

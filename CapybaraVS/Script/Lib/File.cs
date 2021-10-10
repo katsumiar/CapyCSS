@@ -1,5 +1,7 @@
-﻿using CapyCSS.Controls;
+﻿using CapybaraVS.Controls.BaseControls;
+using CapyCSS.Controls;
 using CbVS.Controls;
+using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -8,14 +10,15 @@ using System.Windows.Media.Imaging;
 
 namespace CapybaraVS.Script.Lib
 {
-    public class FileLib
+    [ScriptClass]
+    public static class FileLib
     {
         private const string LIB_NAME = "File";
 
         //====================================================================================
         private const string LIB_NAME1 = LIB_NAME + ".Read";
 
-        [ScriptMethod(LIB_NAME1)]
+        [ScriptMethod(LIB_NAME1, null, true)]
         public static StreamReader CreateReadStream(string fileName, string encoding = "utf-8")
         {
             var encodingCode = Encoding.GetEncoding(encoding);
@@ -47,7 +50,7 @@ namespace CapybaraVS.Script.Lib
         }
 
         //------------------------------------------------------------------
-        [ScriptMethod(LIB_NAME1)]
+        [ScriptMethod(LIB_NAME1, null, true)]
         public static void CloseReadStream(StreamReader stream)
         {
             stream?.Close();
@@ -56,7 +59,7 @@ namespace CapybaraVS.Script.Lib
         //====================================================================================
         private const string LIB_NAME2 = LIB_NAME + ".Writer";
 
-        [ScriptMethod(LIB_NAME2)]
+        [ScriptMethod(LIB_NAME2, null, true)]
         public static StreamWriter CreateWriteStream(string fileName, bool append, string encoding = "utf-8")
         {
             var encodingCode = Encoding.GetEncoding(encoding);
@@ -83,7 +86,7 @@ namespace CapybaraVS.Script.Lib
         }
 
         //------------------------------------------------------------------
-        [ScriptMethod(LIB_NAME2)]
+        [ScriptMethod(LIB_NAME2, null, true)]
         public static void CloseWriteStream(StreamWriter stream)
         {
             stream?.Close();
@@ -219,42 +222,42 @@ namespace CapybaraVS.Script.Lib
         }
 
         //====================================================================================
-        [ScriptMethod(LIB_NAME)]
+        [ScriptMethod(LIB_NAME, null, true)]
         public static string GetFileName(string path)
         {
             return Path.GetFileName(path);
         }
 
         //------------------------------------------------------------------
-        [ScriptMethod(LIB_NAME)]
+        [ScriptMethod(LIB_NAME, null, true)]
         public static string GetExtension(string path)
         {
             return Path.GetExtension(path);
         }
 
         //------------------------------------------------------------------
-        [ScriptMethod(LIB_NAME)]
+        [ScriptMethod(LIB_NAME, null, true)]
         public static string GetDirectoryName(string path)
         {
             return Path.GetDirectoryName(path);
         }
 
         //------------------------------------------------------------------
-        [ScriptMethod(LIB_NAME)]
+        [ScriptMethod(LIB_NAME, null, true)]
         public static string GetFileNameWithoutExtension(string path)
         {
             return Path.GetFileNameWithoutExtension(path);
         }
 
         //------------------------------------------------------------------
-        [ScriptMethod(LIB_NAME)]
+        [ScriptMethod(LIB_NAME, null, true)]
         public static string GetCurrentDirectory()
         {
             return Directory.GetCurrentDirectory();
         }
 
         //------------------------------------------------------------------
-        [ScriptMethod(LIB_NAME)]
+        [ScriptMethod(LIB_NAME, null, true)]
         public static string SetCurrentDirectory(string path)
         {
             Directory.SetCurrentDirectory(path);
@@ -262,63 +265,63 @@ namespace CapybaraVS.Script.Lib
         }
 
         //------------------------------------------------------------------
-        [ScriptMethod(LIB_NAME)]
+        [ScriptMethod(LIB_NAME, null, true)]
         public static string GetPathRoot(string path)
         {
             return Path.GetPathRoot(path);
         }
 
         //------------------------------------------------------------------
-        [ScriptMethod(LIB_NAME)]
+        [ScriptMethod(LIB_NAME, null, true)]
         public static string GetFullPath(string path)
         {
             return Path.GetFullPath(path);
         }
 
         //------------------------------------------------------------------
-        [ScriptMethod(LIB_NAME)]
+        [ScriptMethod(LIB_NAME, null, true)]
         public static bool HasExtension(string path)
         {
             return Path.HasExtension(path);
         }
 
         //------------------------------------------------------------------
-        [ScriptMethod(LIB_NAME)]
+        [ScriptMethod(LIB_NAME, null, true)]
         public static bool IsPathRooted(string path)
         {
             return Path.IsPathRooted(path);
         }
 
         //------------------------------------------------------------------
-        [ScriptMethod(LIB_NAME)]
+        [ScriptMethod(LIB_NAME, null, true)]
         public static bool Exists(string path)
         {
             return File.Exists(path);
         }
 
         //------------------------------------------------------------------
-        [ScriptMethod(LIB_NAME)]
+        [ScriptMethod(LIB_NAME, null, true)]
         public static bool DirectoryExists(string path)
         {
             return Directory.Exists(path);
         }
 
         //------------------------------------------------------------------
-        [ScriptMethod(LIB_NAME)]
+        [ScriptMethod(LIB_NAME, null, true)]
         public static void Delete(string path)
         {
             File.Delete(path);
         }
 
         //------------------------------------------------------------------
-        [ScriptMethod(LIB_NAME)]
+        [ScriptMethod(LIB_NAME, null, true)]
         public static void Copy(string sourceFileName, string destFileName, bool overwrite = true)
         {
             File.Copy(sourceFileName, destFileName, overwrite);
         }
 
         //------------------------------------------------------------------
-        [ScriptMethod(LIB_NAME)]
+        [ScriptMethod(LIB_NAME, null, true)]
         public static void Move(string sourceFileName, string destFileName, bool overwrite = true)
         {
             File.Move(sourceFileName, destFileName, overwrite);
@@ -422,6 +425,44 @@ namespace CapybaraVS.Script.Lib
                 func.Invoke(_path);
             }
             return files.Count;
+        }
+
+        //------------------------------------------------------------------
+        [ScriptMethod(LIB_NAME)]
+        public static string BrowseFile(string title, string currentDir, string filter = "all (*.*)|*.*")
+        {
+            var dialog = new OpenFileDialog();
+            if (!string.IsNullOrEmpty(title))
+                dialog.Title = title;
+            if (!string.IsNullOrEmpty(currentDir))
+                dialog.InitialDirectory = currentDir;
+            else
+                dialog.InitialDirectory = CommandCanvas.GetSamplePath();
+            if (!string.IsNullOrEmpty(filter))
+                dialog.Filter = filter;
+            if (dialog.ShowDialog() == true)
+            {
+                return dialog.FileName;
+            }
+            return null;
+        }
+
+        //------------------------------------------------------------------
+        [ScriptMethod(LIB_NAME)]
+        public static string BrowseFolder(string title, string currentDir)
+        {
+            var dialog = new OpenFileDialog() { FileName = "SelectFolder", Filter = "Folder|.", CheckFileExists = false };
+            if (!string.IsNullOrEmpty(title))
+                dialog.Title = title;
+            if (!string.IsNullOrEmpty(currentDir))
+                dialog.InitialDirectory = currentDir;
+            else
+                dialog.InitialDirectory = CommandCanvas.GetSamplePath();
+            if (dialog.ShowDialog() == true)
+            {
+                return Path.GetDirectoryName(dialog.FileName);
+            }
+            return null;
         }
     }
 }

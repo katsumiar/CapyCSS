@@ -1,6 +1,7 @@
 ﻿using CapybaraVS.Control.BaseControls;
 using CapybaraVS.Controls.BaseControls;
 using CapybaraVS.Script;
+using CapybaraVS.Script.Lib;
 using CapyCSS.Controls;
 using CapyCSS.Script;
 using CbVS.Script;
@@ -325,8 +326,9 @@ namespace CapybaraVS.Controls
                 });
 
         /// <summary>
+        /// 画像のパスとして有効なら ImagePath 型に変換します。
         /// string型に変換します。
-        /// ただし、複数行の場合は、text型に変換します。
+        /// 複数行の場合は、text型に変換します。
         /// </summary>
         /// <param name="self">所属のクラスインスタンス</param>
         /// <param name="text">テキスト</param>
@@ -341,7 +343,15 @@ namespace CapybaraVS.Controls
             }
             else
             {
-                setValue = CbString.Create(text, "");
+                var imageExtensions = new List<string>() { ".png", ".gif", ".jpg", ".bmp" };
+                if (FileLib.Exists(text) && imageExtensions.Contains(FileLib.GetExtension(text.ToLower())))
+                {
+                    setValue = CbImagePath.Create(text, "");
+                }
+                else
+                {
+                    setValue = CbString.Create(text, "");
+                }
             }
             if (text.Length > 20)
             {
@@ -494,6 +504,27 @@ namespace CapybaraVS.Controls
 
         #endregion
 
+        #region OldSpecification 添付プロパティ実装
+
+        private static ImplementDependencyProperty<MultiRootConnector, bool> impOldSpecification =
+            new ImplementDependencyProperty<MultiRootConnector, bool>(
+                nameof(OldSpecification),
+                (self, getValue) =>
+                {
+                    bool value = getValue(self);
+                    self.oldSpecification.Visibility = value ? Visibility.Visible : Visibility.Hidden;
+                });
+
+        public static readonly DependencyProperty OldSpecificationProperty = impOldSpecification.Regist(false);
+
+        public bool OldSpecification
+        {
+            get { return impOldSpecification.GetValue(this); }
+            set { impOldSpecification.SetValue(this, value); }
+        }
+
+        #endregion
+
         /// <summary>
         /// アセットリスト
         /// </summary>
@@ -624,7 +655,7 @@ namespace CapybaraVS.Controls
             msg += Environment.NewLine;
             msg += ex.StackTrace;
             msg = caption + ": " + msg;
-            CommandCanvasList.OutPut.OutLine("Script", msg);
+            Console.WriteLine(msg);
             System.Diagnostics.Debug.WriteLine(msg);
             return msg;
         }
@@ -684,7 +715,7 @@ namespace CapybaraVS.Controls
                 {
                     // 存在しないアセットコード
 
-                    OwnerCommandCanvas.CommandCanvasControl.MainLog.OutLine("System", "Implement Error: " + AssetFuncType);
+                    Console.WriteLine("Implement Error: " + AssetFuncType);
                     return;
                 }
                 AssetFuncType = asset.AssetCode;    // 正しいアセットコードにリセットする

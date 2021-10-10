@@ -36,6 +36,7 @@ namespace CapybaraVS.Script
                 IsConstructor = info.isConstructor,
                 typeRequests = info.typeRequests,
                 GenericMethodParameters = info.genericMethodParameters,
+                oldSpecification = info.oldSpecification,
             };
             return ret;
         }
@@ -96,6 +97,11 @@ namespace CapybaraVS.Script
         /// ※ジェネリックメソッドでないなら null
         /// </summary>
         public Type[] GenericMethodParameters = null;
+
+        /// <summary>
+        /// 古い仕様のノードか？
+        /// </summary>
+        public bool oldSpecification;
 
         /// <summary>
         /// メソッド呼び出し処理を実装する
@@ -194,7 +200,7 @@ namespace CapybaraVS.Script
                     }
 
                     //クラスの型を確定した型で差し替える
-                    classType = Type.GetType(classType.FullName).MakeGenericType(argTypes.ToArray());
+                    classType = CbST.GetTypeEx(classType.FullName).MakeGenericType(argTypes.ToArray());
                 }
             }
 
@@ -231,6 +237,7 @@ namespace CapybaraVS.Script
                 }
             }
 
+            col.OldSpecification = oldSpecification;
             col.MakeFunction(
                 funcTitle + exTitle,
                 NodeHelpText,
@@ -272,6 +279,13 @@ namespace CapybaraVS.Script
             {
                 replaceArgumentType = GetRequestType(col, replaceArgumentType.Name);
             }
+            else if (replaceArgumentType.ContainsGenericParameters)
+            {
+                if (replaceArgumentType.IsArray)
+                {
+                    replaceArgumentType = GetRequestType(col, replaceArgumentType.GetElementType().Name).MakeArrayType();
+                }
+            }
             else
             {
                 Debug.Assert(false);
@@ -298,24 +312,19 @@ namespace CapybaraVS.Script
                     var ngt = MakeRequestGenericType(col, gat);
                     argTypes.Add(ngt);
                 }
+                else if (gat.IsGenericParameter)
+                {
+                    argTypes.Add(GetRequestType(col, gat.Name));
+                }
                 else
                 {
-                    // ジェネリック引数を収集する
+                    // ジェネリックでないパラメータはそのまま使う
 
-                    for (int i = 0; i < typeRequests.Count; i++)
-                    {
-                        TypeRequest typeRequest = typeRequests[i];
-                        if (typeRequest.Name == gat.Name)
-                        {
-                            // 対応する型を登録する
-
-                            argTypes.Add(col.SelectedVariableType[i]);
-                        }
-                    }
+                    argTypes.Add(gat);
                 }
             }
             // 確定した型を返す（repType を使って MakeGenericType しては駄目）
-            Type nType = Type.GetType(type.Namespace + "." + type.Name);
+            Type nType = CbST.GetTypeEx(type.Namespace + "." + type.Name);
             return nType.MakeGenericType(argTypes.ToArray());
         }
 
@@ -473,14 +482,14 @@ namespace CapybaraVS.Script
             {
                 // Func<> 及び Action<> は、オリジナルの型のインスタンスを用意する
 
-                if (cbEvent.CallBack is null)
+                if (cbEvent.Callback is null)
                 {
                     return null;
                 }
                 else
                 {
                     Debug.Assert(dummyArgumentsControl != null);
-                    return cbEvent.GetCallBackOriginalType(dummyArgumentsControl, dummyArgumentsStack);
+                    return cbEvent.GetCallbackOriginalType(dummyArgumentsControl, dummyArgumentsStack);
                 }
             }
             if (value.IsNull)
@@ -517,7 +526,7 @@ namespace CapybaraVS.Script
                     // Disposeメソッドを実行するとUI上で破棄された値を表示しようとするので Dispose は無視する
                     // ※値は Data のリファレンスで繋がっているので、対策として状態を残すのは簡単では無い
 
-                    CommandCanvasList.OutPut.OutLine("Script", CapybaraVS.Language.Instance["Help:Dispose"]);
+                    Console.WriteLine(CapybaraVS.Language.Instance["Help:Dispose"]);
                     return null;
                 }
             }
@@ -769,7 +778,7 @@ namespace CapybaraVS.Script
                 {
                     // 返し値のあるデリゲート型
 
-                    cbEvent.CallBack = (cagt) =>
+                    cbEvent.Callback = (cagt) =>
                     {
                         ICbValue retTypeValue = null;
                         try
@@ -792,7 +801,7 @@ namespace CapybaraVS.Script
                 {
                     // 返し値の無いデリゲート型
 
-                    cbEvent.CallBack = (cagt) =>
+                    cbEvent.Callback = (cagt) =>
                     {
                         try
                         {

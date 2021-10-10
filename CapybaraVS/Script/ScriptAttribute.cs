@@ -20,17 +20,53 @@ using static CapybaraVS.Controls.BaseControls.CommandCanvas;
 
 namespace CapybaraVS.Script
 {
+    public interface IScriptArribute
+    {
+        string Path { get; }
+        string MethodName { get; }
+        bool OldSpecification { get; }
+        bool DefaultHide { get; }
+    }
+
+    /// <summary>
+    /// リフレクションによるメソッドのスクリプトノード化用のメソッド用属性です。
+    /// </summary>
+    [AttributeUsage(AttributeTargets.Class, AllowMultiple = false, Inherited = true)]
+    public class ScriptClassAttribute : Attribute, IScriptArribute
+    {
+        private string path;            // メニュー用のパス
+        private bool oldSpecification;  // 古い仕様
+        private bool defaultHide;
+        public string Path => path;
+        public string MethodName => null;
+        public bool OldSpecification => oldSpecification;
+        public bool DefaultHide => defaultHide;
+        public ScriptClassAttribute(string path = "", bool defaultHide = true, bool oldSpecification = false)
+        {
+            if (path != "" && !path.EndsWith("."))
+            {
+                path += ".";
+            }
+            this.path = path;
+            this.oldSpecification = oldSpecification;
+            this.defaultHide = defaultHide;
+        }
+    }
+
     /// <summary>
     /// リフレクションによるメソッドのスクリプトノード化用のメソッド用属性です。
     /// </summary>
     [AttributeUsage(AttributeTargets.Method, AllowMultiple = true, Inherited = false)]
-    public class ScriptMethodAttribute : Attribute
+    public class ScriptMethodAttribute : Attribute, IScriptArribute
     {
-        private string path;        // メニュー用のパス
-        private string methodName;    // メソッド名
+        private string path;            // メニュー用のパス
+        private string methodName;      // メソッド名
+        private bool oldSpecification;  // 古い仕様
         public string Path => path;
         public string MethodName => methodName;
-        public ScriptMethodAttribute(string path = "", string methodName = null)
+        public bool OldSpecification => oldSpecification;
+        public bool DefaultHide => false;
+        public ScriptMethodAttribute(string path = "", string methodName = null, bool oldSpecification = false)
         {
             if (path != "" && !path.EndsWith("."))
             {
@@ -38,6 +74,7 @@ namespace CapybaraVS.Script
             }
             this.path = path;
             this.methodName = methodName;
+            this.oldSpecification = oldSpecification;
         }
     }
 
@@ -64,6 +101,8 @@ namespace CapybaraVS.Script
         {
             public Func<ICbValue> CreateArgument;
             public bool IsByRef = false;
+            public bool IsOut = false;
+            public bool IsIn = false;
             public bool IsSelf = false;
         }
 
@@ -83,7 +122,7 @@ namespace CapybaraVS.Script
         {
             string pkgId;
             string ver = "(" + packageName.Split("(")[1];
-            CommandCanvasList.OutPut.OutLine(nameof(ScriptImplement), $"NuGet {packageName}.");
+            Console.WriteLine($"NuGet {packageName}.");
 #if !DEBUG_IMPORT
             try
 #endif
@@ -113,7 +152,7 @@ namespace CapybaraVS.Script
 #if !DEBUG_IMPORT
             catch (WebException)
             {
-                CommandCanvasList.OutPut.OutLine(nameof(ScriptImplement), $"NG.");
+                Console.WriteLine($"NG.");
                 return null;
             }
 #endif
@@ -169,61 +208,44 @@ namespace CapybaraVS.Script
                 ControlTools.ShowErrorMessage(ex.Message, "Import Error.");
             }
 #endif
-            CommandCanvasList.OutPut.OutLine(nameof(ScriptImplement), $"imported {name} package.");
+            Console.WriteLine($"imported {name} package.");
             return outputName;
         }
 
         /// <summary>
-        /// スクリプトに基本のクラスをインポートします。
+        /// ネームスペース名からメソッドをスクリプトで使えるように取り込みます。
         /// </summary>
         /// <param name="OwnerCommandCanvas">オーナーキャンバス</param>
         /// <param name="node">登録先のノード</param>
-        /// <param name="name">クラス名</param>
-        public static void ImportScriptMethodsForBase(
-            CommandCanvas OwnerCommandCanvas,
-            TreeMenuNode node)
-        {
-            ImportScriptMethods(
-                OwnerCommandCanvas,
-                node,
-                typeof(System.Object).GetTypeInfo().Assembly,
-                null,
-                new List<string>() {
-                    "System."
-                },
-                (t) => OwnerCommandCanvas.AddImportTypeMenu(t)
-                );
-        }
-
-        /// <summary>
-        /// クラス名からメソッドをスクリプトで使えるように取り込みます。
-        /// </summary>
-        /// <param name="OwnerCommandCanvas">オーナーキャンバス</param>
-        /// <param name="node">登録先のノード</param>
-        /// <param name="name">クラス名</param>
-        /// <returns>インポートしたクラス名</returns>
-        public static string ImportScriptMethodsFromClass(
+        /// <param name="name">ネームスペース名</param>
+        /// <returns>インポートしたネームスペース名</returns>
+        public static string ImportScriptMethodsFromNameSpace(
             CommandCanvas OwnerCommandCanvas,
             TreeMenuNode node,
             string name)
         {
-            Type classType = CbST.GetTypeEx(name);
-            if (classType is null)
+            string outputName = ModuleControler.HEADER_NAMESPACE + name;
+            TreeMenuNode functionNode = ImplementAsset.CreateGroup(node, outputName);
+            List<Type> types = new List<Type>();
+            foreach (Assembly assembly in AppDomain.CurrentDomain.GetAssemblies())
             {
-                return null;
+                foreach (Type ct in assembly.GetTypes())
+                {
+                    if (ct.Namespace == name)
+                    {
+                        types.Add(ct);
+                    }
+                }
             }
-            var asm = classType.GetTypeInfo().Assembly;
-            string outputName = ModuleControler.HEADER_CLASS + name;
-            var functionNode = ImplementAsset.CreateGroup(node, outputName);
             ImportScriptMethods(
-                OwnerCommandCanvas, 
-                functionNode, 
-                asm, 
-                null, 
+                OwnerCommandCanvas,
+                functionNode,
                 null,
-                (t) => OwnerCommandCanvas.AddImportTypeMenu(t)
+                null,
+                (t) => OwnerCommandCanvas.AddImportTypeMenu(t),
+                types.ToArray()
                 );
-            CommandCanvasList.OutPut.OutLine(nameof(ScriptImplement), $"imported {name} class.");
+            Console.WriteLine($"imported {name} namespace.");
             return outputName;
         }
 
@@ -259,12 +281,12 @@ namespace CapybaraVS.Script
                     );
                 if (version is null)
                 {
-                    CommandCanvasList.OutPut.OutLine(nameof(ScriptImplement), $"imported {Path.GetFileNameWithoutExtension(name)} package.");
+                    Console.WriteLine($"imported {Path.GetFileNameWithoutExtension(name)} package.");
                     CommandCanvasList.OutPut.Flush();
                 }
                 else
                 {
-                    CommandCanvasList.OutPut.OutLine(nameof(ScriptImplement), $"imported {version} package.");
+                    Console.WriteLine($"imported {version} package.");
                     CommandCanvasList.OutPut.Flush();
                 }
                 return name;
@@ -272,7 +294,7 @@ namespace CapybaraVS.Script
 #if !DEBUG_IMPORT
             catch (Exception ex)
             {
-                CommandCanvasList.OutPut.OutLine(nameof(ScriptImplement), $"Import Dll Error: {ex.Message}.");
+                Console.WriteLine($"Import Dll Error: {ex.Message}.");
             }
             return null;
 #endif
@@ -308,15 +330,20 @@ namespace CapybaraVS.Script
             if (classType.IsInterface)
                 return true;    // インターフェイスは扱う
 
+            if (classType.IsValueType)
+                return true;    // 値型は扱う
+
             if (!classType.IsClass)
                 return false;   // クラス以外は、扱わない
-
-            if (classType.IsAbstract)
-                return false;   // 象徴クラスは、扱えない
 
             return true;
         }
 
+        /// <summary>
+        /// 受け入れる型を判定します。
+        /// </summary>
+        /// <param name="type"></param>
+        /// <returns></returns>
         private static bool IsAcceptTypeMenuType(Type type)
         {
             if (type.IsNestedPrivate)
@@ -345,6 +372,9 @@ namespace CapybaraVS.Script
                 return true;
 
             if (type.IsClass)
+                return true;
+
+            if (type.IsValueType)
                 return true;
 
             return false;
@@ -377,6 +407,11 @@ namespace CapybaraVS.Script
                 CbST.AddModule(module);
             }
 
+            ImportScriptMethods(OwnerCommandCanvas, node, module, importNameList, inportTypeMenu, types);
+        }
+
+        private static void ImportScriptMethods(CommandCanvas OwnerCommandCanvas, TreeMenuNode node, Module module, List<string> importNameList, Action<Type> inportTypeMenu, Type[] types)
+        {
             Task<List<Type>> tcTask = null;
             if (inportTypeMenu != null)
             {
@@ -449,6 +484,8 @@ namespace CapybaraVS.Script
                 if (!IsAcceptClass(classType))
                     continue;   // 扱えない
 
+                if (classType.Name.EndsWith("Exception"))
+                    continue;   // 例外は扱わない
                 if (classType == typeof(Action))
                     continue;   // 本システムで特殊な扱いをしているので扱わない
                 if (classType.Name.StartsWith("Action`"))
@@ -567,6 +604,12 @@ namespace CapybaraVS.Script
 
             foreach (Type classType in types)
             {
+                var classAttr = classType.GetCustomAttribute(typeof(ScriptClassAttribute)) as ScriptClassAttribute;
+                if (classAttr is null)
+                {
+                    continue;
+                }
+
                 if (!IsAcceptClass(classType))
                     continue;   // 扱えない
 
@@ -583,7 +626,7 @@ namespace CapybaraVS.Script
                             if (!IsAcceptMethod(classType, constructorInfo))
                                 continue;   // 未対応
 
-                            importScriptMethodAttributeMethods(OwnerCommandCanvas, node, classType, constructorInfo, null);
+                            importScriptMethodAttributeMethods(OwnerCommandCanvas, node, classType, constructorInfo, classAttr, null);
                         }
 #if !DEBUG_IMPORT
                         catch (Exception ex)
@@ -604,7 +647,7 @@ namespace CapybaraVS.Script
                         if (!IsAcceptMethod(classType, methodInfo))
                             continue;   // 未対応
 
-                        importScriptMethodAttributeMethods(OwnerCommandCanvas, node, classType, methodInfo, methodInfo.ReturnType);
+                        importScriptMethodAttributeMethods(OwnerCommandCanvas, node, classType, methodInfo, classAttr, methodInfo.ReturnType);
                     }
 #if !DEBUG_IMPORT
                     catch (Exception ex)
@@ -629,9 +672,15 @@ namespace CapybaraVS.Script
             TreeMenuNode node, 
             Type classType,
             MethodBase methodInfo,
+            IScriptArribute methodAttr,
             Type returnType)
         {
-            List<Task<AutoImplementFunctionInfo>> tasks = CreateMakeInportFunctionInfoTasks(classType, methodInfo, returnType);
+            List<Task<AutoImplementFunctionInfo>> tasks = CreateMakeInportFunctionInfoTasks(classType, methodInfo, methodAttr, returnType);
+
+            if (tasks is null)
+            {
+                return;
+            }
 
             // ノード化
             foreach (var info in tasks)
@@ -643,6 +692,14 @@ namespace CapybaraVS.Script
             }
         }
 
+        public class ScriptArributeInfo : IScriptArribute
+        {
+            public string Path { get; set; } = null;
+            public string MethodName { get; set; } = null;
+            public bool OldSpecification { get; set; } = false;
+            public bool DefaultHide { get; set; } = false;
+        }
+
         /// <summary>
         /// メソッド取り込み用情報収集タスクリストを作成します。
         /// </summary>
@@ -650,24 +707,53 @@ namespace CapybaraVS.Script
         /// <param name="methodInfo">メソッド情報</param>
         /// <param name="returnType">メソッドの返り値の型情報</param>
         /// <returns>タスクリスト</returns>
-        private static List<Task<AutoImplementFunctionInfo>> CreateMakeInportFunctionInfoTasks(Type classType, MethodBase methodInfo, Type returnType)
+        private static List<Task<AutoImplementFunctionInfo>> CreateMakeInportFunctionInfoTasks(
+            Type classType, 
+            MethodBase methodInfo,
+            IScriptArribute methodAttr,
+            Type returnType)
         {
             var tasks = new List<Task<AutoImplementFunctionInfo>>();
-            var methods = methodInfo.GetCustomAttributes(typeof(ScriptMethodAttribute));
-            foreach (Attribute att in methods)
+
+            var bbb = new ScriptArributeInfo()
             {
-                ScriptMethodAttribute methodAttr = att as ScriptMethodAttribute;
-                if (methodAttr != null)
+                Path = methodAttr.Path,
+                MethodName = methodAttr.MethodName,
+                OldSpecification = methodAttr.OldSpecification,
+                DefaultHide = methodAttr.DefaultHide,
+            };
+
+            var ovrMethodAttr = methodInfo.GetCustomAttribute(typeof(ScriptMethodAttribute)) as ScriptMethodAttribute;
+            if (ovrMethodAttr != null)
+            {
+                if (!String.IsNullOrEmpty(ovrMethodAttr.Path))
                 {
-                    Task<AutoImplementFunctionInfo> task = Task.Run(() =>
-                    {
-                        return MakeInportFunctionInfo(classType, methodInfo, returnType, methodAttr);
-                    });
-                    tasks.Add(task);
-#if DEBUG_IMPORT
-                    task.Wait();
-#endif
+                    bbb.Path = ovrMethodAttr.Path;
                 }
+                if (!String.IsNullOrEmpty(ovrMethodAttr.MethodName))
+                {
+                    bbb.MethodName = ovrMethodAttr.MethodName;
+                }
+                if (ovrMethodAttr.OldSpecification)
+                {
+                    bbb.OldSpecification = ovrMethodAttr.OldSpecification;
+                }
+            }
+            else if (bbb.DefaultHide)
+            {
+                return null;
+            }
+
+            if (methodAttr != null)
+            {
+                Task<AutoImplementFunctionInfo> task = Task.Run(() =>
+                {
+                    return MakeInportFunctionInfo(classType, methodInfo, returnType, bbb);
+                });
+                tasks.Add(task);
+#if DEBUG_IMPORT
+                task.Wait();
+#endif
             }
             return tasks;
         }
@@ -687,7 +773,7 @@ namespace CapybaraVS.Script
             Type classType,
             MethodBase methodInfo, 
             Type returnType,
-            ScriptMethodAttribute methodAttr = null,
+            IScriptArribute methodAttr = null,
             Module module = null)
         {
             if (returnType != null && returnType.IsGenericType && returnType.GetGenericTypeDefinition() == typeof(Task<>))
@@ -720,6 +806,14 @@ namespace CapybaraVS.Script
             if (!methodInfo.IsStatic && !methodInfo.IsConstructor)
             {
                 // 静的メソッドでは無いので所属するクラスの情報を取得
+
+                if (methodInfo.ReflectedType.FullName == "System.Void")
+                {
+                    // System.Void に所属するものには対応しない
+                    // System.Void は、ジェネリック引数に使えないので CbStruct で管理できない…
+
+                    return null;
+                }
 
                 var selfType = TryGetCbType(methodInfo.ReflectedType);
                 if (selfType is null)
@@ -785,6 +879,7 @@ namespace CapybaraVS.Script
                 //----------------------------------
                 // メソッド名を作成
                 string nodeName;
+                string nodeTitle;
                 if (methodAttr != null)
                 {
                     // メソッド属性情報を持っている
@@ -793,22 +888,30 @@ namespace CapybaraVS.Script
                     {
                         // 指定の名前を採用する
 
-                        nodeName = methodAttr.MethodName;
+                        nodeTitle = nodeName = methodAttr.MethodName;
+
                     }
                     else
                     {
-                        nodeName = methodInfo.Name;
+                        nodeTitle = nodeName = methodInfo.Name;
                     }
                 }
                 else
                 {
                     if (methodInfo.IsConstructor)
                     {
+                        if (methodInfo.IsAbstract)
+                        {
+                            // 象徴クラスは new できない
+
+                            return null;
+                        }
                         nodeName = "new " + className;
+                        nodeTitle = className;
                     }
                     else
                     {
-                        nodeName = methodInfo.Name;
+                        nodeTitle = nodeName = methodInfo.Name;
                     }
                 }
 
@@ -832,7 +935,7 @@ namespace CapybaraVS.Script
                     else
                     {
                         string group = "";
-                        if (methodInfo.Name.Contains("_"))
+                        if (methodInfo.Name.Contains("_") && methodInfo.IsSpecialName)
                         {
                             // 最初に見つかった _ までの文字列でグループを分ける
 
@@ -850,9 +953,13 @@ namespace CapybaraVS.Script
                         switch (group)
                         {
                             case "get.":
+                                menuName = menuName.Replace("get_","");
+                                nodeTitle = nodeTitle.Replace("get_","");
                                 menuName = className + CbSTUtils.MENU_GETTER + menuName;
                                 break;
                             case "set.":
+                                menuName = menuName.Replace("set_", "");
+                                nodeTitle = nodeTitle.Replace("set_", "");
                                 menuName = className + CbSTUtils.MENU_SETTER + menuName;
                                 break;
                             default:
@@ -885,7 +992,9 @@ namespace CapybaraVS.Script
                 }
 
                 // 引数情報を追加する
-                menuName += MakeParamsString(methodInfo);
+                string paramString = MakeParamsString(methodInfo);
+                menuName += paramString;
+                string nodeHintTitle = $"{classType.Namespace}.{className}.{nodeTitle}{paramString}";
 
                 // 返り値の型名を追加する
                 if (methodInfo.IsConstructor && classType.IsGenericType)
@@ -895,10 +1004,13 @@ namespace CapybaraVS.Script
                 else
                 {
                     var type = retType("");
+                    string returnTypeString;
                     if (type.MyType == typeof(CbClass<CbGeneMethArg>))
-                        menuName += " : " + CbSTUtils.GetGenericTypeName((type.Data as CbGeneMethArg).ArgumentType);
+                        returnTypeString = CbSTUtils.GetGenericTypeName((type.Data as CbGeneMethArg).ArgumentType);
                     else
-                        menuName += " : " + type.TypeName;
+                        returnTypeString = type.TypeName;
+                    menuName += " : " + returnTypeString;
+                    nodeHintTitle += " : " + returnTypeString;
                 }
 
                 string helpCode = $"{classType.Namespace}:{className}." + nodeName.Replace(" ", "_");
@@ -907,18 +1019,24 @@ namespace CapybaraVS.Script
 
                 // スクリプトノード用のヒント
                 string nodeHint = null;
-                string nodeHintTitle = menuName;
                 // ノード用ヒントを取得
                 nodeHint = Language.Instance[$"Assembly.{helpCode}/node"];
                 nodeHint = $"【{nodeHintTitle}】" + (nodeHint is null ? "" : Environment.NewLine + nodeHint);
 
-                // メニュー用のヒント
                 string hint = null;
+                bool _oldSpecification = false;
+                string _oldSpecificationMsg = "";
                 if (methodAttr != null)
                 {
                     // メニュー用ヒントをリソースから取得
-
                     hint = Language.Instance[$"Assembly.{helpCode}/menu"];
+
+                    // 古い仕様か？
+                    _oldSpecification = methodAttr.OldSpecification;
+                    if (_oldSpecification)
+                    {
+                        _oldSpecificationMsg = " " + CbSTUtils.MENU_OLD_SPECIFICATION;
+                    }
                 }
 
                 if (hint is null)
@@ -930,8 +1048,8 @@ namespace CapybaraVS.Script
                 AutoImplementFunctionInfo autoImplementFunctionInfo = new AutoImplementFunctionInfo()
                 {
                     assetCode = nodeCode,
-                    menuTitle = menuName,
-                    funcTitle = nodeName,
+                    menuTitle = menuName + _oldSpecificationMsg,
+                    funcTitle = nodeTitle,
                     hint = hint,
                     nodeHint = nodeHint,
                     classType = classType,
@@ -941,6 +1059,7 @@ namespace CapybaraVS.Script
                     isConstructor = methodInfo.IsConstructor,
                     typeRequests = genericTypeRequests,
                     genericMethodParameters = (methodInfo.IsGenericMethod) ? methodInfo.GetGenericArguments() : null,
+                    oldSpecification = _oldSpecification,
                 };
 
                 return autoImplementFunctionInfo;
@@ -1108,13 +1227,39 @@ namespace CapybaraVS.Script
                         paramsStr += ",";
                     }
 
-                    paramsStr += CbSTUtils._GetTypeName(para.ParameterType);
+                    string argStr = CbSTUtils._GetTypeName(para.ParameterType);
+                    argStr = ReplaceModifier(para, argStr);
+                    paramsStr += argStr;
 
                     isFirst = false;
                 }
                 paramsStr += ")";
             }
             return paramsStr;
+        }
+
+        /// <summary>
+        /// 修飾子を置き換えます。
+        /// </summary>
+        /// <param name="para">パラメータ情報</param>
+        /// <param name="argStr">置き換える前の名前</param>
+        /// <returns>置き換えた文字列</returns>
+        private static string ReplaceModifier(ParameterInfo para, string argStr)
+        {
+            argStr = argStr.Replace("&", "");
+            if (para.IsIn)
+            {
+                argStr = $"{CbSTUtils.MENU_IN_STR} " + argStr;
+            }
+            else if (para.IsOut)
+            {
+                argStr = $"{CbSTUtils.MENU_OUT_STR} " + argStr;
+            }
+            else if (para.ParameterType.IsByRef)
+            {
+                argStr = $"{CbSTUtils.MENU_REF_STR} " + argStr;
+            }
+            return argStr;
         }
 
         /// <summary>
@@ -1189,9 +1334,21 @@ namespace CapybaraVS.Script
 
                 ArgumentInfoNode argNode = new ArgumentInfoNode();
 
-                // リファレンス型をチェック
-                if (para.ParameterType.IsByRef)
+                // 引数の修飾をチェック
+                if (para.IsIn)
+                {
+                    argNode.IsIn = true;
+                }
+                else if (para.IsOut)
+                {
+                    argNode.IsOut = true;
+                }
+                else if (para.ParameterType.IsByRef)
+                {
+                    // IsIn と IsOut が false
+
                     argNode.IsByRef = true;
+                }
 
                 // 引数名を取得
                 string name = para.Name;
@@ -1210,6 +1367,8 @@ namespace CapybaraVS.Script
                 {
                     ICbValue addParam = typeInfo(name);
                     addParam.IsByRef = argNode.IsByRef;
+                    addParam.IsOut = argNode.IsOut;
+                    addParam.IsIn = argNode.IsIn;
                     if (para.HasDefaultValue)
                     {
                         if (para.DefaultValue != null)

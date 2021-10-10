@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Text;
+using System.Windows.Input;
 using static CapybaraVS.Controls.BaseControls.CommandCanvas;
 using static CapybaraVS.Controls.MultiRootConnector;
 
@@ -27,16 +28,16 @@ namespace CapybaraVS.Script
         public ObservableCollection<string> ModulueNameList = new ObservableCollection<string>();
         public List<string> DllModulePathList = new List<string>();
         public List<string> PackageModuleList = new List<string>();
-        public List<string> ClassModuleList = new List<string>();
+        public List<string> NameSpaceModuleList = new List<string>();
         public List<string> NuGetModuleList = new List<string>();
 
         public const string BASE_LIB_TAG_PRE = "BaseLib:";
 
         public const string MENU_TITLE_PROGRAM = "Program";
+        public const string MENU_TITLE_IMPORT = "Import";
         public const string MENU_TITLE_DOT_NET_FUNCTION = "Function";
-        public const string MENU_TITLE_DOT_NET_STANDERD = "Standard";
         public const string MENU_TITLE_DOT_NET_FUNCTION_FULL_PATH = MENU_TITLE_PROGRAM + "." + MENU_TITLE_DOT_NET_FUNCTION + ".";
-        public const string MENU_TITLE_DOT_NET_STANDERD_FULL_PATH = MENU_TITLE_PROGRAM + "." + MENU_TITLE_DOT_NET_FUNCTION + "." + MENU_TITLE_DOT_NET_STANDERD + ".";
+        public const string MENU_TITLE_IMPORT_FUNCTION_FULL_PATH = MENU_TITLE_PROGRAM + "." + MENU_TITLE_IMPORT + ".";
 
         public ApiImporter(CommandCanvas ownerCommandCanvas)
         {
@@ -48,20 +49,16 @@ namespace CapybaraVS.Script
             {
                 var literalNode = CreateGroup(ProgramNode, Script_Literal.LIB_Script_literal_NAME);
                 CreateAssetMenu(ownerCommandCanvas, literalNode, new LiteralType());
-                CreateAssetMenu(ownerCommandCanvas, literalNode, new LiteralListType());
             }
 
             {
                 var variableNode = CreateGroup(ProgramNode, "Variable");
                 CreateAssetMenu(ownerCommandCanvas, variableNode, new CreateVariable());
-                CreateAssetMenu(ownerCommandCanvas, variableNode, new CreateFuncVariable());
-                CreateAssetMenu(ownerCommandCanvas, variableNode, new CreateNullableVariable());
                 CreateAssetMenu(ownerCommandCanvas, variableNode, new GetVariable());
                 CreateAssetMenu(ownerCommandCanvas, variableNode, new SetVariable());
 
                 {
                     var variableListNode = CreateGroup(variableNode, "Variable List");
-                    CreateAssetMenu(ownerCommandCanvas, variableListNode, new CreateVariableList());
                     CreateAssetMenu(ownerCommandCanvas, variableListNode, new GetVariableFromIndex());
                     CreateAssetMenu(ownerCommandCanvas, variableListNode, new SetVariableToIndex());
                     CreateAssetMenu(ownerCommandCanvas, variableListNode, new AppendVariableList());
@@ -123,7 +120,9 @@ namespace CapybaraVS.Script
         /// <returns>true==成功</returns>
         public bool ImportBase()
         {
-            ScriptImplement.ImportScriptMethodsForBase(OwnerCommandCanvas, CreateGroup(DotNet, MENU_TITLE_DOT_NET_STANDERD));
+            ImportNameSpace("System");
+            ImportNameSpace("System.Collections.Generic");
+
             return true;
         }
 
@@ -140,7 +139,7 @@ namespace CapybaraVS.Script
             }
             if (DllNode is null)
             {
-                DllNode = CreateGroup(ProgramNode, "Import");
+                DllNode = CreateGroup(ProgramNode, MENU_TITLE_IMPORT);
             }
             string name = ScriptImplement.ImportScriptMethodsFromDllFile(OwnerCommandCanvas, DllNode, path, ignoreClassList);
             if (name != null)
@@ -163,7 +162,7 @@ namespace CapybaraVS.Script
             }
             if (DllNode is null)
             {
-                DllNode = CreateGroup(ProgramNode, "Import");
+                DllNode = CreateGroup(ProgramNode, MENU_TITLE_IMPORT);
             }
             string name = ScriptImplement.ImportScriptMethodsFromPackage(OwnerCommandCanvas, DllNode, packageName, ignoreClassList);
             if (name != null)
@@ -174,32 +173,25 @@ namespace CapybaraVS.Script
         }
 
         /// <summary>
-        /// スクリプトにクラスをインポートします。
+        /// スクリプトにネームスペースをインポートします。
         /// </summary>
-        /// <param name="className">クラス名</param>
+        /// <param name="nameSpaceName">ネームスペース名</param>
         /// <returns>true==成功</returns>
-        public bool ImportClass(string className)
+        public bool ImportNameSpace(string nameSpaceName)
         {
-            if (ClassModuleList.Contains(className))
+            if (NameSpaceModuleList.Contains(nameSpaceName))
             {
                 return true;
             }
-            Type classType = CbST.GetTypeEx(className);
-            if (classType is null)
-            {
-                // クラスが見つからない
-
-                return false;
-            }
             if (DllNode is null)
             {
-                DllNode = CreateGroup(ProgramNode, "Import");
+                DllNode = CreateGroup(ProgramNode, MENU_TITLE_IMPORT);
             }
-            string name = ScriptImplement.ImportScriptMethodsFromClass(OwnerCommandCanvas, DllNode, className);
+            string name = ScriptImplement.ImportScriptMethodsFromNameSpace(OwnerCommandCanvas, DllNode, nameSpaceName);
             if (name != null)
             {
                 ModulueNameList.Add(name);  // インポートリストに表示
-                ClassModuleList.Add(className);
+                NameSpaceModuleList.Add(nameSpaceName);
                 return true;
             }
             return false;
@@ -229,6 +221,7 @@ namespace CapybaraVS.Script
             {
                 return true;
             }
+            CommandCanvasList.SetOwnerCursor(Cursors.Wait);
             if (NuGetNode is null)
             {
                 NuGetNode = CreateGroup(ProgramNode, "NuGet Package");
@@ -238,10 +231,12 @@ namespace CapybaraVS.Script
             {
                 ModulueNameList.Add(name);  // インポートリストに表示
                 NuGetModuleList.Add(pkgName);
-                CommandCanvasList.OutPut.OutLine(nameof(ScriptImplement), $"NuGet successed.");
+                Console.WriteLine($"NuGet successed.");
+                CommandCanvasList.SetOwnerCursor(null);
                 return true;
             }
-            CommandCanvasList.OutPut.OutLine(nameof(ScriptImplement), $"faild.");
+            Console.WriteLine($"faild.");
+            CommandCanvasList.SetOwnerCursor(null);
             return false;
         }
 
@@ -253,7 +248,7 @@ namespace CapybaraVS.Script
             ModulueNameList.Clear();
             DllModulePathList.Clear();
             PackageModuleList.Clear();
-            ClassModuleList.Clear();
+            NameSpaceModuleList.Clear();
             NuGetModuleList.Clear();
             if (DllNode != null)
             {
@@ -277,20 +272,7 @@ namespace CapybaraVS.Script
 
         public List<TypeRequest> typeRequests => new List<TypeRequest>()
         {
-            new TypeRequest(t => !t.IsAbstract)
-        };
-    }
-
-    //-----------------------------------------------------------------
-    class LiteralListType : IFuncAssetLiteralDef
-    {
-        public string MenuTitle => $"Literal List : {CbSTUtils.LITERAL_LIST_STR}<T>";
-
-        public string HelpText => Language.Instance[ApiImporter.BASE_LIB_TAG_PRE + nameof(LiteralListType)];
-
-        public List<TypeRequest> typeRequests => new List<TypeRequest>()
-        { 
-            new TypeRequest(CbSTUtils.LIST_TYPE, t => CbScript.AcceptAll(t))
+            new TypeRequest(t => !t.IsAbstract || t == CbSTUtils.ARRAY_TYPE)
         };
     }
 
@@ -360,7 +342,7 @@ namespace CapybaraVS.Script
         public bool ImplAsset(MultiRootConnector col, bool isReBuildMode = false)
         {
             col.MakeFunction(
-                $"{AssetCode}<{col.SelectedVariableTypeName[0]}>",
+                $"{AssetCode}<{CbSTUtils.GetTypeName(col.SelectedVariableType[0].GenericTypeArguments[0])}>",
                 HelpText,
                 CbST.CbCreateTF(col.SelectedVariableType[0].GenericTypeArguments[0]),  // 返し値の型
                 new List<ICbValue>()  // 引数
@@ -739,7 +721,7 @@ namespace CapybaraVS.Script
                                     toolExec.ParamList.Add(GetArgument<string>(valueData));
                                 });
 
-                            ret.CallBack = (cagt2) =>
+                            ret.Callback = (cagt2) =>
                             {
                                 return CbInt.Create(toolExec.Start(redirect));
                             };
@@ -831,45 +813,6 @@ namespace CapybaraVS.Script
         public List<TypeRequest> typeRequests => new List<TypeRequest>()
         {
             new TypeRequest(t => true)    // 新規作成を意味する
-        };
-    }
-
-    //-----------------------------------------------------------------
-    class CreateVariableList : _GetVariable, IFuncCreateVariableAssetDef
-    {
-        public string MenuTitle => $"Create Variable List : {CbSTUtils.LITERAL_LIST_STR}<T>";
-
-        public new string HelpText => Language.Instance[ApiImporter.BASE_LIB_TAG_PRE + nameof(CreateVariableList)];
-
-        public List<TypeRequest> typeRequests => new List<TypeRequest>()
-        {
-            new TypeRequest(CbSTUtils.LIST_TYPE, t => true)
-        };
-    }
-
-    //-----------------------------------------------------------------
-    class CreateFuncVariable : _GetVariable, IFuncCreateVariableAssetDef
-    {
-        public new string HelpText => Language.Instance[ApiImporter.BASE_LIB_TAG_PRE + nameof(CreateFuncVariable)];
-
-        public string MenuTitle => $"Create Variable : {CbSTUtils.FUNC_STR}<T>";
-
-        public List<TypeRequest> typeRequests => new List<TypeRequest>()
-        {
-            new TypeRequest(CbSTUtils.FUNC_TYPE, t => true)
-        };
-    }
-
-    //-----------------------------------------------------------------
-    class CreateNullableVariable : _GetVariable, IFuncCreateVariableAssetDef
-    {
-        public new string HelpText => Language.Instance[ApiImporter.BASE_LIB_TAG_PRE + nameof(CreateNullableVariable)];
-
-        public string MenuTitle => $"Create Variable : T?";
-
-        public List<TypeRequest> typeRequests => new List<TypeRequest>()
-        {
-            new TypeRequest(CbSTUtils.NULLABLE_TYPE, t => true)
         };
     }
 
@@ -1132,7 +1075,7 @@ namespace CapybaraVS.Script
                         {
                             ret.Set(argument[0]);
                             string str = argument[0].ValueUIString;
-                            col.OwnerCommandCanvas.CommandCanvasControl.MainLog.OutLine(nameof(OutConsole), str);
+                            Console.WriteLine(str);
                         }
                         catch (Exception ex)
                         {
@@ -1262,10 +1205,20 @@ namespace CapybaraVS.Script
                 if (variableGetter.IsError)
                     return false;
 
+                Func<ICbValue> resultValue;
+                if (col.SelectedVariableType[0].IsArray)
+                {
+                    resultValue = CbST.CbCreateTF(col.SelectedVariableType[0].GetElementType());
+                }
+                else
+                {
+                    resultValue = CbST.CbCreateTF(col.SelectedVariableType[0].GenericTypeArguments[0]);
+                }
+
                 col.MakeFunction(
                     variableGetter.MakeName,
                     HelpText,
-                    CbST.CbCreateTF(col.SelectedVariableType[0]),  // 返し値の型
+                    resultValue,  // 返し値の型
                     new List<ICbValue>()       // 引数
                     {
                         CbST.CbCreate<int>("index", 0),
@@ -1273,7 +1226,7 @@ namespace CapybaraVS.Script
                     new Func<List<ICbValue>, DummyArgumentsStack, ICbValue>(
                         (argument, cagt) =>
                         {
-                            var ret = CbST.CbCreate(col.SelectedVariableType[0]);    // 返し値
+                            var ret = resultValue();    // 返し値
                             try
                             {
                                 int index = GetArgument<int>(argument, 0);
@@ -1318,6 +1271,16 @@ namespace CapybaraVS.Script
                 if (variableGetter.IsError)
                     return false;
 
+                ICbValue resultValue;
+                if (col.SelectedVariableType[0].IsArray)
+                {
+                    resultValue = CbST.CbCreate(col.SelectedVariableType[0].GetElementType(), "n");
+                }
+                else
+                {
+                    resultValue = CbST.CbCreate(col.SelectedVariableType[0].GenericTypeArguments[0], "n");
+                }
+
                 col.MakeFunction(
                     variableGetter.MakeName,
                     HelpText,
@@ -1325,7 +1288,7 @@ namespace CapybaraVS.Script
                     new List<ICbValue>()       // 引数
                     {
                         CbST.CbCreate<int>("index", 0),
-                        CbST.CbCreate(col.SelectedVariableType[0].GenericTypeArguments[0], "n")
+                        resultValue
                     },
                     new Func<List<ICbValue>, DummyArgumentsStack, ICbValue>(
                         (argument, cagt) =>
@@ -1360,9 +1323,9 @@ namespace CapybaraVS.Script
     {
         public string AssetCode => nameof(AppendVariableList);
 
-        public string HelpText => Language.Instance[ApiImporter.BASE_LIB_TAG_PRE + AssetCode];
+        public string MenuTitle => "Append VariableList " + CbSTUtils.MENU_OLD_SPECIFICATION;
 
-        public string MenuTitle => "Append VariableList";
+        public string HelpText => Language.Instance[ApiImporter.BASE_LIB_TAG_PRE + AssetCode];
 
         public List<TypeRequest> typeRequests => new List<TypeRequest>()
         {
@@ -1376,13 +1339,23 @@ namespace CapybaraVS.Script
                 if (variableGetter.IsError)
                     return false;
 
+                ICbValue resultValue;
+                if (col.SelectedVariableType[0].IsArray)
+                {
+                    resultValue = CbST.CbCreate(col.SelectedVariableType[0].GetElementType(), "n");
+                }
+                else
+                {
+                    resultValue = CbST.CbCreate(col.SelectedVariableType[0].GenericTypeArguments[0], "n");
+                }
+
                 col.MakeFunction(
                     variableGetter.MakeName,
                     HelpText,
                     CbST.CbCreateTF(col.SelectedVariableType[0]),   // 返し値の型
                     new List<ICbValue>()   // 引数
                     {
-                        CbST.CbCreate(col.SelectedVariableType[0].GenericTypeArguments[0], "n")
+                        resultValue
                     },
                     new Func<List<ICbValue>, DummyArgumentsStack, ICbValue>(
                         (argument, cagt) =>

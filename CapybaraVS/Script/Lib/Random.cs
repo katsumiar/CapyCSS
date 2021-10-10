@@ -4,7 +4,8 @@ using System.Text;
 
 namespace CapybaraVS.Script.Lib
 {
-    public class RandomLib
+    [ScriptClass]
+    public static class RandomLib
     {
         private const string LIB_NAME = "Random";
 

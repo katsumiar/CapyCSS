@@ -622,7 +622,7 @@ namespace CapybaraVS.Controls.BaseControls
 
                     var funcReturn = cbEvent.NodeTF() as ICbEvent;
 
-                    funcReturn.CallBack = (cagt2) =>
+                    funcReturn.Callback = (cagt2) =>
                     {
                         // 接続されているルートコネクターを直接実行する
 
@@ -632,7 +632,7 @@ namespace CapybaraVS.Controls.BaseControls
                         {
                             // Func<> 型を Func<> 型の引数で受け取ったので実行して返し値を返す
 
-                            cbEventValue.CallCallBack(cagt2);
+                            cbEventValue.InvokeCallback(cagt2);
 
                             return cbEventValue.Value;
                         }

@@ -8,7 +8,8 @@ using System.Threading.Tasks;
 
 namespace CapyCSS.Script.Lib
 {
-    public class FlowLib
+    [ScriptClass]
+    public static class FlowLib
     {
         public const string LIB_FLOW_NAME = "Flow";
         public const string LIB_Fx_NAME = "f(x)";
@@ -352,6 +353,16 @@ namespace CapyCSS.Script.Lib
             else
             {
                 return falseValue;
+            }
+        }
+
+        //------------------------------------------------------------------
+        [ScriptMethod(LIB_FLOW_NAME)]
+        public static void NotNull<T>(T sample, Action<T> action)
+        {
+            if (sample != null)
+            {
+                action?.Invoke(sample);
             }
         }
 

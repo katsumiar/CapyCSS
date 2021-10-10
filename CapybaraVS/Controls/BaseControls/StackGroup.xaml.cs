@@ -240,7 +240,15 @@ namespace CapybaraVS.Controls.BaseControls
             if (node is null)
                 return null;
 
-            if (node.ValueData.IsList)
+            bool isGroupWithinGroup = false;
+            if (CbListValue != null && CbListValue.ValueData != null)
+            {
+                // グループの中にグループを作らないようにする
+
+                isGroupWithinGroup = CbListValue.ValueData.IsList;
+            }
+
+            if (node.ValueData.IsList && !isGroupWithinGroup)
             {
                 ICbList cbList = node.ValueData.GetListValue;
                 Debug.Assert(CbListValue is null);

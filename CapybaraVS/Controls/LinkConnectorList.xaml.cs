@@ -326,12 +326,14 @@ namespace CapybaraVS.Controls
 
             var listTypeVariable = variable.GetListValue;
 
-            if (!(variable as ICbList).HaveAdd)
+            bool isOpen = true;
+            if (variable is ICbList cbList && !cbList.HaveAdd)
             {
                 // 追加できないリスト
 
                 forcedNotAdd = true;
                 EnableAdd = false;  // ノード追加機能を無効化
+                isOpen = cbList.IsOpen;
             }
 
             Disconnect();
@@ -343,9 +345,17 @@ namespace CapybaraVS.Controls
             for (var i = 0; i < listTypeVariable.Count; ++i)
             {
                 // リストの要素を作成したコネクターに登録し、バインディングリストに登録する
+
                 AppendList(listTypeVariable[i]);
             }
-            OpenAccordion();
+            if (isOpen)
+            {
+                OpenAccordion();
+            }
+            else
+            {
+                DisenableAccordion();
+            }
             UpdateListEvent?.Invoke();
         }
 
