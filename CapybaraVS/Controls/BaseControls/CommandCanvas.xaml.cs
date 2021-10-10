@@ -1450,13 +1450,14 @@ namespace CapybaraVS.Controls.BaseControls
             }
             if (genericType == CbSTUtils.ARRAY_TYPE)
             {
+                bool andPositionSet = _CanTypeMenuExecuteEventIndex == 0;
                 if (_CanTypeMenuExecuteEventIndex != 0)
                 {
                     _CanTypeMenuExecuteEventIndex--;
                 }
                 _CanTypeMenuExecuteEvent[_CanTypeMenuExecuteEventIndex] = t => CbScript.AcceptAll(t);
                 TypeMenu.RefreshItem();
-                Type result = RequestType(checkType, positionSet);
+                Type result = RequestType(checkType, positionSet && andPositionSet);
                 if (result is null)
                     return null;
                 return result.MakeArrayType();
