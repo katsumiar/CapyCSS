@@ -397,19 +397,24 @@ namespace CapybaraVS.Script
                 else if (type.Name != null)
                     _mame = type.Name;
                 Type tType = CbST.GetTypeEx(_mame);
-                if (tType is null)
-                    return null;
-                Type element = tType.GetElementType();
-                if (element != null)
+                if (tType != null)
                 {
-                    Type collectionType = typeof(List<>).MakeGenericType(element);
-                    var ret = CbList.Create(collectionType, name);
-                    if (ret.IsList)
+                    Type element = tType.GetElementType();
+                    if (element != null)
                     {
-                        ICbList cbList = ret.GetListValue;
-                        cbList.IsArrayType = true;
+                        Type collectionType = typeof(List<>).MakeGenericType(element);
+                        var ret = CbList.Create(collectionType, name);
+                        if (ret.IsList)
+                        {
+                            ICbList cbList = ret.GetListValue;
+                            cbList.IsArrayType = true;
+                        }
+                        return ret;
                     }
-                    return ret;
+                }
+                if (type.ContainsGenericParameters)
+                {
+                    return CbGeneMethArg.NTF(name, type, type.GetGenericArguments(), false);
                 }
             }
 

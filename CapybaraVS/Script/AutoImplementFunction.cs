@@ -279,6 +279,13 @@ namespace CapybaraVS.Script
             {
                 replaceArgumentType = GetRequestType(col, replaceArgumentType.Name);
             }
+            else if (replaceArgumentType.ContainsGenericParameters)
+            {
+                if (replaceArgumentType.IsArray)
+                {
+                    replaceArgumentType = GetRequestType(col, replaceArgumentType.GetElementType().Name).MakeArrayType();
+                }
+            }
             else
             {
                 Debug.Assert(false);
@@ -305,20 +312,15 @@ namespace CapybaraVS.Script
                     var ngt = MakeRequestGenericType(col, gat);
                     argTypes.Add(ngt);
                 }
+                else if (gat.IsGenericParameter)
+                {
+                    argTypes.Add(GetRequestType(col, gat.Name));
+                }
                 else
                 {
-                    // ジェネリック引数を収集する
+                    // ジェネリックでないパラメータはそのまま使う
 
-                    for (int i = 0; i < typeRequests.Count; i++)
-                    {
-                        TypeRequest typeRequest = typeRequests[i];
-                        if (typeRequest.Name == gat.Name)
-                        {
-                            // 対応する型を登録する
-
-                            argTypes.Add(col.SelectedVariableType[i]);
-                        }
-                    }
+                    argTypes.Add(gat);
                 }
             }
             // 確定した型を返す（repType を使って MakeGenericType しては駄目）
