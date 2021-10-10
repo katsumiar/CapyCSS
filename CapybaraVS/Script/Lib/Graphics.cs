@@ -155,13 +155,13 @@ namespace CbVS.Script.Lib
             Transparent
         }
 
-        [ScriptMethod(LIB_NAME)]
+        [ScriptMethod(LIB_NAME, null, true)]
         public static BrushColors CreateBrushColors(BrushColors colors)
         {
             return colors;
         }
 
-        [ScriptMethod(LIB_NAME)]
+        [ScriptMethod(LIB_NAME, null, true)]
         public static SolidColorBrush CreateBrushes(BrushColors colors)
         {
             switch (colors)

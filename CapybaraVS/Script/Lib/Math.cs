@@ -25,7 +25,7 @@ namespace CapybaraVS.Script.Lib
 
         //------------------------------------------------------------------
 
-        [ScriptMethod(LIB_NAME3)]
+        [ScriptMethod(LIB_NAME3, null, true)]
         public static double Sin(double radian)
         {
             return Math.Sin(radian);
@@ -33,7 +33,7 @@ namespace CapybaraVS.Script.Lib
 
         //------------------------------------------------------------------
 
-        [ScriptMethod(LIB_NAME3)]
+        [ScriptMethod(LIB_NAME3, null, true)]
         public static double Cos(double radian)
         {
             return Math.Cos(radian);
@@ -41,7 +41,7 @@ namespace CapybaraVS.Script.Lib
 
         //------------------------------------------------------------------
 
-        [ScriptMethod(LIB_NAME3)]
+        [ScriptMethod(LIB_NAME3, null, true)]
         public static double Tan(double radian)
         {
             return Math.Tan(radian);
@@ -49,7 +49,7 @@ namespace CapybaraVS.Script.Lib
 
         //------------------------------------------------------------------
 
-        [ScriptMethod(LIB_NAME3)]
+        [ScriptMethod(LIB_NAME3, null, true)]
         public static double Asin(double radian)
         {
             return Math.Asin(radian);
@@ -57,7 +57,7 @@ namespace CapybaraVS.Script.Lib
 
         //------------------------------------------------------------------
 
-        [ScriptMethod(LIB_NAME3)]
+        [ScriptMethod(LIB_NAME3, null, true)]
         public static double Acos(double radian)
         {
             return Math.Acos(radian);
@@ -65,7 +65,7 @@ namespace CapybaraVS.Script.Lib
 
         //------------------------------------------------------------------
 
-        [ScriptMethod(LIB_NAME3)]
+        [ScriptMethod(LIB_NAME3, null, true)]
         public static double Atan(double radian)
         {
             return Math.Atan(radian);
@@ -73,7 +73,7 @@ namespace CapybaraVS.Script.Lib
 
         //------------------------------------------------------------------
 
-        [ScriptMethod(LIB_NAME3)]
+        [ScriptMethod(LIB_NAME3, null, true)]
         public static double Atan2(double y, double x)
         {
             return Math.Atan2(y, x);
@@ -81,7 +81,7 @@ namespace CapybaraVS.Script.Lib
 
         //------------------------------------------------------------------
 
-        [ScriptMethod(LIB_NAME3)]
+        [ScriptMethod(LIB_NAME3, null, true)]
         public static double Sinh(double radian)
         {
             return Math.Sinh(radian);
@@ -89,7 +89,7 @@ namespace CapybaraVS.Script.Lib
 
         //------------------------------------------------------------------
 
-        [ScriptMethod(LIB_NAME3)]
+        [ScriptMethod(LIB_NAME3, null, true)]
         public static double Cosh(double radian)
         {
             return Math.Cosh(radian);
@@ -97,63 +97,63 @@ namespace CapybaraVS.Script.Lib
 
         //------------------------------------------------------------------
 
-        [ScriptMethod(LIB_NAME3)]
+        [ScriptMethod(LIB_NAME3, null, true)]
         public static double Tanh(double radian)
         {
             return Math.Tanh(radian);
         }
 
         //------------------------------------------------------------------
-        [ScriptMethod(LIB_MATH_NAME)]
+        [ScriptMethod(LIB_MATH_NAME, null, true)]
         public static double Sqrt(double value)
         {
             return Math.Sqrt(value);
         }
 
         //------------------------------------------------------------------
-        [ScriptMethod(LIB_MATH_NAME)]
+        [ScriptMethod(LIB_MATH_NAME, null, true)]
         public static int Sign(double value)
         {
             return Math.Sign(value);
         }
 
         //------------------------------------------------------------------
-        [ScriptMethod(LIB_MATH_NAME)]
+        [ScriptMethod(LIB_MATH_NAME, null, true)]
         public static double Round(double value)
         {
             return Math.Round(value);
         }
 
         //------------------------------------------------------------------
-        [ScriptMethod(LIB_MATH_NAME)]
+        [ScriptMethod(LIB_MATH_NAME, null, true)]
         public static double Ceiling(double value)
         {
             return Math.Ceiling(value);
         }
 
         //------------------------------------------------------------------
-        [ScriptMethod(LIB_MATH_NAME)]
+        [ScriptMethod(LIB_MATH_NAME, null, true)]
         public static double Floor(double value)
         {
             return Math.Floor(value);
         }
 
         //------------------------------------------------------------------
-        [ScriptMethod(LIB_MATH_NAME)]
+        [ScriptMethod(LIB_MATH_NAME, null, true)]
         public static double Truncate(double value)
         {
             return Math.Truncate(value);
         }
 
         //------------------------------------------------------------------
-        [ScriptMethod(LIB_MATH_NAME)]
+        [ScriptMethod(LIB_MATH_NAME, null, true)]
         public static double Max(double value1, double value2)
         {
             return Math.Max(value1, value2);
         }
 
         //------------------------------------------------------------------
-        [ScriptMethod(LIB_MATH_NAME)]
+        [ScriptMethod(LIB_MATH_NAME, null, true)]
         public static double Min(double value1, double value2)
         {
             return Math.Min(value1, value2);
