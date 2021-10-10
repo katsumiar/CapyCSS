@@ -179,7 +179,7 @@ namespace CapybaraVS.Script
         }
 
         /// <summary>
-        /// クラス名からメソッドをスクリプトで使えるように取り込みます。
+        /// ネームスペース名からメソッドをスクリプトで使えるように取り込みます。
         /// </summary>
         /// <param name="OwnerCommandCanvas">オーナーキャンバス</param>
         /// <param name="node">登録先のノード</param>
