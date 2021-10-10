@@ -324,9 +324,20 @@ namespace CapybaraVS.Script
                     if (geneString == "")
                     {
                         string cname = type.FullName;
+                        if (cname is null)
+                        {
+                            // どうにもならない？
+
+                            return "*Unsupported type*";
+                        }
                         if (cname != null && cname.StartsWith("System.ArraySegment`"))
                         {
                             // ArraySegment は、強引に対応
+
+                            if (type.IsGenericType)
+                            {
+                                return GetGenericTypeName(type);
+                            }
 
                             cname = cname.Substring(cname.IndexOf('['));
                             cname = cname.Substring(0, cname.IndexOf(','));
