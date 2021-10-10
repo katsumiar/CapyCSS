@@ -1146,7 +1146,7 @@ namespace CapybaraVS.Controls.BaseControls
         {
             foreach (var node in ListData)
             {
-                if (node.ValueData.OriginalType == type)
+                if (node.ValueData.OriginalType.IsAssignableFrom(type))
                 {
                     return node;
                 }
