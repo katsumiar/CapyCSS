@@ -531,6 +531,12 @@ namespace CapybaraVS.Script
             {
                 // 構造体
 
+                if (type.FullName == "System.Void")
+                {
+                    Debug.Assert(false);
+                    return null;
+                }
+
                 if (!isCancelClass)
                 {
                     var ret = CbStruct.StructValue(type, name);

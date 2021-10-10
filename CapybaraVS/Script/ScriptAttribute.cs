@@ -724,6 +724,14 @@ namespace CapybaraVS.Script
             {
                 // 静的メソッドでは無いので所属するクラスの情報を取得
 
+                if (methodInfo.ReflectedType.FullName == "System.Void")
+                {
+                    // System.Void に所属するものには対応しない
+                    // System.Void は、ジェネリック引数に使えないので CbStruct で管理できない…
+
+                    return null;
+                }
+
                 var selfType = TryGetCbType(methodInfo.ReflectedType);
                 if (selfType is null)
                     return null;
