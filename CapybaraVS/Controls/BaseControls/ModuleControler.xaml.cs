@@ -31,9 +31,9 @@ namespace CapyCSS.Controls.BaseControls
         private const string DLL_MESSAGE_TITLE = "Dll Import";
 
         // 過去のインポートの再取り込み時の識別用文字列
-        public const string HEADER_PACKAGE = "Package ";
         public const string HEADER_NAMESPACE = "namespace ";
         public const string HEADER_NUGET = "NuGet ";
+        public const string HEADER_DLL = "Import ";
 
         // メニュー定義
         private enum ImportMenu
@@ -162,13 +162,6 @@ namespace CapyCSS.Controls.BaseControls
 
             // 既存のインポート
 
-            if (IsPackage(selectedValue))
-            {
-                // パッケージをインポートする
-
-                ApiImporter.ImportPackage(selectedValue.Split(" ")[1]);
-                return true;
-            }
             if (IsNuGet(selectedValue))
             {
                 // NeGetをインポートする
@@ -191,16 +184,6 @@ namespace CapyCSS.Controls.BaseControls
         }
 
         /// <summary>
-        /// パッケージを判定します。
-        /// </summary>
-        /// <param name="selected">名前</param>
-        /// <returns>true==パッケージ</returns>
-        private static bool IsPackage(string selected)
-        {
-            return selected.StartsWith(HEADER_PACKAGE);
-        }
-
-        /// <summary>
         /// NuGetを判定します。
         /// </summary>
         /// <param name="selected">名前</param>
@@ -217,7 +200,7 @@ namespace CapyCSS.Controls.BaseControls
         /// <returns>true==Dll</returns>
         private static bool IsDll(string selected)
         {
-            return System.IO.Path.GetExtension(selected) == ".dll";
+            return selected.StartsWith(HEADER_DLL);
         }
 
         /// <summary>

@@ -135,7 +135,7 @@ namespace CapybaraVS.Script
                 foreach (var package in packageList)
                 {
 #if true
-                    ScriptImplement.ImportScriptMethodsFromDllFile(OwnerCommandCanvas, node, package.Path, null, $"{package.Name}({package.Version})");
+                    ScriptImplement.ImportScriptMethodsFromDllFile(OwnerCommandCanvas, node, package.Path, null, $"{package.Name}({package.Version})", packageName);
 #else
                     if (package == packageList.Last())
                     {
@@ -174,45 +174,6 @@ namespace CapybaraVS.Script
         }
 
         /// <summary>
-        /// パッケージ名からメソッドをスクリプトで使えるように取り込みます。
-        /// </summary>
-        /// <param name="OwnerCommandCanvas">オーナーキャンバス</param>
-        /// <param name="node">登録先のノード</param>
-        /// <param name="name">パッケージ名</param>
-        /// <param name="importNameList">取り込む名前リスト</param>
-        /// <returns>インポートしたパッケージ名</returns>
-        public static string ImportScriptMethodsFromPackage(
-            CommandCanvas OwnerCommandCanvas,
-            TreeMenuNode node,
-            string name,
-            List<string> importNameList)
-        {
-            string outputName = ModuleControler.HEADER_PACKAGE + name;
-            var functionNode = ImplementAsset.CreateGroup(node, outputName);
-#if !DEBUG_IMPORT
-            try
-#endif
-            {
-                ImportScriptMethods(
-                    OwnerCommandCanvas,
-                    functionNode,
-                    Assembly.Load(name),
-                    null,
-                    importNameList,
-                    (t) => OwnerCommandCanvas.AddImportTypeMenu(t)
-                    );
-            }
-#if !DEBUG_IMPORT
-            catch (Exception ex)
-            {
-                ControlTools.ShowErrorMessage(ex.Message, "Import Error.");
-            }
-#endif
-            Console.WriteLine($"imported {name} package.");
-            return outputName;
-        }
-
-        /// <summary>
         /// ネームスペース名からメソッドをスクリプトで使えるように取り込みます。
         /// </summary>
         /// <param name="OwnerCommandCanvas">オーナーキャンバス</param>
@@ -245,7 +206,7 @@ namespace CapybaraVS.Script
                 (t) => OwnerCommandCanvas.AddImportTypeMenu(t),
                 types.ToArray()
                 );
-            Console.WriteLine($"imported {name} namespace.");
+            Console.WriteLine($"imported namespace {name}");
             return outputName;
         }
 
@@ -256,13 +217,16 @@ namespace CapybaraVS.Script
         /// <param name="node">登録先のノード</param>
         /// <param name="path"></param>
         /// <param name="importNameList">取り込む名前リスト</param>
+        /// <param name="moduleName">モジュール名（NuGet用）</param>
+        /// <param name="ownerModuleName">親モジュール名（NuGet用）</param>
         /// <returns>インポートしたモジュール名</returns>
         public static string ImportScriptMethodsFromDllFile(
             CommandCanvas OwnerCommandCanvas,
             TreeMenuNode node,
             string path,
             List<string> importNameList,
-            string version = null)
+            string moduleName = null,
+            string ownerModuleName = null)
         {
 #if !DEBUG_IMPORT
             try
@@ -271,25 +235,44 @@ namespace CapybaraVS.Script
                 var asm = Assembly.LoadFrom(path);
                 Module mod = asm.GetModule(path);
                 string name = Path.GetFileName(path);
+
+                string createGroupName;
+                if (moduleName is null)
+                {
+                    // DLL
+
+                    createGroupName = ModuleControler.HEADER_DLL + name;
+                }
+                else
+                {
+                    // NuGet
+
+                    createGroupName = ModuleControler.HEADER_DLL + moduleName + $":{ownerModuleName}";
+                }
+
                 ImportScriptMethods(
                     OwnerCommandCanvas,
-                    node,
+                    ImplementAsset.CreateGroup(node, createGroupName),
                     asm,
                     mod,
                     importNameList,
                     (t) => OwnerCommandCanvas.AddImportTypeMenu(t)
                     );
-                if (version is null)
+                if (moduleName is null)
                 {
-                    Console.WriteLine($"imported {Path.GetFileNameWithoutExtension(name)} package.");
+                    // DLL
+
+                    Console.WriteLine($"imported {name}");
                     CommandCanvasList.OutPut.Flush();
                 }
                 else
                 {
-                    Console.WriteLine($"imported {version} package.");
+                    // NuGet
+
+                    Console.WriteLine($"imported {moduleName}");
                     CommandCanvasList.OutPut.Flush();
                 }
-                return name;
+                return ModuleControler.HEADER_DLL + name;
             }
 #if !DEBUG_IMPORT
             catch (Exception ex)

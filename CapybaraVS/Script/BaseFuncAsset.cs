@@ -2,6 +2,7 @@
 using CapybaraVS.Controls.BaseControls;
 using CapybaraVS.Script.Lib;
 using CapyCSS.Controls;
+using CapyCSS.Controls.BaseControls;
 using CapyCSS.Script.Lib;
 using CbVS.Script;
 using System;
@@ -10,8 +11,12 @@ using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Text;
 using System.Windows.Input;
+using System.IO;
+using System.Linq;
+
 using static CapybaraVS.Controls.BaseControls.CommandCanvas;
 using static CapybaraVS.Controls.MultiRootConnector;
+using CapyCSS.Script;
 
 namespace CapybaraVS.Script
 {
@@ -22,12 +27,10 @@ namespace CapybaraVS.Script
     {
         private TreeMenuNode ProgramNode = null;
         private TreeMenuNode DotNet = null;
-        private TreeMenuNode DllNode = null;
-        private TreeMenuNode NuGetNode = null;
+        private TreeMenuNode ImportGroupNode = null;
         private CommandCanvas OwnerCommandCanvas = null;
         public ObservableCollection<string> ModulueNameList = new ObservableCollection<string>();
         public List<string> DllModulePathList = new List<string>();
-        public List<string> PackageModuleList = new List<string>();
         public List<string> NameSpaceModuleList = new List<string>();
         public List<string> NuGetModuleList = new List<string>();
 
@@ -114,16 +117,30 @@ namespace CapybaraVS.Script
         }
 
         /// <summary>
-        /// スクリプトに基本のクラスをインポートします。
+        /// 基本的にインポートする情報を参照します。
         /// </summary>
-        /// <param name="className">クラス名</param>
-        /// <returns>true==成功</returns>
-        public bool ImportBase()
+        /// <returns>インポート情報</returns>
+        public List<string> GetBaseImportList()
         {
-            ImportNameSpace("System");
-            ImportNameSpace("System.Collections.Generic");
+            return new List<string>()
+                {
+                    $"{ModuleControler.HEADER_NAMESPACE}System",
+                    $"{ModuleControler.HEADER_NAMESPACE}System.Collections.Generic"
+                };
+        }
 
-            return true;
+        /// <summary>
+        /// 基本的なモジュールをインポートします。
+        /// </summary>
+        public void ImportBaseModule()
+        {
+            foreach (var ns in GetBaseImportList())
+            {
+                if (ns.StartsWith(ModuleControler.HEADER_NAMESPACE))
+                {
+                    ImportNameSpace(ns.Substring(ModuleControler.HEADER_NAMESPACE.Length));
+                }
+            }
         }
 
         /// <summary>
@@ -137,38 +154,15 @@ namespace CapybaraVS.Script
             {
                 return;
             }
-            if (DllNode is null)
+            if (ImportGroupNode is null)
             {
-                DllNode = CreateGroup(ProgramNode, MENU_TITLE_IMPORT);
+                ImportGroupNode = CreateGroup(ProgramNode, MENU_TITLE_IMPORT);
             }
-            string name = ScriptImplement.ImportScriptMethodsFromDllFile(OwnerCommandCanvas, DllNode, path, ignoreClassList);
+            string name = ScriptImplement.ImportScriptMethodsFromDllFile(OwnerCommandCanvas, ImportGroupNode, path, ignoreClassList);
             if (name != null)
             {
                 ModulueNameList.Add(name);  // インポートリストに表示
                 DllModulePathList.Add(path);
-            }
-        }
-
-        /// <summary>
-        /// スクリプトにパッケージをインポートします。
-        /// </summary>
-        /// <param name="packageName">パッケージ名</param>
-        /// <param name="ignoreClassList">拒否するクラスのリスト</param>
-        public void ImportPackage(string packageName, List<string> ignoreClassList = null)
-        {
-            if (PackageModuleList.Contains(packageName))
-            {
-                return;
-            }
-            if (DllNode is null)
-            {
-                DllNode = CreateGroup(ProgramNode, MENU_TITLE_IMPORT);
-            }
-            string name = ScriptImplement.ImportScriptMethodsFromPackage(OwnerCommandCanvas, DllNode, packageName, ignoreClassList);
-            if (name != null)
-            {
-                ModulueNameList.Add(name);  // インポートリストに表示
-                PackageModuleList.Add(packageName);
             }
         }
 
@@ -183,11 +177,11 @@ namespace CapybaraVS.Script
             {
                 return true;
             }
-            if (DllNode is null)
+            if (ImportGroupNode is null)
             {
-                DllNode = CreateGroup(ProgramNode, MENU_TITLE_IMPORT);
+                ImportGroupNode = CreateGroup(ProgramNode, MENU_TITLE_IMPORT);
             }
-            string name = ScriptImplement.ImportScriptMethodsFromNameSpace(OwnerCommandCanvas, DllNode, nameSpaceName);
+            string name = ScriptImplement.ImportScriptMethodsFromNameSpace(OwnerCommandCanvas, ImportGroupNode, nameSpaceName);
             if (name != null)
             {
                 ModulueNameList.Add(name);  // インポートリストに表示
@@ -222,11 +216,11 @@ namespace CapybaraVS.Script
                 return true;
             }
             CommandCanvasList.SetOwnerCursor(Cursors.Wait);
-            if (NuGetNode is null)
+            if (ImportGroupNode is null)
             {
-                NuGetNode = CreateGroup(ProgramNode, "NuGet Package");
+                ImportGroupNode = CreateGroup(ProgramNode, MENU_TITLE_IMPORT);
             }
-            string name = ScriptImplement.ImportScriptMethodsFromNuGet(OwnerCommandCanvas, NuGetNode, packageDir, pkgName);
+            string name = ScriptImplement.ImportScriptMethodsFromNuGet(OwnerCommandCanvas, ImportGroupNode, packageDir, pkgName);
             if (name != null)
             {
                 ModulueNameList.Add(name);  // インポートリストに表示
@@ -243,22 +237,94 @@ namespace CapybaraVS.Script
         /// <summary>
         /// モジュールの登録を削除します。
         /// </summary>
-        public void ClearModule()
+        public void ClearModule(ICollection<string> importList)
         {
-            ModulueNameList.Clear();
-            DllModulePathList.Clear();
-            PackageModuleList.Clear();
-            NameSpaceModuleList.Clear();
-            NuGetModuleList.Clear();
-            if (DllNode != null)
+            // インポート情報の作成
+            List<string> removeList = new List<string>();
+            foreach (var nd in ImportGroupNode.Child)
             {
-                ProgramNode.Child.Remove(DllNode);
-                DllNode = null;
+                removeList.Add(nd.Name);
             }
-            if (NuGetNode != null)
+
+            if (removeList.Count != 0)
             {
-                ProgramNode.Child.Remove(NuGetNode);
-                NuGetNode = null;
+                // 削除除外を適用
+                foreach (var ns in importList)
+                {
+                    if (removeList.Count == 0)
+                    {
+                        break;
+                    }
+                    if (ns.StartsWith(ModuleControler.HEADER_DLL))
+                    {
+                        string name = ns.Substring(ModuleControler.HEADER_DLL.Length);
+                        string path = importList.First(n => n.EndsWith(name));
+                        removeList.Remove(ModuleControler.HEADER_DLL + Path.GetFileName(name));
+                    }
+                    else if (ns.StartsWith(ModuleControler.HEADER_NUGET))
+                    {
+                        string name = ns.Substring(ModuleControler.HEADER_NUGET.Length);
+                        foreach (var path in removeList.FindAll(n => n.EndsWith(name)))
+                        {
+                            removeList.Remove(path);
+                        }
+                    }
+                    else
+                    {
+                        removeList.Remove(ns);
+                    }
+                }
+            }
+
+            // インポート情報の削除
+            foreach (var rd in removeList)
+            {
+                TreeMenuNode treeMenuNode = null;
+                foreach (var childNode in ImportGroupNode.Child)
+                {
+                    if (childNode.Name == rd)
+                    {
+                        treeMenuNode = childNode;
+                        break;
+                    }
+                }
+                if (treeMenuNode != null)
+                {
+                    ImportGroupNode.Child.Remove(treeMenuNode);
+                    ModulueNameList.Remove(rd);
+                    if (rd.StartsWith(ModuleControler.HEADER_NAMESPACE))
+                    {
+                        // namespace
+
+                        string name = rd.Substring(ModuleControler.HEADER_NAMESPACE.Length);
+                        NameSpaceModuleList.Remove(name);
+                    }
+                    else if (rd.StartsWith(ModuleControler.HEADER_DLL) && rd.Contains(':'))
+                    {
+                        // NuGet
+
+                        string name = rd.Substring(rd.IndexOf(':') + 1);
+                        NuGetModuleList.Remove(name);
+                        ModulueNameList.Remove(ModuleControler.HEADER_NUGET + name);
+                        string temp = rd.Substring(ModuleControler.HEADER_DLL.Length);
+                        NugetClient.RemoveLoadedPackage(temp.Substring(0, temp.IndexOf(':')));
+                    }
+                    else if (rd.StartsWith(ModuleControler.HEADER_DLL))
+                    {
+                        // DLL
+
+                        string name = rd.Substring(ModuleControler.HEADER_DLL.Length);
+                        var path = DllModulePathList.Find(n => n.EndsWith(name));
+                        Debug.Assert(path != null);
+                        DllModulePathList.Remove(path);
+                    }
+                }
+            }
+
+            if (ImportGroupNode != null && ImportGroupNode.Child.Count == 0)
+            {
+                ProgramNode.Child.Remove(ImportGroupNode);
+                ImportGroupNode = null;
             }
         }
     }
