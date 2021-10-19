@@ -183,6 +183,19 @@ namespace CapybaraVS.Controls.BaseControls
 
         private CurvePath curvePath = null;
         private RootCurveLinks rootCurveLinks = null;
+
+        /// <summary>
+        /// ノード接続数を参照します。
+        /// </summary>
+        private int LinkCount
+        {
+            get
+            {
+                if (rootCurveLinks is null)
+                    return 0;
+                return rootCurveLinks.Count;
+            }
+        }
         private Point backupPos = new Point(0, 0);
 
         private bool singleLinkMode = false;
@@ -876,7 +889,7 @@ namespace CapybaraVS.Controls.BaseControls
         /// <param name="e"></param>
         private void _LayoutUpdated(object sender, EventArgs e)
         {
-            if (rootCurveLinks != null && rootCurveLinks.Count != 0 && IsLoaded)
+            if (LinkCount != 0 && IsLoaded)
             {
                 try
                 {
@@ -931,6 +944,10 @@ namespace CapybaraVS.Controls.BaseControls
                 return false;
             var ret = rootCurveLinks.RequestLinkCurve(point);
             ChangeLinkConnectorStroke();
+            if (ret)
+            {
+                CheckNotUseCache();
+            }
             return ret;
         }
 
@@ -938,6 +955,7 @@ namespace CapybaraVS.Controls.BaseControls
         {
             rootCurveLinks?.RequestRemoveCurveLinkRoot(point);
             ChangeLinkConnectorStroke();
+            CheckNotUseCache();
         }
 
         private void ChangeLinkConnectorStroke()
@@ -1229,6 +1247,21 @@ namespace CapybaraVS.Controls.BaseControls
                     ReleaseMouseCapture();
 
                 }), DispatcherPriority.ApplicationIdle);
+            }
+        }
+
+        /// <summary>
+        /// NotUseCache を自動で設定します。
+        /// </summary>
+        private void CheckNotUseCache()
+        {
+            if (LinkCount == 0)
+            {
+                Forced.IsChecked = false;
+            }
+            else
+            {
+                Forced.IsChecked = Forced.IsChecked.Value || LinkCount > 1;
             }
         }
 
