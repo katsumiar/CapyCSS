@@ -873,6 +873,7 @@ namespace CapybaraVS.Controls.BaseControls
                 }
                 ClearWorkCanvas(false);
                 GC.Collect();
+                CommandCanvasControl.MainLog.TryAutoClear();
 
                 PointIdProvider.InitCheckRequest();
                 ScriptCommandCanvas.AssetXML.ReadAction(ScriptCommandCanvas);
