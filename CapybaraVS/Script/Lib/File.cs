@@ -244,23 +244,39 @@ namespace CapybaraVS.Script.Lib
             , bool allDirectories = false
             , bool relativePath = false)
         {
-            IEnumerable<string> files;
+            var files = new List<string>();
             if (allDirectories)
-                files = Directory.EnumerateFiles(path, searchPattern, SearchOption.AllDirectories);
-            else
-                files = Directory.EnumerateFiles(path, searchPattern);
-            var list = new List<string>(files);
+            {
+                try
+                {
+                    var directories = Directory.EnumerateDirectories(path);
+                    foreach (var dir in directories)
+                    {
+                        files.AddRange(GetFiles(dir, searchPattern, allDirectories, relativePath));
+                    }
+                }
+                catch (Exception)
+                {
+                }
+            }
+
+            try
+            {
+                files.AddRange(Directory.EnumerateFiles(path, searchPattern));
+            }
+            catch (Exception)
+            {
+            }
+
             if (relativePath)
             {
                 if (path.EndsWith(@"\"))
                     path = path.Replace(path, "");
                 else
                     path = path.Replace(path + @"\", "");
-
-                list.ForEach(s => s = s.Replace(path, ""));
-
+                files.ForEach(s => s = s.Replace(path, ""));
             }
-            return list;
+            return files;
         }
 
         //------------------------------------------------------------------
