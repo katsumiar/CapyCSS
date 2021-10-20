@@ -387,7 +387,6 @@ namespace CapybaraVS.Script
             else
             {
                 types = module.GetTypes();
-                CbST.AddModule(module);
             }
 
             ImportScriptMethods(OwnerCommandCanvas, node, module, importNameList, inportTypeMenu, types);
@@ -459,21 +458,25 @@ namespace CapybaraVS.Script
         private static List<Task<List<AutoImplementFunctionInfo>>> CreateMakeInportFunctionInfoTasks(Module module, List<string> importNameList, Type[] types)
         {
             var tasks = new List<Task<List<AutoImplementFunctionInfo>>>();
+            Type actionType = typeof(Action);
             foreach (Type classType in types)
             {
-                if (importNameList != null && !importNameList.Any(n => classType.FullName.StartsWith(n)))
+                if (importNameList != null && importNameList.Count > 0 && !importNameList.Any(n => classType.FullName.StartsWith(n)))
                     continue;
 
                 if (!IsAcceptClass(classType))
                     continue;   // 扱えない
 
-                if (classType.Name.EndsWith("Exception"))
+                string className = classType.Name;
+                if (className.EndsWith("Exception"))
                     continue;   // 例外は扱わない
-                if (classType == typeof(Action))
+                if (classType == actionType)
                     continue;   // 本システムで特殊な扱いをしているので扱わない
-                if (classType.Name.StartsWith("Action`"))
+                if (className.StartsWith("Action`"))
                     continue;   // 本システムで特殊な扱いをしているので扱わない
-                if (classType.Name.StartsWith("Func`"))
+                if (className.StartsWith("Func`"))
+                    continue;   // 本システムで特殊な扱いをしているので扱わない
+                if (className.StartsWith("Async"))
                     continue;   // 本システムで特殊な扱いをしているので扱わない
 
                 if (!classType.IsAbstract)

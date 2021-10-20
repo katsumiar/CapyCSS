@@ -1097,7 +1097,7 @@ namespace CapybaraVS.Controls.BaseControls
                         null,
                         (p) =>
                         {
-                            CommandCanvas.SelectType = typeName.Key;
+                            SelectType = typeName.Key;
                             TypeMenuWindow.Close();
                         },
                         (p) =>
@@ -1171,7 +1171,6 @@ namespace CapybaraVS.Controls.BaseControls
             {
                 return;
             }
-            CbST.TypeDictionary(type.FullName, type);
             TreeViewCommand.AddGroupedMenu(
                 typeWindow_import,
                 group + "." + CbSTUtils.MakeGroupedTypeName(type),

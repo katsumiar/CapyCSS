@@ -21,6 +21,7 @@ using System.Windows.Media;
 using CbVS.Script;
 using CapyCSS.Script;
 using System.Collections;
+using System.Threading;
 
 namespace CapybaraVS.Script
 {
@@ -30,29 +31,14 @@ namespace CapybaraVS.Script
     /// </summary>
     public class CbST
     {
-        private static List<Module> moduleList = new List<Module>();
-        private static Dictionary<string, Type> typeDictionary = new Dictionary<string, Type>();
-        public static void AddModule(Module module)
-        {
-            if (!moduleList.Contains(module))
-            {
-                moduleList.Add(module);
-            }
-        }
+        private static List<Assembly> recentlyReferencedAssemblyList = new List<Assembly>();
+        private static ReaderWriterLockSlim recentlyReferencedAssemblyListRWlock = new ReaderWriterLockSlim();
 
-        /// <summary>
-        /// 型情報を辞書に登録します。
-        /// ※CbST.GetTypeEx(name) で参照できるようになります。
-        /// </summary>
-        /// <param name="name">型名</param>
-        /// <param name="type">型情報</param>
-        public static void TypeDictionary(string name, Type type)
-        {
-            if (!typeDictionary.ContainsKey(name))
-            {
-                typeDictionary.Add(name, type);
-            }
-        }
+        private static List<Tuple<string, Type>> cacheTypeList = new List<Tuple<string, Type>>();
+        private static ReaderWriterLockSlim cacheTypeListRWlock = new ReaderWriterLockSlim();
+
+        private const int MAX_recentlyReferencedAssembly = 6;
+        private const int MAX_cacheType = 300;
 
         /// <summary>
         /// 型情報を参照します。
@@ -62,36 +48,107 @@ namespace CapybaraVS.Script
         /// <returns>型情報</returns>
         public static Type GetTypeEx(string name)
         {
-            var type = Type.GetType(name);
-            if (type is null)
+            Type _GetTypeEx(string name)
             {
-                // インポートしたアセンブリを参照する
-
-                if (typeDictionary.TryGetValue(name, out type))
+                var type = Type.GetType(name);
+                if (type is null)
                 {
-                    // インポート時に辞書に登録済み
-
-                    return type;
-                }
-
-                foreach (var module in moduleList)
-                {
-                    type = module.GetType(name);
-                    if (type != null)
-                        return type;
-                }
-                foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies())
-                {
-                    foreach (var ct in assembly.GetTypes())
+                    try
                     {
-                        if (ct.FullName == name)
+                        recentlyReferencedAssemblyListRWlock.EnterReadLock();
+                        foreach (var assembly in recentlyReferencedAssemblyList)
                         {
-                            return ct;
+                            type = Array.Find(assembly.GetTypes(), n => n.FullName == name);
+                            if (type != null)
+                            {
+                                return type;
+                            }
+                        }
+                    }
+                    finally
+                    {
+                        if (recentlyReferencedAssemblyListRWlock.IsReadLockHeld)
+                        {
+                            recentlyReferencedAssemblyListRWlock.ExitReadLock();
+                        }
+                    }
+
+                    foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies())
+                    {
+                        type = Array.Find(assembly.GetTypes(), n => n.FullName == name);
+                        if (type != null)
+                        {
+                            setMostRecentlyReferencedAssemblyList(assembly);
+                            return type;
                         }
                     }
                 }
+                return type;
             }
-            return type;
+
+            try
+            {
+                cacheTypeListRWlock.EnterReadLock();
+                string findName = new string(name.Reverse().ToArray());
+                var cache = cacheTypeList.Find(n => n.Item1 == findName);
+                if (cache != null)
+                {
+                    return cache.Item2;
+                }
+            }
+            finally
+            {
+                if (cacheTypeListRWlock.IsReadLockHeld)
+                {
+                    cacheTypeListRWlock.ExitReadLock();
+                }
+            }
+            try
+            {
+                cacheTypeListRWlock.EnterWriteLock();
+                var type = _GetTypeEx(name);
+                if (cacheTypeList.Count > MAX_cacheType)
+                {
+                    cacheTypeList.RemoveAt(MAX_cacheType);
+                }
+                cacheTypeList.Insert(0, new Tuple<string, Type>(new string(name.Reverse().ToArray()), type));
+                return type;
+            }
+            finally
+            {
+                if (cacheTypeListRWlock.IsWriteLockHeld)
+                {
+                    cacheTypeListRWlock.ExitWriteLock();
+                }
+            }
+        }
+
+        /// <summary>
+        /// 型情報参照のためのアセンブリをキャッシュします。
+        /// </summary>
+        /// <param name="name">アセンブリ</param>
+
+        private static void setMostRecentlyReferencedAssemblyList(Assembly assembly)
+        {
+            try
+            {
+                recentlyReferencedAssemblyListRWlock.EnterWriteLock();
+                if (!recentlyReferencedAssemblyList.Contains(assembly))
+                {
+                    if (recentlyReferencedAssemblyList.Count > MAX_recentlyReferencedAssembly)
+                    {
+                        recentlyReferencedAssemblyList.RemoveAt(MAX_recentlyReferencedAssembly);
+                    }
+                    recentlyReferencedAssemblyList.Insert(0, assembly);
+                }
+            }
+            finally
+            {
+                if (recentlyReferencedAssemblyListRWlock.IsWriteLockHeld)
+                {
+                    recentlyReferencedAssemblyListRWlock.ExitWriteLock();
+                }
+            }
         }
 
         /// <summary>
