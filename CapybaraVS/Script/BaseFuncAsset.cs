@@ -1143,6 +1143,7 @@ namespace CapybaraVS.Script
                             ret.Set(argument[0]);
                             string str = argument[0].ValueUIString;
                             Console.WriteLine(str);
+                            CommandCanvasList.OutPut.Flush();
                         }
                         catch (Exception ex)
                         {
