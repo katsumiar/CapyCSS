@@ -292,6 +292,7 @@ namespace CapybaraVS.Script
                 {
                     ImportGroupNode.Child.Remove(treeMenuNode);
                     ModulueNameList.Remove(rd);
+                    OwnerCommandCanvas.ClearTypeImportMenu(rd);
                     if (rd.StartsWith(ModuleControler.HEADER_NAMESPACE))
                     {
                         // namespace

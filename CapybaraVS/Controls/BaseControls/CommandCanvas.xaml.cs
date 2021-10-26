@@ -912,7 +912,6 @@ namespace CapybaraVS.Controls.BaseControls
             StackGroupHoldAction.Clear();
             PlotWindowHoldAction.Clear();
             LinkConnectorListHoldAction.Clear();
-            ClearTypeImportMenu();
             ScriptCommandCanvas.HideWorkStack();
             InstalledMultiRootConnector = null;
 
@@ -1160,6 +1159,9 @@ namespace CapybaraVS.Controls.BaseControls
                 );
         }
 
+        private string backupImportingName = "";
+        private TreeMenuNode importingMenu = null;
+
         /// <summary>
         /// 型情報を型メニューインポートします。
         /// </summary>
@@ -1171,8 +1173,15 @@ namespace CapybaraVS.Controls.BaseControls
             {
                 return;
             }
+            if (ScriptImplement.ImportingName != backupImportingName)
+            {
+                backupImportingName = ScriptImplement.ImportingName;
+                importingMenu = ImplementAsset.CreateGroup(typeWindow_import, backupImportingName);
+            }
+            Debug.Assert(importingMenu != null);
+
             TreeViewCommand.AddGroupedMenu(
-                typeWindow_import,
+                importingMenu,
                 group + "." + CbSTUtils.MakeGroupedTypeName(type),
                 null,
                 (p) =>
@@ -1511,9 +1520,26 @@ namespace CapybaraVS.Controls.BaseControls
         /// <summary>
         /// インポートされている型情報を削除します。
         /// </summary>
-        private void ClearTypeImportMenu()
+        public void ClearTypeImportMenu(string name)
         {
-            typeWindow_import?.Child.Clear();
+            if (typeWindow_import is null)
+            {
+                return;
+            }
+
+            TreeMenuNode targetNode = null;
+            foreach (var node in typeWindow_import.Child)
+            {
+                if (node.Name == name)
+                {
+                    targetNode = node;
+                    break;
+                }
+            }
+            if (targetNode != null)
+            {
+                typeWindow_import.Child.Remove(targetNode);
+            }
         }
         #endregion
 

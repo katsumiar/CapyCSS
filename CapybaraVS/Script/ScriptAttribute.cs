@@ -94,6 +94,8 @@ namespace CapybaraVS.Script
 
     public class ScriptImplement
     {
+        public static string ImportingName = "";
+
         /// <summary>
         /// 引数情報です。
         /// </summary>
@@ -186,6 +188,7 @@ namespace CapybaraVS.Script
             string name)
         {
             string outputName = ModuleControler.HEADER_NAMESPACE + name;
+            ImportingName = outputName;
             TreeMenuNode functionNode = ImplementAsset.CreateGroup(node, outputName);
             List<Type> types = new List<Type>();
             foreach (Assembly assembly in AppDomain.CurrentDomain.GetAssemblies())
@@ -198,14 +201,19 @@ namespace CapybaraVS.Script
                     }
                 }
             }
+            List<Type> addTypes = new List<Type>();
             ImportScriptMethods(
                 OwnerCommandCanvas,
                 functionNode,
                 null,
                 null,
-                (t) => OwnerCommandCanvas.AddImportTypeMenu(t),
+                (t) => addTypes.Add(t),
                 types.ToArray()
                 );
+            foreach (var addType in addTypes)
+            {
+                OwnerCommandCanvas.AddImportTypeMenu(addType);
+            }
             Console.WriteLine($"imported namespace {name}");
             return outputName;
         }
@@ -249,15 +257,21 @@ namespace CapybaraVS.Script
 
                     createGroupName = ModuleControler.HEADER_DLL + moduleName + $":{ownerModuleName}";
                 }
+                ImportingName = createGroupName;
 
+                List<Type> addTypes = new List<Type>();
                 ImportScriptMethods(
                     OwnerCommandCanvas,
                     ImplementAsset.CreateGroup(node, createGroupName),
                     asm,
                     mod,
                     importNameList,
-                    (t) => OwnerCommandCanvas.AddImportTypeMenu(t)
+                    (t) => addTypes.Add(t)
                     );
+                foreach (var addType in addTypes)
+                {
+                    OwnerCommandCanvas.AddImportTypeMenu(addType);
+                }
                 if (moduleName is null)
                 {
                     // DLL
@@ -421,31 +435,40 @@ namespace CapybaraVS.Script
 
             List<Task<List<AutoImplementFunctionInfo>>> tasks = CreateMakeInportFunctionInfoTasks(module, importNameList, types);
 
-            // ノード化
-            foreach (var task in tasks)
-            {
-                var classInfos = task.Result;
-                if (classInfos is null)
-                    continue;
-
-                foreach (var info in classInfos)
+            Task[] addMethodsAndTypesTasks = new Task[] {
+                // メソッドをメニューに登録する
+                Task.Run(() =>
                 {
-                    if (info is null)
-                        continue;
+                    foreach (var task in tasks)
+                    {
+                        var classInfos = task.Result;
+                        if (classInfos is null)
+                            continue;
 
-                    CreateMethodNode(OwnerCommandCanvas, node, info);
-                }
-            }
+                        foreach (var info in classInfos)
+                        {
+                            if (info is null)
+                                continue;
 
-            // 型情報をメニューに登録する
-            if (tcTask != null)
-            {
-                var typeList = tcTask.Result;
-                foreach (var type in typeList)
+                            CreateMethodNode(OwnerCommandCanvas, node, info);
+                        }
+                    }
+                }),
+                // 型をメニューに登録する
+                Task.Run(() =>
                 {
-                    inportTypeMenu(type);
-                }
-            }
+                    if (tcTask != null)
+                    {
+                        var typeList = tcTask.Result;
+                        foreach (var type in typeList)
+                        {
+                            inportTypeMenu(type);
+                        }
+                    }
+                })
+            };
+
+            Task.WaitAll(addMethodsAndTypesTasks);
         }
 
         /// <summary>
@@ -584,6 +607,8 @@ namespace CapybaraVS.Script
                     if (!IsAcceptTypeMenuType(type))
                         return;   // 扱えない
 
+                    Debug.Assert(false);
+                    // AddImportTypeMenu の間違い？
                     OwnerCommandCanvas.AddTypeMenu(type);
                 }
             });
@@ -642,6 +667,8 @@ namespace CapybaraVS.Script
                     }
 #endif
                 }
+
+                task.Wait();
             }
         }
 
