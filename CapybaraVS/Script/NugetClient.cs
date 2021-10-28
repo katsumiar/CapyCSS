@@ -17,6 +17,15 @@ namespace CapyCSS.Script
     class NugetClient
     {
         private static List<string> loadedPackages = new List<string>();
+        public static void RemoveLoadedPackage(string name)
+        {
+            string moduleDir = name.Replace("(", ".").Replace(")", "");
+            var path = loadedPackages.Find(n => n.Contains(moduleDir));
+            if (path != null)
+            {
+                loadedPackages.Remove(path);
+            }
+        }
 
         public class PackageInfo
         {

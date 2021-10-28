@@ -344,7 +344,7 @@ namespace CapybaraVS.Controls
             else
             {
                 var imageExtensions = new List<string>() { ".png", ".gif", ".jpg", ".bmp" };
-                if (FileLib.Exists(text) && imageExtensions.Contains(FileLib.GetExtension(text.ToLower())))
+                if (System.IO.File.Exists(text) && imageExtensions.Contains(System.IO.Path.GetExtension(text.ToLower())))
                 {
                     setValue = CbImagePath.Create(text, "");
                 }

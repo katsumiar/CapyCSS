@@ -110,9 +110,29 @@ namespace CapybaraVS.Controls.BaseControls
                 {
                     self.AssetId = AssetId;
                     self._inportNameSpaceModule = ImportNameSpaceModule;
-                    self._inportPackageModule = ImportPackageModule;
                     self._inportDllModule = ImportDllModule;
                     self._inportNuGetModule = ImportNuGetModule;
+
+                    {// 不要なモジュールを削除する
+                        List<string> importModules = new List<string>();
+                        foreach (var module in ImportNameSpaceModule)
+                        {
+                            importModules.Add(ModuleControler.HEADER_NAMESPACE + module);
+                        }
+                        foreach (var module in ImportDllModule)
+                        {
+                            importModules.Add(ModuleControler.HEADER_DLL + module);
+                        }
+                        foreach (var module in ImportNuGetModule)
+                        {
+                            importModules.Add(ModuleControler.HEADER_NUGET + module);
+                        }
+
+                        // 基本的なインポートモジュールを追加
+                        importModules.AddRange(self.ApiImporter.GetBaseImportList());
+                        self.ApiImporter.ClearModule(new List<string>(importModules.Distinct()));
+                    }
+
                     if (self.ImportModule())
                     {
                         SetupCanvas(self);
@@ -176,7 +196,6 @@ namespace CapybaraVS.Controls.BaseControls
                     AssetId = self.AssetId;
                     DataVersion = DATA_VERSION;
                     ImportNameSpaceModule = self.ApiImporter.NameSpaceModuleList;
-                    ImportPackageModule = self.ApiImporter.PackageModuleList;
                     ImportDllModule = self.ApiImporter.DllModulePathList;
                     ImportNuGetModule = self.ApiImporter.NuGetModuleList;
                     self.WorkCanvas.AssetXML.WriteAction?.Invoke();
@@ -201,7 +220,6 @@ namespace CapybaraVS.Controls.BaseControls
             public int DataVersion { get; set; } = 0;
             public BaseWorkCanvas._AssetXML<BaseWorkCanvas> WorkCanvas { get; set; } = null;
             public List<string> ImportNameSpaceModule { get; set; } = null;
-            public List<string> ImportPackageModule { get; set; } = null;
             public List<string> ImportDllModule { get; set; } = null;
             public List<string> ImportNuGetModule { get; set; } = null;
             public Stack._AssetXML<Stack> WorkStack { get; set; } = null;
@@ -222,8 +240,6 @@ namespace CapybaraVS.Controls.BaseControls
                         WorkCanvas = null;
                         ImportNameSpaceModule?.Clear();
                         ImportNameSpaceModule = null;
-                        ImportPackageModule?.Clear();
-                        ImportPackageModule = null;
                         ImportDllModule?.Clear();
                         ImportDllModule = null;
                         ImportNuGetModule?.Clear();
@@ -468,7 +484,6 @@ namespace CapybaraVS.Controls.BaseControls
         //----------------------------------------------------------------------
         #region スクリプト内共有
         public List<string> _inportNameSpaceModule = null;
-        public List<string> _inportPackageModule = null;
         public List<string> _inportDllModule = null;
         public List<string> _inportNuGetModule = null;
         public ApiImporter ApiImporter = null;
@@ -607,8 +622,8 @@ namespace CapybaraVS.Controls.BaseControls
                     CommandCanvasControl.PackageDir
                 );
 
-            ApiImporter.ImportBase();
-            ImportModule();
+            ApiImporter.ImportBaseModule();
+            ImportModule(); // 起動時に外部からインポートモジュールを設定される可能性がある
         }
 
         /// <summary>
@@ -626,16 +641,6 @@ namespace CapybaraVS.Controls.BaseControls
                     ApiImporter.ImportNameSpace(imp);
                 }
                 _inportNameSpaceModule = null;
-            }
-            if (_inportPackageModule != null)
-            {
-                // パッケージインポートの復元
-
-                foreach (var imp in _inportPackageModule)
-                {
-                    ApiImporter.ImportPackage(imp, null);
-                }
-                _inportPackageModule = null;
             }
             if (_inportNuGetModule != null)
             {
@@ -868,6 +873,7 @@ namespace CapybaraVS.Controls.BaseControls
                 }
                 ClearWorkCanvas(false);
                 GC.Collect();
+                CommandCanvasControl.MainLog.TryAutoClear();
 
                 PointIdProvider.InitCheckRequest();
                 ScriptCommandCanvas.AssetXML.ReadAction(ScriptCommandCanvas);
@@ -899,7 +905,6 @@ namespace CapybaraVS.Controls.BaseControls
         public void ClearWorkCanvas(bool full = true)
         {
             CommandCanvasControl.ClearPublicExecuteEntryPoint(this);
-            ApiImporter.ClearModule();
             ScriptWorkCanvas.Clear();
             ScriptWorkStack.Clear();
             WorkStack.Clear();
@@ -907,11 +912,8 @@ namespace CapybaraVS.Controls.BaseControls
             StackGroupHoldAction.Clear();
             PlotWindowHoldAction.Clear();
             LinkConnectorListHoldAction.Clear();
-            ClearTypeImportMenu();
             ScriptCommandCanvas.HideWorkStack();
             InstalledMultiRootConnector = null;
-
-            ApiImporter.ImportBase();
 
             if (full)
             {
@@ -1094,7 +1096,7 @@ namespace CapybaraVS.Controls.BaseControls
                         null,
                         (p) =>
                         {
-                            CommandCanvas.SelectType = typeName.Key;
+                            SelectType = typeName.Key;
                             TypeMenuWindow.Close();
                         },
                         (p) =>
@@ -1157,6 +1159,9 @@ namespace CapybaraVS.Controls.BaseControls
                 );
         }
 
+        private string backupImportingName = "";
+        private TreeMenuNode importingMenu = null;
+
         /// <summary>
         /// 型情報を型メニューインポートします。
         /// </summary>
@@ -1168,9 +1173,15 @@ namespace CapybaraVS.Controls.BaseControls
             {
                 return;
             }
-            CbST.TypeDictionary(type.FullName, type);
+            if (ScriptImplement.ImportingName != backupImportingName)
+            {
+                backupImportingName = ScriptImplement.ImportingName;
+                importingMenu = ImplementAsset.CreateGroup(typeWindow_import, backupImportingName);
+            }
+            Debug.Assert(importingMenu != null);
+
             TreeViewCommand.AddGroupedMenu(
-                typeWindow_import,
+                importingMenu,
                 group + "." + CbSTUtils.MakeGroupedTypeName(type),
                 null,
                 (p) =>
@@ -1509,9 +1520,26 @@ namespace CapybaraVS.Controls.BaseControls
         /// <summary>
         /// インポートされている型情報を削除します。
         /// </summary>
-        private void ClearTypeImportMenu()
+        public void ClearTypeImportMenu(string name)
         {
-            typeWindow_import?.Child.Clear();
+            if (typeWindow_import is null)
+            {
+                return;
+            }
+
+            TreeMenuNode targetNode = null;
+            foreach (var node in typeWindow_import.Child)
+            {
+                if (node.Name == name)
+                {
+                    targetNode = node;
+                    break;
+                }
+            }
+            if (targetNode != null)
+            {
+                typeWindow_import.Child.Remove(targetNode);
+            }
         }
         #endregion
 
@@ -1591,6 +1619,7 @@ namespace CapybaraVS.Controls.BaseControls
                 CommandCanvasList.SetOwnerCursor(Cursors.Wait);
                 ScriptWorkCanvas.Dispatcher.BeginInvoke(new Action(() =>
                 {
+                    ApiImporter.ClearModule(ApiImporter.GetBaseImportList());
                     ClearWorkCanvas();
                     ScriptCommandCanvas.Dispatcher.BeginInvoke(new Action(() =>
                     {
@@ -1722,7 +1751,6 @@ namespace CapybaraVS.Controls.BaseControls
                     TypeMenuWindow = null;
 
                     _inportNameSpaceModule = null;
-                    _inportPackageModule = null;
                     _inportDllModule = null;
                     _inportNuGetModule = null;
 

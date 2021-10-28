@@ -18,13 +18,6 @@ namespace CapybaraVS.Script.Lib
         //====================================================================================
         private const string LIB_NAME1 = LIB_NAME + ".Read";
 
-        [ScriptMethod(LIB_NAME1, null, true)]
-        public static StreamReader CreateReadStream(string fileName, string encoding = "utf-8")
-        {
-            var encodingCode = Encoding.GetEncoding(encoding);
-            return new StreamReader(fileName, encodingCode);
-        }
-
         //------------------------------------------------------------------
         [ScriptMethod(LIB_NAME1)]
         public static int StreamReadLine(
@@ -49,22 +42,8 @@ namespace CapybaraVS.Script.Lib
             return ret;
         }
 
-        //------------------------------------------------------------------
-        [ScriptMethod(LIB_NAME1, null, true)]
-        public static void CloseReadStream(StreamReader stream)
-        {
-            stream?.Close();
-        }
-
         //====================================================================================
         private const string LIB_NAME2 = LIB_NAME + ".Writer";
-
-        [ScriptMethod(LIB_NAME2, null, true)]
-        public static StreamWriter CreateWriteStream(string fileName, bool append, string encoding = "utf-8")
-        {
-            var encodingCode = Encoding.GetEncoding(encoding);
-            return new StreamWriter(fileName, append, encodingCode);
-        }
 
         //------------------------------------------------------------------
         [ScriptMethod(LIB_NAME2)]
@@ -86,17 +65,10 @@ namespace CapybaraVS.Script.Lib
         }
 
         //------------------------------------------------------------------
-        [ScriptMethod(LIB_NAME2, null, true)]
-        public static void CloseWriteStream(StreamWriter stream)
-        {
-            stream?.Close();
-        }
-
-        //------------------------------------------------------------------
         [ScriptMethod(LIB_NAME2)]
         public static void FileOpenAddWriteAndClose(string fileName, string str, bool lineMode, string encoding = "utf-8")
         {
-            var stream = CreateWriteStream(fileName, true, encoding);
+            var stream = new StreamWriter(fileName, true, Encoding.GetEncoding(encoding));
             StreamWrite(stream, str, lineMode, true);
         }
 
@@ -221,112 +193,6 @@ namespace CapybaraVS.Script.Lib
             return list;
         }
 
-        //====================================================================================
-        [ScriptMethod(LIB_NAME, null, true)]
-        public static string GetFileName(string path)
-        {
-            return Path.GetFileName(path);
-        }
-
-        //------------------------------------------------------------------
-        [ScriptMethod(LIB_NAME, null, true)]
-        public static string GetExtension(string path)
-        {
-            return Path.GetExtension(path);
-        }
-
-        //------------------------------------------------------------------
-        [ScriptMethod(LIB_NAME, null, true)]
-        public static string GetDirectoryName(string path)
-        {
-            return Path.GetDirectoryName(path);
-        }
-
-        //------------------------------------------------------------------
-        [ScriptMethod(LIB_NAME, null, true)]
-        public static string GetFileNameWithoutExtension(string path)
-        {
-            return Path.GetFileNameWithoutExtension(path);
-        }
-
-        //------------------------------------------------------------------
-        [ScriptMethod(LIB_NAME, null, true)]
-        public static string GetCurrentDirectory()
-        {
-            return Directory.GetCurrentDirectory();
-        }
-
-        //------------------------------------------------------------------
-        [ScriptMethod(LIB_NAME, null, true)]
-        public static string SetCurrentDirectory(string path)
-        {
-            Directory.SetCurrentDirectory(path);
-            return path;
-        }
-
-        //------------------------------------------------------------------
-        [ScriptMethod(LIB_NAME, null, true)]
-        public static string GetPathRoot(string path)
-        {
-            return Path.GetPathRoot(path);
-        }
-
-        //------------------------------------------------------------------
-        [ScriptMethod(LIB_NAME, null, true)]
-        public static string GetFullPath(string path)
-        {
-            return Path.GetFullPath(path);
-        }
-
-        //------------------------------------------------------------------
-        [ScriptMethod(LIB_NAME, null, true)]
-        public static bool HasExtension(string path)
-        {
-            return Path.HasExtension(path);
-        }
-
-        //------------------------------------------------------------------
-        [ScriptMethod(LIB_NAME, null, true)]
-        public static bool IsPathRooted(string path)
-        {
-            return Path.IsPathRooted(path);
-        }
-
-        //------------------------------------------------------------------
-        [ScriptMethod(LIB_NAME, null, true)]
-        public static bool Exists(string path)
-        {
-            return File.Exists(path);
-        }
-
-        //------------------------------------------------------------------
-        [ScriptMethod(LIB_NAME, null, true)]
-        public static bool DirectoryExists(string path)
-        {
-            return Directory.Exists(path);
-        }
-
-        //------------------------------------------------------------------
-        [ScriptMethod(LIB_NAME, null, true)]
-        public static void Delete(string path)
-        {
-            File.Delete(path);
-        }
-
-        //------------------------------------------------------------------
-        [ScriptMethod(LIB_NAME, null, true)]
-        public static void Copy(string sourceFileName, string destFileName, bool overwrite = true)
-        {
-            File.Copy(sourceFileName, destFileName, overwrite);
-        }
-
-        //------------------------------------------------------------------
-        [ScriptMethod(LIB_NAME, null, true)]
-        public static void Move(string sourceFileName, string destFileName, bool overwrite = true)
-        {
-            File.Move(sourceFileName, destFileName, overwrite);
-        }
-
         //------------------------------------------------------------------
         [ScriptMethod(LIB_NAME)]
         public static long GetFileSize(string path)
@@ -378,23 +244,39 @@ namespace CapybaraVS.Script.Lib
             , bool allDirectories = false
             , bool relativePath = false)
         {
-            IEnumerable<string> files;
+            var files = new List<string>();
             if (allDirectories)
-                files = Directory.EnumerateFiles(path, searchPattern, SearchOption.AllDirectories);
-            else
-                files = Directory.EnumerateFiles(path, searchPattern);
-            var list = new List<string>(files);
+            {
+                try
+                {
+                    var directories = Directory.EnumerateDirectories(path);
+                    foreach (var dir in directories)
+                    {
+                        files.AddRange(GetFiles(dir, searchPattern, allDirectories, relativePath));
+                    }
+                }
+                catch (Exception)
+                {
+                }
+            }
+
+            try
+            {
+                files.AddRange(Directory.EnumerateFiles(path, searchPattern));
+            }
+            catch (Exception)
+            {
+            }
+
             if (relativePath)
             {
                 if (path.EndsWith(@"\"))
                     path = path.Replace(path, "");
                 else
                     path = path.Replace(path + @"\", "");
-
-                list.ForEach(s => s = s.Replace(path, ""));
-
+                files.ForEach(s => s = s.Replace(path, ""));
             }
-            return list;
+            return files;
         }
 
         //------------------------------------------------------------------

@@ -94,6 +94,8 @@ namespace CapybaraVS.Script
 
     public class ScriptImplement
     {
+        public static string ImportingName = "";
+
         /// <summary>
         /// 引数情報です。
         /// </summary>
@@ -135,7 +137,7 @@ namespace CapybaraVS.Script
                 foreach (var package in packageList)
                 {
 #if true
-                    ScriptImplement.ImportScriptMethodsFromDllFile(OwnerCommandCanvas, node, package.Path, null, $"{package.Name}({package.Version})");
+                    ScriptImplement.ImportScriptMethodsFromDllFile(OwnerCommandCanvas, node, package.Path, null, $"{package.Name}({package.Version})", packageName);
 #else
                     if (package == packageList.Last())
                     {
@@ -174,45 +176,6 @@ namespace CapybaraVS.Script
         }
 
         /// <summary>
-        /// パッケージ名からメソッドをスクリプトで使えるように取り込みます。
-        /// </summary>
-        /// <param name="OwnerCommandCanvas">オーナーキャンバス</param>
-        /// <param name="node">登録先のノード</param>
-        /// <param name="name">パッケージ名</param>
-        /// <param name="importNameList">取り込む名前リスト</param>
-        /// <returns>インポートしたパッケージ名</returns>
-        public static string ImportScriptMethodsFromPackage(
-            CommandCanvas OwnerCommandCanvas,
-            TreeMenuNode node,
-            string name,
-            List<string> importNameList)
-        {
-            string outputName = ModuleControler.HEADER_PACKAGE + name;
-            var functionNode = ImplementAsset.CreateGroup(node, outputName);
-#if !DEBUG_IMPORT
-            try
-#endif
-            {
-                ImportScriptMethods(
-                    OwnerCommandCanvas,
-                    functionNode,
-                    Assembly.Load(name),
-                    null,
-                    importNameList,
-                    (t) => OwnerCommandCanvas.AddImportTypeMenu(t)
-                    );
-            }
-#if !DEBUG_IMPORT
-            catch (Exception ex)
-            {
-                ControlTools.ShowErrorMessage(ex.Message, "Import Error.");
-            }
-#endif
-            Console.WriteLine($"imported {name} package.");
-            return outputName;
-        }
-
-        /// <summary>
         /// ネームスペース名からメソッドをスクリプトで使えるように取り込みます。
         /// </summary>
         /// <param name="OwnerCommandCanvas">オーナーキャンバス</param>
@@ -225,6 +188,7 @@ namespace CapybaraVS.Script
             string name)
         {
             string outputName = ModuleControler.HEADER_NAMESPACE + name;
+            ImportingName = outputName;
             TreeMenuNode functionNode = ImplementAsset.CreateGroup(node, outputName);
             List<Type> types = new List<Type>();
             foreach (Assembly assembly in AppDomain.CurrentDomain.GetAssemblies())
@@ -237,15 +201,20 @@ namespace CapybaraVS.Script
                     }
                 }
             }
+            List<Type> addTypes = new List<Type>();
             ImportScriptMethods(
                 OwnerCommandCanvas,
                 functionNode,
                 null,
                 null,
-                (t) => OwnerCommandCanvas.AddImportTypeMenu(t),
+                (t) => addTypes.Add(t),
                 types.ToArray()
                 );
-            Console.WriteLine($"imported {name} namespace.");
+            foreach (var addType in addTypes)
+            {
+                OwnerCommandCanvas.AddImportTypeMenu(addType);
+            }
+            Console.WriteLine($"imported namespace {name}");
             return outputName;
         }
 
@@ -256,13 +225,16 @@ namespace CapybaraVS.Script
         /// <param name="node">登録先のノード</param>
         /// <param name="path"></param>
         /// <param name="importNameList">取り込む名前リスト</param>
+        /// <param name="moduleName">モジュール名（NuGet用）</param>
+        /// <param name="ownerModuleName">親モジュール名（NuGet用）</param>
         /// <returns>インポートしたモジュール名</returns>
         public static string ImportScriptMethodsFromDllFile(
             CommandCanvas OwnerCommandCanvas,
             TreeMenuNode node,
             string path,
             List<string> importNameList,
-            string version = null)
+            string moduleName = null,
+            string ownerModuleName = null)
         {
 #if !DEBUG_IMPORT
             try
@@ -271,25 +243,50 @@ namespace CapybaraVS.Script
                 var asm = Assembly.LoadFrom(path);
                 Module mod = asm.GetModule(path);
                 string name = Path.GetFileName(path);
+
+                string createGroupName;
+                if (moduleName is null)
+                {
+                    // DLL
+
+                    createGroupName = ModuleControler.HEADER_DLL + name;
+                }
+                else
+                {
+                    // NuGet
+
+                    createGroupName = ModuleControler.HEADER_DLL + moduleName + $":{ownerModuleName}";
+                }
+                ImportingName = createGroupName;
+
+                List<Type> addTypes = new List<Type>();
                 ImportScriptMethods(
                     OwnerCommandCanvas,
-                    node,
+                    ImplementAsset.CreateGroup(node, createGroupName),
                     asm,
                     mod,
                     importNameList,
-                    (t) => OwnerCommandCanvas.AddImportTypeMenu(t)
+                    (t) => addTypes.Add(t)
                     );
-                if (version is null)
+                foreach (var addType in addTypes)
                 {
-                    Console.WriteLine($"imported {Path.GetFileNameWithoutExtension(name)} package.");
+                    OwnerCommandCanvas.AddImportTypeMenu(addType);
+                }
+                if (moduleName is null)
+                {
+                    // DLL
+
+                    Console.WriteLine($"imported {name}");
                     CommandCanvasList.OutPut.Flush();
                 }
                 else
                 {
-                    Console.WriteLine($"imported {version} package.");
+                    // NuGet
+
+                    Console.WriteLine($"imported {moduleName}");
                     CommandCanvasList.OutPut.Flush();
                 }
-                return name;
+                return ModuleControler.HEADER_DLL + name;
             }
 #if !DEBUG_IMPORT
             catch (Exception ex)
@@ -404,7 +401,6 @@ namespace CapybaraVS.Script
             else
             {
                 types = module.GetTypes();
-                CbST.AddModule(module);
             }
 
             ImportScriptMethods(OwnerCommandCanvas, node, module, importNameList, inportTypeMenu, types);
@@ -439,31 +435,40 @@ namespace CapybaraVS.Script
 
             List<Task<List<AutoImplementFunctionInfo>>> tasks = CreateMakeInportFunctionInfoTasks(module, importNameList, types);
 
-            // ノード化
-            foreach (var task in tasks)
-            {
-                var classInfos = task.Result;
-                if (classInfos is null)
-                    continue;
-
-                foreach (var info in classInfos)
+            Task[] addMethodsAndTypesTasks = new Task[] {
+                // メソッドをメニューに登録する
+                Task.Run(() =>
                 {
-                    if (info is null)
-                        continue;
+                    foreach (var task in tasks)
+                    {
+                        var classInfos = task.Result;
+                        if (classInfos is null)
+                            continue;
 
-                    CreateMethodNode(OwnerCommandCanvas, node, info);
-                }
-            }
+                        foreach (var info in classInfos)
+                        {
+                            if (info is null)
+                                continue;
 
-            // 型情報をメニューに登録する
-            if (tcTask != null)
-            {
-                var typeList = tcTask.Result;
-                foreach (var type in typeList)
+                            CreateMethodNode(OwnerCommandCanvas, node, info);
+                        }
+                    }
+                }),
+                // 型をメニューに登録する
+                Task.Run(() =>
                 {
-                    inportTypeMenu(type);
-                }
-            }
+                    if (tcTask != null)
+                    {
+                        var typeList = tcTask.Result;
+                        foreach (var type in typeList)
+                        {
+                            inportTypeMenu(type);
+                        }
+                    }
+                })
+            };
+
+            Task.WaitAll(addMethodsAndTypesTasks);
         }
 
         /// <summary>
@@ -476,21 +481,25 @@ namespace CapybaraVS.Script
         private static List<Task<List<AutoImplementFunctionInfo>>> CreateMakeInportFunctionInfoTasks(Module module, List<string> importNameList, Type[] types)
         {
             var tasks = new List<Task<List<AutoImplementFunctionInfo>>>();
+            Type actionType = typeof(Action);
             foreach (Type classType in types)
             {
-                if (importNameList != null && !importNameList.Any(n => classType.FullName.StartsWith(n)))
+                if (importNameList != null && importNameList.Count > 0 && !importNameList.Any(n => classType.FullName.StartsWith(n)))
                     continue;
 
                 if (!IsAcceptClass(classType))
                     continue;   // 扱えない
 
-                if (classType.Name.EndsWith("Exception"))
+                string className = classType.Name;
+                if (className.EndsWith("Exception"))
                     continue;   // 例外は扱わない
-                if (classType == typeof(Action))
+                if (classType == actionType)
                     continue;   // 本システムで特殊な扱いをしているので扱わない
-                if (classType.Name.StartsWith("Action`"))
+                if (className.StartsWith("Action`"))
                     continue;   // 本システムで特殊な扱いをしているので扱わない
-                if (classType.Name.StartsWith("Func`"))
+                if (className.StartsWith("Func`"))
+                    continue;   // 本システムで特殊な扱いをしているので扱わない
+                if (className.StartsWith("Async"))
                     continue;   // 本システムで特殊な扱いをしているので扱わない
 
                 if (!classType.IsAbstract)
@@ -598,6 +607,8 @@ namespace CapybaraVS.Script
                     if (!IsAcceptTypeMenuType(type))
                         return;   // 扱えない
 
+                    Debug.Assert(false);
+                    // AddImportTypeMenu の間違い？
                     OwnerCommandCanvas.AddTypeMenu(type);
                 }
             });
@@ -656,6 +667,8 @@ namespace CapybaraVS.Script
                     }
 #endif
                 }
+
+                task.Wait();
             }
         }
 
@@ -1151,27 +1164,30 @@ namespace CapybaraVS.Script
 
         private static bool IsConstraints(Type geneArg, Type t)
         {
-            foreach (var constraint in geneArg.GetGenericParameterConstraints())
+            if (geneArg.IsGenericParameter)
             {
-                // スクリプト用の拡張制限
-                if (constraint == typeof(CbScript.ICalcable) && CbScript.IsCalcable(t))
-                    return true;
-                if (constraint == typeof(CbScript.ISigned) && CbScript.IsSigned(t))
-                    return true;
-                if (constraint == typeof(CbScript.IEnum) && CbScript.IsEnum(t))
-                    return true;
+                foreach (var constraint in geneArg.GetGenericParameterConstraints())
+                {
+                    // スクリプト用の拡張制限
+                    if (constraint == typeof(CbScript.ICalcable) && CbScript.IsCalcable(t))
+                        return true;
+                    if (constraint == typeof(CbScript.ISigned) && CbScript.IsSigned(t))
+                        return true;
+                    if (constraint == typeof(CbScript.IEnum) && CbScript.IsEnum(t))
+                        return true;
 
-                if (constraint.IsAssignableFrom(t))
-                    return true;
-                if (constraint.IsGenericType)
-                {
-                    return IsConstraints(constraint, t);
-                }
-                if (CbSTUtils.HaveGenericParamater(constraint) &&
-                    t.GetInterfaces().Any(t => t.Namespace + ":" + t.Name == constraint.Namespace + ":" + constraint.Name))
-                {
-                    Debug.Assert(false);    // 不要になった筈
-                    return true;    // constraint がジェネリックパラメータを持つインタフェースの判定（取り敢えず）
+                    if (constraint.IsAssignableFrom(t))
+                        return true;
+                    if (constraint.IsGenericType)
+                    {
+                        return IsConstraints(constraint, t);
+                    }
+                    if (CbSTUtils.HaveGenericParamater(constraint) &&
+                        t.GetInterfaces().Any(t => t.Namespace + ":" + t.Name == constraint.Namespace + ":" + constraint.Name))
+                    {
+                        Debug.Assert(false);    // 不要になった筈
+                        return true;    // constraint がジェネリックパラメータを持つインタフェースの判定（取り敢えず）
+                    }
                 }
             }
             return false;

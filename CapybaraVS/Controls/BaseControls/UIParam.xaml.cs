@@ -421,7 +421,7 @@ namespace CapybaraVS.Controls.BaseControls
         /// <param name="imagePath"></param>
         private bool ShowImagePathTypeParamViewer(CbImagePath cbImagePath)
         {
-            if (!FileLib.Exists(cbImagePath.Value))
+            if (!System.IO.File.Exists(cbImagePath.Value))
             {
                 return false;
             }
