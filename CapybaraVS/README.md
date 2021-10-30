@@ -1,12 +1,9 @@
 # CapyCSS
-![sample](https://user-images.githubusercontent.com/63950487/132117205-85f0a709-10bf-4d5b-9dcd-b6d40b1c88aa.png)
+![CapyCSS 0 3 5 0](https://user-images.githubusercontent.com/63950487/136699335-698926a3-e7c6-49e2-ba88-f5f422ad07cf.png)
 
-## 0.3.6.0 での変更
+## 0.3.7.0 での変更
 
-* import機能の差分読み込みに対応しました。
-* 旧仕様のスクリプトメソッドを削除しました。
-* ファイル読み込み時にも「Auto Clear」を適用するようにしました。
-* スクリプトノードの「NotUseCache」を自動で設定するようにしました。
+* 型選択時に間違えた型が型成約を通る問題に対応しました。
 
 ## 特徴
 * ビジュアルなスクリプトを作成することができます。
