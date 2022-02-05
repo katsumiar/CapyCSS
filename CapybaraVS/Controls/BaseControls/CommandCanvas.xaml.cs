@@ -508,15 +508,18 @@ namespace CapybaraVS.Controls.BaseControls
         public HoldActionQueue<StackGroup> StackGroupHoldAction = new HoldActionQueue<StackGroup>();
         public HoldActionQueue<PlotWindow> PlotWindowHoldAction = new HoldActionQueue<PlotWindow>();
         public HoldActionQueue<LinkConnectorList> LinkConnectorListHoldAction = new HoldActionQueue<LinkConnectorList>();
+        private bool enabledScriptHoldActionMode = false;
         public bool EnabledScriptHoldActionMode
         {
             set
             {
+                enabledScriptHoldActionMode = value;
                 UIParamHoldAction.Enabled = value;
                 StackGroupHoldAction.Enabled = value;
                 PlotWindowHoldAction.Enabled = value;
                 LinkConnectorListHoldAction.Enabled = value;
             }
+            get => enabledScriptHoldActionMode; // true ならスクリプト実行中
         }
 
         /// <summary>
@@ -895,7 +898,7 @@ namespace CapybaraVS.Controls.BaseControls
                     {
                         CommandCanvasControl.IsAutoExit = false;
                     }
-                }), DispatcherPriority.ApplicationIdle);
+                }), DispatcherPriority.SystemIdle);
             }), DispatcherPriority.ApplicationIdle);
         }
 

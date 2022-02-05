@@ -490,9 +490,9 @@ namespace CapybaraVS.Controls.BaseControls
 
                 this.Dispatcher.BeginInvoke(new Action(() =>
                 {
-                // アイドル状態（画面の更新処理が終わってから）になってから戻す
+                    // アイドル状態（画面の更新処理が終わってから）になってから戻す
 
-                OwnerCommandCanvas.CommandCanvasControl.CallAllExecuteEntryPointEnable(true);
+                    OwnerCommandCanvas.CommandCanvasControl.CallAllExecuteEntryPointEnable(true);
                     GC.Collect();
                     CommandCanvasList.SetOwnerCursor(null);
 
