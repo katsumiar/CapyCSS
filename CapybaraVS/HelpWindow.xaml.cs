@@ -36,12 +36,12 @@ namespace CapyCSS
             Info.Text += "All rights reserved." + Environment.NewLine;
             Info.Text += Environment.NewLine;
             Info.Text += "Copyright notice:" + Environment.NewLine;
-            Info.Text += "  Microsoft.NET Standard " + Environment.Version.ToString() + " (" + (Environment.Is64BitProcess ? "64bit" : "32bit") + ")" + Environment.NewLine;
-            Info.Text += "  Material Design In XAML Toolkit 4.2.1" + Environment.NewLine;
-            Info.Text += "  Microsoft.ML.NET 1.6.0" + Environment.NewLine;
-            Info.Text += "  Microsoft.ML.ImageAnalytics 1.6.0" + Environment.NewLine;
-            Info.Text += "  Microsoft.ML.OnnxRuntime 1.9.0" + Environment.NewLine;
-            Info.Text += "  Microsoft.ML.OnnxTransformer 1.6.0" + Environment.NewLine;
+            Info.Text += "  Microsoft.NET " + Environment.Version.ToString() + " (" + (Environment.Is64BitProcess ? "64bit" : "32bit") + ")" + Environment.NewLine;
+            Info.Text += "  Material Design In XAML Toolkit 4.3.0" + Environment.NewLine;
+            Info.Text += "  Microsoft.ML.NET 1.7.0" + Environment.NewLine;
+            Info.Text += "  Microsoft.ML.ImageAnalytics 1.7.0" + Environment.NewLine;
+            Info.Text += "  Microsoft.ML.OnnxRuntime 1.10.0" + Environment.NewLine;
+            Info.Text += "  Microsoft.ML.OnnxTransformer 1.7.0" + Environment.NewLine;
 
             Info.Text += Environment.NewLine;
             Info.Text += "Shortcut Key:" + Environment.NewLine;
