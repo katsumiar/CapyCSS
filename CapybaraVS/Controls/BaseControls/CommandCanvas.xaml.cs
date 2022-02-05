@@ -1046,7 +1046,11 @@ namespace CapybaraVS.Controls.BaseControls
             {
                 // 初期ディレクトリをサンプルのあるディレクトリにする
                 
-                dialog.InitialDirectory = GetSamplePath();
+                var sampleDir = GetSamplePath();
+                if (sampleDir != null)
+                {
+                    dialog.InitialDirectory = GetSamplePath();
+                }
                 initFlg = true;
             }
 
@@ -1066,8 +1070,17 @@ namespace CapybaraVS.Controls.BaseControls
         public static string GetSamplePath()
         {
             string exexPath = System.Environment.CommandLine;
+            if (exexPath == null)
+            {
+                return Environment.CurrentDirectory;
+            }
             System.IO.FileInfo fi = new System.IO.FileInfo(exexPath.Replace("\"", ""));
             string startupPath = fi.Directory.FullName;
+            var resultPath = System.IO.Path.Combine(startupPath, "Sample");
+            if (!Directory.Exists(resultPath))
+            {
+                return Environment.CurrentDirectory;
+            }
             return System.IO.Path.Combine(startupPath, "Sample");
         }
         #endregion
