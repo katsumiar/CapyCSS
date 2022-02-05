@@ -620,9 +620,9 @@ namespace CapybaraVS.Controls.BaseControls
 
                     // Func<> 型の接続なので直接コールするための仕組みを差し込む
 
-                    var funcReturn = cbEvent.NodeTF() as ICbEvent;
+                    var callbackReturnValue = cbEvent.NodeTF() as ICbEvent;
 
-                    funcReturn.Callback = (cagt2) =>
+                    callbackReturnValue.Callback = (cagt2) =>
                     {
                         // 接続されているルートコネクターを直接実行する
 
@@ -640,7 +640,7 @@ namespace CapybaraVS.Controls.BaseControls
                         return eventLinkRootConnector.ValueData;
                     };
 
-                    connectValueData = funcReturn;
+                    connectValueData = callbackReturnValue;
                 }
 
                 if (!isEvent && CastType)
