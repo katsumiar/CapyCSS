@@ -126,6 +126,9 @@
     <None Update="Sample\EasingFunctions.cbs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Update="Sample\EntryPoint.cbs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="Sample\ExtensionSearch.cbs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

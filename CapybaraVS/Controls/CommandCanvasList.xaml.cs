@@ -312,9 +312,7 @@ namespace CapyCSS.Controls
             Dispatcher.BeginInvoke(new Action(() =>
             {
                 CurrentScriptCanvas.SaveXML();
-                {
-                    CurrentTabItem.Header = System.IO.Path.GetFileNameWithoutExtension(CurrentScriptCanvas.OpenFileName);
-                }
+                CurrentTabItem.Header = System.IO.Path.GetFileNameWithoutExtension(CurrentScriptCanvas.OpenFileName);
             }), DispatcherPriority.ApplicationIdle);
         }
 
@@ -685,52 +683,79 @@ namespace CapyCSS.Controls
         /// <returns>スクリプトの返し値</returns>
         public object CallPublicExecuteEntryPoint(object owner, bool fromScript, string entryPointName = null)
         {
-            if (!fromScript && CommandCanvasList.GetOwnerCursor() == Cursors.Wait)
-                return null;
-
-            object result = null;
-
-            if (entryPointName != null && entryPointName.Trim().Length == 0)
-            {
-                entryPointName = null;
-            }
-
-            foreach (EntryPoint entryPoint in PublicExecuteEntryPointList)
-            {
-                if (entryPoint.function is null)
-                {
-                    continue;
-                }
-                if (owner is null)
-                {
-                    result = entryPoint.function.Invoke(fromScript, entryPointName);
-                }
-                else
-                {
-                    if (entryPoint.owner == owner)
-                    {
-                        result = entryPoint.function.Invoke(fromScript, entryPointName);
-                    }
-                }
-                if (result != null)
-                {
-                    // 実行結果が返ってきた
-
-                    break;
-                }
-            }
-
+            var result = _CallPublicExecuteEntryPoint(owner, fromScript, entryPointName);
             if (!fromScript)
             {
                 Dispatcher.BeginInvoke(new Action(() =>
                 {
                     if (IsAutoExit)
                     {
-                    // スクリプト実行後自動終了
+                        // スクリプト実行後自動終了
 
-                    CallClosing?.Invoke();
+                        CallClosing?.Invoke();
                     }
                 }), DispatcherPriority.ApplicationIdle);
+            }
+            return result;
+        }
+        private object _CallPublicExecuteEntryPoint(object owner, bool fromScript, string entryPointName = null)
+        {
+            if (!fromScript && CommandCanvasList.GetOwnerCursor() == Cursors.Wait)
+                return null;
+
+            object result = null;
+
+            if (entryPointName != null)
+            {
+                if (entryPointName.Trim().Length == 0)
+                {
+                    entryPointName = null;
+                }
+                else if (PublicExecuteEntryPointList.Where(n => n.function.Invoke(false, ":" + entryPointName) != null).Count() > 1)
+                {
+                    if (owner != null)
+                    {
+                        // CommandCanvas から呼ばれた
+
+                        Console.WriteLine(nameof(CommandCanvas) + $": multiple \"{entryPointName}\" entry points!");
+                        return null;
+                    }
+                    else
+                    {
+                        // CallEntryPoint から呼ばれた
+
+                        throw new Exception($"multiple \"{entryPointName}\" entry points!");
+                    }
+                }
+            }
+
+            var entryPoints = PublicExecuteEntryPointList.Where(n => n.function != null);
+            if (owner != null)
+            {
+                // オーナー限定
+
+                entryPoints = PublicExecuteEntryPointList.Where(n => n.owner == owner);
+            }
+            // １件のみ実行
+            if (!entryPoints.Any(n =>
+            {
+                result = n.function.Invoke(fromScript, entryPointName);
+                return result != null;
+            }))
+            {
+                var errorMessage = $"\"{entryPointName}\" entry point not found!";
+                if (owner != null)
+                {
+                    // CommandCanvas から呼ばれた
+
+                    Console.WriteLine(nameof(CommandCanvas) + $": {errorMessage}");
+                }
+                else
+                {
+                    // CallEntryPoint から呼ばれた
+
+                    throw new Exception(errorMessage);
+                }
             }
 
             return result;
