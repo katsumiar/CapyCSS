@@ -1124,96 +1124,38 @@ namespace CapybaraVS.Script
             {
                 // t には、判定対象の型が入ります。
 
-                if (geneArg.GetGenericParameterConstraints().Length > 0)
-                {
-                    return isConstraints(geneArg, t);
-                }
-
                 GenericParameterAttributes sConstraints =
                             geneArg.GenericParameterAttributes &
                             GenericParameterAttributes.SpecialConstraintMask;
 
                 if (sConstraints != GenericParameterAttributes.None)
                 {
-                    if (GenericParameterAttributes.None != (sConstraints &
+                    if (t.IsClass &&
+                        GenericParameterAttributes.None != (sConstraints &
                         GenericParameterAttributes.DefaultConstructorConstraint))
                     {
                         var query = t.GetMethods(BindingFlags.Public).Where(n => n.IsConstructor);
                         bool haveDefaultConstructer = query.Any(n => n.GetParameters().Length == 0);
                         if (!haveDefaultConstructer)
-                            return false;    // デフォルトコンストラクタを持っていなければ拒否
+                            return false;    // 型がパラメーターなしのコンストラクターを持たなければ拒否
                     }
                     if (GenericParameterAttributes.None != (sConstraints &
                         GenericParameterAttributes.ReferenceTypeConstraint))
                     {
-                        if (!t.IsClass)
-                            return false;   // リファレンス型でなければ拒否
+                        if (t.IsValueType || t.IsPointer)
+                            return false;   // 型が参照型でなければ拒否
                     }
                     if (GenericParameterAttributes.None != (sConstraints &
                         GenericParameterAttributes.NotNullableValueTypeConstraint))
                     {
-                        if (t.GetGenericTypeDefinition() != typeof(Nullable<>))
-                            return false;   // null許容型でなければ拒否
+                        if (!(t.IsValueType && Nullable.GetUnderlyingType(t) == null))
+                            return false;   // 「型が値型で null 許容でない場合」を満たさなければ拒否
                     }
                 }
 
                 return true;
             };
             return isAccept;
-        }
-
-        private static bool isConstraints(Type geneArg, Type t)
-        {
-            if (geneArg.IsGenericParameter)
-            {
-                foreach (var constraint in geneArg.GetGenericParameterConstraints())
-                {
-                    if (isConstraint(constraint, t))
-                    {
-                        return true;
-                    }
-                }
-            }
-            else if (geneArg.IsGenericType)
-            {
-                foreach (var constraint in geneArg.GenericTypeArguments)
-                {
-                    if (isConstraint(constraint, t))
-                    {
-                        return true;
-                    }
-                }
-            }
-            return false;
-        }
-
-        private static bool isConstraint(Type type, Type target)
-        {
-            // スクリプト用の拡張制限
-            if (type == typeof(CbScript.ICalcable) && CbScript.IsCalcable(target))
-                return true;
-            if (type == typeof(CbScript.ISigned) && CbScript.IsSigned(target))
-                return true;
-            if (type == typeof(CbScript.IEnum) && CbScript.IsEnum(target))
-                return true;
-
-            if (type.IsGenericType)
-            {
-                // ジェネリックパラメータがジェネリックは型の場合は、判定を諦める
-                return false;
-            }
-            if (type.GetInterfaces() != null && type.GetInterfaces().Length != 0)
-            {
-                foreach (var ifc in type.GetInterfaces())
-                {
-                    if (!target.IsAssignableFrom(ifc))
-                    {
-                        return false;
-                    }
-                }
-                return true;
-            }
-            return true;
         }
 
         /// <summary>
