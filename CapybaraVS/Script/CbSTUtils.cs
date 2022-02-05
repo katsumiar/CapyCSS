@@ -587,23 +587,31 @@ namespace CapybaraVS.Script
             return String.Join(".", outNodes);
         }
 
-        public static string GetGenericParamatersString(MethodBase type)
+        public static string GetGenericParamatersString(MethodBase type, string st = "<", string ed = ">")
         {
-            var result = GetGenericParamatersString(type.GetGenericArguments());
+            var result = _GetGenericParamatersString(type.GetGenericArguments());
             if (result == "")
                 return "";
-            return "<" + result + ">";
+            return st + result + ed;
         }
 
-        public static string GetGenericParamatersString(Type type)
+        public static string GetGenericParamatersString(Type type, string st = "<", string ed = ">")
         {
-            var result = GetGenericParamatersString(type.GetGenericArguments());
+            var result = _GetGenericParamatersString(type.GetGenericArguments());
             if (result == "")
                 return "";
-            return "<" + result + ">";
+            return st + result + ed;
         }
 
-        private static string GetGenericParamatersString(Type[] types)
+        public static string GetGenericParamatersString(Type[] types, string st = "<", string ed = ">")
+        {
+            var result = _GetGenericParamatersString(types);
+            if (result == "")
+                return "";
+            return st + result + ed;
+        }
+
+        private static string _GetGenericParamatersString(Type[] types)
         {
             if (types.Length == 0)
                 return "";

@@ -617,46 +617,46 @@ namespace CapybaraVS.Script
         /// <returns>呼び出したメソッドの返し値</returns>
         private object InvokeGenericMethod(Type classType, List<Type> genericParams, object[] args)
         {
-            var attr = BindingFlags.Static | BindingFlags.Public;
-            var methods = classType.GetMethods(attr);
+            var attr = BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public;
 
-            // 名前と引数の数だけでフィルタリング
-            var selectMethod = methods.Where(c =>
+            // ジェネリックメソッドを抽出
+            var methods = classType.GetMethods(attr).Where(n => n.IsGenericMethod && n.IsGenericMethodDefinition && n.ContainsGenericParameters);
+
+            // メソッド名と引数の数でフィルタリング
+            methods = methods.Where(n => n.Name == FuncCode && n.GetParameters().Length == args.Length);
+
+            if (methods.Count() == 0)
             {
-                return c.Name == FuncCode && c.GetParameters().Length == args.Length;
-            });
-            if (selectMethod.Count() == 1)
+                throw new Exception($"{FuncCode}{CbSTUtils.GetGenericParamatersString(args.Select(n => n.GetType()).ToArray(), "(", ")")} method not found.");
+            }
+
+            if (methods.Count() == 1)
             {
                 // 該当が一件だけ有った
 
-                return selectMethod.First()
+                return methods.First()
                     .MakeGenericMethod(genericParams.ToArray())
                     .Invoke(classType, args);
             }
 
-            // 引数の型の一致でフィルタリング（null は除く）
-            selectMethod = selectMethod.Where(n =>
+            // 引数の一致で探す
+            methods = methods.Where(n =>
             {
+                var parameters = n.GetParameters();
                 for (int i = 0; i < args.Length; ++i)
                 {
-                    if (args[i] != null &&
-                        (args[i].GetType() != n.GetParameters()[i].ParameterType))
+                    if (args[i] is null || args[i].GetType() != parameters[i].ParameterType)
                         return false;
                 }
                 return true;
             });
-            if (selectMethod.Count() == 1)
+            if (methods.Count() == 0)
             {
-                // 該当が一件だけ有った
-
-                return selectMethod.First()
-                    .MakeGenericMethod(genericParams.ToArray())
-                    .Invoke(classType, args);
+                throw new Exception($"{FuncCode}{CbSTUtils.GetGenericParamatersString(args.Select(n => n.GetType()).ToArray(), "(", ")")} method not found.");
             }
 
-            // 運任せ...
-            return classType
-                .GetMethod(FuncCode)
+            // 該当が一件だけ有った
+            return methods.First()
                 .MakeGenericMethod(genericParams.ToArray())
                 .Invoke(classType, args);
         }

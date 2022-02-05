@@ -705,7 +705,7 @@ namespace CapybaraVS.Script
             }
         }
 
-        public class ScriptArributeInfo : IScriptArribute
+        public class ScriptAttributeInfo : IScriptArribute
         {
             public string Path { get; set; } = null;
             public string MethodName { get; set; } = null;
@@ -728,7 +728,7 @@ namespace CapybaraVS.Script
         {
             var tasks = new List<Task<AutoImplementFunctionInfo>>();
 
-            var bbb = new ScriptArributeInfo()
+            var scriptAttributeInfo = new ScriptAttributeInfo()
             {
                 Path = methodAttr.Path,
                 MethodName = methodAttr.MethodName,
@@ -741,18 +741,18 @@ namespace CapybaraVS.Script
             {
                 if (!String.IsNullOrEmpty(ovrMethodAttr.Path))
                 {
-                    bbb.Path = ovrMethodAttr.Path;
+                    scriptAttributeInfo.Path = ovrMethodAttr.Path;
                 }
                 if (!String.IsNullOrEmpty(ovrMethodAttr.MethodName))
                 {
-                    bbb.MethodName = ovrMethodAttr.MethodName;
+                    scriptAttributeInfo.MethodName = ovrMethodAttr.MethodName;
                 }
                 if (ovrMethodAttr.OldSpecification)
                 {
-                    bbb.OldSpecification = ovrMethodAttr.OldSpecification;
+                    scriptAttributeInfo.OldSpecification = ovrMethodAttr.OldSpecification;
                 }
             }
-            else if (bbb.DefaultHide)
+            else if (scriptAttributeInfo.DefaultHide)
             {
                 return null;
             }
@@ -761,7 +761,7 @@ namespace CapybaraVS.Script
             {
                 Task<AutoImplementFunctionInfo> task = Task.Run(() =>
                 {
-                    return MakeInportFunctionInfo(classType, methodInfo, returnType, bbb);
+                    return MakeInportFunctionInfo(classType, methodInfo, returnType, scriptAttributeInfo);
                 });
                 tasks.Add(task);
 #if DEBUG_IMPORT
@@ -1124,73 +1124,38 @@ namespace CapybaraVS.Script
             {
                 // t には、判定対象の型が入ります。
 
-                if (geneArg.GetGenericParameterConstraints().Length > 0)
-                {
-                    return IsConstraints(geneArg, t);
-                }
-
                 GenericParameterAttributes sConstraints =
                             geneArg.GenericParameterAttributes &
                             GenericParameterAttributes.SpecialConstraintMask;
 
                 if (sConstraints != GenericParameterAttributes.None)
                 {
-                    if (GenericParameterAttributes.None != (sConstraints &
+                    if (t.IsClass &&
+                        GenericParameterAttributes.None != (sConstraints &
                         GenericParameterAttributes.DefaultConstructorConstraint))
                     {
                         var query = t.GetMethods(BindingFlags.Public).Where(n => n.IsConstructor);
                         bool haveDefaultConstructer = query.Any(n => n.GetParameters().Length == 0);
                         if (!haveDefaultConstructer)
-                            return false;    // デフォルトコンストラクタを持っていなければ拒否
+                            return false;    // 型がパラメーターなしのコンストラクターを持たなければ拒否
                     }
                     if (GenericParameterAttributes.None != (sConstraints &
                         GenericParameterAttributes.ReferenceTypeConstraint))
                     {
-                        if (!t.IsClass)
-                            return false;   // リファレンス型でなければ拒否
+                        if (t.IsValueType || t.IsPointer)
+                            return false;   // 型が参照型でなければ拒否
                     }
                     if (GenericParameterAttributes.None != (sConstraints &
                         GenericParameterAttributes.NotNullableValueTypeConstraint))
                     {
-                        if (t.GetGenericTypeDefinition() != typeof(Nullable<>))
-                            return false;   // null許容型でなければ拒否
+                        if (!(t.IsValueType && Nullable.GetUnderlyingType(t) == null))
+                            return false;   // 「型が値型で null 許容でない場合」を満たさなければ拒否
                     }
                 }
 
                 return true;
             };
             return isAccept;
-        }
-
-        private static bool IsConstraints(Type geneArg, Type t)
-        {
-            if (geneArg.IsGenericParameter)
-            {
-                foreach (var constraint in geneArg.GetGenericParameterConstraints())
-                {
-                    // スクリプト用の拡張制限
-                    if (constraint == typeof(CbScript.ICalcable) && CbScript.IsCalcable(t))
-                        return true;
-                    if (constraint == typeof(CbScript.ISigned) && CbScript.IsSigned(t))
-                        return true;
-                    if (constraint == typeof(CbScript.IEnum) && CbScript.IsEnum(t))
-                        return true;
-
-                    if (constraint.IsAssignableFrom(t))
-                        return true;
-                    if (constraint.IsGenericType)
-                    {
-                        return IsConstraints(constraint, t);
-                    }
-                    if (CbSTUtils.HaveGenericParamater(constraint) &&
-                        t.GetInterfaces().Any(t => t.Namespace + ":" + t.Name == constraint.Namespace + ":" + constraint.Name))
-                    {
-                        Debug.Assert(false);    // 不要になった筈
-                        return true;    // constraint がジェネリックパラメータを持つインタフェースの判定（取り敢えず）
-                    }
-                }
-            }
-            return false;
         }
 
         /// <summary>
