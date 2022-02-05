@@ -743,18 +743,21 @@ namespace CapyCSS.Controls
                 return result != null;
             }))
             {
-                var errorMessage = $"\"{entryPointName}\" entry point not found!";
-                if (owner != null)
+                if (entryPointName != null)
                 {
-                    // CommandCanvas から呼ばれた
+                    var errorMessage = $"\"{entryPointName}\" entry point not found!";
+                    if (owner != null)
+                    {
+                        // CommandCanvas から呼ばれた
 
-                    Console.WriteLine(nameof(CommandCanvas) + $": {errorMessage}");
-                }
-                else
-                {
-                    // CallEntryPoint から呼ばれた
+                        Console.WriteLine(nameof(CommandCanvas) + $": {errorMessage}");
+                    }
+                    else
+                    {
+                        // CallEntryPoint から呼ばれた
 
-                    throw new Exception(errorMessage);
+                        throw new Exception(errorMessage);
+                    } 
                 }
             }
 
