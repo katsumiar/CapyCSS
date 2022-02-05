@@ -203,7 +203,7 @@ namespace CapybaraVS.Script
                     break;
             }
 
-            if (type.IsGenericType && Nullable.GetUnderlyingType(type) != null)
+            if (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Nullable<>))
             {
                 Type param = type.GenericTypeArguments[0];
                 switch (param.Name)
@@ -533,7 +533,7 @@ namespace CapybaraVS.Script
                     }
                 }
 
-                if (Nullable.GetUnderlyingType(type) != null)
+                if (type.GetGenericTypeDefinition() == typeof(Nullable<>))
                 {
                     // Null許容型
 

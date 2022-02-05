@@ -1130,7 +1130,7 @@ namespace CapybaraVS.Script
 
                 if (sConstraints != GenericParameterAttributes.None)
                 {
-                    if (t.IsClass &&
+                    if (t.IsClass &&    // 構造体は含めない（デフォルトの挙動が有る）
                         GenericParameterAttributes.None != (sConstraints &
                         GenericParameterAttributes.DefaultConstructorConstraint))
                     {
@@ -1148,8 +1148,10 @@ namespace CapybaraVS.Script
                     if (GenericParameterAttributes.None != (sConstraints &
                         GenericParameterAttributes.NotNullableValueTypeConstraint))
                     {
-                        if (!(t.IsValueType && Nullable.GetUnderlyingType(t) == null))
-                            return false;   // 「型が値型で null 許容でない場合」を満たさなければ拒否
+                        if (!t.IsValueType)
+                            return false;   // 型が値型の場合は拒否
+                        if (t.IsGenericType && t.GetGenericTypeDefinition() == typeof(Nullable<>))
+                            return false;   // Null許容型の場合は拒否
                     }
                 }
 
