@@ -239,7 +239,7 @@ public static System.IO.StreamReader GetReadStream(string path, string encoding 
 
 &lt;p&gt;※メソッドの所属するクラスは、パブリックである必要があります。
 &lt;br /&gt;※メソッドはパブリックである必要があります。
-&lt;br /&gt;※象徴クラスやジェネリッククラスのメソッド及びジェネリックなメソッドは、対象外です。&lt;/p&gt;
+&lt;br /&gt;※抽象クラスやジェネリッククラスのメソッド及びジェネリックなメソッドは、対象外です。&lt;/p&gt;
 
 &lt;h2 id="スクリプトが対応するメソッドの引数の型及び修飾子など"&gt;スクリプトが対応するメソッドの引数の型（及び修飾子など）&lt;/h2&gt;
 &lt;ul&gt;
@@ -562,7 +562,7 @@ public static System.IO.StreamReader GetReadStream(string path, string encoding 
 
 &lt;p&gt;※メソッドの所属するクラスは、パブリックである必要があります。
 &lt;br /&gt;※メソッドはパブリックである必要があります。
-&lt;br /&gt;※象徴クラスやジェネリッククラスのメソッド及びジェネリックなメソッドは、対象外です。&lt;/p&gt;
+&lt;br /&gt;※抽象クラスやジェネリッククラスのメソッド及びジェネリックなメソッドは、対象外です。&lt;/p&gt;
 
 &lt;h2 id="スクリプトが対応するメソッドの引数の型及び修飾子など"&gt;スクリプトが対応するメソッドの引数の型（及び修飾子など）&lt;/h2&gt;
 &lt;ul&gt;

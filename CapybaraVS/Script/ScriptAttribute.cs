@@ -306,7 +306,7 @@ namespace CapybaraVS.Script
         private static bool IsAcceptMethod(Type classType, MethodBase methodInfo)
         {
             if (!classType.IsInterface && methodInfo.IsAbstract)
-                return false;   // 象徴メソッドは呼べない
+                return false;   // 抽象メソッドは呼べない
 
             return true;
         }
@@ -915,7 +915,7 @@ namespace CapybaraVS.Script
                     {
                         if (methodInfo.IsAbstract)
                         {
-                            // 象徴クラスは new できない
+                            // 抽象クラスは new できない
 
                             return null;
                         }
@@ -1134,8 +1134,8 @@ namespace CapybaraVS.Script
                         GenericParameterAttributes.None != (sConstraints &
                         GenericParameterAttributes.DefaultConstructorConstraint))
                     {
-                        var query = t.GetMethods(BindingFlags.Public).Where(n => n.IsConstructor);
-                        bool haveDefaultConstructer = query.Any(n => n.GetParameters().Length == 0);
+                        var query = t.GetMethods(BindingFlags.Public).Where(n => n.IsConstructor);      // 公開コンストラクタを探す
+                        bool haveDefaultConstructer = query.Any(n => n.GetParameters().Length == 0);    // 引数無しを探す
                         if (!haveDefaultConstructer)
                             return false;    // 型がパラメーターなしのコンストラクターを持たなければ拒否
                     }
@@ -1143,7 +1143,7 @@ namespace CapybaraVS.Script
                         GenericParameterAttributes.ReferenceTypeConstraint))
                     {
                         if (t.IsValueType || t.IsPointer)
-                            return false;   // 型が参照型でなければ拒否
+                            return false;   // 型が参照型でなければ拒否（値型で無くポインタ型でも無ければ参照型）
                     }
                     if (GenericParameterAttributes.None != (sConstraints &
                         GenericParameterAttributes.NotNullableValueTypeConstraint))

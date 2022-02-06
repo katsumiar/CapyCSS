@@ -111,7 +111,7 @@ public static ICollection<T> Filtering<T>(IEnumerable<T> samples, Predicate<T> p
 * セッター
 
 ※メソッドの所属するクラスは、パブリックである必要があります。
-<br>※象徴クラスは、対象外です。
+<br>※抽象クラスは、対象外です。
 <br>※メソッドは、パブリックである必要があります。
 
 ## スクリプトが対応するメソッドの引数の型（及び修飾子など）
