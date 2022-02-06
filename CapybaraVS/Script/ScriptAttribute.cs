@@ -99,7 +99,7 @@ namespace CapybaraVS.Script
         /// <summary>
         /// 引数情報です。
         /// </summary>
-        public class ArgumentInfoNode
+        public struct ArgumentInfoNode
         {
             public Func<ICbValue> CreateArgument;
             public bool IsByRef = false;
