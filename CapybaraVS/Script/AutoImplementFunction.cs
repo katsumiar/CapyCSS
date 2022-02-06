@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using static CapybaraVS.Controls.BaseControls.CommandCanvas;
@@ -428,21 +429,58 @@ namespace CapybaraVS.Script
             )
         {
             int argumentIndex = 0;
-            for (int i = 0; i < callArguments.Count; ++i)
+            if (callArguments.Count > 0)
             {
                 methodArguments ??= new List<object>();
+            }
 
-                var node = callArguments[argumentIndex++];
-                CheckArgument(node);
+            bool isTaskRequest = callArguments.Count(n => n.IsList || n is ICbEvent) > 2;   // タスクで処理する条件
 
-                if (i == 0 && isClassInstanceMethod)
+            if (isTaskRequest)
+            {
+                // タスクを使った処理
+
+                List<Task<object>> tasks = new List<Task<object>>();
+                for (int i = 0; i < callArguments.Count; ++i)
                 {
-                    // クラスメソッドの第一引数は、self（this）を受け取るのでメソッド呼び出しの引数にしない
+                    var node = callArguments[argumentIndex++];
+                    CheckArgument(node);
 
-                    continue;
+                    if (i == 0 && isClassInstanceMethod)
+                    {
+                        // クラスメソッドの第一引数は、self（this）を受け取るのでメソッド呼び出しの引数にしない
+
+                        continue;
+                    }
+
+                    tasks.Add(Task.Run(() =>
+                    {
+                        return getBindObject(node, col, dummyArgumentsControl, dummyArgumentsStack);
+                    }));
                 }
+                foreach (var task in tasks)
+                {
+                    methodArguments.Add(task.Result);
+                }
+            }
+            else
+            {
+                // 通常処理
 
-                methodArguments.Add(getBindObject(node, col, dummyArgumentsControl, dummyArgumentsStack));
+                for (int i = 0; i < callArguments.Count; ++i)
+                {
+                    var node = callArguments[argumentIndex++];
+                    CheckArgument(node);
+
+                    if (i == 0 && isClassInstanceMethod)
+                    {
+                        // クラスメソッドの第一引数は、self（this）を受け取るのでメソッド呼び出しの引数にしない
+
+                        continue;
+                    }
+
+                    methodArguments.Add(getBindObject(node, col, dummyArgumentsControl, dummyArgumentsStack));
+                }
             }
 
             return methodArguments;
