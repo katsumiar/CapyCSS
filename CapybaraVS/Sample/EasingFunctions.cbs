@@ -73,7 +73,7 @@
     <Asset Id="4" X="147.77483457275702" Y="534.1823385696995">
       <MultiRootConnector>
         <DataVersion>1</DataVersion>
-        <RootFunc AssetType="FuncType" AssetFuncType="CapybaraVS.EasingFunction.InOutSin#_double">
+        <RootFunc AssetType="FuncType" AssetFuncType="CapyCSS.EasingFunction.InOutSin#_double">
           <AttachVariableIds />
           <AttachVariableId>0</AttachVariableId>
           <AssetValueTypes />
@@ -114,7 +114,7 @@
     <Asset Id="5" X="376.7748345727573" Y="433.1823385696996">
       <MultiRootConnector>
         <DataVersion>1</DataVersion>
-        <RootFunc AssetType="FuncType" AssetFuncType="CapybaraVS.Script.Lib.Graph.MakePlotList#_int_Func&lt;double,double&gt;_double">
+        <RootFunc AssetType="FuncType" AssetFuncType="CapyCSS.Script.Lib.Graph.MakePlotList#_int_Func&lt;double,double&gt;_double">
           <AttachVariableIds />
           <AttachVariableId>0</AttachVariableId>
           <AssetValueTypes />
@@ -185,7 +185,7 @@
     <Asset Id="7" X="1309.0165010387282" Y="313.8137534149109">
       <MultiRootConnector>
         <DataVersion>1</DataVersion>
-        <RootFunc AssetType="FuncType" AssetFuncType="CapybaraVS.Script.Lib.Graph.OutPlot#_string_IEnumerable&lt;PlotInfo&gt;_IEnumerable&lt;double&gt;">
+        <RootFunc AssetType="FuncType" AssetFuncType="CapyCSS.Script.Lib.Graph.OutPlot#_string_IEnumerable&lt;PlotInfo&gt;_IEnumerable&lt;double&gt;">
           <AttachVariableIds />
           <AttachVariableId>0</AttachVariableId>
           <AssetValueTypes />
@@ -341,7 +341,7 @@
     <Asset Id="358" X="870.0360703851802" Y="279.43529299361006">
       <MultiRootConnector>
         <DataVersion>1</DataVersion>
-        <RootFunc AssetType="FuncType" AssetFuncType="CapybaraVS.Script.Lib.Graph.CreatePlotInfo#_IEnumerable&lt;double&gt;_SolidColorBrush_DrawType">
+        <RootFunc AssetType="FuncType" AssetFuncType="CapyCSS.Script.Lib.Graph.CreatePlotInfo#_IEnumerable&lt;double&gt;_SolidColorBrush_DrawType">
           <AttachVariableIds />
           <AttachVariableId>0</AttachVariableId>
           <AssetValueTypes />
@@ -461,7 +461,7 @@
     <Asset Id="358" X="860.1118417620792" Y="557.1763934664605">
       <MultiRootConnector>
         <DataVersion>1</DataVersion>
-        <RootFunc AssetType="FuncType" AssetFuncType="CapybaraVS.Script.Lib.Graph.CreatePlotInfo#_IEnumerable&lt;double&gt;_SolidColorBrush_DrawType">
+        <RootFunc AssetType="FuncType" AssetFuncType="CapyCSS.Script.Lib.Graph.CreatePlotInfo#_IEnumerable&lt;double&gt;_SolidColorBrush_DrawType">
           <AttachVariableIds />
           <AttachVariableId>0</AttachVariableId>
           <AssetValueTypes />

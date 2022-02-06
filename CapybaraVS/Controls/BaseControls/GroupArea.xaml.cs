@@ -1,5 +1,4 @@
-﻿using CapybaraVS.Control.BaseControls;
-using CapybaraVS.Controls.BaseControls;
+﻿using CapyCSS.Controls.BaseControls;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;

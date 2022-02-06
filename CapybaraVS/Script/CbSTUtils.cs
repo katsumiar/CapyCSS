@@ -7,7 +7,7 @@ using System.Threading;
 using CapyCSS.Script;
 using CbVS.Script;
 
-namespace CapybaraVS.Script
+namespace CapyCSS.Script
 {
     //----------------------------------------------------------------------------------------
     public class CbSTUtils

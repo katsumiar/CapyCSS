@@ -92,7 +92,7 @@
     <Asset Id="4" X="1753.8222380477457" Y="52.17573005420758">
       <MultiRootConnector>
         <DataVersion>1</DataVersion>
-        <RootFunc AssetType="FuncType" AssetFuncType="CapybaraVS.Script.Lib.FileLib.ForeachFiles#_string_Action&lt;string&gt;_string_bool_bool">
+        <RootFunc AssetType="FuncType" AssetFuncType="CapyCSS.Script.Lib.FileLib.ForeachFiles#_string_Action&lt;string&gt;_string_bool_bool">
           <AttachVariableIds />
           <AttachVariableId>0</AttachVariableId>
           <AssetValueTypes />
@@ -350,7 +350,7 @@
     <Asset Id="11" X="381.3034937500002" Y="230.6168937500002">
       <MultiRootConnector>
         <DataVersion>1</DataVersion>
-        <RootFunc AssetType="FuncType" AssetFuncType="CapybaraVS.Script.Lib.ListFactory.Contains#_IEnumerable&lt;T&gt;_T">
+        <RootFunc AssetType="FuncType" AssetFuncType="CapyCSS.Script.Lib.ListFactory.Contains#_IEnumerable&lt;T&gt;_T">
           <AttachVariableIds />
           <AttachVariableId>0</AttachVariableId>
           <AssetValueTypes>
@@ -648,7 +648,7 @@
     <Asset Id="377" X="1465.7301028241798" Y="3.089417435326993">
       <MultiRootConnector>
         <DataVersion>1</DataVersion>
-        <RootFunc AssetType="FuncType" AssetFuncType="CapybaraVS.Script.Lib.FileLib.BrowseFolder#_string_string">
+        <RootFunc AssetType="FuncType" AssetFuncType="CapyCSS.Script.Lib.FileLib.BrowseFolder#_string_string">
           <AttachVariableIds />
           <AttachVariableId>0</AttachVariableId>
           <AssetValueTypes />

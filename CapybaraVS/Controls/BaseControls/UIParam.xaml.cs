@@ -1,8 +1,7 @@
 ﻿#define SHOW_LINK_ARRAY   // リスト型を接続したときにリストの要素をコピーして表示する
 
-using CapybaraVS.Script;
-using CapybaraVS.Script.Lib;
 using CapyCSS.Script;
+using CapyCSS.Script.Lib;
 using CbVS.Script;
 using System;
 using System.Collections.Generic;
@@ -20,7 +19,7 @@ using System.Windows.Shapes;
 using System.Windows.Threading;
 using System.Xml.Serialization;
 
-namespace CapybaraVS.Controls.BaseControls
+namespace CapyCSS.Controls.BaseControls
 {
     /// <summary>
     /// UIParam.xaml の相互作用ロジック

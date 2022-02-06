@@ -8,8 +8,8 @@ using System.IO.Compression;
 using System.IO;
 using System.Xml.Linq;
 using CapyCSS.Controls;
-using CapybaraVS;
-using CapybaraVS.Script.Lib;
+using CapyCSS;
+using CapyCSS.Script.Lib;
 using System.Text.RegularExpressions;
 
 namespace CapyCSS.Script

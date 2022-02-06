@@ -1,4 +1,4 @@
-﻿using CapybaraVS.Controls.BaseControls;
+﻿using CapyCSS.Controls.BaseControls;
 using CapyCSS.Controls;
 using CbVS.Controls;
 using Microsoft.Win32;
@@ -8,7 +8,7 @@ using System.IO;
 using System.Text;
 using System.Windows.Media.Imaging;
 
-namespace CapybaraVS.Script.Lib
+namespace CapyCSS.Script.Lib
 {
     [ScriptClass]
     public static class FileLib

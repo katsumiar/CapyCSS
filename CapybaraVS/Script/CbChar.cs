@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace CapybaraVS.Script
+namespace CapyCSS.Script
 {
     /// <summary>
     /// char 型

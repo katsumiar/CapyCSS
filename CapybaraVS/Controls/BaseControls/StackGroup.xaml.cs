@@ -1,4 +1,4 @@
-﻿using CapybaraVS.Script;
+﻿using CapyCSS.Script;
 using CapyCSS.Controls;
 using CbVS;
 using CbVS.Script;
@@ -19,7 +19,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Windows.Threading;
 
-namespace CapybaraVS.Controls.BaseControls
+namespace CapyCSS.Controls.BaseControls
 {
     /// <summary>
     /// StackGroup.xaml の相互作用ロジック

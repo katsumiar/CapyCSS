@@ -1,6 +1,6 @@
-﻿using CapybaraVS.Controls;
-using CapybaraVS.Controls.BaseControls;
-using CapybaraVS.Script;
+﻿using CapyCSS.Controls;
+using CapyCSS.Controls.BaseControls;
+using CapyCSS.Script;
 using System;
 using System.Collections;
 using System.Collections.Generic;

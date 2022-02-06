@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Reflection;
-using static CapybaraVS.Controls.BaseControls.CommandCanvas;
-using static CapybaraVS.Script.ScriptImplement;
+using static CapyCSS.Controls.BaseControls.CommandCanvas;
+using static CapyCSS.Script.ScriptImplement;
 
-namespace CapybaraVS.Script
+namespace CapyCSS.Script
 {
     /// <summary>
     /// スクリプト用メソッド情報

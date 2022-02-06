@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace CapybaraVS.Script.Lib
+namespace CapyCSS.Script.Lib
 {
     [ScriptClass("Diagnostics")]
     public static class DiagnosticsLib

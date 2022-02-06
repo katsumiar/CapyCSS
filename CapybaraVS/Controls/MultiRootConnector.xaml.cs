@@ -1,9 +1,7 @@
-﻿using CapybaraVS.Control.BaseControls;
-using CapybaraVS.Controls.BaseControls;
-using CapybaraVS.Script;
-using CapybaraVS.Script.Lib;
-using CapyCSS.Controls;
+﻿using CapyCSS.Controls.BaseControls;
 using CapyCSS.Script;
+using CapyCSS.Script.Lib;
+using CapyCSS.Controls;
 using CbVS.Script;
 using System;
 using System.Collections.Generic;
@@ -24,7 +22,7 @@ using System.Windows.Shapes;
 using System.Windows.Threading;
 using System.Xml.Serialization;
 
-namespace CapybaraVS.Controls
+namespace CapyCSS.Controls
 {
     public enum FunctionType
     {
@@ -68,7 +66,7 @@ namespace CapybaraVS.Controls
                 {
                     if (DataVersion != DATA_VERSION)
                     {
-                        ControlTools.ShowErrorMessage(CapybaraVS.Language.Instance["Help:DataVersionError"]);
+                        ControlTools.ShowErrorMessage(CapyCSS.Language.Instance["Help:DataVersionError"]);
                         return;
                     }
 

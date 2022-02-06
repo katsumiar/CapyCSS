@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace CapybaraVS.Script
+namespace CapyCSS.Script
 {
     /// <summary>
     /// long 型

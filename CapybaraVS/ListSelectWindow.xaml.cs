@@ -1,7 +1,6 @@
-﻿using CapybaraVS.Controls;
-using CapybaraVS.Controls.BaseControls;
-using CapybaraVS.Script;
-using CapyCSS.Controls;
+﻿using CapyCSS.Controls;
+using CapyCSS.Controls.BaseControls;
+using CapyCSS.Script;
 using CbVS.Script;
 using System;
 using System.Collections.Generic;
@@ -16,7 +15,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 
-namespace CapybaraVS
+namespace CapyCSS
 {
     /// <summary>
     /// ListSelectWindow.xaml の相互作用ロジック

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Reflection;
 
-namespace CapybaraVS.Script
+namespace CapyCSS.Script
 {
     /// <summary>
     /// enum型インターフェイス

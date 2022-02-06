@@ -1,4 +1,4 @@
-﻿using CapybaraVS.Controls.BaseControls;
+﻿using CapyCSS.Controls.BaseControls;
 using CapyCSS.Controls;
 using System;
 using System.Collections.Generic;
@@ -13,7 +13,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace CapybaraVS.Controls
+namespace CapyCSS.Controls
 {
     /// <summary>
     /// DeleteIcon.xaml の相互作用ロジック

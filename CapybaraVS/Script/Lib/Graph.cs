@@ -1,12 +1,12 @@
-﻿using CapybaraVS.Controls;
+﻿using CapyCSS.Controls;
 using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Windows.Media;
-using static CapybaraVS.Controls.PlotWindow;
+using static CapyCSS.Controls.PlotWindow;
 using static CbVS.Script.Lib.Graphics;
 
-namespace CapybaraVS.Script.Lib
+namespace CapyCSS.Script.Lib
 {
     [ScriptClass]
     public static class Graph

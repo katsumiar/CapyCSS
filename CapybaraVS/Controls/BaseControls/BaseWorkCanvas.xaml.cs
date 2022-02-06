@@ -1,8 +1,6 @@
-﻿using CapybaraVS.Controls;
-using CapybaraVS.Controls.BaseControls;
-using CapybaraVS.Script;
-using CapyCSS.Controls;
+﻿using CapyCSS.Controls;
 using CapyCSS.Controls.BaseControls;
+using CapyCSS.Script;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -26,7 +24,7 @@ using System.Windows.Threading;
 using System.Xml;
 using System.Xml.Serialization;
 
-namespace CapybaraVS.Control.BaseControls
+namespace CapyCSS.Controls.BaseControls
 {
     public class LinePos
     {
@@ -94,7 +92,7 @@ namespace CapybaraVS.Control.BaseControls
                 {
                     if (DataVersion != DATA_VERSION)
                     {
-                        ControlTools.ShowErrorMessage(CapybaraVS.Language.Instance["Help:DataVersionError"]);
+                        ControlTools.ShowErrorMessage(CapyCSS.Language.Instance["Help:DataVersionError"]);
                         return;
                     }
 
@@ -1217,8 +1215,8 @@ namespace CapybaraVS.Control.BaseControls
         {
             if (SelectedNodes.Count != 0 &&
                     ControlTools.ShowSelectMessage(
-                        CapybaraVS.Language.Instance["SYSTEM_ConfirmationDelete"],
-                        CapybaraVS.Language.Instance["SYSTEM_Confirmation"],
+                        CapyCSS.Language.Instance["SYSTEM_ConfirmationDelete"],
+                        CapyCSS.Language.Instance["SYSTEM_Confirmation"],
                         MessageBoxButton.OKCancel) == MessageBoxResult.OK)
             {
                 foreach (var node in SelectedNodes)

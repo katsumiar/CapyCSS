@@ -6,7 +6,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Threading;
 
-namespace CapybaraVS
+namespace CapyCSS
 {
     /// <summary>
     /// 添付プロパティ実装クラス

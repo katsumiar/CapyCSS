@@ -1,10 +1,10 @@
-﻿<Window xmlns:Controls="clr-namespace:CapyCSS.Controls"  xmlns:BaseControls="clr-namespace:CapybaraVS.Controls.BaseControls" 
+﻿<Window xmlns:Controls="clr-namespace:CapyCSS.Controls"  xmlns:BaseControls="clr-namespace:CapyCSS.Controls.BaseControls" 
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:CapybaraVS"
-        xmlns:BaseControl="clr-namespace:CapybaraVS.Control.BaseControls" x:Class="CapybaraVS.MainWindow"
+        xmlns:local="clr-namespace:CapyCSS"
+        xmlns:BaseControl="clr-namespace:CapyCSS.Controls.BaseControls" x:Class="CapyCSS.MainWindow"
         mc:Ignorable="d"
         Title="" Height="740" Width="1253">
     <Window.Resources>

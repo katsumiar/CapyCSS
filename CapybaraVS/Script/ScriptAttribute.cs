@@ -1,8 +1,7 @@
 ﻿//#define DEBUG_IMPORT    // インポート機能のデバッグモード
 
-using CapybaraVS.Controls.BaseControls;
-using CapyCSS.Controls;
 using CapyCSS.Controls.BaseControls;
+using CapyCSS.Controls;
 using CapyCSS.Script;
 using CapyCSS.Script.Lib;
 using CbVS.Script;
@@ -16,9 +15,9 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Controls;
-using static CapybaraVS.Controls.BaseControls.CommandCanvas;
+using static CapyCSS.Controls.BaseControls.CommandCanvas;
 
-namespace CapybaraVS.Script
+namespace CapyCSS.Script
 {
     public interface IScriptArribute
     {

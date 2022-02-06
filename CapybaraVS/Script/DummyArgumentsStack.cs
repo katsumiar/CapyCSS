@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using CbVS.Script;
 
-namespace CapybaraVS.Script
+namespace CapyCSS.Script
 {
     /// <summary>
     /// 仮引数のスタックを管理するクラスです。

@@ -1,4 +1,4 @@
-﻿using CapybaraVS.Script;
+﻿using CapyCSS.Script;
 using CapyCSS.Controls.BaseControls;
 using System;
 using System.Collections.Generic;
@@ -16,7 +16,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Xml.Serialization;
 
-namespace CapybaraVS.Controls.BaseControls
+namespace CapyCSS.Controls.BaseControls
 {
     /// <summary>
     /// Movable.xaml の相互作用ロジック

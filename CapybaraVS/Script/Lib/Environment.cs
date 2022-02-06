@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Text.RegularExpressions;
 
-namespace CapybaraVS.Script.Lib
+namespace CapyCSS.Script.Lib
 {
     [ScriptClass]
     public static class EnvironmentLib

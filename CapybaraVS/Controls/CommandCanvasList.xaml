@@ -1,4 +1,4 @@
-﻿<UserControl xmlns:CapybaraVS="clr-namespace:CapybaraVS"  xmlns:BaseControls="clr-namespace:CapybaraVS.Controls.BaseControls"  x:Class="CapyCSS.Controls.CommandCanvasList"
+﻿<UserControl xmlns:CapybaraVS="clr-namespace:CapyCSS"  xmlns:BaseControls="clr-namespace:CapyCSS.Controls.BaseControls"  x:Class="CapyCSS.Controls.CommandCanvasList"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 

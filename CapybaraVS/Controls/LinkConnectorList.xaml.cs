@@ -1,7 +1,7 @@
 ﻿//#define SHOW_LINK_ARRAY   // リスト型を接続したときにリストの要素をコピーして表示する
 
-using CapybaraVS.Controls.BaseControls;
-using CapybaraVS.Script;
+using CapyCSS.Controls.BaseControls;
+using CapyCSS.Script;
 using CapyCSS.Controls;
 using CbVS.Script;
 using System;
@@ -21,7 +21,7 @@ using System.Windows.Shapes;
 using System.Windows.Threading;
 using System.Xml.Serialization;
 
-namespace CapybaraVS.Controls
+namespace CapyCSS.Controls
 {
     /// <summary>
     /// LinkConnectorList.xaml の相互作用ロジック

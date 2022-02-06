@@ -1,7 +1,7 @@
 ﻿//#define SHOW_LINK_ARRAY   // リスト型を接続したときにリストの要素をコピーして表示する
 
-using CapybaraVS.Controls;
-using CapybaraVS.Controls.BaseControls;
+using CapyCSS.Controls;
+using CapyCSS.Controls.BaseControls;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -11,8 +11,8 @@ using System.Windows.Input;
 using System.Xml.Serialization;
 using System.Windows;
 using System.Reflection;
-using static CapybaraVS.Controls.MultiRootConnector;
-using static CapybaraVS.Script.ScriptImplement;
+using static CapyCSS.Controls.MultiRootConnector;
+using static CapyCSS.Script.ScriptImplement;
 using System.Linq.Expressions;
 using System.Diagnostics;
 using System.Threading.Tasks;
@@ -23,7 +23,7 @@ using CapyCSS.Script;
 using System.Collections;
 using System.Threading;
 
-namespace CapybaraVS.Script
+namespace CapyCSS.Script
 {
     /// <summary>
     /// 型を管理する

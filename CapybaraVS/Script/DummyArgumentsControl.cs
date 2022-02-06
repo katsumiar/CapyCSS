@@ -1,5 +1,5 @@
-﻿using CapybaraVS.Controls;
-using CapybaraVS.Script;
+﻿using CapyCSS.Controls;
+using CapyCSS.Script;
 using System;
 using System.Collections.Generic;
 using System.Text;

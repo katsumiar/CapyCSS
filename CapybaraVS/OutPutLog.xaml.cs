@@ -14,7 +14,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Windows.Threading;
 
-namespace CapybaraVS
+namespace CapyCSS
 {
     /// <summary>
     /// OutPutLog.xaml の相互作用ロジック

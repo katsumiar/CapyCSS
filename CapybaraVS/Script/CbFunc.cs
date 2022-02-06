@@ -1,4 +1,4 @@
-﻿using CapybaraVS.Script;
+﻿using CapyCSS.Script;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -6,7 +6,7 @@ using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
 using System.Text;
-using static CapybaraVS.Script.ScriptImplement;
+using static CapyCSS.Script.ScriptImplement;
 
 namespace CbVS.Script
 {

@@ -1,7 +1,4 @@
-﻿using CapybaraVS.Controls;
-using CapybaraVS.Controls.BaseControls;
-using CapybaraVS.Script.Lib;
-using CapyCSS.Controls;
+﻿using CapyCSS.Controls;
 using CapyCSS.Controls.BaseControls;
 using CapyCSS.Script.Lib;
 using CbVS.Script;
@@ -14,11 +11,11 @@ using System.Windows.Input;
 using System.IO;
 using System.Linq;
 
-using static CapybaraVS.Controls.BaseControls.CommandCanvas;
-using static CapybaraVS.Controls.MultiRootConnector;
+using static CapyCSS.Controls.BaseControls.CommandCanvas;
+using static CapyCSS.Controls.MultiRootConnector;
 using CapyCSS.Script;
 
-namespace CapybaraVS.Script
+namespace CapyCSS.Script
 {
     /// <summary>
     /// スクリプトの機能をインポートしメニューに登録するクラスです。

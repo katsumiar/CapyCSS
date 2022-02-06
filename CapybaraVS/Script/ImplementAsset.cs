@@ -1,8 +1,8 @@
-﻿using CapybaraVS.Controls;
-using CapybaraVS.Controls.BaseControls;
+﻿using CapyCSS.Controls;
+using CapyCSS.Controls.BaseControls;
 using CbVS.Script;
 
-namespace CapybaraVS.Script
+namespace CapyCSS.Script
 {
     public class ImplementAsset
     {

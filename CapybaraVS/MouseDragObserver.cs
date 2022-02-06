@@ -1,6 +1,4 @@
-﻿using CapybaraVS.Control.BaseControls;
-using CapybaraVS.Controls.BaseControls;
-using CapyCSS.Controls.BaseControls;
+﻿using CapyCSS.Controls.BaseControls;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -10,7 +8,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 
-namespace CapybaraVS
+namespace CapyCSS
 {
     public interface IMovableControl
     {

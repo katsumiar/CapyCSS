@@ -26,7 +26,7 @@
     <Asset Id="4" X="475" Y="376.04">
       <MultiRootConnector>
         <DataVersion>1</DataVersion>
-        <RootFunc AssetType="FuncType" AssetFuncType="CapybaraVS.Script.Lib.Ip.GetHeaders#_HttpResponseMessage">
+        <RootFunc AssetType="FuncType" AssetFuncType="CapyCSS.Script.Lib.Ip.GetHeaders#_HttpResponseMessage">
           <AttachVariableIds />
           <AttachVariableId>0</AttachVariableId>
           <AssetValueTypes />
@@ -409,7 +409,7 @@ public static System.IO.StreamReader GetReadStream(string path, string encoding 
     <Asset Id="8" X="468" Y="238.04">
       <MultiRootConnector>
         <DataVersion>1</DataVersion>
-        <RootFunc AssetType="FuncType" AssetFuncType="CapybaraVS.Script.Lib.Ip.GetContents#_HttpResponseMessage">
+        <RootFunc AssetType="FuncType" AssetFuncType="CapyCSS.Script.Lib.Ip.GetContents#_HttpResponseMessage">
           <AttachVariableIds />
           <AttachVariableId>0</AttachVariableId>
           <AssetValueTypes />
@@ -676,7 +676,7 @@ public static System.IO.StreamReader GetReadStream(string path, string encoding 
     <Asset Id="10" X="55.53692267502606" Y="367.80440888192265">
       <MultiRootConnector>
         <DataVersion>1</DataVersion>
-        <RootFunc AssetType="FuncType" AssetFuncType="CapybaraVS.Script.Lib.Ip.GetWebAPI#_string_string_string">
+        <RootFunc AssetType="FuncType" AssetFuncType="CapyCSS.Script.Lib.Ip.GetWebAPI#_string_string_string">
           <AttachVariableIds />
           <AttachVariableId>0</AttachVariableId>
           <AssetValueTypes />

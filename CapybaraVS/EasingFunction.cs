@@ -1,11 +1,11 @@
-﻿using CapybaraVS.Script;
+﻿using CapyCSS.Script;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CapybaraVS
+namespace CapyCSS
 {
     [ScriptClass]
     /// <summary>

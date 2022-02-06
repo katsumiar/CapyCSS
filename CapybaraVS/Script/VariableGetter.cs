@@ -1,8 +1,8 @@
-﻿using CapybaraVS.Controls;
-using CapybaraVS.Controls.BaseControls;
+﻿using CapyCSS.Controls;
+using CapyCSS.Controls.BaseControls;
 using System;
 
-namespace CapybaraVS.Script
+namespace CapyCSS.Script
 {
     /// <summary>
     /// 変数参照仲介クラス

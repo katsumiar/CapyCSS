@@ -2,7 +2,7 @@
 using System.Diagnostics;
 using CbVS.Script;
 
-namespace CapybaraVS.Script
+namespace CapyCSS.Script
 {
     /// <summary>
     /// string 型

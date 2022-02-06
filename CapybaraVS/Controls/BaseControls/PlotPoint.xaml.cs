@@ -11,7 +11,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace CapybaraVS.Controls.BaseControls
+namespace CapyCSS.Controls.BaseControls
 {
     /// <summary>
     /// PlotPoint.xaml の相互作用ロジック

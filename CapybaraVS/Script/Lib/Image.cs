@@ -1,6 +1,6 @@
-﻿using CapybaraVS;
-using CapybaraVS.Script;
-using CapybaraVS.Script.Lib;
+﻿using CapyCSS;
+using CapyCSS.Script;
+using CapyCSS.Script.Lib;
 using CapyCSS.Controls;
 using CbVS.Controls;
 using System;
@@ -16,7 +16,7 @@ using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
-using static CapybaraVS.Controls.PlotWindow;
+using static CapyCSS.Controls.PlotWindow;
 using static CbVS.Script.Lib.Media;
 
 namespace CbVS.Script.Lib

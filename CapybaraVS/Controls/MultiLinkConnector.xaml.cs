@@ -1,4 +1,4 @@
-﻿using CapybaraVS.Controls.BaseControls;
+﻿using CapyCSS.Controls.BaseControls;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -13,7 +13,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Xml.Serialization;
 
-namespace CapybaraVS.Controls
+namespace CapyCSS.Controls
 {
     /// <summary>
     /// MultiLinkConnector.xaml の相互作用ロジック

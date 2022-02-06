@@ -1,5 +1,5 @@
-﻿using CapybaraVS.Controls.BaseControls;
-using CapybaraVS.Script;
+﻿using CapyCSS.Controls.BaseControls;
+using CapyCSS.Script;
 using CbVS.Script;
 using System;
 using System.Collections.Generic;
@@ -18,7 +18,7 @@ using System.Windows.Shapes;
 using System.Windows.Threading;
 using System.Xml.Serialization;
 
-namespace CapybaraVS.Controls
+namespace CapyCSS.Controls
 {
     public class StackNodeIdProvider
         : IDisposable

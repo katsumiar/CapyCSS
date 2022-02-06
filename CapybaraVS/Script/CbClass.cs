@@ -5,7 +5,7 @@ using System;
 using System.Diagnostics;
 using System.Reflection;
 
-namespace CapybaraVS.Script
+namespace CapyCSS.Script
 {
     /// <summary>
     /// class型インターフェイス

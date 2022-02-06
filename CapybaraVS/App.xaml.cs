@@ -2,8 +2,7 @@
 Copyright © 2020 Katsumi Aradono. All rights reserved.
 */
 
-using CapybaraVS.Control.BaseControls;
-using CapybaraVS.Controls.BaseControls;
+using CapyCSS.Controls.BaseControls;
 using CapyCSS.Controls;
 using System;
 using System.Collections.Generic;
@@ -17,7 +16,7 @@ using System.Windows;
 using System.Xml;
 using System.Xml.Serialization;
 
-namespace CapybaraVS
+namespace CapyCSS
 {
     /// <summary>
     /// Interaction logic for App.xaml

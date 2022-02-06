@@ -1,14 +1,14 @@
-﻿using CapybaraVS.Controls;
-using CapybaraVS.Controls.BaseControls;
+﻿using CapyCSS.Controls;
+using CapyCSS.Controls.BaseControls;
 using System;
 using System.Collections.Generic;
 using System.Windows.Input;
 using System.Windows;
 using System.Linq;
-using CapybaraVS.Script;
-using CapybaraVS;
+using CapyCSS.Script;
+using CapyCSS;
 using System.Diagnostics;
-using static CapybaraVS.Controls.BaseControls.CommandCanvas;
+using static CapyCSS.Controls.BaseControls.CommandCanvas;
 
 namespace CbVS.Script
 {

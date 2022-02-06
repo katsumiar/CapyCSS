@@ -1,7 +1,7 @@
-﻿using CapybaraVS.Controls;
+﻿using CapyCSS.Controls;
 using CbVS.Script;
 
-namespace CapybaraVS.Script
+namespace CapyCSS.Script
 {
     /// <summary>
     /// リフレクションによる自動実装用ファンクションアセット定義クラス

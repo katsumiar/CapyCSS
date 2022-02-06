@@ -164,7 +164,7 @@
     <Asset Id="104" X="654.5796029258096" Y="195.78756704980836">
       <MultiRootConnector>
         <DataVersion>1</DataVersion>
-        <RootFunc AssetType="FuncType" AssetFuncType="CapybaraVS.Script.Lib.ListFactory.Filtering#_IEnumerable&lt;T&gt;_Predicate&lt;T&gt;">
+        <RootFunc AssetType="FuncType" AssetFuncType="CapyCSS.Script.Lib.ListFactory.Filtering#_IEnumerable&lt;T&gt;_Predicate&lt;T&gt;">
           <AttachVariableIds />
           <AttachVariableId>0</AttachVariableId>
           <AssetValueTypes>

@@ -1,4 +1,4 @@
-﻿using CapybaraVS.Script;
+﻿using CapyCSS.Script;
 using CbVS.Script;
 using System;
 using System.Collections.Generic;
@@ -18,7 +18,7 @@ using System.Windows.Shapes;
 using System.Windows.Threading;
 using System.Xml.Serialization;
 
-namespace CapybaraVS.Controls.BaseControls
+namespace CapyCSS.Controls.BaseControls
 {
     /// <summary>
     /// LinkConnector.xaml の相互作用ロジック

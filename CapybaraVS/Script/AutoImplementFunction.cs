@@ -1,6 +1,5 @@
-﻿using CapybaraVS.Controls;
-using CapybaraVS.Controls.BaseControls;
-using CapyCSS.Controls;
+﻿using CapyCSS.Controls;
+using CapyCSS.Controls.BaseControls;
 using CbVS.Script;
 using System;
 using System.Collections.Generic;
@@ -10,10 +9,10 @@ using System.Reflection;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
-using static CapybaraVS.Controls.BaseControls.CommandCanvas;
-using static CapybaraVS.Script.ScriptImplement;
+using static CapyCSS.Controls.BaseControls.CommandCanvas;
+using static CapyCSS.Script.ScriptImplement;
 
-namespace CapybaraVS.Script
+namespace CapyCSS.Script
 {
     /// <summary>
     /// リフレクションによる自動実装用ファンクションアセット定義クラス
@@ -564,7 +563,7 @@ namespace CapybaraVS.Script
                     // Disposeメソッドを実行するとUI上で破棄された値を表示しようとするので Dispose は無視する
                     // ※値は Data のリファレンスで繋がっているので、対策として状態を残すのは簡単では無い
 
-                    Console.WriteLine(CapybaraVS.Language.Instance["Help:Dispose"]);
+                    Console.WriteLine(CapyCSS.Language.Instance["Help:Dispose"]);
                     return null;
                 }
             }

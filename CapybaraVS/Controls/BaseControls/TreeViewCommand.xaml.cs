@@ -1,4 +1,4 @@
-﻿using CapybaraVS.Script;
+﻿using CapyCSS.Script;
 using CapyCSS.Controls;
 using System;
 using System.Collections;
@@ -20,7 +20,7 @@ using System.Windows.Shapes;
 using System.Windows.Threading;
 using System.Xml.Serialization;
 
-namespace CapybaraVS.Controls.BaseControls
+namespace CapyCSS.Controls.BaseControls
 {
     /// <summary>
     /// 

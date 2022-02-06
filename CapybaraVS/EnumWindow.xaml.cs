@@ -1,5 +1,5 @@
-﻿using CapybaraVS.Controls.BaseControls;
-using CapybaraVS.Script;
+﻿using CapyCSS.Controls.BaseControls;
+using CapyCSS.Script;
 using CapyCSS.Controls;
 using System;
 using System.Collections.Generic;
@@ -14,7 +14,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using System.Windows.Threading;
 
-namespace CapybaraVS
+namespace CapyCSS
 {
     /// <summary>
     /// EnumWindow.xaml の相互作用ロジック

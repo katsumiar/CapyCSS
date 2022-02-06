@@ -1,4 +1,4 @@
-﻿using CapybaraVS.Script;
+﻿using CapyCSS.Script;
 using CapyCSS.Controls;
 using System;
 using System.Collections.Concurrent;
@@ -14,7 +14,7 @@ using System.Windows;
 using System.Diagnostics;
 using CapyCSS;
 
-namespace CapybaraVS
+namespace CapyCSS
 {
     class Language : IDisposable
     {

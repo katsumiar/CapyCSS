@@ -1,5 +1,5 @@
-﻿using CapybaraVS.Controls.BaseControls;
-using CapybaraVS.Script;
+﻿using CapyCSS.Controls.BaseControls;
+using CapyCSS.Script;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -15,7 +15,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Xml.Serialization;
 
-namespace CapybaraVS.Controls
+namespace CapyCSS.Controls
 {
     public interface IRunableControl
     {

@@ -1,7 +1,6 @@
-﻿using CapybaraVS;
-using CapybaraVS.Control.BaseControls;
-using CapybaraVS.Controls.BaseControls;
-using CapybaraVS.Script;
+﻿using CapyCSS;
+using CapyCSS.Controls.BaseControls;
+using CapyCSS.Script;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -49,11 +48,11 @@ namespace CapyCSS.Controls
             {
                 ReadAction = (self) =>
                 {
-                    CapybaraVS.Language.Instance.LanguageType = Language;
+                    CapyCSS.Language.Instance.LanguageType = Language;
 
                     if (DataVersion != DATA_VERSION)
                     {
-                        ControlTools.ShowErrorMessage(CapybaraVS.Language.Instance["Help:DataVersionError"]);
+                        ControlTools.ShowErrorMessage(CapyCSS.Language.Instance["Help:DataVersionError"]);
                         return;
                     }
 
@@ -80,7 +79,7 @@ namespace CapyCSS.Controls
                 {
                     DataVersion = DATA_VERSION;
 
-                    Language = CapybaraVS.Language.Instance.LanguageType;
+                    Language = CapyCSS.Language.Instance.LanguageType;
 
                     BackGroundImagePath = BaseWorkCanvas.BackGrountImagePath;
 
@@ -1044,7 +1043,7 @@ namespace CapyCSS.Controls
         {
             CbSTUtils.ForeachDispose(CanvasData);
             CanvasData = null;
-            CapybaraVS.Language.Instance.Dispose();
+            CapyCSS.Language.Instance.Dispose();
             ToolExec.KillProcess();
 
             GC.SuppressFinalize(this);

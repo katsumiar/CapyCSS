@@ -1,5 +1,5 @@
-﻿using CapybaraVS.Controls.BaseControls;
-using CapybaraVS.Script;
+﻿using CapyCSS.Controls.BaseControls;
+using CapyCSS.Script;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -12,11 +12,10 @@ using System.Windows.Markup;
 using System.Windows.Media;
 using System.Windows.Shapes;
 using System.Xml.Serialization;
-using CapybaraVS.Control.BaseControls;
 using System.Windows.Threading;
 using System.Windows.Input;
 
-namespace CapybaraVS
+namespace CapyCSS
 {
     public class PointIdProvider
     {

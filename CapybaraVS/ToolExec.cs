@@ -5,7 +5,7 @@ using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Text;
 
-namespace CapybaraVS
+namespace CapyCSS
 {
     class ToolExec
     {

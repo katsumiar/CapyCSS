@@ -4,7 +4,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 
-namespace CapybaraVS.Script.Lib
+namespace CapyCSS.Script.Lib
 {
     [ScriptClass]
     public static class ListFactory

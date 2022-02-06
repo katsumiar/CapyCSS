@@ -1,5 +1,5 @@
-﻿using CapybaraVS;
-using CapybaraVS.Script;
+﻿using CapyCSS;
+using CapyCSS.Script;
 using CapyCSS.Controls;
 using CbVS.Controls;
 using System;

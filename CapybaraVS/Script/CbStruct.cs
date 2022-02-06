@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Reflection;
 
-namespace CapybaraVS.Script
+namespace CapyCSS.Script
 {
     /// <summary>
     /// struct型インターフェイス

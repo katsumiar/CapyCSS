@@ -10,7 +10,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 
-namespace CapybaraVS
+namespace CapyCSS
 {
     /// <summary>
     /// OutputWindow.xaml の相互作用ロジック

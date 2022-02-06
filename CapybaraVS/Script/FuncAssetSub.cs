@@ -1,12 +1,12 @@
-﻿using CapybaraVS.Controls;
+﻿using CapyCSS.Controls;
 using CbVS.Script;
 using System;
 using System.Collections.Generic;
 using System.Text;
-using static CapybaraVS.Controls.BaseControls.CommandCanvas;
-using static CapybaraVS.Controls.MultiRootConnector;
+using static CapyCSS.Controls.BaseControls.CommandCanvas;
+using static CapyCSS.Controls.MultiRootConnector;
 
-namespace CapybaraVS.Script
+namespace CapyCSS.Script
 {
     /// <summary>
     /// アセット実装登録インターフェイス

@@ -1,4 +1,4 @@
-﻿using CapybaraVS.Script;
+﻿using CapyCSS.Script;
 using CapyCSS.Controls;
 using CbVS.Script;
 using System;
@@ -20,7 +20,7 @@ using System.Windows.Shapes;
 using System.Windows.Threading;
 using System.Xml.Serialization;
 
-namespace CapybaraVS.Controls.BaseControls
+namespace CapyCSS.Controls.BaseControls
 {
     /// <summary>
     /// RootConnector.xaml の相互作用ロジック
@@ -374,8 +374,8 @@ namespace CapybaraVS.Controls.BaseControls
             RectBox.Stroke = RectboxStroke;
             CheckBoxVisibility();
 
-            Forced.ToolTip = CapybaraVS.Language.Instance["SYSTEM_ArgumentForced"];
-            IsPublicExecute.ToolTip = CapybaraVS.Language.Instance["SYSTEM_IsPublicExecute"];
+            Forced.ToolTip = CapyCSS.Language.Instance["SYSTEM_ArgumentForced"];
+            IsPublicExecute.ToolTip = CapyCSS.Language.Instance["SYSTEM_IsPublicExecute"];
 
             NameText.UpdateEvent =
                 new Action(

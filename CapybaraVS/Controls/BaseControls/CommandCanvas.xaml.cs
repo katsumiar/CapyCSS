@@ -1,8 +1,6 @@
-﻿using CapybaraVS.Control.BaseControls;
-using CapybaraVS.Script;
-using CapyCSS.Controls;
-using CapyCSS.Controls.BaseControls;
+﻿using CapyCSS.Controls.BaseControls;
 using CapyCSS.Script;
+using CapyCSS.Controls;
 using CbVS;
 using CbVS.Script;
 using Microsoft.Win32;
@@ -31,7 +29,7 @@ using System.Windows.Threading;
 using System.Xml;
 using System.Xml.Serialization;
 
-namespace CapybaraVS.Controls.BaseControls
+namespace CapyCSS.Controls.BaseControls
 {
     public interface IHaveCommandCanvas
     {
@@ -153,7 +151,7 @@ namespace CapybaraVS.Controls.BaseControls
                 {
                     if (DataVersion != DATA_VERSION)
                     {
-                        ControlTools.ShowErrorMessage(CapybaraVS.Language.Instance["Help:DataVersionError"]);
+                        ControlTools.ShowErrorMessage(CapyCSS.Language.Instance["Help:DataVersionError"]);
                         return;
                     }
 
@@ -1628,8 +1626,8 @@ namespace CapybaraVS.Controls.BaseControls
         private void ClearWorkCanvasWithConfirmation()
         {
             if (ControlTools.ShowSelectMessage(
-                        CapybaraVS.Language.Instance["SYSTEM_ConfirmationDelete"],
-                        CapybaraVS.Language.Instance["SYSTEM_Confirmation"],
+                        CapyCSS.Language.Instance["SYSTEM_ConfirmationDelete"],
+                        CapyCSS.Language.Instance["SYSTEM_Confirmation"],
                         MessageBoxButton.OKCancel) == MessageBoxResult.OK)
             {
                 CommandCanvasList.SetOwnerCursor(Cursors.Wait);

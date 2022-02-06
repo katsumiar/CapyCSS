@@ -1,4 +1,4 @@
-﻿using CapybaraVS;
+﻿using CapyCSS;
 using CapyCSS.Controls;
 using System;
 using System.Collections.Generic;
@@ -45,7 +45,7 @@ namespace CapyCSS
 
             Info.Text += Environment.NewLine;
             Info.Text += "Shortcut Key:" + Environment.NewLine;
-            Info.Text += CapybaraVS.Language.Instance["Help:SCK"] + Environment.NewLine;
+            Info.Text += CapyCSS.Language.Instance["Help:SCK"] + Environment.NewLine;
         }
 
         public static HelpWindow Create()

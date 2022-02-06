@@ -1,5 +1,5 @@
-﻿using CapybaraVS;
-using CapybaraVS.Script;
+﻿using CapyCSS;
+using CapyCSS.Script;
 using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
@@ -67,7 +67,7 @@ namespace CapyCSS.Controls.BaseControls
             {
                 // TODO フォルダを指定してもらいファイルのパスを特定してもらう
 
-                string msg = string.Format(CapybaraVS.Language.Instance["SYSTEM_ModuleControler_04"], filter);
+                string msg = string.Format(CapyCSS.Language.Instance["SYSTEM_ModuleControler_04"], filter);
                 ControlTools.ShowErrorMessage(msg, DLL_MESSAGE_TITLE);
                 return null;    // 失敗
             }
@@ -173,7 +173,7 @@ namespace CapyCSS.Controls.BaseControls
             string dllPath = System.IO.Path.Combine(InstallDllDirectory, selectedValue);
             if (File.Exists(selectedValue))
             {
-                string msg = string.Format(CapybaraVS.Language.Instance["SYSTEM_ModuleControler_04"], dllPath);
+                string msg = string.Format(CapyCSS.Language.Instance["SYSTEM_ModuleControler_04"], dllPath);
                 ControlTools.ShowErrorMessage(msg, DLL_MESSAGE_TITLE);
                 return true;
             }
@@ -250,7 +250,7 @@ namespace CapyCSS.Controls.BaseControls
             {
                 // dll は既にインポート済み
 
-                string msg = string.Format(CapybaraVS.Language.Instance["SYSTEM_ModuleControler_01"], dllFileName);
+                string msg = string.Format(CapyCSS.Language.Instance["SYSTEM_ModuleControler_01"], dllFileName);
                 var ret = ControlTools.ShowSelectMessage(msg, DLL_MESSAGE_TITLE, MessageBoxButton.YesNo);
                 if (ret == MessageBoxResult.No)
                 {
@@ -265,7 +265,7 @@ namespace CapyCSS.Controls.BaseControls
             {
                 // 上書きインストール成功
 
-                string msg = string.Format(CapybaraVS.Language.Instance["SYSTEM_ModuleControler_02"], dllFileName);
+                string msg = string.Format(CapyCSS.Language.Instance["SYSTEM_ModuleControler_02"], dllFileName);
                 ControlTools.ShowMessage(msg, DLL_MESSAGE_TITLE);
 
                 // アプリケーションの終了
@@ -276,7 +276,7 @@ namespace CapyCSS.Controls.BaseControls
             {
                 // インストール成功
 
-                string msg = string.Format(CapybaraVS.Language.Instance["SYSTEM_ModuleControler_03"], dllFileName);
+                string msg = string.Format(CapyCSS.Language.Instance["SYSTEM_ModuleControler_03"], dllFileName);
                 ControlTools.ShowMessage(msg, DLL_MESSAGE_TITLE);
             }
 
