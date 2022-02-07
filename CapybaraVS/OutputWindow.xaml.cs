@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CapyCSS.Controls;
+using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Windows;
@@ -17,6 +18,16 @@ namespace CapyCSS
     /// </summary>
     public partial class OutputWindow : Window
     {
+        public static OutputWindow CreateWindow(string title)
+        {
+            var outputWindow = new OutputWindow();
+            outputWindow.Title = "[" + title + "]";
+            outputWindow.Owner = CommandCanvasList.OwnerWindow;
+            outputWindow.Show();
+
+            return outputWindow;
+        }
+
         public OutputWindow()
         {
             InitializeComponent();

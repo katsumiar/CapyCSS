@@ -5,8 +5,8 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:CapyCSS"
         mc:Ignorable="d"
-        Title="OutputWindow" Height="378" Width="424">
+        Title="OutputWindow" Height="526" Width="690">
     <Grid>
-        <TextBox x:Name="Log" TextWrapping="Wrap" Text="{Binding BindText}" VerticalScrollBarVisibility="Auto" IsReadOnly="True" Background="Black" Foreground="White" />
+        <TextBox x:Name="Log" TextWrapping="Wrap" Text="{Binding BindText}" VerticalScrollBarVisibility="Auto" IsReadOnly="True" />
     </Grid>
 </Window>
