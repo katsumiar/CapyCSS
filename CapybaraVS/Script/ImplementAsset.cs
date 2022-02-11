@@ -53,6 +53,8 @@ namespace CapyCSS.Script
                     var result = CbScript.CreateFunction(OwnerCommandCanvas, funcAssetDef.AssetCode);
                     if (funcAssetDef.MenuTitle.Contains(CbSTUtils.MENU_OLD_SPECIFICATION))
                     {
+                        // メニューで非表示にしたのでここには来なくなった
+
                         result.OldSpecification = true;
                     }
                     return result;
@@ -78,6 +80,8 @@ namespace CapyCSS.Script
                     var result = CbScript.CreateFreeTypeVariableFunction(OwnerCommandCanvas, funcAssetDef.AssetCode, funcAssetDef.typeRequests);
                     if (funcAssetDef.MenuTitle.Contains(CbSTUtils.MENU_OLD_SPECIFICATION))
                     {
+                        // メニューで非表示にしたのでここには来なくなった
+
                         result.OldSpecification = true;
                     }
                     return result;
@@ -103,6 +107,8 @@ namespace CapyCSS.Script
                     var result = CbScript.CreateFreeTypeVariableFunction(OwnerCommandCanvas, funcAssetDef.AssetCode, null, true);
                     if (funcAssetDef.MenuTitle.Contains(CbSTUtils.MENU_OLD_SPECIFICATION))
                     {
+                        // メニューで非表示にしたのでここには来なくなった
+
                         result.OldSpecification = true;
                     }
                     return result;
@@ -128,6 +134,8 @@ namespace CapyCSS.Script
                     var result = CbScript.CreateFreeTypeFunction(OwnerCommandCanvas, funcAssetDef.AssetCode, funcAssetDef.typeRequests);
                     if (funcAssetDef.MenuTitle.Contains(CbSTUtils.MENU_OLD_SPECIFICATION))
                     {
+                        // メニューで非表示にしたのでここには来なくなった
+
                         result.OldSpecification = true;
                     }
                     return result;
@@ -152,6 +160,8 @@ namespace CapyCSS.Script
                     var result = CbScript.SelectVariableType(OwnerCommandCanvas, funcAssetDef.typeRequests);
                     if (funcAssetDef.MenuTitle.Contains(CbSTUtils.MENU_OLD_SPECIFICATION))
                     {
+                        // メニューで非表示にしたのでここには来なくなった
+
                         result.OldSpecification = true;
                     }
                     return result;
