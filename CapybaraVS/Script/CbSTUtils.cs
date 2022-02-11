@@ -81,6 +81,8 @@ namespace CapyCSS.Script
 
         public const string MENU_OLD_SPECIFICATION = "**OLD**"; // 古い仕様
 
+        public const string MENU_RUNABLE = " [runable]";    // 任意実行可能ノード
+
         /// <summary>
         /// ユーザーによる型作成時に組み込み型選択肢に出てくる型情報です。
         /// </summary>

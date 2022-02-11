@@ -17,7 +17,10 @@ namespace CapyCSS.Script
     /// <summary>
     /// リフレクションによる自動実装用ファンクションアセット定義クラス
     /// </summary>
-    public class AutoImplementFunction : FuncAssetSub, IFuncAssetWithArgumentDef
+    public class AutoImplementFunction 
+        : FuncAssetSub
+        , IFuncAssetWithArgumentDef
+        , IBuildScriptInfo
     {
         static public AutoImplementFunction Create(AutoImplementFunctionInfo info)
         {
@@ -37,6 +40,7 @@ namespace CapyCSS.Script
                 typeRequests = info.typeRequests,
                 GenericMethodParameters = info.genericMethodParameters,
                 oldSpecification = info.oldSpecification,
+                isRunable = info.isRunable,
             };
             return ret;
         }
@@ -102,6 +106,11 @@ namespace CapyCSS.Script
         /// 古い仕様のノードか？
         /// </summary>
         public bool oldSpecification;
+
+        /// <summary>
+        /// 任意実行可能ノードか？（RUNボタンが追加される）
+        /// </summary>
+        public bool isRunable;
 
         /// <summary>
         /// メソッド呼び出し処理を実装する
@@ -238,6 +247,8 @@ namespace CapyCSS.Script
             }
 
             col.OldSpecification = oldSpecification;
+            col.IsRunable = isRunable;
+            col.FunctionInfo = this;
             col.MakeFunction(
                 funcTitle + exTitle,
                 NodeHelpText,

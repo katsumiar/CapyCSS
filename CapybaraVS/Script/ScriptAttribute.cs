@@ -25,6 +25,7 @@ namespace CapyCSS.Script
         string MethodName { get; }
         bool OldSpecification { get; }
         bool DefaultHide { get; }
+        bool IsRunable { get; }
     }
 
     /// <summary>
@@ -34,12 +35,13 @@ namespace CapyCSS.Script
     public class ScriptClassAttribute : Attribute, IScriptArribute
     {
         private string path;            // メニュー用のパス
-        private bool oldSpecification;  // 古い仕様
-        private bool defaultHide;
+        private bool oldSpecification;  // 古い仕様のメソッド（ユーザーに廃止を促すのに使用します）
+        private bool defaultHide;       // 非表示指定
         public string Path => path;
         public string MethodName => null;
         public bool OldSpecification => oldSpecification;
         public bool DefaultHide => defaultHide;
+        public bool IsRunable => false;
         public ScriptClassAttribute(string path = "", bool defaultHide = true, bool oldSpecification = false)
         {
             if (path != "" && !path.EndsWith("."))
@@ -60,12 +62,14 @@ namespace CapyCSS.Script
     {
         private string path;            // メニュー用のパス
         private string methodName;      // メソッド名
-        private bool oldSpecification;  // 古い仕様
+        private bool oldSpecification;  // 古い仕様のメソッド（ユーザーに廃止を促すのに使用します）
+        private bool isRunable;         // 任意実行可能ノード指定
         public string Path => path;
         public string MethodName => methodName;
         public bool OldSpecification => oldSpecification;
         public bool DefaultHide => false;
-        public ScriptMethodAttribute(string path = "", string methodName = null, bool oldSpecification = false)
+        public bool IsRunable => isRunable;
+        public ScriptMethodAttribute(string path = "", string methodName = null, bool oldSpecification = false, bool isRunable = false)
         {
             if (path != "" && !path.EndsWith("."))
             {
@@ -74,6 +78,7 @@ namespace CapyCSS.Script
             this.path = path;
             this.methodName = methodName;
             this.oldSpecification = oldSpecification;
+            this.isRunable = isRunable;
         }
     }
 
@@ -710,6 +715,7 @@ namespace CapyCSS.Script
             public string MethodName { get; set; } = null;
             public bool OldSpecification { get; set; } = false;
             public bool DefaultHide { get; set; } = false;
+            public bool IsRunable { get; set; } = false;
         }
 
         /// <summary>
@@ -733,6 +739,7 @@ namespace CapyCSS.Script
                 MethodName = methodAttr.MethodName,
                 OldSpecification = methodAttr.OldSpecification,
                 DefaultHide = methodAttr.DefaultHide,
+                IsRunable = methodAttr.IsRunable,
             };
 
             var ovrMethodAttr = methodInfo.GetCustomAttribute(typeof(ScriptMethodAttribute)) as ScriptMethodAttribute;
@@ -749,6 +756,10 @@ namespace CapyCSS.Script
                 if (ovrMethodAttr.OldSpecification)
                 {
                     scriptAttributeInfo.OldSpecification = ovrMethodAttr.OldSpecification;
+                }
+                if (ovrMethodAttr.IsRunable)
+                {
+                    scriptAttributeInfo.IsRunable = ovrMethodAttr.IsRunable;
                 }
             }
             else if (scriptAttributeInfo.DefaultHide)
@@ -819,7 +830,10 @@ namespace CapyCSS.Script
             {
                 // 静的メソッドでは無いので所属するクラスの情報を取得
 
-                if (methodInfo.ReflectedType.FullName == "System.Void")
+                var refType = methodInfo.ReflectedType;
+                if (refType.IsValueType   // 絞り込み
+                        && refType.Name == "Void"   // 絞り込み
+                        && refType.FullName == "System.Void")
                 {
                     // System.Void に所属するものには対応しない
                     // System.Void は、ジェネリック引数に使えないので CbStruct で管理できない…
@@ -846,7 +860,9 @@ namespace CapyCSS.Script
                 else
                 {
                     // 返り値の型を準備
-                    if (returnType.FullName == "System.Void")
+                    if (returnType.IsValueType   // 絞り込み
+                        && returnType.Name == "Void"   // 絞り込み
+                        && returnType.FullName == "System.Void")
                     {
                         // void 型は専用のクラスを利用する
 
@@ -1037,17 +1053,24 @@ namespace CapyCSS.Script
 
                 string hint = null;
                 bool _oldSpecification = false;
-                string _oldSpecificationMsg = "";
+                string addTitleMessage = "";
+                bool isRunable = false;
                 if (methodAttr != null)
                 {
                     // メニュー用ヒントをリソースから取得
                     hint = Language.Instance[$"Assembly.{helpCode}/menu"];
 
-                    // 古い仕様か？
+                    // 古い仕様指定されているか？
                     _oldSpecification = methodAttr.OldSpecification;
                     if (_oldSpecification)
                     {
-                        _oldSpecificationMsg = " " + CbSTUtils.MENU_OLD_SPECIFICATION;
+                        addTitleMessage += CbSTUtils.MENU_OLD_SPECIFICATION;
+                    }
+
+                    isRunable = methodAttr.IsRunable;
+                    if (isRunable)
+                    {
+                        addTitleMessage += CbSTUtils.MENU_RUNABLE;
                     }
                 }
 
@@ -1060,7 +1083,7 @@ namespace CapyCSS.Script
                 AutoImplementFunctionInfo autoImplementFunctionInfo = new AutoImplementFunctionInfo()
                 {
                     assetCode = nodeCode,
-                    menuTitle = menuName + _oldSpecificationMsg,
+                    menuTitle = menuName + addTitleMessage,
                     funcTitle = nodeTitle,
                     hint = hint,
                     nodeHint = nodeHint,
@@ -1072,6 +1095,7 @@ namespace CapyCSS.Script
                     typeRequests = genericTypeRequests,
                     genericMethodParameters = (methodInfo.IsGenericMethod) ? methodInfo.GetGenericArguments() : null,
                     oldSpecification = _oldSpecification,
+                    isRunable = isRunable,
                 };
 
                 return autoImplementFunctionInfo;

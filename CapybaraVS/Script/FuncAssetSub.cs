@@ -117,6 +117,15 @@ namespace CapyCSS.Script
         List<TypeRequest> typeRequests { get; }
     }
 
+    /// <summary>
+    /// c#コード化用スクリプト情報
+    /// </summary>
+    public interface IBuildScriptInfo
+    {
+        string FuncCode { get; }
+        Type ClassType { get; }
+    }
+
     public class FuncAssetSub
     {
         /// <summary>

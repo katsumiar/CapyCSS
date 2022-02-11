@@ -515,10 +515,57 @@ namespace CapyCSS.Controls
 
         public static readonly DependencyProperty OldSpecificationProperty = impOldSpecification.Regist(false);
 
+        /// <summary>
+        /// 古い仕様指定
+        /// </summary>
         public bool OldSpecification
         {
             get { return impOldSpecification.GetValue(this); }
             set { impOldSpecification.SetValue(this, value); }
+        }
+
+        #endregion
+
+        #region FunctionInfo 添付プロパティ実装
+
+        private static ImplementDependencyProperty<MultiRootConnector, IBuildScriptInfo> impFunctionInfo =
+            new ImplementDependencyProperty<MultiRootConnector, IBuildScriptInfo>(
+                nameof(FunctionInfo),
+                (self, getValue) =>
+                {
+                    var value = getValue(self);
+                    self.LinkConnectorControl.FunctionInfo = value;
+                });
+
+        public static readonly DependencyProperty FunctionInfoProperty = impFunctionInfo.Regist(null);
+
+        public IBuildScriptInfo FunctionInfo
+        {
+            get { return impFunctionInfo.GetValue(this); }
+            set { impFunctionInfo.SetValue(this, value); }
+        }
+
+        #endregion
+
+        #region IsRunable 添付プロパティ実装
+
+        private static ImplementDependencyProperty<MultiRootConnector, bool> impIsRunable =
+            new ImplementDependencyProperty<MultiRootConnector, bool>(
+                nameof(IsRunable),
+                (self, getValue) =>
+                {
+                    self.LinkConnectorControl.IsRunable = getValue(self);
+                });
+
+        public static readonly DependencyProperty IsRunableProperty = impIsRunable.Regist(false);
+
+        /// <summary>
+        /// 任意実行可能ノードか？（RUNボタンが追加される）
+        /// </summary>
+        public bool IsRunable
+        {
+            get { return impIsRunable.GetValue(this); }
+            set { impIsRunable.SetValue(this, value); }
         }
 
         #endregion
@@ -567,6 +614,7 @@ namespace CapyCSS.Controls
             Func<List<ICbValue>, DummyArgumentsStack, ICbValue> func
             )
         {
+            LinkConnectorControl.OwnerCommandCanvas = OwnerCommandCanvas;
             LinkConnectorControl.Caption = name;
             ICbValue returnType = retType();
             returnType.IsReadOnlyValue = true;

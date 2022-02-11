@@ -306,6 +306,9 @@ namespace CapyCSS.Controls.BaseControls
 
         public static readonly DependencyProperty IsRunableProperty = impIsRunable.Regist(false);
 
+        /// <summary>
+        /// 任意実行可能ノード（RUNボタンが追加される）
+        /// </summary>
         public bool IsRunable
         {
             get { return impIsRunable.GetValue(this); }
@@ -313,6 +316,8 @@ namespace CapyCSS.Controls.BaseControls
         }
 
         #endregion
+
+        public IBuildScriptInfo FunctionInfo = null;
 
         /// <summary>
         /// 通常のノード背景色です。

@@ -64,5 +64,9 @@ namespace CapyCSS.Script
         /// 古い仕様のノードか？
         /// </summary>
         public bool oldSpecification;
+        /// <summary>
+        /// 任意実行可能ノードか？（RUNボタンが付加される）
+        /// </summary>
+        public bool isRunable;
     }
 }

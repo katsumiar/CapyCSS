@@ -327,6 +327,21 @@ namespace CapyCSS.Script
         }
     }
 
+    /// <summary>
+    /// スクリプト構築情報
+    /// </summary>
+    public class BuildScriptFormat
+        : IBuildScriptInfo
+    {
+        public string FuncCode { get; set; } = "";
+        public Type ClassType { get; set; } = null;
+        public BuildScriptFormat(string funcCode, Type classType = null)
+        {
+            FuncCode = funcCode;
+            ClassType = classType;
+        }
+    }
+
     //-----------------------------------------------------------------
     class LiteralType : IFuncAssetLiteralDef
     {
