@@ -79,7 +79,7 @@ namespace CapyCSS.Script
         public const string MENU_SETTER = ".(setter).";     // コマンドメニュー上でのセッターグループ表現
         public const string MENU_CONSTRUCTOR = ".(new).";   // コマンドメニュー上でのコンストラクタグループ表現
 
-        public const string MENU_OLD_SPECIFICATION = "**OLD**"; // 古い仕様
+        public const string MENU_OLD_SPECIFICATION = " **OLD**"; // 古い仕様
 
         public const string MENU_RUNABLE = " [runable]";    // 任意実行可能ノード
 
@@ -455,10 +455,8 @@ namespace CapyCSS.Script
                 if (fromType == typeof(object))
                     return true;    // 接続元が object なら無条件でキャスト可能
 
-                if (!CbScript.IsCalcable(fromType) || !CbScript.IsCalcable(toType))
+                if (!CbScript.IsCast(fromType) || !CbScript.IsCast(toType))
                     return false;
-
-                // 以下、値を表現する型のみ
 
                 if (fromType == typeof(decimal) && toType == typeof(char))
                     return false;
@@ -547,7 +545,6 @@ namespace CapyCSS.Script
             }
             return null;
         }
-
 
         public static string MakeGroupedTypeNameWithOutNameSpace(Type type)
         {

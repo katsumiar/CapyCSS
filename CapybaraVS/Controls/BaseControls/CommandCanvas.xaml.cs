@@ -389,12 +389,14 @@ namespace CapyCSS.Controls.BaseControls
                     Debug.Assert(CbSTUtils.IsAssignment(toType, fromType, true) == result);
                 }
 
+#if false
             foreach (var valueType in valueTypes)
             {
                 Debug.Assert(!CbSTUtils.IsAssignment(valueType, typeof(string), true));
                 Debug.Assert(!CbSTUtils.IsAssignment(typeof(bool), valueType, true));
                 Debug.Assert(!CbSTUtils.IsAssignment(valueType, typeof(bool), true));
             }
+#endif
 
             // 接続元が object なら無条件でキャスト可能
             foreach (var valueType in valueTypes)

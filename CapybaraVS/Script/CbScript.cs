@@ -46,9 +46,19 @@ namespace CbVS.Script
         public static Func<Type, bool> IsNotObject => t => t != typeof(object);
 
         /// <summary>
+        // プリミティブ型で且つ互いにキャスト可能な型
+        /// </summary>
+        public static Func<Type, bool> IsCast => t => t == typeof(decimal) || (t.IsValueType && !t.IsEnum && t.IsPrimitive);
+
+        /// <summary>
         // 演算可能な型
         /// </summary>
-        public static Func<Type, bool> IsCalcable => t => t == typeof(decimal) || (t.IsValueType && !t.IsEnum && t.IsPrimitive && t != typeof(bool));
+        public static Func<Type, bool> IsCalcable => t => t == typeof(decimal) || (t.IsValueType && !t.IsEnum && t.IsPrimitive && t != typeof(bool) && t != typeof(byte) && t != typeof(sbyte) && t != typeof(char) && t != typeof(short) && t != typeof(ushort));
+
+        /// <summary>
+        /// Aggregate可能な型
+        /// </summary>
+        public static Func<Type, bool> IsAggregate => t => CbScript.IsCalcable(t) && t != typeof(uint) && t != typeof(ulong);
 
         /// <summary>
         /// signed型

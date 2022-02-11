@@ -366,7 +366,7 @@ namespace CapyCSS.Script
 
         public List<TypeRequest> typeRequests => new List<TypeRequest>()
         {
-            new TypeRequest(CbSTUtils.LIST_INTERFACE_TYPE, t => CbScript.IsCalcable(t) || t == typeof(string))
+            new TypeRequest(CbSTUtils.LIST_INTERFACE_TYPE, t => CbScript.IsAggregate(t) || t == typeof(string))
         };
 
         public bool ImplAsset(MultiRootConnector col, bool isReBuildMode = false)
@@ -613,7 +613,7 @@ namespace CapyCSS.Script
 
         public List<TypeRequest> typeRequests => new List<TypeRequest>()
         {
-            new TypeRequest(CbSTUtils.LIST_INTERFACE_TYPE, t => CbScript.IsCalcable(t))
+            new TypeRequest(CbSTUtils.LIST_INTERFACE_TYPE, t => CbScript.IsAggregate(t))
         };
 
         public bool ImplAsset(MultiRootConnector col, bool isReBuildMode = false)
@@ -665,7 +665,7 @@ namespace CapyCSS.Script
 
         public List<TypeRequest> typeRequests => new List<TypeRequest>()
         {
-            new TypeRequest(CbSTUtils.LIST_INTERFACE_TYPE, t => CbScript.IsCalcable(t))
+            new TypeRequest(CbSTUtils.LIST_INTERFACE_TYPE, t => CbScript.IsAggregate(t))
         };
 
         public bool ImplAsset(MultiRootConnector col, bool isReBuildMode = false)
@@ -716,7 +716,7 @@ namespace CapyCSS.Script
 
         public List<TypeRequest> typeRequests => new List<TypeRequest>()
         {
-            new TypeRequest(CbSTUtils.LIST_INTERFACE_TYPE, t => CbScript.IsCalcable(t))
+            new TypeRequest(CbSTUtils.LIST_INTERFACE_TYPE, t => CbScript.IsAggregate(t))
         };
 
         public bool ImplAsset(MultiRootConnector col, bool isReBuildMode = false)
