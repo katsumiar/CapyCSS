@@ -267,14 +267,14 @@ namespace CapyCSS
                         string path = Path.Combine(hTextPath, ApiImporter.BASE_LIB_TAG_PRE.Substring(0, ApiImporter.BASE_LIB_TAG_PRE.Length - 1));
                         text = GetHelpText(path, tag, true);
                     }
-                    else if (index.StartsWith(HelpWindow.HELP))
+                    else if (index.StartsWith(HelpWindow.HELP) || index.StartsWith("SYSTEM_"))
                     {
                         // 基本のヘルプファイルを参照する
 
                         string path = Path.Combine(hTextPath, HelpWindow.HELP.Substring(0, HelpWindow.HELP.Length - 1));
                         text = GetHelpText(path, tag, true);
                     }
-                    else if (!index.StartsWith("SYSTEM_"))
+                    else
                     {
                         string fileName = index.Split('.')[1].Split(':')[0].Replace('.', '_');
                         string path = Path.Combine(hTextPath, fileName);
@@ -295,12 +295,6 @@ namespace CapyCSS
                             path = Path.Combine(exHTextPath, fileName);
                             GetHelpText(path, tag, true);
                         }
-                    }
-                    else
-                    {
-                        // リソースからヘルプテキストを参照する
-
-                        text = rm.GetString(index, cultureInfo);
                     }
                     if (text is null || text == "")
                         return null;
