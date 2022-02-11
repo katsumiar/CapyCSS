@@ -5,19 +5,24 @@
     <TargetFramework>net6.0-windows</TargetFramework>
     <UseWPF>true</UseWPF>
     <ApplicationIcon>Image\cpbvs_mUG_icon.ico</ApplicationIcon>
-    <Copyright>Copyright (c) 2020 - 2021 Katsumi Aradono</Copyright>
-    <Version>0.3.7.0</Version>
-    <AssemblyVersion>0.3.7.0</AssemblyVersion>
+    <Copyright>Copyright (c) 2020 - 2022 Katsumi Aradono</Copyright>
+    <Version>0.4.0</Version>
+    <AssemblyVersion>0.4.0</AssemblyVersion>
     <Authors>Katsumi Aradono</Authors>
     <PackageId>CapyCSS</PackageId>
     <AssemblyName>CapyCSS</AssemblyName>
     <RootNamespace>CapyCSS</RootNamespace>
-    <FileVersion>0.3.7.0</FileVersion>
+    <FileVersion>0.4.0</FileVersion>
     <Product>CapyCSS</Product>
     <StartupObject>CapyCSS.App</StartupObject>
     <PackageProjectUrl>https://katsumiar.github.io/CapyCSS/</PackageProjectUrl>
     <Description>A node-connected visual scripting tool that allows you to node c # methods.</Description>
     <NoWin32Manifest>true</NoWin32Manifest>
+    <PackageIcon>CpbVS.png</PackageIcon>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <PackageTags>CapyCSS;C#;Script;VisualScript</PackageTags>
+    <RepositoryUrl>https://github.com/katsumiar/CapyCSS</RepositoryUrl>
+    <NeutralLanguage>ja-JP</NeutralLanguage>
   </PropertyGroup>
 
   <ItemGroup>
@@ -30,6 +35,18 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Update="Properties\Resources.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Update="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
     <EmbeddedResource Update="Resource.ja-JP.resx">
       <Generator></Generator>
     </EmbeddedResource>
@@ -78,6 +95,10 @@
     <None Update="hText\System-ja-JP.htxt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="Image\CpbVS.png">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
     <None Update="LICENSE">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
@@ -98,6 +119,8 @@
     </None>
     <None Update="README.md">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
     </None>
     <None Update="Sample\ActionCall01.cbs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

@@ -32,7 +32,7 @@ namespace CapyCSS
             Info.Text = MainWindow.AppName + Environment.NewLine;
             Info.Text += "Version " + MainWindow.AppVersion + Environment.NewLine;
 
-            Info.Text += "© 2021 Aradono Katsumi" + Environment.NewLine;
+            Info.Text += "© 2022 Aradono Katsumi" + Environment.NewLine;
             Info.Text += "All rights reserved." + Environment.NewLine;
             Info.Text += Environment.NewLine;
             Info.Text += "Copyright notice:" + Environment.NewLine;
