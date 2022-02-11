@@ -1349,6 +1349,7 @@ namespace CapyCSS.Controls.BaseControls
                 {
                     if (IsRunable)
                     {
+                        OwnerCommandCanvas.CommandCanvasControl.RemovePublicExecuteEntryPoint(ExecuteRoot);
                         OwnerCommandCanvas.CommandCanvasControl.RemoveAllExecuteEntryPointEnable(SetExecuteButtonEnable);
                     }
                     LayoutUpdated -= _LayoutUpdated;
