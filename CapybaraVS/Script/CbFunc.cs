@@ -633,6 +633,7 @@ namespace CbVS.Script
                 this.self = self;
                 this.dummyArgumentsControl = dummyArgumentsControl;
                 this.cagt = cagt;
+                this.cagt ??= new DummyArgumentsStack();
             }
             protected void Callback()
             {
@@ -655,6 +656,7 @@ namespace CbVS.Script
                 this.self = self;
                 this.dummyArgumentsControl = dummyArgumentsControl;
                 this.cagt = cagt;
+                this.cagt ??= new DummyArgumentsStack();
             }
             protected TResult Callback()
             {

@@ -1195,7 +1195,7 @@ namespace CapyCSS.Script
         /// <param name="autoImplementFunctionInfo">スクリプト用メソッド情報</param>
         private static void CreateMethodNode(CommandCanvas OwnerCommandCanvas, TreeMenuNode node, AutoImplementFunctionInfo autoImplementFunctionInfo)
         {
-            if (CbFunc.ContainsEvent(autoImplementFunctionInfo.argumentTypeList))
+            //if (CbFunc.ContainsEvent(autoImplementFunctionInfo.argumentTypeList))
             {
                 // Func<> 引数を持つノードを作成
 
@@ -1205,16 +1205,16 @@ namespace CapyCSS.Script
                     AutoImplementEventFunction.Create(autoImplementFunctionInfo)
                 );
             }
-            else
-            {
-                // 通常のノードを作成
+            //else
+            //{
+            //    // 通常のノードを作成
 
-                ImplementAsset.CreateAssetMenu(
-                    OwnerCommandCanvas,
-                    node,
-                    AutoImplementFunction.Create(autoImplementFunctionInfo)
-                );
-            }
+            //    ImplementAsset.CreateAssetMenu(
+            //        OwnerCommandCanvas,
+            //        node,
+            //        AutoImplementFunction.Create(autoImplementFunctionInfo)
+            //    );
+            //}
         }
 
         /// <summary>

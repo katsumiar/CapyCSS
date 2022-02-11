@@ -433,9 +433,6 @@ namespace CbVS.Script
                 // 仮引数用の型を作成
                 // Func<> 及び Action<> 用の変換
 
-                // 仮引数コントロールを作成
-                dummyArgumentsControl ??= new DummyArgumentsControl(col);
-
                 foreach (var node in Value)
                 {
                     ICbEvent cbEvent2 = node as ICbEvent;

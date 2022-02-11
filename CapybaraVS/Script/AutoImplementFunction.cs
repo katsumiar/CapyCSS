@@ -258,7 +258,7 @@ namespace CapyCSS.Script
                     (arguments, cagt) =>
                     {
                         var ret = returnType();
-                        if (dummyArgumentsControl != null && dummyArgumentsControl.IsInvalid(cagt))
+                        if (dummyArgumentsControl == null)
                             return ret; // 実行環境が有効でない
 
                         ImplCallMethod(col, classType, dummyArgumentsControl, arguments, cagt, ret);

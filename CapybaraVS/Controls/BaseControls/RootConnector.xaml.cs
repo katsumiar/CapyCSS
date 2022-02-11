@@ -565,13 +565,16 @@ namespace CapyCSS.Controls.BaseControls
         public object RequestExecute(List<object> functionStack, DummyArgumentsStack preArgument)
         {
             functionStack ??= new List<object>();
-            preArgument ??= new DummyArgumentsStack();
 
             List<ICbValue> arguments = null;
 
             arguments = GetArguments(ref functionStack, preArgument);
 
-            bool enableExecute = !preArgument.IsInvalid();   // 実行環境が有効か？
+            bool enableExecute = true;
+            if (preArgument != null)
+            {
+                enableExecute = !preArgument.IsInvalid();   // 実行環境が有効か？
+            }
 
             if (Function != null && enableExecute)
             {

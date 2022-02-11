@@ -1164,7 +1164,7 @@ namespace CapyCSS.Script
                         // リストはオリジナルの型にしないと代入できない
 
                         ICbList cbList = n.GetListValue;
-
+                        
                         Value = (T)cbList.ConvertOriginalTypeList(null, null);
 
                         if (this is ICbClass cbClass)
@@ -1176,7 +1176,14 @@ namespace CapyCSS.Script
                     }
                     else
                     {
-                        Value = (dynamic)n.Data;
+                        if (IsNullable)
+                        {
+                            Value = (dynamic)Convert.ChangeType(n.Data, OriginalReturnType);
+                        }
+                        else
+                        {
+                            Value = (dynamic)n.Data;
+                        }
                     }
                     if (IsList && n.IsList)
                     {

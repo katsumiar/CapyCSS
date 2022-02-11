@@ -674,6 +674,10 @@ namespace CapyCSS.Controls.BaseControls
 
                     ValueData.Set(connectValueData);
                 }
+                else if (CbScript.IsCast(ValueData.OriginalType))
+                {
+                    ValueData.Set(connectValueData);
+                }
                 else if (connectValueData is CbObject cbObject)
                 {
                     //if (cbObject.Data is null)
