@@ -108,6 +108,14 @@ namespace CbVS.Script
         /// <param name="cagt"></param>
         /// <returns></returns>
         object GetCallbackOriginalType(DummyArgumentsControl dummyArgumentsControl, DummyArgumentsStack cagt);
+        /// <summary>
+        /// デリゲートの引数の数を参照します。
+        /// </summary>
+        int ArgumentsNum { get; }
+        /// <summary>
+        /// デリゲートの返し値の型名を参照します。
+        /// </summary>
+        string ReturnTypeName { get; }
     }
 
     public class CbFunc
@@ -313,6 +321,24 @@ namespace CbVS.Script
         public override Type OriginalReturnType => typeof(RT);
 
         public override Type OriginalType => typeof(T);
+
+        public int ArgumentsNum
+        {
+            get
+            {
+                MethodInfo signature = OriginalType.GetMethod("Invoke");
+                return signature.GetParameters().Length;
+            }
+        }
+
+        public string ReturnTypeName 
+        { 
+            get
+            {
+                MethodInfo signature = OriginalType.GetMethod("Invoke");
+                return signature.ReturnType.Name;
+            }
+        }
 
         public List<ICbValue> EventCallArgumentValueList
         {
