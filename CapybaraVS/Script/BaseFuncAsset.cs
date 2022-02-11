@@ -1461,12 +1461,12 @@ namespace CapyCSS.Script
                         }
                         )
                     );
+
+                // 古い仕様であることを知らせる
+                col.OldSpecification = true;
+
                 return true;
             }
-			
-            // 古い仕様であることを知らせる
-            col.OldSpecification = true;
-		
         }
     }
 
