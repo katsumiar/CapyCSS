@@ -712,7 +712,7 @@ namespace CapyCSS.Script
 
         public string HelpText => Language.Instance[ApiImporter.BASE_LIB_TAG_PRE + AssetCode];
 
-        public string MenuTitle => $"{AssetCode}(T, {CbSTUtils.LIST_STR}<T>) : T";
+        public string MenuTitle => $"{AssetCode}(T, {CbSTUtils.LIST_STR}<T>) : T" + CbSTUtils.MENU_OLD_SPECIFICATION;
 
         public List<TypeRequest> typeRequests => new List<TypeRequest>()
         {
@@ -752,6 +752,9 @@ namespace CapyCSS.Script
                     }
                     )
                 );
+
+            // 古い仕様であることを知らせる
+            col.OldSpecification = true;
 
             return true;
         }
@@ -1172,7 +1175,7 @@ namespace CapyCSS.Script
             return true;
         }
     }
-
+    
     //-----------------------------------------------------------------
     class Abs : FuncAssetSub, IFuncAssetWithArgumentDef
     {
@@ -1403,7 +1406,7 @@ namespace CapyCSS.Script
     {
         public string AssetCode => nameof(AppendVariableList);
 
-        public string MenuTitle => "Append VariableList " + CbSTUtils.MENU_OLD_SPECIFICATION;
+        public string MenuTitle => "Append VariableList" + CbSTUtils.MENU_OLD_SPECIFICATION;
 
         public string HelpText => Language.Instance[ApiImporter.BASE_LIB_TAG_PRE + AssetCode];
 
@@ -1460,6 +1463,10 @@ namespace CapyCSS.Script
                     );
                 return true;
             }
+			
+            // 古い仕様であることを知らせる
+            col.OldSpecification = true;
+		
         }
     }
 
@@ -1470,7 +1477,7 @@ namespace CapyCSS.Script
 
         public string HelpText => Language.Instance[ApiImporter.BASE_LIB_TAG_PRE + AssetCode];
 
-        public string MenuTitle => $"{AssetCode}({CbSTUtils.DOUBLE_STR}, {CbSTUtils.DOUBLE_STR}) : {CbSTUtils.DOUBLE_STR}";
+        public string MenuTitle => $"{AssetCode}({CbSTUtils.DOUBLE_STR}, {CbSTUtils.DOUBLE_STR}) : {CbSTUtils.DOUBLE_STR}" + CbSTUtils.MENU_OLD_SPECIFICATION;
 
         public List<TypeRequest> typeRequests => new List<TypeRequest>()
         {
@@ -1508,6 +1515,9 @@ namespace CapyCSS.Script
                     )
                 );
 
+            // 古い仕様であることを知らせる
+            col.OldSpecification = true;
+
             return true;
         }
     }
@@ -1519,7 +1529,7 @@ namespace CapyCSS.Script
 
         public string HelpText => Language.Instance[ApiImporter.BASE_LIB_TAG_PRE + AssetCode];
 
-        public string MenuTitle => $"{AssetCode}({CbSTUtils.INT_STR}, {CbSTUtils.INT_STR}) : {CbSTUtils.INT_STR}";
+        public string MenuTitle => $"{AssetCode}({CbSTUtils.INT_STR}, {CbSTUtils.INT_STR}) : {CbSTUtils.INT_STR}" + CbSTUtils.MENU_OLD_SPECIFICATION;
 
         public List<TypeRequest> typeRequests => new List<TypeRequest>()
         {
@@ -1555,6 +1565,9 @@ namespace CapyCSS.Script
                     }
                     )
                 );
+
+            // 古い仕様であることを知らせる
+            col.OldSpecification = true;
 
             return true;
         }
