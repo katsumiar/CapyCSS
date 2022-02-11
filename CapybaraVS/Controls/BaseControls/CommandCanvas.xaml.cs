@@ -477,10 +477,10 @@ namespace CapyCSS.Controls.BaseControls
 
             Console.WriteLine("ok");
         }
-        #endregion
+#endregion
 
         //----------------------------------------------------------------------
-        #region スクリプト内共有
+#region スクリプト内共有
         public List<string> _inportNameSpaceModule = null;
         public List<string> _inportDllModule = null;
         public List<string> _inportNuGetModule = null;
@@ -589,10 +589,10 @@ namespace CapyCSS.Controls.BaseControls
             );
         }
 
-        #endregion
+#endregion
 
         //----------------------------------------------------------------------
-        #region アセットリストを実装
+#region アセットリストを実装
 
         private void MakeCommandMenu(TreeViewCommand treeViewCommand)
         {
@@ -923,7 +923,7 @@ namespace CapyCSS.Controls.BaseControls
             OutDebugCreateList("leak clear");
         }
 
-        #region デバッグ用クリア管理
+#region デバッグ用クリア管理
         //※参照カウンターは勘案しない
 
         public static Dictionary<string, int> DebugCreateNames = new Dictionary<string, int>();
@@ -1005,7 +1005,7 @@ namespace CapyCSS.Controls.BaseControls
                 CommandCanvas.DebugCreateNames[name]--;
             }
         }
-        #endregion
+#endregion
 
         /// <summary>
         /// 保存用ファイル選択ダイアログを表示します。
@@ -1084,9 +1084,9 @@ namespace CapyCSS.Controls.BaseControls
             }
             return System.IO.Path.Combine(startupPath, "Sample");
         }
-        #endregion
+#endregion
 
-        #region タイプリストを実装
+#region タイプリストを実装
         private TreeMenuNode typeWindow_classMenu = null;
         private TreeMenuNode typeWindow_enumMenu = null;
         private TreeMenuNode typeWindow_structMenu = null;
@@ -1214,44 +1214,24 @@ namespace CapyCSS.Controls.BaseControls
         {
             public string Name;
             public Type InitType;
-            public Func<Type, bool>[] IsAccepts;
-            public TypeRequest(Func<Type, bool>[] isAccept, string name = "")
-            {
-                Name = name;
-                InitType = null;
-                IsAccepts = isAccept;
-            }
+            public Func<Type, bool> IsAccept;
             public TypeRequest(Func<Type, bool> isAccept, string name = "")
             {
-                Func<Type, bool>[] isAccepts = new Func<Type, bool>[]
-                {
-                    isAccept
-                };
                 Name = name;
                 InitType = null;
-                IsAccepts = isAccepts;
+                IsAccept = isAccept;
             }
             public TypeRequest(Type initTypeName, Func<Type, bool> isAccept, string name = "")
             {
-                Func<Type, bool>[] isAccepts = new Func<Type, bool>[]
-                {
-                    isAccept
-                };
                 Name = name;
                 InitType = initTypeName;
-                IsAccepts = isAccepts;
-            }
-            public TypeRequest(Type initTypeName, Func<Type, bool>[] isAccepts, string name = "")
-            {
-                Name = name;
-                InitType = initTypeName;
-                IsAccepts = isAccepts;
+                IsAccept = isAccept;
             }
             public TypeRequest(Type initTypeName, string name = "")
             {
                 Name = name;
                 InitType = initTypeName;
-                IsAccepts = null;
+                IsAccept = null;
             }
         }
 
@@ -1272,19 +1252,19 @@ namespace CapyCSS.Controls.BaseControls
                 {
                     // フィルタリングされた任意の型
 
-                    typeName = RequestTypeName(typeRequest.IsAccepts, title, positionSet);
+                    typeName = RequestTypeName(typeRequest.IsAccept, title, positionSet);
                 }
                 else if (typeRequest.InitType.IsGenericType && typeRequest.InitType.GenericTypeArguments.Length == 0)
                 {
                     // ジェネリックでかつ型が完成していない
 
-                    typeName = RequestGenericTypeName(typeRequest.InitType.FullName, typeRequest.IsAccepts, title, positionSet);
+                    typeName = RequestGenericTypeName(typeRequest.InitType.FullName, typeRequest.IsAccept, title, positionSet);
                 }
                 else if (typeRequest.InitType == CbSTUtils.ARRAY_TYPE)
                 {
                     // 配列型
 
-                    typeName = RequestTypeName(typeRequest.IsAccepts, title, positionSet);
+                    typeName = RequestTypeName(typeRequest.IsAccept, title, positionSet);
                     typeName += "[]";
                 }
                 else
@@ -1307,16 +1287,16 @@ namespace CapyCSS.Controls.BaseControls
         /// ユーザーに型の指定を要求します。
         /// </summary>
         /// <returns>型名</returns>
-        public string RequestTypeName(Func<Type, bool>[] isAccept, string title = "", bool positionSet = true)
+        public string RequestTypeName(Func<Type, bool> isAccept, string title = "", bool positionSet = true)
         {
             TypeMenuWindow.Message = title;
-            _CanTypeMenuExecuteEvent = isAccept;
+            _CanTypeMenuExecuteEvent = new Func<Type, bool>[] { isAccept };
             _CanTypeMenuExecuteEventIndex = 0;
             TypeMenu.RefreshItem();
             string ret = null;
             try
             {
-                Type type = RequestType(true, positionSet);
+                Type type = RequestType(true, isAccept, positionSet);
                 if (type is null)
                 {
                     return null;
@@ -1335,15 +1315,15 @@ namespace CapyCSS.Controls.BaseControls
         /// </summary>
         /// <param name="genericTypeName">ジェネリック型の型名</param>
         /// <returns>型名（ジェネリック型でない場合はそのままの型名）</returns>
-        public string RequestGenericTypeName(string genericTypeName, Func<Type, bool>[] isAccept, string title = "", bool positionSet = true)
+        public string RequestGenericTypeName(string genericTypeName, Func<Type, bool> isAccept, string title = "", bool positionSet = true)
         {
-            _CanTypeMenuExecuteEvent = isAccept;
+            _CanTypeMenuExecuteEvent = new Func<Type, bool>[] { isAccept };
             _CanTypeMenuExecuteEventIndex = 0;
             TypeMenu.RefreshItem();
             string ret = null;
             try
             {
-                ret = RequestGenericTypeName(CbST.GetTypeEx(genericTypeName), title, positionSet);
+                ret = RequestGenericTypeName(CbST.GetTypeEx(genericTypeName), isAccept, title, positionSet);
             }
             catch (Exception ex)
             {
@@ -1380,7 +1360,7 @@ namespace CapyCSS.Controls.BaseControls
         /// ユーザーに型の指定を要求します。
         /// </summary>
         /// <returns>型情報</returns>
-        private Type RequestType(bool checkType, bool positionSet = true)
+        private Type RequestType(bool checkType, Func<Type, bool> isAccept, bool positionSet = true)
         {
             SelectType = null;
             if (positionSet && _CanTypeMenuExecuteEventIndex == 0)
@@ -1421,7 +1401,7 @@ namespace CapyCSS.Controls.BaseControls
             {
                 TypeMenuWindow.Message += name;
             }
-            return RequestGenericType(type, false);
+            return RequestGenericType(type, isAccept, false);
         }
 
         /// <summary>
@@ -1429,7 +1409,7 @@ namespace CapyCSS.Controls.BaseControls
         /// </summary>
         /// <param name="genericType">ジェネリック型の型情報</param>
         /// <returns>型名（ジェネリック型でない場合はそのままの型名）</returns>
-        private string RequestGenericTypeName(Type genericType, string title = "", bool positionSet = true)
+        private string RequestGenericTypeName(Type genericType, Func<Type, bool> isAccept, string title = "", bool positionSet = true)
         {
             if (genericType is null)
             {
@@ -1454,7 +1434,7 @@ namespace CapyCSS.Controls.BaseControls
 
             TypeMenuWindow.Message = $"{title}{name}{param} : {name}";
 
-            Type type = RequestGenericType(genericType, true, positionSet);
+            Type type = RequestGenericType(genericType, isAccept, true, positionSet);
             if (type is null)
             {
                 return null;
@@ -1467,7 +1447,7 @@ namespace CapyCSS.Controls.BaseControls
         /// </summary>
         /// <param name="genericType">ジェネリック型の型情報</param>
         /// <returns>型情報（ジェネリック型でない場合はそのままの型情報）</returns>
-        private Type RequestGenericType(Type genericType, bool checkType, bool positionSet = true)
+        private Type RequestGenericType(Type genericType, Func<Type, bool> isAccept, bool checkType, bool positionSet = true)
         {
             if (genericType is null)
             {
@@ -1482,7 +1462,7 @@ namespace CapyCSS.Controls.BaseControls
                 }
                 _CanTypeMenuExecuteEvent[_CanTypeMenuExecuteEventIndex] = t => CbScript.AcceptAll(t);
                 TypeMenu.RefreshItem();
-                Type result = RequestType(checkType, positionSet && andPositionSet);
+                Type result = RequestType(checkType, isAccept, positionSet && andPositionSet);
                 if (result is null)
                     return null;
                 return result.MakeArrayType();
@@ -1508,10 +1488,11 @@ namespace CapyCSS.Controls.BaseControls
                     {
                         _CanTypeMenuExecuteEventIndex--;
                     }
-                    _CanTypeMenuExecuteEvent[_CanTypeMenuExecuteEventIndex] = ScriptImplement.MakeParameterConstraintAccepter(argType);
+                    Func<Type, bool> _isAccept = isAccept != null ? isAccept : (t) => true;
+                    _CanTypeMenuExecuteEvent[_CanTypeMenuExecuteEventIndex] = (t) => _isAccept(t) && ScriptImplement.MakeParameterConstraintAccepter(argType)(t);
                     TypeMenu.RefreshItem();
 
-                    Type arg = RequestType(checkType, positionSet);
+                    Type arg = RequestType(checkType, isAccept, positionSet);
 
                     if (arg is null)
                     {
@@ -1555,7 +1536,7 @@ namespace CapyCSS.Controls.BaseControls
                 typeWindow_import.Child.Remove(targetNode);
             }
         }
-        #endregion
+#endregion
 
         public void ToggleGridLine()
         {
@@ -1647,7 +1628,7 @@ namespace CapyCSS.Controls.BaseControls
             }
         }
 
-        #region ROOT_VALUE_TYPE
+#region ROOT_VALUE_TYPE
         private Type rootConnectorValueType = null;
         /// <summary>
         /// 接続操作されている RootConnector の型を参照します。
@@ -1728,7 +1709,7 @@ namespace CapyCSS.Controls.BaseControls
                 return null;
             return InstalledMultiRootConnector.LinkConnectorControl.GetLinkConnector(type);
         }
-        #endregion
+#endregion
 
         /// <summary>
         /// WorkCanvas に登録されたコマンドを実行します。
@@ -1750,7 +1731,7 @@ namespace CapyCSS.Controls.BaseControls
             CommandMenuWindow.ShowDialog();
         }
 
-        #region IDisposable Support
+#region IDisposable Support
         private bool disposedValue = false; // 重複する呼び出しを検出するには
 
         protected virtual void Dispose(bool disposing)
@@ -1810,7 +1791,7 @@ namespace CapyCSS.Controls.BaseControls
             Dispose(true);
             GC.SuppressFinalize(this);
         }
-        #endregion
+#endregion
 
     }
 }
