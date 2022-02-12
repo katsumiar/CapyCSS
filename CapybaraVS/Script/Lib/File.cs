@@ -292,6 +292,10 @@ namespace CapyCSS.Script.Lib
             {
                 return 0;
             }
+            if (path is null)
+            {
+                return 0;
+            }
             var files = FileLib.GetFiles(path, searchPattern, allDirectories);
             if (path.EndsWith(@"\"))
                 path = path.Replace(path, "");
