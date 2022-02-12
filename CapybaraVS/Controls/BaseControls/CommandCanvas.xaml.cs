@@ -348,7 +348,9 @@ namespace CapyCSS.Controls.BaseControls
             foreach (var valueType in valueTypes)
                 Debug.Assert(CbSTUtils.IsAssignment(typeof(object), valueType));
             Debug.Assert(CbSTUtils.IsAssignment(typeof(Action), typeof(CbVoid)));
-            Debug.Assert(CbSTUtils.IsAssignment(typeof(object), typeof(CbVoid)));
+            Debug.Assert(!CbSTUtils.IsAssignment(typeof(object), typeof(CbVoid)));
+            Debug.Assert(CbSTUtils.IsAssignment(typeof(CbVoid), typeof(CbVoid)));
+            Debug.Assert(CbSTUtils.IsAssignment(typeof(CbVoid), typeof(object)));
             Debug.Assert(CbSTUtils.IsAssignment(typeof(List<int>), typeof(List<int>)));
             Debug.Assert(CbSTUtils.IsAssignment(typeof(IEnumerable<int>), typeof(List<int>)));
             Debug.Assert(CbSTUtils.IsAssignment(typeof(ICollection<int>), typeof(List<int>)));

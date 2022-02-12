@@ -471,9 +471,14 @@ namespace CapyCSS.Script
                 return true;
             }
 
+            if (toType == typeof(CbVoid))
+                return true;    // voidへなら無条件に繋がる
+
             if (toType == typeof(object))
-                return true;    // object型なら無条件に繋がる
-            
+            {
+                return fromType != typeof(CbVoid);    // object型ならvoid以外なら無条件に繋がる
+            }
+
             if (IsDelegate(toType))
             {
                 // 接続先がデリゲート型

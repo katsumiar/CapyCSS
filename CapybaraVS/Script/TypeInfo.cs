@@ -844,6 +844,10 @@ namespace CapyCSS.Script
         {
             return type == CbVoid.T || type == typeof(CbVoid);
         }
+        public static CbVoid Create()
+        {
+            return new CbVoid();
+        }
     }
 
     /// <summary>
@@ -1127,6 +1131,7 @@ namespace CapyCSS.Script
                 ReturnAction = null;
                 if (IsNullable && n.IsNull)
                 {
+                    //TODO ここは将来Nullableなクラスへのsetをoverrideして分離する
                     // Nullable<> に null を代入
 
                     // 値型に null の状態を持つ必要がある
@@ -1141,6 +1146,8 @@ namespace CapyCSS.Script
 
                     if (GetType() == typeof(CbBool) || GetType() == typeof(CbNullableBool))
                     {
+                        //TODO ここは将来CbBoolとCbNullableBoolクラスのsetをoverrideして分離する
+
                         if (n.Data.GetType() == typeof(bool))
                         {
                             Data = n.Data;
@@ -1161,6 +1168,7 @@ namespace CapyCSS.Script
                     }
                     else if (!IsList && n.IsList)
                     {
+                        //TODO ここは将来CbListクラスのsetをoverrideして分離する
                         // リストはオリジナルの型にしないと代入できない
 
                         ICbList cbList = n.GetListValue;
@@ -1178,6 +1186,8 @@ namespace CapyCSS.Script
                     {
                         if (IsNullable)
                         {
+                            //TODO ここは将来Nullableなクラスのsetをoverrideして分離する
+
                             Value = (dynamic)Convert.ChangeType(n.Data, OriginalReturnType);
                         }
                         else
@@ -1187,6 +1197,7 @@ namespace CapyCSS.Script
                     }
                     if (IsList && n.IsList)
                     {
+                        //TODO ここは将来CbListクラスのsetをoverrideして分離する
                         // ※IEnumerableを持ったクラスの場合、リストにはオリジナルのデータがある場合があるのでコピーする
 
                         (this as ICbList).OriginalData = (n as ICbList).OriginalData;

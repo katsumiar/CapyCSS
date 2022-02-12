@@ -45,6 +45,8 @@ namespace CapyCSS.Script
             ProgramNode = CreateGroup(ownerCommandCanvas, MENU_TITLE_PROGRAM);
 
             CreateAssetMenu(ownerCommandCanvas, ProgramNode, new Sequence());
+            CreateAssetMenu(ownerCommandCanvas, ProgramNode, new VoidSequence());
+            CreateAssetMenu(ownerCommandCanvas, ProgramNode, new ResultSequence());
 
             {
                 var literalNode = CreateGroup(ProgramNode, Script_Literal.LIB_Script_literal_NAME);
@@ -400,6 +402,9 @@ namespace CapyCSS.Script
                     )
                 );
 
+            // エイリアス
+            col.FunctionInfo = new BuildScriptFormat(nameof(Lib.Script.Sum), typeof(Lib.Script));
+
             return true;
         }
     }
@@ -411,7 +416,7 @@ namespace CapyCSS.Script
 
         public string HelpText => Language.Instance[ApiImporter.BASE_LIB_TAG_PRE + AssetCode];
 
-        public string MenuTitle => $"{AssetCode}({CbSTUtils.LIST_STR}<T>) : T";
+        public string MenuTitle => $"{AssetCode}({CbSTUtils.LIST_STR}<T>) : T" + CbSTUtils.MENU_OLD_SPECIFICATION;
 
         public List<TypeRequest> typeRequests => new List<TypeRequest>()
         { 
@@ -439,6 +444,124 @@ namespace CapyCSS.Script
                             {
                                 ret.Set(argList[argList.Count - 1]);
                             }
+                        }
+                        catch (Exception ex)
+                        {
+                            col.ExceptionFunc(ret, ex);
+                        }
+                        return ret;
+                    }
+                    )
+                );
+
+            // 実行を可能にする
+            col.LinkConnectorControl.IsRunable = true;
+
+            // 古い仕様であることを知らせる
+            col.OldSpecification = true;
+
+            if (!isReBuildMode)
+            {// 「call list」のリンクコネクターを取得する
+                LinkConnector arg = col.LinkConnectorControl.GetArgument(0);
+                // 要素を1つ増やす
+                arg?.TryAddListNode(1);
+            }
+
+            return true;
+        }
+    }
+
+    //-----------------------------------------------------------------
+    class VoidSequence : FuncAssetSub, IFuncAssetWithArgumentDef
+    {
+        public string AssetCode => nameof(VoidSequence);
+
+        public string HelpText => Language.Instance[ApiImporter.BASE_LIB_TAG_PRE + AssetCode];
+
+        public string MenuTitle => $"{AssetCode}";
+
+        private volatile IEnumerable<ICbValue> argList;
+
+        public List<TypeRequest> typeRequests => new List<TypeRequest>()
+        {
+            new TypeRequest(typeof(object))
+        };
+
+        public bool ImplAsset(MultiRootConnector col, bool isReBuildMode = false)
+        {
+            col.MakeFunction(
+                $"{AssetCode}",
+                HelpText,
+                CbVoid.TF,  // 返し値の型
+                new List<ICbValue>()  // 引数
+                {
+                    CbST.CbCreate<IEnumerable<CbVoid>>("flow"),
+                },
+                new Func<List<ICbValue>, DummyArgumentsStack, ICbValue>(
+                    (argument, cagt) =>
+                    {
+                        try
+                        {
+                            argList = GetArgumentList(argument, 0);
+                        }
+                        catch (Exception ex)
+                        {
+                            col.ExceptionFunc(null, ex);
+                        }
+                        return null;
+                    }
+                    )
+                );
+
+            // 実行を可能にする
+            col.LinkConnectorControl.IsRunable = true;
+
+            if (!isReBuildMode)
+            {// 「call list」のリンクコネクターを取得する
+                LinkConnector arg = col.LinkConnectorControl.GetArgument(0);
+                // 要素を1つ増やす
+                arg?.TryAddListNode(1);
+            }
+
+            return true;
+        }
+    }
+
+    //-----------------------------------------------------------------
+    class ResultSequence : FuncAssetSub, IFuncAssetWithArgumentDef
+    {
+        public string AssetCode => nameof(ResultSequence);
+
+        public string HelpText => Language.Instance[ApiImporter.BASE_LIB_TAG_PRE + AssetCode];
+
+        public string MenuTitle => $"{AssetCode}(T) : T";
+
+        private volatile IEnumerable<ICbValue> argList;
+
+        public List<TypeRequest> typeRequests => new List<TypeRequest>()
+        {
+            new TypeRequest(t => CbScript.AcceptAll(t))
+        };
+
+        public bool ImplAsset(MultiRootConnector col, bool isReBuildMode = false)
+        {
+            col.MakeFunction(
+                $"{AssetCode}",
+                HelpText,
+                CbST.CbCreateTF(col.SelectedVariableType[0]),  // 返し値の型
+                new List<ICbValue>()  // 引数
+                {
+                    CbST.CbCreate<IEnumerable<CbVoid>>("flow"),
+                    CbST.CbCreate(col.SelectedVariableType[0], "result"),
+                },
+                new Func<List<ICbValue>, DummyArgumentsStack, ICbValue>(
+                    (argument, cagt) =>
+                    {
+                        var ret = CbST.CbCreate(col.SelectedVariableType[0]);    // 返し値
+                        try
+                        {
+                            argList = GetArgumentList(argument, 0);
+                            ret.Set(argument[1]);
                         }
                         catch (Exception ex)
                         {
@@ -505,6 +628,9 @@ namespace CapyCSS.Script
                     )
                 );
 
+            // エイリアス
+            col.FunctionInfo = new BuildScriptFormat(nameof(Lib.Script.Inc), typeof(Lib.Script));
+
             return true;
         }
     }
@@ -550,6 +676,9 @@ namespace CapyCSS.Script
                     }
                     )
                 );
+
+            // エイリアス
+            col.FunctionInfo = new BuildScriptFormat(nameof(Lib.Script.Dec), typeof(Lib.Script));
 
             return true;
         }
@@ -597,6 +726,9 @@ namespace CapyCSS.Script
                     }
                     )
                 );
+
+            // エイリアス
+            col.FunctionInfo = new BuildScriptFormat(nameof(Lib.Script.Modulo), typeof(Lib.Script));
 
             return true;
         }
@@ -650,6 +782,9 @@ namespace CapyCSS.Script
                     )
                 );
 
+            // エイリアス
+            col.FunctionInfo = new BuildScriptFormat(nameof(Lib.Script.Multiply), typeof(Lib.Script));
+
             return true;
         }
     }
@@ -700,6 +835,9 @@ namespace CapyCSS.Script
                     }
                     )
                 );
+
+            // エイリアス
+            col.FunctionInfo = new BuildScriptFormat(nameof(Lib.Script.Divide), typeof(Lib.Script));
 
             return true;
         }
@@ -932,7 +1070,7 @@ namespace CapyCSS.Script
                     CbVoid.TF,  // 返し値の型
                     new List<ICbValue>()  // 引数
                     {
-                    CbST.CbCreate(col.SelectedVariableType[0], "n"),
+                        CbST.CbCreate(col.SelectedVariableType[0], "n"),
                     },
                     new Func<List<ICbValue>, DummyArgumentsStack, ICbValue>(
                         (argument, cagt) =>
@@ -1121,6 +1259,8 @@ namespace CapyCSS.Script
                     )
                 );
 
+            col.FunctionInfo = new BuildScriptFormat(nameof(SwitchEnum), col.SelectedVariableType[0]);
+
             return true;
         }
     }
@@ -1172,6 +1312,9 @@ namespace CapyCSS.Script
             // 実行を可能にする
             col.LinkConnectorControl.IsRunable = true;
 
+            // エイリアス
+            col.FunctionInfo = new BuildScriptFormat(nameof(Lib.Script.OutConsole), typeof(Lib.Script));
+
             return true;
         }
     }
@@ -1216,6 +1359,9 @@ namespace CapyCSS.Script
                     }
                     )
                 );
+
+            // エイリアス
+            col.FunctionInfo = new BuildScriptFormat("Abs", typeof(Math));
 
             return true;
         }

@@ -25,6 +25,63 @@ namespace CapyCSS.Script.Lib
         {
             return ControlTools.ShowSelectMessage(title, contents, MessageBoxButton.OKCancel);
         }
+
+        //-------------------------------------------------
+        // メニューのエイリアスに対する実体
+        public static T OutConsole<T>(T n)
+        {
+            Console.WriteLine(n.ToString());
+            return n;
+        }
+
+        //----------------------
+        public static uint Inc(uint n) { return n + 1; }
+        public static ulong Inc(ulong n) { return n + 1; }
+        public static int Inc(int n) { return n + 1; }
+        public static long Inc(long n) { return n + 1; }
+        public static float Inc(float n) { return n + 1; }
+        public static double Inc(double n) { return n + 1; }
+        public static decimal Inc(decimal n) { return n + 1; }
+
+        //----------------------
+        public static uint Dec(uint n) { return n - 1; }
+        public static ulong Dec(ulong n) { return n - 1; }
+        public static int Dec(int n) { return n - 1; }
+        public static long Dec(long n) { return n - 1; }
+        public static float Dec(float n) { return n - 1; }
+        public static double Dec(double n) { return n - 1; }
+        public static decimal Dec(decimal n) { return n - 1; }
+
+        //----------------------
+        public static string Sum(IEnumerable<string> sample) { return sample.Aggregate((ct, nt) => ct + nt); }
+        public static int Sum(IEnumerable<int> sample) { return sample.Sum(); }
+        public static long Sum(IEnumerable<long> sample) { return sample.Sum(); }
+        public static float Sum(IEnumerable<float> sample) { return sample.Sum(); }
+        public static double Sum(IEnumerable<double> sample) { return sample.Sum(); }
+        public static decimal Sum(IEnumerable<decimal> sample) { return sample.Sum(); }
+
+        //----------------------
+        public static int Multiply(IEnumerable<int> sample) { return sample.Aggregate((ct, nt)=> ct * nt); }
+        public static long Multiply(IEnumerable<long> sample) { return sample.Aggregate((ct, nt)=> ct * nt); }
+        public static float Multiply(IEnumerable<float> sample) { return sample.Aggregate((ct, nt)=> ct * nt); }
+        public static double Multiply(IEnumerable<double> sample) { return sample.Aggregate((ct, nt)=> ct * nt); }
+        public static decimal Multiply(IEnumerable<decimal> sample) { return sample.Aggregate((ct, nt)=> ct * nt); }
+
+        //----------------------
+        public static int Divide(IEnumerable<int> sample) { return sample.Aggregate((ct, nt) => ct / nt); }
+        public static long Divide(IEnumerable<long> sample) { return sample.Aggregate((ct, nt) => ct / nt); }
+        public static float Divide(IEnumerable<float> sample) { return sample.Aggregate((ct, nt) => ct / nt); }
+        public static double Divide(IEnumerable<double> sample) { return sample.Aggregate((ct, nt) => ct / nt); }
+        public static decimal Divide(IEnumerable<decimal> sample) { return sample.Aggregate((ct, nt) => ct / nt); }
+
+        //----------------------
+        public static uint Modulo(uint n1, uint n2) { return n1 % n2; }
+        public static ulong Modulo(ulong n1, ulong n2) { return n1 % n2; }
+        public static int Modulo(int n1, int n2) { return n1 % n2; }
+        public static long Modulo(long n1, long n2) { return n1 % n2; }
+        public static float Modulo(float n1, float n2) { return n1 % n2; }
+        public static double Modulo(double n1, double n2) { return n1 % n2; }
+        public static decimal Modulo(decimal n1, decimal n2) { return n1 % n2; }
     }
 
     //------------------------------------------------------------------

@@ -245,6 +245,52 @@ namespace CapyCSS.Script
             set => new NotImplementedException();
         }
 
+        public override void Set(ICbValue n)
+        {
+            try
+            {
+                if (n.IsError)
+                    throw new Exception(n.ErrorMessage);
+
+                ReturnAction = null;
+
+                if (n is CbObject cbObject)
+                {
+                    n = (dynamic)cbObject.ValueTypeObject;
+                }
+
+                Debug.Assert(!IsList);
+                Debug.Assert(!CbScript.IsCalcable(typeof(T)));
+
+                if (this is CbClass<CbVoid>)
+                {
+                    // 何もしない
+                }
+                else if (IsNullable)
+                {
+                    Value = (dynamic)Convert.ChangeType(n.Data, OriginalReturnType);
+                }
+                else
+                {
+                    Value = (dynamic)n.Data;
+                }
+
+                isNull = n.IsNull;
+
+                IsLiteral = n.IsLiteral;
+                if (IsError)
+                {
+                    IsError = false;
+                    ErrorMessage = "";
+                }
+            }
+            catch (Exception ex)
+            {
+                IsError = true;
+                ErrorMessage = ex.Message;
+                throw;
+            }
+        }
 
         /// <summary>
         /// 変数の持つ値は null か？
