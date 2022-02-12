@@ -93,6 +93,31 @@ namespace CapyCSS.Script
             }
         }
 
+        public override object Data
+        {
+            get
+            {
+                if (isNull)
+                {
+                    return null;
+                }
+                return Value as object;
+            }
+            set
+            {
+                if (value is null)
+                {
+                    isNull = true;
+                }
+                else
+                {
+                    // ただのキャストでは sbyte から float への変換などで例外が出るので ChangeType を使って変換する
+
+                    Value = (float)Convert.ChangeType(value, typeof(float));
+                }
+            }
+        }
+
         public static new CbNullableFloat Create(string name) => new CbNullableFloat(0, name);
 
         public static new CbNullableFloat Create(float n = 0, string name = "") => new CbNullableFloat(n, name);

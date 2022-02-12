@@ -51,6 +51,31 @@ namespace CapyCSS.Script
             }
         }
 
+        public override object Data
+        {
+            get
+            {
+                if (isNull)
+                {
+                    return null;
+                }
+                return Value as object;
+            }
+            set
+            {
+                if (value is null)
+                {
+                    isNull = true;
+                }
+                else
+                {
+                    // ただのキャストでは sbyte から sbyte への変換などで例外が出るので ChangeType を使って変換する
+
+                    Value = (sbyte)Convert.ChangeType(value, typeof(sbyte));
+                }
+            }
+        }
+
         public void Dispose()
         {
             Dispose(disposing: true);

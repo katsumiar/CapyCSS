@@ -92,6 +92,31 @@ namespace CapyCSS.Script
             }
         }
 
+        public override object Data
+        {
+            get
+            {
+                if (isNull)
+                {
+                    return null;
+                }
+                return Value as object;
+            }
+            set
+            {
+                if (value is null)
+                {
+                    isNull = true;
+                }
+                else
+                {
+                    // ただのキャストでは sbyte から decimal への変換などで例外が出るので ChangeType を使って変換する
+
+                    Value = (decimal)Convert.ChangeType(value, typeof(decimal));
+                }
+            }
+        }
+
         public static new CbNullableDecimal Create(string name) => new CbNullableDecimal(0, name);
 
         public static new CbNullableDecimal Create(decimal n = 0, string name = "") => new CbNullableDecimal(n, name);

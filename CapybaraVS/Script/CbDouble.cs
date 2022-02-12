@@ -92,6 +92,31 @@ namespace CapyCSS.Script
             }
         }
 
+        public override object Data
+        {
+            get
+            {
+                if (isNull)
+                {
+                    return null;
+                }
+                return Value as object;
+            }
+            set
+            {
+                if (value is null)
+                {
+                    isNull = true;
+                }
+                else
+                {
+                    // ただのキャストでは sbyte から double への変換などで例外が出るので ChangeType を使って変換する
+
+                    Value = (double)Convert.ChangeType(value, typeof(double));
+                }
+            }
+        }
+
         public static new CbNullableDouble Create(string name) => new CbNullableDouble(0, name);
 
         public static new CbNullableDouble Create(double n = 0, string name = "") => new CbNullableDouble(n, name);

@@ -99,6 +99,31 @@ namespace CapyCSS.Script
             }
         }
 
+        public override object Data
+        {
+            get
+            {
+                if (isNull)
+                {
+                    return null;
+                }
+                return Value as object;
+            }
+            set
+            {
+                if (value is null)
+                {
+                    isNull = true;
+                }
+                else
+                {
+                    // ただのキャストでは sbyte から uint への変換などで例外が出るので ChangeType を使って変換する
+
+                    Value = (uint)Convert.ChangeType(value, typeof(uint));
+                }
+            }
+        }
+
         public static new CbNullableUInt Create(string name) => new CbNullableUInt(0, name);
 
         public static new CbNullableUInt Create(uint n = 0, string name = "") => new CbNullableUInt(n, name);

@@ -125,6 +125,31 @@ namespace CapyCSS.Script
             }
         }
 
+        public override object Data
+        {
+            get
+            {
+                if (isNull)
+                {
+                    return null;
+                }
+                return Value as object;
+            }
+            set
+            {
+                if (value is null)
+                {
+                    isNull = true;
+                }
+                else
+                {
+                    // ただのキャストでは sbyte から bool への変換などで例外が出るので ChangeType を使って変換する
+
+                    Value = (bool)Convert.ChangeType(value, typeof(bool));
+                }
+            }
+        }
+
         public static new CbNullableBool Create(string name)
         {
             return new CbNullableBool(false, name);

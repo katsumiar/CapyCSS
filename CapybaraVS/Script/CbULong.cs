@@ -93,6 +93,31 @@ namespace CapyCSS.Script
             }
         }
 
+        public override object Data
+        {
+            get
+            {
+                if (isNull)
+                {
+                    return null;
+                }
+                return Value as object;
+            }
+            set
+            {
+                if (value is null)
+                {
+                    isNull = true;
+                }
+                else
+                {
+                    // ただのキャストでは sbyte から ulong への変換などで例外が出るので ChangeType を使って変換する
+
+                    Value = (ulong)Convert.ChangeType(value, typeof(ulong));
+                }
+            }
+        }
+
         public static new CbNullableULong Create(string name) => new CbNullableULong(0, name);
 
         public static new CbNullableULong Create(ulong n = 0, string name = "") => new CbNullableULong(n, name);

@@ -193,6 +193,31 @@ namespace CapyCSS.Script
             }
         }
 
+        public override object Data
+        {
+            get
+            {
+                if (isNull)
+                {
+                    return null;
+                }
+                return Value as object;
+            }
+            set
+            {
+                if (value is null)
+                {
+                    isNull = true;
+                }
+                else
+                {
+                    // ただのキャストでは sbyte から char への変換などで例外が出るので ChangeType を使って変換する
+
+                    Value = (char)Convert.ChangeType(value, typeof(char));
+                }
+            }
+        }
+
         public static new CbNullableChar Create(string name) => new CbNullableChar((char)0, name);
 
         public static new CbNullableChar Create(char n = (char)0, string name = "") => new CbNullableChar(n, name);

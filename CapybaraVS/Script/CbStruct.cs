@@ -266,6 +266,29 @@ namespace CapyCSS.Script
             set => new NotImplementedException();
         }
 
+        public override object Data
+        {
+            get
+            {
+                if (isNull)
+                {
+                    return null;
+                }
+                return Value as object;
+            }
+            set
+            {
+                if (value is null)
+                {
+                    isNull = true;
+                }
+                else
+                {
+                    Value = (dynamic)value;
+                }
+            }
+        }
+
         public static new CbNullableStruct<T> Create(string name = "") => new CbNullableStruct<T>(name);
 
         public static new CbNullableStruct<T> Create(T n, string name = "") => new CbNullableStruct<T>(n, name);

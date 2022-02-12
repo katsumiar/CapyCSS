@@ -93,6 +93,31 @@ namespace CapyCSS.Script
             }
         }
 
+        public override object Data
+        {
+            get
+            {
+                if (isNull)
+                {
+                    return null;
+                }
+                return Value as object;
+            }
+            set
+            {
+                if (value is null)
+                {
+                    isNull = true;
+                }
+                else
+                {
+                    // ただのキャストでは sbyte から short への変換などで例外が出るので ChangeType を使って変換する
+
+                    Value = (short)Convert.ChangeType(value, typeof(short));
+                }
+            }
+        }
+
         public static new CbNullableShort Create(string name) => new CbNullableShort(0, name);
 
         public static new CbNullableShort Create(short n = 0, string name = "") => new CbNullableShort(n, name);

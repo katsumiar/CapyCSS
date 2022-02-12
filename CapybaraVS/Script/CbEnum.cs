@@ -264,6 +264,29 @@ namespace CapyCSS.Script
             }
         }
 
+        public override object Data
+        {
+            get
+            {
+                if (isNull)
+                {
+                    return null;
+                }
+                return Value as object;
+            }
+            set
+            {
+                if (value is null)
+                {
+                    isNull = true;
+                }
+                else
+                {
+                    Value = (dynamic)value;
+                }
+            }
+        }
+
         public static new CbNullableEnum<T> Create(string name = "") => new CbNullableEnum<T>(name);
 
         public static new CbNullableEnum<T> Create(T n, string name = "") => new CbNullableEnum<T>(n, name);
