@@ -425,6 +425,11 @@ namespace CapyCSS.Controls
             return LinkConnectorControl.RequestExecute(functionStack, preArgument);
         }
 
+        public BuildScriptInfo? RequestBuildScript()
+        {
+            return LinkConnectorControl.RequestBuildScript();
+        }
+
         //--------------------------------------------------------------------------------
         #region ファンクションアセット機能
 

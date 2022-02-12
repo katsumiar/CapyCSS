@@ -329,6 +329,15 @@ namespace CapyCSS
             return curveLinkPoint?.RequestExecute(functionStack, preArgument);
         }
 
+        public BuildScriptInfo? RequestBuildScript()
+        {
+            if (curveLinkPoint != null)
+            {
+                return curveLinkPoint.RequestBuildScript();
+            }
+            return null;
+        }
+
         public void CloseLink()
         {
             curveLinkPoint?.RequestRemoveCurveLinkPoint(_self);
@@ -501,6 +510,20 @@ namespace CapyCSS
             return null;
         }
 
+        public BuildScriptInfo? RequestBuildScript()
+        {
+            BuildScriptInfo? result = null;
+            var scr = new BuildScriptInfo();
+            foreach (var curveLink in CurveLinkData)
+            {
+                if (curveLink is null)
+                    continue;
+                scr.Add(curveLink.RequestBuildScript());
+                result = scr;
+            }
+            return result;
+        }
+
         public void CloseLink()
         {
             while (CurveLinkData.Count != 0)
@@ -641,6 +664,23 @@ namespace CapyCSS
                     // 未実行かスコープ指定（ローカルスコープイメージ）の場合は、実行する
 
                     result = curveLinkRoot?.RequestExecute(functionStack, preArgument);
+                }
+            }
+            return result;
+        }
+
+        public BuildScriptInfo? RequestBuildScript()
+        {
+            BuildScriptInfo? result = null;
+            foreach (var curveLinkRoot in CurveLinkRootData)
+            {
+                if (curveLinkRoot is null)
+                    continue;
+
+                var rootResult = curveLinkRoot.RequestBuildScript();
+                if (rootResult.HasValue)
+                {
+                    result = rootResult;
                 }
             }
             return result;

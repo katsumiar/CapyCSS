@@ -132,6 +132,11 @@ namespace CapyCSS.Controls
             return LinkConnectorControl.RequestExecute(functionStack, preArgument);
         }
 
+        public BuildScriptInfo? RequestBuildScript()
+        {
+            return LinkConnectorControl.RequestBuildScript();
+        }
+
         #region IDisposable Support
         private bool disposedValue = false; // 重複する呼び出しを検出するには
 

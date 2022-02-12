@@ -516,6 +516,9 @@ namespace CapyCSS.Script
             // 実行を可能にする
             col.LinkConnectorControl.IsRunable = true;
 
+            // エイリアス
+            col.FunctionInfo = new BuildScriptFormat(nameof(VoidSequence), typeof(VoidSequence));
+
             if (!isReBuildMode)
             {// 「call list」のリンクコネクターを取得する
                 LinkConnector arg = col.LinkConnectorControl.GetArgument(0);
@@ -574,6 +577,9 @@ namespace CapyCSS.Script
 
             // 実行を可能にする
             col.LinkConnectorControl.IsRunable = true;
+
+            // エイリアス
+            col.FunctionInfo = new BuildScriptFormat(nameof(ResultSequence), typeof(ResultSequence));
 
             if (!isReBuildMode)
             {// 「call list」のリンクコネクターを取得する
@@ -1018,6 +1024,9 @@ namespace CapyCSS.Script
                         }
                         )
                     );
+
+                col.FunctionInfo = new BuildScriptFormat(nameof(_GetVariable), typeof(_GetVariable));
+
                 return true;
             }
         }
@@ -1113,6 +1122,8 @@ namespace CapyCSS.Script
                         )
                     );
 
+                col.FunctionInfo = new BuildScriptFormat(nameof(SetVariable), typeof(SetVariable));
+
                 return true;
             }
         }
@@ -1171,6 +1182,8 @@ namespace CapyCSS.Script
                     }
                     )
                 );
+
+            col.FunctionInfo = new BuildScriptFormat(nameof(DummyArguments), typeof(DummyArguments));
 
             return true;
         }
@@ -1259,7 +1272,7 @@ namespace CapyCSS.Script
                     )
                 );
 
-            col.FunctionInfo = new BuildScriptFormat(nameof(SwitchEnum), col.SelectedVariableType[0]);
+            col.FunctionInfo = new BuildScriptFormat("__" + nameof(SwitchEnum), col.SelectedVariableType[0]);
 
             return true;
         }

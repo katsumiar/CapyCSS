@@ -19,6 +19,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Windows.Threading;
 using System.Xml.Serialization;
+using CapyCSS.Script.Lib;
 
 namespace CapyCSS.Controls.BaseControls
 {
@@ -431,21 +432,39 @@ namespace CapyCSS.Controls.BaseControls
 
             if (!fromScript)
             {
-                if (entryPointName != null && entryPointName.StartsWith(":"))
+                if (entryPointName.StartsWith(":"))
                 {
-                    if (entryPointName.StartsWith(":+"))
+                    if (entryPointName == ":*")
                     {
-                        // エントリーポイント名の衝突チェック
+                        // スクリプトコードを取得
 
-                        SetPickupEntryPoint(OwnerCommandCanvas.CommandCanvasControl.IsExistEntryPoint(OwnerCommandCanvas, GetEntryPointName()));
-                        return null;
+                        var sc = RequestBuildScript();
+                        if (sc != null)
+                        {
+                            string name = GetEntryPointName();
+                            if (String.IsNullOrEmpty(name))
+                            {
+                                name = "main";
+                            }
+                            return sc.HasValue ? sc.Value.BuildScript(name) : null;
+                        }
                     }
-
-                    if (entryPointName.Substring(1) == GetEntryPointName())
+                    if (entryPointName != null)
                     {
-                        // 名前が一致している
+                        if (entryPointName.StartsWith(":+"))
+                        {
+                            // エントリーポイント名の衝突チェック
 
-                        return true;
+                            SetPickupEntryPoint(OwnerCommandCanvas.CommandCanvasControl.IsExistEntryPoint(OwnerCommandCanvas, GetEntryPointName()));
+                            return null;
+                        }
+
+                        if (entryPointName.Substring(1) == GetEntryPointName())
+                        {
+                            // 名前が一致している
+
+                            return true;
+                        }
                     }
                     return null;    // false
                 }
@@ -619,6 +638,139 @@ namespace CapyCSS.Controls.BaseControls
             return ValueData.Data;
         }
 
+        public BuildScriptInfo? RequestBuildScript()
+        {
+            BuildScriptInfo? result = null;
+            var scr = new BuildScriptInfo();
+
+            if (Function != null)
+            {
+                // 引数情報
+                BuildScriptInfo? args = GetArgumentsBuildScript();
+                // メソッドの返し値情報
+                bool isList = ValueData.IsList;
+                // メソッド呼び出しコードを取り出す
+                string name = (string)FuncCaption.LabelString;
+                if (FunctionInfo != null)
+                {
+                    if (FunctionInfo.ClassType == typeof(VoidSequence))
+                    {
+                        // シーケンス（返し値無し）
+
+                        string methodName = "";
+                        scr.Set(methodName, BuildScriptInfo.CodeType.Sequece);
+                        scr.SetTypeName(ValueData.TypeName);
+                    }
+                    else if (FunctionInfo.ClassType == typeof(ResultSequence))
+                    {
+                        // シーケンス（返し値有り）
+
+                        string methodName = "";
+                        scr.Set(methodName, BuildScriptInfo.CodeType.ResultSequece);
+                        scr.SetTypeName(ValueData.TypeName);
+                    }
+                    else if (FunctionInfo.ClassType == typeof(DummyArguments))
+                    {
+                        scr.Set("", BuildScriptInfo.CodeType.DummyArgument);
+                        scr.SetTypeName(ValueData.TypeName);
+                    }
+                    else if (FunctionInfo.ClassType == typeof(SetVariable)
+                                || FunctionInfo.ClassType == typeof(_GetVariable))
+                    {
+                        // 変数
+
+                        scr.Set(name.Substring(2, name.Length - 4), BuildScriptInfo.CodeType.Variable);
+                        scr.SetTypeName(ValueData.TypeName);
+                    }
+                    else if (FunctionInfo.FuncCode == "__" + nameof(SwitchEnum))
+                    {
+                        // 列挙型
+
+                        scr.Set(name, BuildScriptInfo.CodeType.Enum);
+                        scr.SetTypeName(FunctionInfo.ClassType.FullName);
+                    }
+                    else
+                    {
+                        // 通常のメソッド
+
+                        string methodName = FunctionInfo.ClassType.FullName + "." + FunctionInfo.FuncCode;
+                        scr.Set(methodName, BuildScriptInfo.CodeType.Method);
+                        scr.SetTypeName(ValueData.TypeName);
+                    }
+                    scr.Add(args);
+                }
+                result = scr;
+            }
+            else
+            {
+                // リテラル定数
+
+                result = GetArgumentsBuildScript();
+            }
+            return result;
+        }
+
+        /// <summary>
+        /// 引数のスクリプト構築の為の要素を収集します。
+        /// </summary>
+        /// <returns>BuildScriptInfo?</returns>
+        public BuildScriptInfo? GetArgumentsBuildScript()
+        {
+            BuildScriptInfo? result = null;
+            var scr = new BuildScriptInfo();
+            if (ValueData.TypeName == "void")
+            {
+                // 無視する
+            }
+            if (ListData is null)
+            {
+                return result;
+            }
+            foreach (var node in ListData)
+            {
+                // イベント呼び出し
+
+                if (node is LinkConnector connector)
+                {
+                    BuildScriptInfo? argResult = connector.RequestBuildScript();
+                    if (node.IsCallBackLink)
+                    {
+                        // イベント呼び出し
+
+                        if (!connector.ValueData.IsNull && connector.ValueData is ICbEvent cbEvent)
+                        {
+                            string argStr = "";
+                            int argCount = cbEvent.ArgumentsNum;
+                            // 引数情報を作成する
+                            for (int i = 0; i < argCount; i++)
+                            {
+                                if (i > 0)
+                                    argStr += ",";
+                                argStr += $"ARG_{i + 1}";
+                            }
+                            var temp = new BuildScriptInfo();
+                            temp.Set($"({argStr}) =>", 
+                                (cbEvent.ReturnTypeName == "Void" ? BuildScriptInfo.CodeType.Delegate : BuildScriptInfo.CodeType.ResultDelegate),
+                                node.ValueData.Name);
+                            temp.Add(argResult);
+                            temp.SetTypeName(cbEvent.ReturnTypeName);
+                            argResult = temp;
+                        }
+                    }
+                    if (argResult.HasValue)
+                    {
+                        scr.Add(argResult);
+                    }
+                    else
+                    {
+                        scr.Add(new BuildScriptInfo(connector.ValueData.ValueString));
+                    }
+                    result = scr;
+                }
+            }
+            return result;
+        }
+
         /// <summary>
         /// 引数に接続された情報を参照します。
         /// </summary>
@@ -640,7 +792,7 @@ namespace CapyCSS.Controls.BaseControls
             {
                 if (node is LinkConnector connector)
                 {
-                    // 接続しているファンクションアセットの実行依頼
+                    // 接続しているファンクションノードの実行依頼
 
                     if (node.IsCallBackLink)
                     {

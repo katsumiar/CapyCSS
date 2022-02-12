@@ -815,9 +815,22 @@ namespace CapyCSS.Script
     }
 
     /// <summary>
+    /// スクリプト構築用要素情報収集用インターフェイス
+    /// </summary>
+    public interface ICbRequestScriptBuild
+    {
+        /// <summary>
+        /// スクリプト構築用要素情報の収集をリクエストします。
+        /// </summary>
+        /// <returns>BuildScriptInfo</returns>
+        BuildScriptInfo? RequestBuildScript();
+    }
+
+    /// <summary>
     /// 実行可能アセットインターフェイス
     /// </summary>
     public interface ICbExecutable
+        : ICbRequestScriptBuild
     {
         object RequestExecute(List<object> functionStack, DummyArgumentsStack preArgument);
     }

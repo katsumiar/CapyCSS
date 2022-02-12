@@ -608,6 +608,7 @@ namespace CapyCSS.Controls.BaseControls
                 commandNode.AddChild(new TreeMenuNode("Toggle ShowGridLine(Ctrl+G)", CreateImmediateExecutionCanvasCommand(() => ScriptCommandCanvas.ToggleGridLine())));
                 commandNode.AddChild(new TreeMenuNode("Save(Ctrl+S)", CreateImmediateExecutionCanvasCommand(() => CommandCanvasControl.SaveCbsFile())));
                 commandNode.AddChild(new TreeMenuNode("Load(Ctrl+O)", CreateImmediateExecutionCanvasCommand(() => CommandCanvasControl.LoadCbsFile())));
+                commandNode.AddChild(new TreeMenuNode("Build Script", CreateImmediateExecutionCanvasCommand(() => CommandCanvasList.Instance?.BuildScriptAndOut(null))));
                 treeViewCommand.AssetTreeData.Add(commandNode);
             }
 

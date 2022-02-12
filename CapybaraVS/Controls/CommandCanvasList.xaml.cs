@@ -706,24 +706,21 @@ namespace CapyCSS.Controls
 
             if (entryPointName != null)
             {
-                if (entryPointName.Trim().Length == 0)
+                if (CheckMultipleEntryPoints(owner, entryPointName))
                 {
-                    entryPointName = null;
-                }
-                else if (PublicExecuteEntryPointList.Where(n => n.function.Invoke(false, ":" + entryPointName) != null).Count() > 1)
-                {
+                    var errorMessage = $"multiple \"{entryPointName}\" entry points!";
                     if (owner != null)
                     {
                         // CommandCanvas から呼ばれた
 
-                        Console.WriteLine(nameof(CommandCanvas) + $": multiple \"{entryPointName}\" entry points!");
+                        Console.WriteLine(nameof(CommandCanvas) + $": {errorMessage}");
                         return null;
                     }
                     else
                     {
                         // CallEntryPoint から呼ばれた
 
-                        throw new Exception($"multiple \"{entryPointName}\" entry points!");
+                        throw new Exception(errorMessage);
                     }
                 }
             }
@@ -761,6 +758,70 @@ namespace CapyCSS.Controls
             }
 
             return result;
+        }
+
+        /// <summary>
+        /// エントリーポイント名が複数無いかチェックします。
+        /// </summary>
+        /// <param name="owner">対象オーナー</param>
+        /// <param name="entryPointName">エントリーポイント名</param>
+        /// <returns>true==複数有る</returns>
+        private bool CheckMultipleEntryPoints(object owner, string entryPointName)
+        {
+            if (entryPointName.Trim().Length == 0)
+            {
+                entryPointName = null;
+            }
+            else if (PublicExecuteEntryPointList.Where(n => n.function.Invoke(false, ":" + entryPointName) != null).Count() > 1)
+            {
+                return true;
+            }
+            return false;
+        }
+
+        /// <summary>
+        /// スクリプトからc#を構築します。
+        /// </summary>
+        /// <param name="owner">オーナー</param>
+        /// <returns>c#コード</returns>
+        public string BuildScript(object owner)
+        {
+            string result = null;
+            var entryPoints = PublicExecuteEntryPointList.Where(n => n.function != null);
+            if (owner != null)
+            {
+                // オーナー限定
+
+                entryPoints = PublicExecuteEntryPointList.Where(n => n.owner == owner);
+            }
+            foreach (var entryPoint in entryPoints)
+            {
+                var r = entryPoint.function.Invoke(false, ":*");
+                if (r != null)
+                {
+                    result += r;
+                }
+            }
+            result += $"{nameof(CommandCanvasList.CallEntryPoint)} (\"{BuildScriptInfo.DEFAULT_ENTRY_POINT_LABEL_NAME}\");";
+            return result;
+        }
+
+        /// <summary>
+        /// スクリプトからc#を構築しウインドウに出力します。
+        /// </summary>
+        /// <param name="owner">オーナー</param>
+        public void BuildScriptAndOut(object owner)
+        {
+            string title = "(owner)";
+            if (owner is null)
+            {
+                title = CurrentTabItem.Header.ToString();
+            }
+            string code = BuildScript(owner);
+            if (!string.IsNullOrEmpty(code))
+            {
+                OutputWindow.CreateWindow(title).AddBindText = BuildScript(owner);
+            }
         }
 
         /// <summary>

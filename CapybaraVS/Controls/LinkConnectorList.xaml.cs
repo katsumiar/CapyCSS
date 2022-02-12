@@ -495,6 +495,54 @@ namespace CapyCSS.Controls
             return null;
         }
 
+        public BuildScriptInfo? RequestBuildScript()
+        {
+            BuildScriptInfo? result = null;
+            var scr = new BuildScriptInfo();
+            foreach (var node in ListData)
+            {
+                if (node.ValueData.TypeName != "void")
+                {
+                    scr.Set($"new List<{node.ValueData.TypeName}>()", BuildScriptInfo.CodeType.List);
+                }
+                BuildScriptInfo? argResult = node.RequestBuildScript();
+                if (node.IsCallBackLink)
+                {
+                    // イベント呼び出し
+
+                    if (!node.ValueData.IsNull && node.ValueData is ICbEvent cbEvent)
+                    {
+                        string argStr = "";
+                        int argCount = cbEvent.ArgumentsNum;
+                        // 引数情報を作成する
+                        for (int i = 0; i < argCount; i++)
+                        {
+                            if (i > 0)
+                                argStr += ",";
+                            argStr += $"ARG_{i + 1}";
+                        }
+                        var temp = new BuildScriptInfo();
+                        temp.Set($"({argStr}) =>",
+                            (cbEvent.ReturnTypeName == "Void" ? BuildScriptInfo.CodeType.Delegate : BuildScriptInfo.CodeType.ResultDelegate),
+                            node.ValueData.Name);
+                        temp.Add(argResult);
+                        temp.SetTypeName(cbEvent.ReturnTypeName);
+                        argResult = temp;
+                    }
+                }
+                if (argResult.HasValue)
+                {
+                    scr.Add(argResult);
+                }
+                else
+                {
+                    scr.Add(new BuildScriptInfo(node.ValueData.ValueString));
+                }
+                result = scr;
+            }
+            return result;
+        }
+
         /// <summary>
         /// ノード作成用イベントです。
         /// </summary>

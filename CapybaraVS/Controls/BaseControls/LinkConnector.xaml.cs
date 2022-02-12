@@ -317,6 +317,84 @@ namespace CapyCSS.Controls.BaseControls
             return result;
         }
 
+        public BuildScriptInfo? RequestBuildScript()
+        {
+            BuildScriptInfo? result = null;
+            var scr = new BuildScriptInfo();
+            var connectorResult = ConnectorList.RequestBuildScript();
+            if (connectorResult.HasValue)
+            {
+                // 引数情報（要素情報リストが有効な場合は、こちらの情報は無い）
+
+                result = connectorResult;
+                if (result.HasValue)
+                {
+                    // そのまま流す
+                }
+            }
+            if (linkCurveLinks != null)
+            {
+                // 引数がリストの場合の要素情報リスト（引数情報が有効な場合は、こちらの情報は無い）
+
+                var linksResult = linkCurveLinks.RequestBuildScript();
+                if (linksResult.HasValue)
+                {
+                    result = linksResult;
+                }
+            }
+            if (!result.HasValue)
+            {
+                if (ValueData.Data is char)
+                {
+                    // 文字
+
+                    scr.Add(new BuildScriptInfo("'" + ValueData.ValueString + "'", BuildScriptInfo.CodeType.Data, ValueData.Name));
+                }
+                else if (ValueData.Data is string)
+                {
+                    // 文字列
+
+                    scr.Add(new BuildScriptInfo("\"" + ValueData.ValueString + "\"", BuildScriptInfo.CodeType.Data, ValueData.Name));
+                }
+                else if (!(ValueData.OriginalReturnType is object || ValueData.OriginalReturnType.IsEnum) &&
+                        ValueData.OriginalReturnType.IsClass || CbStruct.IsStruct(ValueData.OriginalReturnType))
+                {
+                    // クラス
+
+                    scr.Add(new BuildScriptInfo("new " + ValueData.OriginalReturnType.FullName + "()", BuildScriptInfo.CodeType.Data, ValueData.Name));
+                }
+                else if (ValueData is ICbEnum cbEnum)
+                {
+                    // 列挙型
+
+                    scr.Add(new BuildScriptInfo(ValueData.ValueString, BuildScriptInfo.CodeType.Data, ValueData.Name));
+                }
+                else
+                {
+                    // その他
+
+                    if (ValueData.ValueString == "")
+                    {
+                        if (ValueData.IsList)
+                        {
+                            scr.Add(new BuildScriptInfo("null", BuildScriptInfo.CodeType.Data, ValueData.Name));
+                        }
+                        else
+                        {
+                            Debug.Assert(false);
+                        }
+                    }
+                    else
+                    {
+                        scr.Add(new BuildScriptInfo(ValueData.ValueString, BuildScriptInfo.CodeType.Data, ValueData.Name));
+                    }
+                }
+                scr.SetTypeName(ValueData.TypeName);
+                result = scr;
+            }
+            return result;
+        }
+
         private bool hideLinkPoint = false;
         public bool HideLinkPoint
         {
