@@ -282,7 +282,7 @@ namespace CbVS.Script
                         return $"{ItemName}[]";
                     }
                 }
-                return CbSTUtils._GetTypeName(SourceType);
+                return CbSTUtils.GetTypeName(SourceType);
             }
         }
 

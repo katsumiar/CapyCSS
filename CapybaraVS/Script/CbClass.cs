@@ -166,7 +166,7 @@ namespace CapyCSS.Script
             {
                 if (CbVoid.Is(typeof(T)))
                     return CbSTUtils.VOID_STR;
-                return CbSTUtils._GetTypeName(typeof(T));
+                return CbSTUtils.GetTypeName(typeof(T));
             }
         }
 

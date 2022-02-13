@@ -409,7 +409,7 @@ namespace CbVS.Script
         {
             get
             {
-                return CbSTUtils.GetGenericTypeName(OriginalType);
+                return CbSTUtils.GetTypeName(OriginalType);
             }
         }
 

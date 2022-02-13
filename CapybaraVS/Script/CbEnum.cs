@@ -134,7 +134,7 @@ namespace CapyCSS.Script
             Name = name;
         }
 
-        public override string TypeName => CbSTUtils._GetTypeName(typeof(T));
+        public override string TypeName => CbSTUtils.GetTypeName(typeof(T));
 
         public override Func<ICbValue> NodeTF => TF;
 

@@ -150,7 +150,7 @@ namespace CapyCSS.Script
         {
             get
             {
-                return CbSTUtils._GetTypeName(typeof(T));
+                return CbSTUtils.GetTypeName(typeof(T));
             }
         }
 
