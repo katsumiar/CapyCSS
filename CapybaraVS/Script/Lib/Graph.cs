@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.Text;
 using System.Windows.Media;
 using static CapyCSS.Controls.PlotWindow;
-using static CbVS.Script.Lib.Graphics;
 
 namespace CapyCSS.Script.Lib
 {
