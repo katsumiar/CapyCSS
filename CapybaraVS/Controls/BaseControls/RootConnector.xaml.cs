@@ -442,10 +442,6 @@ namespace CapyCSS.Controls.BaseControls
                         if (sc != null)
                         {
                             string name = GetEntryPointName();
-                            if (String.IsNullOrEmpty(name))
-                            {
-                                name = "main";
-                            }
                             return sc.HasValue ? sc.Value.BuildScript(name) : null;
                         }
                     }

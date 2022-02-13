@@ -25,8 +25,6 @@ namespace CapyCSS.Script
         }
 
         private const int TAB_SIZE = 4;
-        public const string DEFAULT_ENTRY_POINT_NAME = "main";
-        public const string DEFAULT_ENTRY_POINT_LABEL_NAME = "";
 
         public string ScriptElement = null;
         public List<BuildScriptInfo> Child = null;
@@ -218,16 +216,14 @@ namespace CapyCSS.Script
                 }
                 return result;
             }
-            if (!string.IsNullOrEmpty(entryPointName))
+            if (string.IsNullOrWhiteSpace(entryPointName))
             {
-                result = "var " + entryPointName + " = () =>";
+                entryPointName = CommandCanvasList.Instance.CurrentScriptTitle;
             }
+            result = "var " + entryPointName + " = () =>";
             result += _BuildScript(entryPointName, 0);
             result += ";" + Environment.NewLine;
-            if (entryPointName == DEFAULT_ENTRY_POINT_NAME)
-                result += $"AddEntryPoint(\"{DEFAULT_ENTRY_POINT_LABEL_NAME}\", {entryPointName});";
-            else
-                result += $"AddEntryPoint(nameof({entryPointName}), {entryPointName});";
+            result += $"AddEntryPoint(nameof({entryPointName}), {entryPointName});";
             result += Environment.NewLine + Environment.NewLine;
             return result;
         }
