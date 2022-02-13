@@ -724,6 +724,10 @@ namespace CapyCSS.Controls
                     }
                 }
             }
+            else
+            {
+                entryPointName = "";
+            }
 
             var entryPoints = PublicExecuteEntryPointList.Where(n => n.function != null);
             if (owner != null)
