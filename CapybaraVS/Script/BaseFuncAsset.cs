@@ -337,6 +337,7 @@ namespace CapyCSS.Script
     {
         public string FuncCode { get; set; } = "";
         public Type ClassType { get; set; } = null;
+        public bool IsProperty => false;
         public BuildScriptFormat(string funcCode, Type classType = null)
         {
             FuncCode = funcCode;

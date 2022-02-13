@@ -68,5 +68,9 @@ namespace CapyCSS.Script
         /// 任意実行可能ノードか？（RUNボタンが付加される）
         /// </summary>
         public bool isRunable;
+        /// <summary>
+        /// プロパティのゲッターもしくはセッターか？
+        /// </summary>
+        public bool IsProperty { get; set; }
     }
 }

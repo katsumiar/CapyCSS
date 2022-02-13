@@ -693,8 +693,17 @@ namespace CapyCSS.Controls.BaseControls
                     {
                         // 通常のメソッド
 
-                        string methodName = FunctionInfo.ClassType.FullName + "." + FunctionInfo.FuncCode;
-                        scr.Set(methodName, BuildScriptInfo.CodeType.Method);
+                        if (FunctionInfo.IsProperty)
+                        {
+                            string funcCode = FunctionInfo.FuncCode.Substring(4);   // get_ set_ を取り除く
+                            string methodName = FunctionInfo.ClassType.FullName + "." + funcCode;
+                            scr.Set(methodName, BuildScriptInfo.CodeType.Variable);
+                        }
+                        else
+                        {
+                            string methodName = FunctionInfo.ClassType.FullName + "." + FunctionInfo.FuncCode;
+                            scr.Set(methodName, BuildScriptInfo.CodeType.Method);
+                        }
                         scr.SetTypeName(ValueData.TypeName);
                     }
                     scr.Add(args);

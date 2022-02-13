@@ -41,6 +41,7 @@ namespace CapyCSS.Script
                 GenericMethodParameters = info.genericMethodParameters,
                 oldSpecification = info.oldSpecification,
                 isRunable = info.isRunable,
+                IsProperty = info.IsProperty,
             };
             return ret;
         }
@@ -111,6 +112,11 @@ namespace CapyCSS.Script
         /// 任意実行可能ノードか？（RUNボタンが追加される）
         /// </summary>
         public bool isRunable;
+
+        /// <summary>
+        /// プロパティのゲッターもしくはセッターか？
+        /// </summary>
+        public bool IsProperty { get; set; }
 
         /// <summary>
         /// メソッド呼び出し処理を実装する

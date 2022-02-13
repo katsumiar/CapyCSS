@@ -1023,10 +1023,19 @@ namespace CapyCSS.Script
                     }
                 }
 
+                bool isProperty = methodInfo.IsSpecialName && (methodInfo.Name.StartsWith("get_") || methodInfo.Name.StartsWith("set_"));
+
                 // 引数情報を追加する
                 string paramString = MakeParamsString(methodInfo);
-                menuName += paramString;
-                string nodeHintTitle = $"{classType.Namespace}.{className}.{nodeTitle}{paramString}";
+                if (!isProperty)
+                {
+                    menuName += paramString;
+                }
+                string nodeHintTitle = $"{classType.Namespace}.{className}.{nodeTitle}";
+                if (!isProperty)
+                {
+                    nodeHintTitle += paramString;
+                }
 
                 // 返り値の型名を追加する
                 if (methodInfo.IsConstructor && classType.IsGenericType)
@@ -1100,6 +1109,7 @@ namespace CapyCSS.Script
                     genericMethodParameters = (methodInfo.IsGenericMethod) ? methodInfo.GetGenericArguments() : null,
                     oldSpecification = _oldSpecification,
                     isRunable = isRunable,
+                    IsProperty = isProperty,
                 };
 
                 return autoImplementFunctionInfo;

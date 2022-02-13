@@ -27,6 +27,7 @@ namespace CapyCSS.Script
                 GenericMethodParameters = info.genericMethodParameters,
                 oldSpecification = info.oldSpecification,
                 isRunable = info.isRunable,
+                IsProperty = info.IsProperty,
             };
             return ret;
         }

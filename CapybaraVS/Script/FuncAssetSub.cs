@@ -124,6 +124,10 @@ namespace CapyCSS.Script
     {
         string FuncCode { get; }
         Type ClassType { get; }
+        /// <summary>
+        /// プロパティのゲッターもしくはセッターか？
+        /// </summary>
+        bool IsProperty { get; }
     }
 
     public class FuncAssetSub
