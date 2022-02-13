@@ -194,13 +194,24 @@ namespace CapyCSS.Script
         private static ReaderWriterLock CbTypeNameListRwLock = new ReaderWriterLock();
 
         /// <summary>
+        /// 型のFullNameを取得します。
+        /// ※ "+"は"."に置き換えます。
+        /// </summary>
+        /// <param name="type">型情報</param>
+        /// <returns>可能ならFullName無理ならName</returns>
+        public static string GetTryFullName(Type type)
+        {
+            return GetTypeName(type, false);
+        }
+
+        /// <summary>
         /// オブジェクトの型の文字列名を返します。
         /// </summary>
         /// <param name="obj"></param>
         /// <returns></returns>
-        static public string GetTypeName(object obj)
+        static public string GetTypeName(object obj, bool optimize = true)
         {
-            return GetTypeName(obj.GetType());
+            return GetTypeName(obj.GetType(), optimize);
         }
 
         /// <summary>
@@ -208,29 +219,32 @@ namespace CapyCSS.Script
         /// </summary>
         /// <param name="type">型情報</param>
         /// <returns></returns>
-        static public string GetTypeName(Type type)
+        static public string GetTypeName(Type type, bool optimize = true)
         {
             string typeName = type.FullName;
-            string newName = _GetTypeName(type);
+            string newName = _GetTypeName(type, optimize);
 
-            try
+            if (optimize)
             {
-                CbTypeNameListRwLock.AcquireWriterLock(Timeout.Infinite);
-                if (!CbTypeNameList.ContainsKey(typeName))
+                try
                 {
-                    CbTypeNameList.Add(typeName, newName);
+                    CbTypeNameListRwLock.AcquireWriterLock(Timeout.Infinite);
+                    if (!CbTypeNameList.ContainsKey(typeName))
+                    {
+                        CbTypeNameList.Add(typeName, newName);
+                    }
                 }
-            }
-            finally
-            {
-                CbTypeNameListRwLock.ReleaseWriterLock();
+                finally
+                {
+                    CbTypeNameListRwLock.ReleaseWriterLock();
+                }
             }
             return newName;
         }
 
-        static public string _GetTypeName(Type type)
+        static public string _GetTypeName(Type type, bool optimize = true)
         {
-            string ret = __GetTypeName(type);
+            string ret = __GetTypeName(type, optimize);
             if (type.IsArray)
             {
                 // 外した配列を付け直す
@@ -240,7 +254,7 @@ namespace CapyCSS.Script
             return ret;
         }
 
-        static public string __GetTypeName(Type type)
+        static public string __GetTypeName(Type type, bool optimize = true)
         {
             if (type == typeof(Nullable))
             {
@@ -290,17 +304,20 @@ namespace CapyCSS.Script
                 typeName = typeName.Replace("[]", "");
             }
 
-            try
+            if (optimize)
             {
-                CbTypeNameListRwLock.AcquireReaderLock(Timeout.Infinite);
-                if (CbTypeNameList.ContainsKey(typeName))
+                try
                 {
-                    return CbTypeNameList[typeName];
+                    CbTypeNameListRwLock.AcquireReaderLock(Timeout.Infinite);
+                    if (CbTypeNameList.ContainsKey(typeName))
+                    {
+                        return CbTypeNameList[typeName];
+                    }
                 }
-            }
-            finally
-            {
-                CbTypeNameListRwLock.ReleaseReaderLock();
+                finally
+                {
+                    CbTypeNameListRwLock.ReleaseReaderLock();
+                }
             }
 
             if (isGeneName)
@@ -383,19 +400,21 @@ namespace CapyCSS.Script
             }
 
             // ネームスペースを省略できるかチェックをここで行い、省略できるなら省略する
-            typeName = Optimisation(typeName);
-
-            try
+            if (optimize)
             {
-                CbTypeNameListRwLock.AcquireReaderLock(Timeout.Infinite);
-                if (CbTypeNameList.ContainsKey(typeName))
+                typeName = Optimisation(typeName);
+                try
                 {
-                    typeName = CbTypeNameList[typeName];
+                    CbTypeNameListRwLock.AcquireReaderLock(Timeout.Infinite);
+                    if (CbTypeNameList.ContainsKey(typeName))
+                    {
+                        typeName = CbTypeNameList[typeName];
+                    }
                 }
-            }
-            finally
-            {
-                CbTypeNameListRwLock.ReleaseReaderLock();
+                finally
+                {
+                    CbTypeNameListRwLock.ReleaseReaderLock();
+                }
             }
 
             if (type.IsEnum || type.IsInterface || type.IsClass)
@@ -405,7 +424,7 @@ namespace CapyCSS.Script
                 typeName = typeName.Substring(typeName.IndexOf("+") + 1, typeName.Length - typeName.IndexOf("+") - 1);
             }
 
-            if (isNotGeneName)
+            if (isNotGeneName && optimize)
                 return Optimisation(geneString);
 
             if (typeName == "Nullable")
@@ -414,6 +433,10 @@ namespace CapyCSS.Script
                 geneString = "";
             }
 
+            if (!optimize)
+            {
+                return typeName + geneString;
+            }
             return Optimisation(typeName + geneString);
         }
 

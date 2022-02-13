@@ -503,7 +503,8 @@ namespace CapyCSS.Controls
             {
                 if (node.ValueData.TypeName != "void")
                 {
-                    scr.Set($"new List<{node.ValueData.TypeName}>()", BuildScriptInfo.CodeType.List);
+                    string name = CbSTUtils.GetTryFullName(node.ValueData.OriginalType);
+                    scr.Set($"new List<{name}>()", BuildScriptInfo.CodeType.List);
                 }
                 BuildScriptInfo? argResult = node.RequestBuildScript();
                 if (node.IsCallBackLink)

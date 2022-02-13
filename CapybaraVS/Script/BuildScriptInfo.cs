@@ -15,19 +15,13 @@ namespace CapyCSS.Script
             ResultSequece,
             Variable,
             DummyArgument,
-            //ListVariable,
-            //SetVariable,
-            //SetListVariable,
             Enum,
             Method,
-            //NoReturnMethod,
-            //ListFunc,
-            //Scope,
             List,
-            //NoReturnDelegate,
             Data,
             Delegate,
             ResultDelegate,
+            StackVariable,
         }
 
         private const int TAB_SIZE = 4;
@@ -211,6 +205,19 @@ namespace CapyCSS.Script
         public string BuildScript(string entryPointName)
         {
             string result = "";
+            if (entryPointName == null)
+            {
+                // 変数の展開
+
+                if (Child != null)
+                {
+                    foreach (var node in Child)
+                    {
+                        result += node.ScriptElement + " " + node.Label + ";" + Environment.NewLine;
+                    }
+                }
+                return result;
+            }
             if (!string.IsNullOrEmpty(entryPointName))
             {
                 result = "var " + entryPointName + " = () =>";
@@ -273,29 +280,13 @@ namespace CapyCSS.Script
                                 return result;
                             }
 
+                        case CodeType.ResultDelegate:
                         case CodeType.Delegate:
                             {
                                 string arg = Child[0]._BuildScript(null, tabLevel + TAB_SIZE, CodeType.Sequece);
 
                                 result = ParagraphConvert(tabLevel, result.TrimStart() + " ", false);
                                 result += arg.TrimStart();
-
-                                return result;
-                            }
-
-                        case CodeType.ResultDelegate:
-                            {
-                                string arg = Child[0]._BuildScript(null, tabLevel + TAB_SIZE, CodeType.Sequece);
-
-                                result = ParagraphConvert(tabLevel, result.TrimStart() + " ", false);
-                                if (arg.TrimStart().StartsWith("{"))
-                                {
-                                    result += arg.TrimStart();
-                                }
-                                else
-                                {
-                                    result += "return " + arg.TrimStart();
-                                }
 
                                 return result;
                             }

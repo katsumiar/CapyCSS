@@ -687,7 +687,8 @@ namespace CapyCSS.Controls.BaseControls
                         // 列挙型
 
                         scr.Set(name, BuildScriptInfo.CodeType.Enum);
-                        scr.SetTypeName(FunctionInfo.ClassType.FullName);
+                        string className = CbSTUtils.GetTryFullName(FunctionInfo.ClassType);
+                        scr.SetTypeName(className);
                     }
                     else
                     {
@@ -696,12 +697,14 @@ namespace CapyCSS.Controls.BaseControls
                         if (FunctionInfo.IsProperty)
                         {
                             string funcCode = FunctionInfo.FuncCode.Substring(4);   // get_ set_ を取り除く
-                            string methodName = FunctionInfo.ClassType.FullName + "." + funcCode;
+                            string className = CbSTUtils.GetTryFullName(FunctionInfo.ClassType);
+                            string methodName = className + "." + funcCode;
                             scr.Set(methodName, BuildScriptInfo.CodeType.Variable);
                         }
                         else
                         {
-                            string methodName = FunctionInfo.ClassType.FullName + "." + FunctionInfo.FuncCode;
+                            string className = CbSTUtils.GetTryFullName(FunctionInfo.ClassType);
+                            string methodName = className + "." + FunctionInfo.FuncCode;
                             scr.Set(methodName, BuildScriptInfo.CodeType.Method);
                         }
                         scr.SetTypeName(ValueData.TypeName);

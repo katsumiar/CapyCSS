@@ -205,6 +205,7 @@ namespace CapyCSS.Controls
     public partial class Stack 
         : UserControl
         , IHaveCommandCanvas
+        , ICbRequestScriptBuild
         , IDisposable
     {
         #region XML定義
@@ -545,6 +546,21 @@ namespace CapyCSS.Controls
                 CbSTUtils.ForeachDispose(node.Value);
             }
             linkList.Clear();
+        }
+
+        public BuildScriptInfo? RequestBuildScript()
+        {
+            BuildScriptInfo result = new BuildScriptInfo();
+            foreach (var stackNode in StackData)
+            {
+                if (stackNode.stackNode is StackNode variable)
+                {
+                    var value = variable.ValueData;
+                    string name = CbSTUtils.GetTypeName(value.OriginalType);
+                    result.Add(new BuildScriptInfo(name, BuildScriptInfo.CodeType.StackVariable, value.Name));
+                }
+            }
+            return result;
         }
 
         protected virtual void Dispose(bool disposing)

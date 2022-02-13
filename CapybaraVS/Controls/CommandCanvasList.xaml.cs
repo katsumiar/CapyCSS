@@ -791,22 +791,40 @@ namespace CapyCSS.Controls
         public string BuildScript(object owner)
         {
             string result = null;
-            var entryPoints = PublicExecuteEntryPointList.Where(n => n.function != null);
+            IEnumerable<EntryPoint> entryPoints = null;
             if (owner != null)
             {
                 // オーナー限定
 
-                entryPoints = PublicExecuteEntryPointList.Where(n => n.owner == owner);
+                // TODO ここはフィルタリングできていない様なので原因を調べる
+                entryPoints = PublicExecuteEntryPointList.FindAll(n => n.function != null && n.owner == owner);
             }
-            foreach (var entryPoint in entryPoints)
+            else
             {
-                var r = entryPoint.function.Invoke(false, ":*");
-                if (r != null)
-                {
-                    result += r;
-                }
+                entryPoints = PublicExecuteEntryPointList.Where(n => n.function != null);
             }
-            result += $"{nameof(CommandCanvasList.CallEntryPoint)} (\"{BuildScriptInfo.DEFAULT_ENTRY_POINT_LABEL_NAME}\");";
+            var completionList = new List<CommandCanvas>();
+            if (entryPoints.Count() > 0)
+            {
+                foreach (var entryPoint in entryPoints)
+                {
+                    if (entryPoint.owner is CommandCanvas commandCanvas && !completionList.Contains(commandCanvas))
+                    {
+                        BuildScriptInfo? scr = commandCanvas.WorkStack.RequestBuildScript();
+                        if (scr.HasValue)
+                        {
+                            result += scr.Value.BuildScript(null);
+                            completionList.Add(commandCanvas);
+                        }
+                    }
+                    var script = entryPoint.function.Invoke(false, ":*");
+                    if (script != null)
+                    {
+                        result += script;
+                    }
+                }
+                result += $"{nameof(CommandCanvasList.CallEntryPoint)} (\"{BuildScriptInfo.DEFAULT_ENTRY_POINT_LABEL_NAME}\");";
+            }
             return result;
         }
 
@@ -821,7 +839,7 @@ namespace CapyCSS.Controls
             {
                 title = CurrentTabItem.Header.ToString();
             }
-            string code = BuildScript(owner);
+            string code = BuildScript(CurrentTabItem.Content);
             if (!string.IsNullOrEmpty(code))
             {
                 OutputWindow.CreateWindow(title).AddBindText = BuildScript(owner);

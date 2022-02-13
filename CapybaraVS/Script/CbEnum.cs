@@ -151,7 +151,7 @@ namespace CapyCSS.Script
                     return CbSTUtils.ERROR_STR;
                 if (IsNull)
                     return CbSTUtils.UI_NULL_STR;
-                return CbSTUtils._GetTypeName(typeof(T)) + "." + Value.ToString();
+                return CbSTUtils.GetTypeName(typeof(T)) + "." + Value.ToString();
             }
         }
 

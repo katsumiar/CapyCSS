@@ -361,13 +361,22 @@ namespace CapyCSS.Controls.BaseControls
                 {
                     // クラス
 
-                    scr.Add(new BuildScriptInfo("new " + ValueData.OriginalReturnType.FullName + "()", BuildScriptInfo.CodeType.Data, ValueData.Name));
+                    string name = CbSTUtils.GetTryFullName(ValueData.OriginalReturnType);
+                    scr.Add(new BuildScriptInfo("new " + name + "()", BuildScriptInfo.CodeType.Data, ValueData.Name));
                 }
                 else if (ValueData is ICbEnum cbEnum)
                 {
                     // 列挙型
 
-                    scr.Add(new BuildScriptInfo(ValueData.ValueString, BuildScriptInfo.CodeType.Data, ValueData.Name));
+                    string name = CbSTUtils.GetTryFullName(ValueData.OriginalType);
+                    if (name == typeof(CbFuncArguments.INDEX).FullName.Replace("+", "."))
+                    {
+                        scr.Add(new BuildScriptInfo(cbEnum.SelectedItemName, BuildScriptInfo.CodeType.Data, ValueData.Name));
+                    }
+                    else
+                    {
+                        scr.Add(new BuildScriptInfo(name + "." + cbEnum.SelectedItemName, BuildScriptInfo.CodeType.Data, ValueData.Name));
+                    }
                 }
                 else
                 {
