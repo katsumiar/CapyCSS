@@ -27,13 +27,6 @@ namespace CapyCSS.Script.Lib
         }
 
         //-------------------------------------------------
-        public static void Test(Action<string> a, Action<string> b)
-        {
-            a?.Invoke("call a");
-            b?.Invoke("call b");
-        }
-
-        //-------------------------------------------------
         // メニューのエイリアスに対する実体
         public static T OutConsole<T>(T n)
         {
