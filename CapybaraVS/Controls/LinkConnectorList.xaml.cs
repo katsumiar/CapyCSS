@@ -495,18 +495,21 @@ namespace CapyCSS.Controls
             return null;
         }
 
-        public BuildScriptInfo? RequestBuildScript()
+        public BuildScriptInfo RequestBuildScript()
         {
-            BuildScriptInfo? result = null;
-            var scr = new BuildScriptInfo();
+            if (ListData is null || ListData.Count == 0)
+            {
+                return null;
+            }
+            BuildScriptInfo result = BuildScriptInfo.CreateBuildScriptInfo(null);
             foreach (var node in ListData)
             {
                 if (node.ValueData.TypeName != "void")
                 {
                     string name = CbSTUtils.GetTryFullName(node.ValueData.OriginalType);
-                    scr.Set($"new List<{name}>()", BuildScriptInfo.CodeType.List);
+                    result.Set($"new List<{name}>()", BuildScriptInfo.CodeType.List);
                 }
-                BuildScriptInfo? argResult = node.RequestBuildScript();
+                BuildScriptInfo argResult = node.RequestBuildScript();
                 if (node.IsCallBackLink)
                 {
                     // イベント呼び出し
@@ -522,7 +525,7 @@ namespace CapyCSS.Controls
                                 argStr += ",";
                             argStr += $"ARG_{i + 1}";
                         }
-                        var temp = new BuildScriptInfo();
+                        var temp = BuildScriptInfo.CreateBuildScriptInfo(null);
                         temp.Set($"({argStr}) =>",
                             (cbEvent.ReturnTypeName == "Void" ? BuildScriptInfo.CodeType.Delegate : BuildScriptInfo.CodeType.ResultDelegate),
                             node.ValueData.Name);
@@ -531,15 +534,14 @@ namespace CapyCSS.Controls
                         argResult = temp;
                     }
                 }
-                if (argResult.HasValue)
+                if (argResult != null && !argResult.IsEmpty())
                 {
-                    scr.Add(argResult);
+                    result.Add(argResult);
                 }
                 else
                 {
-                    scr.Add(new BuildScriptInfo(node.ValueData.ValueString));
+                    Debug.Assert(false);
                 }
-                result = scr;
             }
             return result;
         }

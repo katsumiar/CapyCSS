@@ -318,7 +318,21 @@ namespace CapyCSS.Controls.BaseControls
 
         #endregion
 
-        public IBuildScriptInfo FunctionInfo = null;
+        private IBuildScriptInfo functionInfo = null;
+        public IBuildScriptInfo FunctionInfo 
+        {
+            get => functionInfo;
+            set
+            {
+                functionInfo = value;
+                if (functionInfo != null && functionInfo.IsConstructor)
+                {
+                    RectBox.RadiusX = 10;
+                    RectBox.RadiusY = 10;
+                    RectBox.Fill = Brushes.LavenderBlush;
+                }
+            }
+        }
 
         /// <summary>
         /// 通常のノード背景色です。
@@ -442,7 +456,7 @@ namespace CapyCSS.Controls.BaseControls
                         if (sc != null)
                         {
                             string name = GetEntryPointName();
-                            return sc.HasValue ? sc.Value.BuildScript(name) : null;
+                            return sc != null ? sc.BuildScript(name) : null;
                         }
                     }
                     if (entryPointName != null)
@@ -558,6 +572,7 @@ namespace CapyCSS.Controls.BaseControls
             set
             {
                 Forced.IsChecked = value;
+                UpdateMainPanelColor();
             }
         }
 
@@ -634,15 +649,20 @@ namespace CapyCSS.Controls.BaseControls
             return ValueData.Data;
         }
 
-        public BuildScriptInfo? RequestBuildScript()
+        public BuildScriptInfo RequestBuildScript()
         {
-            BuildScriptInfo? result = null;
-            var scr = new BuildScriptInfo();
+            if (BuildScriptInfo.HaveBuildScriptInfo(this))
+            {
+                // すでに情報を取得済みなので、作成済みの内容を返します。
+
+                return BuildScriptInfo.CreateBuildScriptInfo(this);
+            }
+            BuildScriptInfo result = BuildScriptInfo.CreateBuildScriptInfo(this);
 
             if (Function != null)
             {
                 // 引数情報
-                BuildScriptInfo? args = GetArgumentsBuildScript();
+                BuildScriptInfo args = GetArgumentsBuildScript();
                 // メソッドの返し値情報
                 bool isList = ValueData.IsList;
                 // メソッド呼び出しコードを取り出す
@@ -651,63 +671,117 @@ namespace CapyCSS.Controls.BaseControls
                 {
                     if (FunctionInfo.ClassType == typeof(VoidSequence))
                     {
-                        // シーケンス（返し値無し）
+                        // 返し値無し
 
                         string methodName = "";
-                        scr.Set(methodName, BuildScriptInfo.CodeType.Sequece);
-                        scr.SetTypeName(ValueData.TypeName);
+                        result.Set(methodName, BuildScriptInfo.CodeType.Sequece);
+                        result.SetTypeName(ValueData.TypeName);
+                        BuildScriptInfo.InsertSharedScripts(args);
+                        result.Add(args);
                     }
                     else if (FunctionInfo.ClassType == typeof(ResultSequence))
                     {
-                        // シーケンス（返し値有り）
+                        // シーケンス
 
                         string methodName = "";
-                        scr.Set(methodName, BuildScriptInfo.CodeType.ResultSequece);
-                        scr.SetTypeName(ValueData.TypeName);
+                        result.Set(methodName, BuildScriptInfo.CodeType.ResultSequece);
+                        result.IsNotUseCache = ForcedChecked;
+                        result.SetTypeName(ValueData.TypeName);
+                        BuildScriptInfo.InsertSharedScripts(args);
+                        result.Add(args);
+                        if (!ForcedChecked && ValueData.TypeName != "void")
+                        {
+                            // キャッシュする
+                            // 結果を変数に入れる処理に分けて、自身は変数を返します。
+                            // 結果を変数に入れるノードは、BuildScriptInfo.InsertSharedScripts で出力されます。
+
+                            string tempValiable = result.MakeSharedValiable(result);
+                            result.Clear();
+                            result.Set(tempValiable, BuildScriptInfo.CodeType.Variable);
+                        }
+                    }
+                    else if (FunctionInfo.ClassType == typeof(Script_Literal2) && FunctionInfo.FuncCode == nameof(Script_Literal2.Null))
+                    {
+                        // null
+
+                        result.Set("null", BuildScriptInfo.CodeType.Data);
+                        result.SetTypeName(ValueData.TypeName);
+                        //result.Add(args);
                     }
                     else if (FunctionInfo.ClassType == typeof(DummyArguments))
                     {
-                        scr.Set("", BuildScriptInfo.CodeType.DummyArgument);
-                        scr.SetTypeName(ValueData.TypeName);
+                        // 仮引数
+
+                        result.Set("", BuildScriptInfo.CodeType.DummyArgument);
+                        result.SetTypeName(ValueData.TypeName);
+                        result.Add(args);
                     }
                     else if (FunctionInfo.ClassType == typeof(SetVariable)
                                 || FunctionInfo.ClassType == typeof(_GetVariable))
                     {
                         // 変数
 
-                        scr.Set(name.Substring(2, name.Length - 4), BuildScriptInfo.CodeType.Variable);
-                        scr.SetTypeName(ValueData.TypeName);
+                        result.Set(name.Substring(2, name.Length - 4), BuildScriptInfo.CodeType.Variable);
+                        result.SetTypeName(ValueData.TypeName);
+                        result.Add(args);
                     }
                     else if (FunctionInfo.FuncCode == "__" + nameof(SwitchEnum))
                     {
-                        // 列挙型
+                        // Switch文
 
-                        scr.Set(name, BuildScriptInfo.CodeType.Enum);
+                        result.Set(name, BuildScriptInfo.CodeType.VoidSwitch);
                         string className = CbSTUtils.GetTryFullName(FunctionInfo.ClassType);
-                        scr.SetTypeName(className);
+                        result.SetTypeName(className);
+                        result.Add(args);
                     }
                     else
                     {
-                        // 通常のメソッド
-
                         if (FunctionInfo.IsProperty)
                         {
-                            string funcCode = FunctionInfo.FuncCode.Substring(4);   // get_ set_ を取り除く
+                            // プロパティ
+
+                            Debug.Assert(FunctionInfo.FuncCode.StartsWith("get_"));
+
+                            string funcCode = FunctionInfo.FuncCode.Substring(4);   // "get_" を取り除く
                             string className = CbSTUtils.GetTryFullName(FunctionInfo.ClassType);
                             string methodName = className + "." + funcCode;
-                            scr.Set(methodName, BuildScriptInfo.CodeType.Variable);
+                            result.Set(methodName, BuildScriptInfo.CodeType.Variable);
+                            result.SetTypeName(ValueData.TypeName);
+                            result.Add(args);
                         }
                         else
                         {
-                            string className = CbSTUtils.GetTryFullName(FunctionInfo.ClassType);
-                            string methodName = className + "." + FunctionInfo.FuncCode;
-                            scr.Set(methodName, BuildScriptInfo.CodeType.Method);
+                            // 通常のメソッド
+
+                            string methodName;
+                            if (FunctionInfo.IsConstructor)
+                            {
+                                // コンストラクタ
+
+                                methodName = "new " + FunctionInfo.ClassType.Namespace + "." + ValueData.TypeName;
+                            }
+                            else
+                            {
+                                string className = CbSTUtils.GetTryFullName(FunctionInfo.ClassType);
+                                methodName = className + "." + FunctionInfo.FuncCode;
+                            }
+                            result.Set(methodName, BuildScriptInfo.CodeType.Method);
+                            result.IsNotUseCache = ForcedChecked;
+                            result.SetTypeName(ValueData.TypeName);
+                            result.Add(args);
+                            if (!ForcedChecked && ValueData.TypeName != "void")
+                            {
+                                // キャッシュする
+                                // 結果を変数に入れる処理に分けて、自身は変数を返します。
+                                // 結果を変数に入れるノードは、BuildScriptInfo.InsertSharedScripts で出力されます。
+
+                                string tempValiable = result.MakeSharedValiable(result);
+                                result.Clear();
+                                result.Set(tempValiable, BuildScriptInfo.CodeType.Variable);
+                            }
                         }
-                        scr.SetTypeName(ValueData.TypeName);
                     }
-                    scr.Add(args);
                 }
-                result = scr;
             }
             else
             {
@@ -722,25 +796,21 @@ namespace CapyCSS.Controls.BaseControls
         /// 引数のスクリプト構築の為の要素を収集します。
         /// </summary>
         /// <returns>BuildScriptInfo?</returns>
-        public BuildScriptInfo? GetArgumentsBuildScript()
+        public BuildScriptInfo GetArgumentsBuildScript()
         {
-            BuildScriptInfo? result = null;
-            var scr = new BuildScriptInfo();
-            if (ValueData.TypeName == "void")
-            {
-                // 無視する
-            }
             if (ListData is null)
             {
-                return result;
+                return null;
             }
-            foreach (var node in ListData)
+            BuildScriptInfo result = BuildScriptInfo.CreateBuildScriptInfo(null);
+            for (int j = 0; j < ListData.Count; j++)
             {
+                LinkConnector node = ListData[j];
                 // イベント呼び出し
 
                 if (node is LinkConnector connector)
                 {
-                    BuildScriptInfo? argResult = connector.RequestBuildScript();
+                    BuildScriptInfo argResult = connector.RequestBuildScript();
                     if (node.IsCallBackLink)
                     {
                         // イベント呼び出し
@@ -756,7 +826,7 @@ namespace CapyCSS.Controls.BaseControls
                                     argStr += ",";
                                 argStr += $"ARG_{i + 1}";
                             }
-                            var temp = new BuildScriptInfo();
+                            var temp = BuildScriptInfo.CreateBuildScriptInfo(null);
                             temp.Set($"({argStr}) =>", 
                                 (cbEvent.ReturnTypeName == "Void" ? BuildScriptInfo.CodeType.Delegate : BuildScriptInfo.CodeType.ResultDelegate),
                                 node.ValueData.Name);
@@ -765,15 +835,18 @@ namespace CapyCSS.Controls.BaseControls
                             argResult = temp;
                         }
                     }
-                    if (argResult.HasValue)
+                    if (argResult != null && !argResult.IsEmpty())
                     {
-                        scr.Add(argResult);
+                        if (FunctionInfo != null && FunctionInfo.ArgumentTypeList != null)
+                        {
+                            argResult.SetArgumentAttr(FunctionInfo.ArgumentTypeList[j]);
+                        }
+                        result.Add(argResult);
                     }
                     else
                     {
-                        scr.Add(new BuildScriptInfo(connector.ValueData.ValueString));
+                        Debug.Assert(false);
                     }
-                    result = scr;
                 }
             }
             return result;
@@ -857,6 +930,12 @@ namespace CapyCSS.Controls.BaseControls
         {
             get
             {
+                if (FunctionInfo != null && FunctionInfo.IsConstructor)
+                {
+                    // コンストラクタ
+
+                    return Brushes.LightSalmon;
+                }
                 return Forced.IsChecked == false ?
                     new SolidColorBrush(Color.FromArgb(102, 0x90, 0x90, 0x90))//Brushes.Silver
                     :
@@ -1112,10 +1191,6 @@ namespace CapyCSS.Controls.BaseControls
                 return false;
             var ret = rootCurveLinks.RequestLinkCurve(point);
             ChangeLinkConnectorStroke();
-            if (ret)
-            {
-                CheckNotUseCache();
-            }
             return ret;
         }
 
@@ -1123,15 +1198,19 @@ namespace CapyCSS.Controls.BaseControls
         {
             rootCurveLinks?.RequestRemoveCurveLinkRoot(point);
             ChangeLinkConnectorStroke();
-            CheckNotUseCache();
         }
 
         private void ChangeLinkConnectorStroke()
         {
             if (rootCurveLinks is null)
+            {
                 ConnectorStroke = Brushes.Blue;
+            }
             else
+            {
                 ConnectorStroke = rootCurveLinks.Count == 0 ? Brushes.Blue : Brushes.CornflowerBlue;
+            }
+            UpdateMainPanelColor();
         }
 
         private void Forced_Click(object sender, RoutedEventArgs e)
@@ -1141,8 +1220,70 @@ namespace CapyCSS.Controls.BaseControls
                 e.Handled = true;
         }
 
-        private void UpdateMainPanelColor()
+        public void UpdateMainPanelColor()
         {
+            if (rootCurveLinks != null && ValueData != null)
+            {
+                if (rootCurveLinks.Count == 0)
+                {
+                    // ルートはキャッシュしない
+
+                    Forced.IsChecked = true;
+                }
+                else
+                {
+                    bool check = Forced.IsChecked.Value;
+                    if (FunctionInfo != null && FunctionInfo.IsConstructor)
+                    {
+                        // コンストラクター
+
+                        for (int i = 0; check && i < rootCurveLinks.Count; ++i)
+                        {
+                            var linkConnector = rootCurveLinks.LinkedInfo(i);
+                            if (linkConnector is null)
+                                continue;
+                            if (linkConnector.IsSelf)
+                            {
+                                // リンク先にself引数があるならキャッシュする
+
+                                check = false;
+                            }
+                        }
+                    }
+                    else
+                    {
+                        if (!Forced.IsChecked.Value)
+                        {
+                            check = rootCurveLinks.Count < 2 || ValueData.TypeName == "void";
+                            for (int i = 0; !check && i < rootCurveLinks.Count; ++i)
+                            {
+                                var linkConnector = rootCurveLinks.LinkedInfo(i);
+                                if (linkConnector is null)
+                                    continue;
+                                if (linkConnector.ValueData.IsDelegate)
+                                {
+                                    // リンク先にデリゲートがあるならキャッシュはしない
+
+                                    check = true;
+                                }
+                            }
+                        }
+                        for (int i = 0; check && i < rootCurveLinks.Count; ++i)
+                        {
+                            var linkConnector = rootCurveLinks.LinkedInfo(i);
+                            if (linkConnector is null)
+                                continue;
+                            if (linkConnector.IsIn || linkConnector.IsOut || linkConnector.IsByRef)
+                            {
+                                // リンク先が in, out, ref 修飾された引数ならキャッシュする
+
+                                check = false;
+                            }
+                        }
+                    }
+                    Forced.IsChecked = check;
+                }
+            }
             RectBox.Stroke = RectboxStroke;
             if (Forced.IsChecked == true)
             {
@@ -1415,21 +1556,6 @@ namespace CapyCSS.Controls.BaseControls
                     ReleaseMouseCapture();
 
                 }), DispatcherPriority.ApplicationIdle);
-            }
-        }
-
-        /// <summary>
-        /// NotUseCache を自動で設定します。
-        /// </summary>
-        private void CheckNotUseCache()
-        {
-            if (LinkCount == 0)
-            {
-                Forced.IsChecked = false;
-            }
-            else
-            {
-                Forced.IsChecked = Forced.IsChecked.Value || LinkCount > 1;
             }
         }
 

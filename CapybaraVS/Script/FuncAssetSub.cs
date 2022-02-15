@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Text;
 using static CapyCSS.Controls.BaseControls.CommandCanvas;
 using static CapyCSS.Controls.MultiRootConnector;
+using static CapyCSS.Script.ScriptImplement;
 
 namespace CapyCSS.Script
 {
@@ -125,9 +126,17 @@ namespace CapyCSS.Script
         string FuncCode { get; }
         Type ClassType { get; }
         /// <summary>
+        /// コンストラクターか？
+        /// </summary>
+        bool IsConstructor { get; }
+        /// <summary>
         /// プロパティのゲッターもしくはセッターか？
         /// </summary>
         bool IsProperty { get; }
+        /// <summary>
+        /// 引数情報
+        /// </summary>
+        List<ArgumentInfoNode> ArgumentTypeList { get; }
     }
 
     public class FuncAssetSub

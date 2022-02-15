@@ -823,7 +823,7 @@ namespace CapyCSS.Script
         /// スクリプト構築用要素情報の収集をリクエストします。
         /// </summary>
         /// <returns>BuildScriptInfo</returns>
-        BuildScriptInfo? RequestBuildScript();
+        BuildScriptInfo RequestBuildScript();
     }
 
     /// <summary>

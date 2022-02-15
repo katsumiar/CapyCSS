@@ -132,7 +132,7 @@ namespace CapyCSS.Controls
             return LinkConnectorControl.RequestExecute(functionStack, preArgument);
         }
 
-        public BuildScriptInfo? RequestBuildScript()
+        public BuildScriptInfo RequestBuildScript()
         {
             return LinkConnectorControl.RequestBuildScript();
         }

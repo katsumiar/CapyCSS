@@ -425,7 +425,7 @@ namespace CapyCSS.Controls
             return LinkConnectorControl.RequestExecute(functionStack, preArgument);
         }
 
-        public BuildScriptInfo? RequestBuildScript()
+        public BuildScriptInfo RequestBuildScript()
         {
             return LinkConnectorControl.RequestBuildScript();
         }
@@ -635,6 +635,7 @@ namespace CapyCSS.Controls
                     AppendArgument(node);
                 }
             }
+            LinkConnectorControl.UpdateMainPanelColor();
         }
 
         private bool MakeLiteral(Func<ICbValue> literalType)

@@ -317,44 +317,40 @@ namespace CapyCSS.Controls.BaseControls
             return result;
         }
 
-        public BuildScriptInfo? RequestBuildScript()
+        public BuildScriptInfo RequestBuildScript()
         {
-            BuildScriptInfo? result = null;
-            var scr = new BuildScriptInfo();
+            BuildScriptInfo result = null;
+            var scr = BuildScriptInfo.CreateBuildScriptInfo(null);
             var connectorResult = ConnectorList.RequestBuildScript();
-            if (connectorResult.HasValue)
+            if (connectorResult != null)
             {
                 // 引数情報（要素情報リストが有効な場合は、こちらの情報は無い）
 
                 result = connectorResult;
-                if (result.HasValue)
-                {
-                    // そのまま流す
-                }
             }
             if (linkCurveLinks != null)
             {
                 // 引数がリストの場合の要素情報リスト（引数情報が有効な場合は、こちらの情報は無い）
 
                 var linksResult = linkCurveLinks.RequestBuildScript();
-                if (linksResult.HasValue)
+                if (linksResult != null)
                 {
                     result = linksResult;
                 }
             }
-            if (!result.HasValue)
+            if (result is null || result.IsEmpty())
             {
                 if (ValueData.Data is char)
                 {
                     // 文字
 
-                    scr.Add(new BuildScriptInfo("'" + ValueData.ValueString + "'", BuildScriptInfo.CodeType.Data, ValueData.Name));
+                    scr.Add(BuildScriptInfo.CreateBuildScriptInfo(null, "'" + ValueData.ValueString + "'", BuildScriptInfo.CodeType.Data, ValueData.Name));
                 }
                 else if (ValueData.Data is string)
                 {
                     // 文字列
 
-                    scr.Add(new BuildScriptInfo("\"" + ValueData.ValueString + "\"", BuildScriptInfo.CodeType.Data, ValueData.Name));
+                    scr.Add(BuildScriptInfo.CreateBuildScriptInfo(null, "\"" + ValueData.ValueString + "\"", BuildScriptInfo.CodeType.Data, ValueData.Name));
                 }
                 else if (!(ValueData.OriginalReturnType is object || ValueData.OriginalReturnType.IsEnum) &&
                         ValueData.OriginalReturnType.IsClass || CbStruct.IsStruct(ValueData.OriginalReturnType))
@@ -362,20 +358,20 @@ namespace CapyCSS.Controls.BaseControls
                     // クラス
 
                     string name = CbSTUtils.GetTryFullName(ValueData.OriginalReturnType);
-                    scr.Add(new BuildScriptInfo("new " + name + "()", BuildScriptInfo.CodeType.Data, ValueData.Name));
+                    scr.Add(BuildScriptInfo.CreateBuildScriptInfo(null, "new " + name + "()", BuildScriptInfo.CodeType.Data, ValueData.Name));
                 }
                 else if (ValueData is ICbEnum cbEnum)
                 {
                     // 列挙型
 
-                    string name = CbSTUtils.GetTryFullName(ValueData.OriginalType);
+                    string name = cbEnum.ItemName;
                     if (name == typeof(CbFuncArguments.INDEX).FullName.Replace("+", "."))
                     {
-                        scr.Add(new BuildScriptInfo(cbEnum.SelectedItemName, BuildScriptInfo.CodeType.Data, ValueData.Name));
+                        scr.Add(BuildScriptInfo.CreateBuildScriptInfo(null, cbEnum.SelectedItemName, BuildScriptInfo.CodeType.Data, ValueData.Name));
                     }
                     else
                     {
-                        scr.Add(new BuildScriptInfo(name + "." + cbEnum.SelectedItemName, BuildScriptInfo.CodeType.Data, ValueData.Name));
+                        scr.Add(BuildScriptInfo.CreateBuildScriptInfo(null, name + "." + cbEnum.SelectedItemName, BuildScriptInfo.CodeType.Data, ValueData.Name));
                     }
                 }
                 else
@@ -386,7 +382,7 @@ namespace CapyCSS.Controls.BaseControls
                     {
                         if (ValueData.IsList)
                         {
-                            scr.Add(new BuildScriptInfo("null", BuildScriptInfo.CodeType.Data, ValueData.Name));
+                            scr.Add(BuildScriptInfo.CreateBuildScriptInfo(null, "null", BuildScriptInfo.CodeType.Data, ValueData.Name));
                         }
                         else
                         {
@@ -395,7 +391,7 @@ namespace CapyCSS.Controls.BaseControls
                     }
                     else
                     {
-                        scr.Add(new BuildScriptInfo(ValueData.ValueString, BuildScriptInfo.CodeType.Data, ValueData.Name));
+                        scr.Add(BuildScriptInfo.CreateBuildScriptInfo(null, ValueData.ValueString, BuildScriptInfo.CodeType.Data, ValueData.Name));
                     }
                 }
                 scr.SetTypeName(ValueData.TypeName);
@@ -524,6 +520,26 @@ namespace CapyCSS.Controls.BaseControls
                 ParamTextBox.ValueData = value;
             }
         }
+
+        /// <summary>
+        /// self（インスタンスの受け渡し用）引数か？
+        /// </summary>
+        public bool IsSelf => defaultValueData.Name == "self";
+        /// <summary>
+        /// ref 修飾されているか？
+        /// ※ ValueData からは確認できないので本プロパティを参照します。
+        /// </summary>
+        public bool IsByRef => defaultValueData is null ? false : defaultValueData.IsByRef;
+        /// <summary>
+        /// in 修飾されているか？
+        /// ※ ValueData からは確認できないので本プロパティを参照します。
+        /// </summary>
+        public bool IsIn => defaultValueData is null ? false : defaultValueData.IsIn;
+        /// <summary>
+        /// out 修飾されているか？
+        /// ※ ValueData からは確認できないので本プロパティを参照します。
+        /// </summary>
+        public bool IsOut => defaultValueData is null ? false : defaultValueData.IsOut;
 
         public Point TargetPoint
         {

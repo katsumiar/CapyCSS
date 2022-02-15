@@ -105,11 +105,15 @@ namespace CapyCSS.Script
         /// </summary>
         public struct ArgumentInfoNode
         {
-            public Func<ICbValue> CreateArgument;
+            public Func<ICbValue> CreateArgument = null;
             public bool IsByRef = false;
             public bool IsOut = false;
             public bool IsIn = false;
             public bool IsSelf = false;
+            public ArgumentInfoNode()
+            {
+
+            }
         }
 
         /// <summary>

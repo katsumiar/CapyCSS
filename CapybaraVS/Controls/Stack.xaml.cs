@@ -548,16 +548,16 @@ namespace CapyCSS.Controls
             linkList.Clear();
         }
 
-        public BuildScriptInfo? RequestBuildScript()
+        public BuildScriptInfo RequestBuildScript()
         {
-            BuildScriptInfo result = new BuildScriptInfo();
+            BuildScriptInfo result = BuildScriptInfo.CreateBuildScriptInfo(null);
             foreach (var stackNode in StackData)
             {
                 if (stackNode.stackNode is StackNode variable)
                 {
                     var value = variable.ValueData;
                     string name = CbSTUtils.GetTypeName(value.OriginalType);
-                    result.Add(new BuildScriptInfo(name, BuildScriptInfo.CodeType.StackVariable, value.Name));
+                    result.Add(BuildScriptInfo.CreateBuildScriptInfo(null, name, BuildScriptInfo.CodeType.StackVariable, value.Name));
                 }
             }
             return result;

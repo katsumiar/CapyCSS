@@ -329,7 +329,7 @@ namespace CapyCSS
             return curveLinkPoint?.RequestExecute(functionStack, preArgument);
         }
 
-        public BuildScriptInfo? RequestBuildScript()
+        public BuildScriptInfo RequestBuildScript()
         {
             if (curveLinkPoint != null)
             {
@@ -448,6 +448,20 @@ namespace CapyCSS
             _canvas = canvas;
         }
 
+        /// <summary>
+        /// リンク先の情報を参照します。
+        /// </summary>
+        /// <param name="i">インデックス</param>
+        /// <returns>LinkConnector</returns>
+        public LinkConnector LinkedInfo(int i)
+        {
+            if (i >= CurveLinkData.Count)
+            {
+                return null;
+            }
+            return CurveLinkData[i].curveLinkPoint as LinkConnector;
+        }
+
         public int Count => CurveLinkData.Count;
 
         public void EnterEmphasis()
@@ -510,10 +524,10 @@ namespace CapyCSS
             return null;
         }
 
-        public BuildScriptInfo? RequestBuildScript()
+        public BuildScriptInfo RequestBuildScript()
         {
-            BuildScriptInfo? result = null;
-            var scr = new BuildScriptInfo();
+            BuildScriptInfo result = null;
+            var scr = BuildScriptInfo.CreateBuildScriptInfo(null);
             foreach (var curveLink in CurveLinkData)
             {
                 if (curveLink is null)
@@ -669,16 +683,16 @@ namespace CapyCSS
             return result;
         }
 
-        public BuildScriptInfo? RequestBuildScript()
+        public BuildScriptInfo RequestBuildScript()
         {
-            BuildScriptInfo? result = null;
+            BuildScriptInfo result = null;
             foreach (var curveLinkRoot in CurveLinkRootData)
             {
                 if (curveLinkRoot is null)
                     continue;
 
                 var rootResult = curveLinkRoot.RequestBuildScript();
-                if (rootResult.HasValue)
+                if (rootResult != null)
                 {
                     result = rootResult;
                 }

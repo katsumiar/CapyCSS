@@ -259,6 +259,10 @@ namespace CapyCSS.Controls.BaseControls
             {
                 // パラメータ名
 
+                if (valueData.Name == "self")
+                {
+                    TypePanel.Fill = Brushes.LightSalmon;
+                }
                 ParamName = valueData.Name;
             }
 

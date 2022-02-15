@@ -14,6 +14,7 @@ using System.Linq;
 using static CapyCSS.Controls.BaseControls.CommandCanvas;
 using static CapyCSS.Controls.MultiRootConnector;
 using CapyCSS.Script;
+using static CapyCSS.Script.ScriptImplement;
 
 namespace CapyCSS.Script
 {
@@ -337,7 +338,9 @@ namespace CapyCSS.Script
     {
         public string FuncCode { get; set; } = "";
         public Type ClassType { get; set; } = null;
+        public bool IsConstructor => false;
         public bool IsProperty => false;
+        public List<ArgumentInfoNode> ArgumentTypeList { get; set; } = null;
         public BuildScriptFormat(string funcCode, Type classType = null)
         {
             FuncCode = funcCode;

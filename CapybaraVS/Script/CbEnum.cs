@@ -104,7 +104,7 @@ namespace CapyCSS.Script
 
         public override Type OriginalType => typeof(T);
 
-        public string ItemName => typeof(T).FullName;
+        public string ItemName => typeof(T).FullName.Replace("+", ".");
 
         public string SelectedItemName
         {
