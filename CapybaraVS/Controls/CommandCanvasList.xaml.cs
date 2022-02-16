@@ -715,16 +715,23 @@ namespace CapyCSS.Controls
             object owner = null;
             if (string.IsNullOrWhiteSpace(entryPointName))
             {
+                // カレントの中からエントリーポイントを探す
+
                 owner = CurrentScriptCanvas;
             }
             else
             {
                 owner = FindCommandCanvas(entryPointName);
-                entryPointName = "";
-            }
-            if (owner is null)
-            {
-                return null;
+                if (owner != null)
+                {
+                    // タブの中に名前が見つかったので空のエントリーポイントを呼び出す
+
+                    entryPointName = "";
+                }
+                else
+                {
+                    // タブの中に名前が見つからなかったので全ての中からエントリーポイントを探す
+                }
             }
 
             if (entryPointName is null)
@@ -755,7 +762,15 @@ namespace CapyCSS.Controls
                 }
             }
 
-            IEnumerable<EntryPoint> entryPoints = PublicExecuteEntryPointList.Where(n => n.function != null && n.owner == owner);
+            IEnumerable<EntryPoint> entryPoints;
+            if (owner is null)
+            {
+                entryPoints = PublicExecuteEntryPointList.Where(n => n.function != null);
+            }
+            else
+            {
+                entryPoints = PublicExecuteEntryPointList.Where(n => n.function != null && n.owner == owner);
+            }
 
             // １件のみ実行
             entryPoints.Any(n =>
@@ -810,10 +825,10 @@ namespace CapyCSS.Controls
                 {
                     if (entryPoint.owner is CommandCanvas commandCanvas && !isWorkStackImported)
                     {
-                        BuildScriptInfo? scr = commandCanvas.WorkStack.RequestBuildScript();
-                        if (scr.HasValue)
+                        BuildScriptInfo scr = commandCanvas.WorkStack.RequestBuildScript();
+                        if (scr != null)
                         {
-                            result += scr.Value.BuildScript(null);
+                            result += scr.BuildScript(null);
                             isWorkStackImported = true;
                         }
                     }
