@@ -222,6 +222,10 @@ namespace CapyCSS.Script
             Label = name;
         }
 
+        /// <summary>
+        /// 引数属性を取り込みます。
+        /// </summary>
+        /// <param name="info"></param>
         public void SetArgumentAttr(ScriptImplement.ArgumentInfoNode info)
         {
             Attribute = AttributeType.None;
