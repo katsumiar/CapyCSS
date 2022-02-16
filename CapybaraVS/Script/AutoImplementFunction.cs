@@ -95,7 +95,7 @@ namespace CapyCSS.Script
         /// <summary>
         /// コンストラクターか？
         /// </summary>
-        public bool IsConstructor = false;
+        public bool IsConstructor { get; set; } = false;
 
         /// <summary>
         /// ジェネリックメソッドのパラメータ
@@ -763,6 +763,7 @@ namespace CapyCSS.Script
             List<ICbValue> callArguments,
             object[] args)
         {
+            int argStartIndex = 0;
             if (classInstance != null)
             {
                 // 参照渡しのため変更後の値を戻す（直接リファレンスが渡されていないケース）
@@ -784,8 +785,9 @@ namespace CapyCSS.Script
 
                     scrArg.ReturnAction?.Invoke(classInstance);
                 }
+                argStartIndex++;
             }
-            for (int i = 1; i < callArguments.Count; ++i)
+            for (int i = argStartIndex; i < callArguments.Count; ++i)
             {
                 var scrArg = callArguments[i];
 
