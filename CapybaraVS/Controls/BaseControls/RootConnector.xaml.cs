@@ -1224,15 +1224,15 @@ namespace CapyCSS.Controls.BaseControls
         {
             if (rootCurveLinks != null && ValueData != null)
             {
-                if (rootCurveLinks.Count == 0)
+                if (rootCurveLinks.Count < 2 || ValueData.TypeName == "void")
                 {
-                    // ルートはキャッシュしない
+                    // ルートか返し値がVoid、あるいは接続先が一つだけの場合はキャッシュしない
 
                     Forced.IsChecked = true;
                 }
                 else
                 {
-                    bool check = Forced.IsChecked.Value;
+                    bool check = false;
                     if (FunctionInfo != null && FunctionInfo.IsConstructor)
                     {
                         // コンストラクター
@@ -1252,9 +1252,8 @@ namespace CapyCSS.Controls.BaseControls
                     }
                     else
                     {
-                        if (!Forced.IsChecked.Value)
+                        if (!check)
                         {
-                            check = rootCurveLinks.Count < 2 || ValueData.TypeName == "void";
                             for (int i = 0; !check && i < rootCurveLinks.Count; ++i)
                             {
                                 var linkConnector = rootCurveLinks.LinkedInfo(i);
