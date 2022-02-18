@@ -329,7 +329,7 @@ namespace CapyCSS.Controls.BaseControls
                 {
                     RectBox.RadiusX = 10;
                     RectBox.RadiusY = 10;
-                    RectBox.Fill = Brushes.LavenderBlush;
+                    RectBox.Fill = new SolidColorBrush(Color.FromArgb(80, 0xf0, 0x80, 0x80));//Brushes.LightCoral;
                 }
             }
         }
@@ -1014,16 +1014,17 @@ namespace CapyCSS.Controls.BaseControls
         {
             get
             {
+                byte alpha = 102;
                 if (FunctionInfo != null && FunctionInfo.IsConstructor)
                 {
                     // コンストラクタ
 
-                    return Brushes.LightSalmon;
+                    return new SolidColorBrush(Color.FromArgb(alpha, 0xf0, 0x80, 0x80));//Brushes.LightCoral;
                 }
                 return Forced.IsChecked == false ?
-                    new SolidColorBrush(Color.FromArgb(102, 0x90, 0x90, 0x90))//Brushes.Silver
+                    new SolidColorBrush(Color.FromArgb(alpha, 0x90, 0x90, 0x90))//Brushes.Silver
                     :
-                    new SolidColorBrush(Color.FromArgb(102, 0x00, 0x00, 0xfa));//Brushes.LightSkyBlue;
+                    new SolidColorBrush(Color.FromArgb(alpha, 0x00, 0x00, 0xfa));//Brushes.LightSkyBlue;
             }
         }
 
