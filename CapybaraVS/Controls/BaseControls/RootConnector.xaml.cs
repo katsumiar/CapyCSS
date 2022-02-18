@@ -331,6 +331,12 @@ namespace CapyCSS.Controls.BaseControls
                     RectBox.RadiusY = 10;
                     RectBox.Fill = new SolidColorBrush(Color.FromArgb(80, 0xf0, 0x80, 0x80));//Brushes.LightCoral;
                 }
+                else if (functionInfo != null && functionInfo.ClassType == typeof(DummyArguments))
+                {
+                    RectBox.RadiusX = 20;
+                    RectBox.RadiusY = 20;
+                    //RectBox.Fill = new SolidColorBrush(Color.FromArgb(80, 0xf0, 0x80, 0x80));//Brushes.LightCoral;
+                }
             }
         }
 
