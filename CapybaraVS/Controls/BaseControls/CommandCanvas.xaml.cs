@@ -608,7 +608,7 @@ namespace CapyCSS.Controls.BaseControls
                 commandNode.AddChild(new TreeMenuNode("Toggle ShowGridLine(Ctrl+G)", CreateImmediateExecutionCanvasCommand(() => ScriptCommandCanvas.ToggleGridLine())));
                 commandNode.AddChild(new TreeMenuNode("Save(Ctrl+S)", CreateImmediateExecutionCanvasCommand(() => CommandCanvasControl.SaveCbsFile())));
                 commandNode.AddChild(new TreeMenuNode("Load(Ctrl+O)", CreateImmediateExecutionCanvasCommand(() => CommandCanvasControl.LoadCbsFile())));
-                commandNode.AddChild(new TreeMenuNode("Build Script", CreateImmediateExecutionCanvasCommand(() => CommandCanvasList.Instance?.BuildScriptAndOut(null))));
+                commandNode.AddChild(new TreeMenuNode("Build Script", CreateImmediateExecutionCanvasCommand(() => CommandCanvasList.Instance?.BuildScriptAndOut())));
                 treeViewCommand.AssetTreeData.Add(commandNode);
             }
 
@@ -820,6 +820,9 @@ namespace CapyCSS.Controls.BaseControls
                     swriter.WriteLine(writer.ToString());
                 }
                 OpenFileName = path;
+
+                File.WriteAllText(System.IO.Path.ChangeExtension(OpenFileName,".css"), CommandCanvasList.Instance.BuildScript());
+
                 Console.WriteLine($"Save...\"{path}.xml\"");
             }
             catch (Exception ex)

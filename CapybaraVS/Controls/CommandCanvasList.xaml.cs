@@ -806,7 +806,7 @@ namespace CapyCSS.Controls
         /// </summary>
         /// <param name="owner">オーナー</param>
         /// <returns>c#コード</returns>
-        public string BuildScript(object owner)
+        public string BuildScript(object owner = null)
         {
             if (owner is null)
             {
@@ -846,7 +846,7 @@ namespace CapyCSS.Controls
         /// スクリプトからc#を構築しウインドウに出力します。
         /// </summary>
         /// <param name="owner">オーナー</param>
-        public void BuildScriptAndOut(object owner)
+        public void BuildScriptAndOut(object owner = null)
         {
             OutputWindow.CreateWindow(CurrentScriptTitle).AddBindText = BuildScript(owner);
         }
