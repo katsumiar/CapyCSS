@@ -1,0 +1,21 @@
+System.Int32 variable1;
+var Delegate = () => {
+    CapyCSS.Script.Lib.FlowLib.Foreach(
+        CapyCSS.Script.Lib.ListFactory.Filtering(
+            new System.Collections.Generic.List<System.String>() {
+                "120",
+                "abc",
+                "0.12",
+                "56",
+                "999"
+            },
+            (ARG_1) => System.Int32.TryParse(
+                    ARG_1,
+                    out variable1
+                )
+        ),
+        (ARG_1) => CapyCSS.Script.Lib.Script.OutConsole( ARG_1 )
+    );
+};
+CapyCSS.Script.Lib.Script.AddEntryPoint(nameof(Delegate), Delegate);
+

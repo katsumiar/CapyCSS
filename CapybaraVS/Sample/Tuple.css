@@ -1,0 +1,11 @@
+var Tuple = () => {
+    var __cpb_work_0 = new System.Tuple<int,string>(
+            0,
+            "abc"
+        );
+    CapyCSS.Script.Lib.Script.OutConsole( __cpb_work_0.Item1 );
+    CapyCSS.Script.Lib.Script.OutConsole( __cpb_work_0.Item2 );
+    CapyCSS.Script.Lib.Script.OutConsole( __cpb_work_0.ToString() );
+};
+CapyCSS.Script.Lib.Script.AddEntryPoint(nameof(Tuple), Tuple);
+

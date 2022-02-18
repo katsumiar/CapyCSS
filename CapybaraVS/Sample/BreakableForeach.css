@@ -1,0 +1,19 @@
+var BreakableForeach = () => {
+    CapyCSS.Script.Lib.FlowLib.BreakableForeach(
+        new System.Collections.Generic.List<System.String>() {
+            "test1",
+            "test2",
+            "end",
+            "test3"
+        },
+        (ARG_1) => {
+                CapyCSS.Script.Lib.Script.OutConsole( ARG_1 );
+                return CapyCSS.Script.Lib.FlowLib.Ne(
+                    ARG_1,
+                    "end"
+                );
+            }
+    );
+};
+CapyCSS.Script.Lib.Script.AddEntryPoint(nameof(BreakableForeach), BreakableForeach);
+

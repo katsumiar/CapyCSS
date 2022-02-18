@@ -164,6 +164,9 @@
     <None Update="Sample\FuncVariable.cbs">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </None>
+    <None Update="Sample\GenericInstance.cbs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="Sample\Graph.cbs">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </None>
@@ -211,6 +214,9 @@
     </None>
     <None Update="Sample\SwitchCall.cbs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Sample\Tuple.cbs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="Sample\Union.cbs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

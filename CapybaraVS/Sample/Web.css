@@ -1,0 +1,12 @@
+var Web = () => {
+    var __cpb_work_0 = CapyCSS.Script.Lib.Ip.GetWebAPI(
+            "https://katsumiar.github.io/CapyCSS/",
+            "",
+            ""
+        );
+    return CapyCSS.Script.Lib.Script.OutConsole(
+        CapyCSS.Script.Lib.Ip.GetContents( __cpb_work_0 )
+    );
+};
+CapyCSS.Script.Lib.Script.AddEntryPoint(nameof(Web), Web);
+

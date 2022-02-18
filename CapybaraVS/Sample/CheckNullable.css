@@ -1,0 +1,82 @@
+System.Nullable<byte> variable1;
+System.Nullable<ushort> variable2;
+System.Nullable<uint> variable3;
+System.Nullable<ulong> variable4;
+System.Nullable<sbyte> variable5;
+System.Nullable<short> variable6;
+System.Nullable<int> variable7;
+System.Nullable<long> variable8;
+System.Nullable<char> variable9;
+System.Nullable<float> variable10;
+System.Nullable<double> variable11;
+System.Nullable<decimal> variable12;
+System.Nullable<bool> variable13;
+System.Nullable<DateTime> variable14;
+System.Nullable<PlatformID> variable15;
+System.Object sample;
+var CheckNullable = () => {
+    CapyCSS.Script.Lib.FlowLib.Foreach(
+        new System.Collections.Generic.List<System.Object>() {
+            null,
+            1
+        },
+        (ARG_1) => {
+                sample = ARG_1;
+                {
+                    {
+                        variable1 = sample;
+                        variable2 = sample;
+                        variable3 = sample;
+                        variable4 = sample;
+                        variable5 = sample;
+                        variable6 = sample;
+                        variable7 = sample;
+                        variable8 = sample;
+                        variable9 = sample;
+                        variable10 = sample;
+                        variable11 = sample;
+                        variable12 = sample;
+                        variable13 = sample;
+                        variable14 = CapyCSS.Script.Lib.FlowLib.IsNull(
+                                sample,
+                                null,
+                                new System.DateTime()
+                            );
+                        variable15 = CapyCSS.Script.Lib.FlowLib.IsNull(
+                                sample,
+                                null,
+                                System.PlatformID.Unix
+                            );
+                    };
+                    CapyCSS.Script.Lib.Script.OutConsole(
+                        CapyCSS.Script.Lib.FlowLib.If_Value(
+                            CapyCSS.Script.Lib.FlowLib.And(
+                                new System.Collections.Generic.List<System.Boolean>() {
+                                    CapyCSS.Script.Lib.FlowLib.HasValue( variable1 ),
+                                    CapyCSS.Script.Lib.FlowLib.HasValue( variable2 ),
+                                    CapyCSS.Script.Lib.FlowLib.HasValue( variable3 ),
+                                    CapyCSS.Script.Lib.FlowLib.HasValue( variable4 ),
+                                    CapyCSS.Script.Lib.FlowLib.HasValue( variable5 ),
+                                    CapyCSS.Script.Lib.FlowLib.HasValue( variable6 ),
+                                    CapyCSS.Script.Lib.FlowLib.HasValue( variable7 ),
+                                    CapyCSS.Script.Lib.FlowLib.HasValue( variable8 ),
+                                    CapyCSS.Script.Lib.FlowLib.HasValue( variable9 ),
+                                    CapyCSS.Script.Lib.FlowLib.HasValue( variable10 ),
+                                    CapyCSS.Script.Lib.FlowLib.HasValue( variable11 ),
+                                    CapyCSS.Script.Lib.FlowLib.HasValue( variable12 ),
+                                    CapyCSS.Script.Lib.FlowLib.HasValue( variable13 ),
+                                    CapyCSS.Script.Lib.FlowLib.HasValue( variable14 ),
+                                    CapyCSS.Script.Lib.FlowLib.HasValue( variable15 )
+                                },
+                                CapyCSS.Script.Lib.FlowLib.IsNull( sample )
+                            ),
+                            "SUCCESS.",
+                            "ERROR!"
+                        )
+                    );
+                };
+            }
+    );
+};
+CapyCSS.Script.Lib.Script.AddEntryPoint(nameof(CheckNullable), CheckNullable);
+

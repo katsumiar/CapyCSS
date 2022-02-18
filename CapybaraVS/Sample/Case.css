@@ -1,0 +1,11 @@
+var Case = () => {
+    switch (System.PlatformID.Unix) {
+        case System.PlatformID.Unix: 
+            CapyCSS.Script.Lib.Script.OutConsole( "Linux" );
+            break;
+        default: 
+            break;
+    };
+};
+CapyCSS.Script.Lib.Script.AddEntryPoint(nameof(Case), Case);
+
