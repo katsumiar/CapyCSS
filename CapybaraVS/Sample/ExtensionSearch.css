@@ -1,6 +1,9 @@
 var ExtensionSearch = () => {
     CapyCSS.Script.Lib.FileLib.ForeachFiles(
-        "D:\dev",
+        CapyCSS.Script.Lib.FileLib.BrowseFolder(
+            "",
+            ""
+        ),
         (ARG_1) => CapyCSS.Script.Lib.FlowLib.If(
                 CapyCSS.Script.Lib.ListFactory.Contains(
                     new System.Collections.Generic.List<System.String>() {
