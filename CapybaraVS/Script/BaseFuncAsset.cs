@@ -338,7 +338,7 @@ namespace CapyCSS.Script
     {
         public string FuncCode { get; set; } = "";
         public Type ClassType { get; set; } = null;
-        public bool IsConstructor => false;
+        public bool IsConstructor { get; set; } = false;
         public bool IsProperty => false;
         public List<ArgumentInfoNode> ArgumentTypeList { get; set; } = null;
         public BuildScriptFormat(string funcCode, Type classType = null)
@@ -349,6 +349,7 @@ namespace CapyCSS.Script
     }
 
     //-----------------------------------------------------------------
+    // TODO 今は役割が変わっているので名前を変える
     class LiteralType : IFuncAssetLiteralDef
     {
         public string MenuTitle => "Literal : T";

@@ -26,6 +26,11 @@ namespace CapyCSS.Script.Lib
             return ControlTools.ShowSelectMessage(title, contents, MessageBoxButton.OKCancel);
         }
 
+        [ScriptMethod(LIB_Script_NAME)]
+        public static void AddEntryPoint(string name, Action action)
+        {
+        }
+
         //-------------------------------------------------
         // メニューのエイリアスに対する実体
         public static T OutConsole<T>(T n)

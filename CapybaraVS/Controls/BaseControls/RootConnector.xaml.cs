@@ -659,7 +659,7 @@ namespace CapyCSS.Controls.BaseControls
             }
             BuildScriptInfo result = BuildScriptInfo.CreateBuildScriptInfo(this);
 
-            if (Function != null)
+            if (Function != null || (FunctionInfo != null && FunctionInfo.IsConstructor))
             {
                 // 引数情報
                 BuildScriptInfo args = GetArgumentsBuildScript();
@@ -734,6 +734,18 @@ namespace CapyCSS.Controls.BaseControls
                         result.SetTypeName(className);
                         result.Add(args);
                     }
+                    else if (FunctionInfo.ClassType == typeof(LiteralType) && ValueData.IsList)
+                    {
+                        // このメソッドでリストをUI的にまとめているだけなので、そのまま流す
+
+                        if (!ForcedChecked)
+                        {
+                            // インスタンスを括弧で囲む
+
+                            result.Set("", BuildScriptInfo.CodeType.Method);
+                        }
+                        result.Add(args);
+                    }
                     else
                     {
                         if (FunctionInfo.IsProperty)
@@ -758,13 +770,14 @@ namespace CapyCSS.Controls.BaseControls
                             {
                                 // コンストラクタ
 
-                                methodName = "new " + FunctionInfo.ClassType.Namespace + "." + ValueData.TypeName;
+                                methodName = "new " + CbSTUtils.GetTryFullName(ValueData.OriginalType);
                             }
                             else
                             {
                                 string className = CbSTUtils.GetTryFullName(FunctionInfo.ClassType);
                                 methodName = className + "." + FunctionInfo.FuncCode;
                             }
+
                             result.Set(methodName, BuildScriptInfo.CodeType.Method);
                             result.IsNotUseCache = ForcedChecked;
                             result.SetTypeName(ValueData.TypeName);
@@ -777,7 +790,7 @@ namespace CapyCSS.Controls.BaseControls
 
                                 string tempValiable = result.MakeSharedValiable(result);
                                 result.Clear();
-                                result.Set(tempValiable, BuildScriptInfo.CodeType.Variable);
+                                result.Add(BuildScriptInfo.CreateBuildScriptInfo(null, tempValiable, BuildScriptInfo.CodeType.Variable));
                             }
                         }
                     }
@@ -785,9 +798,80 @@ namespace CapyCSS.Controls.BaseControls
             }
             else
             {
-                // リテラル定数
+                if (ListData.Count == 0)
+                {
+                    // 引数無しのオブジェクト作成
 
-                result = GetArgumentsBuildScript();
+                    if (ValueData.OriginalType == typeof(char))
+                    {
+                        // 文字
+
+                        result.Add(BuildScriptInfo.CreateBuildScriptInfo(null, "'" + ValueData.ValueString + "'", BuildScriptInfo.CodeType.Data, ValueData.Name));
+                    }
+                    else if (ValueData.OriginalType == typeof(string))
+                    {
+                        // 文字列
+
+                        result.Add(BuildScriptInfo.CreateBuildScriptInfo(null, "\"" + ValueData.ValueString + "\"", BuildScriptInfo.CodeType.Data, ValueData.Name));
+                    }
+                    else if (ValueData is ICbEnum cbEnum)
+                    {
+                        // 列挙型
+
+                        string name = cbEnum.ItemName;
+                        if (name == typeof(CbFuncArguments.INDEX).FullName.Replace("+", "."))
+                        {
+                            result.Add(BuildScriptInfo.CreateBuildScriptInfo(null, cbEnum.SelectedItemName, BuildScriptInfo.CodeType.Data, ValueData.Name));
+                        }
+                        else
+                        {
+                            result.Add(BuildScriptInfo.CreateBuildScriptInfo(null, name + "." + cbEnum.SelectedItemName, BuildScriptInfo.CodeType.Data, ValueData.Name));
+                        }
+                    }
+                    else if (ValueData.OriginalType != typeof(object) &&
+                            (ValueData.OriginalType.IsClass || CbStruct.IsStruct(ValueData.OriginalType) || ValueData.IsList))
+                    {
+                        // クラスもしくは構造体
+
+                        if (ValueData.IsNull)
+                        {
+                            result.Add(BuildScriptInfo.CreateBuildScriptInfo(null, "null", BuildScriptInfo.CodeType.Data, ValueData.Name));
+                        }
+                        else
+                        {
+                            string name = CbSTUtils.GetTryFullName(ValueData.OriginalType);
+                            result.Add(BuildScriptInfo.CreateBuildScriptInfo(null, "new " + name + "()", BuildScriptInfo.CodeType.Method, ValueData.Name));
+
+                            result.IsNotUseCache = ForcedChecked;
+                            if (!ForcedChecked && ValueData.TypeName != "void")
+                            {
+                                // キャッシュする
+                                // 結果を変数に入れる処理に分けて、自身は変数を返します。
+                                // 結果を変数に入れるノードは、BuildScriptInfo.InsertSharedScripts で出力されます。
+
+                                string tempValiable = result.MakeSharedValiable(result);
+                                result.Clear();
+                                result.Set(tempValiable, BuildScriptInfo.CodeType.Variable);
+                            }
+                        }
+                    }
+                    else
+                    {
+                        // その他
+
+                        Debug.Assert(ValueData.ValueString != "");
+                        result.Add(BuildScriptInfo.CreateBuildScriptInfo(null, ValueData.ValueString, BuildScriptInfo.CodeType.Data, ValueData.Name));
+                    }
+                    result.SetTypeName(ValueData.TypeName);
+                }
+                else
+                {
+                    // 引数有りのオブジェクト作成
+
+                    // ここは元に戻す
+
+                    result = GetArgumentsBuildScript();
+                }
             }
             return result;
         }
@@ -1224,7 +1308,7 @@ namespace CapyCSS.Controls.BaseControls
         {
             if (rootCurveLinks != null && ValueData != null)
             {
-                if (rootCurveLinks.Count < 2 || ValueData.TypeName == "void")
+                if ((FunctionInfo is null || !FunctionInfo.IsConstructor) && (rootCurveLinks.Count < 2 || ValueData.TypeName == "void"))
                 {
                     // ルートか返し値がVoid、あるいは接続先が一つだけの場合はキャッシュしない
 
@@ -1237,6 +1321,7 @@ namespace CapyCSS.Controls.BaseControls
                     {
                         // コンストラクター
 
+                        check = true;
                         for (int i = 0; check && i < rootCurveLinks.Count; ++i)
                         {
                             var linkConnector = rootCurveLinks.LinkedInfo(i);

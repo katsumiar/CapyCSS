@@ -63,7 +63,7 @@ namespace CapyCSS.Script
         }
 
         /// <summary>
-        /// グループにアセットを登録する
+        /// グループにアセットを登録する（変数作成用）
         /// </summary>
         /// <param name="group">登録するグループ</param>
         /// <param name="funcAssetDef">アセット</param>

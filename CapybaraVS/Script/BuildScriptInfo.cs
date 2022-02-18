@@ -48,6 +48,11 @@ namespace CapyCSS.Script
         private static int workCounter = 0;
         private static List<BuildScriptInfo> SharedScripts = null;
 
+        public CodeType GetElementType()
+        {
+            return ElementType;
+        }
+
         /// <summary>
         /// 内容を obj にコピーします。
         /// </summary>
@@ -156,6 +161,8 @@ namespace CapyCSS.Script
         {
             if (HaveBuildScriptInfo(methodObject))
             {
+                // すでに作られているので対応したものを返す
+
                 return buildScriptInfoList[methodObject];
             }
             var result = new BuildScriptInfo();
@@ -170,6 +177,8 @@ namespace CapyCSS.Script
         {
             if (HaveBuildScriptInfo(methodObject))
             {
+                // すでに作られているので対応したものを返す
+
                 return buildScriptInfoList[methodObject];
             }
             var result = new BuildScriptInfo(code, scopeMode, label);
@@ -343,7 +352,7 @@ namespace CapyCSS.Script
             result += "var " + entryPointName + " = () =>";
             result += _BuildScript(entryPointName, 0);
             result += ";" + Environment.NewLine;
-            result += $"AddEntryPoint(nameof({entryPointName}), {entryPointName});";
+            result += $"{typeof(Lib.Script).FullName}.{nameof(Lib.Script.AddEntryPoint)}(nameof({entryPointName}), {entryPointName});";
             result += Environment.NewLine + Environment.NewLine;
             return result;
         }
@@ -423,11 +432,11 @@ namespace CapyCSS.Script
                                     return result;
                                 }
 
-                                string arg = Child[0]._BuildScript(null, tabLevel + TAB_SIZE, CodeType.Sequece);
+                                string arg = Child[0]._BuildScript(null, tabLevel + TAB_SIZE, CodeType.Variable);
 
                                 if (!string.IsNullOrWhiteSpace(arg))
                                 {
-                                    if (Child[0].Child.Count > 0 && Child[0].Child[0].Attribute == AttributeType.Self)
+                                    if (Child[0].Child != null && Child[0].Child.Count > 0 && Child[0].Child[0].Attribute == AttributeType.Self)
                                     {
                                         // インスタンスプロパティ（最初の引数は self）
 
@@ -464,19 +473,13 @@ namespace CapyCSS.Script
             if (Child != null)
             {
                 string args = "";
-                for (int i = 0; i < Child.Count; i++)
+                IList<BuildScriptInfo> argList = Child;
+                for (int i = 0; i < argList.Count; i++)
                 {
-                    BuildScriptInfo info = Child[i];
+                    BuildScriptInfo info = argList[i];
                     string arg = info._BuildScript(null, nextTabLevel, codeType);
-                    if (codeType == CodeType.Sequece && (arg.Trim() == "" || arg == "null"))
+                    if (codeType == CodeType.Sequece && (arg.Trim() == "" || arg.Trim() == "null"))
                     {
-                        continue;
-                    }
-                    if (info.Child != null && info.Child.Count > 0 && info.Child[0].Attribute == AttributeType.Self)
-                    {
-                        // インスタンスメソッド（最初の引数は self）
-
-                        result = arg.TrimStart() + result.Substring(result.LastIndexOf("."));
                         continue;
                     }
                     if (info.Attribute == AttributeType.ByRef)
@@ -508,9 +511,26 @@ namespace CapyCSS.Script
                 }
                 if (!string.IsNullOrEmpty(args))
                 {
+                    BuildScriptInfo info = argList[0];
+                    if (info.Child != null && info.Child.Count > 0 && info.Child[0].Attribute == AttributeType.Self)
+                    {
+                        // インスタンスメソッド（最初の引数は self）
+
+                        if (args.Contains(','))
+                        {
+                            string instance = args.Substring(0, args.IndexOf(','));
+                            args = args.Substring(args.IndexOf(',') + 1, args.Length - instance.Length - 1).TrimStart();
+                            result = instance.TrimStart() + result.Substring(result.LastIndexOf("."));
+                        }
+                        else
+                        {
+                            result = args.TrimStart() + result.Substring(result.LastIndexOf("."));
+                            args = "";
+                        }
+                    }
                     if (args.Split(Environment.NewLine).Length > 1)
                     {
-                        // 取得した構築コードが複数行なら一行表現を諦める
+                        // 引数が２個以上
 
                         result = ParagraphConvert(
                             tabLevel,
@@ -521,9 +541,29 @@ namespace CapyCSS.Script
                     }
                     else
                     {
-                        // １行で表現する
+                        // 引数が１個
 
-                        result += GetOpenBrakets(codeType) + " " + args.Trim() + " " + GetCloseBrakets(codeType);
+                        string arg = args.Trim();
+                        if (arg.Length > 0)
+                        {
+                            arg = " " + arg + " ";
+                        }
+                        if (result.Length + arg.Length > 80)
+                        {
+                            result = ParagraphConvert(
+                                tabLevel,
+                                result.TrimStart() + (ElementType == CodeType.Method ? "" : " ") + GetOpenBrakets(codeType),
+                                true);
+                            result += args;
+                            result += Environment.NewLine + ParagraphConvert(tabLevel, GetCloseBrakets(codeType), false);
+
+                        }
+                        else
+                        {
+                            // １行で表現する
+
+                            result += GetOpenBrakets(codeType) + arg + GetCloseBrakets(codeType);
+                        }
                     }
                 }
                 else
@@ -543,7 +583,9 @@ namespace CapyCSS.Script
         private string BuildEnum(int tabLevel, int nextTabLevel)
         {
             string result = "";
+            Debug.Assert(Child != null && Child.Count > 0);
             var childRoot = Child[0];
+            Debug.Assert(childRoot.Child != null && childRoot.Child.Count == 3);
             string target = childRoot.Child[0]._BuildScript(null, nextTabLevel + TAB_SIZE);
             string defaultCall = childRoot.Child[2]._BuildScript(null, nextTabLevel + TAB_SIZE);
 
@@ -555,8 +597,22 @@ namespace CapyCSS.Script
                 BuildScriptInfo label = child.Child[0];
                 if (label != null && label.ScriptElement != "null")
                 {
-                    string caseName = TypeName + "." + child.Label.Replace(":", "");
+                    BuildScriptInfo caseTarget;
+                    if (child.Label is null)
+                    {
+                        Debug.Assert(child.Child != null && child.Child.Count > 0);
+                        caseTarget = child.Child[0];
+                    }
+                    else
+                    {
+                        caseTarget = child;
+                    }
+                    string caseName = TypeName + "." + caseTarget.Label.Replace(":", "");
                     string caseCall = label._BuildScript(null, tabLevel + TAB_SIZE * 2);
+                    if (caseCall == "null")
+                    {
+                        continue;
+                    }
                     result += new String(' ', tabLevel) + "case " + caseName + ": " + GetOpenBrakets(0) + Environment.NewLine;
                     result += ParagraphConvert(tabLevel + TAB_SIZE, caseCall + ";");
                     result += ParagraphConvert(tabLevel + TAB_SIZE, "break;");

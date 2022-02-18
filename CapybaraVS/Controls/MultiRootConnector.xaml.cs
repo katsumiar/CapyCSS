@@ -649,6 +649,13 @@ namespace CapyCSS.Controls
 
                 // 引数を追加する
                 AppendArgument(value, true);
+
+                // コンストラクタ表示
+                var methodInfo = new BuildScriptFormat(nameof(LiteralType), typeof(LiteralType));
+                methodInfo.IsConstructor = (value.OriginalType != typeof(object) && value.OriginalType != typeof(string)) &&
+                    (value.OriginalType.IsClass || CbStruct.IsStruct(value.OriginalType) || value.IsList);
+                FunctionInfo = methodInfo;
+                LinkConnectorControl.UpdateMainPanelColor();
                 return true;
             }
             return false;

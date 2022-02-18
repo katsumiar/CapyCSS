@@ -324,13 +324,13 @@ namespace CapyCSS.Controls.BaseControls
             var connectorResult = ConnectorList.RequestBuildScript();
             if (connectorResult != null)
             {
-                // 引数情報（要素情報リストが有効な場合は、こちらの情報は無い）
+                // 引数を要素リストで受け取った
 
                 result = connectorResult;
             }
             if (linkCurveLinks != null)
             {
-                // 引数がリストの場合の要素情報リスト（引数情報が有効な場合は、こちらの情報は無い）
+                // 引数をそのまま受け取った
 
                 var linksResult = linkCurveLinks.RequestBuildScript();
                 if (linksResult != null)
@@ -340,25 +340,17 @@ namespace CapyCSS.Controls.BaseControls
             }
             if (result is null || result.IsEmpty())
             {
-                if (ValueData.Data is char)
+                if (ValueData.OriginalType == typeof(char))
                 {
                     // 文字
 
                     scr.Add(BuildScriptInfo.CreateBuildScriptInfo(null, "'" + ValueData.ValueString + "'", BuildScriptInfo.CodeType.Data, ValueData.Name));
                 }
-                else if (ValueData.Data is string)
+                else if (ValueData.OriginalType == typeof(string))
                 {
                     // 文字列
 
                     scr.Add(BuildScriptInfo.CreateBuildScriptInfo(null, "\"" + ValueData.ValueString + "\"", BuildScriptInfo.CodeType.Data, ValueData.Name));
-                }
-                else if (!(ValueData.OriginalReturnType is object || ValueData.OriginalReturnType.IsEnum) &&
-                        ValueData.OriginalReturnType.IsClass || CbStruct.IsStruct(ValueData.OriginalReturnType))
-                {
-                    // クラス
-
-                    string name = CbSTUtils.GetTryFullName(ValueData.OriginalReturnType);
-                    scr.Add(BuildScriptInfo.CreateBuildScriptInfo(null, "new " + name + "()", BuildScriptInfo.CodeType.Data, ValueData.Name));
                 }
                 else if (ValueData is ICbEnum cbEnum)
                 {
@@ -374,25 +366,26 @@ namespace CapyCSS.Controls.BaseControls
                         scr.Add(BuildScriptInfo.CreateBuildScriptInfo(null, name + "." + cbEnum.SelectedItemName, BuildScriptInfo.CodeType.Data, ValueData.Name));
                     }
                 }
+                else if (ValueData.OriginalType != typeof(object) &&
+                        (ValueData.OriginalType.IsClass || CbStruct.IsStruct(ValueData.OriginalType) || ValueData.IsList))
+                {
+                    // クラスもしくは構造体
+
+                    if (ValueData.IsNull)
+                    {
+                        scr.Add(BuildScriptInfo.CreateBuildScriptInfo(null, "null", BuildScriptInfo.CodeType.Data, ValueData.Name));
+                    }
+                    else
+                    {
+                        string name = CbSTUtils.GetTryFullName(ValueData.OriginalType);
+                        scr.Add(BuildScriptInfo.CreateBuildScriptInfo(null, "new " + name + "()", BuildScriptInfo.CodeType.Method, ValueData.Name));
+                    }
+                }
                 else
                 {
                     // その他
 
-                    if (ValueData.ValueString == "")
-                    {
-                        if (ValueData.IsList)
-                        {
-                            scr.Add(BuildScriptInfo.CreateBuildScriptInfo(null, "null", BuildScriptInfo.CodeType.Data, ValueData.Name));
-                        }
-                        else
-                        {
-                            Debug.Assert(false);
-                        }
-                    }
-                    else
-                    {
-                        scr.Add(BuildScriptInfo.CreateBuildScriptInfo(null, ValueData.ValueString, BuildScriptInfo.CodeType.Data, ValueData.Name));
-                    }
+                    scr.Add(BuildScriptInfo.CreateBuildScriptInfo(null, ValueData.ValueString, BuildScriptInfo.CodeType.Data, ValueData.Name));
                 }
                 scr.SetTypeName(ValueData.TypeName);
                 result = scr;

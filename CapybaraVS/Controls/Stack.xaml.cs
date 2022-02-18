@@ -556,7 +556,7 @@ namespace CapyCSS.Controls
                 if (stackNode.stackNode is StackNode variable)
                 {
                     var value = variable.ValueData;
-                    string name = CbSTUtils.GetTypeName(value.OriginalType);
+                    string name = CbSTUtils.GetTryFullName(value.OriginalType);
                     result.Add(BuildScriptInfo.CreateBuildScriptInfo(null, name, BuildScriptInfo.CodeType.StackVariable, value.Name));
                 }
             }
