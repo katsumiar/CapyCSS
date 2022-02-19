@@ -3,13 +3,13 @@ var Nullable = () => {
     variable1 = 100;
     CapyCSS.Script.Lib.FlowLib.If_HasValue(
         variable1,
-        (ARG_1) => CapyCSS.Script.Lib.Script.OutConsole( ARG_1 ),
+        ( ARG_1 ) => CapyCSS.Script.Lib.Script.OutConsole( ARG_1 ),
         () => CapyCSS.Script.Lib.Script.OutConsole( "null" )
     );
     variable1 = null;
     CapyCSS.Script.Lib.FlowLib.If_HasValue(
         variable1,
-        (ARG_1) => CapyCSS.Script.Lib.Script.OutConsole( ARG_1 ),
+        ( ARG_1 ) => CapyCSS.Script.Lib.Script.OutConsole( ARG_1 ),
         () => CapyCSS.Script.Lib.Script.OutConsole( "null" )
     );
 };

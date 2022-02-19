@@ -522,10 +522,14 @@ namespace CapyCSS.Controls
                         for (int i = 0; i < argCount; i++)
                         {
                             if (i > 0)
-                                argStr += ",";
+                                argStr += ", ";
                             argStr += $"ARG_{i + 1}";
                         }
                         var temp = BuildScriptInfo.CreateBuildScriptInfo(null);
+                        if (argStr.Length > 0)
+                        {
+                            argStr = " " + argStr + " ";
+                        }
                         temp.Set($"({argStr}) =>",
                             (cbEvent.ReturnTypeName == "Void" ? BuildScriptInfo.CodeType.Delegate : BuildScriptInfo.CodeType.ResultDelegate),
                             node.ValueData.Name);

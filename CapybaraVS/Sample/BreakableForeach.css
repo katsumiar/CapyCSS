@@ -6,7 +6,7 @@ var BreakableForeach = () => {
             "end",
             "test3"
         },
-        (ARG_1) => {
+        ( ARG_1 ) => {
                 CapyCSS.Script.Lib.Script.OutConsole( ARG_1 );
                 return CapyCSS.Script.Lib.FlowLib.Ne(
                     ARG_1,

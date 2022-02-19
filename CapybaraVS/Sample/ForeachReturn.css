@@ -8,7 +8,7 @@ var ForeachReturn = () => {
                 "1.2345",
                 "abcd"
             },
-            (ARG_1) => CapyCSS.Script.Lib.FlowLib.If_ResultNullable(
+            ( ARG_1 ) => CapyCSS.Script.Lib.FlowLib.If_ResultNullable(
                     System.Double.TryParse(
                         ARG_1,
                         out parseWork
@@ -27,7 +27,7 @@ var ForeachReturn = () => {
                 "5.32",
                 "abcd"
             },
-            (ARG_1) => CapyCSS.Script.Lib.FlowLib.If_ResultNullable(
+            ( ARG_1 ) => CapyCSS.Script.Lib.FlowLib.If_ResultNullable(
                     System.Double.TryParse(
                         ARG_1,
                         out parseWork

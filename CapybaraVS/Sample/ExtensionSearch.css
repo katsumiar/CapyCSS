@@ -4,7 +4,7 @@ var ExtensionSearch = () => {
             "",
             ""
         ),
-        (ARG_1) => CapyCSS.Script.Lib.FlowLib.If(
+        ( ARG_1 ) => CapyCSS.Script.Lib.FlowLib.If(
                 CapyCSS.Script.Lib.ListFactory.Contains(
                     new System.Collections.Generic.List<System.String>() {
                         ".txt",

@@ -30,21 +30,10 @@ namespace CbVS.Script
             List<ICbValue> convList = new List<ICbValue>();
             for (int i = 0; i < Enum.GetNames(typeof(CbFuncArguments.INDEX)).Length; ++i)
             {
-                convList.Add(CbObject.Create());
+                convList.Add(null);
             }
             argumentRef = new CbFuncArguments(convList);
             owner.PreFunction = () => new DummyArgumentsStack.Node(() => argumentInvalid, argumentRef);
-        }
-
-        /// <summary>
-        /// 仮引数は有効か？
-        /// </summary>
-        /// <param name="dummyArgumentstack">仮引数スタック</param>
-        /// <returns>true = 有効</returns>
-        public bool IsInvalid(DummyArgumentsStack dummyArgumentstack)
-        {
-            dummyArgumentstack.Pop();  // CallerArgument からの実行無効はここで解消される
-            return dummyArgumentstack.IsInvalid();
         }
 
         /// <summary>
@@ -63,20 +52,6 @@ namespace CbVS.Script
 
         /// <summary>
         /// 仮引数に引数を登録し、有効化します。
-        /// ※Invokeメソッド用です。
-        /// </summary>
-        /// <typeparam name="T">登録する型</typeparam>
-        /// <param name="dummyArgumentstack">仮引数スタック</param>
-        /// <param name="arguments">引数リスト</param>
-        public void EnableCbValue(DummyArgumentsStack dummyArgumentstack, List<ICbValue> arguments)
-        {
-            argumentInvalid = false;
-            argumentRef.Set(arguments);
-            dummyArgumentstack.Push(owner.PreFunction());
-        }
-
-        /// <summary>
-        /// 仮引数に引数を登録し、有効化します。
         /// </summary>
         /// <typeparam name="T">登録する型</typeparam>
         /// <param name="dummyArgumentstack">仮引数スタック</param>
@@ -86,20 +61,9 @@ namespace CbVS.Script
             argumentInvalid = false;
             for (int i = 0; i < argument.Length; ++i)
             {
+                argumentRef[(CbFuncArguments.INDEX)i] ??= CbObject.Create();
                 argumentRef[(CbFuncArguments.INDEX)i].Data = argument[i];
             }
-            dummyArgumentstack.Push(owner.PreFunction());
-        }
-
-        /// <summary>
-        /// 仮引数に引数を登録し、有効化します。
-        /// </summary>
-        /// <param name="dummyArgumentstack">仮引数スタック</param>
-        /// <param name="arguments">引数リスト</param>
-        public void EnableList(DummyArgumentsStack dummyArgumentstack, List<object> arguments)
-        {
-            argumentInvalid = false;
-            argumentRef.CopyFrom(arguments);
             dummyArgumentstack.Push(owner.PreFunction());
         }
 

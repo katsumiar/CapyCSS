@@ -20,7 +20,7 @@ var CheckNullable = () => {
             null,
             1
         },
-        (ARG_1) => {
+        ( ARG_1 ) => {
                 sample = ARG_1;
                 {
                     {

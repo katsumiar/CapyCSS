@@ -35,24 +35,17 @@ namespace CapyCSS.Script
         {
             return cbVSValues.Count == 0;
         }
-        public bool IsGetValue()
+        public bool IsGetValue(CbFuncArguments.INDEX index)
         {
             if (IsEmpty())
-                return true;    // そもそも登録がされていないなら登録されたものとする
-            if (cbVSValues.Count == 0)
-                return false;
-            return !cbVSValues[cbVSValues.Count - 1].IsInvalid();
+                return true;
+            return cbVSValues[cbVSValues.Count - 1].CbVSValue(index) != null;
         }
         public ICbValue GetValue(CbFuncArguments.INDEX index = CbFuncArguments.INDEX.ARG_1)
         {
             if (IsEmpty())
                 return null;    // そもそも登録されていなかったら値が無いので null を返す
             return cbVSValues[cbVSValues.Count - 1].CbVSValue(index);
-        }
-        public void InvalidReturn()
-        {
-            if (cbVSValues.Count != 0)
-                cbVSValues[cbVSValues.Count - 1].IsReturn = false;
         }
         public void Pop()
         {

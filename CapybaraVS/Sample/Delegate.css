@@ -9,12 +9,12 @@ var Delegate = () => {
                 "56",
                 "999"
             },
-            (ARG_1) => System.Int32.TryParse(
+            ( ARG_1 ) => System.Int32.TryParse(
                     ARG_1,
                     out variable1
                 )
         ),
-        (ARG_1) => CapyCSS.Script.Lib.Script.OutConsole( ARG_1 )
+        ( ARG_1 ) => CapyCSS.Script.Lib.Script.OutConsole( ARG_1 )
     );
 };
 CapyCSS.Script.Lib.Script.AddEntryPoint(nameof(Delegate), Delegate);

@@ -1167,17 +1167,16 @@ namespace CapyCSS.Script
 
                         if (cagt.IsEmpty())
                         {
-                            cagt.InvalidReturn();   // 有効でないまま返す
-                            return ret;
+                            throw new Exception($"Dummy Arguments not found.");
                         }
                         try
                         {
                             // 呼び元引数をセット
 
-                            if (cagt.IsGetValue())
+                            if (cagt.IsGetValue(select))
                                 ret.Set(cagt.GetValue(select));
                             else
-                                cagt.InvalidReturn();   // 有効でないまま返す
+                                throw new Exception($"Dummy Arguments not found.");
                         }
                         catch (Exception ex)
                         {

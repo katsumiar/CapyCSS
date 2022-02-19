@@ -562,7 +562,8 @@ namespace CapyCSS.Script
                         {
                             // １行で表現する
 
-                            result += GetOpenBrakets(codeType) + arg + GetCloseBrakets(codeType);
+                            result += (ElementType == CodeType.Method ? "" : " ")
+                                + GetOpenBrakets(codeType) + arg + GetCloseBrakets(codeType);
                         }
                     }
                 }

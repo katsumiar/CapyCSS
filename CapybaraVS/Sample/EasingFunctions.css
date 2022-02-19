@@ -1,7 +1,7 @@
 var EasingFunctions = () => {
     var __cpb_work_0 = CapyCSS.Script.Lib.Graph.MakePlotList(
             4,
-            (ARG_1) => CapyCSS.EasingFunction.InOutSin( ARG_1 ),
+            ( ARG_1 ) => CapyCSS.EasingFunction.InOutSin( ARG_1 ),
             0.05
         );
     CapyCSS.Script.Lib.Graph.OutPlot(

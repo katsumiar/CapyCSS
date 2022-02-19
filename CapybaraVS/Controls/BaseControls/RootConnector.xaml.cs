@@ -913,10 +913,14 @@ namespace CapyCSS.Controls.BaseControls
                             for (int i = 0; i < argCount; i++)
                             {
                                 if (i > 0)
-                                    argStr += ",";
+                                    argStr += ", ";
                                 argStr += $"ARG_{i + 1}";
                             }
                             var temp = BuildScriptInfo.CreateBuildScriptInfo(null);
+                            if (argStr.Length > 0)
+                            {
+                                argStr = " " + argStr + " ";
+                            }
                             temp.Set($"({argStr}) =>", 
                                 (cbEvent.ReturnTypeName == "Void" ? BuildScriptInfo.CodeType.Delegate : BuildScriptInfo.CodeType.ResultDelegate),
                                 node.ValueData.Name);
@@ -1315,9 +1319,10 @@ namespace CapyCSS.Controls.BaseControls
         {
             if (rootCurveLinks != null && ValueData != null)
             {
-                if ((FunctionInfo is null || !FunctionInfo.IsConstructor) && (rootCurveLinks.Count < 2 || ValueData.TypeName == "void"))
+                if ((FunctionInfo is null || !FunctionInfo.IsConstructor)
+                    && (rootCurveLinks.Count < 2 || ValueData.TypeName == "void" || functionInfo.ClassType == typeof(DummyArguments)))
                 {
-                    // ルートか返し値がVoid、あるいは接続先が一つだけの場合はキャッシュしない
+                    // 仮引数ノードかルートか返し値がVoid、あるいは接続先が一つだけの場合はキャッシュしない
 
                     Forced.IsChecked = true;
                 }
