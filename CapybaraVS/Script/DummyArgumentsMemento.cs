@@ -50,7 +50,7 @@ namespace CapyCSS.Script
         {
         }
 
-        public void CreateAndRegist(object[] argument)
+        public void Regist(params object[] argument)
         {
             CbFuncArguments argumentRef = new CbFuncArguments();
             for (int i = 0; i < argument.Length; ++i)
@@ -82,6 +82,11 @@ namespace CapyCSS.Script
 
         public void Unregist()
         {
+            if (id == 0)
+            {
+                // 登録されていない
+                return;
+            }
             _DummyArguments.Remove(id);
         }
     }

@@ -623,7 +623,7 @@ namespace CbVS.Script
             protected void Callback()
             {
                 self.InvokeCallback(dummyArguments);
-                DummyArgumentsControl.Invalidated(dummyArguments);    // 仮引数後処理
+                dummyArguments.Unregist();
             }
             protected void ArgumentlessCallback()
             {
@@ -643,7 +643,7 @@ namespace CbVS.Script
             protected TResult Callback()
             {
                 self.InvokeCallback(dummyArguments);
-                DummyArgumentsControl.Invalidated(dummyArguments);    // 仮引数後処理
+                dummyArguments.Unregist();
                 return (TResult)self.Value.Data;
             }
         }
@@ -664,7 +664,7 @@ namespace CbVS.Script
             public DelegateAction(CbFunc<T, RT> self) : base(self) { }
             public void Method(T1 arg)
             {
-                DummyArgumentsControl.Enable(dummyArguments, arg);    // 仮引数に引数を登録
+                dummyArguments.Regist(arg);    // 仮引数に引数を登録
                 Callback();
             }
         }
@@ -675,7 +675,7 @@ namespace CbVS.Script
             public DelegateAction(CbFunc<T, RT> self) : base(self) { }
             public void Method(T1 arg1, T2 arg2)
             {
-                DummyArgumentsControl.Enable(dummyArguments, arg1, arg2);    // 仮引数に引数を登録
+                dummyArguments.Regist(arg1, arg2);    // 仮引数に引数を登録
                 Callback();
             }
         }
@@ -686,7 +686,7 @@ namespace CbVS.Script
             public DelegateAction(CbFunc<T, RT> self) : base(self) { }
             public void Method(T1 arg1, T2 arg2, T3 arg3)
             {
-                DummyArgumentsControl.Enable(dummyArguments, arg1, arg2, arg3);    // 仮引数に引数を登録
+                dummyArguments.Regist(arg1, arg2, arg3);    // 仮引数に引数を登録
                 Callback();
             }
         }
@@ -697,7 +697,7 @@ namespace CbVS.Script
             public DelegateAction(CbFunc<T, RT> self) : base(self) { }
             public void Method(T1 arg1, T2 arg2, T3 arg3, T4 arg4)
             {
-                DummyArgumentsControl.Enable(dummyArguments, arg1, arg2, arg3, arg4);    // 仮引数に引数を登録
+                dummyArguments.Regist(arg1, arg2, arg3, arg4);    // 仮引数に引数を登録
                 Callback();
             }
         }
@@ -708,7 +708,7 @@ namespace CbVS.Script
             public DelegateAction(CbFunc<T, RT> self) : base(self) { }
             public void Method(T1 arg1, T2 arg2, T3 arg3, T4 arg4, T5 arg5)
             {
-                DummyArgumentsControl.Enable(dummyArguments, arg1, arg2, arg3, arg4, arg5);    // 仮引数に引数を登録
+                dummyArguments.Regist(arg1, arg2, arg3, arg4, arg5);    // 仮引数に引数を登録
                 Callback();
             }
         }
@@ -719,7 +719,7 @@ namespace CbVS.Script
             public DelegateAction(CbFunc<T, RT> self) : base(self) { }
             public void Method(T1 arg1, T2 arg2, T3 arg3, T4 arg4, T5 arg5, T6 arg6)
             {
-                DummyArgumentsControl.Enable(dummyArguments, arg1, arg2, arg3, arg4, arg5, arg6);    // 仮引数に引数を登録
+                dummyArguments.Regist(arg1, arg2, arg3, arg4, arg5, arg6);    // 仮引数に引数を登録
                 Callback();
             }
         }
@@ -730,7 +730,7 @@ namespace CbVS.Script
             public DelegateAction(CbFunc<T, RT> self) : base(self) { }
             public void Method(T1 arg1, T2 arg2, T3 arg3, T4 arg4, T5 arg5, T6 arg6, T7 arg7)
             {
-                DummyArgumentsControl.Enable(dummyArguments, arg1, arg2, arg3, arg4, arg5, arg6, arg7);    // 仮引数に引数を登録
+                dummyArguments.Regist(arg1, arg2, arg3, arg4, arg5, arg6, arg7);    // 仮引数に引数を登録
                 Callback();
             }
         }
@@ -741,7 +741,7 @@ namespace CbVS.Script
             public DelegateAction(CbFunc<T, RT> self) : base(self) { }
             public void Method(T1 arg1, T2 arg2, T3 arg3, T4 arg4, T5 arg5, T6 arg6, T7 arg7, T8 arg8)
             {
-                DummyArgumentsControl.Enable(dummyArguments, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8);    // 仮引数に引数を登録
+                dummyArguments.Regist(arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8);    // 仮引数に引数を登録
                 Callback();
             }
         }
@@ -752,7 +752,7 @@ namespace CbVS.Script
             public DelegateAction(CbFunc<T, RT> self) : base(self) { }
             public void Method(T1 arg1, T2 arg2, T3 arg3, T4 arg4, T5 arg5, T6 arg6, T7 arg7, T8 arg8, T9 arg9)
             {
-                DummyArgumentsControl.Enable(dummyArguments, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9);    // 仮引数に引数を登録
+                dummyArguments.Regist(arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9);    // 仮引数に引数を登録
                 Callback();
             }
         }
@@ -763,7 +763,7 @@ namespace CbVS.Script
             public DelegateAction(CbFunc<T, RT> self) : base(self) { }
             public void Method(T1 arg1, T2 arg2, T3 arg3, T4 arg4, T5 arg5, T6 arg6, T7 arg7, T8 arg8, T9 arg9, T10 arg10)
             {
-                DummyArgumentsControl.Enable(dummyArguments, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10);    // 仮引数に引数を登録
+                dummyArguments.Regist(arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10);    // 仮引数に引数を登録
                 Callback();
             }
         }
@@ -774,7 +774,7 @@ namespace CbVS.Script
             public DelegateAction(CbFunc<T, RT> self) : base(self) { }
             public void Method(T1 arg1, T2 arg2, T3 arg3, T4 arg4, T5 arg5, T6 arg6, T7 arg7, T8 arg8, T9 arg9, T10 arg10, T11 arg11)
             {
-                DummyArgumentsControl.Enable(dummyArguments, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11);    // 仮引数に引数を登録
+                dummyArguments.Regist(arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11);    // 仮引数に引数を登録
                 Callback();
             }
         }
@@ -785,7 +785,7 @@ namespace CbVS.Script
             public DelegateAction(CbFunc<T, RT> self) : base(self) { }
             public void Method(T1 arg1, T2 arg2, T3 arg3, T4 arg4, T5 arg5, T6 arg6, T7 arg7, T8 arg8, T9 arg9, T10 arg10, T11 arg11, T12 arg12)
             {
-                DummyArgumentsControl.Enable(dummyArguments, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12);    // 仮引数に引数を登録
+                dummyArguments.Regist(arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12);    // 仮引数に引数を登録
                 Callback();
             }
         }
@@ -796,7 +796,7 @@ namespace CbVS.Script
             public DelegateAction(CbFunc<T, RT> self) : base(self) { }
             public void Method(T1 arg1, T2 arg2, T3 arg3, T4 arg4, T5 arg5, T6 arg6, T7 arg7, T8 arg8, T9 arg9, T10 arg10, T11 arg11, T12 arg12, T13 arg13)
             {
-                DummyArgumentsControl.Enable(dummyArguments, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13);    // 仮引数に引数を登録
+                dummyArguments.Regist(arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13);    // 仮引数に引数を登録
                 Callback();
             }
         }
@@ -807,7 +807,7 @@ namespace CbVS.Script
             public DelegateAction(CbFunc<T, RT> self) : base(self) { }
             public void Method(T1 arg1, T2 arg2, T3 arg3, T4 arg4, T5 arg5, T6 arg6, T7 arg7, T8 arg8, T9 arg9, T10 arg10, T11 arg11, T12 arg12, T13 arg13, T14 arg14)
             {
-                DummyArgumentsControl.Enable(dummyArguments, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14);    // 仮引数に引数を登録
+                dummyArguments.Regist(arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14);    // 仮引数に引数を登録
                 Callback();
             }
         }
@@ -818,7 +818,7 @@ namespace CbVS.Script
             public DelegateAction(CbFunc<T, RT> self) : base(self) { }
             public void Method(T1 arg1, T2 arg2, T3 arg3, T4 arg4, T5 arg5, T6 arg6, T7 arg7, T8 arg8, T9 arg9, T10 arg10, T11 arg11, T12 arg12, T13 arg13, T14 arg14, T15 arg15)
             {
-                DummyArgumentsControl.Enable(dummyArguments, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14, arg15);    // 仮引数に引数を登録
+                dummyArguments.Regist(arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14, arg15);    // 仮引数に引数を登録
                 Callback();
             }
         }
@@ -829,7 +829,7 @@ namespace CbVS.Script
             public DelegateAction(CbFunc<T, RT> self) : base(self) { }
             public void Method(T1 arg1, T2 arg2, T3 arg3, T4 arg4, T5 arg5, T6 arg6, T7 arg7, T8 arg8, T9 arg9, T10 arg10, T11 arg11, T12 arg12, T13 arg13, T14 arg14, T15 arg15, T16 arg16)
             {
-                DummyArgumentsControl.Enable(dummyArguments, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14, arg15, arg16);    // 仮引数に引数を登録
+                dummyArguments.Regist(arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14, arg15, arg16);    // 仮引数に引数を登録
                 Callback();
             }
         }
@@ -842,7 +842,6 @@ namespace CbVS.Script
             public DelegateFunction(CbFunc<T, RT> self) : base(self) { }
             public TResult Method()
             {
-                DummyArgumentsControl.Enable(dummyArguments);    // 仮引数に引数を登録（引数が無いのでnullを登録する）
                 return Callback();
             }
         }
@@ -853,7 +852,7 @@ namespace CbVS.Script
             public DelegateFunction(CbFunc<T, RT> self) : base(self) { }
             public TResult Method(T1 arg)
             {
-                DummyArgumentsControl.Enable(dummyArguments, arg);    // 仮引数に引数を登録
+                dummyArguments.Regist(arg);    // 仮引数に引数を登録
                 return Callback();
             }
         }
@@ -864,7 +863,7 @@ namespace CbVS.Script
             public DelegateFunction(CbFunc<T, RT> self) : base(self) { }
             public TResult Method(T1 arg1, T2 arg2)
             {
-                DummyArgumentsControl.Enable(dummyArguments, arg1, arg2);    // 仮引数に引数を登録
+                dummyArguments.Regist(arg1, arg2);    // 仮引数に引数を登録
                 return Callback();
             }
         }
@@ -875,7 +874,7 @@ namespace CbVS.Script
             public DelegateFunction(CbFunc<T, RT> self) : base(self) { }
             public TResult Method(T1 arg1, T2 arg2, T3 arg3)
             {
-                DummyArgumentsControl.Enable(dummyArguments, arg1, arg2, arg3);    // 仮引数に引数を登録
+                dummyArguments.Regist(arg1, arg2, arg3);    // 仮引数に引数を登録
                 return Callback();
             }
         }
@@ -886,7 +885,7 @@ namespace CbVS.Script
             public DelegateFunction(CbFunc<T, RT> self) : base(self) { }
             public TResult Method(T1 arg1, T2 arg2, T3 arg3, T4 arg4)
             {
-                DummyArgumentsControl.Enable(dummyArguments, arg1, arg2, arg3, arg4);    // 仮引数に引数を登録
+                dummyArguments.Regist(arg1, arg2, arg3, arg4);    // 仮引数に引数を登録
                 return Callback();
             }
         }
@@ -897,7 +896,7 @@ namespace CbVS.Script
             public DelegateFunction(CbFunc<T, RT> self) : base(self) { }
             public TResult Method(T1 arg1, T2 arg2, T3 arg3, T4 arg4, T5 arg5)
             {
-                DummyArgumentsControl.Enable(dummyArguments, arg1, arg2, arg3, arg4, arg5);    // 仮引数に引数を登録
+                dummyArguments.Regist(arg1, arg2, arg3, arg4, arg5);    // 仮引数に引数を登録
                 return Callback();
             }
         }
@@ -908,7 +907,7 @@ namespace CbVS.Script
             public DelegateFunction(CbFunc<T, RT> self) : base(self) { }
             public TResult Method(T1 arg1, T2 arg2, T3 arg3, T4 arg4, T5 arg5, T6 arg6)
             {
-                DummyArgumentsControl.Enable(dummyArguments, arg1, arg2, arg3, arg4, arg5, arg6);    // 仮引数に引数を登録
+                dummyArguments.Regist(arg1, arg2, arg3, arg4, arg5, arg6);    // 仮引数に引数を登録
                 return Callback();
             }
         }
@@ -919,7 +918,7 @@ namespace CbVS.Script
             public DelegateFunction(CbFunc<T, RT> self) : base(self) { }
             public TResult Method(T1 arg1, T2 arg2, T3 arg3, T4 arg4, T5 arg5, T6 arg6, T7 arg7)
             {
-                DummyArgumentsControl.Enable(dummyArguments, arg1, arg2, arg3, arg4, arg5, arg6, arg7);    // 仮引数に引数を登録
+                dummyArguments.Regist(arg1, arg2, arg3, arg4, arg5, arg6, arg7);    // 仮引数に引数を登録
                 return Callback();
             }
         }
@@ -930,7 +929,7 @@ namespace CbVS.Script
             public DelegateFunction(CbFunc<T, RT> self) : base(self) { }
             public TResult Method(T1 arg1, T2 arg2, T3 arg3, T4 arg4, T5 arg5, T6 arg6, T7 arg7, T8 arg8)
             {
-                DummyArgumentsControl.Enable(dummyArguments, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8);    // 仮引数に引数を登録
+                dummyArguments.Regist(arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8);    // 仮引数に引数を登録
                 return Callback();
             }
         }
@@ -941,7 +940,7 @@ namespace CbVS.Script
             public DelegateFunction(CbFunc<T, RT> self) : base(self) { }
             public TResult Method(T1 arg1, T2 arg2, T3 arg3, T4 arg4, T5 arg5, T6 arg6, T7 arg7, T8 arg8, T9 arg9)
             {
-                DummyArgumentsControl.Enable(dummyArguments, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9);    // 仮引数に引数を登録
+                dummyArguments.Regist(arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9);    // 仮引数に引数を登録
                 return Callback();
             }
         }
@@ -952,7 +951,7 @@ namespace CbVS.Script
             public DelegateFunction(CbFunc<T, RT> self) : base(self) { }
             public TResult Method(T1 arg1, T2 arg2, T3 arg3, T4 arg4, T5 arg5, T6 arg6, T7 arg7, T8 arg8, T9 arg9, T10 arg10)
             {
-                DummyArgumentsControl.Enable(dummyArguments, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10);    // 仮引数に引数を登録
+                dummyArguments.Regist(arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10);    // 仮引数に引数を登録
                 return Callback();
             }
         }
@@ -963,7 +962,7 @@ namespace CbVS.Script
             public DelegateFunction(CbFunc<T, RT> self) : base(self) { }
             public TResult Method(T1 arg1, T2 arg2, T3 arg3, T4 arg4, T5 arg5, T6 arg6, T7 arg7, T8 arg8, T9 arg9, T10 arg10, T11 arg11)
             {
-                DummyArgumentsControl.Enable(dummyArguments, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11);    // 仮引数に引数を登録
+                dummyArguments.Regist(arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11);    // 仮引数に引数を登録
                 return Callback();
             }
         }
@@ -974,7 +973,7 @@ namespace CbVS.Script
             public DelegateFunction(CbFunc<T, RT> self) : base(self) { }
             public TResult Method(T1 arg1, T2 arg2, T3 arg3, T4 arg4, T5 arg5, T6 arg6, T7 arg7, T8 arg8, T9 arg9, T10 arg10, T11 arg11, T12 arg12)
             {
-                DummyArgumentsControl.Enable(dummyArguments, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12);    // 仮引数に引数を登録
+                dummyArguments.Regist(arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12);    // 仮引数に引数を登録
                 return Callback();
             }
         }
@@ -985,7 +984,7 @@ namespace CbVS.Script
             public DelegateFunction(CbFunc<T, RT> self) : base(self) { }
             public TResult Method(T1 arg1, T2 arg2, T3 arg3, T4 arg4, T5 arg5, T6 arg6, T7 arg7, T8 arg8, T9 arg9, T10 arg10, T11 arg11, T12 arg12, T13 arg13)
             {
-                DummyArgumentsControl.Enable(dummyArguments, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13);    // 仮引数に引数を登録
+                dummyArguments.Regist(arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13);    // 仮引数に引数を登録
                 return Callback();
             }
         }
@@ -996,7 +995,7 @@ namespace CbVS.Script
             public DelegateFunction(CbFunc<T, RT> self) : base(self) { }
             public TResult Method(T1 arg1, T2 arg2, T3 arg3, T4 arg4, T5 arg5, T6 arg6, T7 arg7, T8 arg8, T9 arg9, T10 arg10, T11 arg11, T12 arg12, T13 arg13, T14 arg14)
             {
-                DummyArgumentsControl.Enable(dummyArguments, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14);    // 仮引数に引数を登録
+                dummyArguments.Regist(arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14);    // 仮引数に引数を登録
                 return Callback();
             }
         }
@@ -1007,7 +1006,7 @@ namespace CbVS.Script
             public DelegateFunction(CbFunc<T, RT> self) : base(self) { }
             public TResult Method(T1 arg1, T2 arg2, T3 arg3, T4 arg4, T5 arg5, T6 arg6, T7 arg7, T8 arg8, T9 arg9, T10 arg10, T11 arg11, T12 arg12, T13 arg13, T14 arg14, T15 arg15)
             {
-                DummyArgumentsControl.Enable(dummyArguments, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14, arg15);    // 仮引数に引数を登録
+                dummyArguments.Regist(arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14, arg15);    // 仮引数に引数を登録
                 return Callback();
             }
         }
@@ -1018,7 +1017,7 @@ namespace CbVS.Script
             public DelegateFunction(CbFunc<T, RT> self) : base(self) { }
             public TResult Method(T1 arg1, T2 arg2, T3 arg3, T4 arg4, T5 arg5, T6 arg6, T7 arg7, T8 arg8, T9 arg9, T10 arg10, T11 arg11, T12 arg12, T13 arg13, T14 arg14, T15 arg15, T16 arg16)
             {
-                DummyArgumentsControl.Enable(dummyArguments, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14, arg15, arg16);    // 仮引数に引数を登録
+                dummyArguments.Regist(arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14, arg15, arg16);    // 仮引数に引数を登録
                 return Callback();
             }
         }

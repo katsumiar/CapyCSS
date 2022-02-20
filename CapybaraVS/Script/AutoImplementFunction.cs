@@ -506,7 +506,7 @@ namespace CapyCSS.Script
 
                 // リストは、オリジナルの型のインスタンスを用意する
 
-                return cbList.ConvertOriginalTypeList(col);
+                return cbList.ConvertOriginalTypeList();
             }
             else if (value is ICbEvent cbEvent)
             {

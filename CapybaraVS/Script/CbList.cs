@@ -23,9 +23,8 @@ namespace CbVS.Script
         /// <summary>
         /// List<適切な型> に変換します。
         /// </summary>
-        /// <param name="col"></param>
         /// <returns></returns>
-        object ConvertOriginalTypeList(MultiRootConnector col = null);
+        object ConvertOriginalTypeList();
 
         /// <summary>
         /// 配列型か？
@@ -393,7 +392,7 @@ namespace CbVS.Script
         /// </summary>
         /// <param name="col"></param>
         /// <returns></returns>
-        public object ConvertOriginalTypeList(MultiRootConnector col = null)
+        public object ConvertOriginalTypeList()
         {
             if (CastType != null)
             {
@@ -442,7 +441,7 @@ namespace CbVS.Script
                         {
                             if (node.IsList)
                             {
-                                var arrayData = (node as ICbList).ConvertOriginalTypeList(null);
+                                var arrayData = (node as ICbList).ConvertOriginalTypeList();
                                 originalCopyList.Add((T)arrayData);
                             }
                             else
