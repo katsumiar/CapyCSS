@@ -718,17 +718,17 @@ namespace CapyCSS.Controls.BaseControls
 
                     var callbackReturnValue = cbEvent.NodeTF() as ICbEvent;
 
-                    callbackReturnValue.Callback = (cagt2) =>
+                    callbackReturnValue.Callback = (dummyArguments) =>
                     {
                         // 接続されているルートコネクターを直接実行する
 
-                        eventLinkRootConnector.RequestExecute(null, cagt2);
+                        eventLinkRootConnector.RequestExecute(null, dummyArguments);
 
                         if (eventLinkRootConnector.ValueData is ICbEvent cbEventValue)
                         {
                             // Func<> 型を Func<> 型の引数で受け取ったので実行して返し値を返す
 
-                            cbEventValue.InvokeCallback(cagt2);
+                            cbEventValue.InvokeCallback(dummyArguments);
 
                             return cbEventValue.Value;
                         }

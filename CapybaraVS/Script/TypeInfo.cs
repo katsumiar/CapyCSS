@@ -1186,7 +1186,7 @@ namespace CapyCSS.Script
 
                         ICbList cbList = n.GetListValue;
                         
-                        Value = (T)cbList.ConvertOriginalTypeList(null, null);
+                        Value = (T)cbList.ConvertOriginalTypeList(null);
 
                         if (this is ICbClass cbClass)
                         {

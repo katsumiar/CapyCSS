@@ -1159,22 +1159,18 @@ namespace CapyCSS.Script
                     CbST.CbCreate<CbFuncArguments.INDEX>("select"),
                 },
                 new Func<List<ICbValue>, DummyArgumentsStack, ICbValue>(
-                    (argument, cagt) =>
+                    (argument, dummyArguments) =>
                     {
                         var ret = CbST.CbCreate(col.SelectedVariableType[0]);    // 返し値
 
                         var select = GetArgument<CbFuncArguments.INDEX>(argument, 0);
 
-                        if (cagt.IsEmpty())
-                        {
-                            throw new Exception($"Dummy Arguments not found.");
-                        }
                         try
                         {
                             // 呼び元引数をセット
 
-                            if (cagt.IsGetValue(select))
-                                ret.Set(cagt.GetValue(select));
+                            if (dummyArguments != null && dummyArguments.CanValue(select))
+                                ret.Set(dummyArguments.GetValue(select));
                             else
                                 throw new Exception($"Dummy Arguments not found.");
                         }

@@ -39,9 +39,8 @@ namespace CapyCSS.Script
         /// <param name="isReBuildMode">再構築か？（保存データからの復帰）</param>
         public override bool ImplAsset(MultiRootConnector col, bool isReBuildMode = false)
         {
-            DummyArgumentsControl dummyArgumentsControl = new DummyArgumentsControl(col);
             string exTitle = GetGenericArgumentsString(col, isReBuildMode);
-            return ImplAsset(col, dummyArgumentsControl, exTitle);
+            return ImplAsset(col, exTitle);
         }
     }
 }

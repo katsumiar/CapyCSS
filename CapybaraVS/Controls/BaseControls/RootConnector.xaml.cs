@@ -598,24 +598,16 @@ namespace CapyCSS.Controls.BaseControls
             }
         }
 
-        public object RequestExecute(List<object> functionStack, DummyArgumentsStack preArgument)
+        public object RequestExecute(List<object> functionStack, DummyArgumentsStack dummyArguments)
         {
             functionStack ??= new List<object>();
 
-            List<ICbValue> arguments = null;
+            List<ICbValue> arguments = GetArguments(ref functionStack, dummyArguments);
 
-            arguments = GetArguments(ref functionStack, preArgument);
-
-            bool enableExecute = true;
-            if (preArgument != null)
-            {
-                enableExecute = !preArgument.IsInvalid();   // 実行環境が有効か？
-            }
-
-            if (Function != null && enableExecute)
+            if (Function != null)
             {
                 // ファンクションを実行する
-                ICbValue ret = Function(arguments, preArgument);
+                ICbValue ret = Function(arguments, dummyArguments);
                 try
                 {
                     if (ValueData.TypeName == CbSTUtils.VOID_STR)

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using CbVS.Script;
 
 namespace CapyCSS.Script
@@ -9,48 +10,79 @@ namespace CapyCSS.Script
     /// </summary>
     public class DummyArgumentsStack
     {
-        public class Node
+        public class _DummyArguments
         {
-            public bool IsReturn = true;
-            public Func<bool> IsInvalid = () => false;
-            public Func<CbFuncArguments.INDEX, ICbValue> CbVSValue = null;
-            public Node(Func<bool> IsInvalid, CbFuncArguments funcArguments)
+            public class Node
             {
-                this.IsInvalid = IsInvalid;
-                this.CbVSValue = (idx) => funcArguments[idx];
+                public CbFuncArguments funcArguments;
+                public Node(CbFuncArguments funcArguments)
+                {
+                    this.funcArguments = funcArguments;
+                }
+            }
+            private static ulong lastId = 0;
+            private static IDictionary<ulong, Node> cbVSValues = new Dictionary<ulong, Node>();
+            public static ulong CreateAdd(CbFuncArguments funcArguments)
+            {
+                cbVSValues.Add(++lastId, new Node(funcArguments));
+                return lastId;
+            }
+            public static bool ExistId(ulong id)
+            {
+                return cbVSValues.ContainsKey(id);
+            }
+            public static ICbValue GetValue(ulong id, CbFuncArguments.INDEX index)
+            {
+                if (!ExistId(id))
+                    return null;    // そもそも登録されていなかったら値が無いので null を返す
+                return cbVSValues[id].funcArguments[index];
+            }
+            public static void Remove(ulong id)
+            {
+                Debug.Assert(ExistId(id));
+                cbVSValues.Remove(id);
             }
         }
-        private List<Node> cbVSValues = new List<Node>();
-        public void Push(Node value)
+
+        private ulong id = 0;
+
+        public DummyArgumentsStack()
         {
-            cbVSValues.Add(value);
         }
+
+        public void CreateAndRegist(object[] argument)
+        {
+            CbFuncArguments argumentRef = new CbFuncArguments();
+            for (int i = 0; i < argument.Length; ++i)
+            {
+                argumentRef[(CbFuncArguments.INDEX)i] ??= CbObject.Create();
+                argumentRef[(CbFuncArguments.INDEX)i].Data = argument[i];
+            }
+            id = _DummyArguments.CreateAdd(argumentRef);
+        }
+
         public bool IsInvalid()
         {
-            if (cbVSValues.Count != 0)
-                return !cbVSValues[cbVSValues.Count - 1].IsReturn;
-            return false;
+            return !_DummyArguments.ExistId(id);
         }
-        public bool IsEmpty()
+
+        public bool CanValue(CbFuncArguments.INDEX index)
         {
-            return cbVSValues.Count == 0;
-        }
-        public bool IsGetValue(CbFuncArguments.INDEX index)
-        {
-            if (IsEmpty())
+            if (IsInvalid())
                 return true;
-            return cbVSValues[cbVSValues.Count - 1].CbVSValue(index) != null;
+            return _DummyArguments.GetValue(id, index) != null;
         }
+
         public ICbValue GetValue(CbFuncArguments.INDEX index = CbFuncArguments.INDEX.ARG_1)
         {
-            if (IsEmpty())
-                return null;    // そもそも登録されていなかったら値が無いので null を返す
-            return cbVSValues[cbVSValues.Count - 1].CbVSValue(index);
+            if (IsInvalid())
+                return null;
+            return _DummyArguments.GetValue(id, index);
         }
-        public void Pop()
+
+        public void Unregist()
         {
-            if (cbVSValues.Count != 0)
-                cbVSValues.RemoveAt(cbVSValues.Count - 1);
+            _DummyArguments.Remove(id);
         }
     }
 }

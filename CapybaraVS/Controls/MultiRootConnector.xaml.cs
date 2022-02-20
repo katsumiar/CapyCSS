@@ -217,25 +217,6 @@ namespace CapyCSS.Controls
 
         #endregion
 
-        #region PreFunction 添付プロパティ実装
-
-        private static ImplementDependencyProperty<MultiRootConnector, Func<DummyArgumentsStack.Node>> impPreFunction =
-            new ImplementDependencyProperty<MultiRootConnector, Func<DummyArgumentsStack.Node>>(
-                nameof(PreFunction),
-                (self, getValue) =>
-                {
-                });
-
-        public static readonly DependencyProperty PreFunctionProperty = impPreFunction.Regist(null);
-
-        public Func<DummyArgumentsStack.Node> PreFunction
-        {
-            get { return impPreFunction.GetValue(this); }
-            set { impPreFunction.SetValue(this, value); }
-        }
-
-        #endregion
-
         #region AttachParam 添付プロパティ実装
 
         public interface IAttachParam

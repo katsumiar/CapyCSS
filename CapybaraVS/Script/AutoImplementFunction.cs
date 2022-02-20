@@ -126,7 +126,7 @@ namespace CapyCSS.Script
         public virtual bool ImplAsset(MultiRootConnector col, bool isReBuildMode = false)
         {
             string exTitle = GetGenericArgumentsString(col, isReBuildMode);
-            return ImplAsset(col, null, exTitle);
+            return ImplAsset(col, exTitle);
         }
 
         public string GetGenericArgumentsString(MultiRootConnector col, bool isReBuildMode)
@@ -168,10 +168,8 @@ namespace CapyCSS.Script
         /// メソッド呼び出し処理を実装する
         /// </summary>
         /// <param name="col">スクリプトのルートノード</param>
-        /// <param name="dummyArgumentsControl">仮引数管理</param>
         protected bool ImplAsset(
             MultiRootConnector col, 
-            DummyArgumentsControl dummyArgumentsControl,
             string exTitle)
         {
             Type classType = ClassType;
@@ -264,10 +262,8 @@ namespace CapyCSS.Script
                     (arguments, cagt) =>
                     {
                         var ret = returnType();
-                        if (dummyArgumentsControl == null)
-                            return ret; // 実行環境が有効でない
 
-                        ImplCallMethod(col, classType, dummyArgumentsControl, arguments, cagt, ret);
+                        ImplCallMethod(col, classType, arguments, ret);
                         return ret;
                     }
                 )
@@ -349,16 +345,13 @@ namespace CapyCSS.Script
         /// メソッド呼び出しの実装です。
         /// </summary>
         /// <param name="col">スクリプトのルートノード</param>
-        /// <param name="dummyArgumentsControl">仮引数管理オブジェクト</param>
         /// <param name="callArguments">引数リスト</param>
         /// <param name="dummyArgumentsStack">仮引数スタック</param>
         /// <param name="returnValue">返り値</param>
         private void ImplCallMethod(
             MultiRootConnector col, 
             Type classType,
-            DummyArgumentsControl dummyArgumentsControl, 
             List<ICbValue> callArguments, 
-            DummyArgumentsStack dummyArgumentsStack, 
             ICbValue returnValue
             )
         {
@@ -369,9 +362,7 @@ namespace CapyCSS.Script
 
                 methodArguments = SetArguments(
                     col,
-                    dummyArgumentsControl,
                     callArguments,
-                    dummyArgumentsStack,
                     isClassInstanceMethod,
                     methodArguments
                     );
@@ -381,7 +372,7 @@ namespace CapyCSS.Script
                 {
                     // クラスメソッドの第一引数は、self（this）を受け取るのでクラスインスタンスとして扱う
 
-                    classInstance = getBindObject(callArguments[0], col, dummyArgumentsControl, dummyArgumentsStack);
+                    classInstance = getBindObject(callArguments[0], col);
                     if (classInstance is null)
                     {
                         throw new Exception($"self(this) is invalid.");
@@ -428,18 +419,13 @@ namespace CapyCSS.Script
         /// 引数をメソッドに合わせて調整しリストアップします。
         /// </summary>
         /// <param name="col">スクリプトのルートノード</param>
-        /// <param name="dummyArgumentsControl">仮引数管理オブジェクト</param>
         /// <param name="callArguments">引数リスト</param>
-        /// <param name="dummyArgumentsStack">仮引数スタック</param>
-        /// <param name="variableIds">スクリプト変数IDリスト</param>
         /// <param name="isClassInstanceMethod">インスタンスメソッドか？</param>
         /// <param name="methodArguments">メソッド呼び出し引数リスト</param>
         /// <returns>メソッド呼び出し引数リスト</returns>
         private List<object> SetArguments(
             MultiRootConnector col, 
-            DummyArgumentsControl dummyArgumentsControl, 
             List<ICbValue> callArguments, 
-            DummyArgumentsStack dummyArgumentsStack, 
             bool isClassInstanceMethod,
             List<object> methodArguments
             )
@@ -471,7 +457,7 @@ namespace CapyCSS.Script
 
                     tasks.Add(Task.Run(() =>
                     {
-                        return getBindObject(node, col, dummyArgumentsControl, dummyArgumentsStack);
+                        return getBindObject(node, col);
                     }));
                 }
                 foreach (var task in tasks)
@@ -495,7 +481,7 @@ namespace CapyCSS.Script
                         continue;
                     }
 
-                    methodArguments.Add(getBindObject(node, col, dummyArgumentsControl, dummyArgumentsStack));
+                    methodArguments.Add(getBindObject(node, col));
                 }
             }
 
@@ -507,14 +493,11 @@ namespace CapyCSS.Script
         /// </summary>
         /// <param name="value"></param>
         /// <param name="col"></param>
-        /// <param name="dummyArgumentsControl"></param>
         /// <param name="dummyArgumentsStack"></param>
         /// <returns></returns>
         private object getBindObject(
             ICbValue value,
-            MultiRootConnector col,
-            DummyArgumentsControl dummyArgumentsControl,
-            DummyArgumentsStack dummyArgumentsStack
+            MultiRootConnector col
             )
         {
             if (value.IsList)
@@ -523,16 +506,9 @@ namespace CapyCSS.Script
 
                 // リストは、オリジナルの型のインスタンスを用意する
 
-                if (dummyArgumentsControl is null)
-                {
-                    return cbList.ConvertOriginalTypeList(col, dummyArgumentsStack);
-                }
-                else
-                {
-                    return cbList.ConvertOriginalTypeList(dummyArgumentsControl, dummyArgumentsStack);
-                }
+                return cbList.ConvertOriginalTypeList(col);
             }
-            else if (dummyArgumentsControl != null && value is ICbEvent cbEvent)
+            else if (value is ICbEvent cbEvent)
             {
                 // Func<> 及び Action<> は、オリジナルの型のインスタンスを用意する
 
@@ -542,8 +518,7 @@ namespace CapyCSS.Script
                 }
                 else
                 {
-                    Debug.Assert(dummyArgumentsControl != null);
-                    return cbEvent.GetCallbackOriginalType(dummyArgumentsControl, dummyArgumentsStack);
+                    return cbEvent.GetCallbackOriginalType();
                 }
             }
             if (value.IsNull)
@@ -694,17 +669,49 @@ namespace CapyCSS.Script
             }
 
             // 引数の一致で探す
+            var sample = methods.Where(n =>
+            {
+                var parameters = n.GetParameters();
+                for (int i = 0; i < args.Length; ++i)
+                {
+                    if (args[i].GetType() != parameters[i].ParameterType)
+                        return false;
+                }
+                return true;
+            });
+            if (sample.Count() == 1)
+            {
+                return sample.First()
+                    .MakeGenericMethod(genericParams.ToArray())
+                    .Invoke(classType, args);
+            }
+
+            // ジェネリックの比較で探す（手抜き...）
             methods = methods.Where(n =>
             {
                 var parameters = n.GetParameters();
                 for (int i = 0; i < args.Length; ++i)
                 {
-                    if (args[i] is null || args[i].GetType() != parameters[i].ParameterType)
-                        return false;
+                    if (!args[i].GetType().IsGenericType)
+                    {
+                        if (parameters[i].ParameterType.IsGenericParameter)
+                            continue;   // ジェネリックパラメータを一律一つのワイルドカードとして扱う（手抜き...）
+                                        // ※ジェネリックパラメータはいくつか違うタイプが設定されている可能性がある
+                    }
+                    if (args[i].GetType().IsGenericType && parameters[i].ParameterType.IsGenericType)
+                    {
+                        // 両方ともジェネリックタイプなら型の名前の一致だけ見る（手抜き...）
+                        // ※ジェネリックパラメータを全く無視している
+
+                        if (args[i].GetType().Name == parameters[i].ParameterType.Name)
+                            continue;
+                    }
+                    if (args[i].GetType() != parameters[i].ParameterType)
+                        return false;   // 型が一致しないなら不一致と確定する
                 }
                 return true;
             });
-            if (methods.Count() == 0)
+            if (methods.Count() != 1)
             {
                 throw new Exception($"{FuncCode}{CbSTUtils.GetGenericParamatersString(args.Select(n => n.GetType()).ToArray(), "(", ")")} method not found.");
             }

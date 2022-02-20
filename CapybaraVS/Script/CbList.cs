@@ -23,17 +23,10 @@ namespace CbVS.Script
         /// <summary>
         /// List<適切な型> に変換します。
         /// </summary>
-        /// <returns>List<適切な型>のインスタンス</returns>
-        object ConvertOriginalTypeList(MultiRootConnector col, DummyArgumentsStack cagt);
-
-        /// <summary>
-        /// List<適切な型> に変換します。
-        /// </summary>
-        /// <param name="dummyArgumentsControl"></param>
         /// <param name="cagt"></param>
         /// <param name="col"></param>
         /// <returns></returns>
-        object ConvertOriginalTypeList(DummyArgumentsControl dummyArgumentsControl, DummyArgumentsStack cagt, MultiRootConnector col = null);
+        object ConvertOriginalTypeList(MultiRootConnector col = null);
 
         /// <summary>
         /// 配列型か？
@@ -399,20 +392,9 @@ namespace CbVS.Script
         /// <summary>
         /// List<適切な型> に変換します。
         /// </summary>
-        /// <returns>List<適切な型>のインスタンス</returns>
-        public object ConvertOriginalTypeList(MultiRootConnector col, DummyArgumentsStack cagt)
-        {
-            return ConvertOriginalTypeList(null, cagt, col);
-        }
-
-        /// <summary>
-        /// List<適切な型> に変換します。
-        /// </summary>
-        /// <param name="dummyArgumentsControl"></param>
-        /// <param name="cagt"></param>
         /// <param name="col"></param>
         /// <returns></returns>
-        public object ConvertOriginalTypeList(DummyArgumentsControl dummyArgumentsControl, DummyArgumentsStack cagt, MultiRootConnector col = null)
+        public object ConvertOriginalTypeList(MultiRootConnector col = null)
         {
             if (CastType != null)
             {
@@ -439,7 +421,7 @@ namespace CbVS.Script
                     if (cbEvent2.Callback is null)
                         ((dynamic)originalCopyList).Add(null);
                     else
-                        originalCopyList.Add((T)cbEvent2.GetCallbackOriginalType(dummyArgumentsControl, cagt));
+                        originalCopyList.Add((T)cbEvent2.GetCallbackOriginalType());
                 }
             }
             else
@@ -461,7 +443,7 @@ namespace CbVS.Script
                         {
                             if (node.IsList)
                             {
-                                var arrayData = (node as ICbList).ConvertOriginalTypeList(null, null);
+                                var arrayData = (node as ICbList).ConvertOriginalTypeList(null);
                                 originalCopyList.Add((T)arrayData);
                             }
                             else
