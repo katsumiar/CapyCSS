@@ -475,6 +475,7 @@ namespace CapyCSS.Controls
             CommandMenuButton.IsEnabled = enable;
             AddButton.IsEnabled = enable;
             DeleteButton.IsEnabled = enable;
+            ConvertCSS.IsEnabled = ExecuteButton.IsEnabled;
         }
 
         public delegate object NodeFunction(bool fromScript, string entryPointName);
@@ -567,6 +568,7 @@ namespace CapyCSS.Controls
             SaveButton.IsEnabled = Tab.Items.Count != 0;
             DeleteButton.IsEnabled = Tab.Items.Count != 0;
             CommandMenuButton.IsEnabled = Tab.Items.Count != 0;
+            ConvertCSS.IsEnabled = ExecuteButton.IsEnabled;
         }
 
         /// <summary>
@@ -848,7 +850,11 @@ namespace CapyCSS.Controls
         /// <param name="owner">オーナー</param>
         public void BuildScriptAndOut(object owner = null)
         {
-            OutputWindow.CreateWindow(CurrentScriptTitle).AddBindText = BuildScript(owner);
+            string script = BuildScript(owner);
+            if (!string.IsNullOrWhiteSpace(script))
+            {
+                OutputWindow.CreateWindow(CurrentScriptTitle).AddBindText = script;
+            }
         }
 
         /// <summary>
@@ -1113,6 +1119,16 @@ namespace CapyCSS.Controls
             }
         }
 
+        private void EntryPointName_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            EntryPointNamePh.Visibility = (EntryPointName.Text.Trim().Length != 0) ? Visibility.Hidden : Visibility.Visible;
+        }
+
+        private void ConvertCSS_Click(object sender, RoutedEventArgs e)
+        {
+            BuildScriptAndOut();
+        }
+
         public void Dispose()
         {
             CbSTUtils.ForeachDispose(CanvasData);
@@ -1121,11 +1137,6 @@ namespace CapyCSS.Controls
             ToolExec.KillProcess();
 
             GC.SuppressFinalize(this);
-        }
-
-        private void EntryPointName_TextChanged(object sender, TextChangedEventArgs e)
-        {
-            EntryPointNamePh.Visibility = (EntryPointName.Text.Trim().Length != 0) ? Visibility.Hidden : Visibility.Visible;
         }
     }
 }

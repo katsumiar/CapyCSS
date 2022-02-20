@@ -608,7 +608,7 @@ namespace CapyCSS.Controls.BaseControls
                 commandNode.AddChild(new TreeMenuNode("Toggle ShowGridLine(Ctrl+G)", CreateImmediateExecutionCanvasCommand(() => ScriptCommandCanvas.ToggleGridLine())));
                 commandNode.AddChild(new TreeMenuNode("Save(Ctrl+S)", CreateImmediateExecutionCanvasCommand(() => CommandCanvasControl.SaveCbsFile())));
                 commandNode.AddChild(new TreeMenuNode("Load(Ctrl+O)", CreateImmediateExecutionCanvasCommand(() => CommandCanvasControl.LoadCbsFile())));
-                commandNode.AddChild(new TreeMenuNode("Build Script", CreateImmediateExecutionCanvasCommand(() => CommandCanvasList.Instance?.BuildScriptAndOut())));
+                commandNode.AddChild(new TreeMenuNode("Convert C#", CreateImmediateExecutionCanvasCommand(() => CommandCanvasList.Instance?.BuildScriptAndOut())));
                 treeViewCommand.AssetTreeData.Add(commandNode);
             }
 
@@ -821,7 +821,11 @@ namespace CapyCSS.Controls.BaseControls
                 }
                 OpenFileName = path;
 
-                File.WriteAllText(System.IO.Path.ChangeExtension(OpenFileName,".css"), CommandCanvasList.Instance.BuildScript());
+                string script = CommandCanvasList.Instance.BuildScript();
+                if (!string.IsNullOrWhiteSpace(script))
+                {
+                    File.WriteAllText(System.IO.Path.ChangeExtension(OpenFileName, ".css"), script);
+                }
 
                 Console.WriteLine($"Save...\"{path}.xml\"");
             }
