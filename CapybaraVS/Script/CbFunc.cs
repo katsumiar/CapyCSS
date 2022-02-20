@@ -80,7 +80,7 @@ namespace CbVS.Script
         /// <summary>
         /// Func<> もしくは Action<> の内包したコールバックを参照します。
         /// </summary>
-        Func<DummyArgumentsStack, object> Callback { get; set; }
+        Func<DummyArgumentsMemento, object> Callback { get; set; }
         /// <summary>
         /// コールバックの返し値を参照します。
         /// </summary>
@@ -89,12 +89,10 @@ namespace CbVS.Script
         /// コールバックを呼び出します。
         /// </summary>
         /// <param name="dummyArguments"></param>
-        void InvokeCallback(DummyArgumentsStack dummyArguments);
+        void InvokeCallback(DummyArgumentsMemento dummyArguments);
         /// <summary>
         /// オリジナルの型でコールバックを取得します。
         /// </summary>
-        /// <param name="dummyArgumentsControl"></param>
-        /// <param name="cagt"></param>
         /// <returns></returns>
         object GetCallbackOriginalType();
         /// <summary>
@@ -349,7 +347,7 @@ namespace CbVS.Script
         /// <summary>
         /// Func<> もしくは Action<> を内包したコールバックを参照します。
         /// </summary>
-        public Func<DummyArgumentsStack, object> Callback { get; set; } = null;
+        public Func<DummyArgumentsMemento, object> Callback { get; set; } = null;
 
         public CbFunc(ICbValue n, string name = "")
         {
@@ -404,10 +402,12 @@ namespace CbVS.Script
 
         public bool IsCallback => Callback != null;
 
-        public void InvokeCallback(DummyArgumentsStack dummyArguments)
+        public void InvokeCallback(DummyArgumentsMemento dummyArguments)
         {
             if (CbVoid.Is(typeof(RT)))
             {
+                // Action用
+
                 Callback?.Invoke(dummyArguments);
             }
             else if (typeof(RT) == typeof(CbObject))
@@ -420,6 +420,8 @@ namespace CbVS.Script
             }
             else
             {
+                // Func用
+
                 ICbValue result = Callback?.Invoke(dummyArguments) as ICbValue;
                 if (!result.IsNull)
                 {
@@ -501,7 +503,6 @@ namespace CbVS.Script
         /// <summary>
         /// Cbクラスでラッピングしていない元々の型（T）の Func<> 及び Action<> を返す機能を取得します。
         /// </summary>
-        /// <param name="cagt"></param>
         /// <returns></returns>
         public object ConvertOriginalType()
         {
@@ -613,11 +614,11 @@ namespace CbVS.Script
         {
             public Type OriginalType => self.OriginalType;
             private CbFunc<T, RT> self;
-            protected DummyArgumentsStack dummyArguments;
+            protected DummyArgumentsMemento dummyArguments;
             protected DelegateActionBase(CbFunc<T, RT> self)
             {
                 this.self = self;
-                this.dummyArguments = new DummyArgumentsStack();
+                this.dummyArguments = new DummyArgumentsMemento();
             }
             protected void Callback()
             {
@@ -633,11 +634,11 @@ namespace CbVS.Script
         public class DelegateFunctionBase<TResult>
         {
             private CbFunc<T, RT> self;
-            protected DummyArgumentsStack dummyArguments;
+            protected DummyArgumentsMemento dummyArguments;
             protected DelegateFunctionBase(CbFunc<T, RT> self)
             {
                 this.self = self;
-                this.dummyArguments = new DummyArgumentsStack();
+                this.dummyArguments = new DummyArgumentsMemento();
             }
             protected TResult Callback()
             {

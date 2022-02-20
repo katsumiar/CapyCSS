@@ -832,7 +832,7 @@ namespace CapyCSS.Script
     public interface ICbExecutable
         : ICbRequestScriptBuild
     {
-        object RequestExecute(List<object> functionStack, DummyArgumentsStack preArgument);
+        object RequestExecute(List<object> functionStack, DummyArgumentsMemento dummyArguments);
     }
 
     /// <summary>

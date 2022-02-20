@@ -477,8 +477,8 @@ namespace CapyCSS.Controls
         /// 実行処理を要求します。
         /// </summary>
         /// <param name="functionStack"></param>
-        /// <param name="preArgument"></param>
-        public object RequestExecute(List<object> functionStack = null, DummyArgumentsStack preArgument = null)
+        /// <param name="dummyArguments"></param>
+        public object RequestExecute(List<object> functionStack = null, DummyArgumentsMemento dummyArguments = null)
         {
             foreach (var node in ListData)
             {
@@ -489,7 +489,7 @@ namespace CapyCSS.Controls
                 }
                 else
                 {
-                    node.RequestExecute(functionStack, preArgument);
+                    node.RequestExecute(functionStack, dummyArguments);
                 }
             }
             return null;

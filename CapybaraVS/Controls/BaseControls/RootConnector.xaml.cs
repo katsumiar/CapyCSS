@@ -245,8 +245,8 @@ namespace CapyCSS.Controls.BaseControls
 
         #region Function 添付プロパティ実装
 
-        private static ImplementDependencyProperty<RootConnector, Func<List<ICbValue>, DummyArgumentsStack, ICbValue>> impFunction =
-            new ImplementDependencyProperty<RootConnector, Func<List<ICbValue>, DummyArgumentsStack, ICbValue>>(
+        private static ImplementDependencyProperty<RootConnector, Func<List<ICbValue>, DummyArgumentsMemento, ICbValue>> impFunction =
+            new ImplementDependencyProperty<RootConnector, Func<List<ICbValue>, DummyArgumentsMemento, ICbValue>>(
                 nameof(Function),
                 (self, getValue) =>
                 {
@@ -255,7 +255,7 @@ namespace CapyCSS.Controls.BaseControls
 
         public static readonly DependencyProperty FunctionProperty = impFunction.Regist(null);
 
-        public Func<List<ICbValue>, DummyArgumentsStack, ICbValue> Function
+        public Func<List<ICbValue>, DummyArgumentsMemento, ICbValue> Function
         {
             get { return impFunction.GetValue(this); }
             set { impFunction.SetValue(this, value); }
@@ -598,7 +598,7 @@ namespace CapyCSS.Controls.BaseControls
             }
         }
 
-        public object RequestExecute(List<object> functionStack, DummyArgumentsStack dummyArguments)
+        public object RequestExecute(List<object> functionStack, DummyArgumentsMemento dummyArguments)
         {
             functionStack ??= new List<object>();
 
@@ -942,9 +942,9 @@ namespace CapyCSS.Controls.BaseControls
         /// 引数に接続された情報を参照します。
         /// </summary>
         /// <param name="functionStack"></param>
-        /// <param name="preArgument"></param>
+        /// <param name="dummyArguments"></param>
         /// <returns></returns>
-        private List<ICbValue> GetArguments(ref List<object> functionStack, DummyArgumentsStack preArgument)
+        private List<ICbValue> GetArguments(ref List<object> functionStack, DummyArgumentsMemento dummyArguments)
         {
             List<ICbValue> arguments = new List<ICbValue>();
 
@@ -968,7 +968,7 @@ namespace CapyCSS.Controls.BaseControls
                     }
                     else
                     {
-                        connector.RequestExecute(functionStack, preArgument);
+                        connector.RequestExecute(functionStack, dummyArguments);
                     }
                     arguments.Add(connector.ValueData);
                 }

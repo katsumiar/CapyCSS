@@ -8,7 +8,7 @@ namespace CapyCSS.Script
     /// <summary>
     /// 仮引数のスタックを管理するクラスです。
     /// </summary>
-    public class DummyArgumentsStack
+    public class DummyArgumentsMemento
     {
         public class _DummyArguments
         {
@@ -46,7 +46,7 @@ namespace CapyCSS.Script
 
         private ulong id = 0;
 
-        public DummyArgumentsStack()
+        public DummyArgumentsMemento()
         {
         }
 

@@ -198,18 +198,18 @@ namespace CapyCSS.Controls
 
         #region Function 添付プロパティ実装
 
-        private static ImplementDependencyProperty<MultiRootConnector, Func<List<ICbValue>, DummyArgumentsStack, ICbValue>> impFunction =
-            new ImplementDependencyProperty<MultiRootConnector, Func<List<ICbValue>, DummyArgumentsStack, ICbValue>>(
+        private static ImplementDependencyProperty<MultiRootConnector, Func<List<ICbValue>, DummyArgumentsMemento, ICbValue>> impFunction =
+            new ImplementDependencyProperty<MultiRootConnector, Func<List<ICbValue>, DummyArgumentsMemento, ICbValue>>(
                 nameof(Function),
                 (self, getValue) =>
                 {
-                    Func<List<ICbValue>, DummyArgumentsStack, ICbValue> value = getValue(self);
+                    Func<List<ICbValue>, DummyArgumentsMemento, ICbValue> value = getValue(self);
                     self.LinkConnectorControl.Function = value;
                 });
 
         public static readonly DependencyProperty FunctionProperty = impFunction.Regist(null);
 
-        public Func<List<ICbValue>, DummyArgumentsStack, ICbValue> Function
+        public Func<List<ICbValue>, DummyArgumentsMemento, ICbValue> Function
         {
             get { return impFunction.GetValue(this); }
             set { impFunction.SetValue(this, value); }
@@ -401,7 +401,7 @@ namespace CapyCSS.Controls
         /// Function イベント実行依頼
         /// </summary>
         /// <param name="functionStack"></param>
-        public object RequestExecute(List<object> functionStack = null, DummyArgumentsStack preArgument = null)
+        public object RequestExecute(List<object> functionStack = null, DummyArgumentsMemento preArgument = null)
         {
             return LinkConnectorControl.RequestExecute(functionStack, preArgument);
         }
@@ -597,7 +597,7 @@ namespace CapyCSS.Controls
             string hint,
             Func<ICbValue> retType,
             List<ICbValue> argumentList,
-            Func<List<ICbValue>, DummyArgumentsStack, ICbValue> func
+            Func<List<ICbValue>, DummyArgumentsMemento, ICbValue> func
             )
         {
             LinkConnectorControl.OwnerCommandCanvas = OwnerCommandCanvas;

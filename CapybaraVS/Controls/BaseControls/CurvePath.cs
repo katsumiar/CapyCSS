@@ -324,7 +324,7 @@ namespace CapyCSS
             curveLinkPoint?.UpdateRootValue();
         }
 
-        public object RequestExecute(List<object> functionStack, DummyArgumentsStack preArgument)
+        public object RequestExecute(List<object> functionStack, DummyArgumentsMemento preArgument)
         {
             return curveLinkPoint?.RequestExecute(functionStack, preArgument);
         }
@@ -515,11 +515,11 @@ namespace CapyCSS
                 curveLink?.RequestUpdateRootValue();
         }
 
-        public object RequestExecute(List<object> functionStack, DummyArgumentsStack preArgument)
+        public object RequestExecute(List<object> functionStack, DummyArgumentsMemento dummyArguments)
         {
             foreach (var curveLink in CurveLinkData)
             {
-                curveLink?.RequestExecute(functionStack, preArgument);
+                curveLink?.RequestExecute(functionStack, dummyArguments);
             }
             return null;
         }
@@ -663,7 +663,7 @@ namespace CapyCSS
             CurveLinkRootData.Remove(curveLinkRoot);
         }
 
-        public object RequestExecute(List<object> functionStack, DummyArgumentsStack preArgument)
+        public object RequestExecute(List<object> functionStack, DummyArgumentsMemento dummyArguments)
         {
             object result = null;
             foreach (var curveLinkRoot in CurveLinkRootData)
@@ -677,7 +677,7 @@ namespace CapyCSS
                 {
                     // 未実行かスコープ指定（ローカルスコープイメージ）の場合は、実行する
 
-                    result = curveLinkRoot?.RequestExecute(functionStack, preArgument);
+                    result = curveLinkRoot?.RequestExecute(functionStack, dummyArguments);
                 }
             }
             return result;

@@ -258,8 +258,8 @@ namespace CapyCSS.Script
                 NodeHelpText,
                 returnType,
                 argumentTypeList,
-                new Func<List<ICbValue>, DummyArgumentsStack, ICbValue>(
-                    (arguments, cagt) =>
+                new Func<List<ICbValue>, DummyArgumentsMemento, ICbValue>(
+                    (arguments, dummyArguments) =>
                     {
                         var ret = returnType();
 
@@ -841,13 +841,13 @@ namespace CapyCSS.Script
                 {
                     // 返し値のあるデリゲート型
 
-                    cbEvent.Callback = (cagt) =>
+                    cbEvent.Callback = (dummyArguments) =>
                     {
                         ICbValue retTypeValue = null;
                         try
                         {
                             // イベントからの返り値を取得
-                            object tempReturnValue = ((dynamic)result).Invoke(cagt.GetValue().Data);
+                            object tempReturnValue = ((dynamic)result).Invoke(dummyArguments.GetValue().Data);
 
                             // 直接メソッドを呼ぶため帰ってくるのは通常の値なので Cb タイプに変換する
                             retTypeValue = CbST.CbCreate(tempReturnValue.GetType());
@@ -864,11 +864,11 @@ namespace CapyCSS.Script
                 {
                     // 返し値の無いデリゲート型
 
-                    cbEvent.Callback = (cagt) =>
+                    cbEvent.Callback = (dummyArguments) =>
                     {
                         try
                         {
-                            var argType = cagt.GetValue();
+                            var argType = dummyArguments.GetValue();
                             if (argType is null)
                                 ((dynamic)result).Invoke(null);
                             else

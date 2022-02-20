@@ -305,14 +305,14 @@ namespace CapyCSS.Controls.BaseControls
         /// スクリプトの実行を依頼します。
         /// </summary>
         /// <param name="functionStack">スタック情報</param>
-        /// <param name="preArgument"></param>
-        public object RequestExecute(List<object> functionStack = null, DummyArgumentsStack preArgument = null)
+        /// <param name="dummyArguments"></param>
+        public object RequestExecute(List<object> functionStack = null, DummyArgumentsMemento dummyArguments = null)
         {
             object result = null;
-            ConnectorList.RequestExecute(functionStack, preArgument);
+            ConnectorList.RequestExecute(functionStack, dummyArguments);
             if (linkCurveLinks != null)
             {
-                result = linkCurveLinks.RequestExecute(functionStack, preArgument);
+                result = linkCurveLinks.RequestExecute(functionStack, dummyArguments);
             }
             return result;
         }

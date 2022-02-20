@@ -23,7 +23,6 @@ namespace CbVS.Script
         /// <summary>
         /// List<適切な型> に変換します。
         /// </summary>
-        /// <param name="cagt"></param>
         /// <param name="col"></param>
         /// <returns></returns>
         object ConvertOriginalTypeList(MultiRootConnector col = null);

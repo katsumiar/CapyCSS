@@ -183,7 +183,7 @@ namespace CapyCSS.Script
         /// <param name="variable">変数</param>
         /// <param name="dummyArgumentstack">仮引数スタック</param>
         /// <returns>コールバックの返し値</returns>
-        protected ICbValue CallEvent(ICbValue variable, DummyArgumentsStack dummyArgumentstack)
+        protected ICbValue CallEvent(ICbValue variable, DummyArgumentsMemento dummyArgumentstack)
         {
             ICbEvent cbEvent = variable as ICbEvent;
             cbEvent.InvokeCallback(dummyArgumentstack);
@@ -255,23 +255,23 @@ namespace CapyCSS.Script
         /// <summary>
         /// コールバックを呼びます。
         /// </summary>
-        /// <param name="cagt">仮引数スタック</param>
+        /// <param name="dummyArguments">仮引数</param>
         /// <param name="func">コールバック変数</param>
-        protected void CallCallBack(DummyArgumentsStack cagt, ICbValue func)
+        protected void CallCallBack(DummyArgumentsMemento dummyArguments, ICbValue func)
         {
-            CallEvent(func, cagt);
+            CallEvent(func, dummyArguments);
         }
 
         /// <summary>
         /// 可能ならコールバックを呼びます。
         /// </summary>
-        /// <param name="cagt">仮引数スタック</param>
+        /// <param name="dummyArguments">仮引数スタック</param>
         /// <param name="func">コールバック変数</param>
-        protected void TryCallCallBack(DummyArgumentsStack cagt, ICbValue func)
+        protected void TryCallCallBack(DummyArgumentsMemento dummyArguments, ICbValue func)
         {
             if (CanCallBack(func))
             {
-                CallCallBack(cagt, func);
+                CallCallBack(dummyArguments, func);
             }
         }
     }

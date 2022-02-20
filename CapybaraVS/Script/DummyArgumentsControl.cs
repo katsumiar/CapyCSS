@@ -17,7 +17,7 @@ namespace CbVS.Script
         /// <typeparam name="T">登録する型</typeparam>
         /// <param name="dummyArguments">仮引数スタック</param>
         /// <param name="argument">引数</param>
-        public static void Enable(DummyArgumentsStack dummyArguments, params object[] argument)
+        public static void Enable(DummyArgumentsMemento dummyArguments, params object[] argument)
         {
             dummyArguments.CreateAndRegist(argument);
         }
@@ -26,7 +26,7 @@ namespace CbVS.Script
         /// 仮引数を無効化します。
         /// </summary>
         /// <param name="dummyArguments">仮引数スタック</param>
-        public static void Invalidated(DummyArgumentsStack dummyArguments)
+        public static void Invalidated(DummyArgumentsMemento dummyArguments)
         {
             dummyArguments.Unregist();
         }
