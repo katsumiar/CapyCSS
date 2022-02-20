@@ -6,11 +6,11 @@ using CbVS.Script;
 namespace CapyCSS.Script
 {
     /// <summary>
-    /// 仮引数のスタックを管理するクラスです。
+    /// 仮引数をDummyArgumentsノードに届けるためのクラスです。
     /// </summary>
     public class DummyArgumentsMemento
     {
-        public class _DummyArguments
+        private class _DummyArguments
         {
             public class Node
             {
@@ -34,7 +34,7 @@ namespace CapyCSS.Script
             public static ICbValue GetValue(ulong id, CbFuncArguments.INDEX index)
             {
                 if (!ExistId(id))
-                    return null;    // そもそも登録されていなかったら値が無いので null を返す
+                    return null;
                 return cbVSValues[id].funcArguments[index];
             }
             public static void Remove(ulong id)
