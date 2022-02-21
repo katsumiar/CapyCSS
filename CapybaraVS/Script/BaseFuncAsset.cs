@@ -46,7 +46,6 @@ namespace CapyCSS.Script
             OwnerCommandCanvas = ownerCommandCanvas;
             ProgramNode = CreateGroup(ownerCommandCanvas, MENU_TITLE_PROGRAM);
 
-            CreateAssetMenu(ownerCommandCanvas, ProgramNode, new Sequence());
             CreateAssetMenu(ownerCommandCanvas, ProgramNode, new VoidSequence());
             CreateAssetMenu(ownerCommandCanvas, ProgramNode, new ResultSequence());
 
@@ -60,13 +59,6 @@ namespace CapyCSS.Script
                 CreateAssetMenu(ownerCommandCanvas, variableNode, new CreateVariable());
                 CreateAssetMenu(ownerCommandCanvas, variableNode, new GetVariable());
                 CreateAssetMenu(ownerCommandCanvas, variableNode, new SetVariable());
-
-                {
-                    var variableListNode = CreateGroup(variableNode, "Variable List");
-                    CreateAssetMenu(ownerCommandCanvas, variableListNode, new GetVariableFromIndex());
-                    CreateAssetMenu(ownerCommandCanvas, variableListNode, new SetVariableToIndex());
-                    CreateAssetMenu(ownerCommandCanvas, variableListNode, new AppendVariableList());
-                }
             }
 
             {
@@ -353,7 +345,7 @@ namespace CapyCSS.Script
     // TODO 今は役割が変わっているので名前を変える
     class LiteralType : IFuncAssetLiteralDef
     {
-        public string MenuTitle => "Literal : T";
+        public string MenuTitle => "Literal/Local : T";
 
         public string HelpText => Language.Instance[ApiImporter.BASE_LIB_TAG_PRE + nameof(LiteralType)];
 
@@ -410,68 +402,6 @@ namespace CapyCSS.Script
 
             // エイリアス
             col.FunctionInfo = new BuildScriptFormat(nameof(CapyCSSbase.Script.Sum), typeof(CapyCSSbase.Script));
-
-            return true;
-        }
-    }
-
-    //-----------------------------------------------------------------
-    class Sequence : FuncAssetSub, IFuncAssetWithArgumentDef
-    {
-        public string AssetCode => nameof(Sequence);
-
-        public string HelpText => Language.Instance[ApiImporter.BASE_LIB_TAG_PRE + AssetCode];
-
-        public string MenuTitle => $"{AssetCode}({CbSTUtils.LIST_STR}<T>) : T" + CbSTUtils.MENU_OLD_SPECIFICATION;
-
-        public List<TypeRequest> typeRequests => new List<TypeRequest>()
-        { 
-            new TypeRequest(CbSTUtils.LIST_INTERFACE_TYPE, t => CbScript.AcceptAll(t))
-        };
-
-        public bool ImplAsset(MultiRootConnector col, bool isReBuildMode = false)
-        {
-            col.MakeFunction(
-                $"{AssetCode}<{CbSTUtils.GetTypeName(col.SelectedVariableType[0].GenericTypeArguments[0])}>",
-                HelpText,
-                CbST.CbCreateTF(col.SelectedVariableType[0].GenericTypeArguments[0]),  // 返し値の型
-                new List<ICbValue>()  // 引数
-                {
-                    CbST.CbCreate(col.SelectedVariableType[0], "call list"),
-                },
-                new Func<List<ICbValue>, DummyArgumentsMemento, ICbValue>(
-                    (argument, dummyArguments) =>
-                    {
-                        var ret = CbST.CbCreate(col.SelectedVariableType[0].GenericTypeArguments[0]);    // 返し値
-                        try
-                        {
-                            var argList = GetArgumentList(argument, 0);
-                            if (argList.Count != 0)
-                            {
-                                ret.Set(argList[argList.Count - 1]);
-                            }
-                        }
-                        catch (Exception ex)
-                        {
-                            col.ExceptionFunc(ret, ex);
-                        }
-                        return ret;
-                    }
-                    )
-                );
-
-            // 実行を可能にする
-            col.LinkConnectorControl.IsRunable = true;
-
-            // 古い仕様であることを知らせる
-            col.OldSpecification = true;
-
-            if (!isReBuildMode)
-            {// 「call list」のリンクコネクターを取得する
-                LinkConnector arg = col.LinkConnectorControl.GetArgument(0);
-                // 要素を1つ増やす
-                arg?.TryAddListNode(1);
-            }
 
             return true;
         }
@@ -1424,209 +1354,6 @@ namespace CapyCSS.Script
                 );
 
             return true;
-        }
-    }
-
-    //-----------------------------------------------------------------
-    class GetVariableFromIndex : FuncAssetSub, IFuncCreateVariableListAssetDef
-    {
-        public string AssetCode => nameof(GetVariableFromIndex);
-
-        public string HelpText => Language.Instance[ApiImporter.BASE_LIB_TAG_PRE + nameof(GetVariableFromIndex)];
-
-        public string MenuTitle => "Get VariableList[index]";
-
-        public List<TypeRequest> typeRequests => new List<TypeRequest>()
-        {
-            new TypeRequest(t => CbScript.AcceptAll(t))
-        };
-
-        public bool ImplAsset(MultiRootConnector col, bool isReBuildMode = false)
-        {
-            using (VariableGetter variableGetter = new VariableGetter(col, (name) => "[ " + name + " [index] ]"))
-            {
-                if (variableGetter.IsError)
-                    return false;
-
-                Func<ICbValue> resultValue;
-                if (col.SelectedVariableType[0].IsArray)
-                {
-                    resultValue = CbST.CbCreateTF(col.SelectedVariableType[0].GetElementType());
-                }
-                else
-                {
-                    resultValue = CbST.CbCreateTF(col.SelectedVariableType[0].GenericTypeArguments[0]);
-                }
-
-                col.MakeFunction(
-                    variableGetter.MakeName,
-                    HelpText,
-                    resultValue,  // 返し値の型
-                    new List<ICbValue>()       // 引数
-                    {
-                        CbST.CbCreate<int>("index", 0),
-                    },
-                    new Func<List<ICbValue>, DummyArgumentsMemento, ICbValue>(
-                        (argument, dummyArguments) =>
-                        {
-                            var ret = resultValue();    // 返し値
-                            try
-                            {
-                                int index = GetArgument<int>(argument, 0);
-
-                                ICbValue cbVSValue = col.OwnerCommandCanvas.ScriptWorkStack.Find(variableGetter.Id);
-                                var argList = cbVSValue.GetListValue.Value;
-
-                                ret.Set(argList[index]);
-                                col.LinkConnectorControl.UpdateValueData();
-                            }
-                            catch (Exception ex)
-                            {
-                                col.ExceptionFunc(ret, ex);
-                            }
-                            return ret;
-                        }
-                        )
-                   );
-            }
-            return true;
-        }
-    }
-
-    //-----------------------------------------------------------------
-    class SetVariableToIndex : FuncAssetSub, IFuncCreateVariableListAssetDef
-    {
-        public string AssetCode => nameof(SetVariableToIndex);
-
-        public string HelpText => Language.Instance[ApiImporter.BASE_LIB_TAG_PRE + nameof(SetVariableToIndex)];
-
-        public string MenuTitle => "Set VariableList[index]";
-
-        public List<TypeRequest> typeRequests => new List<TypeRequest>()
-        {
-            new TypeRequest(t => CbScript.AcceptAll(t))
-        };
-
-        public bool ImplAsset(MultiRootConnector col, bool isReBuildMode = false)
-        {
-            using (VariableGetter variableGetter = new VariableGetter(col, (name) => "[ " + name + " [index] ]"))
-            {
-                if (variableGetter.IsError)
-                    return false;
-
-                ICbValue resultValue;
-                if (col.SelectedVariableType[0].IsArray)
-                {
-                    resultValue = CbST.CbCreate(col.SelectedVariableType[0].GetElementType(), "n");
-                }
-                else
-                {
-                    resultValue = CbST.CbCreate(col.SelectedVariableType[0].GenericTypeArguments[0], "n");
-                }
-
-                col.MakeFunction(
-                    variableGetter.MakeName,
-                    HelpText,
-                    CbST.CbCreateTF(col.SelectedVariableType[0]),   // 返し値の型
-                    new List<ICbValue>()       // 引数
-                    {
-                        CbST.CbCreate<int>("index", 0),
-                        resultValue
-                    },
-                    new Func<List<ICbValue>, DummyArgumentsMemento, ICbValue>(
-                        (argument, dummyArguments) =>
-                        {
-                            try
-                            {
-                                int index = GetArgument<int>(argument, 0);
-
-                                ICbList cbVSValue = col.OwnerCommandCanvas.ScriptWorkStack.Find(variableGetter.Id).GetListValue;
-                                cbVSValue[index].Set(argument[1]);
-
-                                col.OwnerCommandCanvas.ScriptWorkStack.UpdateValueData(variableGetter.Id);
-                                col.LinkConnectorControl.UpdateValueData();
-                                return cbVSValue;
-                            }
-                            catch (Exception ex)
-                            {
-                                var ret = CbST.CbCreate(col.SelectedVariableType[0]);    // 返し値
-                                col.ExceptionFunc(ret, ex);
-                                return ret;
-                            }
-                        }
-                        )
-                    );
-                return true;
-            }
-        }
-    }
-
-    //-----------------------------------------------------------------
-    class AppendVariableList : FuncAssetSub, IFuncCreateVariableListAssetDef
-    {
-        public string AssetCode => nameof(AppendVariableList);
-
-        public string MenuTitle => "Append VariableList" + CbSTUtils.MENU_OLD_SPECIFICATION;
-
-        public string HelpText => Language.Instance[ApiImporter.BASE_LIB_TAG_PRE + AssetCode];
-
-        public List<TypeRequest> typeRequests => new List<TypeRequest>()
-        {
-            new TypeRequest(t => CbScript.AcceptAll(t))
-        };
-
-        public bool ImplAsset(MultiRootConnector col, bool isReBuildMode = false)
-        {
-            using (VariableGetter variableGetter = new VariableGetter(col, (name) => "Append [ " + name + " ]"))
-            {
-                if (variableGetter.IsError)
-                    return false;
-
-                ICbValue resultValue;
-                if (col.SelectedVariableType[0].IsArray)
-                {
-                    resultValue = CbST.CbCreate(col.SelectedVariableType[0].GetElementType(), "n");
-                }
-                else
-                {
-                    resultValue = CbST.CbCreate(col.SelectedVariableType[0].GenericTypeArguments[0], "n");
-                }
-
-                col.MakeFunction(
-                    variableGetter.MakeName,
-                    HelpText,
-                    CbST.CbCreateTF(col.SelectedVariableType[0]),   // 返し値の型
-                    new List<ICbValue>()   // 引数
-                    {
-                        resultValue
-                    },
-                    new Func<List<ICbValue>, DummyArgumentsMemento, ICbValue>(
-                        (argument, dummyArguments) =>
-                        {
-                            try
-                            {
-                                ICbList cbVSValue = col.OwnerCommandCanvas.ScriptWorkStack.Find(variableGetter.Id).GetListValue;
-                                cbVSValue.Append(argument[0]);
-
-                                col.OwnerCommandCanvas.ScriptWorkStack.UpdateValueData(variableGetter.Id);
-                                col.LinkConnectorControl.UpdateValueData();
-                                return cbVSValue;
-                            }
-                            catch (Exception ex)
-                            {
-                                var ret = CbST.CbCreate(col.SelectedVariableType[0]);    // 返し値
-                                col.ExceptionFunc(ret, ex);
-                                return ret;
-                            }
-                        }
-                        )
-                    );
-
-                // 古い仕様であることを知らせる
-                col.OldSpecification = true;
-
-                return true;
-            }
         }
     }
 
