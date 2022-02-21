@@ -15,6 +15,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using System.Windows.Threading;
+using CapyCSSbase;
 
 namespace CapyCSS.Controls
 {
@@ -56,7 +57,7 @@ namespace CapyCSS.Controls
             }
             public PlotInfo(IEnumerable<int> list, DrawType drawType, SolidColorBrush solidColorBrush = null)
             {
-                this.list = ListFactory.ConvertList(list, (n) => (double)n);
+                this.list = CapyCSSbase.ListFactory.ConvertList(list, (n) => (double)n);
                 this.drawType = drawType;
                 this.solidColorBrush = solidColorBrush;
             }

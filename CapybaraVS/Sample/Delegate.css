@@ -1,7 +1,7 @@
 System.Int32 variable1;
 var Delegate = () => {
-    CapyCSS.Script.Lib.FlowLib.Foreach(
-        CapyCSS.Script.Lib.ListFactory.Filtering(
+    CapyCSSbase.FlowLib.Foreach(
+        CapyCSSbase.ListFactory.Filtering(
             new System.Collections.Generic.List<System.String>() {
                 "120",
                 "abc",
@@ -14,7 +14,7 @@ var Delegate = () => {
                     out variable1
                 )
         ),
-        ( ARG_1 ) => CapyCSS.Script.Lib.Script.OutConsole( ARG_1 )
+        ( ARG_1 ) => CapyCSSbase.Script.OutConsole( ARG_1 )
     );
 };
 CapyCSS.Script.Lib.Script.AddEntryPoint(nameof(Delegate), Delegate);

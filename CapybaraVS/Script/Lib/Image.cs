@@ -19,6 +19,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using static CapyCSS.Controls.PlotWindow;
 using static CbVS.Script.Lib.Media;
+using CapyCSSbase;
 
 namespace CbVS.Script.Lib
 {

@@ -28,7 +28,7 @@ namespace CapyCSS.Script.Lib
         /// <param name="samples">評価対象リスト</param>
         /// <param name="invert">要素の評価を逆にするか？</param>
         /// <returns>すべての要素が true のとき true</returns>
-        [ScriptMethod(LIB_LOGICAL_NAME)]
+        [ScriptMethod(path: LIB_LOGICAL_NAME, oldSpecification: true)]
         public static bool And(IEnumerable<bool> samples, bool invert)
         {
             if (samples is null || samples.Count() == 0)
@@ -59,7 +59,7 @@ namespace CapyCSS.Script.Lib
         /// <param name="samples">評価対象リスト</param>
         /// <param name="invert">要素の評価を逆にするか？</param>
         /// <returns>要素が一つでも true のとき true</returns>
-        [ScriptMethod(LIB_LOGICAL_NAME)]
+        [ScriptMethod(path: LIB_LOGICAL_NAME, oldSpecification: true)]
         public static bool Or(IEnumerable<bool> samples, bool invert)
         {
             if (samples is null || samples.Count() == 0)
@@ -88,49 +88,49 @@ namespace CapyCSS.Script.Lib
         /// </summary>
         /// <param name="sample">真偽値</param>
         /// <returns>sampleの逆の真偽値</returns>
-        [ScriptMethod(LIB_LOGICAL_NAME)]
+        [ScriptMethod(path: LIB_LOGICAL_NAME, oldSpecification: true)]
         public static bool Not(bool sample)
         {
             return !sample;
         }
 
         //====================================================================================
-        [ScriptMethod(LIB_OPERATION_NAME, "==")]
+        [ScriptMethod(path: LIB_OPERATION_NAME, methodName: "==", oldSpecification: true)]
         public static bool Eq(IComparable a, IComparable b)
         {
             return a.CompareTo(b) == 0;
         }
 
         //------------------------------------------------------------------
-        [ScriptMethod(LIB_OPERATION_NAME, "!=")]
+        [ScriptMethod(path: LIB_OPERATION_NAME, methodName: "!=", oldSpecification: true)]
         public static bool Ne(IComparable a, IComparable b)
         {
             return a.CompareTo(b) != 0;
         }
 
         //------------------------------------------------------------------
-        [ScriptMethod(LIB_OPERATION_NAME, ">")]
+        [ScriptMethod(path: LIB_OPERATION_NAME, methodName: ">", oldSpecification: true)]
         public static bool Gt(IComparable a, IComparable b)
         {
             return a.CompareTo(b) > 0;
         }
 
         //------------------------------------------------------------------
-        [ScriptMethod(LIB_OPERATION_NAME, ">=")]
+        [ScriptMethod(path: LIB_OPERATION_NAME, methodName: ">=", oldSpecification: true)]
         public static bool Ge(IComparable a, IComparable b)
         {
             return a.CompareTo(b) >= 0;
         }
 
         //------------------------------------------------------------------
-        [ScriptMethod(LIB_OPERATION_NAME, "<")]
+        [ScriptMethod(path: LIB_OPERATION_NAME, methodName: "<", oldSpecification: true)]
         public static bool Lt(IComparable a, IComparable b)
         {
             return a.CompareTo(b) < 0;
         }
 
         //------------------------------------------------------------------
-        [ScriptMethod(LIB_OPERATION_NAME, "<=")]
+        [ScriptMethod(path: LIB_OPERATION_NAME, methodName: "<=", oldSpecification: true)]
         public static bool Le(IComparable a, IComparable b)
         {
             return a.CompareTo(b) <= 0;
@@ -143,7 +143,7 @@ namespace CapyCSS.Script.Lib
         /// <typeparam name="TResult"></typeparam>
         /// <param name="func"></param>
         /// <returns></returns>
-        [ScriptMethod(LIB_FUNC_NAME)]
+        [ScriptMethod(path: LIB_FUNC_NAME, oldSpecification: true)]
         public static TResult Invoke<TResult>(Func<TResult> func)
         {
             return func();
@@ -158,7 +158,7 @@ namespace CapyCSS.Script.Lib
         /// <param name="arg"></param>
         /// <param name="func"></param>
         /// <returns></returns>
-        [ScriptMethod(LIB_FUNC_NAME)]
+        [ScriptMethod(path: LIB_FUNC_NAME, oldSpecification: true)]
         public static TResult Invoke<T, TResult>(T arg, Func<T, TResult> func)
         {
             return func(arg);
@@ -175,7 +175,7 @@ namespace CapyCSS.Script.Lib
         /// <param name="arg2"></param>
         /// <param name="func"></param>
         /// <returns></returns>
-        [ScriptMethod(LIB_FUNC_NAME)]
+        [ScriptMethod(path: LIB_FUNC_NAME, oldSpecification: true)]
         public static TResult Invoke<T1, T2, TResult>(T1 arg1, T2 arg2, Func<T1, T2, TResult> func)
         {
             return func(arg1, arg2);
@@ -186,7 +186,7 @@ namespace CapyCSS.Script.Lib
         /// Action を Invoke します。
         /// </summary>
         /// <param name="action"></param>
-        [ScriptMethod(LIB_ACTION_NAME)]
+        [ScriptMethod(path: LIB_ACTION_NAME, oldSpecification: true)]
         public static void Invoke(Action action)
         {
             action?.Invoke();
@@ -199,7 +199,7 @@ namespace CapyCSS.Script.Lib
         /// <typeparam name="T"></typeparam>
         /// <param name="arg"></param>
         /// <param name="action"></param>
-        [ScriptMethod(LIB_ACTION_NAME)]
+        [ScriptMethod(path: LIB_ACTION_NAME, oldSpecification: true)]
         public static void Invoke<T>(T arg, Action<T> action)
         {
             action?.Invoke(arg);
@@ -214,7 +214,7 @@ namespace CapyCSS.Script.Lib
         /// <param name="arg1"></param>
         /// <param name="arg2"></param>
         /// <param name="action"></param>
-        [ScriptMethod(LIB_ACTION_NAME)]
+        [ScriptMethod(path: LIB_ACTION_NAME, oldSpecification: true)]
         public static void Invoke<T1, T2>(T1 arg1, T2 arg2, Action<T1, T2> action)
         {
             action?.Invoke(arg1, arg2);
@@ -227,7 +227,7 @@ namespace CapyCSS.Script.Lib
         /// <typeparam name="T"></typeparam>
         /// <param name="sample"></param>
         /// <returns></returns>
-        [ScriptMethod(LIB_NULLABLE_NAME)]
+        [ScriptMethod(path: LIB_NULLABLE_NAME, oldSpecification: true)]
         public static bool HasValue<T>(T? sample) where T : struct
         {
             if (sample.HasValue)
@@ -244,7 +244,7 @@ namespace CapyCSS.Script.Lib
         /// <typeparam name="T"></typeparam>
         /// <param name="sample"></param>
         /// <param name="hasValueAction"></param>
-        [ScriptMethod(LIB_NULLABLE_NAME)]
+        [ScriptMethod(path: LIB_NULLABLE_NAME, oldSpecification: true)]
         public static void HasValue<T>(T? sample, Action<T> hasValueAction) where T : struct
         {
             if (sample.HasValue)
@@ -262,7 +262,7 @@ namespace CapyCSS.Script.Lib
         /// <param name="sample"></param>
         /// <param name="value"></param>
         /// <returns></returns>
-        [ScriptMethod(LIB_NULLABLE_NAME)]
+        [ScriptMethod(path: LIB_NULLABLE_NAME, oldSpecification: true)]
         public static T? If_ResultNullable<T>(bool sample, T value) where T : struct
         {
             if (sample)
@@ -284,7 +284,7 @@ namespace CapyCSS.Script.Lib
         /// <param name="sample"></param>
         /// <param name="hasValueAction"></param>
         /// <param name="othersAction"></param>
-        [ScriptMethod(LIB_NULLABLE_NAME)]
+        [ScriptMethod(path: LIB_NULLABLE_NAME, oldSpecification: true)]
         public static void If_HasValue<T>(T? sample, Action<T> hasValueAction, Action othersAction) where T : struct
         {
             if (sample.HasValue)
@@ -298,7 +298,7 @@ namespace CapyCSS.Script.Lib
         }
 
         //------------------------------------------------------------------
-        [ScriptMethod(LIB_NULLABLE_NAME)]
+        [ScriptMethod(path: LIB_NULLABLE_NAME, oldSpecification: true)]
         public static T? If_ResultNullable<T>(bool sample, Func<T> trueFunction, Func<T> falseFunction) where T : struct
         {
             if (sample)
@@ -323,14 +323,14 @@ namespace CapyCSS.Script.Lib
         /// </summary>
         /// <param name="sample">null チェック対象</param>
         /// <returns>null なら true</returns>
-        [ScriptMethod(LIB_FLOW_NAME)]
+        [ScriptMethod(path: LIB_FLOW_NAME, oldSpecification: true)]
         public static bool IsNull(object sample)
         {
             return sample is null;
         }
 
         //------------------------------------------------------------------
-        [ScriptMethod(LIB_FLOW_NAME)]
+        [ScriptMethod(path: LIB_FLOW_NAME, oldSpecification: true)]
         public static T IsNull<T>(object sample, T trueValue, T falseValue)
         {
             if (sample is null)
@@ -344,7 +344,7 @@ namespace CapyCSS.Script.Lib
         }
 
         //------------------------------------------------------------------
-        [ScriptMethod(LIB_FLOW_NAME)]
+        [ScriptMethod(path: LIB_FLOW_NAME, oldSpecification: true)]
         public static T If_Value<T>(bool sample, T trueValue, T falseValue)
         {
             if (sample)
@@ -358,7 +358,7 @@ namespace CapyCSS.Script.Lib
         }
 
         //------------------------------------------------------------------
-        [ScriptMethod(LIB_FLOW_NAME)]
+        [ScriptMethod(path: LIB_FLOW_NAME, oldSpecification: true)]
         public static void NotNull<T>(T sample, Action<T> action)
         {
             if (sample != null)
@@ -368,7 +368,7 @@ namespace CapyCSS.Script.Lib
         }
 
         //------------------------------------------------------------------
-        [ScriptMethod(LIB_FLOW_NAME)]
+        [ScriptMethod(path: LIB_FLOW_NAME, oldSpecification: true)]
         public static void If(bool sample, Action trueAction, Action falseAction)
         {
             if (sample)
@@ -382,7 +382,7 @@ namespace CapyCSS.Script.Lib
         }
 
         //------------------------------------------------------------------
-        [ScriptMethod(LIB_FLOW_NAME)]
+        [ScriptMethod(path: LIB_FLOW_NAME, oldSpecification: true)]
         public static T If<T>(bool sample, Func<T> trueFunction, Func<T> falseFunction) where T : class
         {
             if (sample)
@@ -402,7 +402,7 @@ namespace CapyCSS.Script.Lib
         }
 
         //------------------------------------------------------------------
-        [ScriptMethod(LIB_FLOW_NAME)]
+        [ScriptMethod(path: LIB_FLOW_NAME, oldSpecification: true)]
         public static void For(int begin, int end, int step, Action<int> action)
         {
             if (action is null)
@@ -418,7 +418,7 @@ namespace CapyCSS.Script.Lib
         /// Func<bool> が true を返すまで Func<bool> を呼び続けます。
         /// </summary>
         /// <param name="func"></param>
-        [ScriptMethod(LIB_FLOW_NAME)]
+        [ScriptMethod(path: LIB_FLOW_NAME, oldSpecification: true)]
         public static void DoWhile(Func<bool> func)
         {
             if (func is null)
@@ -433,7 +433,7 @@ namespace CapyCSS.Script.Lib
         /// <typeparam name="T">サンプルリストの型</typeparam>
         /// <param name="samples">サンプルリスト</param>
         /// <param name="action">サンプルリストの要素に対する処理</param>
-        [ScriptMethod(LIB_FLOW_NAME)]
+        [ScriptMethod(path: LIB_FLOW_NAME, oldSpecification: true)]
         public static void Foreach<T>(IEnumerable<T> samples, Action<T> action)
         {
             if (samples is null || action is null)
@@ -452,7 +452,7 @@ namespace CapyCSS.Script.Lib
         /// <typeparam name="T">サンプルリストの型</typeparam>
         /// <param name="samples">サンプルリスト</param>
         /// <param name="predicate">サンプルリストの要素に対する処理</param>
-        [ScriptMethod(LIB_FLOW_NAME)]
+        [ScriptMethod(path: LIB_FLOW_NAME, oldSpecification: true)]
         public static void BreakableForeach<T>(IEnumerable<T> samples, Predicate<T> predicate)
         {
             if (samples is null || predicate is null)
@@ -471,7 +471,7 @@ namespace CapyCSS.Script.Lib
         /// サンプルリストに登録されている Action を順番に実行します。
         /// </summary>
         /// <param name="samples">サンプルリスト</param>
-        [ScriptMethod(LIB_FLOW_NAME)]
+        [ScriptMethod(path: LIB_FLOW_NAME, oldSpecification: true)]
         public static void ForeachAction(IEnumerable<Action> samples)
         {
             if (samples is null)
@@ -488,7 +488,7 @@ namespace CapyCSS.Script.Lib
         /// Func<bool> が false を返したら終了します。
         /// </summary>
         /// <param name="samples">サンプルリスト</param>
-        [ScriptMethod(LIB_FLOW_NAME)]
+        [ScriptMethod(path: LIB_FLOW_NAME, oldSpecification: true)]
         public static void BreakableForeachAction(IEnumerable<Func<bool>> samples)
         {
             if (samples is null)
@@ -517,7 +517,7 @@ namespace CapyCSS.Script.Lib
         /// <param name="func">サンプルリストの要素に対する処理</param>
         /// <param name="defalutReturn">デフォルトの返し値</param>
         /// <returns>funcの返した値かデフォルト値</returns>
-        [ScriptMethod(LIB_FLOW_NAME)]
+        [ScriptMethod(path: LIB_FLOW_NAME, oldSpecification: true)]
         public static TReturn ForeachReturn<T, TReturn>(IEnumerable<T> samples, Func<T, Nullable<TReturn>> func, TReturn defalutReturn)
             where TReturn : struct
         {

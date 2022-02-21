@@ -105,6 +105,8 @@ namespace CapyCSS.Script
             // 現在のコードを実行しているアセンブリを取得する
             Assembly asm = Assembly.GetExecutingAssembly();
             GetApiFromAssemblyForScriptMethodAttribute(OwnerCommandCanvas, node, asm);
+            var capyCSSbase = Assembly.Load("CapyCSSbase");
+            GetApiFromAssemblyForScriptMethodAttribute(OwnerCommandCanvas, node, capyCSSbase);
         }
 
         /// <summary>
@@ -543,7 +545,7 @@ namespace CapyCSS.Script
                     if (!IsAcceptTypeMenuType(type))
                         return;   // 扱えない
 
-                    Debug.Assert(false);
+                    //Debug.Assert(false);
                     // AddImportTypeMenu の間違い？
                     OwnerCommandCanvas.AddTypeMenu(type);
                 }

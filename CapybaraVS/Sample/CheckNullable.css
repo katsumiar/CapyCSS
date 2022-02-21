@@ -15,7 +15,7 @@ System.Nullable<DateTime> variable14;
 System.Nullable<PlatformID> variable15;
 System.Object sample;
 var CheckNullable = () => {
-    CapyCSS.Script.Lib.FlowLib.Foreach(
+    CapyCSSbase.FlowLib.Foreach(
         new System.Collections.Generic.List<System.Object>() {
             null,
             1
@@ -37,38 +37,37 @@ var CheckNullable = () => {
                         variable11 = sample;
                         variable12 = sample;
                         variable13 = sample;
-                        variable14 = CapyCSS.Script.Lib.FlowLib.IsNull(
+                        variable14 = CapyCSSbase.FlowLib.IsNull(
                                 sample,
                                 null,
                                 new System.DateTime()
                             );
-                        variable15 = CapyCSS.Script.Lib.FlowLib.IsNull(
+                        variable15 = CapyCSSbase.FlowLib.IsNull(
                                 sample,
                                 null,
                                 System.PlatformID.Unix
                             );
                     };
-                    CapyCSS.Script.Lib.Script.OutConsole(
-                        CapyCSS.Script.Lib.FlowLib.If_Value(
-                            CapyCSS.Script.Lib.FlowLib.And(
+                    CapyCSSbase.Script.OutConsole(
+                        CapyCSSbase.FlowLib.If_Value(
+                            CapyCSSbase.FlowLib.And(
                                 new System.Collections.Generic.List<System.Boolean>() {
-                                    CapyCSS.Script.Lib.FlowLib.HasValue( variable1 ),
-                                    CapyCSS.Script.Lib.FlowLib.HasValue( variable2 ),
-                                    CapyCSS.Script.Lib.FlowLib.HasValue( variable3 ),
-                                    CapyCSS.Script.Lib.FlowLib.HasValue( variable4 ),
-                                    CapyCSS.Script.Lib.FlowLib.HasValue( variable5 ),
-                                    CapyCSS.Script.Lib.FlowLib.HasValue( variable6 ),
-                                    CapyCSS.Script.Lib.FlowLib.HasValue( variable7 ),
-                                    CapyCSS.Script.Lib.FlowLib.HasValue( variable8 ),
-                                    CapyCSS.Script.Lib.FlowLib.HasValue( variable9 ),
-                                    CapyCSS.Script.Lib.FlowLib.HasValue( variable10 ),
-                                    CapyCSS.Script.Lib.FlowLib.HasValue( variable11 ),
-                                    CapyCSS.Script.Lib.FlowLib.HasValue( variable12 ),
-                                    CapyCSS.Script.Lib.FlowLib.HasValue( variable13 ),
-                                    CapyCSS.Script.Lib.FlowLib.HasValue( variable14 ),
-                                    CapyCSS.Script.Lib.FlowLib.HasValue( variable15 )
+                                    CapyCSSbase.FlowLib.HasValue( variable1 ),
+                                    CapyCSSbase.FlowLib.HasValue( variable2 ),
+                                    CapyCSSbase.FlowLib.HasValue( variable3 ),
+                                    CapyCSSbase.FlowLib.HasValue( variable4 ),
+                                    CapyCSSbase.FlowLib.HasValue( variable6 ),
+                                    CapyCSSbase.FlowLib.HasValue( variable7 ),
+                                    CapyCSSbase.FlowLib.HasValue( variable8 ),
+                                    CapyCSSbase.FlowLib.HasValue( variable9 ),
+                                    CapyCSSbase.FlowLib.HasValue( variable10 ),
+                                    CapyCSSbase.FlowLib.HasValue( variable11 ),
+                                    CapyCSSbase.FlowLib.HasValue( variable12 ),
+                                    CapyCSSbase.FlowLib.HasValue( variable13 ),
+                                    CapyCSSbase.FlowLib.HasValue( variable14 ),
+                                    CapyCSSbase.FlowLib.HasValue( variable15 )
                                 },
-                                CapyCSS.Script.Lib.FlowLib.IsNull( sample )
+                                CapyCSSbase.FlowLib.IsNull( sample )
                             ),
                             "SUCCESS.",
                             "ERROR!"

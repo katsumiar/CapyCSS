@@ -1,5 +1,5 @@
 var BreakableForeach = () => {
-    CapyCSS.Script.Lib.FlowLib.BreakableForeach(
+    CapyCSSbase.FlowLib.BreakableForeach(
         new System.Collections.Generic.List<System.String>() {
             "test1",
             "test2",
@@ -7,8 +7,8 @@ var BreakableForeach = () => {
             "test3"
         },
         ( ARG_1 ) => {
-                CapyCSS.Script.Lib.Script.OutConsole( ARG_1 );
-                return CapyCSS.Script.Lib.FlowLib.Ne(
+                CapyCSSbase.Script.OutConsole( ARG_1 );
+                return CapyCSSbase.FlowLib.Ne(
                     ARG_1,
                     "end"
                 );

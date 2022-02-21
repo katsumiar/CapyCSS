@@ -1,14 +1,14 @@
 System.Double parseWork;
 var ForeachReturn = () => {
-    CapyCSS.Script.Lib.Script.OutConsole(
-        CapyCSS.Script.Lib.FlowLib.ForeachReturn(
+    CapyCSSbase.Script.OutConsole(
+        CapyCSSbase.FlowLib.ForeachReturn(
             new System.Collections.Generic.List<System.String>() {
                 "moji",
                 "26a",
                 "1.2345",
                 "abcd"
             },
-            ( ARG_1 ) => CapyCSS.Script.Lib.FlowLib.If_ResultNullable(
+            ( ARG_1 ) => CapyCSSbase.FlowLib.If_ResultNullable(
                     System.Double.TryParse(
                         ARG_1,
                         out parseWork
@@ -19,15 +19,15 @@ var ForeachReturn = () => {
             1
         )
     );
-    CapyCSS.Script.Lib.Script.OutConsole(
-        CapyCSS.Script.Lib.FlowLib.ForeachReturn(
+    CapyCSSbase.Script.OutConsole(
+        CapyCSSbase.FlowLib.ForeachReturn(
             new System.Collections.Generic.List<System.String>() {
                 "moji",
                 "685",
                 "5.32",
                 "abcd"
             },
-            ( ARG_1 ) => CapyCSS.Script.Lib.FlowLib.If_ResultNullable(
+            ( ARG_1 ) => CapyCSSbase.FlowLib.If_ResultNullable(
                     System.Double.TryParse(
                         ARG_1,
                         out parseWork

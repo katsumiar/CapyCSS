@@ -37,6 +37,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\CapyCSSattribute\CapyCSSattribute.csproj" />
+    <ProjectReference Include="..\CapyCSSbase\CapyCSSbase.csproj" />
   </ItemGroup>
 
   <ItemGroup>

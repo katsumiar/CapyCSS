@@ -25,7 +25,7 @@ namespace CapyCSS.Script.Lib
         /// <param name="list">対象のリスト</param>
         /// <param name="converter">任意の変換処理</param>
         /// <returns>変換したリスト</returns>
-        [ScriptMethod(LIB_NAME2)]
+        [ScriptMethod(path: LIB_NAME2, oldSpecification: true)]
         public static ICollection<T2> ConvertList<T1, T2>(IEnumerable<T1> list, Converter<T1, T2> converter)
         {
             ICollection<T2> result = new List<T2>();
@@ -44,14 +44,14 @@ namespace CapyCSS.Script.Lib
         /// <typeparam name="T2">変換後の型</typeparam>
         /// <param name="list">変換対象のリスト</param>
         /// <returns>変換したリスト</returns>
-        [ScriptMethod(LIB_NAME2)]
+        [ScriptMethod(path: LIB_NAME2, oldSpecification: true)]
         public static ICollection<T2> CastConvert<T1, T2>(IEnumerable<T1> list) where T2 : class
         {
             return ConvertList(list, (n) => (T2)(dynamic)n);
         }
 
         //------------------------------------------------------------------
-        [ScriptMethod(LIB_NAME5)]
+        [ScriptMethod(path: LIB_NAME5, oldSpecification: true)]
         public static int Counter<T>(IEnumerable<T> samples, Predicate<T> predicate)
         {
             int count = 0;
@@ -66,7 +66,7 @@ namespace CapyCSS.Script.Lib
         }
 
         //------------------------------------------------------------------
-        [ScriptMethod(LIB_NAME5)]
+        [ScriptMethod(path: LIB_NAME5, oldSpecification: true)]
         public static int ConteinsCounter<T>(IEnumerable<T> samples, T value)
         {
             int count = 0;
@@ -81,7 +81,7 @@ namespace CapyCSS.Script.Lib
         }
 
         //------------------------------------------------------------------
-        [ScriptMethod(LIB_NAME6)]
+        [ScriptMethod(path: LIB_NAME6, oldSpecification: true)]
         public static ICollection<T> DescSort<T>(IEnumerable<T> list)
         {
             var ret = new List<T>(list);
@@ -90,7 +90,7 @@ namespace CapyCSS.Script.Lib
         }
 
         //------------------------------------------------------------------
-        [ScriptMethod(LIB_NAME6)]
+        [ScriptMethod(path: LIB_NAME6, oldSpecification: true)]
         public static ICollection<T> AscSort<T>(IEnumerable<T> list) where T : IComparable
         {
             var ret = new List<T>(list);
@@ -99,7 +99,7 @@ namespace CapyCSS.Script.Lib
         }
 
         //------------------------------------------------------------------
-        [ScriptMethod(LIB_NAME8)]
+        [ScriptMethod(path: LIB_NAME8, oldSpecification: true)]
         public static ICollection<T> Filtering<T>(IEnumerable<T> samples, Predicate<T> predicate)
         {
             if (predicate is null)
@@ -124,7 +124,7 @@ namespace CapyCSS.Script.Lib
         /// <param name="value">開始値</param>
         /// <param name="converter">value を受け取って次の要素に入れる値の変換処理</param>
         /// <returns>作成したリスト</returns>
-        [ScriptMethod(LIB_NAME)]
+        [ScriptMethod(path: LIB_NAME, oldSpecification: true)]
         public static ICollection<T> MakeList<T>(int num, T value, Converter<T, T> converter)
         {
             var vs = new List<T>();
@@ -137,14 +137,14 @@ namespace CapyCSS.Script.Lib
         }
 
         //------------------------------------------------------------------
-        [ScriptMethod(LIB_NAME)]
+        [ScriptMethod(path: LIB_NAME, oldSpecification: true)]
         public static string Join<T>(string separator, IEnumerable<T> values)
         {
             return string.Join(separator, values);
         }
 
         //------------------------------------------------------------------
-        [ScriptMethod(LIB_NAME)]
+        [ScriptMethod(path: LIB_NAME, oldSpecification: true)]
         public static ICollection<T> ParseCSV<T>(string value)
         {
             var ret = new List<T>();
@@ -165,7 +165,7 @@ namespace CapyCSS.Script.Lib
         }
 
         //------------------------------------------------------------------
-        [ScriptMethod(LIB_NAME)]
+        [ScriptMethod(path: LIB_NAME, oldSpecification: true)]
         public static ICollection<T> Distinct<T>(IEnumerable<T> samples)
         {
             var ret = new List<T>();
@@ -180,7 +180,7 @@ namespace CapyCSS.Script.Lib
         }
 
         //------------------------------------------------------------------
-        [ScriptMethod(LIB_NAME)]
+        [ScriptMethod(path: LIB_NAME, oldSpecification: true)]
         public static bool Contains<T>(IEnumerable<T> samples, T target)
         {
             return samples.Contains(target);

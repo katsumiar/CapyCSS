@@ -29,7 +29,7 @@ namespace CapyCSS.Script.Lib
         }
 
         //------------------------------------------------------------------
-        [ScriptMethod(LIB_NAME2)]
+        [ScriptMethod(path: LIB_NAME2, oldSpecification: true)]
         public static HttpResponseMessage GetWebAPI(string url, string account = null, string passwd = null)
         {
             if (url is null || url.Trim() == "")
@@ -40,7 +40,7 @@ namespace CapyCSS.Script.Lib
         }
 
         //------------------------------------------------------------------
-        [ScriptMethod(LIB_NAME2)]
+        [ScriptMethod(path: LIB_NAME2, oldSpecification: true)]
         public static HttpResponseMessage PostWebAPI(string url, HttpContent content, string account = null, string passwd = null)
         {
             if (url is null || url.Trim() == "" || content is null)
@@ -51,7 +51,7 @@ namespace CapyCSS.Script.Lib
         }
 
         //------------------------------------------------------------------
-        [ScriptMethod(LIB_NAME2)]
+        [ScriptMethod(path: LIB_NAME2, oldSpecification: true)]
         public static string GetHeaders(HttpResponseMessage httpResponseMessage)
         {
             if (httpResponseMessage is null)
@@ -60,7 +60,7 @@ namespace CapyCSS.Script.Lib
         }
 
         //------------------------------------------------------------------
-        [ScriptMethod(LIB_NAME2)]
+        [ScriptMethod(path: LIB_NAME2, oldSpecification: true)]
         public static string GetContents(HttpResponseMessage httpResponseMessage)
         {
             if (httpResponseMessage is null)
@@ -70,14 +70,14 @@ namespace CapyCSS.Script.Lib
         }
 
         //------------------------------------------------------------------
-        [ScriptMethod(LIB_NAME)]
+        [ScriptMethod(path: LIB_NAME, oldSpecification: true)]
         public static string GetMyHostName()
         {
             return Dns.GetHostName();
         }
 
         //------------------------------------------------------------------
-        [ScriptMethod(LIB_NAME)]
+        [ScriptMethod(path: LIB_NAME, oldSpecification: true)]
         public static ICollection<string> GetMyHostAddress()
         {
             var addressList = new List<string>();
@@ -89,7 +89,7 @@ namespace CapyCSS.Script.Lib
         }
 
         //------------------------------------------------------------------
-        [ScriptMethod(LIB_NAME)]
+        [ScriptMethod(path: LIB_NAME, oldSpecification: true)]
         public static ICollection<string> GetHostEntry(string hostname)
         {
             var ipAddressList = new List<string>();
@@ -101,7 +101,7 @@ namespace CapyCSS.Script.Lib
         }
 
         //------------------------------------------------------------------
-        [ScriptMethod(LIB_NAME)]
+        [ScriptMethod(path: LIB_NAME, oldSpecification: true)]
         public static string GetHostName(string address)
         {
             IPHostEntry hostInfo = Dns.GetHostEntry(address);

@@ -1,21 +1,21 @@
 System.String variable1;
 var ExtensionSearch = () => {
-    CapyCSS.Script.Lib.FileLib.ForeachFiles(
+    CapyCSSbase.FileLib.ForeachFiles(
         CapyCSS.Script.Lib.FileLib.BrowseFolder(
             "",
             ""
         ),
         ( ARG_1 ) => {
                 variable1 = ARG_1;
-                CapyCSS.Script.Lib.FlowLib.If(
-                    CapyCSS.Script.Lib.ListFactory.Contains(
+                CapyCSSbase.FlowLib.If(
+                    CapyCSSbase.ListFactory.Contains(
                         new System.Collections.Generic.List<System.String>() {
                             ".txt",
                             ".bat"
                         },
                         System.IO.Path.GetExtension( variable1 )
                     ),
-                    () => CapyCSS.Script.Lib.Script.OutConsole( variable1 ),
+                    () => CapyCSSbase.Script.OutConsole( variable1 ),
                     null
                 );
             },

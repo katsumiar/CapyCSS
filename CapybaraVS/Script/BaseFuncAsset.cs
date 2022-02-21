@@ -15,6 +15,7 @@ using static CapyCSS.Controls.BaseControls.CommandCanvas;
 using static CapyCSS.Controls.MultiRootConnector;
 using CapyCSS.Script;
 using static CapyCSS.Script.ScriptImplement;
+using CapyCSSbase;
 
 namespace CapyCSS.Script
 {
@@ -50,7 +51,7 @@ namespace CapyCSS.Script
             CreateAssetMenu(ownerCommandCanvas, ProgramNode, new ResultSequence());
 
             {
-                var literalNode = CreateGroup(ProgramNode, Script_Literal.LIB_Script_literal_NAME);
+                var literalNode = CreateGroup(ProgramNode, CapyCSSbase.Script_Literal.LIB_Script_literal_NAME);
                 CreateAssetMenu(ownerCommandCanvas, literalNode, new LiteralType());
             }
 
@@ -72,17 +73,17 @@ namespace CapyCSS.Script
                 DotNet = CreateGroup(ProgramNode, MENU_TITLE_DOT_NET_FUNCTION);
 
                 {
-                    var flowOperation = CreateGroup(DotNet, FlowLib.LIB_FLOW_NAME);
+                    var flowOperation = CreateGroup(DotNet, CapyCSSbase.FlowLib.LIB_FLOW_NAME);
                     CreateAssetMenu(ownerCommandCanvas, flowOperation, new SwitchEnum());
                 }
 
                 {
-                    var funcNode = CreateGroup(DotNet, FlowLib.LIB_Fx_NAME);
+                    var funcNode = CreateGroup(DotNet, CapyCSSbase.FlowLib.LIB_Fx_NAME);
                     CreateAssetMenu(ownerCommandCanvas, funcNode, new DummyArguments());
                 }
 
                 {
-                    var math = CreateGroup(DotNet, MathLib.LIB_MATH_NAME);
+                    var math = CreateGroup(DotNet, CapyCSSbase.MathLib.LIB_MATH_NAME);
                     var mathNode = CreateGroup(math, "Base");
                     CreateAssetMenu(ownerCommandCanvas, mathNode, new Abs());
                     CreateAssetMenu(ownerCommandCanvas, mathNode, new Inc());
@@ -97,12 +98,12 @@ namespace CapyCSS.Script
                 }
 
                 {
-                    var script = CreateGroup(DotNet, CapyCSS.Script.Lib.Script.LIB_Script_NAME);
+                    var script = CreateGroup(DotNet, CapyCSSbase.Script.LIB_Script_NAME);
                     CreateAssetMenu(ownerCommandCanvas, script, new ScriptDispose());
                 }
 
                 {
-                    var io = CreateGroup(DotNet, EnvironmentLib.LIB_IO_NAME);
+                    var io = CreateGroup(DotNet, CapyCSSbase.EnvironmentLib.LIB_IO_NAME);
                     var conOut = CreateGroup(io, "OutConsole");
                     CreateAssetMenu(ownerCommandCanvas, conOut, new OutConsole());
                 }
@@ -408,7 +409,7 @@ namespace CapyCSS.Script
                 );
 
             // エイリアス
-            col.FunctionInfo = new BuildScriptFormat(nameof(Lib.Script.Sum), typeof(Lib.Script));
+            col.FunctionInfo = new BuildScriptFormat(nameof(CapyCSSbase.Script.Sum), typeof(CapyCSSbase.Script));
 
             return true;
         }
@@ -640,7 +641,7 @@ namespace CapyCSS.Script
                 );
 
             // エイリアス
-            col.FunctionInfo = new BuildScriptFormat(nameof(Lib.Script.Inc), typeof(Lib.Script));
+            col.FunctionInfo = new BuildScriptFormat(nameof(CapyCSSbase.Script.Inc), typeof(CapyCSSbase.Script));
 
             return true;
         }
@@ -689,7 +690,7 @@ namespace CapyCSS.Script
                 );
 
             // エイリアス
-            col.FunctionInfo = new BuildScriptFormat(nameof(Lib.Script.Dec), typeof(Lib.Script));
+            col.FunctionInfo = new BuildScriptFormat(nameof(CapyCSSbase.Script.Dec), typeof(CapyCSSbase.Script));
 
             return true;
         }
@@ -739,7 +740,7 @@ namespace CapyCSS.Script
                 );
 
             // エイリアス
-            col.FunctionInfo = new BuildScriptFormat(nameof(Lib.Script.Modulo), typeof(Lib.Script));
+            col.FunctionInfo = new BuildScriptFormat(nameof(CapyCSSbase.Script.Modulo), typeof(CapyCSSbase.Script));
 
             return true;
         }
@@ -794,7 +795,7 @@ namespace CapyCSS.Script
                 );
 
             // エイリアス
-            col.FunctionInfo = new BuildScriptFormat(nameof(Lib.Script.Multiply), typeof(Lib.Script));
+            col.FunctionInfo = new BuildScriptFormat(nameof(CapyCSSbase.Script.Multiply), typeof(CapyCSSbase.Script));
 
             return true;
         }
@@ -848,7 +849,7 @@ namespace CapyCSS.Script
                 );
 
             // エイリアス
-            col.FunctionInfo = new BuildScriptFormat(nameof(Lib.Script.Divide), typeof(Lib.Script));
+            col.FunctionInfo = new BuildScriptFormat(nameof(CapyCSSbase.Script.Divide), typeof(CapyCSSbase.Script));
 
             return true;
         }
@@ -1326,7 +1327,7 @@ namespace CapyCSS.Script
             col.LinkConnectorControl.IsRunable = true;
 
             // エイリアス
-            col.FunctionInfo = new BuildScriptFormat(nameof(Lib.Script.OutConsole), typeof(Lib.Script));
+            col.FunctionInfo = new BuildScriptFormat(nameof(CapyCSSbase.Script.OutConsole), typeof(CapyCSSbase.Script));
 
             return true;
         }

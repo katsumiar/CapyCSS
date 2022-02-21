@@ -19,7 +19,7 @@ namespace CapyCSS.Script.Lib
         private const string LIB_NAME1 = LIB_NAME + ".Read";
 
         //------------------------------------------------------------------
-        [ScriptMethod(LIB_NAME1)]
+        [ScriptMethod(path: LIB_NAME1, oldSpecification: true)]
         public static int StreamReadLine(
             StreamReader stream,
             bool autoClose,
@@ -46,7 +46,7 @@ namespace CapyCSS.Script.Lib
         private const string LIB_NAME2 = LIB_NAME + ".Writer";
 
         //------------------------------------------------------------------
-        [ScriptMethod(LIB_NAME2)]
+        [ScriptMethod(path: LIB_NAME2, oldSpecification: true)]
         public static string StreamWrite(
             StreamWriter stream,
             string str,
@@ -65,7 +65,7 @@ namespace CapyCSS.Script.Lib
         }
 
         //------------------------------------------------------------------
-        [ScriptMethod(LIB_NAME2)]
+        [ScriptMethod(path: LIB_NAME2, oldSpecification: true)]
         public static void FileOpenAddWriteAndClose(string fileName, string str, bool lineMode, string encoding = "utf-8")
         {
             var stream = new StreamWriter(fileName, true, Encoding.GetEncoding(encoding));
@@ -75,7 +75,7 @@ namespace CapyCSS.Script.Lib
         //====================================================================================
         private const string LIB_NAME3 = LIB_NAME + ".Searcher";
 
-        [ScriptMethod(LIB_NAME3)]
+        [ScriptMethod(path: LIB_NAME3, oldSpecification: true)]
         public static long GetFilesSize(
             string path
             , string searchPattern = "*.*"
@@ -95,7 +95,7 @@ namespace CapyCSS.Script.Lib
         }
 
         //------------------------------------------------------------------
-        [ScriptMethod(LIB_NAME3)]
+        [ScriptMethod(path: LIB_NAME3, oldSpecification: true)]
         static ICollection<string> GetDirectories(
             ICollection<string> list
             , string path
@@ -118,7 +118,7 @@ namespace CapyCSS.Script.Lib
             return list;
         }
 
-        [ScriptMethod(LIB_NAME3)]
+        [ScriptMethod(path: LIB_NAME3, oldSpecification: true)]
         public static ICollection<string> GetDirectories(
             string path
             , bool allDirectories = false
@@ -129,7 +129,7 @@ namespace CapyCSS.Script.Lib
         }
 
         //------------------------------------------------------------------
-        [ScriptMethod(LIB_NAME3)]
+        [ScriptMethod(path: LIB_NAME3, oldSpecification: true)]
         public static ICollection<string> GetFilesFromDirectories(
             IEnumerable<string> directories
             , string searchPattern = "*.*"
@@ -158,7 +158,7 @@ namespace CapyCSS.Script.Lib
         //====================================================================================
         private const string LIB_NAME4 = LIB_NAME + ".Filtering";
 
-        [ScriptMethod(LIB_NAME4)]
+        [ScriptMethod(path: LIB_NAME4, oldSpecification: true)]
         public static ICollection<string> PathListToFileList(IEnumerable<string> pathList)
         {
             var list = new List<string>();
@@ -170,7 +170,7 @@ namespace CapyCSS.Script.Lib
         }
 
         //------------------------------------------------------------------
-        [ScriptMethod(LIB_NAME4)]
+        [ScriptMethod(path: LIB_NAME4, oldSpecification: true)]
         public static ICollection<string> PathListToExtensionList(IEnumerable<string> pathList)
         {
             var list = new List<string>();
@@ -182,7 +182,7 @@ namespace CapyCSS.Script.Lib
         }
 
         //------------------------------------------------------------------
-        [ScriptMethod(LIB_NAME4)]
+        [ScriptMethod(path: LIB_NAME4, oldSpecification: true)]
         public static ICollection<string> PathListToDirectoryList(IEnumerable<string> pathList)
         {
             var list = new List<string>();
@@ -194,7 +194,7 @@ namespace CapyCSS.Script.Lib
         }
 
         //------------------------------------------------------------------
-        [ScriptMethod(LIB_NAME)]
+        [ScriptMethod(path: LIB_NAME, oldSpecification: true)]
         public static long GetFileSize(string path)
         {
             FileInfo file = new FileInfo(path);
@@ -202,7 +202,7 @@ namespace CapyCSS.Script.Lib
         }
 
         //------------------------------------------------------------------
-        [ScriptMethod(LIB_NAME)]
+        [ScriptMethod(path: LIB_NAME, oldSpecification: true)]
         public static string CreateDirectory(
             string path
             , bool addSerialNumber = false)
@@ -225,7 +225,7 @@ namespace CapyCSS.Script.Lib
         }
 
         //------------------------------------------------------------------
-        [ScriptMethod(LIB_NAME)]
+        [ScriptMethod(path: LIB_NAME, oldSpecification: true)]
         public static string Combine(List<string> paths, bool slashSeparate = false)
         {
             string path = Path.Combine(paths.ToArray());
@@ -237,7 +237,7 @@ namespace CapyCSS.Script.Lib
         }
 
         //------------------------------------------------------------------
-        [ScriptMethod(LIB_NAME)]
+        [ScriptMethod(path: LIB_NAME, oldSpecification: true)]
         public static ICollection<string> GetFiles(
             string path
             , string searchPattern = "*.*"
@@ -280,7 +280,7 @@ namespace CapyCSS.Script.Lib
         }
 
         //------------------------------------------------------------------
-        [ScriptMethod(LIB_NAME)]
+        [ScriptMethod(path: LIB_NAME, oldSpecification: true)]
         public static int ForeachFiles(
             string path
             , Action<string> func
@@ -314,7 +314,7 @@ namespace CapyCSS.Script.Lib
         }
 
         //------------------------------------------------------------------
-        [ScriptMethod(LIB_NAME)]
+        [ScriptMethod(path: LIB_NAME)]
         public static string BrowseFile(string title, string currentDir, string filter = "all (*.*)|*.*")
         {
             var dialog = new OpenFileDialog();
@@ -334,7 +334,7 @@ namespace CapyCSS.Script.Lib
         }
 
         //------------------------------------------------------------------
-        [ScriptMethod(LIB_NAME)]
+        [ScriptMethod(path: LIB_NAME)]
         public static string BrowseFolder(string title, string currentDir)
         {
             var dialog = new OpenFileDialog() { FileName = "SelectFolder", Filter = "Folder|.", CheckFileExists = false };
