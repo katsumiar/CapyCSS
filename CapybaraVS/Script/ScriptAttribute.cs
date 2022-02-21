@@ -16,86 +16,10 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Controls;
 using static CapyCSS.Controls.BaseControls.CommandCanvas;
+using CapyCSSattribute;
 
 namespace CapyCSS.Script
 {
-    public interface IScriptArribute
-    {
-        string Path { get; }
-        string MethodName { get; }
-        bool OldSpecification { get; }
-        bool DefaultHide { get; }
-        bool IsRunable { get; }
-    }
-
-    /// <summary>
-    /// リフレクションによるメソッドのスクリプトノード化用のメソッド用属性です。
-    /// </summary>
-    [AttributeUsage(AttributeTargets.Class, AllowMultiple = false, Inherited = true)]
-    public class ScriptClassAttribute : Attribute, IScriptArribute
-    {
-        private string path;            // メニュー用のパス
-        private bool oldSpecification;  // 古い仕様のメソッド（ユーザーに廃止を促すのに使用します）
-        private bool defaultHide;       // 非表示指定
-        public string Path => path;
-        public string MethodName => null;
-        public bool OldSpecification => oldSpecification;
-        public bool DefaultHide => defaultHide;
-        public bool IsRunable => false;
-        public ScriptClassAttribute(string path = "", bool defaultHide = true, bool oldSpecification = false)
-        {
-            if (path != "" && !path.EndsWith("."))
-            {
-                path += ".";
-            }
-            this.path = path;
-            this.oldSpecification = oldSpecification;
-            this.defaultHide = defaultHide;
-        }
-    }
-
-    /// <summary>
-    /// リフレクションによるメソッドのスクリプトノード化用のメソッド用属性です。
-    /// </summary>
-    [AttributeUsage(AttributeTargets.Method, AllowMultiple = true, Inherited = false)]
-    public class ScriptMethodAttribute : Attribute, IScriptArribute
-    {
-        private string path;            // メニュー用のパス
-        private string methodName;      // メソッド名
-        private bool oldSpecification;  // 古い仕様のメソッド（ユーザーに廃止を促すのに使用します）
-        private bool isRunable;         // 任意実行可能ノード指定
-        public string Path => path;
-        public string MethodName => methodName;
-        public bool OldSpecification => oldSpecification;
-        public bool DefaultHide => false;
-        public bool IsRunable => isRunable;
-        public ScriptMethodAttribute(string path = "", string methodName = null, bool oldSpecification = false, bool isRunable = false)
-        {
-            if (path != "" && !path.EndsWith("."))
-            {
-                path += ".";
-            }
-            this.path = path;
-            this.methodName = methodName;
-            this.oldSpecification = oldSpecification;
-            this.isRunable = isRunable;
-        }
-    }
-
-    /// <summary>
-    /// リフレクションによるメソッドのスクリプトノード化用の引数用属性です。
-    /// </summary>
-    [AttributeUsage(AttributeTargets.Parameter)]
-    public class ScriptParamAttribute : Attribute
-    {
-        private string name;    // 引数名
-        public string ParamName => name;
-        public ScriptParamAttribute(string name)
-        {
-            this.name = name;
-        }
-    }
-
     public class ScriptImplement
     {
         public static string ImportingName = "";
