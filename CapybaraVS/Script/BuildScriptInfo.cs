@@ -352,7 +352,7 @@ namespace CapyCSS.Script
             result += "var " + entryPointName + " = () =>";
             result += _BuildScript(entryPointName, 0);
             result += ";" + Environment.NewLine;
-            result += $"{typeof(Lib.Script).FullName}.{nameof(Lib.Script.AddEntryPoint)}(nameof({entryPointName}), {entryPointName});";
+            result += $"{typeof(CapyCSSbase.Script).FullName}.{nameof(CapyCSSbase.Script.AddEntryPoint)}(nameof({entryPointName}), {entryPointName});";
             result += Environment.NewLine + Environment.NewLine;
             return result;
         }

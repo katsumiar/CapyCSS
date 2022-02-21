@@ -1,10 +1,10 @@
 var ActionCall01 = () => {
-    CapyCSS.Script.Lib.FlowLib.ForeachAction(
+    CapyCSSbase.FlowLib.ForeachAction(
         new System.Collections.Generic.List<System.Action>() {
-            () => CapyCSS.Script.Lib.Script.OutConsole( "dog" ),
-            () => CapyCSS.Script.Lib.Script.OutConsole( "cat" )
+            () => CapyCSSbase.Script.OutConsole( "dog" ),
+            () => CapyCSSbase.Script.OutConsole( "cat" )
         }
     );
 };
-CapyCSS.Script.Lib.Script.AddEntryPoint(nameof(ActionCall01), ActionCall01);
+CapyCSSbase.Script.AddEntryPoint(nameof(ActionCall01), ActionCall01);
 

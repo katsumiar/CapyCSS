@@ -1,5 +1,6 @@
 ﻿using CapyCSS.Controls;
 using CapyCSSattribute;
+using CapyCSSbase;
 using System;
 using System.Collections.Generic;
 using System.Text;

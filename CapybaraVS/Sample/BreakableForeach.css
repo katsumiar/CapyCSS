@@ -15,5 +15,5 @@ var BreakableForeach = () => {
             }
     );
 };
-CapyCSS.Script.Lib.Script.AddEntryPoint(nameof(BreakableForeach), BreakableForeach);
+CapyCSSbase.Script.AddEntryPoint(nameof(BreakableForeach), BreakableForeach);
 

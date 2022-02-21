@@ -1,15 +1,15 @@
 var EntryPoint = () => {
     return CapyCSS.Controls.CommandCanvasList.CallEntryPoint( "b" );
 };
-CapyCSS.Script.Lib.Script.AddEntryPoint(nameof(EntryPoint), EntryPoint);
+CapyCSSbase.Script.AddEntryPoint(nameof(EntryPoint), EntryPoint);
 
 var a = () => {
     return "called a";
 };
-CapyCSS.Script.Lib.Script.AddEntryPoint(nameof(a), a);
+CapyCSSbase.Script.AddEntryPoint(nameof(a), a);
 
 var b = () => {
     return "called b";
 };
-CapyCSS.Script.Lib.Script.AddEntryPoint(nameof(b), b);
+CapyCSSbase.Script.AddEntryPoint(nameof(b), b);
 

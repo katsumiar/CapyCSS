@@ -13,5 +13,5 @@ var Nullable = () => {
         () => CapyCSSbase.Script.OutConsole( "null" )
     );
 };
-CapyCSS.Script.Lib.Script.AddEntryPoint(nameof(Nullable), Nullable);
+CapyCSSbase.Script.AddEntryPoint(nameof(Nullable), Nullable);
 

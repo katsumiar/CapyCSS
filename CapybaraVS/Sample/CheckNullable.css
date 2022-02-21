@@ -77,5 +77,5 @@ var CheckNullable = () => {
             }
     );
 };
-CapyCSS.Script.Lib.Script.AddEntryPoint(nameof(CheckNullable), CheckNullable);
+CapyCSSbase.Script.AddEntryPoint(nameof(CheckNullable), CheckNullable);
 

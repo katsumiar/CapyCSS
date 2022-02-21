@@ -39,5 +39,5 @@ var ForeachReturn = () => {
         )
     );
 };
-CapyCSS.Script.Lib.Script.AddEntryPoint(nameof(ForeachReturn), ForeachReturn);
+CapyCSSbase.Script.AddEntryPoint(nameof(ForeachReturn), ForeachReturn);
 

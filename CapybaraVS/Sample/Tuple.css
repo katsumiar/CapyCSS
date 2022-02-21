@@ -7,5 +7,5 @@ var Tuple = () => {
     CapyCSSbase.Script.OutConsole( __cpb_work_0.Item2 );
     CapyCSSbase.Script.OutConsole( __cpb_work_0.ToString() );
 };
-CapyCSS.Script.Lib.Script.AddEntryPoint(nameof(Tuple), Tuple);
+CapyCSSbase.Script.AddEntryPoint(nameof(Tuple), Tuple);
 

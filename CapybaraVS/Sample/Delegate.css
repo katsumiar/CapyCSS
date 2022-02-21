@@ -17,5 +17,5 @@ var Delegate = () => {
         ( ARG_1 ) => CapyCSSbase.Script.OutConsole( ARG_1 )
     );
 };
-CapyCSS.Script.Lib.Script.AddEntryPoint(nameof(Delegate), Delegate);
+CapyCSSbase.Script.AddEntryPoint(nameof(Delegate), Delegate);
 

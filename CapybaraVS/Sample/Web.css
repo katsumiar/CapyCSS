@@ -6,5 +6,5 @@ var Web = () => {
         );
     return CapyCSSbase.Script.OutConsole( CapyCSSbase.Ip.GetContents( __cpb_work_0 ) );
 };
-CapyCSS.Script.Lib.Script.AddEntryPoint(nameof(Web), Web);
+CapyCSSbase.Script.AddEntryPoint(nameof(Web), Web);
 

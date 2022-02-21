@@ -20,6 +20,7 @@ using System.Windows.Shapes;
 using System.Windows.Threading;
 using System.Xml.Serialization;
 using CapyCSS.Script.Lib;
+using CapyCSSbase;
 
 namespace CapyCSS.Controls.BaseControls
 {

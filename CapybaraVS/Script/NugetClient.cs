@@ -11,6 +11,7 @@ using CapyCSS.Controls;
 using CapyCSS;
 using CapyCSS.Script.Lib;
 using System.Text.RegularExpressions;
+using CapyCSSbase;
 
 namespace CapyCSS.Script
 {
@@ -114,7 +115,7 @@ namespace CapyCSS.Script
             }
 
             List<string> dllList = new List<string>();
-            List<string> libPathList = new List<string>(FileLib.GetDirectories(packageDir, true));
+            List<string> libPathList = new List<string>(CapyCSSbase.FileLib.GetDirectories(packageDir, true));
             libPathList.Sort((a, b) => b.CompareTo(a));
             foreach (var dir in libPathList)
             {
@@ -122,7 +123,7 @@ namespace CapyCSS.Script
                     continue;
                 if (dir.Contains("netstandard"))
                     {
-                    ICollection<string> dll = FileLib.GetFiles(dir, "*.dll");
+                    ICollection<string> dll = CapyCSSbase.FileLib.GetFiles(dir, "*.dll");
                     if (dll.Count != 0)
                     {
                         bool isHit = dllList.Any((n) => dir.StartsWith(n.Substring(0, n.IndexOf("netstandard"))));

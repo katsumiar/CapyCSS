@@ -6,5 +6,5 @@ var ActionCall02 = () => {
         };
     CapyCSSbase.FlowLib.ForeachAction( funcs );
 };
-CapyCSS.Script.Lib.Script.AddEntryPoint(nameof(ActionCall02), ActionCall02);
+CapyCSSbase.Script.AddEntryPoint(nameof(ActionCall02), ActionCall02);
 
