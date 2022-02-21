@@ -120,7 +120,7 @@ namespace CapyCSS.Controls.BaseControls
                     self.FuncCaption.AssetXML.WriteAction?.Invoke();
                     Caption = self.FuncCaption.AssetXML;
 
-                    if (!(self.ValueData is ICbValueList))
+                    if (!(self.ValueData is ICbValueList) && self.ValueData != null)
                         Value = self.ValueData.ValueUIString;
 
                     ForcedChecked = self.ForcedChecked;
@@ -799,6 +799,13 @@ namespace CapyCSS.Controls.BaseControls
                             else
                             {
                                 string className = CbSTUtils.GetTryFullName(FunctionInfo.ClassType);
+                                if (FunctionInfo.FuncCode == nameof(CommandCanvasList.CallEntryPoint) &&
+                                    FunctionInfo.ClassType == typeof(CommandCanvasList))
+                                {
+                                    // CommandCanvasList.CallEntryPoint は、c#変換時に CapyCSSbase.Script.CallEntryPoint に差し替える
+
+                                    className = typeof(CapyCSSbase.Script).FullName;
+                                }
                                 methodName = className + "." + FunctionInfo.FuncCode;
                             }
 

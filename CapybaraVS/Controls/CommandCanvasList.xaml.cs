@@ -581,7 +581,7 @@ namespace CapyCSS.Controls
             UpdateButtonEnable();
         }
 
-        [ScriptMethod]
+        [ScriptMethod(path: CapyCSSbase.FlowLib.LIB_FLOW_NAME)]
         /// <summary>
         /// エントリーポイントリストからエントリーポイントを探して呼び出します。
         /// エントリーポイント名を指定していない場合は、カレントタブのエントリーポイントが呼ばれます。

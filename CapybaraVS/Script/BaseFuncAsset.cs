@@ -1353,6 +1353,9 @@ namespace CapyCSS.Script
                     )
                 );
 
+            // エイリアス
+            col.FunctionInfo = new BuildScriptFormat(nameof(CapyCSSbase.Script.Dispose), typeof(CapyCSSbase.Script));
+
             return true;
         }
     }

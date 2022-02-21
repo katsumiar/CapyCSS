@@ -13,10 +13,35 @@ namespace CapyCSSbase
     public static class Script
     {
         public const string LIB_Script_NAME = "Script";
+        private static List<Tuple<string, Func<object>>> funcs = new List<Tuple<string, Func<object>>>();
+
+        [ScriptMethod(path: LIB_Script_NAME)]
+        public static void AddEntryPoint(string name, Func<object> func)
+        {
+            funcs.Add(new Tuple<string, Func<object>>(name, func));
+        }
 
         [ScriptMethod(path: LIB_Script_NAME)]
         public static void AddEntryPoint(string name, Action action)
         {
+            funcs.Add(new Tuple<string, Func<object>>(name, () => { action?.Invoke(); return null; }));
+        }
+
+        [ScriptMethod(path: LIB_Script_NAME)]
+        public static object CallEntryPoint(string entryPointName)
+        {
+            var findList = funcs.Where(n => n.Item1 == entryPointName).ToList();
+            if (findList.Count != 0 && findList.First().Item2 != null)
+            {
+                return findList.First().Item2.Invoke();
+            }
+            return null;
+        }
+
+        [ScriptMethod(path: LIB_Script_NAME)]
+        public static void Dispose(IDisposable obj)
+        {
+            obj.Dispose();
         }
 
         //-------------------------------------------------
@@ -472,7 +497,7 @@ namespace CapyCSSbase
     [ScriptClass]
     public static class Script_Literal
     {
-        public const string LIB_Script_literal_NAME = "Literal";
+        public const string LIB_Script_literal_NAME = "Literal/Local";
 
         [ScriptMethod(path: LIB_Script_literal_NAME)]
         public static T Null<T>()
@@ -486,7 +511,7 @@ namespace CapyCSSbase
     [ScriptClass]
     public static class Script_Literal2
     {
-        public const string LIB_Script_literal_NAME = "Literal";
+        public const string LIB_Script_literal_NAME = "Literal/Local";
 
         [ScriptMethod(path: LIB_Script_literal_NAME)]
         public static object Null()
