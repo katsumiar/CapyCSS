@@ -59,6 +59,8 @@ namespace CapyCSS.Script
         public static readonly Type ARRAY_TYPE = typeof(Array);
         public static readonly Type DUMMY_TYPE = typeof(int); // ダミー
 
+        public const string NEW_STR = "new";                // new の表現
+
         public const string ERROR_STR = "[ERROR]";          // エラーの表現
         public const string NULL_STR = "null";              // nullの表現
         public const string DELEGATE_STR = "[delegate]";    // dlegateの表現

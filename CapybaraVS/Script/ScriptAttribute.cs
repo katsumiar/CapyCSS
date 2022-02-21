@@ -868,7 +868,7 @@ namespace CapyCSS.Script
 
                             return null;
                         }
-                        nodeName = "new " + className;
+                        nodeName = CbSTUtils.NEW_STR + " " + className;
                         nodeTitle = className;
                     }
                     else

@@ -744,21 +744,46 @@ namespace CapyCSS.Controls.BaseControls
                             result.Set("", BuildScriptInfo.CodeType.Method);
                         }
                         result.Add(args);
+                        if (!ForcedChecked && ValueData.TypeName != "void")
+                        {
+                            // キャッシュする
+                            // 結果を変数に入れる処理に分けて、自身は変数を返します。
+                            // 結果を変数に入れるノードは、BuildScriptInfo.InsertSharedScripts で出力されます。
+
+                            string tempValiable = result.MakeSharedValiable(result);
+                            result.Clear();
+                            result.Add(BuildScriptInfo.CreateBuildScriptInfo(null, tempValiable, BuildScriptInfo.CodeType.Variable));
+                        }
                     }
                     else
                     {
                         if (FunctionInfo.IsProperty)
                         {
-                            // プロパティ
+                            if (FunctionInfo.FuncCode == "get_Item" || FunctionInfo.FuncCode == "set_Item")
+                            {
+                                // インデクサー
 
-                            Debug.Assert(FunctionInfo.FuncCode.StartsWith("get_"));
+                                string funcCode = FunctionInfo.FuncCode.Substring(4);   // "get_" "set_" を取り除く
+                                string className = CbSTUtils.GetTryFullName(FunctionInfo.ClassType);
+                                string methodName = className;
+                                result.Set(methodName,
+                                    FunctionInfo.FuncCode == "get_Item" ? BuildScriptInfo.CodeType.GetIndexer : BuildScriptInfo.CodeType.SetIndexer);
+                                result.SetTypeName(ValueData.TypeName);
+                                result.Add(args);
+                            }
+                            else
+                            {
+                                // プロパティ
 
-                            string funcCode = FunctionInfo.FuncCode.Substring(4);   // "get_" を取り除く
-                            string className = CbSTUtils.GetTryFullName(FunctionInfo.ClassType);
-                            string methodName = className + "." + funcCode;
-                            result.Set(methodName, BuildScriptInfo.CodeType.Variable);
-                            result.SetTypeName(ValueData.TypeName);
-                            result.Add(args);
+                                Debug.Assert(FunctionInfo.FuncCode.StartsWith("get_"));
+
+                                string funcCode = FunctionInfo.FuncCode.Substring(4);   // "get_" を取り除く
+                                string className = CbSTUtils.GetTryFullName(FunctionInfo.ClassType);
+                                string methodName = className + "." + funcCode;
+                                result.Set(methodName, BuildScriptInfo.CodeType.Variable);
+                                result.SetTypeName(ValueData.TypeName);
+                                result.Add(args);
+                            }
                         }
                         else
                         {
@@ -769,7 +794,7 @@ namespace CapyCSS.Controls.BaseControls
                             {
                                 // コンストラクタ
 
-                                methodName = "new " + CbSTUtils.GetTryFullName(ValueData.OriginalType);
+                                methodName = CbSTUtils.NEW_STR + " " + CbSTUtils.GetTryFullName(ValueData.OriginalType);
                             }
                             else
                             {
@@ -839,7 +864,7 @@ namespace CapyCSS.Controls.BaseControls
                         else
                         {
                             string name = CbSTUtils.GetTryFullName(ValueData.OriginalType);
-                            result.Add(BuildScriptInfo.CreateBuildScriptInfo(null, "new " + name + "()", BuildScriptInfo.CodeType.Method, ValueData.Name));
+                            result.Add(BuildScriptInfo.CreateBuildScriptInfo(null, $"{CbSTUtils.NEW_STR} {name}()", BuildScriptInfo.CodeType.Method, ValueData.Name));
 
                             result.IsNotUseCache = ForcedChecked;
                             if (!ForcedChecked && ValueData.TypeName != "void")

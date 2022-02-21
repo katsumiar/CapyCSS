@@ -378,7 +378,7 @@ namespace CapyCSS.Controls.BaseControls
                     else
                     {
                         string name = CbSTUtils.GetTryFullName(ValueData.OriginalType);
-                        scr.Add(BuildScriptInfo.CreateBuildScriptInfo(null, "new " + name + "()", BuildScriptInfo.CodeType.Method, ValueData.Name));
+                        scr.Add(BuildScriptInfo.CreateBuildScriptInfo(null, $"{CbSTUtils.NEW_STR} {name}()", BuildScriptInfo.CodeType.Method, ValueData.Name));
                     }
                 }
                 else

@@ -1,0 +1,41 @@
+var Indexer = () => {
+    var __cpb_work_0 = (
+            new System.Collections.Generic.List<System.String>() {
+                "abc",
+                "def"
+            }
+        );
+    var __cpb_work_1 = (
+            new System.Collections.Generic.List<System.String>() {
+                "abc",
+                "def"
+            }
+        );
+    var __cpb_work_2 = (
+            new System.Collections.Generic.List<System.String>() {
+                "abc",
+                "def"
+            }
+        );
+    var __cpb_work_3 = (
+            new System.Collections.Generic.List<System.String>() {
+                "abc",
+                "def"
+            }
+        );
+    var __cpb_work_4 = CapyCSSbase.Script.Sum(
+            new System.Collections.Generic.List<System.Int32>() {
+                1,
+                2
+            }
+        );
+    __cpb_work_0.Add( "" );
+    __cpb_work_1[ 0 ];
+    __cpb_work_2[ 0 ] = "abc";
+    __cpb_work_3[ 0 ];
+    __cpb_work_3[ 0 ] = "abc";
+    __cpb_work_3[ __cpb_work_4 ];
+    __cpb_work_3[ __cpb_work_4 ] = __cpb_work_4;
+};
+CapyCSSbase.Script.AddEntryPoint(nameof(Indexer), Indexer);
+
