@@ -811,7 +811,7 @@ namespace CapyCSS.Controls.BaseControls
         /// </summary>
         public void SetupTitle()
         {
-            CommandCanvasControl.RequestSetTitle(openFileName);
+            CommandCanvasControl.RequestSetTitle(System.IO.Path.GetFileName(openFileName));
         }
 
         /// <summary>
