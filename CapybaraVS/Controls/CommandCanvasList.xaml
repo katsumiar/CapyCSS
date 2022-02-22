@@ -16,7 +16,7 @@
         <ToolBarPanel Grid.Row="0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Background="PeachPuff" Orientation="Horizontal">
             <Button Content="Help" x:Name="HelpButton" Click="HelpButton_Click" Height="30" Margin="6,2,0,2" />
             <Button Content="Load(Ctrl+O)" x:Name="LoadButton" Click="LoadButton_Click" Height="30" Margin="6,2,0,2" />
-            <Button Content="Save(Ctrl+S)" x:Name="SaveButton" Click="SaveButton_Click" Height="30" Margin="6,2,0,2" />
+            <Button Content="Save" x:Name="SaveButton" Click="SaveButton_Click" Height="30" Margin="6,2,0,2" />
             <Button Content="New(Ctrl+N)" x:Name="AddButton" Click="AddButton_Click" Height="30" Margin="6,2,0,2" />
             <Button Content="Remove(Del)" x:Name="DeleteButton" Click="DeleteButton_Click" Height="30" Margin="12,2,0,2" />
             <Button Content="Command Menu(Space)" x:Name="CommandMenuButton" Click="CommandMenuButton_Click" Height="30" Margin="12,2,0,2" />

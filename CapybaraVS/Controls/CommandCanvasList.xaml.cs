@@ -966,11 +966,6 @@ namespace CapyCSS.Controls
                         AddNewContents();
                         e.Handled = true;
                         break;
-
-                    case Key.F5:    // 全スクリプト実行
-                        CallPublicExecuteEntryPoint(false, null);
-                        e.Handled = true;
-                        break;
                 }
             }
             else if ((Keyboard.GetKeyStates(Key.LeftShift) & KeyStates.Down) > 0 ||
