@@ -14,10 +14,10 @@
         <Grid Grid.Column="0">
             <BaseControls:BaseWorkCanvas x:Name="WorkCanvas" />
         </Grid>
-        <Expander IsExpanded="True"  ExpandDirection="Right" HorizontalAlignment="Right" VerticalAlignment="Top" Background="Bisque">
+        <Expander IsExpanded="True"  ExpandDirection="Right" HorizontalAlignment="Right" VerticalAlignment="Top" Background="#CCFFE4C4">
             <Controls:Stack x:Name="WorkStack" HorizontalAlignment="Center" VerticalAlignment="Top" />
         </Expander>
-        <Expander x:Name="moduleView" IsExpanded="True"  ExpandDirection="Left" HorizontalAlignment="Left" VerticalAlignment="Top" Background="Bisque">
+        <Expander x:Name="moduleView" IsExpanded="True"  ExpandDirection="Left" HorizontalAlignment="Left" VerticalAlignment="Top" Background="#CCFFE4C4">
         </Expander>
     </Grid>
 </UserControl>
