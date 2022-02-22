@@ -862,10 +862,26 @@ namespace CapyCSS.Controls.BaseControls
             ChangeLinkConnectorStroke();
         }
 
+        private void Grid_MouseDown2(object sender, MouseButtonEventArgs e)
+        {
+            if (e.ClickCount < 2)
+            {
+                return;
+            }
+            RequestRemoveQurve();
+            e.Handled = true;
+        }
+
         private void Grid_MouseDown(object sender, MouseButtonEventArgs e)
         {
-            if ((Keyboard.GetKeyStates(Key.LeftCtrl) & KeyStates.Down) > 0 ||
-                (Keyboard.GetKeyStates(Key.RightCtrl) & KeyStates.Down) > 0)
+            bool isPlusLeftCtrlKey = (Keyboard.GetKeyStates(Key.LeftCtrl) & KeyStates.Down) > 0;
+            bool isPlusRightCtrlKey = (Keyboard.GetKeyStates(Key.RightCtrl) & KeyStates.Down) > 0;
+            bool isDoubleClick = e.ClickCount == 2;
+
+            if (isPlusLeftCtrlKey 
+                || isPlusRightCtrlKey
+                || isDoubleClick
+                )
             {
                 RequestRemoveQurve();
                 e.Handled = true;

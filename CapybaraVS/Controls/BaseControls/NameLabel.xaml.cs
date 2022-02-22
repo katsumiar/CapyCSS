@@ -220,6 +220,12 @@ namespace CapyCSS.Controls.BaseControls
             {
                 return;
             }
+            if (e.ClickCount < 2)
+            {
+                // シングルクリックは拒否する
+
+                return;
+            }
 
             LabelControl.Visibility = Visibility.Hidden;
             EditControl.Visibility = Visibility.Visible;
