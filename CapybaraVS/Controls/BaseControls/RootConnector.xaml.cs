@@ -729,7 +729,7 @@ namespace CapyCSS.Controls.BaseControls
                         // Switch文
 
                         result.Set(name, BuildScriptInfo.CodeType.VoidSwitch);
-                        string className = CbSTUtils.GetTryFullName(FunctionInfo.ClassType);
+                        string className = CbSTUtils.GetTypeFullName(FunctionInfo.ClassType);
                         result.SetTypeName(className);
                         result.Add(args);
                     }
@@ -764,7 +764,7 @@ namespace CapyCSS.Controls.BaseControls
                                 // インデクサー
 
                                 string funcCode = FunctionInfo.FuncCode.Substring(4);   // "get_" "set_" を取り除く
-                                string className = CbSTUtils.GetTryFullName(FunctionInfo.ClassType);
+                                string className = CbSTUtils.GetTypeFullName(FunctionInfo.ClassType);
                                 string methodName = className;
                                 result.Set(methodName,
                                     FunctionInfo.FuncCode == "get_Item" ? BuildScriptInfo.CodeType.GetIndexer : BuildScriptInfo.CodeType.SetIndexer);
@@ -778,7 +778,7 @@ namespace CapyCSS.Controls.BaseControls
                                 Debug.Assert(FunctionInfo.FuncCode.StartsWith("get_"));
 
                                 string funcCode = FunctionInfo.FuncCode.Substring(4);   // "get_" を取り除く
-                                string className = CbSTUtils.GetTryFullName(FunctionInfo.ClassType);
+                                string className = CbSTUtils.GetTypeFullName(FunctionInfo.ClassType);
                                 string methodName = className + "." + funcCode;
                                 result.Set(methodName, BuildScriptInfo.CodeType.Variable);
                                 result.SetTypeName(ValueData.TypeName);
@@ -794,11 +794,11 @@ namespace CapyCSS.Controls.BaseControls
                             {
                                 // コンストラクタ
 
-                                methodName = CbSTUtils.NEW_STR + " " + CbSTUtils.GetTryFullName(ValueData.OriginalType);
+                                methodName = CbSTUtils.NEW_STR + " " + CbSTUtils.GetTypeFullName(ValueData.OriginalType);
                             }
                             else
                             {
-                                string className = CbSTUtils.GetTryFullName(FunctionInfo.ClassType);
+                                string className = CbSTUtils.GetTypeFullName(FunctionInfo.ClassType);
                                 if (FunctionInfo.FuncCode == nameof(CommandCanvasList.CallEntryPoint) &&
                                     FunctionInfo.ClassType == typeof(CommandCanvasList))
                                 {
@@ -870,7 +870,7 @@ namespace CapyCSS.Controls.BaseControls
                         }
                         else
                         {
-                            string name = CbSTUtils.GetTryFullName(ValueData.OriginalType);
+                            string name = CbSTUtils.GetTypeFullName(ValueData.OriginalType);
                             result.Add(BuildScriptInfo.CreateBuildScriptInfo(null, $"{CbSTUtils.NEW_STR} {name}()", BuildScriptInfo.CodeType.Method, ValueData.Name));
 
                             result.IsNotUseCache = ForcedChecked;

@@ -105,8 +105,13 @@ namespace CapyCSS.Script
             // 現在のコードを実行しているアセンブリを取得する
             Assembly asm = Assembly.GetExecutingAssembly();
             GetApiFromAssemblyForScriptMethodAttribute(OwnerCommandCanvas, node, asm);
-            var capyCSSbase = Assembly.Load("CapyCSSbase");
-            GetApiFromAssemblyForScriptMethodAttribute(OwnerCommandCanvas, node, capyCSSbase);
+
+            // 基本のDLLを追加する
+            foreach (var dllName in CbSTUtils.BaseDllList)
+            {
+                Assembly capyCSSbase = Assembly.Load(dllName);
+                GetApiFromAssemblyForScriptMethodAttribute(OwnerCommandCanvas, node, capyCSSbase);
+            }
         }
 
         /// <summary>

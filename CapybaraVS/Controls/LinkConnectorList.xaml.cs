@@ -506,7 +506,7 @@ namespace CapyCSS.Controls
             {
                 if (node.ValueData.TypeName != "void")
                 {
-                    string name = CbSTUtils.GetTryFullName(node.ValueData.OriginalType);
+                    string name = CbSTUtils.GetTypeFullName(node.ValueData.OriginalType);
                     result.Set($"{CbSTUtils.NEW_STR} System.Collections.Generic.List<{name}>()", BuildScriptInfo.CodeType.List);
                 }
                 BuildScriptInfo argResult = node.RequestBuildScript();

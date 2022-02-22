@@ -193,15 +193,23 @@ namespace CapyCSS.Script
             { nameof(CbVoid), VOID_STR },
         };
 
+        /// <summary>
+        /// 初期実装のDLLリストです。
+        /// ※CapyCSSattributeが使われていることが前提です。
+        /// </summary>
+        static public readonly IEnumerable<string> BaseDllList = new List<string>()
+        {
+            "CapyCSSbase",
+        };
+
         private static ReaderWriterLock CbTypeNameListRwLock = new ReaderWriterLock();
 
         /// <summary>
-        /// 型のFullNameを取得します。
-        /// ※ "+"は"."に置き換えます。
+        /// 型のフルネームを取得します。
         /// </summary>
         /// <param name="type">型情報</param>
-        /// <returns>可能ならFullName無理ならName</returns>
-        public static string GetTryFullName(Type type)
+        /// <returns>型のフルネーム</returns>
+        public static string GetTypeFullName(Type type)
         {
             return GetTypeName(type, false);
         }
