@@ -619,17 +619,54 @@ namespace CapyCSS.Controls.BaseControls
                 treeViewCommand.AssetTreeData.Add(decorationNode);
             }
 
-            // 基本的なアセットを追加
+            // 基本的なネームスペースを追加
             ApiImporter = new ApiImporter(this);
-            moduleView.Content =
-                moduleControler = new ModuleControler(
-                    ApiImporter, 
-                    CommandCanvasControl.DllDir,
-                    CommandCanvasControl.PackageDir
-                );
+            MakeModuleControler(new List<ShortCutCommand>()
+            {
+                // ショートカットを追加
+
+                new ShortCutCommand() { Name = "Create Literal/Local Variable", Command = "Program.Literal/Local.Literal/Local : T" },
+                new ShortCutCommand() { Name = "Create Variable", Command = "Program.Variable.Create Variable : T" },
+                new ShortCutCommand() { Name = "Void Sequence", Command = "Program.VoidSequence" },
+                new ShortCutCommand() { Name = "Result Sequence", Command = "Program.ResultSequence(T) : T" },
+                new ShortCutCommand() { Name = "Reference Dummy Arguments", Command = "Program.Function.f(x).DummyArguments<T> : T" },
+            });
 
             ApiImporter.ImportBaseModule();
             ImportModule(); // 起動時に外部からインポートモジュールを設定される可能性がある
+        }
+
+        struct ShortCutCommand
+        {
+            public string Name { get; set; }
+            public string Command { get; set; }
+        }
+
+        private void MakeModuleControler(IEnumerable<ShortCutCommand> shortCutCommands)
+        {
+            moduleControler = new ModuleControler(
+                ApiImporter,
+                CommandCanvasControl.DllDir,
+                CommandCanvasControl.PackageDir
+            );
+
+            var stackPanel = new StackPanel();
+            stackPanel.Orientation = Orientation.Vertical;
+            stackPanel.Children.Add(moduleControler);
+            foreach (var shortCutCommand in shortCutCommands)
+            {
+                var shortcutButton = new Button()
+                {
+                    Content = shortCutCommand.Name,
+                    Background = Brushes.SeaGreen,
+                    BorderBrush = Brushes.DarkOliveGreen,
+                    Margin = new Thickness( 0, 0, 0, 2),
+                };
+                shortcutButton.Click += (o, e) => CommandMenu.ExecuteFindCommand(shortCutCommand.Command);
+                stackPanel.Children.Add(shortcutButton);
+            }
+
+            moduleView.Content = stackPanel;
         }
 
         /// <summary>
