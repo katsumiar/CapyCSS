@@ -80,7 +80,7 @@ namespace CapyCSS.Controls.BaseControls
         , IAsset
         , IDisposable
     {
-        public static readonly int DATA_VERSION = 2;
+        public static readonly int DATA_VERSION = 3;
 
         #region ID管理
         private AssetIdProvider assetIdProvider = null;
