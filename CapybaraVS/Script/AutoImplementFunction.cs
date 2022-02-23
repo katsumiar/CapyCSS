@@ -79,11 +79,11 @@ namespace CapyCSS.Script
 
         public string FuncTitle { get; set; } = "";
 
-        public List<TypeRequest> typeRequests { get; set; } = null;
+        public IList<TypeRequest> typeRequests { get; set; } = null;
 
         public Type ClassType { get; set; } = null;
 
-        public List<ArgumentInfoNode> ArgumentTypeList { get; set; } = null;
+        public IList<ArgumentInfoNode> ArgumentTypeList { get; set; } = null;
 
         public Func<ICbValue> ReturnType { get; set; } = null;
 

@@ -1290,7 +1290,7 @@ namespace CapyCSS.Controls.BaseControls
         /// <param name="typeRequests">型の要求リスト</param>
         /// <param name="title">タイトル</param>
         /// <returns>型名リスト</returns>
-        public List<string> RequestTypeName(in List<TypeRequest> typeRequests, string title = "")
+        public List<string> RequestTypeName(in IList<TypeRequest> typeRequests, string title = "")
         {
             var result = new List<string>();
             bool positionSet = true;

@@ -752,7 +752,7 @@ namespace CapyCSS.Script
             if (returnType == typeof(Task))
                 return null;
 
-            List<ArgumentInfoNode> argumentList = null;
+            IList<ArgumentInfoNode> argumentList = null;
 
             string genericArgs = "";
             List<TypeRequest> genericTypeRequests = null;
@@ -1234,9 +1234,9 @@ namespace CapyCSS.Script
         /// <param name="argumentList">引数リスト</param>
         /// <param name="selfType"></param>
         /// <returns></returns>
-        private static List<ArgumentInfoNode> MakeSelfTypeForClassMethod(
+        private static IList<ArgumentInfoNode> MakeSelfTypeForClassMethod(
             MethodBase methodInfo,
-            List<ArgumentInfoNode> argumentList,
+            IList<ArgumentInfoNode> argumentList,
             Func<string, ICbValue> selfType)
         {
             ArgumentInfoNode argNode = new ArgumentInfoNode();
@@ -1271,7 +1271,7 @@ namespace CapyCSS.Script
         /// <returns></returns>
         private static bool GetArgumentList(
             MethodBase info,
-            ref List<ArgumentInfoNode> argumentList)
+            ref IList<ArgumentInfoNode> argumentList)
         {
             if (info is null)
                 return false;

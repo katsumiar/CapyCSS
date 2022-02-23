@@ -93,7 +93,7 @@ namespace CapyCSS.Script
         /// 型選択リストの受け入れ項目
         /// ※必要がないなら null にする
         /// </summary>
-        List<TypeRequest> typeRequests { get; }
+        IList<TypeRequest> typeRequests { get; }
     }
 
     /// <summary>
@@ -115,7 +115,7 @@ namespace CapyCSS.Script
         /// 型選択リストの受け入れ項目
         /// ※必要がないなら null にする
         /// </summary>
-        List<TypeRequest> typeRequests { get; }
+        IList<TypeRequest> typeRequests { get; }
     }
 
     /// <summary>
@@ -136,7 +136,7 @@ namespace CapyCSS.Script
         /// <summary>
         /// 引数情報
         /// </summary>
-        List<ArgumentInfoNode> ArgumentTypeList { get; }
+        IList<ArgumentInfoNode> ArgumentTypeList { get; }
     }
 
     public class FuncAssetSub

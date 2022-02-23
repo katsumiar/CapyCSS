@@ -333,7 +333,7 @@ namespace CapyCSS.Script
         public Type ClassType { get; set; } = null;
         public bool IsConstructor { get; set; } = false;
         public bool IsProperty => false;
-        public List<ArgumentInfoNode> ArgumentTypeList { get; set; } = null;
+        public IList<ArgumentInfoNode> ArgumentTypeList { get; set; } = null;
         public BuildScriptFormat(string funcCode, Type classType = null)
         {
             FuncCode = funcCode;
@@ -349,7 +349,7 @@ namespace CapyCSS.Script
 
         public string HelpText => Language.Instance[ApiImporter.BASE_LIB_TAG_PRE + nameof(LiteralType)];
 
-        public List<TypeRequest> typeRequests => new List<TypeRequest>()
+        public IList<TypeRequest> typeRequests => new List<TypeRequest>()
         {
             new TypeRequest(t => !t.IsAbstract || t == CbSTUtils.ARRAY_TYPE)
         };
@@ -364,7 +364,7 @@ namespace CapyCSS.Script
 
         public string MenuTitle => $"{AssetCode}({CbSTUtils.LIST_STR}<T>) : T";
 
-        public List<TypeRequest> typeRequests => new List<TypeRequest>()
+        public IList<TypeRequest> typeRequests => new List<TypeRequest>()
         {
             new TypeRequest(CbSTUtils.LIST_INTERFACE_TYPE, t => CbScript.IsAggregate(t) || t == typeof(string))
         };
@@ -418,7 +418,7 @@ namespace CapyCSS.Script
 
         private volatile IEnumerable<ICbValue> argList;
 
-        public List<TypeRequest> typeRequests => new List<TypeRequest>()
+        public IList<TypeRequest> typeRequests => new List<TypeRequest>()
         {
             new TypeRequest(typeof(object))
         };
@@ -477,7 +477,7 @@ namespace CapyCSS.Script
 
         private volatile IEnumerable<ICbValue> argList;
 
-        public List<TypeRequest> typeRequests => new List<TypeRequest>()
+        public IList<TypeRequest> typeRequests => new List<TypeRequest>()
         {
             new TypeRequest(t => CbScript.AcceptAll(t))
         };
@@ -537,7 +537,7 @@ namespace CapyCSS.Script
 
         public string MenuTitle => $"{AssetCode}(T) : T";
 
-        public List<TypeRequest> typeRequests => new List<TypeRequest>()
+        public IList<TypeRequest> typeRequests => new List<TypeRequest>()
         {
             new TypeRequest(t => CbScript.IsCalcable(t))
         };
@@ -586,7 +586,7 @@ namespace CapyCSS.Script
 
         public string MenuTitle => $"{AssetCode}(T) : T";
 
-        public List<TypeRequest> typeRequests => new List<TypeRequest>()
+        public IList<TypeRequest> typeRequests => new List<TypeRequest>()
         {
             new TypeRequest(t => CbScript.IsCalcable(t))
         };
@@ -635,7 +635,7 @@ namespace CapyCSS.Script
 
         public string MenuTitle => $"{AssetCode}(T, T) : T";
 
-        public List<TypeRequest> typeRequests => new List<TypeRequest>()
+        public IList<TypeRequest> typeRequests => new List<TypeRequest>()
         {
             new TypeRequest(t => CbScript.IsCalcable(t))
         };
@@ -685,7 +685,7 @@ namespace CapyCSS.Script
 
         public string MenuTitle => $"{AssetCode}(T, {CbSTUtils.LIST_STR}<T>) : T";
 
-        public List<TypeRequest> typeRequests => new List<TypeRequest>()
+        public IList<TypeRequest> typeRequests => new List<TypeRequest>()
         {
             new TypeRequest(CbSTUtils.LIST_INTERFACE_TYPE, t => CbScript.IsAggregate(t))
         };
@@ -740,7 +740,7 @@ namespace CapyCSS.Script
 
         public string MenuTitle => $"{AssetCode}(T, {CbSTUtils.LIST_STR}<T>) : T";
 
-        public List<TypeRequest> typeRequests => new List<TypeRequest>()
+        public IList<TypeRequest> typeRequests => new List<TypeRequest>()
         {
             new TypeRequest(CbSTUtils.LIST_INTERFACE_TYPE, t => CbScript.IsAggregate(t))
         };
@@ -794,7 +794,7 @@ namespace CapyCSS.Script
 
         public string MenuTitle => $"{AssetCode}(T, {CbSTUtils.LIST_STR}<T>) : T" + CbSTUtils.MENU_OLD_SPECIFICATION;
 
-        public List<TypeRequest> typeRequests => new List<TypeRequest>()
+        public IList<TypeRequest> typeRequests => new List<TypeRequest>()
         {
             new TypeRequest(CbSTUtils.LIST_INTERFACE_TYPE, t => CbScript.IsAggregate(t))
         };
@@ -849,7 +849,7 @@ namespace CapyCSS.Script
 
         public string MenuTitle => $"{AssetCode}({CbSTUtils.STRING_STR}, {CbSTUtils.BOOL_STR}, {CbSTUtils.LIST_STR}<{CbSTUtils.STRING_STR}>) : {CbSTUtils.FUNC_STR}<{CbSTUtils.INT_STR}>";
 
-        public List<TypeRequest> typeRequests => new List<TypeRequest>()
+        public IList<TypeRequest> typeRequests => new List<TypeRequest>()
         {
             new TypeRequest(typeof(string))
         };
@@ -1074,7 +1074,7 @@ namespace CapyCSS.Script
 
         public string MenuTitle => "DummyArguments<T> : T";
 
-        public List<TypeRequest> typeRequests => new List<TypeRequest>()
+        public IList<TypeRequest> typeRequests => new List<TypeRequest>()
         {
             new TypeRequest(t => CbScript.AcceptAll(t))
         };
@@ -1129,7 +1129,7 @@ namespace CapyCSS.Script
 
         public string MenuTitle => $"Switch Case<TEnum> : {CbSTUtils.VOID_STR}";
 
-        public List<TypeRequest> typeRequests => new List<TypeRequest>()
+        public IList<TypeRequest> typeRequests => new List<TypeRequest>()
         {
             new TypeRequest(t => CbScript.IsEnum(t))
         };
@@ -1218,7 +1218,7 @@ namespace CapyCSS.Script
 
         public string MenuTitle => $"{AssetCode}(T) : T";
 
-        public List<TypeRequest> typeRequests => new List<TypeRequest>()
+        public IList<TypeRequest> typeRequests => new List<TypeRequest>()
         {
             new TypeRequest(t => CbScript.IsNotObject(t))
         };
@@ -1272,7 +1272,7 @@ namespace CapyCSS.Script
 
         public string MenuTitle => $"{AssetCode}(T) : T";
 
-        public List<TypeRequest> typeRequests => new List<TypeRequest>()
+        public IList<TypeRequest> typeRequests => new List<TypeRequest>()
         {
             new TypeRequest(t => CbScript.IsSigned(t))
         };
@@ -1320,7 +1320,7 @@ namespace CapyCSS.Script
 
         public string MenuTitle => $"{AssetCode}(IDisposable) : void";
 
-        public List<TypeRequest> typeRequests => new List<TypeRequest>()
+        public IList<TypeRequest> typeRequests => new List<TypeRequest>()
         {
             new TypeRequest(t => CbScript.IsDisposable(t))
         };
@@ -1369,7 +1369,7 @@ namespace CapyCSS.Script
 
         public string MenuTitle => $"{AssetCode}({CbSTUtils.DOUBLE_STR}, {CbSTUtils.DOUBLE_STR}) : {CbSTUtils.DOUBLE_STR}" + CbSTUtils.MENU_OLD_SPECIFICATION;
 
-        public List<TypeRequest> typeRequests => new List<TypeRequest>()
+        public IList<TypeRequest> typeRequests => new List<TypeRequest>()
         {
             new TypeRequest(typeof(double))
         };
@@ -1421,7 +1421,7 @@ namespace CapyCSS.Script
 
         public string MenuTitle => $"{AssetCode}({CbSTUtils.INT_STR}, {CbSTUtils.INT_STR}) : {CbSTUtils.INT_STR}" + CbSTUtils.MENU_OLD_SPECIFICATION;
 
-        public List<TypeRequest> typeRequests => new List<TypeRequest>()
+        public IList<TypeRequest> typeRequests => new List<TypeRequest>()
         {
             new TypeRequest(typeof(int))
         };

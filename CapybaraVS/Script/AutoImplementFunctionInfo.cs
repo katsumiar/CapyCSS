@@ -42,7 +42,7 @@ namespace CapyCSS.Script
         /// <summary>
         /// 引数型の定義リスト
         /// </summary>
-        public List<ArgumentInfoNode> argumentTypeList;
+        public IList<ArgumentInfoNode> argumentTypeList;
         /// <summary>
         /// モジュール（DLL）
         /// </summary>
@@ -54,7 +54,7 @@ namespace CapyCSS.Script
         /// <summary>
         /// 型選択要求情報
         /// </summary>
-        public List<TypeRequest> typeRequests;
+        public IList<TypeRequest> typeRequests;
         /// <summary>
         /// ジェネリックメソッドのパラメータ
         /// ※ジェネリックメソッドでないなら null

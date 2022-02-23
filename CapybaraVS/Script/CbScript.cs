@@ -193,7 +193,7 @@ namespace CbVS.Script
         public static MultiRootConnector CreateFreeTypeFunction(
             CommandCanvas OwnerCommandCanvas, 
             string assetCode,
-            List<TypeRequest> typeRequests = null)
+            IList<TypeRequest> typeRequests = null)
         {
             var ret = new MultiRootConnector(nameof(CbScript));
             ret.OwnerCommandCanvas = OwnerCommandCanvas;
@@ -262,7 +262,7 @@ namespace CbVS.Script
         /// <returns>ノード</returns>
         public static MultiRootConnector SelectVariableType(
             CommandCanvas OwnerCommandCanvas,
-            List<TypeRequest> typeRequests = null)
+            IList<TypeRequest> typeRequests = null)
         {
             var ret = new MultiRootConnector(nameof(CbScript));
             ret.OwnerCommandCanvas = OwnerCommandCanvas;
