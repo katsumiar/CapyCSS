@@ -246,8 +246,8 @@ namespace CapyCSS.Controls.BaseControls
 
         #region Function 添付プロパティ実装
 
-        private static ImplementDependencyProperty<RootConnector, Func<List<ICbValue>, DummyArgumentsMemento, ICbValue>> impFunction =
-            new ImplementDependencyProperty<RootConnector, Func<List<ICbValue>, DummyArgumentsMemento, ICbValue>>(
+        private static ImplementDependencyProperty<RootConnector, Func<IList<ICbValue>, DummyArgumentsMemento, ICbValue>> impFunction =
+            new ImplementDependencyProperty<RootConnector, Func<IList<ICbValue>, DummyArgumentsMemento, ICbValue>>(
                 nameof(Function),
                 (self, getValue) =>
                 {
@@ -256,7 +256,7 @@ namespace CapyCSS.Controls.BaseControls
 
         public static readonly DependencyProperty FunctionProperty = impFunction.Regist(null);
 
-        public Func<List<ICbValue>, DummyArgumentsMemento, ICbValue> Function
+        public Func<IList<ICbValue>, DummyArgumentsMemento, ICbValue> Function
         {
             get { return impFunction.GetValue(this); }
             set { impFunction.SetValue(this, value); }

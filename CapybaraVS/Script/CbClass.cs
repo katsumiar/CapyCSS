@@ -292,6 +292,8 @@ namespace CapyCSS.Script
             }
         }
 
+        //public override bool IsLiteral { get => false; set { } }
+
         /// <summary>
         /// 変数の持つ値は null か？
         /// </summary>

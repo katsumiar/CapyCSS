@@ -182,7 +182,7 @@ namespace CapyCSS.Script
                 var data = ReturnType().Data;
                 if (data is CbGeneMethArg gmaType)
                 {
-                    List<Type> argTypes = new List<Type>();
+                    ICollection<Type> argTypes = new List<Type>();
                     for (int i = 0; i < typeRequests.Count; ++i)
                     {
                         argTypes.Add(col.SelectedVariableType[i]);
@@ -206,7 +206,7 @@ namespace CapyCSS.Script
                 {
                     // ユーザー選択ではなく直接 self からコピーされた型の場合は、そのまま内容を登録する
 
-                    List<Type> argTypes = new List<Type>();
+                    ICollection<Type> argTypes = new List<Type>();
                     for (int i = 0; i < typeRequests.Count; ++i)
                     {
                         argTypes.Add(col.SelectedVariableType[i]);
@@ -230,7 +230,7 @@ namespace CapyCSS.Script
                 }
             }
 
-            List<ICbValue> argumentTypeList = new List<ICbValue>();
+            ICollection<ICbValue> argumentTypeList = new List<ICbValue>();
             if (ArgumentTypeList != null)
             {
                 // 引数用の変数を用意する
@@ -258,7 +258,7 @@ namespace CapyCSS.Script
                 NodeHelpText,
                 returnType,
                 argumentTypeList,
-                new Func<List<ICbValue>, DummyArgumentsMemento, ICbValue>(
+                new Func<IList<ICbValue>, DummyArgumentsMemento, ICbValue>(
                     (arguments, dummyArguments) =>
                     {
                         var ret = returnType();
@@ -315,7 +315,7 @@ namespace CapyCSS.Script
         /// <returns></returns>
         private Type MakeRequestGenericType(MultiRootConnector col, Type type)
         {
-            List<Type> argTypes = new List<Type>();
+            ICollection<Type> argTypes = new List<Type>();
             foreach (var gat in type.GetGenericArguments())
             {
                 if (gat.IsGenericType)
@@ -346,19 +346,18 @@ namespace CapyCSS.Script
         /// </summary>
         /// <param name="col">スクリプトのルートノード</param>
         /// <param name="callArguments">引数リスト</param>
-        /// <param name="dummyArgumentsStack">仮引数スタック</param>
         /// <param name="returnValue">返り値</param>
         private void ImplCallMethod(
             MultiRootConnector col, 
             Type classType,
-            List<ICbValue> callArguments, 
+            IList<ICbValue> callArguments, 
             ICbValue returnValue
             )
         {
             try
             {
                 bool isClassInstanceMethod = ArgumentTypeList != null && ArgumentTypeList[0].IsSelf && !IsConstructor;
-                List<object> methodArguments = null;
+                ICollection<object> methodArguments = null;
 
                 methodArguments = SetArguments(
                     col,
@@ -372,13 +371,13 @@ namespace CapyCSS.Script
                 {
                     // クラスメソッドの第一引数は、self（this）を受け取るのでクラスインスタンスとして扱う
 
-                    classInstance = getBindObject(callArguments[0], col);
+                    classInstance = getBindObject(callArguments.First(), col);
                     if (classInstance is null)
                     {
                         throw new Exception($"self(this) is invalid.");
                     }
                     // 返却方法が入っていないならセットしておく
-                    var cbVSValue = callArguments[0];
+                    var cbVSValue = callArguments.First();
                     if (!cbVSValue.IsDelegate && !cbVSValue.IsLiteral && cbVSValue.ReturnAction is null)
                     {
                         if (cbVSValue.IsList)
@@ -423,11 +422,11 @@ namespace CapyCSS.Script
         /// <param name="isClassInstanceMethod">インスタンスメソッドか？</param>
         /// <param name="methodArguments">メソッド呼び出し引数リスト</param>
         /// <returns>メソッド呼び出し引数リスト</returns>
-        private List<object> SetArguments(
+        private ICollection<object> SetArguments(
             MultiRootConnector col, 
-            List<ICbValue> callArguments, 
+            IList<ICbValue> callArguments, 
             bool isClassInstanceMethod,
-            List<object> methodArguments
+            ICollection<object> methodArguments
             )
         {
             int argumentIndex = 0;
@@ -541,9 +540,9 @@ namespace CapyCSS.Script
             object classInstance,
             MultiRootConnector col,
             Type classType,
-            List<ICbValue> callArguments, 
+            IList<ICbValue> callArguments, 
             bool isClassInstanceMethod, 
-            List<object> methodArguments
+            IEnumerable<object> methodArguments
             )
         {
             object result;
@@ -580,11 +579,7 @@ namespace CapyCSS.Script
             {
                 // ジェネリックメソッド
 
-                List<Type> genericParams = new List<Type>();
-                foreach (var atype in GenericMethodParameters)
-                {
-                    genericParams.Add(GetRequestType(col, atype.Name));
-                }
+                IEnumerable<Type> genericParams = GenericMethodParameters.Select(n => GetRequestType(col, n.Name));
                 if (methodArguments is null)
                 {
                     // 引数のないメソッドを型で補完して呼ぶ
@@ -598,12 +593,7 @@ namespace CapyCSS.Script
                     object[] args = methodArguments.ToArray();
 
                     // 引数の型リストを作成
-                    List<Type> argTypes = new List<Type>();
-                    foreach (var cbArg in callArguments)
-                    {
-                        argTypes.Add(cbArg.OriginalType);
-                    }
-
+                    IEnumerable<Type> argTypes = callArguments.Select(n => n.OriginalType);
                     if (classType.GetMethod(FuncCode, argTypes.ToArray()) != null)
                     {
                         // 同じ型のメソッドが既に定義されているのでそちらを呼ぶ
@@ -644,7 +634,7 @@ namespace CapyCSS.Script
         /// <param name="genericParams">ジェネリックパラメータ</param>
         /// <param name="args">呼び出す時の引数リスト</param>
         /// <returns>呼び出したメソッドの返し値</returns>
-        private object InvokeGenericMethod(Type classType, List<Type> genericParams, object[] args)
+        private object InvokeGenericMethod(Type classType, IEnumerable<Type> genericParams, object[] args)
         {
             var attr = BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public;
 
@@ -767,7 +757,7 @@ namespace CapyCSS.Script
         /// <param name="args">呼び出し時の引数リスト（変更が入っている）</param>
         private void ReturnArgumentsValue(
             object classInstance,
-            List<ICbValue> callArguments,
+            IList<ICbValue> callArguments,
             object[] args)
         {
             int argStartIndex = 0;

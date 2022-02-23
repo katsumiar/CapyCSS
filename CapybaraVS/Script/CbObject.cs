@@ -180,6 +180,8 @@ namespace CapyCSS.Script
             set => new NotImplementedException();
         }
 
+        //public override bool IsLiteral { get => false; set { } }
+
         public override bool IsStringableValue => false;
 
         public override bool IsReadOnlyValue { get; set; } = true;

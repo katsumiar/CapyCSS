@@ -379,7 +379,7 @@ namespace CapyCSS.Script
                 {
                     CbST.CbCreate(col.SelectedVariableType[0], "samples"),
                 },
-                new Func<List<ICbValue>, DummyArgumentsMemento, ICbValue>(
+                new Func<IList<ICbValue>, DummyArgumentsMemento, ICbValue>(
                     (argument, dummyArguments) =>
                     {
                         var ret = CbST.CbCreate(col.SelectedVariableType[0].GenericTypeArguments[0]);    // 返し値
@@ -433,7 +433,7 @@ namespace CapyCSS.Script
                 {
                     CbST.CbCreate<IEnumerable<CbVoid>>("flow"),
                 },
-                new Func<List<ICbValue>, DummyArgumentsMemento, ICbValue>(
+                new Func<IList<ICbValue>, DummyArgumentsMemento, ICbValue>(
                     (argument, dummyArguments) =>
                     {
                         try
@@ -493,7 +493,7 @@ namespace CapyCSS.Script
                     CbST.CbCreate<IEnumerable<CbVoid>>("flow"),
                     CbST.CbCreate(col.SelectedVariableType[0], "result"),
                 },
-                new Func<List<ICbValue>, DummyArgumentsMemento, ICbValue>(
+                new Func<IList<ICbValue>, DummyArgumentsMemento, ICbValue>(
                     (argument, dummyArguments) =>
                     {
                         var ret = CbST.CbCreate(col.SelectedVariableType[0]);    // 返し値
@@ -552,7 +552,7 @@ namespace CapyCSS.Script
                 {
                     CbST.CbCreate(col.SelectedVariableType[0], "n"),
                 },
-                new Func<List<ICbValue>, DummyArgumentsMemento, ICbValue>(
+                new Func<IList<ICbValue>, DummyArgumentsMemento, ICbValue>(
                     (argument, dummyArguments) =>
                     {
                         var ret = CbST.CbCreate(col.SelectedVariableType[0]);    // 返し値
@@ -601,7 +601,7 @@ namespace CapyCSS.Script
                 {
                     CbST.CbCreate(col.SelectedVariableType[0], "n"),
                 },
-                new Func<List<ICbValue>, DummyArgumentsMemento, ICbValue>(
+                new Func<IList<ICbValue>, DummyArgumentsMemento, ICbValue>(
                     (argument, dummyArguments) =>
                     {
                         var ret = CbST.CbCreate(col.SelectedVariableType[0]);    // 返し値
@@ -651,7 +651,7 @@ namespace CapyCSS.Script
                     CbST.CbCreate(col.SelectedVariableType[0], "n1"),
                     CbST.CbCreate(col.SelectedVariableType[0], "n2"),
                 },
-                new Func<List<ICbValue>, DummyArgumentsMemento, ICbValue>(
+                new Func<IList<ICbValue>, DummyArgumentsMemento, ICbValue>(
                     (argument, dummyArguments) =>
                     {
                         var ret = CbST.CbCreate(col.SelectedVariableType[0]);    // 返し値
@@ -701,7 +701,7 @@ namespace CapyCSS.Script
                     CbST.CbCreate(col.SelectedVariableType[0].GenericTypeArguments[0], "base"),
                     CbST.CbCreate(col.SelectedVariableType[0], "samples"),
                 },
-                new Func<List<ICbValue>, DummyArgumentsMemento, ICbValue>(
+                new Func<IList<ICbValue>, DummyArgumentsMemento, ICbValue>(
                     (argument, dummyArguments) =>
                     {
                         var ret = CbST.CbCreate(col.SelectedVariableType[0].GenericTypeArguments[0]);    // 返し値
@@ -756,7 +756,7 @@ namespace CapyCSS.Script
                     CbST.CbCreate(col.SelectedVariableType[0].GenericTypeArguments[0], "base"),
                     CbST.CbCreate(col.SelectedVariableType[0], "samples"),
                 },
-                new Func<List<ICbValue>, DummyArgumentsMemento, ICbValue>(
+                new Func<IList<ICbValue>, DummyArgumentsMemento, ICbValue>(
                     (argument, dummyArguments) =>
                     {
                         var ret = CbST.CbCreate(col.SelectedVariableType[0].GenericTypeArguments[0]);    // 返し値
@@ -810,7 +810,7 @@ namespace CapyCSS.Script
                     CbST.CbCreate(col.SelectedVariableType[0].GenericTypeArguments[0], "base"),
                     CbST.CbCreate(col.SelectedVariableType[0], "samples"),
                 },
-                new Func<List<ICbValue>, DummyArgumentsMemento, ICbValue>(
+                new Func<IList<ICbValue>, DummyArgumentsMemento, ICbValue>(
                     (argument, dummyArguments) =>
                     {
                         var ret = CbST.CbCreate(col.SelectedVariableType[0].GenericTypeArguments[0]);    // 返し値
@@ -866,7 +866,7 @@ namespace CapyCSS.Script
                     CbST.CbCreate<bool>("redirect"),
                     CbST.CbCreate<List<string>>("arguments"),
                 },
-                new Func<List<ICbValue>, DummyArgumentsMemento, ICbValue>(
+                new Func<IList<ICbValue>, DummyArgumentsMemento, ICbValue>(
                     (argument, dummyArguments) =>
                     {
                         var ret = CbST.CbCreate<Func<int>>() as ICbEvent;    // 返し値
@@ -920,7 +920,7 @@ namespace CapyCSS.Script
                     HelpText,
                     CbST.CbCreateTF(col.SelectedVariableType[0]),  // 返し値の型
                     null,   // 引数はなし
-                    new Func<List<ICbValue>, DummyArgumentsMemento, ICbValue>(
+                    new Func<IList<ICbValue>, DummyArgumentsMemento, ICbValue>(
                         (argument, dummyArguments) =>
                         {
                             try
@@ -1017,7 +1017,7 @@ namespace CapyCSS.Script
                     {
                         CbST.CbCreate(col.SelectedVariableType[0], "n"),
                     },
-                    new Func<List<ICbValue>, DummyArgumentsMemento, ICbValue>(
+                    new Func<IList<ICbValue>, DummyArgumentsMemento, ICbValue>(
                         (argument, dummyArguments) =>
                         {
                             try
@@ -1089,7 +1089,7 @@ namespace CapyCSS.Script
                 {
                     CbST.CbCreate<CbFuncArguments.INDEX>("select"),
                 },
-                new Func<List<ICbValue>, DummyArgumentsMemento, ICbValue>(
+                new Func<IList<ICbValue>, DummyArgumentsMemento, ICbValue>(
                     (argument, dummyArguments) =>
                     {
                         var ret = CbST.CbCreate(col.SelectedVariableType[0]);    // 返し値
@@ -1164,7 +1164,7 @@ namespace CapyCSS.Script
                 HelpText,
                 CbVoid.TF,  // 返し値の型
                 args,  // 引数
-                new Func<List<ICbValue>, DummyArgumentsMemento, ICbValue>(
+                new Func<IList<ICbValue>, DummyArgumentsMemento, ICbValue>(
                     (argument, dummyArguments) =>
                     {
                         try
@@ -1233,7 +1233,7 @@ namespace CapyCSS.Script
                 {
                     CbST.CbCreate(col.SelectedVariableType[0], "n"),
                 },
-                new Func<List<ICbValue>, DummyArgumentsMemento, ICbValue>(
+                new Func<IList<ICbValue>, DummyArgumentsMemento, ICbValue>(
                     (argument, dummyArguments) =>
                     {
                         var ret = CbST.CbCreate(col.SelectedVariableType[0]);    // 返し値
@@ -1287,7 +1287,7 @@ namespace CapyCSS.Script
                 {
                     CbST.CbCreate(col.SelectedVariableType[0], "n"),
                 },
-                new Func<List<ICbValue>, DummyArgumentsMemento, ICbValue>(
+                new Func<IList<ICbValue>, DummyArgumentsMemento, ICbValue>(
                     (argument, dummyArguments) =>
                     {
                         var ret = CbST.CbCreate(col.SelectedVariableType[0]);    // 返し値
@@ -1335,7 +1335,7 @@ namespace CapyCSS.Script
                 {
                     CbClass.ClassValue(typeof(IDisposable), "disposable"),
                 },
-                new Func<List<ICbValue>, DummyArgumentsMemento, ICbValue>(
+                new Func<IList<ICbValue>, DummyArgumentsMemento, ICbValue>(
                     (argument, dummyArguments) =>
                     {
                         try
@@ -1385,7 +1385,7 @@ namespace CapyCSS.Script
                     CbST.CbCreate<double>("n"),
                     CbST.CbCreate<double>("p"),
                 },
-                new Func<List<ICbValue>, DummyArgumentsMemento, ICbValue>(
+                new Func<IList<ICbValue>, DummyArgumentsMemento, ICbValue>(
                     (argument, dummyArguments) =>
                     {
                         var ret = CbST.CbCreate<double>();    // 返し値
@@ -1437,7 +1437,7 @@ namespace CapyCSS.Script
                     CbST.CbCreate<int>("min", 0),
                     CbST.CbCreate<int>("max", 1),
                 },
-                new Func<List<ICbValue>, DummyArgumentsMemento, ICbValue>(
+                new Func<IList<ICbValue>, DummyArgumentsMemento, ICbValue>(
                     (argument, dummyArguments) =>
                     {
                         var ret = CbST.CbCreate<int>();   // 返し値

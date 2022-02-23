@@ -485,9 +485,9 @@ namespace CapyCSS.Controls.BaseControls
 
         //----------------------------------------------------------------------
 #region スクリプト内共有
-        public List<string> _inportNameSpaceModule = null;
-        public List<string> _inportDllModule = null;
-        public List<string> _inportNuGetModule = null;
+        private List<string> _inportNameSpaceModule = null;
+        private List<string> _inportDllModule = null;
+        private List<string> _inportNuGetModule = null;
         public ApiImporter ApiImporter = null;
         private ModuleControler moduleControler = null;
         public CommandWindow CommandMenuWindow = null;

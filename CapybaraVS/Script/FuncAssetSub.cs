@@ -234,7 +234,7 @@ namespace CapyCSS.Script
         /// <param name="arguments">引数リスト</param>
         /// <param name="index">引数のインデックス</param>
         /// <returns>値</returns>
-        protected T GetArgument<T>(List<ICbValue> arguments, int index)
+        protected T GetArgument<T>(IList<ICbValue> arguments, int index)
         {
             return GetArgument<T>(arguments[index]);
         }
@@ -245,7 +245,7 @@ namespace CapyCSS.Script
         /// <param name="arguments">引数リスト</param>
         /// <param name="index">引数のインデックス</param>
         /// <returns>配列</returns>
-        protected List<ICbValue> GetArgumentList(List<ICbValue> arguments, int index)
+        protected IList<ICbValue> GetArgumentList(IList<ICbValue> arguments, int index)
         {
             ICbValue valueData = arguments[index];
             CheckArgument(valueData);

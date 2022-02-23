@@ -95,14 +95,14 @@ namespace CbVS.Script
         private static MultiRootConnector _CreateFreeTypeVariableFunction(
             CommandCanvas OwnerCommandCanvas, 
             string assetCode,
-            List<TypeRequest> typeRequests, 
+            IList<TypeRequest> typeRequests, 
             MultiRootConnector multiRootConnector, 
             StackNode stackNode, 
             bool forcedListTypeSelect)
         {
             if (multiRootConnector is null)
             {
-                List<string> typeNames;
+                IList<string> typeNames;
                 if (typeRequests == null)
                 {
                     if (OwnerCommandCanvas.ScriptWorkStack.StackData.Count != 0)
@@ -175,7 +175,7 @@ namespace CbVS.Script
         public static MultiRootConnector CreateFreeTypeVariableFunction(
             CommandCanvas OwnerCommandCanvas, 
             string assetCode,
-            List<TypeRequest> typeRequests, 
+            IList<TypeRequest> typeRequests, 
             bool forcedListTypeSelect = false)
         {
             MultiRootConnector multiRootConnector = null;

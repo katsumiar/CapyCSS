@@ -198,18 +198,18 @@ namespace CapyCSS.Controls
 
         #region Function 添付プロパティ実装
 
-        private static ImplementDependencyProperty<MultiRootConnector, Func<List<ICbValue>, DummyArgumentsMemento, ICbValue>> impFunction =
-            new ImplementDependencyProperty<MultiRootConnector, Func<List<ICbValue>, DummyArgumentsMemento, ICbValue>>(
+        private static ImplementDependencyProperty<MultiRootConnector, Func<IList<ICbValue>, DummyArgumentsMemento, ICbValue>> impFunction =
+            new ImplementDependencyProperty<MultiRootConnector, Func<IList<ICbValue>, DummyArgumentsMemento, ICbValue>>(
                 nameof(Function),
                 (self, getValue) =>
                 {
-                    Func<List<ICbValue>, DummyArgumentsMemento, ICbValue> value = getValue(self);
+                    Func<IList<ICbValue>, DummyArgumentsMemento, ICbValue> value = getValue(self);
                     self.LinkConnectorControl.Function = value;
                 });
 
         public static readonly DependencyProperty FunctionProperty = impFunction.Regist(null);
 
-        public Func<List<ICbValue>, DummyArgumentsMemento, ICbValue> Function
+        public Func<IList<ICbValue>, DummyArgumentsMemento, ICbValue> Function
         {
             get { return impFunction.GetValue(this); }
             set { impFunction.SetValue(this, value); }
@@ -559,7 +559,7 @@ namespace CapyCSS.Controls
         /// <summary>
         /// アセットリスト
         /// </summary>
-        public static List<IFuncAssetDef> AssetFunctionList = new List<IFuncAssetDef>();
+        public static ICollection<IFuncAssetDef> AssetFunctionList = new List<IFuncAssetDef>();
 
         public Func<string, string> GetVariableName = (name) => "[ " + name + " ]";
         public void VariableUpdate()
@@ -596,8 +596,8 @@ namespace CapyCSS.Controls
             string name,
             string hint,
             Func<ICbValue> retType,
-            List<ICbValue> argumentList,
-            Func<List<ICbValue>, DummyArgumentsMemento, ICbValue> func
+            IEnumerable<ICbValue> argumentList,
+            Func<IList<ICbValue>, DummyArgumentsMemento, ICbValue> func
             )
         {
             LinkConnectorControl.OwnerCommandCanvas = OwnerCommandCanvas;
@@ -745,12 +745,12 @@ namespace CapyCSS.Controls
 
         private void MakeFunctionType()
         {
-            IFuncAssetDef asset = AssetFunctionList.Find(m => m.AssetCode == AssetFuncType);
+            IFuncAssetDef asset = AssetFunctionList.FirstOrDefault(m => m.AssetCode == AssetFuncType);
             if (asset is null)
             {
                 // 恐らく古い形式のアセットコード
 
-                asset = AssetFunctionList.Find(m => m.AssetCode.Contains(AssetFuncType));
+                asset = AssetFunctionList.FirstOrDefault(m => m.AssetCode.Contains(AssetFuncType));
                 if (asset is null)
                 {
                     // 存在しないアセットコード

@@ -555,6 +555,8 @@ namespace CbVS.Script
             }
         }
 
+        //public override bool IsLiteral { get => false; set { } }
+
         public override bool IsNull => nullFlg;
 
         public static CbList<T> Create(string name = "") => new CbList<T>(new List<ICbValue>(), name);

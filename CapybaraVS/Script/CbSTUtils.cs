@@ -88,7 +88,7 @@ namespace CapyCSS.Script
         /// <summary>
         /// ユーザーによる型作成時に組み込み型選択肢に出てくる型情報です。
         /// </summary>
-        static public readonly Dictionary<string, string> BuiltInTypeList = new Dictionary<string, string>()
+        static public readonly IDictionary<string, string> BuiltInTypeList = new Dictionary<string, string>()
         {
             { ARRAY_TYPE.FullName, "T[]" },
             { LIST_TYPE.FullName, "List<T>" },
@@ -152,7 +152,7 @@ namespace CapyCSS.Script
             { typeof(Object).FullName, OBJECT_STR },
         };
 
-        static public readonly Dictionary<string, string> CbTypeNameList = new Dictionary<string, string>()
+        static public readonly IDictionary<string, string> CbTypeNameList = new Dictionary<string, string>()
         {
             // 型名変換
             { nameof(Byte), BYTE_STR },

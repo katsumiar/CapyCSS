@@ -31,10 +31,10 @@ namespace CapyCSS.Script
     /// </summary>
     public class CbST
     {
-        private static List<Assembly> recentlyReferencedAssemblyList = new List<Assembly>();
+        private static IList<Assembly> recentlyReferencedAssemblyList = new List<Assembly>();
         private static ReaderWriterLockSlim recentlyReferencedAssemblyListRWlock = new ReaderWriterLockSlim();
 
-        private static List<Tuple<string, Type>> cacheTypeList = new List<Tuple<string, Type>>();
+        private static IList<Tuple<string, Type>> cacheTypeList = new List<Tuple<string, Type>>();
         private static ReaderWriterLockSlim cacheTypeListRWlock = new ReaderWriterLockSlim();
 
         private const int MAX_recentlyReferencedAssembly = 6;
@@ -90,7 +90,7 @@ namespace CapyCSS.Script
             {
                 cacheTypeListRWlock.EnterReadLock();
                 string findName = new string(name.Reverse().ToArray());
-                var cache = cacheTypeList.Find(n => n.Item1 == findName);
+                var cache = cacheTypeList.FirstOrDefault(n => n.Item1 == findName);
                 if (cache != null)
                 {
                     return cache.Item2;
@@ -767,7 +767,6 @@ namespace CapyCSS.Script
     public interface ICbValueClass<T> 
         : ICbValue
     {
-        //ICbYSValueClass<T> Create(T n);
         T Value { get; set; }
     }
 
@@ -1020,9 +1019,9 @@ namespace CapyCSS.Script
         public bool IsIn { get; set; } = false;
         /// <summary>
         /// リテラルかどうか？
-        /// ※変数以外は、原則リテラル
+        /// ※変数とobjectとstringとclass以外は、原則リテラル
         /// </summary>
-        public bool IsLiteral { get; set; } = true;
+        public virtual bool IsLiteral { get; set; } = true;
         /// <summary>
         /// デリゲート型かどうか？
         /// </summary>
