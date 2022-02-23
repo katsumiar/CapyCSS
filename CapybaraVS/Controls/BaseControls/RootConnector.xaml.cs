@@ -780,7 +780,7 @@ namespace CapyCSS.Controls.BaseControls
                                 string funcCode = FunctionInfo.FuncCode.Substring(4);   // "get_" を取り除く
                                 string className = CbSTUtils.GetTypeFullName(FunctionInfo.ClassType);
                                 string methodName = className + "." + funcCode;
-                                result.Set(methodName, BuildScriptInfo.CodeType.Variable);
+                                result.Set(methodName, BuildScriptInfo.CodeType.Property);
                                 result.SetTypeName(ValueData.TypeName);
                                 result.Add(args);
                             }

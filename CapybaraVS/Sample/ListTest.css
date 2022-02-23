@@ -1,0 +1,35 @@
+System.Collections.Generic.List<int> variable1;
+var ListTest = () => {
+    {
+        var __cpb_work_0 = ( new System.Collections.Generic.List<int>() );
+        __cpb_work_0.Add( 1 );
+        __cpb_work_0.Add( 2 );
+        CapyCSSbase.Script.OutConsole(
+            CapyCSSbase.FlowLib.If_Value(
+                CapyCSSbase.FlowLib.Eq(
+                    __cpb_work_0.Count,
+                    0
+                ),
+                "OK",
+                "NG"
+            )
+        );
+    };
+    {
+        variable1 = new System.Collections.Generic.List<int>();
+        variable1.Add( 1 );
+        variable1.Add( 2 );
+        CapyCSSbase.Script.OutConsole(
+            CapyCSSbase.FlowLib.If_Value(
+                CapyCSSbase.FlowLib.Eq(
+                    variable1.Count,
+                    2
+                ),
+                "OK",
+                "NG"
+            )
+        );
+    };
+};
+CapyCSSbase.Script.AddEntryPoint(nameof(ListTest), ListTest);
+
