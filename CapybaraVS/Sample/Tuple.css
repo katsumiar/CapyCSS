@@ -1,11 +1,22 @@
 var Tuple = () => {
-    var __cpb_work_0 = new System.Tuple<int,string>(
-            0,
-            "abc"
-        );
-    CapyCSSbase.Script.OutConsole( __cpb_work_0.Item1 );
-    CapyCSSbase.Script.OutConsole( __cpb_work_0.Item2 );
-    CapyCSSbase.Script.OutConsole( __cpb_work_0.ToString() );
+    CapyCSSbase.Script.OutConsole(
+        ( new System.Tuple<int,string>(
+                0,
+                "abc"
+            ) ).Item1
+    );
+    CapyCSSbase.Script.OutConsole(
+        ( new System.Tuple<int,string>(
+                0,
+                "abc"
+            ) ).Item2
+    );
+    CapyCSSbase.Script.OutConsole(
+        ( new System.Tuple<int,string>(
+                0,
+                "abc"
+            ) ).ToString()
+    );
 };
 CapyCSSbase.Script.AddEntryPoint(nameof(Tuple), Tuple);
 

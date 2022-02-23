@@ -1,13 +1,12 @@
 System.Collections.Generic.List<int> variable1;
 var ListTest = () => {
     {
-        var __cpb_work_0 = ( new System.Collections.Generic.List<int>() );
-        __cpb_work_0.Add( 1 );
-        __cpb_work_0.Add( 2 );
+        ( new System.Collections.Generic.List<int>() ).Add( 1 );
+        ( new System.Collections.Generic.List<int>() ).Add( 2 );
         CapyCSSbase.Script.OutConsole(
             CapyCSSbase.FlowLib.If_Value(
                 CapyCSSbase.FlowLib.Eq(
-                    __cpb_work_0.Count,
+                    ( new System.Collections.Generic.List<int>() ).Count,
                     0
                 ),
                 "OK",

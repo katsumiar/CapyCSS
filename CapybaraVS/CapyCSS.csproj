@@ -242,6 +242,12 @@
     <None Update="Sample\LeastSquaresApproximation5.cbs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Update="Sample\ListTest.cbs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Sample\ListTest.css">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="Sample\MetropolisMethod.cbs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

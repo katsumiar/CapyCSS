@@ -1344,8 +1344,11 @@ namespace CapyCSS.Controls.BaseControls
         {
             if (rootCurveLinks != null && ValueData != null)
             {
-                if ((FunctionInfo is null || !FunctionInfo.IsConstructor)
-                    && (rootCurveLinks.Count < 2 || ValueData.TypeName == "void" || functionInfo.ClassType == typeof(DummyArguments)))
+                bool isLiteral = ValueData.IsLiteral;
+                bool isNotConstructor = FunctionInfo is null || !FunctionInfo.IsConstructor;
+                bool isNoReturn = ValueData is CbVoid;
+                bool isRootOrNoReturnOrDummyArguments = rootCurveLinks.Count < 2 || isNoReturn || functionInfo.ClassType == typeof(DummyArguments);
+                if (isLiteral || (isNotConstructor && isRootOrNoReturnOrDummyArguments))
                 {
                     // 仮引数ノードかルートか返し値がVoid、あるいは接続先が一つだけの場合はキャッシュしない
 

@@ -476,7 +476,12 @@ namespace CapyCSS.Script
                                     {
                                         // インスタンスプロパティ（最初の引数は self）
 
-                                        result = arg.TrimStart() + result.Substring(result.LastIndexOf("."));
+                                        arg = arg.TrimStart();
+                                        if (arg.StartsWith(CbSTUtils.NEW_STR + " "))
+                                        {
+                                            arg = $"( {arg} )";
+                                        }
+                                        result = arg + result.Substring(result.LastIndexOf("."));
                                     }
                                 }
 
@@ -579,6 +584,10 @@ namespace CapyCSS.Script
 
                                 string index = argumentList[1].Trim();
                                 methodName = instance.TrimStart();  // インデクサーにメソッド名は不要
+                                if (methodName.StartsWith(CbSTUtils.NEW_STR + " "))
+                                {
+                                    methodName = $"( {methodName} )";
+                                }
                                 result = methodName + GetOpenBrakets(ElementType) + $" {index} " + GetCloseBrakets(ElementType);
                             }
                             else if (ElementType == CodeType.SetIndexer)
@@ -588,6 +597,10 @@ namespace CapyCSS.Script
                                 string index = argumentList[1].Trim();
                                 string setValue = argumentList[2].Trim();
                                 methodName = instance.TrimStart();  // インデクサーにメソッド名は不要
+                                if (methodName.StartsWith(CbSTUtils.NEW_STR + " "))
+                                {
+                                    methodName = $"( {methodName} )";
+                                }
                                 result = methodName + GetOpenBrakets(ElementType) + $" {index} " + GetCloseBrakets(ElementType);
                                 result += " = " + StripSequence(BuildMethod(0, codeType, "", setValue));
                             }
@@ -595,7 +608,12 @@ namespace CapyCSS.Script
                             {
                                 // インスタンスメソッドを構築
 
-                                methodName = instance.TrimStart() + methodName.Substring(methodName.LastIndexOf("."));
+                                instance = instance.TrimStart();
+                                if (instance.StartsWith(CbSTUtils.NEW_STR + " "))
+                                {
+                                    instance = $"( {instance} )";
+                                }
+                                methodName = instance + methodName.Substring(methodName.LastIndexOf("."));
                                 args = ShapeArguments(argumentList);
                                 result = BuildMethod(tabLevel, codeType, methodName, args);
                             }
@@ -604,7 +622,12 @@ namespace CapyCSS.Script
                         {
                             // 引数無しのインスタンスメソッド
 
-                            methodName = args.TrimStart() + methodName.Substring(methodName.LastIndexOf("."));
+                            args = args.TrimStart();
+                            if (args.StartsWith(CbSTUtils.NEW_STR + " "))
+                            {
+                                args = $"( {args} )";
+                            }
+                            methodName = args + methodName.Substring(methodName.LastIndexOf("."));
                             result = BuildMethod(tabLevel, codeType, methodName, "");
                         }
                     }
