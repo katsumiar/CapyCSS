@@ -128,20 +128,29 @@ namespace CapyCSS.Script
         {
             string outputName = ModuleControler.HEADER_NAMESPACE + name;
             ImportingName = outputName;
-            TreeMenuNode functionNode = ImplementAsset.CreateGroup(node, outputName);
-            IList<Type> types = AppDomain.CurrentDomain.GetAssemblies().SelectMany(assembly => assembly.GetTypes()).Where(ct => ct.Namespace == name).ToList();
-            IList<Type> addTypes = new List<Type>();
+            ICollection<Type> types = AppDomain.CurrentDomain.GetAssemblies().SelectMany(assembly => assembly.GetTypes()).Where(ct => ct.Namespace == name).ToList();
+            ICollection<AutoImplementFunctionInfo> addMethodInfos = new List<AutoImplementFunctionInfo>();
+            ICollection<Type> addTypeInfos = new List<Type>();
             ImportScriptMethods(
                 OwnerCommandCanvas,
-                functionNode,
+                (info) => addMethodInfos.Add(info),
                 null,
                 null,
-                (t) => addTypes.Add(t),
+                (t) => addTypeInfos.Add(t),
                 types.ToArray()
                 );
-            foreach (var addType in addTypes)
+            TreeMenuNode methodGroup = ImplementAsset.CreateGroup(node, outputName);
+            foreach (var methodInfo in addMethodInfos)
             {
-                OwnerCommandCanvas.AddImportTypeMenu(addType);
+                // スレッド上で処理できないのでここで登録する
+
+                CreateMethodNode(OwnerCommandCanvas, methodGroup, methodInfo);
+            }
+            foreach (var typeInfo in addTypeInfos)
+            {
+                // スレッド上で処理できないのでここで登録する
+
+                OwnerCommandCanvas.AddImportTypeMenu(typeInfo);
             }
             Console.WriteLine($"imported namespace {name}");
             return outputName;
@@ -151,7 +160,7 @@ namespace CapyCSS.Script
         /// DLLファイルを読み込んでメソッドをスクリプトで使えるように取り込みます。
         /// </summary>
         /// <param name="OwnerCommandCanvas">オーナーキャンバス</param>
-        /// <param name="node">登録先のノード</param>
+        /// <param name="importDestNode">登録先のノード</param>
         /// <param name="path"></param>
         /// <param name="importNameList">取り込む名前リスト</param>
         /// <param name="moduleName">モジュール名（NuGet用）</param>
@@ -159,7 +168,7 @@ namespace CapyCSS.Script
         /// <returns>インポートしたモジュール名</returns>
         public static string ImportScriptMethodsFromDllFile(
             CommandCanvas OwnerCommandCanvas,
-            TreeMenuNode node,
+            TreeMenuNode importDestNode,
             string path,
             ICollection<string> importNameList,
             string moduleName = null,
@@ -173,33 +182,43 @@ namespace CapyCSS.Script
                 Module mod = asm.GetModule(path);
                 string name = Path.GetFileName(path);
 
-                string createGroupName;
+                string methodGroupName;
                 if (moduleName is null)
                 {
                     // DLL
 
-                    createGroupName = ModuleControler.HEADER_DLL + name;
+                    methodGroupName = ModuleControler.HEADER_DLL + name;
                 }
                 else
                 {
                     // NuGet
 
-                    createGroupName = ModuleControler.HEADER_DLL + moduleName + $":{ownerModuleName}";
+                    methodGroupName = ModuleControler.HEADER_DLL + moduleName + $":{ownerModuleName}";
                 }
-                ImportingName = createGroupName;
+                ImportingName = methodGroupName;
 
-                ICollection<Type> addTypes = new List<Type>();
+                ICollection<AutoImplementFunctionInfo> addMethodInfos = new List<AutoImplementFunctionInfo>();
+                ICollection<Type> addTypeInfos = new List<Type>();
                 ImportScriptMethods(
                     OwnerCommandCanvas,
-                    ImplementAsset.CreateGroup(node, createGroupName),
+                    (info) => addMethodInfos.Add(info),
                     asm,
                     mod,
                     importNameList,
-                    (t) => addTypes.Add(t)
+                    (t) => addTypeInfos.Add(t)
                     );
-                foreach (var addType in addTypes)
+                var methodGroup = ImplementAsset.CreateGroup(importDestNode, methodGroupName);
+                foreach (var methodInfo in addMethodInfos)
                 {
-                    OwnerCommandCanvas.AddImportTypeMenu(addType);
+                    // スレッド上で処理できないのでここで登録する
+
+                    CreateMethodNode(OwnerCommandCanvas, methodGroup, methodInfo);
+                }
+                foreach (var typeInfo in addTypeInfos)
+                {
+                    // スレッド上で処理できないのでここで登録する
+
+                    OwnerCommandCanvas.AddImportTypeMenu(typeInfo);
                 }
                 if (moduleName is null)
                 {
@@ -310,17 +329,17 @@ namespace CapyCSS.Script
         /// Assemblyからメソッドをスクリプトで使えるように取り込みます。
         /// </summary>
         /// <param name="OwnerCommandCanvas">オーナーキャンバス</param>
-        /// <param name="node">登録先のノード</param>
+        /// <param name="importMethod">メソッド取り込み処理</param>
         /// <param name="asm">対象Assembly</param>
         /// <param name="module">モジュール</param>
-        /// <param name="importNameList">取り込む名前リスト</param>
+        /// <param name="importNames">型取り込み処理</param>
         public static void ImportScriptMethods(
             CommandCanvas OwnerCommandCanvas,
-            TreeMenuNode node,
+            Action<AutoImplementFunctionInfo> importMethod,
             Assembly asm,
             Module module,
-            ICollection<string> importNameList,
-            Action<Type> inportTypeMenu)
+            ICollection<string> importNames,
+            Action<Type> importType)
         {
             Type[] types = null;
             if (module is null)
@@ -332,28 +351,28 @@ namespace CapyCSS.Script
                 types = module.GetTypes();
             }
 
-            ImportScriptMethods(OwnerCommandCanvas, node, module, importNameList, inportTypeMenu, types);
+            ImportScriptMethods(OwnerCommandCanvas, importMethod, module, importNames, importType, types);
         }
 
         private static void ImportScriptMethods(
-            CommandCanvas OwnerCommandCanvas, 
-            TreeMenuNode node, 
+            CommandCanvas OwnerCommandCanvas,
+            Action<AutoImplementFunctionInfo> importMethod, 
             Module module, 
-            ICollection<string> importNameList,
-            Action<Type> inportTypeMenu,
+            ICollection<string> importNames,
+            Action<Type> importType,
             Type[] types)
         {
             Task<IEnumerable<Type>> tcTask = null;
-            if (inportTypeMenu != null)
+            if (importType != null)
             {
                 // 型情報を収集する
 
                 tcTask = Task.Run(() =>
                 {
                     Predicate<Type> ignorePredicater;
-                    if (importNameList != null)
+                    if (importNames != null)
                     {
-                        ignorePredicater = (type) => !importNameList.Any(n => type.FullName.StartsWith(n)) || !IsAcceptTypeMenuType(type);
+                        ignorePredicater = (type) => !importNames.Any(n => type.FullName.StartsWith(n)) || !IsAcceptTypeMenuType(type);
                     }
                     else
                     {
@@ -367,7 +386,7 @@ namespace CapyCSS.Script
 #endif
             }
 
-            IEnumerable<Task<IEnumerable<AutoImplementFunctionInfo>>> tasks = CreateMakeInportFunctionInfoTasks(module, importNameList, types);
+            IEnumerable<Task<IEnumerable<AutoImplementFunctionInfo>>> tasks = CreateMakeImportFunctionInfoTasks(module, importNames, types);
 
             Task[] addMethodsAndTypesTasks = new Task[] {
                 // メソッドをメニューに登録する
@@ -377,7 +396,7 @@ namespace CapyCSS.Script
                         tasks.Where(t => t.Result != null).SelectMany(classInfos => classInfos.Result).Where(info => info != null).ToList();
                     foreach (AutoImplementFunctionInfo classInfo in autoImplementFunctionInfos)
                     {
-                        CreateMethodNode(OwnerCommandCanvas, node, classInfo);
+                        importMethod(classInfo);
                     }
                 }),
                 // 型をメニューに登録する
@@ -388,7 +407,7 @@ namespace CapyCSS.Script
                         var typeList = tcTask.Result;
                         foreach (var type in typeList)
                         {
-                            inportTypeMenu(type);
+                            importType(type);
                         }
                     }
                 })
@@ -404,7 +423,7 @@ namespace CapyCSS.Script
         /// <param name="importNameList">取り込む名前リスト</param>
         /// <param name="types">モジュールの情報</param>
         /// <returns>タスクリスト</returns>
-        private static IEnumerable<Task<IEnumerable<AutoImplementFunctionInfo>>> CreateMakeInportFunctionInfoTasks(
+        private static IEnumerable<Task<IEnumerable<AutoImplementFunctionInfo>>> CreateMakeImportFunctionInfoTasks(
             Module module, 
             ICollection<string> importNameList, 
             Type[] types)
@@ -441,7 +460,7 @@ namespace CapyCSS.Script
 
                     Task<IEnumerable<AutoImplementFunctionInfo>> importConstructorTask = Task.Run(() =>
                     {
-                        return CreateMakeInportConstructorInfoTasks(module, classType);
+                        return CreateMakeImportConstructorInfoTasks(module, classType);
                     });
                     tasks.Add(importConstructorTask);
 #if DEBUG_IMPORT
@@ -452,7 +471,7 @@ namespace CapyCSS.Script
                 // メソッドをインポートする
                 Task<IEnumerable<AutoImplementFunctionInfo>> importMethodTask = Task.Run(() =>
                 {
-                    return CreateMakeInportMethodInfoTasks(module, classType);
+                    return CreateMakeImportMethodInfoTasks(module, classType);
                 });
                 tasks.Add(importMethodTask);
 #if DEBUG_IMPORT
@@ -463,7 +482,7 @@ namespace CapyCSS.Script
             return tasks;
         }
 
-        private static IEnumerable<AutoImplementFunctionInfo> CreateMakeInportConstructorInfoTasks(Module module, Type classType)
+        private static IEnumerable<AutoImplementFunctionInfo> CreateMakeImportConstructorInfoTasks(Module module, Type classType)
         {
             ICollection<AutoImplementFunctionInfo> importFuncInfoList = new List<AutoImplementFunctionInfo>();
             foreach (ConstructorInfo constructorInfo in classType.GetConstructors())
@@ -475,7 +494,7 @@ namespace CapyCSS.Script
                 try
 #endif
                 {
-                    var functionInfo = MakeInportFunctionInfo(classType, constructorInfo, null, null, module);
+                    var functionInfo = MakeImportFunctionInfo(classType, constructorInfo, null, null, module);
                     if (functionInfo != null)
                     {
                         importFuncInfoList.Add(functionInfo);
@@ -491,7 +510,7 @@ namespace CapyCSS.Script
             return importFuncInfoList;
         }
 
-        private static IEnumerable<AutoImplementFunctionInfo> CreateMakeInportMethodInfoTasks(Module module, Type classType)
+        private static IEnumerable<AutoImplementFunctionInfo> CreateMakeImportMethodInfoTasks(Module module, Type classType)
         {
             ICollection<AutoImplementFunctionInfo> importFuncInfoList = new List<AutoImplementFunctionInfo>();
             foreach (MethodInfo methodInfo in classType.GetMethods())
@@ -503,7 +522,7 @@ namespace CapyCSS.Script
                 try
 #endif
                 {
-                    var functionInfo = MakeInportFunctionInfo(classType, methodInfo, methodInfo.ReturnType, null, module);
+                    var functionInfo = MakeImportFunctionInfo(classType, methodInfo, methodInfo.ReturnType, null, module);
                     if (functionInfo != null)
                     {
                         importFuncInfoList.Add(functionInfo);
@@ -621,7 +640,7 @@ namespace CapyCSS.Script
             IScriptArribute methodAttr,
             Type returnType)
         {
-            List<Task<AutoImplementFunctionInfo>> tasks = CreateMakeInportFunctionInfoTasks(classType, methodInfo, methodAttr, returnType);
+            List<Task<AutoImplementFunctionInfo>> tasks = CreateMakeImportFunctionInfoTasks(classType, methodInfo, methodAttr, returnType);
 
             if (tasks is null)
             {
@@ -654,7 +673,7 @@ namespace CapyCSS.Script
         /// <param name="methodInfo">メソッド情報</param>
         /// <param name="returnType">メソッドの返り値の型情報</param>
         /// <returns>タスクリスト</returns>
-        private static List<Task<AutoImplementFunctionInfo>> CreateMakeInportFunctionInfoTasks(
+        private static List<Task<AutoImplementFunctionInfo>> CreateMakeImportFunctionInfoTasks(
             Type classType, 
             MethodBase methodInfo,
             IScriptArribute methodAttr,
@@ -700,7 +719,7 @@ namespace CapyCSS.Script
             {
                 Task<AutoImplementFunctionInfo> task = Task.Run(() =>
                 {
-                    return MakeInportFunctionInfo(classType, methodInfo, returnType, scriptAttributeInfo);
+                    return MakeImportFunctionInfo(classType, methodInfo, returnType, scriptAttributeInfo);
                 });
                 tasks.Add(task);
 #if DEBUG_IMPORT
@@ -721,7 +740,7 @@ namespace CapyCSS.Script
         /// <param name="methodAttr">ScriptMethodAttribute情報(or null)</param>
         /// <param name="module">DLLモジュール(or null)</param>
         /// <returns>スクリプト用メソッド情報</returns>
-        private static AutoImplementFunctionInfo MakeInportFunctionInfo(
+        private static AutoImplementFunctionInfo MakeImportFunctionInfo(
             Type classType,
             MethodBase methodInfo, 
             Type returnType,
