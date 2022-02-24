@@ -431,7 +431,14 @@ namespace CapyCSS.Script
             {
                 // enum定義のネームスペースを削除
 
-                typeName = typeName.Substring(typeName.IndexOf("+") + 1, typeName.Length - typeName.IndexOf("+") - 1);
+                if (optimize)
+                {
+                    typeName = typeName.Substring(typeName.IndexOf("+") + 1, typeName.Length - typeName.IndexOf("+") - 1);
+                }
+                else
+                {
+                    typeName = typeName.Replace('+', '.');
+                }
             }
 
             if (isNotGeneName && optimize)

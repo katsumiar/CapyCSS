@@ -377,8 +377,16 @@ namespace CapyCSS.Controls.BaseControls
                     }
                     else
                     {
-                        string name = CbSTUtils.GetTypeFullName(ValueData.OriginalType);
-                        scr.Add(BuildScriptInfo.CreateBuildScriptInfo(null, $"{CbSTUtils.NEW_STR} {name}()", BuildScriptInfo.CodeType.Method, ValueData.Name));
+                        if (ValueData.IsList)
+                        {
+                            string name = CbSTUtils.GetTypeFullName(ValueData.OriginalReturnType);
+                            scr.Add(BuildScriptInfo.CreateBuildScriptInfo(null, $"{CbSTUtils.NEW_STR} System.Collections.Generic.List<{name}>()", BuildScriptInfo.CodeType.Method, ValueData.Name));
+                        }
+                        else
+                        {
+                            string name = CbSTUtils.GetTypeFullName(ValueData.OriginalType);
+                            scr.Add(BuildScriptInfo.CreateBuildScriptInfo(null, $"{CbSTUtils.NEW_STR} {name}()", BuildScriptInfo.CodeType.Method, ValueData.Name));
+                        }
                     }
                 }
                 else
