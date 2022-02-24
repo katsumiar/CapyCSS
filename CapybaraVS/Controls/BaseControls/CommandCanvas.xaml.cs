@@ -902,10 +902,27 @@ namespace CapyCSS.Controls.BaseControls
             CommandCanvasList.SetOwnerCursor(Cursors.Wait);
             ScriptWorkCanvas.Dispatcher.BeginInvoke(new Action(() =>
             {
+                try
+                {
+                    string text = File.ReadAllText(path);
+                    if (!text.Contains("<CommandCanvas Id=") || !text.Contains("<DataVersion>"))
+                    {
+                        CommandCanvasList.SetOwnerCursor(null);
+                        ControlTools.ShowErrorMessage(CapyCSS.Language.Instance["SYSTEM_Error_DataFormat"]);
+                        return;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    ControlTools.ShowErrorMessage(ex.Message);
+                }
+
                 using (StreamReader reader = new StreamReader(path))
                 {
                     try
                     {
+                        File.ReadAllText(path).Contains("<CommandCanvas Id=");
+
                         XmlSerializer serializer = new XmlSerializer(ScriptCommandCanvas.AssetXML.GetType());
 
                         XmlDocument doc = new XmlDocument();
