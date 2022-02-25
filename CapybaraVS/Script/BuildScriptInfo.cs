@@ -33,7 +33,6 @@ namespace CapyCSS.Script
             ByRef,
             Out,
             In,
-            Self,
         }
 
         private const int TAB_SIZE = 4;
@@ -47,6 +46,7 @@ namespace CapyCSS.Script
         private AttributeType Attribute = AttributeType.None;
         public bool IsNotUseCache = false;
         private string SharedValiable = null;
+        private bool IsInstanceMethod = false;
 
         private static int workCounter = 0;
         private static IList<BuildScriptInfo> SharedScripts = null;
@@ -70,6 +70,7 @@ namespace CapyCSS.Script
             obj.Attribute = Attribute;
             obj.IsNotUseCache = IsNotUseCache;
             obj.SharedValiable = SharedValiable;
+            obj.IsInstanceMethod = IsInstanceMethod;
         }
 
         /// <summary>
@@ -85,6 +86,7 @@ namespace CapyCSS.Script
             Attribute = AttributeType.None;
             IsNotUseCache = false;
             SharedValiable = null;
+            IsInstanceMethod = false;
         }
 
         /// <summary>
@@ -256,7 +258,15 @@ namespace CapyCSS.Script
             Attribute = info.IsByRef ? AttributeType.ByRef : Attribute;
             Attribute = info.IsOut ? AttributeType.Out : Attribute;
             Attribute = info.IsIn ? AttributeType.In : Attribute;
-            Attribute = info.IsSelf ? AttributeType.Self : Attribute;
+        }
+
+        /// <summary>
+        /// インスタンスメソッドか否かをセットします。
+        /// </summary>
+        /// <param name="isInstanceMethod">true==インスタンスメソッド</param>
+        public void SetInstanceMethod(bool isInstanceMethod)
+        {
+            IsInstanceMethod = isInstanceMethod;
         }
 
         /// <summary>
@@ -472,7 +482,7 @@ namespace CapyCSS.Script
 
                                 if (!string.IsNullOrWhiteSpace(arg))
                                 {
-                                    if (Child[0].Child != null && Child[0].Child.Count > 0 && Child[0].Child[0].Attribute == AttributeType.Self)
+                                    if (IsInstanceMethod)
                                     {
                                         // インスタンスプロパティ（最初の引数は self）
 
@@ -481,7 +491,7 @@ namespace CapyCSS.Script
                                         {
                                             arg = $"( {arg} )";
                                         }
-                                        result = arg + result.Substring(result.LastIndexOf("."));
+                                        result = arg + "." + result;
                                     }
                                 }
 
@@ -563,10 +573,14 @@ namespace CapyCSS.Script
                     return new Tuple<string, IList<string>>(args, arguments);
                 }
                 string methodName = result;
+                if (methodName == CbSTUtils.NULL_STR)
+                {
+                    return new Tuple<string, IList<string>>(methodName, null);
+                }
                 if (!string.IsNullOrEmpty(args))
                 {
                     BuildScriptInfo info = argList[0];
-                    if (info.Child != null && info.Child.Count > 0 && info.Child[0].Attribute == AttributeType.Self)
+                    if (IsInstanceMethod)
                     {
                         // インスタンスメソッド（最初の引数は self）
 
@@ -613,7 +627,7 @@ namespace CapyCSS.Script
                                 {
                                     instance = $"( {instance} )";
                                 }
-                                methodName = instance + methodName.Substring(methodName.LastIndexOf("."));
+                                methodName = instance + "." + methodName;
                                 args = ShapeArguments(argumentList);
                                 result = BuildMethod(tabLevel, codeType, methodName, args);
                             }
@@ -627,7 +641,7 @@ namespace CapyCSS.Script
                             {
                                 args = $"( {args} )";
                             }
-                            methodName = args + methodName.Substring(methodName.LastIndexOf("."));
+                            methodName = args + "." + methodName;
                             result = BuildMethod(tabLevel, codeType, methodName, "");
                         }
                     }

@@ -166,6 +166,8 @@ namespace CapyCSS.Script
             {
                 if (CbVoid.Is(typeof(T)))
                     return CbSTUtils.VOID_STR;
+                if (CbNull.Is(typeof(T)))
+                    return CbSTUtils.NULL_STR;
                 return CbSTUtils.GetTypeName(typeof(T));
             }
         }
@@ -217,6 +219,8 @@ namespace CapyCSS.Script
                     return CbSTUtils.ERROR_STR;
                 if (CbVoid.Is(typeof(T)))
                     return CbSTUtils.VOID_STR;
+                if (CbNull.Is(typeof(T)))
+                    return CbSTUtils.UI_NULL_STR;
                 string baseName = $"[{TypeName}]";
                 if (IsNull)
                 {
@@ -266,16 +270,27 @@ namespace CapyCSS.Script
                 {
                     // 何もしない
                 }
+                else if (this is CbClass<CbNull>)
+                {
+                    // null への代入は無い
+
+                    Debug.Assert(false);
+                }
+                else if (n is CbClass<CbNull>)
+                {
+                    Data = null;
+                    isNull = true;
+                }
                 else if (IsNullable)
                 {
                     Value = (dynamic)Convert.ChangeType(n.Data, OriginalReturnType);
+                    isNull = n.IsNull;
                 }
                 else
                 {
                     Value = (dynamic)n.Data;
+                    isNull = n.IsNull;
                 }
-
-                isNull = n.IsNull;
 
                 IsLiteral = n.IsLiteral;
                 if (IsError)
@@ -297,7 +312,7 @@ namespace CapyCSS.Script
         /// <summary>
         /// 変数の持つ値は null か？
         /// </summary>
-        public override bool IsNull => Value is null;
+        public override bool IsNull => Value is null || CbNull.Is(typeof(T));
 
         public override bool IsStringableValue => true;
 

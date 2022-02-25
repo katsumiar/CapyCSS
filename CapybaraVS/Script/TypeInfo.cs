@@ -863,6 +863,55 @@ namespace CapyCSS.Script
     }
 
     /// <summary>
+    /// nullを表現するクラスです。
+    /// </summary>
+    public class CbNull
+        : ICbShowValue
+    {
+        public string DataString => CbSTUtils.UI_NULL_STR;
+        public static Func<ICbValue> TF = () => CbClass<CbNull>.Create();
+        public static Func<string, ICbValue> NTF = (name) => CbClass<CbNull>.Create(name);
+        public static Type T => typeof(CbClass<CbNull>);
+        public static bool Is(Type type)
+        {
+            return type == CbNull.T || type == typeof(CbNull);
+        }
+        public static bool Is(ICbValue value)
+        {
+            return value is CbNull || value is CbClass<CbNull>;
+        }
+        public static CbNull Create()
+        {
+            return new CbNull();
+        }
+        /// <summary>
+        /// nullを受け入れられる型を判定します。
+        /// </summary>
+        /// <param name="value">CbXXX型の変数</param>
+        /// <returns>true==受け入れられる</returns>
+        public static bool IsSubstitutable(ICbValue value)
+        {
+            if (value is null || value.OriginalType == typeof(CbNull))
+            {
+                return false;
+            }
+            return IsSubstitutable(value.OriginalType);
+        }
+        /// <summary>
+        /// nullを受け入れられる型を判定します。
+        /// </summary>
+        /// <param name="type">型情報</param>
+        /// <returns>true==受け入れられる</returns>
+        public static bool IsSubstitutable(Type type)
+        {
+            return type.IsClass
+                || type == typeof(object)
+                || type == typeof(string)
+                || (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Nullable<>));
+        }
+    }
+
+    /// <summary>
     /// ジェネリックメソッドの引数型を表現するクラスです。
     /// </summary>
     public class CbGeneMethArg 
@@ -1166,7 +1215,14 @@ namespace CapyCSS.Script
                         }
                         else
                         {
-                            Data = (dynamic)n.Data != 0;
+                            if (n is CbNull)
+                            {
+                                Data = false;
+                            }
+                            else
+                            {
+                                Data = (dynamic)n.Data != 0;
+                            }
                         }
                     }
                     else if (CbScript.IsCalcable(typeof(T)))
@@ -1196,7 +1252,10 @@ namespace CapyCSS.Script
                     }
                     else
                     {
-                        if (IsNullable)
+                        if (n is CbNull)
+                        {
+                        }
+                        else if (IsNullable)
                         {
                             //TODO ここは将来Nullableなクラスのsetをoverrideして分離する
 

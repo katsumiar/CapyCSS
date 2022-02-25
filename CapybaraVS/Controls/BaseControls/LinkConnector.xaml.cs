@@ -350,7 +350,12 @@ namespace CapyCSS.Controls.BaseControls
                 {
                     // 文字列
 
-                    scr.Add(BuildScriptInfo.CreateBuildScriptInfo(null, "\"" + ValueData.ValueString + "\"", BuildScriptInfo.CodeType.Data, ValueData.Name));
+                    string str = ValueData.ValueString;
+                    str = str.Replace(Environment.NewLine, "\\n");
+                    str = str.Replace("\n", "\\n");
+                    str = str.Replace("\r", "\\r");
+                    str = str.Replace("\t", "\\t");
+                    scr.Add(BuildScriptInfo.CreateBuildScriptInfo(null, "\"" + str + "\"", BuildScriptInfo.CodeType.Data, ValueData.Name));
                 }
                 else if (ValueData is ICbEnum cbEnum)
                 {
@@ -718,7 +723,7 @@ namespace CapyCSS.Controls.BaseControls
             {
                 bool isEvent = false;
 
-                if (ValueData is ICbEvent cbEvent)
+                if (!CbNull.Is(connectValueData) && ValueData is ICbEvent cbEvent)
                 {
                     isEvent = true;
 

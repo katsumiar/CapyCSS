@@ -137,6 +137,15 @@ namespace CapyCSS.Script
         /// 引数情報
         /// </summary>
         IList<ArgumentInfoNode> ArgumentTypeList { get; }
+        /// <summary>
+        /// インスタンスメソッドか？
+        /// </summary>
+        bool IsClassInstanceMethod { get; }
+        /// <summary>
+        /// ジェネリックメソッドのパラメータ
+        /// </summary>
+        Type[] GenericMethodParameters { get; }
+        IList<TypeRequest> typeRequests { get; }
     }
 
     public class FuncAssetSub

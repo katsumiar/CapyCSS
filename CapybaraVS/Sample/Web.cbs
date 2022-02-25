@@ -1,227 +1,238 @@
-<?xml version="1.0" encoding="utf-16"?><CommandCanvas Id="2"><DataVersion>3</DataVersion><WorkCanvas Id="1"><DataVersion>1</DataVersion><EnabelGridLine>false</EnabelGridLine><EnableInfo>false</EnableInfo><CanvasScale>1</CanvasScale><CanvasRenderTransform><M11>1.1180852304935274</M11><M12>0</M12><M21>0</M21><M22>1.1180852304935274</M22><OffsetX>78.26596613454691</OffsetX><OffsetY>22.104623076773905</OffsetY></CanvasRenderTransform></WorkCanvas><ImportNameSpaceModule><string>System</string><string>System.Collections.Generic</string></ImportNameSpaceModule><ImportDllModule /><ImportNuGetModule /><WorkStack><StackList /></WorkStack><WorkCanvasAssetList><Asset Id="5" X="922.2891998162362" Y="299.36900583229334"><MultiRootConnector><DataVersion>1</DataVersion><RootFunc AssetType="FuncType" AssetFuncType="OutConsole"><AttachVariableIds /><AttachVariableId>0</AttachVariableId><AssetValueTypes><string>System.String</string></AssetValueTypes><RootConnector PointId="1055"><Caption><LabelString>OutConsole&lt;string&gt;</LabelString></Caption><Value>&lt;!DOCTYPE html&gt;
-&lt;html lang="en-US"&gt;
+<?xml version="1.0" encoding="utf-16"?><CommandCanvas Id="2"><DataVersion>3</DataVersion><WorkCanvas Id="1"><DataVersion>1</DataVersion><EnabelGridLine>false</EnabelGridLine><EnableInfo>false</EnableInfo><CanvasScale>1</CanvasScale><CanvasRenderTransform><M11>1.024368664414076</M11><M12>0</M12><M21>0</M21><M22>1.024368664414076</M22><OffsetX>71.70580650898519</OffsetX><OffsetY>94.90130585393553</OffsetY></CanvasRenderTransform></WorkCanvas><ImportNameSpaceModule><string>System</string><string>System.Collections.Generic</string></ImportNameSpaceModule><ImportDllModule /><ImportNuGetModule /><WorkStack><StackList /></WorkStack><WorkCanvasAssetList><Asset Id="5" X="1004.1943097778246" Y="188.38870297539205"><MultiRootConnector><DataVersion>1</DataVersion><RootFunc AssetType="FuncType" AssetFuncType="OutConsole"><AttachVariableIds /><AttachVariableId>0</AttachVariableId><AssetValueTypes><string>System.String</string></AssetValueTypes><RootConnector PointId="1315"><Caption><LabelString>OutConsole&lt;string&gt;</LabelString></Caption><Value>&lt;!DOCTYPE html&gt;
+&lt;html&gt;
   &lt;head&gt;
-    &lt;meta charset="UTF-8"&gt;
-    &lt;meta http-equiv="X-UA-Compatible" content="IE=edge"&gt;
-    &lt;meta name="viewport" content="width=device-width, initial-scale=1"&gt;
+    &lt;meta http-equiv="Content-type" content="text/html; charset=utf-8"&gt;
+    &lt;meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'; img-src data:; connect-src 'self'"&gt;
+    &lt;title&gt;Site not found &amp;middot; GitHub Pages&lt;/title&gt;
+    &lt;style type="text/css" media="screen"&gt;
+      body {
+        background-color: #f1f1f1;
+        margin: 0;
+        font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+      }
 
-&lt;!-- Begin Jekyll SEO tag v2.7.1 --&gt;
-&lt;title&gt;CapyCSS | A node-connected visual scripting tool that allows you to node c # methods.&lt;/title&gt;
-&lt;meta name="generator" content="Jekyll v3.9.0" /&gt;
-&lt;meta property="og:title" content="CapyCSS" /&gt;
-&lt;meta property="og:locale" content="en_US" /&gt;
-&lt;meta name="description" content="A node-connected visual scripting tool that allows you to node c # methods." /&gt;
-&lt;meta property="og:description" content="A node-connected visual scripting tool that allows you to node c # methods." /&gt;
-&lt;link rel="canonical" href="https://katsumiar.github.io/CapyCSS/" /&gt;
-&lt;meta property="og:url" content="https://katsumiar.github.io/CapyCSS/" /&gt;
-&lt;meta property="og:site_name" content="CapyCSS" /&gt;
-&lt;meta name="twitter:card" content="summary" /&gt;
-&lt;meta property="twitter:title" content="CapyCSS" /&gt;
-&lt;script type="application/ld+json"&gt;
-{"description":"A node-connected visual scripting tool that allows you to node c # methods.","url":"https://katsumiar.github.io/CapyCSS/","@type":"WebSite","headline":"CapyCSS","name":"CapyCSS","@context":"https://schema.org"}&lt;/script&gt;
-&lt;!-- End Jekyll SEO tag --&gt;
+      .container { margin: 50px auto 40px auto; width: 600px; text-align: center; }
 
-    &lt;link rel="stylesheet" href="/CapyCSS/assets/css/style.css?v=e2c1239b8d65896b377e4fc09217ece0d24557b2"&gt;
-    &lt;!-- start custom head snippets, customize with your own _includes/head-custom.html file --&gt;
+      a { color: #4183c4; text-decoration: none; }
+      a:hover { text-decoration: underline; }
 
-&lt;!-- Setup Google Analytics --&gt;
+      h1 { width: 800px; position:relative; left: -100px; letter-spacing: -1px; line-height: 60px; font-size: 60px; font-weight: 100; margin: 0px 0 50px 0; text-shadow: 0 1px 0 #fff; }
+      p { color: rgba(0, 0, 0, 0.5); margin: 20px 0; line-height: 1.6; }
 
+      ul { list-style: none; margin: 25px 0; padding: 0; }
+      li { display: table-cell; font-weight: bold; width: 1%; }
 
+      .logo { display: inline-block; margin-top: 35px; }
+      .logo-img-2x { display: none; }
+      @media
+      only screen and (-webkit-min-device-pixel-ratio: 2),
+      only screen and (   min--moz-device-pixel-ratio: 2),
+      only screen and (     -o-min-device-pixel-ratio: 2/1),
+      only screen and (        min-device-pixel-ratio: 2),
+      only screen and (                min-resolution: 192dpi),
+      only screen and (                min-resolution: 2dppx) {
+        .logo-img-1x { display: none; }
+        .logo-img-2x { display: inline-block; }
+      }
 
-&lt;!-- You can set your favicon here --&gt;
-&lt;!-- link rel="shortcut icon" type="image/x-icon" href="/CapyCSS/favicon.ico" --&gt;
+      #suggestions {
+        margin-top: 35px;
+        color: #ccc;
+      }
+      #suggestions a {
+        color: #666666;
+        font-weight: 200;
+        font-size: 14px;
+        margin: 0 10px;
+      }
 
-&lt;!-- end custom head snippets --&gt;
-
+    &lt;/style&gt;
   &lt;/head&gt;
   &lt;body&gt;
-    &lt;div class="container-lg px-3 my-5 markdown-body"&gt;
-      
 
-      &lt;h1 id="capycss"&gt;CapyCSS&lt;/h1&gt;
-&lt;p&gt;&lt;img src="https://user-images.githubusercontent.com/63950487/132117205-85f0a709-10bf-4d5b-9dcd-b6d40b1c88aa.png" alt="sample" /&gt;&lt;/p&gt;
+    &lt;div class="container"&gt;
 
-&lt;h2 id="0330-での変更"&gt;0.3.3.0 での変更&lt;/h2&gt;
+      &lt;h1&gt;404&lt;/h1&gt;
+      &lt;p&gt;&lt;strong&gt;There isn't a GitHub Pages site here.&lt;/strong&gt;&lt;/p&gt;
 
-&lt;ul&gt;
-  &lt;li&gt;ジェネリッククラスおよびジェネリックメソッドのインポートに対応&lt;/li&gt;
-&lt;/ul&gt;
+      &lt;p&gt;
+        If you're trying to publish one,
+        &lt;a href="https://help.github.com/pages/"&gt;read the full documentation&lt;/a&gt;
+        to learn how to set up &lt;strong&gt;GitHub Pages&lt;/strong&gt;
+        for your repository, organization, or user account.
+      &lt;/p&gt;
 
-&lt;p&gt;&lt;img src="https://user-images.githubusercontent.com/63950487/131742437-1d6ec46a-7d06-4e6e-9fec-746d63051b6e.gif" alt="generic" /&gt;&lt;/p&gt;
-
-&lt;h2 id="特徴"&gt;特徴&lt;/h2&gt;
-&lt;ul&gt;
-  &lt;li&gt;ビジュアルなスクリプトを作成することができます。&lt;/li&gt;
-  &lt;li&gt;c#で書かれたソースを修正してメソッドを追加することでノードとして使用できるようにインポートする機能があります（属性の指定とビルドが必要です）。&lt;/li&gt;
-  &lt;li&gt;dllをインポートしてメソッドをスクリプトで使うことができます。&lt;/li&gt;
-  &lt;li&gt;クラス指定でメソッドをインポートしてスクリプトで使うことができます。&lt;/li&gt;
-  &lt;li&gt;NuGetからパッケージをインポートしてスクリプトで使うことができます。&lt;/li&gt;
-  &lt;li&gt;作者の趣味とc#の勉強と気まぐれで制作されています。&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h2 id="ターゲット環境"&gt;ターゲット環境&lt;/h2&gt;
-&lt;ul&gt;
-  &lt;li&gt;.Net 5.0&lt;/li&gt;
-  &lt;li&gt;c＃&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h2 id="実行オプション"&gt;実行オプション&lt;/h2&gt;
-&lt;p&gt;保存したスクリプトファイルをコマンド引数で指定すると、起動時に自動的に読み込まれます。
-オプションとして-asが併せて指定されている場合、「Entry」をチェックされたノードは、スクリプトのロード後に自動で実行されます。
-オプションとして-aeを指定した場合、スクリプト実行後に自動的に終了します。
-オプションとして-aseを指定した場合、-asと-aeを併せて実行した場合と同様になります。&lt;/p&gt;
-&lt;div class="language-plaintext highlighter-rouge"&gt;&lt;div class="highlight"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;CapyCSS.exe script.cbs
-CapyCSS.exe -as script.cbs
-CapyCSS.exe -as -ae script.cbs
-CapyCSS.exe -ase script.cbs
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-&lt;p&gt;「SetExitCode」ノードを使って終了コードをセットできます。&lt;/p&gt;
-
-&lt;h2 id="コンソール出力"&gt;コンソール出力&lt;/h2&gt;
-
-&lt;p&gt;コンソールから起動した場合は、「Call File」や「ConsoleOut」系のノードからの出力は、コンソールにも出力されます。&lt;/p&gt;
-
-&lt;h2 id="ノードのインポート"&gt;ノードのインポート&lt;/h2&gt;
-&lt;p&gt;本ツールでは、c# の多くのメソッドを簡単にノード化することができます。
-下記は、属性を使用してメソッドをノード化する例です。&lt;/p&gt;
-&lt;div class="language-plaintext highlighter-rouge"&gt;&lt;div class="highlight"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;[ScriptMethod]
-public static System.IO.StreamReader GetReadStream(string path, string encoding = "utf-8")
-{
-    var encodingCode = Encoding.GetEncoding(encoding);
-    return new System.IO.StreamReader(path, encodingCode);
-}
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;h2 id="操作方法"&gt;操作方法&lt;/h2&gt;
-&lt;ul&gt;
-  &lt;li&gt;スペースキーもしくはホイールボタンの押下でコマンドウインドウを表示できます。&lt;/li&gt;
-  &lt;li&gt;コマンドウインドウを表示し、コマンドメニューの「Program」下から項目をクリックしてノードを配置できます。&lt;/li&gt;
-  &lt;li&gt;ノードの○を左クリックしてドラッグし、ノードの□に接続できます。&lt;/li&gt;
-  &lt;li&gt;Ctrlキーを押しながら□を左クリックすると、接続しているノードを切断できます。&lt;/li&gt;
-  &lt;li&gt;Shiftキーを押しながらマウスをドラッグして範囲内のノードを複数選択します。&lt;/li&gt;
-  &lt;li&gt;Deleteキーで選択されているノードを削除できます。&lt;/li&gt;
-  &lt;li&gt;ノード名を左クリックしてノードをドラッグ移動できます（Ctrlキーを押下した状態だと、ガイドに沿って移動します）。&lt;/li&gt;
-  &lt;li&gt;画面を左クリックして画面全体をドラッグ移動できます（選択されたノードがある場合、選択されているノードが移動します）。&lt;/li&gt;
-  &lt;li&gt;ホイールボタンの回転で表示を拡大もしくは縮小できます。&lt;/li&gt;
-  &lt;li&gt;Ctrl + Aで全選択&lt;/li&gt;
-  &lt;li&gt;Ctrl + Spaceで選択解除&lt;/li&gt;
-  &lt;li&gt;Ctrl + Cで選択したノードをコピーできます。&lt;/li&gt;
-  &lt;li&gt;Ctrl + Vでコピーされているノードを貼り付けられます。&lt;/li&gt;
-  &lt;li&gt;Ctrl + Sでスクリプトを上書き保存できます。&lt;/li&gt;
-  &lt;li&gt;Ctrl + Oでスクリプトの読み込みができます。&lt;/li&gt;
-  &lt;li&gt;Ctrl + Nで新規にスクリプトを作成できます。&lt;/li&gt;
-  &lt;li&gt;Ctrl + Shift + Nでスクリプトをクリアできます。&lt;/li&gt;
-  &lt;li&gt;jキーでスクリプトの表示を画面の中央に画面に収まるように調整します。&lt;/li&gt;
-  &lt;li&gt;Ctrl + jキーでスクリプトの表示位置を画面の左上に調整します。&lt;/li&gt;
-  &lt;li&gt;F5でEntryをチェックされたノードをすべて実行できます。&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;※ノード名、引数名はダブルクリックで編集できます。ただし、変数名は画面左側の変数名一覧でのみダブルクリックで編集できます。&lt;/p&gt;
-
-&lt;h2 id="スクリプトの便利な機能"&gt;スクリプトの便利な機能&lt;/h2&gt;
-&lt;ul&gt;
-  &lt;li&gt;引数の上にカーソルを置くと内容を確認できます。&lt;/li&gt;
-  &lt;li&gt;数字と文字をドラッグアンドドロップするだけで定数ノードを作成できます。&lt;/li&gt;
-  &lt;li&gt;ノードの接続時に型キャストが可能です。&lt;/li&gt;
-  &lt;li&gt;object型から任意の型へのキャストができます。&lt;/li&gt;
-  &lt;li&gt;ICollection型からArray型（この逆も）へのキャストができます。&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h2 id="ヒント表示"&gt;ヒント表示&lt;/h2&gt;
-&lt;p&gt;英語と日本語をサポートします。ただし、初期状態では英語のみの機械翻訳です。
-日本語で表示するには、実行後に作成されるapp.xmlファイルの内容を変更します。
-&lt;code class="language-plaintext highlighter-rouge"&gt;&amp;lt;Language&amp;gt;en-US&amp;lt;/Language&amp;gt;&lt;/code&gt;
-上記の内容を次のように変更します。
-&lt;code class="language-plaintext highlighter-rouge"&gt;&amp;lt;Language&amp;gt;ja-JP&amp;lt;/Language&amp;gt;&lt;/code&gt;
-再起動すると設定が適用されます。&lt;/p&gt;
-
-&lt;h2 id="メソッドのインポートでサポートされるメソッド"&gt;メソッドのインポートでサポートされるメソッド&lt;/h2&gt;
-&lt;ul&gt;
-  &lt;li&gt;Static method&lt;/li&gt;
-  &lt;li&gt;Class method(thisを受け取る引数が追加されます)&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;※メソッドの所属するクラスは、パブリックである必要があります。
-&lt;br /&gt;※メソッドはパブリックである必要があります。
-&lt;br /&gt;※抽象クラスやジェネリッククラスのメソッド及びジェネリックなメソッドは、対象外です。&lt;/p&gt;
-
-&lt;h2 id="スクリプトが対応するメソッドの引数の型及び修飾子など"&gt;スクリプトが対応するメソッドの引数の型（及び修飾子など）&lt;/h2&gt;
-&lt;ul&gt;
-  &lt;li&gt;Type: int, string, double, byte, sbyte, long, short, ushort, uint, ulong, char, float, decimal, bool, object&lt;/li&gt;
-  &lt;li&gt;配列&lt;/li&gt;
-  &lt;li&gt;ICollection（※UI上で要素を操作できます）&lt;/li&gt;
-  &lt;li&gt;Class&lt;/li&gt;
-  &lt;li&gt;Struct&lt;/li&gt;
-  &lt;li&gt;Interface&lt;/li&gt;
-  &lt;li&gt;Enum&lt;/li&gt;
-  &lt;li&gt;Generics&lt;/li&gt;
-  &lt;li&gt;デフォルト値&lt;/li&gt;
-  &lt;li&gt;ref（リファレンス）&lt;/li&gt;
-  &lt;li&gt;outパラメーター修飾子&lt;/li&gt;
-  &lt;li&gt;inパラメーター修飾子&lt;/li&gt;
-  &lt;li&gt;paramsパラメータ配列&lt;/li&gt;
-  &lt;li&gt;null許容型&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;※リテラルノードのみ独自のtext型を用意しています。string型とobject型へ代入可能です。
-&lt;br /&gt;※オーバーロードに対応しています。&lt;/p&gt;
-
-&lt;h2 id="スクリプトが対応するメソッドの戻り値の型"&gt;スクリプトが対応するメソッドの戻り値の型&lt;/h2&gt;
-&lt;ul&gt;
-  &lt;li&gt;Type: int, string, double, byte, sbyte, long, short, ushort, uint, ulong, char, float, decimal, bool, object&lt;/li&gt;
-  &lt;li&gt;配列&lt;/li&gt;
-  &lt;li&gt;Class&lt;/li&gt;
-  &lt;li&gt;Struct&lt;/li&gt;
-  &lt;li&gt;Interface&lt;/li&gt;
-  &lt;li&gt;Enum&lt;/li&gt;
-  &lt;li&gt;Generics&lt;/li&gt;
-  &lt;li&gt;void&lt;/li&gt;
-  &lt;li&gt;null許容型&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h2 id="メソッドからのメソッド呼び出し"&gt;メソッドからのメソッド呼び出し&lt;/h2&gt;
-&lt;p&gt;Func&amp;lt;&amp;gt; および Action&amp;lt;&amp;gt; タイプの引数は、ノードを外部プロセスとして呼び出すことができます。Func&amp;lt;&amp;gt; の場合、ノード型と戻り値型が一致した場合に接続できます。Action だと無条件に接続できます。&lt;/p&gt;
-
-&lt;h2 id="hello-world"&gt;Hello World!&lt;/h2&gt;
-&lt;p&gt;「Hello World!」と出力するサンプルです。&lt;br /&gt;
-&lt;img src="https://user-images.githubusercontent.com/63950487/97863495-6f7a3f00-1d4a-11eb-9ef4-0017be21d13e.png" alt="CapyCSS01" /&gt;
-&lt;br /&gt;ホイールボタンをクリックするかスペースキーでコマンドウインドウが表示されます。
-その中からProgram→.Net Function→Input/Output→ConsoleOut→ConsoleOutをクリックします。&lt;/p&gt;
-
-&lt;p&gt;&lt;img src="https://user-images.githubusercontent.com/63950487/97861283-d4cc3100-1d46-11eb-9aed-1bf981d57ad3.png" alt="CapyCSS02" /&gt;
-&lt;br /&gt;作業エリアをクリックすると型選択ウインドウが表示されますので、その中からstringを選択します。&lt;/p&gt;
-
-&lt;p&gt;&lt;img src="https://user-images.githubusercontent.com/63950487/97861311-deee2f80-1d46-11eb-8352-ef904e6d8818.png" alt="CapyCSS03" /&gt;
-&lt;br /&gt;引数nの部分に「Hello World!」と入力し、Runをクリックするとスクリプトが実行されます。&lt;/p&gt;
-
-&lt;p&gt;&lt;img src="https://user-images.githubusercontent.com/63950487/97861328-e7df0100-1d46-11eb-9f44-2c72d97f86a1.png" alt="CapyCSS04" /&gt;
-&lt;br /&gt;このように「Hello World!」と出力されます。&lt;/p&gt;
-
-&lt;p&gt;&lt;img src="https://user-images.githubusercontent.com/63950487/97861338-eca3b500-1d46-11eb-8c6e-5cc957366621.png" alt="CapyCSS05" /&gt;
-&lt;br /&gt;EntryをチェックするとF5キーで実行できるようになります。&lt;/p&gt;
-
-&lt;h2 id="簡単な足し算"&gt;簡単な足し算&lt;/h2&gt;
-
-&lt;p&gt;&lt;img src="https://user-images.githubusercontent.com/63950487/98212435-ef8ce880-1f86-11eb-9e4b-d2a6612d86ac.gif" alt="CapyCSS" /&gt;
-&lt;br /&gt;ノードを繋ぐことによって、一連のノードを実行できます。&lt;/p&gt;
-
-&lt;h2 id="グループ化及びテキスト"&gt;グループ化及びテキスト&lt;/h2&gt;
-
-&lt;p&gt;&lt;img src="https://user-images.githubusercontent.com/63950487/98465611-6b986200-220d-11eb-8184-bd8b6a2e9bca.gif" alt="CapyCSS02" /&gt;
-&lt;br /&gt;Test Areaを使うとノードのグループ化とテキストの書き込みが行えます。&lt;/p&gt;
-
-&lt;h2 id="ライセンス"&gt;ライセンス&lt;/h2&gt;
-&lt;p&gt;MITライセンス&lt;/p&gt;
-
-
-      
-      &lt;div class="footer border-top border-gray-light mt-5 pt-3 text-right text-gray"&gt;
-        This site is open source. &lt;a href="https://github.com/katsumiar/CapyCSS/edit/master/README.md"&gt;Improve this page&lt;/a&gt;.
+      &lt;div id="suggestions"&gt;
+        &lt;a href="https://githubstatus.com"&gt;GitHub Status&lt;/a&gt; &amp;mdash;
+        &lt;a href="https://twitter.com/githubstatus"&gt;@githubstatus&lt;/a&gt;
       &lt;/div&gt;
-      
+
+      &lt;a href="/" class="logo logo-img-1x"&gt;
+        &lt;img width="32" height="32" title="" alt="" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyRpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMy1jMDExIDY2LjE0NTY2MSwgMjAxMi8wMi8wNi0xNDo1NjoyNyAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENTNiAoTWFjaW50b3NoKSIgeG1wTU06SW5zdGFuY2VJRD0ieG1wLmlpZDpFMTZCRDY3REIzRjAxMUUyQUQzREIxQzRENUFFNUM5NiIgeG1wTU06RG9jdW1lbnRJRD0ieG1wLmRpZDpFMTZCRDY3RUIzRjAxMUUyQUQzREIxQzRENUFFNUM5NiI+IDx4bXBNTTpEZXJpdmVkRnJvbSBzdFJlZjppbnN0YW5jZUlEPSJ4bXAuaWlkOkUxNkJENjdCQjNGMDExRTJBRDNEQjFDNEQ1QUU1Qzk2IiBzdFJlZjpkb2N1bWVudElEPSJ4bXAuZGlkOkUxNkJENjdDQjNGMDExRTJBRDNEQjFDNEQ1QUU1Qzk2Ii8+IDwvcmRmOkRlc2NyaXB0aW9uPiA8L3JkZjpSREY+IDwveDp4bXBtZXRhPiA8P3hwYWNrZXQgZW5kPSJyIj8+SM9MCAAAA+5JREFUeNrEV11Ik1EY3s4+ddOp29Q5b0opCgKFsoKoi5Kg6CIhuwi6zLJLoYLopq4qsKKgi4i6CYIoU/q5iDAKs6syoS76IRWtyJ+p7cdt7sf1PGOD+e0c3dygAx/67ZzzPM95/877GYdHRg3ZjMXFxepQKNS6sLCwJxqNNuFpiMfjVs4ZjUa/pmmjeD6VlJS8NpvNT4QQ7mxwjSsJiEQim/1+/9lgMHgIr5ohuxG1WCw9Vqv1clFR0dCqBODElV6v90ogEDjGdYbVjXhpaendioqK07CIR7ZAqE49PT09BPL2PMgTByQGsYiZlQD4uMXtdr+JxWINhgINYhGT2MsKgMrm2dnZXgRXhaHAg5jEJodUAHxux4LudHJE9RdEdA+i3Juz7bGHe4mhE9FNrgwBCLirMFV9Okh5eflFh8PR5nK5nDabrR2BNJlKO0T35+Li4n4+/J+/JQCxhmu5h3uJoXNHPbmWZAHMshWB8l5/ipqammaAf0zPDDx1ONV3vurdidqwAQL+pEc8sLcAe1CCvQ3YHxIW8Pl85xSWNC1hADDIv0rIE/o4J0k3kww4xSlwIhcq3EFFOm7KN/hUGOQkt0CFa5WpNJlMvxBEz/IVQAxg/ZRZl9wiHA63yDYieM7DnLP5CiAGsC7I5sgtYKJGWe2A8seFqgFJrJjEPY1Cn3pJ8/9W1e5VWsFDTEmFrBcoDhZJEQkXuhICMyKpjhahqN21hRYATKfUOlDmkygrR4o4C0VOLGJKrOITKB4jijzdXygBKixyC5TDQdnk/Pz8qRw6oOWGlsTKGOQW6OH6FBWsyePxdOXLTgxiyebILZCjz+GLgMIKnXNzc49YMlcRdHXcSwxFVgTInQhC9G33UhNoJLuqq6t345p9y3eUy8OTk5PjAHuI9uo4b07FBaOhsu0A4Unc+T1TU1Nj3KsSSE5yJ65jqF2DDd8QqWYmAZrIM2VlZTdnZmb6AbpdV9V6ec9znf5Q7HjYumdRE0JOp3MjitO4SFa+cZz8Umqe3TCbSLvdfkR/kWDdNQl5InuTcysOcpFT35ZrbBxx4p3JAHlZVVW1D/634VRt+FvLBgK/v5LV9WS+10xMTEwtRw7XvqOL+e2Q8V3AYIOIAXQ26/heWVnZCVfcyKHg2CBgTpmPmjYM8l24GyaUHyaIh7XwfR9ErE8qHoDfn2LTNAVC0HX6MFcBIP8Bi+6F6cdW/DICkANRfx99fEYFQ7Nph5i/uQiA214gno7K+guhaiKg9gC62+M8eR7XsBsYJ4ilam60Fb7r7uAj8wFyuwM1oIOWgfmDy6RXEEQzJMPe23DXrVS7rtyD3Df8z/FPgAEAzWU5Ku59ZAUAAAAASUVORK5CYII="&gt;
+      &lt;/a&gt;
+
+      &lt;a href="/" class="logo logo-img-2x"&gt;
+        &lt;img width="32" height="32" title="" alt="" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyRpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMy1jMDExIDY2LjE0NTY2MSwgMjAxMi8wMi8wNi0xNDo1NjoyNyAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENTNiAoTWFjaW50b3NoKSIgeG1wTU06SW5zdGFuY2VJRD0ieG1wLmlpZDpEQUM1QkUxRUI0MUMxMUUyQUQzREIxQzRENUFFNUM5NiIgeG1wTU06RG9jdW1lbnRJRD0ieG1wLmRpZDpEQUM1QkUxRkI0MUMxMUUyQUQzREIxQzRENUFFNUM5NiI+IDx4bXBNTTpEZXJpdmVkRnJvbSBzdFJlZjppbnN0YW5jZUlEPSJ4bXAuaWlkOkUxNkJENjdGQjNGMDExRTJBRDNEQjFDNEQ1QUU1Qzk2IiBzdFJlZjpkb2N1bWVudElEPSJ4bXAuZGlkOkUxNkJENjgwQjNGMDExRTJBRDNEQjFDNEQ1QUU1Qzk2Ii8+IDwvcmRmOkRlc2NyaXB0aW9uPiA8L3JkZjpSREY+IDwveDp4bXBtZXRhPiA8P3hwYWNrZXQgZW5kPSJyIj8+hfPRaQAAB6lJREFUeNrsW2mME2UYbodtt+2222u35QheoCCYGBQligIJgkZJNPzgigoaTEj8AdFEMfADfyABkgWiiWcieK4S+QOiHAYUj2hMNKgYlEujpNttu9vttbvdw+chU1K6M535pt3ubHCSyezR+b73eb73+t7vrfXsufOW4bz6+vom9/b23ovnNNw34b5xYGAgODg46Mbt4mesVmsWd1qSpHhdXd2fuP/Afcput5/A88xwymcdBgLqenp6FuRyuWV4zu/v759QyWBjxoz5t76+/gun09mK5xFyakoCAPSaTCazNpvNPoYVbh6O1YKGRF0u13sNDQ27QMzfpiAAKj0lnU6/gBVfAZW2WWpwwVzy0IgP3G73FpjI6REhAGA9qVRqA1b9mVoBVyIC2tDi8Xg24+dUzQiAbS/s7Ox8G2o/3mKCC+Zw0efzPQEfcVjYrARX3dbV1bUtHo8fMgt42f+Mp0yUTVQbdWsAHVsikdiHkHaPxcQXQufXgUBgMRxme9U0AAxfH4vFvjM7eF6UkbJS5qoQwEQGA57Ac5JllFyUVZZ5ckUEgMVxsK2jlSYzI+QXJsiyjzNEAJyJAzb/KQa41jJKL8pODMQiTEAymXw5n8/P0IjD3bh7Rgog59aanxiIRTVvV/oj0tnHca/WMrVwODwB3raTGxzkBg/gnZVapFV62Wy2n5AO70HM/5wbJ0QnXyQSaVPDIuNZzY0V3ntHMwxiwHA0Gj2Np7ecIBDgaDAYXKCQJM1DhrgJ3nhulcPbl8j4NmHe46X/g60fwbz3aewjkqFQaAqebWU1AOqyQwt8Id6qEHMc97zu7u7FGGsn7HAiVuosVw7P35C1nccdgSCxop1dHeZswmfHMnxBo6ZTk+jN8dl/vF7vWofDsa+MLN9oEUBMxOb3+1eoEsBVw6Zmua49r8YmhAKDiEPcMwBsxMiqQ+ixzPFxZyqRpXARG/YOr1ObFJ0gUskXBbamcR1OKmMUvDxHRAu8/LmY3jFLMUpFqz9HxG65smYJdyKyECOxDiEAe/p1gjF2oonivZAsxVgl2daa4EQWCW6J55qFAFFZiJWYLxNQy2qOSUzGRsyXCUDIeliwAHEO4WSlWQBRFoZakXcKmCXmyXAKs0Ve9vl8q42WoIYpJU4hV3hKcNs8m9gl7p/xQ73eF5kB4j5mNrWmTJRNwAzqiV1CxjVTZCIkEq+Z1bZFZSN2CenmVAFVy4Plz8xKAGWjjAKFk6lCBMDR/MJjLLMSQNm43xAiQKTaA+9/wewhDjL+JVI1kkTSSOTcKbMTwPqESAot6dn6Fr1gHwVJju6IRuyiByPuUUBAg5DGkAgBmxlvdgIEK9gDkohdY/BJo4CAG0R8miRSsGABkgVQs4KXu098IgUXSSRsFAoKZiVAVDY2WUiiPTjYRi41KwGisrGsLtlsth8Fiwnz2fBkQvWfRtlE3iF2yW63/yCacXZ1dW02GwGyTFaRd4idJnCKHRaCxYRHoG5LTKT6SyiToP1fJHbmAYPYRR0UnZQtMnA6s0zg+GZBlt0Gdo7EPHgpE3Q6nZ8YyLhc8Xj8MJh/aKTAY+5FPAKHLE7RdwuYJZmNwzyCMkBCYyKROJBMJl9B/PXXCjjmCmDOVzH3fiPpObEWGqoKe4EBl8v1hlqsdLvd23mkxHM9pc9kMpmno9HoeTii7ewbHEZPPx1ztLS1tV3AnGuMjiNjvbQFuHw6zDo5By7dTPAQNBgMLrRarTkSls1mnwT7uwp9virx9QzbW/HuV/j5d/b+6jniKlllP8lkeONJDk+dq9GsQTnC4fB1heO0K47Hwe7WdDr9nAKgXwOBwHI+C45Htj1d6sd429TUNEcmUdc+PRaLHcvn87dXW4ugzdsaGxufL94NFv9zi1J7GVbhlvb2dnaJ3SVrxfc+n2+NTsZ7/H7/Mr3g5XdSIHyJSH1PZ+7fToyl2+ErqilgZ4NaLYB9goVGaHjR93Hv1ZrU4XDsFT20kH3PObzbWk0CgG1jacVIUnAQb9F+VexyLMzkpcLv0IJV7AHQIOCAUYHx7v5qgScmYHtTqSAyZLEJTK22Bie4iq3xsqpm4SAf9Hq9a2DnJ4uLK3SEULcdRvp3i3zHySqpficxEdsQc1NrlYXXvR+O7qASSezXB+h1SuUomgg9LL8BUoV4749EIolKh+EiqWmqVEZlDgHks2pxHw7xTqUQw9J5NcAXOK10AGIoZ6Zli6JY6Z1Q461KoZ4NiKLHarW+KDsxlDUPHZ5zPQZqUVDPJsTqb5n9malbpAh8C2XXDLl62+WZIDFRUlNVOiwencnNU3aQEkL+cDMSoLvZo2fQB7AJssNAuFuvorlDVVkkg2I87+jo2K2QAVphDrfyViK5VqtO34OkaxXCp+7drdDBCAdubm6eidX+2WwqT5komwh4YQLk+H4aE93h8Xg2gvHekQZOGSgLZTLyDTLJ4Lx9/KZWKBSainT4Iy3FqQBfnUZR42PKQFksBr9QKVXCPusD3OiA/RkQ5kP8qV/Jl1WywAp/6+dcmPM2zL1UrUahe4JqfnWWKXIul3uUbfP8njAFLW1OFr3gdFtZ72cNH+PtQT7/brW+NXqJAHh0y9V8/U/A1U7AfwIMAD7mS3pCbuWJAAAAAElFTkSuQmCC"&gt;
+      &lt;/a&gt;
     &lt;/div&gt;
-    &lt;script src="https://cdnjs.cloudflare.com/ajax/libs/anchor-js/4.1.0/anchor.min.js" integrity="sha256-lZaRhKri35AyJSypXXs4o6OPFTbTmUoltBbDCbdzegg=" crossorigin="anonymous"&gt;&lt;/script&gt;
-    &lt;script&gt;anchors.add();&lt;/script&gt;
   &lt;/body&gt;
 &lt;/html&gt;
-</Value><ForcedChecked>true</ForcedChecked><Connector><LinkList><PointID>1064</PointID></LinkList></Connector><Arguments><LinkConnector PointId="1056"><Value /><CastConnect>false</CastConnect><ParamInfo><ParamName>n</ParamName><ParamNameLabelOverlap>n</ParamNameLabelOverlap><ParamNameLabel><LabelString>n</LabelString></ParamNameLabel></ParamInfo><LinkConnectorList><List /><IsOpenList>true</IsOpenList></LinkConnectorList></LinkConnector></Arguments><IsPublicExecute>false</IsPublicExecute><EntryPointName /></RootConnector></RootFunc></MultiRootConnector></Asset><Asset Id="532" X="1252.3185191451992" Y="141.42582298668611"><MultiRootConnector><DataVersion>1</DataVersion><RootFunc AssetType="FuncType" AssetFuncType="ResultSequence"><AttachVariableIds /><AttachVariableId>0</AttachVariableId><AssetValueTypes><string>System.String</string></AssetValueTypes><RootConnector PointId="1060"><Caption><LabelString>ResultSequence</LabelString></Caption><Value /><ForcedChecked>true</ForcedChecked><Connector><LinkList /></Connector><Arguments><LinkConnector PointId="1061"><CastConnect>false</CastConnect><ParamInfo><ParamName>flow</ParamName><ParamNameLabelOverlap>flow</ParamNameLabelOverlap><ParamNameLabel><LabelString>flow</LabelString></ParamNameLabel></ParamInfo><LinkConnectorList><List><LinkConnector PointId="1063"><Value>void</Value><CastConnect>false</CastConnect><ParamInfo><ParamName> </ParamName><ParamNameLabelOverlap /><ParamNameLabel><LabelString> </LabelString></ParamNameLabel></ParamInfo><LinkConnectorList><List /><IsOpenList>true</IsOpenList></LinkConnectorList></LinkConnector></List><IsOpenList>true</IsOpenList></LinkConnectorList></LinkConnector><LinkConnector PointId="1064"><Value /><CastConnect>false</CastConnect><ParamInfo><ParamName>result</ParamName><ParamNameLabelOverlap>result</ParamNameLabelOverlap><ParamNameLabel><LabelString>result</LabelString></ParamNameLabel></ParamInfo><LinkConnectorList><List /><IsOpenList>true</IsOpenList></LinkConnectorList></LinkConnector></Arguments><IsPublicExecute>true</IsPublicExecute><EntryPointName /></RootConnector></RootFunc></MultiRootConnector></Asset><Asset Id="587" X="30" Y="330"><MultiRootConnector><DataVersion>1</DataVersion><RootFunc AssetType="FuncType" AssetFuncType="CapyCSSbase.Ip.GetWebAPI#_string_string_string"><AttachVariableIds /><AttachVariableId>0</AttachVariableId><AssetValueTypes /><RootConnector PointId="1069"><Caption><LabelString>GetWebAPI</LabelString></Caption><Value>[HttpResponseMessage]&lt;null&gt;</Value><ForcedChecked>false</ForcedChecked><Connector><LinkList><PointID>1076</PointID><PointID>1080</PointID></LinkList></Connector><Arguments><LinkConnector PointId="1070"><Value>https://katsumiar.github.io/CapyCSS/</Value><CastConnect>false</CastConnect><ParamInfo><ParamName>url</ParamName><ParamNameLabelOverlap>url</ParamNameLabelOverlap><ParamNameLabel><LabelString>url</LabelString></ParamNameLabel></ParamInfo><LinkConnectorList><List /><IsOpenList>true</IsOpenList></LinkConnectorList></LinkConnector><LinkConnector PointId="1071"><Value /><CastConnect>false</CastConnect><ParamInfo><ParamName>account</ParamName><ParamNameLabelOverlap>account</ParamNameLabelOverlap><ParamNameLabel><LabelString>account</LabelString></ParamNameLabel></ParamInfo><LinkConnectorList><List /><IsOpenList>true</IsOpenList></LinkConnectorList></LinkConnector><LinkConnector PointId="1072"><Value /><CastConnect>false</CastConnect><ParamInfo><ParamName>passwd</ParamName><ParamNameLabelOverlap>passwd</ParamNameLabelOverlap><ParamNameLabel><LabelString>passwd</LabelString></ParamNameLabel></ParamInfo><LinkConnectorList><List /><IsOpenList>true</IsOpenList></LinkConnectorList></LinkConnector></Arguments><IsPublicExecute>false</IsPublicExecute><EntryPointName /></RootConnector></RootFunc></MultiRootConnector></Asset><Asset Id="588" X="480" Y="240"><MultiRootConnector><DataVersion>1</DataVersion><RootFunc AssetType="FuncType" AssetFuncType="CapyCSSbase.Ip.GetContents#_HttpResponseMessage"><AttachVariableIds /><AttachVariableId>0</AttachVariableId><AssetValueTypes /><RootConnector PointId="1075"><Caption><LabelString>GetContents</LabelString></Caption><Value /><ForcedChecked>true</ForcedChecked><Connector><LinkList><PointID>1056</PointID></LinkList></Connector><Arguments><LinkConnector PointId="1076"><Value>[HttpResponseMessage]&lt;null&gt;</Value><CastConnect>false</CastConnect><ParamInfo><ParamName>httpResponseMessage</ParamName><ParamNameLabelOverlap>httpResponseMessage</ParamNameLabelOverlap><ParamNameLabel><LabelString>httpResponseMessage</LabelString></ParamNameLabel></ParamInfo><LinkConnectorList><List /><IsOpenList>true</IsOpenList></LinkConnectorList></LinkConnector></Arguments><IsPublicExecute>false</IsPublicExecute><EntryPointName /></RootConnector></RootFunc></MultiRootConnector></Asset><Asset Id="589" X="480" Y="360"><MultiRootConnector><DataVersion>1</DataVersion><RootFunc AssetType="FuncType" AssetFuncType="CapyCSSbase.Ip.GetHeaders#_HttpResponseMessage"><AttachVariableIds /><AttachVariableId>0</AttachVariableId><AssetValueTypes /><RootConnector PointId="1079"><Caption><LabelString>GetHeaders</LabelString></Caption><Value /><ForcedChecked>true</ForcedChecked><Connector><LinkList /></Connector><Arguments><LinkConnector PointId="1080"><Value>[HttpResponseMessage]&lt;null&gt;</Value><CastConnect>false</CastConnect><ParamInfo><ParamName>httpResponseMessage</ParamName><ParamNameLabelOverlap>httpResponseMessage</ParamNameLabelOverlap><ParamNameLabel><LabelString>httpResponseMessage</LabelString></ParamNameLabel></ParamInfo><LinkConnectorList><List /><IsOpenList>true</IsOpenList></LinkConnectorList></LinkConnector></Arguments><IsPublicExecute>false</IsPublicExecute><EntryPointName /></RootConnector></RootFunc></MultiRootConnector></Asset></WorkCanvasAssetList></CommandCanvas>
+</Value><ForcedChecked>true</ForcedChecked><Connector><LinkList><PointID>1324</PointID></LinkList></Connector><Arguments><LinkConnector PointId="1316"><Value /><CastConnect>false</CastConnect><ParamInfo><ParamName>n</ParamName><ParamNameLabelOverlap>n</ParamNameLabelOverlap><ParamNameLabel><LabelString>n</LabelString></ParamNameLabel></ParamInfo><LinkConnectorList><List /><IsOpenList>true</IsOpenList></LinkConnectorList></LinkConnector></Arguments><IsPublicExecute>false</IsPublicExecute><EntryPointName /></RootConnector></RootFunc></MultiRootConnector></Asset><Asset Id="532" X="1406.6912653300433" Y="60.978053848105475"><MultiRootConnector><DataVersion>1</DataVersion><RootFunc AssetType="FuncType" AssetFuncType="ResultSequence"><AttachVariableIds /><AttachVariableId>0</AttachVariableId><AssetValueTypes><string>System.String</string></AssetValueTypes><RootConnector PointId="1320"><Caption><LabelString>ResultSequence</LabelString></Caption><Value>&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+  &lt;head&gt;
+    &lt;meta http-equiv="Content-type" content="text/html; charset=utf-8"&gt;
+    &lt;meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'; img-src data:; connect-src 'self'"&gt;
+    &lt;title&gt;Site not found &amp;middot; GitHub Pages&lt;/title&gt;
+    &lt;style type="text/css" media="screen"&gt;
+      body {
+        background-color: #f1f1f1;
+        margin: 0;
+        font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+      }
+
+      .container { margin: 50px auto 40px auto; width: 600px; text-align: center; }
+
+      a { color: #4183c4; text-decoration: none; }
+      a:hover { text-decoration: underline; }
+
+      h1 { width: 800px; position:relative; left: -100px; letter-spacing: -1px; line-height: 60px; font-size: 60px; font-weight: 100; margin: 0px 0 50px 0; text-shadow: 0 1px 0 #fff; }
+      p { color: rgba(0, 0, 0, 0.5); margin: 20px 0; line-height: 1.6; }
+
+      ul { list-style: none; margin: 25px 0; padding: 0; }
+      li { display: table-cell; font-weight: bold; width: 1%; }
+
+      .logo { display: inline-block; margin-top: 35px; }
+      .logo-img-2x { display: none; }
+      @media
+      only screen and (-webkit-min-device-pixel-ratio: 2),
+      only screen and (   min--moz-device-pixel-ratio: 2),
+      only screen and (     -o-min-device-pixel-ratio: 2/1),
+      only screen and (        min-device-pixel-ratio: 2),
+      only screen and (                min-resolution: 192dpi),
+      only screen and (                min-resolution: 2dppx) {
+        .logo-img-1x { display: none; }
+        .logo-img-2x { display: inline-block; }
+      }
+
+      #suggestions {
+        margin-top: 35px;
+        color: #ccc;
+      }
+      #suggestions a {
+        color: #666666;
+        font-weight: 200;
+        font-size: 14px;
+        margin: 0 10px;
+      }
+
+    &lt;/style&gt;
+  &lt;/head&gt;
+  &lt;body&gt;
+
+    &lt;div class="container"&gt;
+
+      &lt;h1&gt;404&lt;/h1&gt;
+      &lt;p&gt;&lt;strong&gt;There isn't a GitHub Pages site here.&lt;/strong&gt;&lt;/p&gt;
+
+      &lt;p&gt;
+        If you're trying to publish one,
+        &lt;a href="https://help.github.com/pages/"&gt;read the full documentation&lt;/a&gt;
+        to learn how to set up &lt;strong&gt;GitHub Pages&lt;/strong&gt;
+        for your repository, organization, or user account.
+      &lt;/p&gt;
+
+      &lt;div id="suggestions"&gt;
+        &lt;a href="https://githubstatus.com"&gt;GitHub Status&lt;/a&gt; &amp;mdash;
+        &lt;a href="https://twitter.com/githubstatus"&gt;@githubstatus&lt;/a&gt;
+      &lt;/div&gt;
+
+      &lt;a href="/" class="logo logo-img-1x"&gt;
+        &lt;img width="32" height="32" title="" alt="" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyRpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMy1jMDExIDY2LjE0NTY2MSwgMjAxMi8wMi8wNi0xNDo1NjoyNyAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENTNiAoTWFjaW50b3NoKSIgeG1wTU06SW5zdGFuY2VJRD0ieG1wLmlpZDpFMTZCRDY3REIzRjAxMUUyQUQzREIxQzRENUFFNUM5NiIgeG1wTU06RG9jdW1lbnRJRD0ieG1wLmRpZDpFMTZCRDY3RUIzRjAxMUUyQUQzREIxQzRENUFFNUM5NiI+IDx4bXBNTTpEZXJpdmVkRnJvbSBzdFJlZjppbnN0YW5jZUlEPSJ4bXAuaWlkOkUxNkJENjdCQjNGMDExRTJBRDNEQjFDNEQ1QUU1Qzk2IiBzdFJlZjpkb2N1bWVudElEPSJ4bXAuZGlkOkUxNkJENjdDQjNGMDExRTJBRDNEQjFDNEQ1QUU1Qzk2Ii8+IDwvcmRmOkRlc2NyaXB0aW9uPiA8L3JkZjpSREY+IDwveDp4bXBtZXRhPiA8P3hwYWNrZXQgZW5kPSJyIj8+SM9MCAAAA+5JREFUeNrEV11Ik1EY3s4+ddOp29Q5b0opCgKFsoKoi5Kg6CIhuwi6zLJLoYLopq4qsKKgi4i6CYIoU/q5iDAKs6syoS76IRWtyJ+p7cdt7sf1PGOD+e0c3dygAx/67ZzzPM95/877GYdHRg3ZjMXFxepQKNS6sLCwJxqNNuFpiMfjVs4ZjUa/pmmjeD6VlJS8NpvNT4QQ7mxwjSsJiEQim/1+/9lgMHgIr5ohuxG1WCw9Vqv1clFR0dCqBODElV6v90ogEDjGdYbVjXhpaendioqK07CIR7ZAqE49PT09BPL2PMgTByQGsYiZlQD4uMXtdr+JxWINhgINYhGT2MsKgMrm2dnZXgRXhaHAg5jEJodUAHxux4LudHJE9RdEdA+i3Juz7bGHe4mhE9FNrgwBCLirMFV9Okh5eflFh8PR5nK5nDabrR2BNJlKO0T35+Li4n4+/J+/JQCxhmu5h3uJoXNHPbmWZAHMshWB8l5/ipqammaAf0zPDDx1ONV3vurdidqwAQL+pEc8sLcAe1CCvQ3YHxIW8Pl85xSWNC1hADDIv0rIE/o4J0k3kww4xSlwIhcq3EFFOm7KN/hUGOQkt0CFa5WpNJlMvxBEz/IVQAxg/ZRZl9wiHA63yDYieM7DnLP5CiAGsC7I5sgtYKJGWe2A8seFqgFJrJjEPY1Cn3pJ8/9W1e5VWsFDTEmFrBcoDhZJEQkXuhICMyKpjhahqN21hRYATKfUOlDmkygrR4o4C0VOLGJKrOITKB4jijzdXygBKixyC5TDQdnk/Pz8qRw6oOWGlsTKGOQW6OH6FBWsyePxdOXLTgxiyebILZCjz+GLgMIKnXNzc49YMlcRdHXcSwxFVgTInQhC9G33UhNoJLuqq6t345p9y3eUy8OTk5PjAHuI9uo4b07FBaOhsu0A4Unc+T1TU1Nj3KsSSE5yJ65jqF2DDd8QqWYmAZrIM2VlZTdnZmb6AbpdV9V6ec9znf5Q7HjYumdRE0JOp3MjitO4SFa+cZz8Umqe3TCbSLvdfkR/kWDdNQl5InuTcysOcpFT35ZrbBxx4p3JAHlZVVW1D/634VRt+FvLBgK/v5LV9WS+10xMTEwtRw7XvqOL+e2Q8V3AYIOIAXQ26/heWVnZCVfcyKHg2CBgTpmPmjYM8l24GyaUHyaIh7XwfR9ErE8qHoDfn2LTNAVC0HX6MFcBIP8Bi+6F6cdW/DICkANRfx99fEYFQ7Nph5i/uQiA214gno7K+guhaiKg9gC62+M8eR7XsBsYJ4ilam60Fb7r7uAj8wFyuwM1oIOWgfmDy6RXEEQzJMPe23DXrVS7rtyD3Df8z/FPgAEAzWU5Ku59ZAUAAAAASUVORK5CYII="&gt;
+      &lt;/a&gt;
+
+      &lt;a href="/" class="logo logo-img-2x"&gt;
+        &lt;img width="32" height="32" title="" alt="" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyRpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMy1jMDExIDY2LjE0NTY2MSwgMjAxMi8wMi8wNi0xNDo1NjoyNyAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENTNiAoTWFjaW50b3NoKSIgeG1wTU06SW5zdGFuY2VJRD0ieG1wLmlpZDpEQUM1QkUxRUI0MUMxMUUyQUQzREIxQzRENUFFNUM5NiIgeG1wTU06RG9jdW1lbnRJRD0ieG1wLmRpZDpEQUM1QkUxRkI0MUMxMUUyQUQzREIxQzRENUFFNUM5NiI+IDx4bXBNTTpEZXJpdmVkRnJvbSBzdFJlZjppbnN0YW5jZUlEPSJ4bXAuaWlkOkUxNkJENjdGQjNGMDExRTJBRDNEQjFDNEQ1QUU1Qzk2IiBzdFJlZjpkb2N1bWVudElEPSJ4bXAuZGlkOkUxNkJENjgwQjNGMDExRTJBRDNEQjFDNEQ1QUU1Qzk2Ii8+IDwvcmRmOkRlc2NyaXB0aW9uPiA8L3JkZjpSREY+IDwveDp4bXBtZXRhPiA8P3hwYWNrZXQgZW5kPSJyIj8+hfPRaQAAB6lJREFUeNrsW2mM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"&gt;
+      &lt;/a&gt;
+    &lt;/div&gt;
+  &lt;/body&gt;
+&lt;/html&gt;
+</Value><ForcedChecked>true</ForcedChecked><Connector><LinkList /></Connector><Arguments><LinkConnector PointId="1321"><CastConnect>false</CastConnect><ParamInfo><ParamName>flow</ParamName><ParamNameLabelOverlap>flow</ParamNameLabelOverlap><ParamNameLabel><LabelString>flow</LabelString></ParamNameLabel></ParamInfo><LinkConnectorList><List><LinkConnector PointId="1323"><Value>void</Value><CastConnect>false</CastConnect><ParamInfo><ParamName> </ParamName><ParamNameLabelOverlap /><ParamNameLabel><LabelString> </LabelString></ParamNameLabel></ParamInfo><LinkConnectorList><List /><IsOpenList>true</IsOpenList></LinkConnectorList></LinkConnector></List><IsOpenList>true</IsOpenList></LinkConnectorList></LinkConnector><LinkConnector PointId="1324"><Value /><CastConnect>false</CastConnect><ParamInfo><ParamName>result</ParamName><ParamNameLabelOverlap>result</ParamNameLabelOverlap><ParamNameLabel><LabelString>result</LabelString></ParamNameLabel></ParamInfo><LinkConnectorList><List /><IsOpenList>true</IsOpenList></LinkConnectorList></LinkConnector></Arguments><IsPublicExecute>true</IsPublicExecute><EntryPointName /></RootConnector></RootFunc></MultiRootConnector></Asset><Asset Id="587" X="30" Y="330"><MultiRootConnector><DataVersion>1</DataVersion><RootFunc AssetType="FuncType" AssetFuncType="CapyCSSbase.Ip.GetWebAPI#_string_string_string"><AttachVariableIds /><AttachVariableId>0</AttachVariableId><AssetValueTypes /><RootConnector PointId="1329"><Caption><LabelString>GetWebAPI</LabelString></Caption><Value>[HttpResponseMessage]</Value><ForcedChecked>true</ForcedChecked><Connector><LinkList><PointID>1336</PointID><PointID>1340</PointID></LinkList></Connector><Arguments><LinkConnector PointId="1330"><Value>https://katsumiar.github.io/CapyCSS/</Value><CastConnect>false</CastConnect><ParamInfo><ParamName>url</ParamName><ParamNameLabelOverlap>url</ParamNameLabelOverlap><ParamNameLabel><LabelString>url</LabelString></ParamNameLabel></ParamInfo><LinkConnectorList><List /><IsOpenList>true</IsOpenList></LinkConnectorList></LinkConnector><LinkConnector PointId="1331"><Value /><CastConnect>false</CastConnect><ParamInfo><ParamName>account</ParamName><ParamNameLabelOverlap>account</ParamNameLabelOverlap><ParamNameLabel><LabelString>account</LabelString></ParamNameLabel></ParamInfo><LinkConnectorList><List /><IsOpenList>true</IsOpenList></LinkConnectorList></LinkConnector><LinkConnector PointId="1332"><Value /><CastConnect>false</CastConnect><ParamInfo><ParamName>passwd</ParamName><ParamNameLabelOverlap>passwd</ParamNameLabelOverlap><ParamNameLabel><LabelString>passwd</LabelString></ParamNameLabel></ParamInfo><LinkConnectorList><List /><IsOpenList>true</IsOpenList></LinkConnectorList></LinkConnector></Arguments><IsPublicExecute>false</IsPublicExecute><EntryPointName /></RootConnector></RootFunc></MultiRootConnector></Asset><Asset Id="588" X="480" Y="240"><MultiRootConnector><DataVersion>1</DataVersion><RootFunc AssetType="FuncType" AssetFuncType="CapyCSSbase.Ip.GetContents#_HttpResponseMessage"><AttachVariableIds /><AttachVariableId>0</AttachVariableId><AssetValueTypes /><RootConnector PointId="1335"><Caption><LabelString>GetContents</LabelString></Caption><Value>&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+  &lt;head&gt;
+    &lt;meta http-equiv="Content-type" content="text/html; charset=utf-8"&gt;
+    &lt;meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'; img-src data:; connect-src 'self'"&gt;
+    &lt;title&gt;Site not found &amp;middot; GitHub Pages&lt;/title&gt;
+    &lt;style type="text/css" media="screen"&gt;
+      body {
+        background-color: #f1f1f1;
+        margin: 0;
+        font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+      }
+
+      .container { margin: 50px auto 40px auto; width: 600px; text-align: center; }
+
+      a { color: #4183c4; text-decoration: none; }
+      a:hover { text-decoration: underline; }
+
+      h1 { width: 800px; position:relative; left: -100px; letter-spacing: -1px; line-height: 60px; font-size: 60px; font-weight: 100; margin: 0px 0 50px 0; text-shadow: 0 1px 0 #fff; }
+      p { color: rgba(0, 0, 0, 0.5); margin: 20px 0; line-height: 1.6; }
+
+      ul { list-style: none; margin: 25px 0; padding: 0; }
+      li { display: table-cell; font-weight: bold; width: 1%; }
+
+      .logo { display: inline-block; margin-top: 35px; }
+      .logo-img-2x { display: none; }
+      @media
+      only screen and (-webkit-min-device-pixel-ratio: 2),
+      only screen and (   min--moz-device-pixel-ratio: 2),
+      only screen and (     -o-min-device-pixel-ratio: 2/1),
+      only screen and (        min-device-pixel-ratio: 2),
+      only screen and (                min-resolution: 192dpi),
+      only screen and (                min-resolution: 2dppx) {
+        .logo-img-1x { display: none; }
+        .logo-img-2x { display: inline-block; }
+      }
+
+      #suggestions {
+        margin-top: 35px;
+        color: #ccc;
+      }
+      #suggestions a {
+        color: #666666;
+        font-weight: 200;
+        font-size: 14px;
+        margin: 0 10px;
+      }
+
+    &lt;/style&gt;
+  &lt;/head&gt;
+  &lt;body&gt;
+
+    &lt;div class="container"&gt;
+
+      &lt;h1&gt;404&lt;/h1&gt;
+      &lt;p&gt;&lt;strong&gt;There isn't a GitHub Pages site here.&lt;/strong&gt;&lt;/p&gt;
+
+      &lt;p&gt;
+        If you're trying to publish one,
+        &lt;a href="https://help.github.com/pages/"&gt;read the full documentation&lt;/a&gt;
+        to learn how to set up &lt;strong&gt;GitHub Pages&lt;/strong&gt;
+        for your repository, organization, or user account.
+      &lt;/p&gt;
+
+      &lt;div id="suggestions"&gt;
+        &lt;a href="https://githubstatus.com"&gt;GitHub Status&lt;/a&gt; &amp;mdash;
+        &lt;a href="https://twitter.com/githubstatus"&gt;@githubstatus&lt;/a&gt;
+      &lt;/div&gt;
+
+      &lt;a href="/" class="logo logo-img-1x"&gt;
+        &lt;img width="32" height="32" title="" alt="" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyRpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMy1jMDExIDY2LjE0NTY2MSwgMjAxMi8wMi8wNi0xNDo1NjoyNyAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENTNiAoTWFjaW50b3NoKSIgeG1wTU06SW5zdGFuY2VJRD0ieG1wLmlpZDpFMTZCRDY3REIzRjAxMUUyQUQzREIxQzRENUFFNUM5NiIgeG1wTU06RG9jdW1lbnRJRD0ieG1wLmRpZDpFMTZCRDY3RUIzRjAxMUUyQUQzREIxQzRENUFFNUM5NiI+IDx4bXBNTTpEZXJpdmVkRnJvbSBzdFJlZjppbnN0YW5jZUlEPSJ4bXAuaWlkOkUxNkJENjdCQjNGMDExRTJBRDNEQjFDNEQ1QUU1Qzk2IiBzdFJlZjpkb2N1bWVudElEPSJ4bXAuZGlkOkUxNkJENjdDQjNGMDExRTJBRDNEQjFDNEQ1QUU1Qzk2Ii8+IDwvcmRmOkRlc2NyaXB0aW9uPiA8L3JkZjpSREY+IDwveDp4bXBtZXRhPiA8P3hwYWNrZXQgZW5kPSJyIj8+SM9MCAAAA+5JREFUeNrEV11Ik1EY3s4+ddOp29Q5b0opCgKFsoKoi5Kg6CIhuwi6zLJLoYLopq4qsKKgi4i6CYIoU/q5iDAKs6syoS76IRWtyJ+p7cdt7sf1PGOD+e0c3dygAx/67ZzzPM95/877GYdHRg3ZjMXFxepQKNS6sLCwJxqNNuFpiMfjVs4ZjUa/pmmjeD6VlJS8NpvNT4QQ7mxwjSsJiEQim/1+/9lgMHgIr5ohuxG1WCw9Vqv1clFR0dCqBODElV6v90ogEDjGdYbVjXhpaendioqK07CIR7ZAqE49PT09BPL2PMgTByQGsYiZlQD4uMXtdr+JxWINhgINYhGT2MsKgMrm2dnZXgRXhaHAg5jEJodUAHxux4LudHJE9RdEdA+i3Juz7bGHe4mhE9FNrgwBCLirMFV9Okh5eflFh8PR5nK5nDabrR2BNJlKO0T35+Li4n4+/J+/JQCxhmu5h3uJoXNHPbmWZAHMshWB8l5/ipqammaAf0zPDDx1ONV3vurdidqwAQL+pEc8sLcAe1CCvQ3YHxIW8Pl85xSWNC1hADDIv0rIE/o4J0k3kww4xSlwIhcq3EFFOm7KN/hUGOQkt0CFa5WpNJlMvxBEz/IVQAxg/ZRZl9wiHA63yDYieM7DnLP5CiAGsC7I5sgtYKJGWe2A8seFqgFJrJjEPY1Cn3pJ8/9W1e5VWsFDTEmFrBcoDhZJEQkXuhICMyKpjhahqN21hRYATKfUOlDmkygrR4o4C0VOLGJKrOITKB4jijzdXygBKixyC5TDQdnk/Pz8qRw6oOWGlsTKGOQW6OH6FBWsyePxdOXLTgxiyebILZCjz+GLgMIKnXNzc49YMlcRdHXcSwxFVgTInQhC9G33UhNoJLuqq6t345p9y3eUy8OTk5PjAHuI9uo4b07FBaOhsu0A4Unc+T1TU1Nj3KsSSE5yJ65jqF2DDd8QqWYmAZrIM2VlZTdnZmb6AbpdV9V6ec9znf5Q7HjYumdRE0JOp3MjitO4SFa+cZz8Umqe3TCbSLvdfkR/kWDdNQl5InuTcysOcpFT35ZrbBxx4p3JAHlZVVW1D/634VRt+FvLBgK/v5LV9WS+10xMTEwtRw7XvqOL+e2Q8V3AYIOIAXQ26/heWVnZCVfcyKHg2CBgTpmPmjYM8l24GyaUHyaIh7XwfR9ErE8qHoDfn2LTNAVC0HX6MFcBIP8Bi+6F6cdW/DICkANRfx99fEYFQ7Nph5i/uQiA214gno7K+guhaiKg9gC62+M8eR7XsBsYJ4ilam60Fb7r7uAj8wFyuwM1oIOWgfmDy6RXEEQzJMPe23DXrVS7rtyD3Df8z/FPgAEAzWU5Ku59ZAUAAAAASUVORK5CYII="&gt;
+      &lt;/a&gt;
+
+      &lt;a href="/" class="logo logo-img-2x"&gt;
+        &lt;img width="32" height="32" title="" alt="" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyRpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMy1jMDExIDY2LjE0NTY2MSwgMjAxMi8wMi8wNi0xNDo1NjoyNyAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENTNiAoTWFjaW50b3NoKSIgeG1wTU06SW5zdGFuY2VJRD0ieG1wLmlpZDpEQUM1QkUxRUI0MUMxMUUyQUQzREIxQzRENUFFNUM5NiIgeG1wTU06RG9jdW1lbnRJRD0ieG1wLmRpZDpEQUM1QkUxRkI0MUMxMUUyQUQzREIxQzRENUFFNUM5NiI+IDx4bXBNTTpEZXJpdmVkRnJvbSBzdFJlZjppbnN0YW5jZUlEPSJ4bXAuaWlkOkUxNkJENjdGQjNGMDExRTJBRDNEQjFDNEQ1QUU1Qzk2IiBzdFJlZjpkb2N1bWVudElEPSJ4bXAuZGlkOkUxNkJENjgwQjNGMDExRTJBRDNEQjFDNEQ1QUU1Qzk2Ii8+IDwvcmRmOkRlc2NyaXB0aW9uPiA8L3JkZjpSREY+IDwveDp4bXBtZXRhPiA8P3hwYWNrZXQgZW5kPSJyIj8+hfPRaQAAB6lJREFUeNrsW2mM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"&gt;
+      &lt;/a&gt;
+    &lt;/div&gt;
+  &lt;/body&gt;
+&lt;/html&gt;
+</Value><ForcedChecked>true</ForcedChecked><Connector><LinkList><PointID>1316</PointID></LinkList></Connector><Arguments><LinkConnector PointId="1336"><Value>[HttpResponseMessage]&lt;null&gt;</Value><CastConnect>false</CastConnect><ParamInfo><ParamName>httpResponseMessage</ParamName><ParamNameLabelOverlap>httpResponseMessage</ParamNameLabelOverlap><ParamNameLabel><LabelString>httpResponseMessage</LabelString></ParamNameLabel></ParamInfo><LinkConnectorList><List /><IsOpenList>true</IsOpenList></LinkConnectorList></LinkConnector></Arguments><IsPublicExecute>false</IsPublicExecute><EntryPointName /></RootConnector></RootFunc></MultiRootConnector></Asset><Asset Id="589" X="480" Y="360"><MultiRootConnector><DataVersion>1</DataVersion><RootFunc AssetType="FuncType" AssetFuncType="CapyCSSbase.Ip.GetHeaders#_HttpResponseMessage"><AttachVariableIds /><AttachVariableId>0</AttachVariableId><AssetValueTypes /><RootConnector PointId="1339"><Caption><LabelString>GetHeaders</LabelString></Caption><Value /><ForcedChecked>true</ForcedChecked><Connector><LinkList /></Connector><Arguments><LinkConnector PointId="1340"><Value>[HttpResponseMessage]&lt;null&gt;</Value><CastConnect>false</CastConnect><ParamInfo><ParamName>httpResponseMessage</ParamName><ParamNameLabelOverlap>httpResponseMessage</ParamNameLabelOverlap><ParamNameLabel><LabelString>httpResponseMessage</LabelString></ParamNameLabel></ParamInfo><LinkConnectorList><List /><IsOpenList>true</IsOpenList></LinkConnectorList></LinkConnector></Arguments><IsPublicExecute>false</IsPublicExecute><EntryPointName /></RootConnector></RootFunc></MultiRootConnector></Asset></WorkCanvasAssetList></CommandCanvas>

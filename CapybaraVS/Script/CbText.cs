@@ -14,7 +14,7 @@ namespace CapyCSS.Script
     {
         public override Type MyType => typeof(CbText);
 
-        public override string TypeName => "text";
+        public override string TypeName => "string";    // 定数のみの扱い
 
         public CbText(string n = "", string name = "")
             : base(n, name)

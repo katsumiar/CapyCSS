@@ -1,18 +1,18 @@
 var Tuple = () => {
     CapyCSSbase.Script.OutConsole(
-        ( new System.Tuple<int,string>(
+        ( new System.Tuple<System.Int32,System.String>(
                 0,
                 "abc"
             ) ).Item1
     );
     CapyCSSbase.Script.OutConsole(
-        ( new System.Tuple<int,string>(
+        ( new System.Tuple<System.Int32,System.String>(
                 0,
                 "abc"
             ) ).Item2
     );
     CapyCSSbase.Script.OutConsole(
-        ( new System.Tuple<int,string>(
+        ( new System.Tuple<System.Int32,System.String>(
                 0,
                 "abc"
             ) ).ToString()

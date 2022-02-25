@@ -1,15 +1,15 @@
-System.Nullable<int> variable1;
+System.Nullable<System.Int32> variable1;
 var Nullable = () => {
     variable1 = 100;
-    CapyCSSbase.FlowLib.If_HasValue(
+    CapyCSSbase.FlowLib.If_HasValue<System.Int32>(
         variable1,
-        ( ARG_1 ) => CapyCSSbase.Script.OutConsole( ARG_1 ),
+        ( ARG_1 ) => CapyCSSbase.Script.OutConsole( ARG_1.ToString() ),
         () => CapyCSSbase.Script.OutConsole( "null" )
     );
     variable1 = null;
-    CapyCSSbase.FlowLib.If_HasValue(
+    CapyCSSbase.FlowLib.If_HasValue<System.Int32>(
         variable1,
-        ( ARG_1 ) => CapyCSSbase.Script.OutConsole( ARG_1 ),
+        ( ARG_1 ) => CapyCSSbase.Script.OutConsole( ARG_1.ToString() ),
         () => CapyCSSbase.Script.OutConsole( "null" )
     );
 };

@@ -1,7 +1,7 @@
 System.Int32 variable1;
 var Delegate = () => {
-    CapyCSSbase.FlowLib.Foreach(
-        CapyCSSbase.ListFactory.Filtering(
+    CapyCSSbase.FlowLib.Foreach<System.String>(
+        CapyCSSbase.ListFactory.Filtering<System.String>(
             new System.Collections.Generic.List<System.String>() {
                 "120",
                 "abc",

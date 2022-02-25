@@ -31,9 +31,9 @@ namespace CbVS.Script
 
 
         /// <summary>
-        /// object 型を除く
+        /// すべての型
         /// </summary>
-        public static Func<Type, bool> AcceptAll => t => true;
+        public static Func<Type, bool> AcceptAll => t => t != typeof(CbNull) && t != typeof(CbText);
 
         /// <summary>
         /// Enum 型
@@ -43,32 +43,41 @@ namespace CbVS.Script
         /// <summary>
         /// object 型を除く
         /// </summary>
-        public static Func<Type, bool> IsNotObject => t => t != typeof(object);
+        public static Func<Type, bool> IsNotObject => t => t != typeof(object) && AcceptAll(t);
 
         /// <summary>
-        // プリミティブ型で且つ互いにキャスト可能な型
+        // プリミティブ型で且つ互いにキャスト可能な型（TODO 扱いを変える必要があるか調べる）
         /// </summary>
-        public static Func<Type, bool> IsCast => t => t == typeof(decimal) || (t.IsValueType && !t.IsEnum && t.IsPrimitive);
+        public static Func<Type, bool> IsCast => t => (t == typeof(decimal) || (t.IsValueType && !t.IsEnum && t.IsPrimitive)) && AcceptAll(t);
 
         /// <summary>
         // 演算可能な型
         /// </summary>
-        public static Func<Type, bool> IsCalcable => t => t == typeof(decimal) || (t.IsValueType && !t.IsEnum && t.IsPrimitive && t != typeof(bool) && t != typeof(byte) && t != typeof(sbyte) && t != typeof(char) && t != typeof(short) && t != typeof(ushort));
+        public static Func<Type, bool> IsCalcable => t => 
+                        (t == typeof(decimal) ||
+                            (t.IsValueType && !t.IsEnum && t.IsPrimitive &&
+                             t != typeof(bool) &&
+                             t != typeof(byte) &&
+                             t != typeof(sbyte) &&
+                             t != typeof(char) &&
+                             t != typeof(short) && 
+                             t != typeof(ushort))) && AcceptAll(t);
 
         /// <summary>
         /// Aggregate可能な型
         /// </summary>
-        public static Func<Type, bool> IsAggregate => t => CbScript.IsCalcable(t) && t != typeof(uint) && t != typeof(ulong);
+        public static Func<Type, bool> IsAggregate => t => CbScript.IsCalcable(t) && t != typeof(uint) && t != typeof(ulong) && AcceptAll(t);
 
         /// <summary>
         /// signed型
         /// </summary>
-        public static Func<Type, bool> IsSigned => t => IsCalcable(t) && (t == typeof(short) || t == typeof(int) || t == typeof(long) || t == typeof(float) || t == typeof(double) || t == typeof(sbyte) || t == typeof(decimal));
+        public static Func<Type, bool> IsSigned => t => AcceptAll(t) && IsCalcable(t) && 
+                        (t == typeof(short) || t == typeof(int) || t == typeof(long) || t == typeof(float) || t == typeof(double) || t == typeof(sbyte) || t == typeof(decimal));
 
         /// <summary>
         /// IDisposable インターフェイスを持っている型
         /// </summary>
-        public static Func<Type, bool> IsDisposable => t => typeof(IDisposable).IsAssignableFrom(t);
+        public static Func<Type, bool> IsDisposable => t => AcceptAll(t) && typeof(IDisposable).IsAssignableFrom(t);
 
         /// <summary>
         /// アセットコードでノードを作成します。

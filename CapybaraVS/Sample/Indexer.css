@@ -6,11 +6,11 @@ var Indexer = () => {
     ( new System.Collections.Generic.List<System.String>() {
             "abc",
             "def"
-        } )[ 0 ];
+        } )[ 5 ];
     ( new System.Collections.Generic.List<System.String>() {
             "abc",
             "def"
-        } )[ 0 ] = "abc";
+        } )[ 5 ] = "abc";
     ( new System.Collections.Generic.List<System.String>() {
             "abc",
             "def"

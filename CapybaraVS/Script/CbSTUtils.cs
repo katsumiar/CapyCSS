@@ -90,6 +90,7 @@ namespace CapyCSS.Script
         /// </summary>
         static public readonly IDictionary<string, string> BuiltInTypeList = new Dictionary<string, string>()
         {
+            { typeof(CbNull).FullName, NULL_STR },
             { ARRAY_TYPE.FullName, "T[]" },
             { LIST_TYPE.FullName, "List<T>" },
             { NULLABLE_TYPE.FullName, "T?" },
@@ -191,6 +192,24 @@ namespace CapyCSS.Script
             { nameof(CbImagePath), IMAGE_PATH_STR },
 
             { nameof(CbVoid), VOID_STR },
+            { nameof(CbNull), NULL_STR },
+        };
+
+        /// <summary>
+        /// キャスト判定辞書
+        /// </summary>
+        static public readonly IDictionary<Type, IEnumerable<Type>> CastPermissionDic = new Dictionary<Type, IEnumerable<Type>>()
+        {
+            { typeof(sbyte), new List<Type> { typeof(short), typeof(int), typeof(long), typeof(float), typeof(double), typeof(decimal) } },
+            { typeof(byte), new List<Type> { typeof(ushort), typeof(short), typeof(uint), typeof(int), typeof(ulong), typeof(long), typeof(float), typeof(double), typeof(decimal) } },
+            { typeof(char), new List<Type> { typeof(ushort), typeof(uint), typeof(int), typeof(ulong), typeof(long), typeof(float), typeof(double), typeof(decimal) } },
+            { typeof(ushort), new List<Type> { typeof(uint), typeof(int), typeof(ulong), typeof(long), typeof(float), typeof(double), typeof(decimal) } },
+            { typeof(short), new List<Type> { typeof(int), typeof(long), typeof(float), typeof(double), typeof(decimal) } },
+            { typeof(uint), new List<Type> { typeof(ulong), typeof(long), typeof(float), typeof(double), typeof(decimal) } },
+            { typeof(int), new List<Type> { typeof(long), typeof(float), typeof(double), typeof(decimal) } },
+            { typeof(ulong), new List<Type> { typeof(float), typeof(double), typeof(decimal) } },
+            { typeof(long), new List<Type> { typeof(float), typeof(double), typeof(decimal) } },
+            { typeof(float), new List<Type> { typeof(double) } },
         };
 
         /// <summary>
@@ -341,7 +360,7 @@ namespace CapyCSS.Script
 
                 foreach (Type arg in type.GenericTypeArguments)
                 {
-                    string newName = _GetTypeName(arg);
+                    string newName = _GetTypeName(arg, optimize);
                     if (geneString.Length != 0)
                     {
                         geneString += ",";
@@ -371,7 +390,7 @@ namespace CapyCSS.Script
                             cname = cname.Substring(cname.IndexOf('['));
                             cname = cname.Substring(0, cname.IndexOf(','));
                             cname = cname.Replace("[", "");
-                            return $"ArraySegment<{__GetTypeName(CbST.GetTypeEx(cname))}>";
+                            return $"ArraySegment<{__GetTypeName(CbST.GetTypeEx(cname), optimize)}>";
                         }
                         else
                         {
@@ -380,7 +399,7 @@ namespace CapyCSS.Script
                                 // リファレンスを取った型で試してみる
 
                                 cname = cname.TrimEnd('&');
-                                return __GetTypeName(CbST.GetTypeEx(cname));
+                                return __GetTypeName(CbST.GetTypeEx(cname), optimize);
                             }
                             else if (cname.EndsWith("[]"))
                             {
@@ -388,7 +407,7 @@ namespace CapyCSS.Script
 
                                 cname = cname.TrimEnd(']');
                                 cname = cname.TrimEnd('[');
-                                return __GetTypeName(CbST.GetTypeEx(cname));
+                                return __GetTypeName(CbST.GetTypeEx(cname), optimize);
                             }
                             else if (type.ContainsGenericParameters)
                             {
@@ -492,31 +511,37 @@ namespace CapyCSS.Script
             /// </summary>
             bool IsCastAssignment(Type toType, Type fromType)
             {
-                if (fromType == typeof(object))
-                    return true;    // 接続元が object なら無条件でキャスト可能
-
-                if (!CbScript.IsCast(fromType) || !CbScript.IsCast(toType))
+                if (!fromType.IsValueType || !toType.IsValueType)
                     return false;
-
-                if (fromType == typeof(decimal) && toType == typeof(char))
-                    return false;
-
-                if (fromType == typeof(char) &&
-                    (toType == typeof(decimal) || toType == typeof(float) || toType == typeof(double)))
-                    return false;
-
-                if (fromType == typeof(ulong) || fromType == typeof(uint) || fromType == typeof(ushort) || fromType == typeof(byte))
-                    return true;
-
-                return true;
+                if (CastPermissionDic.ContainsKey(fromType))
+                {
+                    return CastPermissionDic[fromType].Any(t => t == toType);
+                }
+                return false;
             }
 
-            if (toType == typeof(CbVoid))
+            if (CbVoid.Is(toType))
+            {
                 return true;    // voidへなら無条件に繋がる
+            }
 
             if (toType == typeof(object))
             {
                 return fromType != typeof(CbVoid);    // object型ならvoid以外なら無条件に繋がる
+            }
+
+            if (CbNull.Is(toType))
+            {
+                // 代入先が null はあり得ない
+
+                return false;
+            }
+
+            if (CbNull.Is(fromType))
+            {
+                // 代入元が null
+
+                return CbNull.IsSubstitutable(toType);
             }
 
             if (IsDelegate(toType))
@@ -541,11 +566,11 @@ namespace CapyCSS.Script
                 }
             }
 
-            if (fromType == typeof(CbVoid))
-                return false;   // object と Action 以外には繋がらない
+            //if (fromType == typeof(CbVoid))
+            //    return false;   // object と Action 以外には繋がらない
 
-            if (toType == typeof(string))
-                return true;    // CbVoid型以外なら無条件に繋がる
+            //if (toType == typeof(string))
+            //    return true;    // CbVoid型以外なら無条件に繋がる
 
             if (isCast && IsCastAssignment(toType, fromType))
                 return true;    // Cast接続なら繋がる

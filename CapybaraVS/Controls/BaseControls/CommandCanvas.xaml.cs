@@ -358,14 +358,6 @@ namespace CapyCSS.Controls.BaseControls
             Debug.Assert(CbSTUtils.IsAssignment(typeof(IEnumerable<int>), typeof(IList<int>)));
             Debug.Assert(CbSTUtils.IsAssignment(typeof(int), typeof(int)));
 
-            foreach (var valueType in valueTypes)
-                Debug.Assert(CbSTUtils.IsAssignment(typeof(string), valueType));
-            Debug.Assert(CbSTUtils.IsAssignment(typeof(string), typeof(object)));
-            Debug.Assert(CbSTUtils.IsAssignment(typeof(string), typeof(List<int>)));
-            Debug.Assert(CbSTUtils.IsAssignment(typeof(string), typeof(Func<int>)));
-            Debug.Assert(CbSTUtils.IsAssignment(typeof(string), typeof(Action)));
-            Debug.Assert(CbSTUtils.IsAssignment(typeof(string), typeof(Action<int>)));
-
             // Void は object と Action 以外に代入できない
             Debug.Assert(!CbSTUtils.IsAssignment(typeof(bool), typeof(CbVoid)));
             Debug.Assert(!CbSTUtils.IsAssignment(typeof(string), typeof(CbVoid)));
@@ -374,36 +366,51 @@ namespace CapyCSS.Controls.BaseControls
             foreach (var valueType in valueTypes)
                 Debug.Assert(!CbSTUtils.IsAssignment(valueType, typeof(CbVoid)));
 
-            foreach (var toType in valueTypes)
-                foreach (var fromType in valueTypes)
-                {
-                    if (toType == fromType)
-                        continue;
-                    bool result = true;
-                    if (toType == typeof(char) && fromType == typeof(decimal))
-                        result = false;
-                    if (toType == typeof(decimal) && fromType == typeof(char))
-                        result = false;
-                    if (toType == typeof(float) && fromType == typeof(char))
-                        result = false;
-                    if (toType == typeof(double) && fromType == typeof(char))
-                        result = false;
-                    Debug.Assert(CbSTUtils.IsAssignment(toType, fromType, true) == result);
-                }
-
-#if false
             foreach (var valueType in valueTypes)
+                Debug.Assert(!CbSTUtils.IsAssignment(typeof(string), valueType));
+
+            // object と Void に対する代入チェック
+            foreach (var fromType in valueTypes)
             {
-                Debug.Assert(!CbSTUtils.IsAssignment(valueType, typeof(string), true));
-                Debug.Assert(!CbSTUtils.IsAssignment(typeof(bool), valueType, true));
-                Debug.Assert(!CbSTUtils.IsAssignment(valueType, typeof(bool), true));
+                Debug.Assert(CbSTUtils.IsAssignment(typeof(object), fromType));
+                Debug.Assert(CbSTUtils.IsAssignment(typeof(CbVoid), fromType));
             }
-#endif
+            // サンプリング代入チェック
+            Debug.Assert(CbSTUtils.IsAssignment(typeof(object), typeof(List<int>)));
+            Debug.Assert(CbSTUtils.IsAssignment(typeof(CbVoid), typeof(List<int>)));
 
-            // 接続元が object なら無条件でキャスト可能
-            foreach (var valueType in valueTypes)
-                Debug.Assert(CbSTUtils.IsAssignment(valueType, typeof(object), true));
-            Debug.Assert(CbSTUtils.IsAssignment(typeof(List<int>), typeof(object), true));
+            // キャストのサンプリングチェック
+            Debug.Assert(CbSTUtils.IsAssignment(typeof(long), typeof(int), true));
+            Debug.Assert(CbSTUtils.IsAssignment(typeof(float), typeof(int), true));
+            Debug.Assert(CbSTUtils.IsAssignment(typeof(double), typeof(int), true));
+            Debug.Assert(CbSTUtils.IsAssignment(typeof(decimal), typeof(int), true));
+            Debug.Assert(CbSTUtils.IsAssignment(typeof(ushort), typeof(char), true));
+            Debug.Assert(CbSTUtils.IsAssignment(typeof(long), typeof(char), true));
+            Debug.Assert(CbSTUtils.IsAssignment(typeof(float), typeof(char), true));
+            Debug.Assert(CbSTUtils.IsAssignment(typeof(short), typeof(byte), true));
+            Debug.Assert(CbSTUtils.IsAssignment(typeof(ushort), typeof(byte), true));
+            Debug.Assert(CbSTUtils.IsAssignment(typeof(uint), typeof(byte), true));
+            Debug.Assert(CbSTUtils.IsAssignment(typeof(ulong), typeof(byte), true));
+            Debug.Assert(CbSTUtils.IsAssignment(typeof(double), typeof(float), true));
+
+            // 型名変換チェック
+            Debug.Assert(CbSTUtils.GetTypeName(typeof(int)) == "int");
+            Debug.Assert(CbSTUtils.GetTypeName(typeof(Int32)) == "int");
+            Debug.Assert(CbSTUtils.GetTypeName(typeof(Int64?)) == "long?");
+            Debug.Assert(CbSTUtils.GetTypeName(typeof(Type)) == "Type");
+            Debug.Assert(CbSTUtils.GetTypeName(typeof(Rect)) == "Rect");
+            Debug.Assert(CbSTUtils.GetTypeName(typeof(Rect?)) == "Rect?");
+            Debug.Assert(CbSTUtils.GetTypeName(typeof(Action<bool>)) == "Action<bool>");
+            Debug.Assert(CbSTUtils.GetTypeName(typeof(List<int>)) == "List<int>");
+            Debug.Assert(CbSTUtils.GetTypeName(typeof(IDictionary<int, short?>)) == "IDictionary<int,short?>");
+            Debug.Assert(CbSTUtils.GetTypeName(typeof(IDictionary<int, Nullable<short>>)) == "IDictionary<int,short?>");
+            Debug.Assert(CbSTUtils.GetTypeName(typeof(System.PlatformID)) == "PlatformID");
+
+            Debug.Assert(CbSTUtils.GetTypeFullName(typeof(int)) == "System.Int32");
+            Debug.Assert(CbSTUtils.GetTypeFullName(typeof(Rect)) == "System.Windows.Rect");
+            Debug.Assert(CbSTUtils.GetTypeFullName(typeof(Rect?)) == "System.Nullable<System.Windows.Rect>");
+            Debug.Assert(CbSTUtils.GetTypeFullName(typeof(IDictionary<int, Nullable<short>>)) == "System.Collections.Generic.IDictionary<System.Int32,System.Nullable<System.Int16>>");
+            Debug.Assert(CbSTUtils.GetTypeFullName(typeof(System.PlatformID)) == "System.PlatformID");
 
             // ジェネリック型名変換チェック
             Debug.Assert(CbSTUtils.GetGenericTypeName(typeof(List<>)) == "List<T>");
@@ -943,7 +950,7 @@ namespace CapyCSS.Controls.BaseControls
                 CommandCanvasControl.MainLog.TryAutoClear();
 
                 PointIdProvider.InitCheckRequest();
-                ScriptCommandCanvas.AssetXML.ReadAction(ScriptCommandCanvas);
+                ScriptCommandCanvas.AssetXML.ReadAction(ScriptCommandCanvas);   // 優先順位 Background まで使われる 
 
                 ScriptCommandCanvas.Dispatcher.BeginInvoke(new Action(() =>
                 {
@@ -962,7 +969,7 @@ namespace CapyCSS.Controls.BaseControls
                     {
                         CommandCanvasControl.IsAutoExit = false;
                     }
-                }), DispatcherPriority.SystemIdle);
+                }), DispatcherPriority.SystemIdle); // ApplicationIdle でも良いと思うけども…
             }), DispatcherPriority.ApplicationIdle);
         }
 

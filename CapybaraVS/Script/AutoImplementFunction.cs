@@ -101,7 +101,7 @@ namespace CapyCSS.Script
         /// ジェネリックメソッドのパラメータ
         /// ※ジェネリックメソッドでないなら null
         /// </summary>
-        public Type[] GenericMethodParameters = null;
+        public Type[] GenericMethodParameters { get; set; } = null;
 
         /// <summary>
         /// 古い仕様のノードか？
@@ -117,6 +117,11 @@ namespace CapyCSS.Script
         /// プロパティのゲッターもしくはセッターか？
         /// </summary>
         public bool IsProperty { get; set; }
+
+        /// <summary>
+        /// インスタンスメソッドか？
+        /// </summary>
+        public bool IsClassInstanceMethod => ArgumentTypeList != null && ArgumentTypeList[0].IsSelf && !IsConstructor;
 
         /// <summary>
         /// メソッド呼び出し処理を実装する
@@ -145,21 +150,6 @@ namespace CapyCSS.Script
                     }
                 }
                 return exTitle + ">";
-            }
-            return null;
-        }
-
-        private Type GetRequestType(MultiRootConnector col, string name)
-        {
-            for (int i = 0; i < typeRequests.Count; i++)
-            {
-                TypeRequest typeRequest = typeRequests[i];
-                if (typeRequest.Name == name)
-                {
-                    // 対応する型が見つかった
-
-                    return col.SelectedVariableType[i];
-                }
             }
             return null;
         }
@@ -290,13 +280,13 @@ namespace CapyCSS.Script
             }
             else if (replaceArgumentType.IsGenericParameter)
             {
-                replaceArgumentType = GetRequestType(col, replaceArgumentType.Name);
+                replaceArgumentType = col.GetRequestType(typeRequests, replaceArgumentType.Name);
             }
             else if (replaceArgumentType.ContainsGenericParameters)
             {
                 if (replaceArgumentType.IsArray)
                 {
-                    replaceArgumentType = GetRequestType(col, replaceArgumentType.GetElementType().Name).MakeArrayType();
+                    replaceArgumentType = col.GetRequestType(typeRequests, replaceArgumentType.GetElementType().Name).MakeArrayType();
                 }
             }
             else
@@ -327,7 +317,7 @@ namespace CapyCSS.Script
                 }
                 else if (gat.IsGenericParameter)
                 {
-                    argTypes.Add(GetRequestType(col, gat.Name));
+                    argTypes.Add(col.GetRequestType(typeRequests, gat.Name));
                 }
                 else
                 {
@@ -356,7 +346,7 @@ namespace CapyCSS.Script
         {
             try
             {
-                bool isClassInstanceMethod = ArgumentTypeList != null && ArgumentTypeList[0].IsSelf && !IsConstructor;
+                bool isClassInstanceMethod = IsClassInstanceMethod;
                 ICollection<object> methodArguments = null;
 
                 methodArguments = SetArguments(
@@ -579,7 +569,7 @@ namespace CapyCSS.Script
             {
                 // ジェネリックメソッド
 
-                IEnumerable<Type> genericParams = GenericMethodParameters.Select(n => GetRequestType(col, n.Name));
+                IEnumerable<Type> genericParams = GenericMethodParameters.Select(n => col.GetRequestType(typeRequests, n.Name));
                 if (methodArguments is null)
                 {
                     // 引数のないメソッドを型で補完して呼ぶ

@@ -1,12 +1,12 @@
-System.Collections.Generic.List<int> variable1;
+System.Collections.Generic.List<System.Int32> variable1;
 var ListTest = () => {
     {
-        ( new System.Collections.Generic.List<int>() ).Add( 1 );
-        ( new System.Collections.Generic.List<int>() ).Add( 2 );
+        ( new System.Collections.Generic.List<System.Int32>() ).Add( 1 );
+        ( new System.Collections.Generic.List<System.Int32>() ).Add( 2 );
         CapyCSSbase.Script.OutConsole(
-            CapyCSSbase.FlowLib.If_Value(
+            CapyCSSbase.FlowLib.If_Value<System.String>(
                 CapyCSSbase.FlowLib.Eq(
-                    ( new System.Collections.Generic.List<int>() ).Count,
+                    ( new System.Collections.Generic.List<System.Int32>() ).Count,
                     0
                 ),
                 "OK",
@@ -15,11 +15,11 @@ var ListTest = () => {
         );
     };
     {
-        variable1 = new System.Collections.Generic.List<int>();
+        variable1 = new System.Collections.Generic.List<System.Int32>();
         variable1.Add( 1 );
         variable1.Add( 2 );
         CapyCSSbase.Script.OutConsole(
-            CapyCSSbase.FlowLib.If_Value(
+            CapyCSSbase.FlowLib.If_Value<System.String>(
                 CapyCSSbase.FlowLib.Eq(
                     variable1.Count,
                     2

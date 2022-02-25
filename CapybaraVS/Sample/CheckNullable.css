@@ -1,81 +1,43 @@
-System.Nullable<byte> variable1;
-System.Nullable<ushort> variable2;
-System.Nullable<uint> variable3;
-System.Nullable<ulong> variable4;
-System.Nullable<sbyte> variable5;
-System.Nullable<short> variable6;
-System.Nullable<int> variable7;
-System.Nullable<long> variable8;
-System.Nullable<char> variable9;
-System.Nullable<float> variable10;
-System.Nullable<double> variable11;
-System.Nullable<decimal> variable12;
-System.Nullable<bool> variable13;
-System.Nullable<DateTime> variable14;
-System.Nullable<PlatformID> variable15;
-System.Object sample;
-var CheckNullable = () => {
-    CapyCSSbase.FlowLib.Foreach(
-        new System.Collections.Generic.List<System.Object>() {
-            null,
+System.Double parseWork;
+var ForeachReturn = () => {
+    CapyCSSbase.Script.OutConsole<System.Double>(
+        CapyCSSbase.FlowLib.ForeachReturn<System.String, System.Double>(
+            new System.Collections.Generic.List<System.String>() {
+                "moji",
+                "26a",
+                "1.2345",
+                "abcd"
+            },
+            ( ARG_1 ) => CapyCSSbase.FlowLib.If_ResultNullable<System.Double>(
+                    System.Double.TryParse(
+                        ARG_1,
+                        out parseWork
+                    ),
+                    () => parseWork,
+                    null
+                ),
             1
-        },
-        ( ARG_1 ) => {
-                sample = ARG_1;
-                {
-                    {
-                        variable1 = sample;
-                        variable2 = sample;
-                        variable3 = sample;
-                        variable4 = sample;
-                        variable5 = sample;
-                        variable6 = sample;
-                        variable7 = sample;
-                        variable8 = sample;
-                        variable9 = sample;
-                        variable10 = sample;
-                        variable11 = sample;
-                        variable12 = sample;
-                        variable13 = sample;
-                        variable14 = CapyCSSbase.FlowLib.IsNull(
-                                sample,
-                                null,
-                                new System.DateTime()
-                            );
-                        variable15 = CapyCSSbase.FlowLib.IsNull(
-                                sample,
-                                null,
-                                System.PlatformID.Unix
-                            );
-                    };
-                    CapyCSSbase.Script.OutConsole(
-                        CapyCSSbase.FlowLib.If_Value(
-                            CapyCSSbase.FlowLib.And(
-                                new System.Collections.Generic.List<System.Boolean>() {
-                                    CapyCSSbase.FlowLib.HasValue( variable1 ),
-                                    CapyCSSbase.FlowLib.HasValue( variable2 ),
-                                    CapyCSSbase.FlowLib.HasValue( variable3 ),
-                                    CapyCSSbase.FlowLib.HasValue( variable4 ),
-                                    CapyCSSbase.FlowLib.HasValue( variable6 ),
-                                    CapyCSSbase.FlowLib.HasValue( variable7 ),
-                                    CapyCSSbase.FlowLib.HasValue( variable8 ),
-                                    CapyCSSbase.FlowLib.HasValue( variable9 ),
-                                    CapyCSSbase.FlowLib.HasValue( variable10 ),
-                                    CapyCSSbase.FlowLib.HasValue( variable11 ),
-                                    CapyCSSbase.FlowLib.HasValue( variable12 ),
-                                    CapyCSSbase.FlowLib.HasValue( variable13 ),
-                                    CapyCSSbase.FlowLib.HasValue( variable14 ),
-                                    CapyCSSbase.FlowLib.HasValue( variable15 )
-                                },
-                                CapyCSSbase.FlowLib.IsNull( sample )
-                            ),
-                            "SUCCESS.",
-                            "ERROR!"
-                        )
-                    );
-                };
-            }
+        )
+    );
+    CapyCSSbase.Script.OutConsole<System.Double>(
+        CapyCSSbase.FlowLib.ForeachReturn<System.String, System.Double>(
+            new System.Collections.Generic.List<System.String>() {
+                "moji",
+                "685",
+                "5.32",
+                "abcd"
+            },
+            ( ARG_1 ) => CapyCSSbase.FlowLib.If_ResultNullable<System.Double>(
+                    System.Double.TryParse(
+                        ARG_1,
+                        out parseWork
+                    ),
+                    () => parseWork,
+                    null
+                ),
+            1
+        )
     );
 };
-CapyCSSbase.Script.AddEntryPoint(nameof(CheckNullable), CheckNullable);
+CapyCSSbase.Script.AddEntryPoint(nameof(ForeachReturn), ForeachReturn);
 

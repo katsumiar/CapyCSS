@@ -1,5 +1,5 @@
 var BreakableForeach = () => {
-    CapyCSSbase.FlowLib.BreakableForeach(
+    CapyCSSbase.FlowLib.BreakableForeach<System.String>(
         new System.Collections.Generic.List<System.String>() {
             "test1",
             "test2",

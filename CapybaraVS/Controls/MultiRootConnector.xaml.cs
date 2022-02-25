@@ -21,6 +21,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Windows.Threading;
 using System.Xml.Serialization;
+using static CapyCSS.Controls.BaseControls.CommandCanvas;
 
 namespace CapyCSS.Controls
 {
@@ -422,6 +423,7 @@ namespace CapyCSS.Controls
                 {
                     Type type = CbST.GetTypeEx(node.name);
                     SelectedVariableType[node.index] = type;
+                    LinkConnectorControl.SelectedVariableType[node.index] = type;
                     SelectedVariableTypeName[node.index] = CbSTUtils.GetTypeName(type);
                 }
             }
@@ -434,6 +436,7 @@ namespace CapyCSS.Controls
             set
             {
                 selectedVariableType = value;
+                LinkConnectorControl.SelectedVariableType = value;
             }
         }
 
@@ -591,6 +594,11 @@ namespace CapyCSS.Controls
             }
         }
 
+        public Type GetRequestType(IList<TypeRequest> typeRequests, string name)
+        {
+            return LinkConnectorControl.GetRequestType(typeRequests, name);
+        }
+
         //--------------------------------------------------------------------------------
         public void MakeFunction(
             string name,
@@ -605,6 +613,7 @@ namespace CapyCSS.Controls
             ICbValue returnType = retType();
             returnType.IsReadOnlyValue = true;
             LinkConnectorControl.ValueData = returnType;
+            //LinkConnectorControl.SelectedVariableType = SelectedVariableType;
             LinkConnectorControl.Hint = hint;
             Function = func;
             if (argumentList != null)

@@ -334,6 +334,12 @@ namespace CapyCSS.Script
         public bool IsConstructor { get; set; } = false;
         public bool IsProperty => false;
         public IList<ArgumentInfoNode> ArgumentTypeList { get; set; } = null;
+        public bool IsClassInstanceMethod => false;
+
+        public Type[] GenericMethodParameters { get; set; } = null;
+
+        public IList<TypeRequest> typeRequests { get; set; } = null;
+
         public BuildScriptFormat(string funcCode, Type classType = null)
         {
             FuncCode = funcCode;

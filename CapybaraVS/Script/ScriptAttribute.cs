@@ -1105,6 +1105,11 @@ namespace CapyCSS.Script
             {
                 // t には、判定対象の型が入ります。
 
+                if (!CbScript.AcceptAll(t))
+                {
+                    return false;
+                }
+
                 GenericParameterAttributes sConstraints =
                             geneArg.GenericParameterAttributes &
                             GenericParameterAttributes.SpecialConstraintMask;

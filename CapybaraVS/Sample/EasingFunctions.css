@@ -1,7 +1,7 @@
 var EasingFunctions = () => {
     CapyCSS.Script.Lib.Graph.OutPlot(
         "Sample",
-        new System.Collections.Generic.List<PlotInfo>() {
+        new System.Collections.Generic.List<CapyCSS.Controls.PlotWindow.PlotInfo>() {
             CapyCSS.Script.Lib.Graph.CreatePlotInfo(
                 CapyCSS.Script.Lib.Graph.MakePlotList(
                     4,
@@ -21,7 +21,7 @@ var EasingFunctions = () => {
                 CapyCSS.Controls.PlotWindow.DrawType.Line
             )
         },
-        new System.Collections.Generic.IEnumerable<double>()
+        new System.Collections.Generic.List<System.Double>()
     );
 };
 CapyCSSbase.Script.AddEntryPoint(nameof(EasingFunctions), EasingFunctions);

@@ -1,4 +1,4 @@
-System.Collections.Generic.List<Action> funcs;
+System.Collections.Generic.List<System.Action> funcs;
 var ActionCall02 = () => {
     funcs = new System.Collections.Generic.List<System.Action>() {
             () => CapyCSSbase.Script.OutConsole( "dog" ),

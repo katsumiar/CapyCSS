@@ -8,7 +8,7 @@ var ExtensionSearch = () => {
         ( ARG_1 ) => {
                 variable1 = ARG_1;
                 CapyCSSbase.FlowLib.If(
-                    CapyCSSbase.ListFactory.Contains(
+                    CapyCSSbase.ListFactory.Contains<System.String>(
                         new System.Collections.Generic.List<System.String>() {
                             ".txt",
                             ".bat"

@@ -62,7 +62,11 @@ namespace CapyCSS.Script
 
                 // 型情報を残す
                 copyOriginal = n;
-                if (n is ICbEvent || n is ICbClass)
+                if (n is CbClass<CbNull>)
+                {
+                    Value = null;
+                }
+                else if (n is ICbEvent || n is ICbClass)
                 {
                     Value = n;
                 }

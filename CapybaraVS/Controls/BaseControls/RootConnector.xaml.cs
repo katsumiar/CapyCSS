@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
@@ -21,6 +22,7 @@ using System.Windows.Threading;
 using System.Xml.Serialization;
 using CapyCSS.Script.Lib;
 using CapyCSSbase;
+using static CapyCSS.Controls.BaseControls.CommandCanvas;
 
 namespace CapyCSS.Controls.BaseControls
 {
@@ -46,7 +48,7 @@ namespace CapyCSS.Controls.BaseControls
         public class _AssetXML<OwnerClass> : IDisposable
             where OwnerClass : RootConnector
         {
-            private static int queueCounter = 0;
+            //private static int queueCounter = 0;
             [XmlIgnore]
             public Action WriteAction = null;
             [XmlIgnore]
@@ -87,26 +89,22 @@ namespace CapyCSS.Controls.BaseControls
                     // レイアウトが変更されるのでレイアウトの変更を待って続きを処理する必要がある
                     self.Dispatcher.BeginInvoke(new Action(() =>
                     {
-                        // ↓この中で CurveCanvas が取得されるがデザインがある程度整うまで取得できない
+                        // レイアウト処理が終わるまで処理できない
                         self.ChangeConnectorStyle(self.SingleLinkMode);
 
-                        if (self.CurveCanvas is null)
-                            return; // 最後までここで終わると接続が張られない可能性がある……
+                        Debug.Assert(self.CurveCanvas != null); // キャンバスが取得できるようになっている筈
 
                         self.rootCurveLinks.AssetXML = Connector;
                         self.rootCurveLinks.AssetXML.ReadAction?.Invoke(self.rootCurveLinks);
 
-                        queueCounter++;
                         self.Dispatcher.BeginInvoke(new Action(() =>
                         {
-                            // このタイミングでリンクを貼ることに不安を拭えない……（貼り漏れが発生するかも）
-                            if (--queueCounter == 0)
-                            {
-                                PointIdProvider.CheckRequestStart();
-                            }
-                        }), DispatcherPriority.ApplicationIdle);
+                            // ノードを起き終わってから接続線を繋げる
 
-                    }), DispatcherPriority.ApplicationIdle);
+                            PointIdProvider.CheckRequestStart();
+                        }), DispatcherPriority.Background);
+
+                    }), DispatcherPriority.Loaded);
 
                     // 次回の為の初期化
                     self.AssetXML = new _AssetXML<RootConnector>(self);
@@ -318,6 +316,26 @@ namespace CapyCSS.Controls.BaseControls
         }
 
         #endregion
+
+        /// <summary>
+        /// ジェネリックメソッドの場合のジェネリックパラメータです。
+        /// </summary>
+        public Type[] SelectedVariableType = new Type[16];
+
+        public Type GetRequestType(IList<TypeRequest> typeRequests, string name)
+        {
+            for (int i = 0; i < typeRequests.Count; i++)
+            {
+                TypeRequest typeRequest = typeRequests[i];
+                if (typeRequest.Name == name)
+                {
+                    // 対応する型が見つかった
+
+                    return SelectedVariableType[i];
+                }
+            }
+            return null;
+        }
 
         private IBuildScriptInfo functionInfo = null;
         public IBuildScriptInfo FunctionInfo 
@@ -769,6 +787,7 @@ namespace CapyCSS.Controls.BaseControls
                                 result.Set(methodName,
                                     FunctionInfo.FuncCode == "get_Item" ? BuildScriptInfo.CodeType.GetIndexer : BuildScriptInfo.CodeType.SetIndexer);
                                 result.SetTypeName(ValueData.TypeName);
+                                result.SetInstanceMethod(FunctionInfo.IsClassInstanceMethod);
                                 result.Add(args);
                             }
                             else
@@ -779,9 +798,15 @@ namespace CapyCSS.Controls.BaseControls
 
                                 string funcCode = FunctionInfo.FuncCode.Substring(4);   // "get_" を取り除く
                                 string className = CbSTUtils.GetTypeFullName(FunctionInfo.ClassType);
-                                string methodName = className + "." + funcCode;
+                                string methodName = "";
+                                if (!FunctionInfo.IsClassInstanceMethod)
+                                {
+                                    methodName = className + ".";
+                                }
+                                methodName += funcCode;
                                 result.Set(methodName, BuildScriptInfo.CodeType.Property);
                                 result.SetTypeName(ValueData.TypeName);
+                                result.SetInstanceMethod(FunctionInfo.IsClassInstanceMethod);
                                 result.Add(args);
                             }
                         }
@@ -789,12 +814,21 @@ namespace CapyCSS.Controls.BaseControls
                         {
                             // 通常のメソッド
 
-                            string methodName;
+                            string methodName = "";
                             if (FunctionInfo.IsConstructor)
                             {
                                 // コンストラクタ
 
-                                methodName = CbSTUtils.NEW_STR + " " + CbSTUtils.GetTypeFullName(ValueData.OriginalType);
+                                if (ValueData.OriginalType == typeof(CbNull))
+                                {
+                                    // CbNull は null 定数として扱う
+
+                                    methodName = CbSTUtils.NULL_STR;
+                                }
+                                else
+                                {
+                                    methodName = CbSTUtils.NEW_STR + " " + CbSTUtils.GetTypeFullName(ValueData.OriginalType);
+                                }
                             }
                             else
                             {
@@ -806,12 +840,35 @@ namespace CapyCSS.Controls.BaseControls
 
                                     className = typeof(CapyCSSbase.Script).FullName;
                                 }
-                                methodName = className + "." + FunctionInfo.FuncCode;
+                                if (!FunctionInfo.IsClassInstanceMethod)
+                                {
+                                    methodName = className + ".";
+                                }
+                                methodName += FunctionInfo.FuncCode;
+                                if (FunctionInfo.GenericMethodParameters != null)
+                                {
+                                    // ジェネリックパラメータを追加
+                                    IEnumerable<string> methodGenericParameters =
+                                        FunctionInfo.GenericMethodParameters.Select(n => CbSTUtils.GetTypeFullName(GetRequestType(FunctionInfo.typeRequests, n.Name)));
+                                    if (methodGenericParameters.Count() > 0)
+                                    {
+                                        string temp = null;
+                                        foreach (string param in methodGenericParameters)
+                                        {
+                                            if (temp is null)
+                                                temp = "<" + param;
+                                            else
+                                                temp += ", " + param;
+                                        }
+                                        methodName += temp + ">";
+                                    }
+                                }
                             }
 
                             result.Set(methodName, BuildScriptInfo.CodeType.Method);
                             result.IsNotUseCache = ForcedChecked;
                             result.SetTypeName(ValueData.TypeName);
+                            result.SetInstanceMethod(FunctionInfo.IsClassInstanceMethod);
                             result.Add(args);
                             if (!ForcedChecked && ValueData.TypeName != "void")
                             {
@@ -843,7 +900,12 @@ namespace CapyCSS.Controls.BaseControls
                     {
                         // 文字列
 
-                        result.Add(BuildScriptInfo.CreateBuildScriptInfo(null, "\"" + ValueData.ValueString + "\"", BuildScriptInfo.CodeType.Data, ValueData.Name));
+                        string str = ValueData.ValueString;
+                        str = str.Replace(Environment.NewLine, "\\n");
+                        str = str.Replace("\n", "\\n");
+                        str = str.Replace("\r", "\\r");
+                        str = str.Replace("\t", "\\t");
+                        result.Add(BuildScriptInfo.CreateBuildScriptInfo(null, "\"" + str + "\"", BuildScriptInfo.CodeType.Data, ValueData.Name));
                     }
                     else if (ValueData is ICbEnum cbEnum)
                     {

@@ -368,7 +368,12 @@ namespace CbVS.Script
                 if (n.IsError)
                     throw new Exception(n.ErrorMessage);
 
-                if (n is CbObject)
+                if (n is CbClass<CbNull>)
+                {
+                    Data = null;
+                    isNull = true;
+                }
+                else if (n is CbObject)
                 {
                     Data = n.Data;
                 }
