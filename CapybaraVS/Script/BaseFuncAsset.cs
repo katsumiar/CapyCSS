@@ -41,6 +41,8 @@ namespace CapyCSS.Script
         public const string MENU_TITLE_DOT_NET_FUNCTION_FULL_PATH = MENU_TITLE_PROGRAM + "." + MENU_TITLE_DOT_NET_FUNCTION + ".";
         public const string MENU_TITLE_IMPORT_FUNCTION_FULL_PATH = MENU_TITLE_PROGRAM + "." + MENU_TITLE_IMPORT + ".";
 
+        public const string LIB_Script_literal_NAME = "Literal/Local";
+
         public ApiImporter(CommandCanvas ownerCommandCanvas)
         {
             OwnerCommandCanvas = ownerCommandCanvas;
@@ -50,7 +52,7 @@ namespace CapyCSS.Script
             CreateAssetMenu(ownerCommandCanvas, ProgramNode, new ResultSequence());
 
             {
-                var literalNode = CreateGroup(ProgramNode, CapyCSSbase.Script_Literal.LIB_Script_literal_NAME);
+                var literalNode = CreateGroup(ProgramNode, LIB_Script_literal_NAME);
                 CreateAssetMenu(ownerCommandCanvas, literalNode, new LiteralType());
             }
 

@@ -534,13 +534,14 @@ namespace CapyCSS.Controls
                             (cbEvent.ReturnTypeName == "Void" ? BuildScriptInfo.CodeType.Delegate : BuildScriptInfo.CodeType.ResultDelegate),
                             node.ValueData.Name);
                         temp.Add(argResult);
-                        temp.SetTypeName(cbEvent.ReturnTypeName);
+                        temp.SetTypeName(CbSTUtils.GetTypeFullName(node.ValueData.OriginalReturnType));
                         argResult = temp;
                     }
                 }
                 if (argResult != null && !argResult.IsEmpty())
                 {
                     result.Add(argResult);
+                    result.SetTypeName(CbSTUtils.GetTypeFullName(node.ValueData.OriginalType));
                 }
                 else
                 {

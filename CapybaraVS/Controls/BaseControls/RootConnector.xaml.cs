@@ -692,7 +692,7 @@ namespace CapyCSS.Controls.BaseControls
 
                         string methodName = "";
                         result.Set(methodName, BuildScriptInfo.CodeType.Sequece);
-                        result.SetTypeName(ValueData.TypeName);
+                        result.SetTypeName(CbSTUtils.GetTypeFullName(ValueData.OriginalType));
                         BuildScriptInfo.InsertSharedScripts(args);
                         result.Add(args);
                     }
@@ -703,7 +703,7 @@ namespace CapyCSS.Controls.BaseControls
                         string methodName = "";
                         result.Set(methodName, BuildScriptInfo.CodeType.ResultSequece);
                         result.IsNotUseCache = ForcedChecked;
-                        result.SetTypeName(ValueData.TypeName);
+                        result.SetTypeName(CbSTUtils.GetTypeFullName(ValueData.OriginalType));
                         BuildScriptInfo.InsertSharedScripts(args);
                         result.Add(args);
                         if (!ForcedChecked && ValueData.TypeName != "void")
@@ -717,20 +717,12 @@ namespace CapyCSS.Controls.BaseControls
                             result.Set(tempValiable, BuildScriptInfo.CodeType.Variable);
                         }
                     }
-                    else if (FunctionInfo.ClassType == typeof(Script_Literal2) && FunctionInfo.FuncCode == nameof(Script_Literal2.Null))
-                    {
-                        // null
-
-                        result.Set("null", BuildScriptInfo.CodeType.Data);
-                        result.SetTypeName(ValueData.TypeName);
-                        //result.Add(args);
-                    }
                     else if (FunctionInfo.ClassType == typeof(DummyArguments))
                     {
                         // 仮引数
 
                         result.Set("", BuildScriptInfo.CodeType.DummyArgument);
-                        result.SetTypeName(ValueData.TypeName);
+                        result.SetTypeName(CbSTUtils.GetTypeFullName(ValueData.OriginalType));
                         result.Add(args);
                     }
                     else if (FunctionInfo.ClassType == typeof(SetVariable)
@@ -739,7 +731,7 @@ namespace CapyCSS.Controls.BaseControls
                         // 変数
 
                         result.Set(name.Substring(2, name.Length - 4), BuildScriptInfo.CodeType.Variable);
-                        result.SetTypeName(ValueData.TypeName);
+                        result.SetTypeName(CbSTUtils.GetTypeFullName(ValueData.OriginalType));
                         result.Add(args);
                     }
                     else if (FunctionInfo.FuncCode == "__" + nameof(SwitchEnum))
@@ -747,8 +739,7 @@ namespace CapyCSS.Controls.BaseControls
                         // Switch文
 
                         result.Set(name, BuildScriptInfo.CodeType.VoidSwitch);
-                        string className = CbSTUtils.GetTypeFullName(FunctionInfo.ClassType);
-                        result.SetTypeName(className);
+                        result.SetTypeName(CbSTUtils.GetTypeFullName(FunctionInfo.ClassType));
                         result.Add(args);
                     }
                     else if (FunctionInfo.ClassType == typeof(LiteralType) && ValueData.IsList)
@@ -786,7 +777,7 @@ namespace CapyCSS.Controls.BaseControls
                                 string methodName = className;
                                 result.Set(methodName,
                                     FunctionInfo.FuncCode == "get_Item" ? BuildScriptInfo.CodeType.GetIndexer : BuildScriptInfo.CodeType.SetIndexer);
-                                result.SetTypeName(ValueData.TypeName);
+                                result.SetTypeName(CbSTUtils.GetTypeFullName(ValueData.OriginalType));
                                 result.SetInstanceMethod(FunctionInfo.IsClassInstanceMethod);
                                 result.Add(args);
                             }
@@ -805,7 +796,7 @@ namespace CapyCSS.Controls.BaseControls
                                 }
                                 methodName += funcCode;
                                 result.Set(methodName, BuildScriptInfo.CodeType.Property);
-                                result.SetTypeName(ValueData.TypeName);
+                                result.SetTypeName(CbSTUtils.GetTypeFullName(ValueData.OriginalType));
                                 result.SetInstanceMethod(FunctionInfo.IsClassInstanceMethod);
                                 result.Add(args);
                             }
@@ -867,7 +858,7 @@ namespace CapyCSS.Controls.BaseControls
 
                             result.Set(methodName, BuildScriptInfo.CodeType.Method);
                             result.IsNotUseCache = ForcedChecked;
-                            result.SetTypeName(ValueData.TypeName);
+                            result.SetTypeName(CbSTUtils.GetTypeFullName(ValueData.OriginalType));
                             result.SetInstanceMethod(FunctionInfo.IsClassInstanceMethod);
                             result.Add(args);
                             if (!ForcedChecked && ValueData.TypeName != "void")
@@ -953,9 +944,16 @@ namespace CapyCSS.Controls.BaseControls
                         // その他
 
                         Debug.Assert(ValueData.ValueString != "");
-                        result.Add(BuildScriptInfo.CreateBuildScriptInfo(null, ValueData.ValueString, BuildScriptInfo.CodeType.Data, ValueData.Name));
+                        if (ValueData.OriginalType == typeof(bool))
+                        {
+                            result.Add(BuildScriptInfo.CreateBuildScriptInfo(null, ValueData.ValueString.ToLower(), BuildScriptInfo.CodeType.Data, ValueData.Name));
+                        }
+                        else
+                        {
+                            result.Add(BuildScriptInfo.CreateBuildScriptInfo(null, ValueData.ValueString, BuildScriptInfo.CodeType.Data, ValueData.Name));
+                        }
                     }
-                    result.SetTypeName(ValueData.TypeName);
+                    result.SetTypeName(CbSTUtils.GetTypeFullName(ValueData.OriginalType));
                 }
                 else
                 {
@@ -1012,7 +1010,7 @@ namespace CapyCSS.Controls.BaseControls
                                 (cbEvent.ReturnTypeName == "Void" ? BuildScriptInfo.CodeType.Delegate : BuildScriptInfo.CodeType.ResultDelegate),
                                 node.ValueData.Name);
                             temp.Add(argResult);
-                            temp.SetTypeName(cbEvent.ReturnTypeName);
+                            temp.SetTypeName(CbSTUtils.GetTypeFullName(ValueData.OriginalReturnType));
                             argResult = temp;
                         }
                     }
@@ -1023,6 +1021,7 @@ namespace CapyCSS.Controls.BaseControls
                             argResult.SetArgumentAttr(FunctionInfo.ArgumentTypeList[j]);
                         }
                         result.Add(argResult);
+                        result.SetTypeName(CbSTUtils.GetTypeFullName(node.ValueData.OriginalType));
                     }
                     else
                     {

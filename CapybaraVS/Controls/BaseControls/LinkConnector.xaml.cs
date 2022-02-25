@@ -327,6 +327,10 @@ namespace CapyCSS.Controls.BaseControls
                 // 引数を要素リストで受け取った
 
                 result = connectorResult;
+                if (CastType)
+                {
+                    result.SetCast();
+                }
             }
             if (linkCurveLinks != null)
             {
@@ -336,6 +340,10 @@ namespace CapyCSS.Controls.BaseControls
                 if (linksResult != null)
                 {
                     result = linksResult;
+                    if (CastType)
+                    {
+                        result.SetCast();
+                    }
                 }
             }
             if (result is null || result.IsEmpty())
@@ -398,11 +406,18 @@ namespace CapyCSS.Controls.BaseControls
                 {
                     // その他
 
-                    scr.Add(BuildScriptInfo.CreateBuildScriptInfo(null, ValueData.ValueString, BuildScriptInfo.CodeType.Data, ValueData.Name));
+                    if (ValueData.OriginalType == typeof(bool))
+                    {
+                        scr.Add(BuildScriptInfo.CreateBuildScriptInfo(null, ValueData.ValueString.ToLower(), BuildScriptInfo.CodeType.Data, ValueData.Name));
+                    }
+                    else
+                    {
+                        scr.Add(BuildScriptInfo.CreateBuildScriptInfo(null, ValueData.ValueString, BuildScriptInfo.CodeType.Data, ValueData.Name));
+                    }
                 }
-                scr.SetTypeName(ValueData.TypeName);
                 result = scr;
             }
+            result.SetTypeName(CbSTUtils.GetTypeFullName(ValueData.OriginalType));
             return result;
         }
 

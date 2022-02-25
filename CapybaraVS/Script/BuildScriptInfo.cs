@@ -25,6 +25,8 @@ namespace CapyCSS.Script
             GetIndexer,
             SetIndexer,
             Property,
+            Cast,
+            MethodCast,
         }
 
         public enum AttributeType
@@ -37,6 +39,7 @@ namespace CapyCSS.Script
 
         private const int TAB_SIZE = 4;
         private const string WORK_VARIABLE_NAME = "__cpb_work_";
+        private const string CAST_REPLACE_WORD = "(_XXXX_)";
 
         private string ScriptElement = null;
         public List<BuildScriptInfo> Child = null;
@@ -96,6 +99,17 @@ namespace CapyCSS.Script
         public bool IsEmpty()
         {
             return ScriptElement == null && Child == null;
+        }
+
+        /// <summary>
+        /// キャストが必要であることを指示します。
+        /// </summary>
+        public void SetCast()
+        {
+            if (ElementType == CodeType.Method || ElementType == CodeType.MethodCast)
+                ElementType = CodeType.MethodCast;
+            else
+                ElementType = CodeType.Cast;
         }
 
         /// <summary>
@@ -298,6 +312,7 @@ namespace CapyCSS.Script
         private bool IsMethodType()
         {
             return ElementType == CodeType.Method
+                || ElementType == CodeType.MethodCast
                 || ElementType == CodeType.GetIndexer
                 || ElementType == CodeType.SetIndexer;
         }
@@ -307,14 +322,19 @@ namespace CapyCSS.Script
         /// </summary>
         /// <param name="level">段組み階層</param>
         /// <returns>括弧開き</returns>
-        private string GetOpenBrakets(CodeType codeType)
+        private string GetOpenBrakets(CodeType codeType, bool isThrough = false)
         {
+            if (isThrough)
+            {
+                return "";
+            }
             switch (codeType)
             {
                 case CodeType.GetIndexer:
                 case CodeType.SetIndexer:
                     return "[";
 
+                case CodeType.MethodCast:
                 case CodeType.Method:
                     return "(";
 
@@ -333,14 +353,19 @@ namespace CapyCSS.Script
         /// </summary>
         /// <param name="level">段組み階層</param>
         /// <returns>括弧閉じ</returns>
-        private string GetCloseBrakets(CodeType codeType)
+        private string GetCloseBrakets(CodeType codeType, bool isThrough = false)
         {
+            if (isThrough)
+            {
+                return "";
+            }
             switch (codeType)
             {
                 case CodeType.GetIndexer:
                 case CodeType.SetIndexer:
                     return "]";
 
+                case CodeType.MethodCast:
                 case CodeType.Method:
                     return ")";
 
@@ -466,6 +491,7 @@ namespace CapyCSS.Script
                             }
 
                         case CodeType.GetIndexer:
+                        case CodeType.MethodCast:
                         case CodeType.Method:
                         case CodeType.List:
                             codeType = ElementType;
@@ -570,6 +596,13 @@ namespace CapyCSS.Script
                 if (ElementType == CodeType.none)
                 {
                     Debug.Assert(ScriptElement is null);
+                    if (args.Contains(CAST_REPLACE_WORD))
+                    {
+                        // キャスト用キーワードを差し替える
+                        // ※この時点での TypeName は、代入先の型を示している。
+
+                        args = args.Replace(CAST_REPLACE_WORD, $"({TypeName})");
+                    }
                     return new Tuple<string, IList<string>>(args, arguments);
                 }
                 string methodName = result;
@@ -616,7 +649,7 @@ namespace CapyCSS.Script
                                     methodName = $"( {methodName} )";
                                 }
                                 result = methodName + GetOpenBrakets(ElementType) + $" {index} " + GetCloseBrakets(ElementType);
-                                result += " = " + StripSequence(BuildMethod(0, codeType, "", setValue));
+                                result += " = " + StripSequence(BuildMethod(0, codeType, "", setValue)).Trim();
                             }
                             else
                             {
@@ -657,6 +690,20 @@ namespace CapyCSS.Script
                     // 引数無しのstaticメソッド
 
                     result = methodName + GetOpenBrakets(codeType) + GetCloseBrakets(codeType);
+                }
+                if (result.Contains(CAST_REPLACE_WORD))
+                {
+                    // キャスト用キーワードを差し替える
+                    // ※この時点での TypeName は、代入先の型を示している。
+
+                    result = result.Replace(CAST_REPLACE_WORD, $"({TypeName})");
+                }
+                if (ElementType == CodeType.MethodCast || ElementType == CodeType.Cast)
+                {
+                    // キャスト用のキーワードを挿入する
+                    // ※この時点での TypeName は代入側の型を示している。
+
+                    result = CAST_REPLACE_WORD + result.TrimStart();
                 }
             }
             return new Tuple<string, IList<string>>(result, null);
@@ -768,10 +815,10 @@ namespace CapyCSS.Script
             string result = "";
             result = ParagraphConvert(
                 tabLevel,
-                methodName.TrimStart() + (IsMethodType() ? "" : " ") + GetOpenBrakets(codeType),
+                methodName.TrimStart() + (IsMethodType() ? "" : " ") + GetOpenBrakets(ElementType, ElementType == CodeType.SetIndexer),
                 true);
             result += args;
-            result += Environment.NewLine + ParagraphConvert(tabLevel, GetCloseBrakets(codeType), false);
+            result += Environment.NewLine + ParagraphConvert(tabLevel, GetCloseBrakets(ElementType, ElementType == CodeType.SetIndexer), false);
             return result;
         }
 
@@ -800,17 +847,17 @@ namespace CapyCSS.Script
             {
                 result = ParagraphConvert(
                     tabLevel,
-                    methodName.TrimStart() + (IsMethodType() ? "" : " ") + GetOpenBrakets(codeType),
+                    methodName.TrimStart() + (IsMethodType() ? "" : " ") + GetOpenBrakets(ElementType, ElementType == CodeType.SetIndexer),
                     true);
                 result += args;
-                result += Environment.NewLine + ParagraphConvert(tabLevel, GetCloseBrakets(codeType), false);
+                result += Environment.NewLine + ParagraphConvert(tabLevel, GetCloseBrakets(ElementType, ElementType == CodeType.SetIndexer), false);
             }
             else
             {
                 // １行で表現する
 
                 result = methodName + (IsMethodType() ? "" : " ")
-                    + GetOpenBrakets(codeType) + arg + GetCloseBrakets(codeType);
+                    + GetOpenBrakets(ElementType, ElementType == CodeType.SetIndexer) + arg + GetCloseBrakets(ElementType, ElementType == CodeType.SetIndexer);
             }
             return result;
         }
@@ -848,7 +895,7 @@ namespace CapyCSS.Script
                     {
                         caseTarget = child;
                     }
-                    string caseName = TypeName + "." + caseTarget.Label.Replace(":", "");
+                    string caseName = childRoot.Child[0].TypeName + "." + caseTarget.Label.Replace(":", "");
                     string caseCall = label._BuildScript(tabLevel + TAB_SIZE * 2).Item1;
                     if (caseCall == "null")
                     {

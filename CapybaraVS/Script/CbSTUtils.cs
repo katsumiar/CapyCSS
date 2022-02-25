@@ -511,6 +511,11 @@ namespace CapyCSS.Script
             /// </summary>
             bool IsCastAssignment(Type toType, Type fromType)
             {
+
+                if (fromType == typeof(object))
+                {
+                    return toType != typeof(CbVoid);    // object型ならvoid以外なら無条件に繋げる
+                }
                 if (!fromType.IsValueType || !toType.IsValueType)
                     return false;
                 if (CastPermissionDic.ContainsKey(fromType))

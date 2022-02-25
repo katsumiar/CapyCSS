@@ -1,5 +1,5 @@
 var GenericInstance = () => {
-    ( new System.Collections.Generic.List<string>() ).Add( "" );
+    ( new System.Collections.Generic.List<System.String>() ).Add( "" );
 };
 CapyCSSbase.Script.AddEntryPoint(nameof(GenericInstance), GenericInstance);
 

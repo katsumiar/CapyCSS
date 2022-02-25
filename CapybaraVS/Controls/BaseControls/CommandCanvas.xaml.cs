@@ -370,12 +370,17 @@ namespace CapyCSS.Controls.BaseControls
                 Debug.Assert(!CbSTUtils.IsAssignment(typeof(string), valueType));
 
             // object と Void に対する代入チェック
-            foreach (var fromType in valueTypes)
+            foreach (var valueType in valueTypes)
             {
-                Debug.Assert(CbSTUtils.IsAssignment(typeof(object), fromType));
-                Debug.Assert(CbSTUtils.IsAssignment(typeof(CbVoid), fromType));
+                Debug.Assert(CbSTUtils.IsAssignment(typeof(object), valueType));
+                Debug.Assert(CbSTUtils.IsAssignment(valueType, typeof(object), true));
+                Debug.Assert(CbSTUtils.IsAssignment(typeof(CbVoid), valueType));
             }
-            // サンプリング代入チェック
+            Debug.Assert(CbSTUtils.IsAssignment(typeof(CbVoid), typeof(object)));
+            Debug.Assert(!CbSTUtils.IsAssignment(typeof(object), typeof(CbVoid)));
+            Debug.Assert(CbSTUtils.IsAssignment(typeof(CbVoid), typeof(CbVoid)));
+
+            // 代入のサンプリングチェック
             Debug.Assert(CbSTUtils.IsAssignment(typeof(object), typeof(List<int>)));
             Debug.Assert(CbSTUtils.IsAssignment(typeof(CbVoid), typeof(List<int>)));
 
@@ -392,6 +397,9 @@ namespace CapyCSS.Controls.BaseControls
             Debug.Assert(CbSTUtils.IsAssignment(typeof(uint), typeof(byte), true));
             Debug.Assert(CbSTUtils.IsAssignment(typeof(ulong), typeof(byte), true));
             Debug.Assert(CbSTUtils.IsAssignment(typeof(double), typeof(float), true));
+            Debug.Assert(CbSTUtils.IsAssignment(typeof(string), typeof(object), true));
+            Debug.Assert(CbSTUtils.IsAssignment(typeof(Type), typeof(object), true));
+            Debug.Assert(CbSTUtils.IsAssignment(typeof(List<int>), typeof(object), true));
 
             // 型名変換チェック
             Debug.Assert(CbSTUtils.GetTypeName(typeof(int)) == "int");

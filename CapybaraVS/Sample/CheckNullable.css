@@ -1,43 +1,94 @@
-System.Double parseWork;
-var ForeachReturn = () => {
-    CapyCSSbase.Script.OutConsole<System.Double>(
-        CapyCSSbase.FlowLib.ForeachReturn<System.String, System.Double>(
-            new System.Collections.Generic.List<System.String>() {
-                "moji",
-                "26a",
-                "1.2345",
-                "abcd"
-            },
-            ( ARG_1 ) => CapyCSSbase.FlowLib.If_ResultNullable<System.Double>(
-                    System.Double.TryParse(
-                        ARG_1,
-                        out parseWork
+System.Nullable<System.Byte> variable1;
+System.Nullable<System.UInt16> variable2;
+System.Nullable<System.UInt32> variable3;
+System.Nullable<System.UInt64> variable4;
+System.Nullable<System.SByte> variable5;
+System.Nullable<System.Int16> variable6;
+System.Nullable<System.Int32> variable7;
+System.Nullable<System.Int64> variable8;
+System.Nullable<System.Char> variable9;
+System.Nullable<System.Single> variable10;
+System.Nullable<System.Double> variable11;
+System.Nullable<System.Decimal> variable12;
+System.Nullable<System.Boolean> variable13;
+System.Nullable<System.DateTime> variable14;
+System.Nullable<System.PlatformID> variable15;
+System.Action<System.Boolean> variable16;
+var CheckNullable = () => {
+    variable16 = ( ARG_1 ) => CapyCSSbase.Script.OutConsole(
+                CapyCSSbase.FlowLib.If_Value<System.String>(
+                    CapyCSSbase.FlowLib.And(
+                        new System.Collections.Generic.List<System.Boolean>() {
+                            CapyCSSbase.FlowLib.HasValue<System.Byte>( variable1 ),
+                            CapyCSSbase.FlowLib.HasValue<System.UInt16>( variable2 ),
+                            CapyCSSbase.FlowLib.HasValue<System.UInt32>( variable3 ),
+                            CapyCSSbase.FlowLib.HasValue<System.UInt64>( variable4 ),
+                            CapyCSSbase.FlowLib.HasValue<System.SByte>( variable5 ),
+                            CapyCSSbase.FlowLib.HasValue<System.Int16>( variable6 ),
+                            CapyCSSbase.FlowLib.HasValue<System.Int32>( variable7 ),
+                            CapyCSSbase.FlowLib.HasValue<System.Int64>( variable8 ),
+                            CapyCSSbase.FlowLib.HasValue<System.Char>( variable9 ),
+                            CapyCSSbase.FlowLib.HasValue<System.Single>( variable10 ),
+                            CapyCSSbase.FlowLib.HasValue<System.Double>( variable11 ),
+                            CapyCSSbase.FlowLib.HasValue<System.Decimal>( variable12 ),
+                            CapyCSSbase.FlowLib.HasValue<System.Boolean>( variable13 ),
+                            CapyCSSbase.FlowLib.HasValue<System.DateTime>( variable14 ),
+                            CapyCSSbase.FlowLib.HasValue<System.PlatformID>( variable15 )
+                        },
+                        ARG_1
                     ),
-                    () => parseWork,
-                    null
-                ),
-            1
-        )
-    );
-    CapyCSSbase.Script.OutConsole<System.Double>(
-        CapyCSSbase.FlowLib.ForeachReturn<System.String, System.Double>(
-            new System.Collections.Generic.List<System.String>() {
-                "moji",
-                "685",
-                "5.32",
-                "abcd"
-            },
-            ( ARG_1 ) => CapyCSSbase.FlowLib.If_ResultNullable<System.Double>(
-                    System.Double.TryParse(
-                        ARG_1,
-                        out parseWork
-                    ),
-                    () => parseWork,
-                    null
-                ),
-            1
-        )
-    );
+                    "SUCCESS.",
+                    "ERROR!"
+                )
+            );
+    {
+        {
+            {
+                variable1 = 1;
+                variable2 = 1;
+                variable3 = 1;
+                variable4 = 1;
+                variable5 = 1;
+                variable6 = 1;
+                variable7 = 1;
+                variable8 = 1;
+                variable9 = '1';
+                variable10 = 1;
+                variable11 = 1;
+                variable12 = new System.Decimal();
+                variable13 = True;
+                variable14 = new System.DateTime();
+                variable15 = System.PlatformID.Unix;
+            };
+            CapyCSSbase.FlowLib.Invoke<System.Boolean>(
+                False,
+                ( ARG_1 ) => variable16
+            );
+        };
+        {
+            {
+                variable1 = null;
+                variable2 = null;
+                variable3 = null;
+                variable4 = null;
+                variable5 = null;
+                variable6 = null;
+                variable7 = null;
+                variable8 = null;
+                variable9 = null;
+                variable10 = null;
+                variable11 = null;
+                variable12 = null;
+                variable13 = null;
+                variable14 = null;
+                variable15 = null;
+            };
+            CapyCSSbase.FlowLib.Invoke<System.Boolean>(
+                True,
+                ( ARG_1 ) => variable16
+            );
+        };
+    };
 };
-CapyCSSbase.Script.AddEntryPoint(nameof(ForeachReturn), ForeachReturn);
+CapyCSSbase.Script.AddEntryPoint(nameof(CheckNullable), CheckNullable);
 

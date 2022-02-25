@@ -15,6 +15,19 @@ namespace CapyCSSbase
         public const string LIB_Script_NAME = "Script";
         private static List<Tuple<string, Func<object>>> funcs = new List<Tuple<string, Func<object>>>();
 
+
+        [ScriptMethod(path: LIB_Script_NAME)]
+        public static TResult As<TResult>(object value) where TResult : class
+        {
+            return value as TResult;
+        }
+
+        [ScriptMethod(path: LIB_Script_NAME)]
+        public static bool Is<T>(object value) where T : class
+        {
+            return value is T;
+        }
+
         [ScriptMethod(path: LIB_Script_NAME)]
         public static void AddEntryPoint(string name, Func<object> func)
         {
@@ -490,33 +503,6 @@ namespace CapyCSSbase
             where TCollection : IEnumerable<TElement>
         {
             return collection.GetEnumerator();
-        }
-    }
-
-    //------------------------------------------------------------------
-    [ScriptClass]
-    public static class Script_Literal
-    {
-        public const string LIB_Script_literal_NAME = "Literal/Local";
-
-        [ScriptMethod(path: LIB_Script_literal_NAME)]
-        public static T Null<T>()
-            where T : class
-        {
-            return null;
-        }
-    }
-
-    //------------------------------------------------------------------
-    [ScriptClass]
-    public static class Script_Literal2
-    {
-        public const string LIB_Script_literal_NAME = "Literal/Local";
-
-        [ScriptMethod(path: LIB_Script_literal_NAME)]
-        public static object Null()
-        {
-            return null;
         }
     }
 }
