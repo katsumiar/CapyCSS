@@ -990,7 +990,9 @@ namespace CapyCSS.Controls.BaseControls
                     {
                         // イベント呼び出し
 
-                        if (!connector.ValueData.IsNull && connector.ValueData is ICbEvent cbEvent)
+                        if (argResult.GetElementType() != BuildScriptInfo.CodeType.Variable 
+                            && !connector.ValueData.IsNull
+                            && connector.ValueData is ICbEvent cbEvent)
                         {
                             string argStr = "";
                             int argCount = cbEvent.ArgumentsNum;

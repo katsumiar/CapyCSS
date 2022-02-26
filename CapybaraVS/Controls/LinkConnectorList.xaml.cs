@@ -514,7 +514,9 @@ namespace CapyCSS.Controls
                 {
                     // イベント呼び出し
 
-                    if (!node.ValueData.IsNull && node.ValueData is ICbEvent cbEvent)
+                    if (argResult.GetElementType() != BuildScriptInfo.CodeType.Variable 
+                        && !node.ValueData.IsNull
+                        && node.ValueData is ICbEvent cbEvent)
                     {
                         string argStr = "";
                         int argCount = cbEvent.ArgumentsNum;
