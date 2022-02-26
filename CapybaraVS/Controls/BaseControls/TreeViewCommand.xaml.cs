@@ -19,6 +19,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Windows.Threading;
 using System.Xml.Serialization;
+using System.Linq;
 
 namespace CapyCSS.Controls.BaseControls
 {
@@ -428,54 +429,36 @@ namespace CapyCSS.Controls.BaseControls
         {
             ObservableCollection<TreeMenuNode> treeView = viewer.TreeView.ItemsSource as ObservableCollection<TreeMenuNode>;
 
-            Dictionary<string, string> keyValuePairs = new Dictionary<string, string>()
+            IDictionary<string, string> primitiveDic = new Dictionary<string, string>()
             {
-                { "STRING", "System" },
-                { "BOOL", "System" },
-                { "BYTE", "System" },
-                { "SBYTE", "System" },
-                { "CHAR", "System" },
-                { "SHORT", "System" },
-                { "INT", "System" },
-                { "LONG", "System" },
-                { "FLOAT", "System" },
-                { "DOUBLE", "System" },
-                { "USHORT", "System" },
-                { "UINT", "System" },
-                { "ULONG", "System" },
-                { "DECIMAL", "System" },
-
-                { "BOOL[]", "Script.Array" },
-                { "BYTE[]", "Script.Array" },
-                { "SBYTE[]", "Script.Array" },
-                { "CHAR[]", "Script.Array" },
-                { "SHORT[]", "Script.Array" },
-                { "INT[]", "Script.Array" },
-                { "LONG[]", "Script.Array" },
-                { "FLOAT[]", "Script.Array" },
-                { "DOUBLE[]", "Script.Array" },
-                { "USHORT[]", "Script.Array" },
-                { "UINT[]", "Script.Array" },
-                { "ULONG[]", "Script.Array" },
-                { "DECIMAL[]", "Script.Array" },
+                { "STRING", "system.string" },
+                { "BOOL", "system.boolean" },
+                { "BYTE", "system.byte" },
+                { "SBYTE", "system.sbyte" },
+                { "CHAR", "system.char" },
+                { "SHORT", "system.int16" },
+                { "INT", "system.int32" },
+                { "LONG", "system.int64" },
+                { "FLOAT", "system.single" },
+                { "DOUBLE", "system.double" },
+                { "USHORT", "system.uint16" },
+                { "UINT", "system.uint32" },
+                { "ULONG", "system.uint64" },
+                { "DECIMAL", "system.decimal" },
             };
 
-            if (keyValuePairs.ContainsKey(name.ToUpper()))
+            if (primitiveDic.ContainsKey(name.ToUpper()))
             {
-                if (keyValuePairs[name.ToUpper()].EndsWith("#"))
-                {
-                    name = keyValuePairs[name.ToUpper()];
-                    name = name.Replace("#", "");
-                }
-                else
-                {
-                    name = keyValuePairs[name.ToUpper()] + "." + name.Replace("[]", "");
-                }
+                name = primitiveDic[name.ToUpper()];
+            }
+            else if (name.EndsWith("[]"))
+            {
+                name = "system.array";
             }
 
             string searchName = name.ToUpper().Replace(" ", "");
 
-            List<TreeMenuNode> treeMenuNodes = new List<TreeMenuNode>();
+            ICollection<TreeMenuNode> treeMenuNodes = new List<TreeMenuNode>();
             foreach (var assetData in AssetTreeData)
             {
                 treeMenuNodes.Add(assetData);
@@ -507,7 +490,7 @@ namespace CapyCSS.Controls.BaseControls
         /// <param name="token"></param>
         /// <param name="treeView"></param>
         /// <param name="searchName"></param>
-        private void ActionFilter(List<TreeMenuNode> treeMenuNodes, TreeViewCommand viewer, CancellationToken token, string searchName, string[] option)
+        private void ActionFilter(IEnumerable<TreeMenuNode> treeMenuNodes, TreeViewCommand viewer, CancellationToken token, string searchName, string[] option)
         {
             foreach (var node in treeMenuNodes)
             {
