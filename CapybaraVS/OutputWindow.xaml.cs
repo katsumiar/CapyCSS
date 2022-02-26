@@ -24,7 +24,7 @@ namespace CapyCSS
             outputWindow.Title = "[" + title + "]";
             outputWindow.Owner = CommandCanvasList.OwnerWindow;
             outputWindow.Show();
-
+            ControlTools.SetWindowPos(outputWindow, null);
             return outputWindow;
         }
 
