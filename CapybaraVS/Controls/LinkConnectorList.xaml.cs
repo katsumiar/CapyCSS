@@ -273,6 +273,7 @@ namespace CapyCSS.Controls
             if (variableList is null)
             {
                 Disconnect();
+                DisenableList();
                 return;
             }
             foreach (var variable in variableList)

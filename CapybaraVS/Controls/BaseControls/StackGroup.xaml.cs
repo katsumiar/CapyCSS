@@ -176,7 +176,6 @@ namespace CapyCSS.Controls.BaseControls
             {
                 // アコーディオンが閉じているので開いたときに更新する。
 
-
                 HoldAction.Add(this, () => _UpdateValueData());
                 return;
             }
@@ -356,9 +355,19 @@ namespace CapyCSS.Controls.BaseControls
                 DispatcherPriority.ApplicationIdle
             );
             HoldAction.Enabled = false;
-            AccordionCloseIcon.Visibility = Visibility.Collapsed;
-            AccordionOpenIcon.Visibility = Visibility.Visible;
-            OpenList();
+            if (CbValue is null)
+            {
+                AccordionOpenIcon.Visibility = Visibility.Collapsed;
+                AccordionCloseIcon.Visibility = Visibility.Collapsed;
+                CloseList();
+                InnerList.Visibility = Visibility.Collapsed;
+            }
+            else
+            {
+                AccordionCloseIcon.Visibility = Visibility.Collapsed;
+                AccordionOpenIcon.Visibility = Visibility.Visible;
+                OpenList();
+            }
         }
 
         /// <summary>
@@ -385,6 +394,7 @@ namespace CapyCSS.Controls.BaseControls
         private void OpenList()
         {
             ListView.Visibility = Visibility.Visible;
+            InnerList.Visibility = Visibility.Visible;
             SetConnectorBackground();
             EnableAddOption = true;
         }
@@ -396,6 +406,7 @@ namespace CapyCSS.Controls.BaseControls
         {
             ListView.Visibility = Visibility.Collapsed;
             ConnectorBackground.Visibility = Visibility.Collapsed;
+            InnerList.Visibility = Visibility.Visible;
             EnableAddOption = false;
         }
 
@@ -407,7 +418,7 @@ namespace CapyCSS.Controls.BaseControls
             get => AddOption.Visibility == Visibility.Visible;
             set
             {
-                AddOption.Visibility = (value && CbValue != null) ? Visibility.Visible : Visibility.Collapsed;
+                AddOption.Visibility = value ? Visibility.Visible : Visibility.Collapsed;
             }
         }
 
