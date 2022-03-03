@@ -438,16 +438,6 @@ namespace CapyCSS.Script
                 if (!IsAcceptClass(classType))
                     continue;   // 扱えない
 
-                if (classType == typeof(Action))
-                    continue;   // 本システムで特殊な扱いをしているので扱わない
-                if (classType.IsGenericType)
-                {
-                    if (classType.GetGenericTypeDefinition() == typeof(Action<>))
-                        continue;   // 本システムで特殊な扱いをしているので扱わない
-                    if (classType.GetGenericTypeDefinition() == typeof(Func<>))
-                        continue;   // 本システムで特殊な扱いをしているので扱わない
-                }
-
                 string className = classType.Name;
                 if (className.EndsWith("Exception"))
                     continue;   // 例外は扱わない
