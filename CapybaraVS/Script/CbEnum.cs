@@ -21,6 +21,11 @@ namespace CapyCSS.Script
         string SelectedItemName { get; }
 
         /// <summary>
+        /// 要素リストです。
+        /// </summary>
+        string[] ElementList { get; }
+
+        /// <summary>
         /// 値を初期化します。
         /// </summary>
         void Initialize();

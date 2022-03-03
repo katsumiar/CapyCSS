@@ -573,7 +573,30 @@ namespace CapyCSS.Controls
                 {
                     var value = variable.ValueData;
                     string name = CbSTUtils.GetTypeFullName(value.OriginalType);
-                    result.Add(BuildScriptInfo.CreateBuildScriptInfo(null, name, BuildScriptInfo.CodeType.StackVariable, value.Name));
+
+                    string label = value.Name + " = ";
+                    if (value.IsList || value is ICbClass || value is ICbEvent || value.MyType == typeof(CbString) || value.IsNullable)
+                    {
+                        label += CbSTUtils.NULL_STR;
+                    }
+                    else if (value is ICbStruct cbStruct)
+                    {
+                        label += $"{CbSTUtils.NEW_STR} {name}()";
+                    }
+                    else if (value is ICbEnum cbEnum)
+                    {
+                        label += cbEnum.ItemName + "." + cbEnum.ElementList[0];
+                    }
+                    else if (value.MyType == typeof(CbBool))
+                    {
+                        label += "false";
+                    }
+                    else
+                    {
+                        label += "0";
+                    }
+
+                    result.Add(BuildScriptInfo.CreateBuildScriptInfo(null, name, BuildScriptInfo.CodeType.StackVariable, label));
                 }
             }
             return result;
