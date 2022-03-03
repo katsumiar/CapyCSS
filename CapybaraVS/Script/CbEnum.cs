@@ -19,6 +19,11 @@ namespace CapyCSS.Script
         /// 選択されている要素です。
         /// </summary>
         string SelectedItemName { get; }
+
+        /// <summary>
+        /// 値を初期化します。
+        /// </summary>
+        void Initialize();
     }
 
     public class CbEnumTools
@@ -103,6 +108,11 @@ namespace CapyCSS.Script
         public override Type MyType => typeof(CbEnum<T>);
 
         public override Type OriginalType => typeof(T);
+
+        public void Initialize()
+        {
+            Value = default(T) as Enum;
+        }
 
         public string ItemName => typeof(T).FullName.Replace("+", ".");
 

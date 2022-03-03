@@ -535,6 +535,7 @@ namespace CapyCSS.Controls.BaseControls
                 sw.Start();
             }
 
+            OwnerCommandCanvas.WorkStack.Initialize();  // 変数の初期化
             result = RequestExecute(null, null);
 
             if (!fromScript)

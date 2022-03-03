@@ -176,6 +176,14 @@ namespace CapyCSS.Controls
             ValueData = obj;
         }
 
+        /// <summary>
+        /// 値を初期化します。
+        /// </summary>
+        public void Initialize()
+        {
+            CbST.Initialize(ValueData);
+        }
+
         protected override void Dispose(bool disposing)
         {
             if (!disposedValue)
@@ -322,6 +330,14 @@ namespace CapyCSS.Controls
             AssetXML = new _AssetXML<Stack>(this);
             StackList.ItemsSource = StackData;
             Visibility = Visibility.Collapsed;
+        }
+
+        public void Initialize()
+        {
+            foreach (var node in StackData)
+            {
+                node.stackNode.Initialize();
+            }
         }
 
         /// <summary>

@@ -24,6 +24,11 @@ namespace CapyCSS.Script
         /// 値を文字列で参照します。
         /// </summary>
         string ValueUIString { get; }
+
+        /// <summary>
+        /// 値を初期化します。
+        /// </summary>
+        void Initialize();
     }
 
     public class CbStruct
@@ -144,6 +149,11 @@ namespace CapyCSS.Script
         public CbStruct(string name = "")
         {
             Name = name;
+        }
+
+        public void Initialize()
+        {
+            Value = (T)Activator.CreateInstance(typeof(T));
         }
 
         public override string TypeName

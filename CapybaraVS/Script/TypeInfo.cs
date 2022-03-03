@@ -632,6 +632,38 @@ namespace CapyCSS.Script
 
             return null;
         }
+
+        /// <summary>
+        /// 値を初期化します。
+        /// </summary>
+        /// <param name="cbValue">対象のCb変数</param>
+        public static void Initialize(ICbValue cbValue)
+        {
+            if (cbValue is ICbList cbList)
+            {
+                cbList.Value = null;
+            }
+            else if (cbValue is ICbClass || cbValue is ICbEvent || cbValue.MyType == typeof(CbString))
+            {
+                cbValue.Data = null;
+            }
+            else if (cbValue is ICbStruct cbStruct)
+            {
+                cbStruct.Initialize();
+            }
+            else if (cbValue is ICbEnum cbEnum)
+            {
+                cbEnum.Initialize();
+            }
+            else if (cbValue.MyType == typeof(CbBool))
+            {
+                cbValue.Data = false;
+            }
+            else
+            {
+                cbValue.Data = 0;
+            }
+        }
     }
 
     //----------------------------------------------------------------------------------------

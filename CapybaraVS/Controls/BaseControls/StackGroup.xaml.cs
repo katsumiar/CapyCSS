@@ -224,9 +224,12 @@ namespace CapyCSS.Controls.BaseControls
                 else
                 {
                     ListData.Clear();
-                    foreach (var node in target.Value)
+                    if (!target.IsNull)
                     {
-                        AddListNode(CbList.ConvertStackNode(OwnerCommandCanvas, node));
+                        foreach (var node in target.Value)
+                        {
+                            AddListNode(CbList.ConvertStackNode(OwnerCommandCanvas, node));
+                        }
                     }
                 }
             }
@@ -404,7 +407,7 @@ namespace CapyCSS.Controls.BaseControls
             get => AddOption.Visibility == Visibility.Visible;
             set
             {
-                AddOption.Visibility = value ? Visibility.Visible : Visibility.Collapsed;
+                AddOption.Visibility = (value && CbValue != null) ? Visibility.Visible : Visibility.Collapsed;
             }
         }
 

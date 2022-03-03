@@ -401,6 +401,11 @@ namespace CbVS.Script
                 return OriginalData;
             }
 
+            if (isNull)
+            {
+                return null;
+            }
+
             var listNodeType = NodeTF();
 
             var genericType = typeof(List<>).MakeGenericType(typeof(T));
@@ -480,6 +485,14 @@ namespace CbVS.Script
             }
 
             Clear();
+            if (IsNull)
+            {
+                if (list is ICbList cbList && cbList.IsNull)
+                {
+                    return;
+                }
+                Value = new List<ICbValue>();
+            }
 
             if (list is ICbValue cbValue && cbValue.IsList)
             {

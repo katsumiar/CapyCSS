@@ -270,6 +270,11 @@ namespace CapyCSS.Controls
         /// <param name="variableList"></param>
         private void BuildConnectorList(List<ICbValue> variableList)
         {
+            if (variableList is null)
+            {
+                Disconnect();
+                return;
+            }
             foreach (var variable in variableList)
             {
                 AppendList(variable);
@@ -460,7 +465,8 @@ namespace CapyCSS.Controls
         /// </summary>
         private void ClearList()
         {
-            Debug.Assert(ListData == connectedListData);
+            //↓nullが代入されたときに通る
+            //Debug.Assert(ListData == connectedListData);
 
             foreach (var node in ListData)
             {
