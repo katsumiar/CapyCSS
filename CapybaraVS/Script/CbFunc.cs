@@ -370,6 +370,7 @@ namespace CbVS.Script
 
                 if (n is CbClass<CbNull>)
                 {
+                    Debug.Assert(false);    // このパスは無い
                     Data = null;
                     isNull = true;
                 }
@@ -473,7 +474,7 @@ namespace CbVS.Script
         /// <summary>
         /// 変数の持つ値は null か？
         /// </summary>
-        public override bool IsNull => Callback is null;
+        public override bool IsNull => _value is null || Callback is null;
 
         /// <summary>
         /// 値の文字列表現

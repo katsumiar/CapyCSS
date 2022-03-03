@@ -489,6 +489,10 @@ namespace CapyCSS.Script
             MultiRootConnector col
             )
         {
+            if (value.IsNull)
+            {
+                return null;
+            }
             if (value.IsList)
             {
                 ICbList cbList = value.GetListValue;
