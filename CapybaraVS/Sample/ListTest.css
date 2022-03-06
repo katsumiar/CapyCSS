@@ -1,4 +1,4 @@
-System.Collections.Generic.List<System.Int32> variable1;
+System.Collections.Generic.List<System.Int32> variable1 = null;
 var ListTest = () => {
     {
         ( new System.Collections.Generic.List<System.Int32>() ).Add( 1 );

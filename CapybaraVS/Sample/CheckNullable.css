@@ -1,21 +1,21 @@
-System.Nullable<System.Byte> variable1;
-System.Nullable<System.UInt16> variable2;
-System.Nullable<System.UInt32> variable3;
-System.Nullable<System.UInt64> variable4;
-System.Nullable<System.SByte> variable5;
-System.Nullable<System.Int16> variable6;
-System.Nullable<System.Int32> variable7;
-System.Nullable<System.Int64> variable8;
-System.Nullable<System.Char> variable9;
-System.Nullable<System.Single> variable10;
-System.Nullable<System.Double> variable11;
-System.Nullable<System.Decimal> variable12;
-System.Nullable<System.Boolean> variable13;
-System.Nullable<System.DateTime> variable14;
-System.Nullable<System.PlatformID> variable15;
-System.Action<System.Boolean> variable16;
+System.Nullable<System.Byte> variable1 = null;
+System.Nullable<System.UInt16> variable2 = null;
+System.Nullable<System.UInt32> variable3 = null;
+System.Nullable<System.UInt64> variable4 = null;
+System.Nullable<System.SByte> variable5 = null;
+System.Nullable<System.Int16> variable6 = null;
+System.Nullable<System.Int32> variable7 = null;
+System.Nullable<System.Int64> variable8 = null;
+System.Nullable<System.Char> variable9 = null;
+System.Nullable<System.Single> variable10 = null;
+System.Nullable<System.Double> variable11 = null;
+System.Nullable<System.Decimal> variable12 = null;
+System.Nullable<System.Boolean> variable13 = null;
+System.Nullable<System.DateTime> variable14 = null;
+System.Nullable<System.PlatformID> variable15 = null;
+System.Action<System.Boolean> variable16 = null;
 var CheckNullable = () => {
-    variable16 = ( ARG_1 ) => CapyCSSbase.Script.OutConsole(
+    variable16 = ( ARG_1 ) =>( ARG_1 ) => CapyCSSbase.Script.OutConsole(
                 CapyCSSbase.FlowLib.If_Value<System.String>(
                     CapyCSSbase.FlowLib.And(
                         new System.Collections.Generic.List<System.Boolean>() {
@@ -56,13 +56,13 @@ var CheckNullable = () => {
                 variable10 = 1;
                 variable11 = 1;
                 variable12 = new System.Decimal();
-                variable13 = True;
+                variable13 = true;
                 variable14 = new System.DateTime();
                 variable15 = System.PlatformID.Unix;
             };
             CapyCSSbase.FlowLib.Invoke<System.Boolean>(
-                False,
-                ( ARG_1 ) => variable16
+                false,
+                variable16
             );
         };
         {
@@ -84,8 +84,8 @@ var CheckNullable = () => {
                 variable15 = null;
             };
             CapyCSSbase.FlowLib.Invoke<System.Boolean>(
-                True,
-                ( ARG_1 ) => variable16
+                true,
+                variable16
             );
         };
     };

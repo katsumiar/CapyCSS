@@ -1,4 +1,4 @@
-System.String variable1;
+System.String variable1 = null;
 var ExtensionSearch = () => {
     CapyCSSbase.FileLib.ForeachFiles(
         CapyCSS.Script.Lib.FileLib.BrowseFolder(
@@ -20,8 +20,8 @@ var ExtensionSearch = () => {
                 );
             },
         "*.*",
-        True,
-        False
+        true,
+        false
     );
 };
 CapyCSSbase.Script.AddEntryPoint(nameof(ExtensionSearch), ExtensionSearch);

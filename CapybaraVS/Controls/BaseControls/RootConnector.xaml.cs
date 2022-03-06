@@ -356,6 +356,12 @@ namespace CapyCSS.Controls.BaseControls
                     RectBox.RadiusY = 20;
                     //RectBox.Fill = new SolidColorBrush(Color.FromArgb(80, 0xf0, 0x80, 0x80));//Brushes.LightCoral;
                 }
+                if (ValueData != null && ValueData.IsDelegate && IsGetVariavleFunction())
+                {
+                    // 変数参照デリゲートをマークする
+
+                    ValueData.IsVariableDelegate = true;
+                }
             }
         }
 
@@ -669,13 +675,23 @@ namespace CapyCSS.Controls.BaseControls
 
         public BuildScriptInfo RequestBuildScript()
         {
-            if (BuildScriptInfo.HaveBuildScriptInfo(this))
+            BuildScriptInfo result;
+            if (IsGetVariavleFunction())
             {
-                // すでに情報を取得済みなので、作成済みの内容を返します。
+                // 変数参照はキャッシュしない
 
-                return BuildScriptInfo.CreateBuildScriptInfo(this);
+                result = BuildScriptInfo.CreateBuildScriptInfo(null);
             }
-            BuildScriptInfo result = BuildScriptInfo.CreateBuildScriptInfo(this);
+            else
+            {
+                if (BuildScriptInfo.HaveBuildScriptInfo(this))
+                {
+                    // すでに情報を取得済みなので、作成済みの内容を返します。
+
+                    return BuildScriptInfo.CreateBuildScriptInfo(this);
+                }
+                result = BuildScriptInfo.CreateBuildScriptInfo(this);
+            }
 
             if (Function != null || (FunctionInfo != null && FunctionInfo.IsConstructor))
             {
@@ -726,13 +742,46 @@ namespace CapyCSS.Controls.BaseControls
                         result.SetTypeName(CbSTUtils.GetTypeFullName(ValueData.OriginalType));
                         result.Add(args);
                     }
-                    else if (FunctionInfo.ClassType == typeof(SetVariable)
-                                || FunctionInfo.ClassType == typeof(_GetVariable))
+                    else if (IsVariableFunction())
                     {
                         // 変数
 
-                        result.Set(name.Substring(2, name.Length - 4), BuildScriptInfo.CodeType.Variable);
-                        result.SetTypeName(CbSTUtils.GetTypeFullName(ValueData.OriginalType));
+                        string variableName = name.Substring(2, name.Length - 4);
+                        if (CbSTUtils.IsDelegate(FunctionInfo.ClassType))
+                        {
+                            string argStr = "";
+                            // 引数情報を作成する
+                            for (int i = 0; i < FunctionInfo.ClassType.GetGenericArguments().Length; i++)
+                            {
+                                if (i > 0)
+                                    argStr += ", ";
+                                argStr += $"ARG_{i + 1}";
+                            }
+                            if (argStr.Length > 0)
+                            {
+                                argStr = " " + argStr + " ";
+                            }
+                            if (args.Child is null)
+                            {
+                                result.Set(variableName, BuildScriptInfo.CodeType.Variable, variableName);
+                            }
+                            else
+                            {
+                                result.Set($"{variableName} = ({argStr}) =>", BuildScriptInfo.CodeType.Variable, variableName);
+                            }
+                        }
+                        else
+                        {
+                            if (args.Child is null)
+                            {
+                                result.Set(variableName, BuildScriptInfo.CodeType.Variable, variableName);
+                            }
+                            else
+                            {
+                                result.Set($"{variableName} = ", BuildScriptInfo.CodeType.Variable, variableName);
+                            }
+                        }
+                        result.SetTypeName(CbSTUtils.GetTypeFullName(FunctionInfo.ClassType));
                         result.Add(args);
                     }
                     else if (FunctionInfo.FuncCode == "__" + nameof(SwitchEnum))
@@ -969,6 +1018,33 @@ namespace CapyCSS.Controls.BaseControls
         }
 
         /// <summary>
+        /// 変数参照メソッドノードを判定します。
+        /// </summary>
+        /// <returns>true==変数参照メソッドノード</returns>
+        private bool IsVariableFunction()
+        {
+            return IsSetVariableFunction() || IsGetVariavleFunction();
+        }
+
+        private bool IsGetVariavleFunction()
+        {
+            if (FunctionInfo is null || FunctionInfo.FuncCode is null)
+            {
+                return false;
+            }
+            return FunctionInfo.FuncCode == $"[{nameof(_GetVariable)}]";
+        }
+
+        /// <summary>
+        /// 変数代入メソッドノードを判定します。
+        /// </summary>
+        /// <returns>true==変数代入メソッドノード</returns>
+        private bool IsSetVariableFunction()
+        {
+            return FunctionInfo.FuncCode == $"[{nameof(SetVariable)}]";
+        }
+
+        /// <summary>
         /// 引数のスクリプト構築の為の要素を収集します。
         /// </summary>
         /// <returns>BuildScriptInfo?</returns>
@@ -996,9 +1072,8 @@ namespace CapyCSS.Controls.BaseControls
                             && connector.ValueData is ICbEvent cbEvent)
                         {
                             string argStr = "";
-                            int argCount = cbEvent.ArgumentsNum;
                             // 引数情報を作成する
-                            for (int i = 0; i < argCount; i++)
+                            for (int i = 0; i < cbEvent.ArgumentsNum; i++)
                             {
                                 if (i > 0)
                                     argStr += ", ";
@@ -1058,10 +1133,19 @@ namespace CapyCSS.Controls.BaseControls
                 {
                     // 接続しているファンクションノードの実行依頼
 
-                    if (node.IsCallBackLink)
+                    bool isVariableDelegate = false;
+                    if (node.ValueData is ICbEvent cbEvent)
+                    {
+                        // デリゲート変数参照ノードからの接続かの情報を取得
+
+                        isVariableDelegate = cbEvent.IsVariableDelegate;
+                    }
+
+                    if (node.IsCallBackLink && !isVariableDelegate)
                     {
                         // イベント呼び出しは、参照対象としない。
                         // 接続時にイベントとして処理している。
+                        // ただし、デリゲート変数ノードに対しては、参照する必要がある。
                     }
                     else
                     {
@@ -1282,6 +1366,12 @@ namespace CapyCSS.Controls.BaseControls
             get => NameText.ValueData;
             set
             {
+                if (value != null && value.IsDelegate && IsGetVariavleFunction())
+                {
+                    // 変数参照デリゲートをマークする
+
+                    (value as ICbEvent).IsVariableDelegate = true;
+                }
                 NameText.ValueData = value;
             }
         }

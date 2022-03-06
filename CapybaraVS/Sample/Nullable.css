@@ -1,4 +1,4 @@
-System.Nullable<System.Int32> variable1;
+System.Nullable<System.Int32> variable1 = null;
 var Nullable = () => {
     variable1 = 100;
     CapyCSSbase.FlowLib.If_HasValue<System.Int32>(

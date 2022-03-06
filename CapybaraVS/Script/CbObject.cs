@@ -64,6 +64,7 @@ namespace CapyCSS.Script
                 copyOriginal = n;
                 if (n is CbClass<CbNull>)
                 {
+                    Debug.Assert(false);    // このパスは無い
                     Value = null;
                 }
                 else if (n is ICbEvent || n is ICbClass)
@@ -74,6 +75,7 @@ namespace CapyCSS.Script
                 {
                     if (n.IsNullable && n.IsNull)
                     {
+                        Debug.Assert(false);    // このパスは無い
                         // null許容型は、null のときに参照してはならない
 
                         Value = null;

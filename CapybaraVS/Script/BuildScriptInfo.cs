@@ -543,7 +543,7 @@ namespace CapyCSS.Script
 
                                         result = "var " + result;
                                     }
-                                    result = ParagraphConvert(tabLevel, result.TrimStart() + " = ", false);
+                                    result = ParagraphConvert(tabLevel, result.TrimStart(), false);
                                     result += arg.TrimStart();
                                 }
 

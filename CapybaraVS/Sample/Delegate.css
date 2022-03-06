@@ -1,4 +1,4 @@
-System.Int32 variable1;
+System.Int32 variable1 = 0;
 var Delegate = () => {
     CapyCSSbase.FlowLib.Foreach<System.String>(
         CapyCSSbase.ListFactory.Filtering<System.String>(

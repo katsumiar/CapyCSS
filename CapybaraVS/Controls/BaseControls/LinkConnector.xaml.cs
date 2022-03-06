@@ -763,6 +763,13 @@ namespace CapyCSS.Controls.BaseControls
 
                         return eventLinkRootConnector.ValueData;
                     };
+                    callbackReturnValue.Value = eventLinkRootConnector.ValueData;
+                    if (callbackReturnValue.Value is ICbEvent cbEventValue)
+                    {
+                        // IsVariableDelegate を参照できるように管理側に内容をコピーする
+
+                        callbackReturnValue.IsVariableDelegate = cbEventValue.IsVariableDelegate;
+                    }
 
                     connectValueData = callbackReturnValue;
                 }

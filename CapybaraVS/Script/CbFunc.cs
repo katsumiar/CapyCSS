@@ -370,17 +370,19 @@ namespace CbVS.Script
 
                 if (n is CbClass<CbNull>)
                 {
-                    Debug.Assert(false);    // このパスは無い
                     Data = null;
                     isNull = true;
                 }
                 else if (n is CbObject)
                 {
+                    Debug.Assert(false);    // このパスは無い
                     Data = n.Data;
                 }
                 else if (n is ICbEvent cbEvent)
                 {
                     Callback = cbEvent.Callback;
+                    IsVariableDelegate = cbEvent.IsVariableDelegate;
+                    _value = (cbEvent as CbFunc<T, RT>)._value;
                 }
                 if (IsError)
                 {
@@ -471,10 +473,15 @@ namespace CbVS.Script
             }
         }
 
+        private bool _isNull()
+        {
+            return _value is null || _value.IsNull || Callback is null;
+        }
+
         /// <summary>
         /// 変数の持つ値は null か？
         /// </summary>
-        public override bool IsNull => _value is null || Callback is null;
+        public override bool IsNull => CbNull.Is(_value) || (_isNull() && !CbVoid.Is(_value));
 
         /// <summary>
         /// 値の文字列表現

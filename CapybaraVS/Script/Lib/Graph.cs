@@ -27,7 +27,7 @@ namespace CapyCSS.Script.Lib
         public static ICollection<double> MakePlotList(int count, Func<double, double> func, double step = TickGraph)
         {
             var list = new List<double>();
-            if (step <= 0)
+            if (step <= 0 || func is null)
                 return list;
             count--;
             for (double i = 0; i < count; i += step)

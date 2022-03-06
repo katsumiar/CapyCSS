@@ -613,7 +613,6 @@ namespace CapyCSS.Controls
             ICbValue returnType = retType();
             returnType.IsReadOnlyValue = true;
             LinkConnectorControl.ValueData = returnType;
-            //LinkConnectorControl.SelectedVariableType = SelectedVariableType;
             LinkConnectorControl.Hint = hint;
             Function = func;
             if (argumentList != null)

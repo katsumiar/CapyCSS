@@ -969,7 +969,7 @@ namespace CapyCSS.Script
                         )
                     );
 
-                col.FunctionInfo = new BuildScriptFormat(nameof(_GetVariable), typeof(_GetVariable));
+                col.FunctionInfo = new BuildScriptFormat($"[{nameof(_GetVariable)}]", col.SelectedVariableType[0]);
 
                 return true;
             }
@@ -1066,7 +1066,7 @@ namespace CapyCSS.Script
                         )
                     );
 
-                col.FunctionInfo = new BuildScriptFormat(nameof(SetVariable), typeof(SetVariable));
+                col.FunctionInfo = new BuildScriptFormat($"[{nameof(SetVariable)}]", col.SelectedVariableType[0]);
 
                 return true;
             }

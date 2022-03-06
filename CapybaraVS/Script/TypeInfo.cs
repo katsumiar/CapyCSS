@@ -744,6 +744,10 @@ namespace CapyCSS.Script
         /// </summary>
         bool IsDelegate { get; }
         /// <summary>
+        /// デリゲート変数参照です。
+        /// </summary>
+        bool IsVariableDelegate { get; set; }
+        /// <summary>
         /// リストか否か？（ToArray も含めるので ICollection ではない）
         /// </summary>
         bool IsList { get; }
@@ -888,6 +892,12 @@ namespace CapyCSS.Script
         {
             return type == CbVoid.T || type == typeof(CbVoid);
         }
+        public static bool Is(ICbValue value)
+        {
+            if (value is null)
+                return false;
+            return CbVoid.Is(value.MyType);
+        }
         public static CbVoid Create()
         {
             return new CbVoid();
@@ -910,7 +920,9 @@ namespace CapyCSS.Script
         }
         public static bool Is(ICbValue value)
         {
-            return value is CbNull || value is CbClass<CbNull>;
+            if (value is null)
+                return false;
+            return CbNull.Is(value.MyType);
         }
         public static CbNull Create()
         {
@@ -1107,7 +1119,10 @@ namespace CapyCSS.Script
         /// デリゲート型かどうか？
         /// </summary>
         public virtual bool IsDelegate => false;
-
+        /// <summary>
+        /// デリゲート変数参照です。
+        /// </summary>
+        public virtual bool IsVariableDelegate { get; set; } = false;
         /// <summary>
         /// リストか否か？（ToArray も含めるので ICollection ではない）
         /// </summary>
@@ -1553,6 +1568,7 @@ namespace CapyCSS.Script
 
         public bool IsOut { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
         public bool IsIn { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        public bool IsVariableDelegate { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 
         public ParamNameOnly(string name, bool readOnly = false)
         {
