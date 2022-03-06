@@ -1100,40 +1100,52 @@ namespace CapyCSS.Script
                     return false;
                 }
 
-                GenericParameterAttributes sConstraints =
-                            geneArg.GenericParameterAttributes &
-                            GenericParameterAttributes.SpecialConstraintMask;
-
-                if (sConstraints != GenericParameterAttributes.None)
-                {
-                    if (t.IsClass &&    // 構造体は含めない（デフォルトの挙動が有る）
-                        GenericParameterAttributes.None != (sConstraints &
-                        GenericParameterAttributes.DefaultConstructorConstraint))
-                    {
-                        var query = t.GetMethods(BindingFlags.Public).Where(n => n.IsConstructor);      // 公開コンストラクタを探す
-                        bool haveDefaultConstructer = query.Any(n => n.GetParameters().Length == 0);    // 引数無しを探す
-                        if (!haveDefaultConstructer)
-                            return false;    // 型がパラメーターなしのコンストラクターを持たなければ拒否
-                    }
-                    if (GenericParameterAttributes.None != (sConstraints &
-                        GenericParameterAttributes.ReferenceTypeConstraint))
-                    {
-                        if (t.IsValueType || t.IsPointer)
-                            return false;   // 型が参照型でなければ拒否（値型で無くポインタ型でも無ければ参照型）
-                    }
-                    if (GenericParameterAttributes.None != (sConstraints &
-                        GenericParameterAttributes.NotNullableValueTypeConstraint))
-                    {
-                        if (!t.IsValueType)
-                            return false;   // 型が値型の場合は拒否
-                        if (t.IsGenericType && t.GetGenericTypeDefinition() == typeof(Nullable<>))
-                            return false;   // Null許容型の場合は拒否
-                    }
-                }
-
-                return true;
+                return IsConstraint(geneArg, t);
             };
             return isAccept;
+        }
+
+        /// <summary>
+        /// 型制約を判定します。
+        /// ※未完成
+        /// </summary>
+        /// <param name="geneArg">制約を持つ型</param>
+        /// <param name="target">判定する型</param>
+        /// <returns>true==制約を満たす</returns>
+        public static bool IsConstraint(Type geneArg, Type target)
+        {
+            GenericParameterAttributes sConstraints =
+                        geneArg.GenericParameterAttributes &
+                        GenericParameterAttributes.SpecialConstraintMask;
+
+            if (sConstraints != GenericParameterAttributes.None)
+            {
+                if (target.IsClass &&    // 構造体は含めない（デフォルトの挙動が有る）
+                    GenericParameterAttributes.None != (sConstraints &
+                    GenericParameterAttributes.DefaultConstructorConstraint))
+                {
+                    var query = target.GetMethods(BindingFlags.Public).Where(n => n.IsConstructor);      // 公開コンストラクタを探す
+                    bool haveDefaultConstructer = query.Any(n => n.GetParameters().Length == 0);    // 引数無しを探す
+                    if (!haveDefaultConstructer)
+                        return false;    // 型がパラメーターなしのコンストラクターを持たなければ拒否
+                }
+                if (GenericParameterAttributes.None != (sConstraints &
+                    GenericParameterAttributes.ReferenceTypeConstraint))
+                {
+                    if (target.IsValueType || target.IsPointer)
+                        return false;   // 型が参照型でなければ拒否（値型で無くポインタ型でも無ければ参照型）
+                }
+                if (GenericParameterAttributes.None != (sConstraints &
+                    GenericParameterAttributes.NotNullableValueTypeConstraint))
+                {
+                    if (!target.IsValueType)
+                        return false;   // 型が値型の場合は拒否
+                    if (target.IsGenericType && target.GetGenericTypeDefinition() == typeof(Nullable<>))
+                        return false;   // Null許容型の場合は拒否
+                }
+            }
+
+            return true;
         }
 
         /// <summary>

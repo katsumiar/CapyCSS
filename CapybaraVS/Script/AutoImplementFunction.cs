@@ -392,6 +392,7 @@ namespace CapyCSS.Script
                     classInstance,
                     col,
                     classType,
+                    returnValue,
                     callArguments,
                     isClassInstanceMethod, 
                     methodArguments);
@@ -534,6 +535,7 @@ namespace CapyCSS.Script
             object classInstance,
             MultiRootConnector col,
             Type classType,
+            ICbValue returnValue,
             IList<ICbValue> callArguments, 
             bool isClassInstanceMethod, 
             IEnumerable<object> methodArguments
@@ -569,141 +571,200 @@ namespace CapyCSS.Script
                     ReturnArgumentsValue(classInstance, callArguments, args);
                 }
             }
-            else if (GenericMethodParameters != null)
+            else
             {
-                // ジェネリックメソッド
 
-                IEnumerable<Type> genericParams = GenericMethodParameters.Select(n => col.GetRequestType(typeRequests, n.Name));
+
                 if (methodArguments is null)
                 {
-                    // 引数のないメソッドを型で補完して呼ぶ
+                    // 引数のないメソッド
 
-                    result = InvokeGenericMethod(classType, genericParams, new object[] { });
+                    result = InvokeMethod(classType, classInstance);
                 }
                 else
                 {
                     // 引数ありのメソッド
 
+                    IEnumerable<Type> genericParams = new List<Type>();
+                    if (GenericMethodParameters != null && GenericMethodParameters.Length > 0)
+                    {
+                        genericParams = GenericMethodParameters.Select(n => col.GetRequestType(typeRequests, n.Name));
+                    }
+
                     object[] args = methodArguments.ToArray();
 
-                    // 引数の型リストを作成
-                    IEnumerable<Type> argTypes = callArguments.Select(n => n.OriginalType);
-                    if (classType.GetMethod(FuncCode, argTypes.ToArray()) != null)
+                    IList<ICbValue> tempCallArguments = new List<ICbValue>(callArguments);
+                    if (classInstance != null)
                     {
-                        // 同じ型のメソッドが既に定義されているのでそちらを呼ぶ
+                        // インスタンスメソッドの場合は、1つ目がselfに該当するので削除しておく
 
-                        result = InvokeMethodWithArguments(classType, classInstance, args);
+                        tempCallArguments.RemoveAt(0);
+                    }
+
+                    var resultFindMethod = InvokeFindMethod(classType, returnValue.OriginalType, genericParams, tempCallArguments, classInstance, args);
+                    if (resultFindMethod.Item2)
+                    {
+                        result = resultFindMethod.Item1;
                     }
                     else
                     {
-                        // ジェネリックメソッドを型で補完して呼ぶ
-
-                        result = InvokeGenericMethod(classType, genericParams, args);
+                        Debug.Assert(false);    // このパスには来ない（型制約判定が未完成なので来るかも...）
+                        result = InvokeMethodWithArguments(classType, classInstance, args);
                     }
                     ReturnArgumentsValue(classInstance, callArguments, args);
                 }
-            }
-            else if (methodArguments is null)
-            {
-                // 引数のないメソッド
-
-                result = InvokeMethod(classType, classInstance);
-            }
-            else
-            {
-                // 引数ありのメソッド
-
-                object[] args = methodArguments.ToArray();
-                result = InvokeMethodWithArguments(classType, classInstance, args);
-                ReturnArgumentsValue(classInstance, callArguments, args);
             }
 
             return result;
         }
 
         /// <summary>
-        /// ジェネリックメソッドを作成して呼びます。
+        /// 該当するメソッドを探して呼び出します。
         /// </summary>
-        /// <param name="classType">所属するクラスの型</param>
-        /// <param name="genericParams">ジェネリックパラメータ</param>
-        /// <param name="args">呼び出す時の引数リスト</param>
-        /// <returns>呼び出したメソッドの返し値</returns>
-        private object InvokeGenericMethod(Type classType, IEnumerable<Type> genericParams, object[] args)
+        /// <param name="classType">クラス情報</param>
+        /// <param name="argTypes">引数型情報</param>
+        /// <param name="classInstance">クラスインスタンス</param>
+        /// <param name="args">引数</param>
+        /// <returns>Tuple(呼び出したメソッドの返し値, メソッドが見つかった==true)</returns>
+        private Tuple<object, bool> InvokeFindMethod(
+            Type classType,
+            Type returnType,
+            IEnumerable<Type> genericParams, 
+            IList<ICbValue> argTypes,
+            object classInstance,
+            object[] args)
         {
             var attr = BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public;
 
-            // ジェネリックメソッドを抽出
-            var methods = classType.GetMethods(attr).Where(n => n.IsGenericMethod && n.IsGenericMethodDefinition && n.ContainsGenericParameters);
-
             // メソッド名と引数の数でフィルタリング
-            methods = methods.Where(n => n.Name == FuncCode && n.GetParameters().Length == args.Length);
-
-            if (methods.Count() == 0)
-            {
-                throw new Exception($"{FuncCode}{CbSTUtils.GetGenericParamatersString(args.Select(n => n.GetType()).ToArray(), "(", ")")} method not found.");
-            }
+            var methods = classType.GetMethods(attr).Where(n => n.Name == FuncCode && n.GetParameters().Length == args.Length);
 
             if (methods.Count() == 1)
             {
-                // 該当が一件だけ有った
+                // 該当するメソッドが一つだけ見つかった
 
-                return methods.First()
-                    .MakeGenericMethod(genericParams.ToArray())
-                    .Invoke(classType, args);
+                return MakeAndCallMethod(genericParams, classInstance, args, methods.First());
             }
 
             // 引数の一致で探す
-            var sample = methods.Where(n =>
-            {
-                var parameters = n.GetParameters();
-                for (int i = 0; i < args.Length; ++i)
-                {
-                    if (args[i].GetType() != parameters[i].ParameterType)
-                        return false;
-                }
-                return true;
-            });
-            if (sample.Count() == 1)
-            {
-                return sample.First()
-                    .MakeGenericMethod(genericParams.ToArray())
-                    .Invoke(classType, args);
-            }
-
-            // ジェネリックの比較で探す（手抜き...）
             methods = methods.Where(n =>
             {
                 var parameters = n.GetParameters();
-                for (int i = 0; i < args.Length; ++i)
+                ICollection<string> genericParameters = new List<string>();
+                for (int i = 0; i < argTypes.Count; ++i)
                 {
-                    if (!args[i].GetType().IsGenericType)
-                    {
-                        if (parameters[i].ParameterType.IsGenericParameter)
-                            continue;   // ジェネリックパラメータを一律一つのワイルドカードとして扱う（手抜き...）
-                                        // ※ジェネリックパラメータはいくつか違うタイプが設定されている可能性がある
-                    }
-                    if (args[i].GetType().IsGenericType && parameters[i].ParameterType.IsGenericType)
-                    {
-                        // 両方ともジェネリックタイプなら型の名前の一致だけ見る（手抜き...）
-                        // ※ジェネリックパラメータを全く無視している
+                    // 引数の型の一致判定
 
-                        if (args[i].GetType().Name == parameters[i].ParameterType.Name)
-                            continue;
-                    }
-                    if (args[i].GetType() != parameters[i].ParameterType)
-                        return false;   // 型が一致しないなら不一致と確定する
+                    var paramType = parameters[i].ParameterType;
+                    var argType = argTypes[i].OriginalType;
+                    if (!IsMatchType(paramType, argType, genericParameters))
+                        return false;
                 }
-                return true;
+                if (n.ReturnType != null && n.ReturnType.IsGenericParameter)
+                {
+                    // 返し値がジェネリックパラメータ
+
+                    genericParameters.Add(n.ReturnType.Name);
+                    if (genericParams.Count() == genericParameters.Count)
+                    {
+                        return ScriptImplement.IsConstraint(n.ReturnType, genericParams.Last());
+                    }
+                    return false;
+                }
+                return genericParams.Count() == genericParameters.Count;
             });
-            if (methods.Count() != 1)
+            if (methods.Count() == 1)
             {
-                throw new Exception($"{FuncCode}{CbSTUtils.GetGenericParamatersString(args.Select(n => n.GetType()).ToArray(), "(", ")")} method not found.");
+                // 該当するメソッドが一つだけ見つかった
+
+                return MakeAndCallMethod(genericParams, classInstance, args, methods.First());
             }
 
-            // 該当が一件だけ有った
-            return methods.First()
-                .MakeGenericMethod(genericParams.ToArray())
-                .Invoke(classType, args);
+            // 該当するメソッドが無かった
+            return new Tuple<object, bool>(null, false);
+        }
+
+        /// <summary>
+        /// メソッドを構築し実行します。
+        /// </summary>
+        /// <param name="genericParams">ジェネリック引数</param>
+        /// <param name="classInstance">クラス</param>
+        /// <param name="args">引数</param>
+        /// <param name="method">メソッド情報</param>
+        /// <returns>呼び出したメソッドの返し値</returns>
+        private static Tuple<object, bool> MakeAndCallMethod(IEnumerable<Type> genericParams, object classInstance, object[] args, MethodInfo method)
+        {
+            Debug.Assert((method.IsStatic && classInstance is null) || (!method.IsStatic && classInstance != null));
+            if (method.IsGenericMethod)
+            {
+                var result = new Tuple<object, bool>(method.MakeGenericMethod(genericParams.ToArray()).Invoke(classInstance, args), true);
+                return result;
+            }
+            else
+            {
+                var result = new Tuple<object, bool>(method.Invoke(classInstance, args), true);
+                return result;
+            }
+        }
+
+        /// <summary>
+        /// メソッドの引数の型の一致を判定します。
+        /// </summary>
+        /// <param name="paramType">メソッドの引数の型</param>
+        /// <param name="argType">引数の型</param>
+        /// <param name="genericParameters">メソッド作成時に使用するジェネリック引数</param>
+        /// <returns>true==型の一致に該当する</returns>
+        private bool IsMatchType(Type paramType, Type argType, ICollection<string> genericParameters)
+        {
+            if (paramType.IsGenericParameter)
+            {
+                // 型がジェネリックパラメータ
+
+                if (!genericParameters.Contains(paramType.Name))
+                {
+                    // 登場したジェネリックパラメータを記録しておく
+
+                    genericParameters.Add(paramType.Name);
+                }
+                return ScriptImplement.IsConstraint(paramType, argType);
+            }
+            if (paramType.IsGenericType)
+            {
+                // 型がジェネリック型
+
+                if (paramType.GenericTypeArguments.Length != argType.GenericTypeArguments.Length)
+                    return false;   // ジェネリック引数の数が異なる
+                for (int i = 0; i < paramType.GenericTypeArguments.Length; i++)
+                {
+                    var _paramType = paramType.GenericTypeArguments[i];
+                    var _argType = argType.GenericTypeArguments[i];
+                    if (!IsMatchType(_paramType, _argType, genericParameters))
+                        return false;
+                }
+            }
+            else
+            {
+                // 通常の型
+
+                if (argType != paramType)
+                {
+                    if (argType.FullName != null && paramType.FullName != null)
+                    {
+                        if (argType.FullName != paramType.FullName.Replace("&", ""))
+                        {
+                            return false;
+                        }
+                    }
+                    else
+                    {
+                        if (argType.Name != paramType.Name.Replace("&", ""))
+                        {
+                            return false;
+                        }
+                    }
+                }
+            }
+            return true;
         }
 
         /// <summary>
