@@ -11,10 +11,10 @@ jobs:
 
     runs-on: windows-latest
     env:
-      Solution_Name: CapybaraVS.sln
-      Test_Project_Path: CapybaraVS\CapybaraVS.csproj
+      Solution_Name: CapyCSS.sln
+      Test_Project_Path: CapybaraVS\CapyCSS.csproj
       Wap_Project_Directory: CapybaraVS
-      Wap_Project_Path: CapybaraVS\CapybaraVS.wapproj
+      Wap_Project_Path: CapybaraVS\CapyCSS.wapproj
 
     steps:
     - uses: actions/checkout@v2
