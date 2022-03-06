@@ -1,5 +1,5 @@
 # CapyCSS
-![CapyCSS 0 3 5 0](https://user-images.githubusercontent.com/63950487/136699335-698926a3-e7c6-49e2-ba88-f5f422ad07cf.png)
+![CapyCSS 0 4 0 0](https://user-images.githubusercontent.com/63950487/156915429-2f4d55c3-7dac-4d4c-a59e-c339a39fbdca.gif)
 
 ## 0.4.0.0 での変更
 
