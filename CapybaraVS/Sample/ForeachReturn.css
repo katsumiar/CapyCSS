@@ -1,4 +1,4 @@
-System.Double parseWork;
+System.Double parseWork = 0;
 var ForeachReturn = () => {
     CapyCSSbase.Script.OutConsole(
         CapyCSSbase.FlowLib.ForeachReturn<System.String, System.Double>(

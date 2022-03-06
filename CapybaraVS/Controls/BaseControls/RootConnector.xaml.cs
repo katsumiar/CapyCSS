@@ -763,11 +763,11 @@ namespace CapyCSS.Controls.BaseControls
                             }
                             if (args.Child is null)
                             {
-                                result.Set(variableName, BuildScriptInfo.CodeType.Variable, variableName);
+                                result.Set(variableName, BuildScriptInfo.CodeType.DelegateVariable, variableName);
                             }
                             else
                             {
-                                result.Set($"{variableName} = ({argStr}) =>", BuildScriptInfo.CodeType.Variable, variableName);
+                                result.Set($"{variableName} = ({argStr}) =>", BuildScriptInfo.CodeType.DelegateVariable, variableName);
                             }
                         }
                         else
@@ -1067,7 +1067,7 @@ namespace CapyCSS.Controls.BaseControls
                     {
                         // イベント呼び出し
 
-                        if (argResult.GetElementType() != BuildScriptInfo.CodeType.Variable 
+                        if (argResult.GetElementType() != BuildScriptInfo.CodeType.DelegateVariable
                             && !connector.ValueData.IsNull
                             && connector.ValueData is ICbEvent cbEvent)
                         {

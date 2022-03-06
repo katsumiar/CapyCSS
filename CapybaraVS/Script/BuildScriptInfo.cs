@@ -22,6 +22,7 @@ namespace CapyCSS.Script
             Delegate,
             ResultDelegate,
             StackVariable,
+            DelegateVariable,
             GetIndexer,
             SetIndexer,
             Property,
@@ -524,6 +525,7 @@ namespace CapyCSS.Script
                                 return new Tuple<string, IList<string>>(result, null);
                             }
 
+                        case CodeType.DelegateVariable:
                         case CodeType.Variable:
                             {
                                 if (Child is null)
@@ -531,7 +533,7 @@ namespace CapyCSS.Script
                                     return new Tuple<string, IList<string>>(result, null);
                                 }
 
-                                string arg = Child[0]._BuildScript(tabLevel + TAB_SIZE, CodeType.Variable).Item1;
+                                string arg = Child[0]._BuildScript(tabLevel + TAB_SIZE, ElementType).Item1;
 
                                 if (!string.IsNullOrWhiteSpace(arg))
                                 {

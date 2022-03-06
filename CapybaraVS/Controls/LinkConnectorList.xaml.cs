@@ -521,7 +521,7 @@ namespace CapyCSS.Controls
                 {
                     // イベント呼び出し
 
-                    if (argResult.GetElementType() != BuildScriptInfo.CodeType.Variable 
+                    if (argResult.GetElementType() != BuildScriptInfo.CodeType.DelegateVariable
                         && !node.ValueData.IsNull
                         && node.ValueData is ICbEvent cbEvent)
                     {
