@@ -608,8 +608,8 @@ namespace CapyCSS.Script
                     }
                     else
                     {
-                        Debug.Assert(false);    // このパスには来ない（型制約判定が未完成なので来るかも...）
-                        result = InvokeMethodWithArguments(classType, classInstance, args);
+                        // このパスには来ない筈（型制約判定が未完成なので来るかも...）
+                        throw new Exception($"{FuncCode}{CbSTUtils.GetGenericParamatersString(args.Select(n => n.GetType()).ToArray(), "(", ")")} method not found.");
                     }
                     ReturnArgumentsValue(classInstance, callArguments, args);
                 }
