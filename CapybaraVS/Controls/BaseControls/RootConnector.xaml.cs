@@ -747,39 +747,13 @@ namespace CapyCSS.Controls.BaseControls
                         // 変数
 
                         string variableName = name.Substring(2, name.Length - 4);
-                        if (CbSTUtils.IsDelegate(FunctionInfo.ClassType))
+                        if (args.Child is null)
                         {
-                            string argStr = "";
-                            // 引数情報を作成する
-                            for (int i = 0; i < FunctionInfo.ClassType.GetGenericArguments().Length; i++)
-                            {
-                                if (i > 0)
-                                    argStr += ", ";
-                                argStr += $"ARG_{i + 1}";
-                            }
-                            if (argStr.Length > 0)
-                            {
-                                argStr = " " + argStr + " ";
-                            }
-                            if (args.Child is null)
-                            {
-                                result.Set(variableName, BuildScriptInfo.CodeType.DelegateVariable, variableName);
-                            }
-                            else
-                            {
-                                result.Set($"{variableName} = ({argStr}) =>", BuildScriptInfo.CodeType.DelegateVariable, variableName);
-                            }
+                            result.Set(variableName, BuildScriptInfo.CodeType.Variable, variableName);
                         }
                         else
                         {
-                            if (args.Child is null)
-                            {
-                                result.Set(variableName, BuildScriptInfo.CodeType.Variable, variableName);
-                            }
-                            else
-                            {
-                                result.Set($"{variableName} = ", BuildScriptInfo.CodeType.Variable, variableName);
-                            }
+                            result.Set($"{variableName} = ", BuildScriptInfo.CodeType.Variable, variableName);
                         }
                         result.SetTypeName(CbSTUtils.GetTypeFullName(FunctionInfo.ClassType));
                         result.Add(args);

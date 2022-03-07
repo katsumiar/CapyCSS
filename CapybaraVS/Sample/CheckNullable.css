@@ -15,7 +15,7 @@ System.Nullable<System.DateTime> variable14 = null;
 System.Nullable<System.PlatformID> variable15 = null;
 System.Action<System.Boolean> variable16 = null;
 var CheckNullable = () => {
-    variable16 = ( ARG_1 ) =>( ARG_1 ) => CapyCSSbase.Script.OutConsole(
+    variable16 = ( ARG_1 ) => CapyCSSbase.Script.OutConsole(
                 CapyCSSbase.FlowLib.If_Value<System.String>(
                     CapyCSSbase.FlowLib.And(
                         new System.Collections.Generic.List<System.Boolean>() {
