@@ -638,13 +638,17 @@ namespace CapyCSS.Controls.BaseControls
             ApiImporter = new ApiImporter(this);
             MakeModuleControler(new List<ShortCutCommand>()
             {
-                // ショートカットを追加
+                // ショートカットを追加：
+                // BaseWorkCanvas.AddScriptCommandRecent(string name)
+                // にブレークポイントを張ると name の内容でショートカットコードがわかります。
 
                 new ShortCutCommand() { Name = "Create Literal/Local Variable", Command = "Program.Literal/Local.Literal/Local : T" },
                 new ShortCutCommand() { Name = "Create Variable", Command = "Program.Variable.Create Variable : T" },
+                new ShortCutCommand() { Name = "Get Variable", Command = "Program.Variable.Get Variable" },
+                new ShortCutCommand() { Name = "Set Variable", Command = "Program.Variable.Set Variable" },
+                new ShortCutCommand() { Name = "Reference Dummy Arguments", Command = "Program.Function.f(x).DummyArguments<T> : T" },
                 new ShortCutCommand() { Name = "Void Sequence", Command = "Program.VoidSequence" },
                 new ShortCutCommand() { Name = "Result Sequence", Command = "Program.ResultSequence(T) : T" },
-                new ShortCutCommand() { Name = "Reference Dummy Arguments", Command = "Program.Function.f(x).DummyArguments<T> : T" },
             });
 
             ApiImporter.ImportBaseModule();
@@ -673,6 +677,7 @@ namespace CapyCSS.Controls.BaseControls
                 var shortcutButton = new Button()
                 {
                     Content = shortCutCommand.Name,
+                    Height = 24,
                     Background = Brushes.SeaGreen,
                     BorderBrush = Brushes.DarkOliveGreen,
                     Margin = new Thickness( 0, 0, 0, 2),
