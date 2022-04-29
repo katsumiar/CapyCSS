@@ -747,13 +747,25 @@ namespace CapyCSS.Controls.BaseControls
                         // 変数
 
                         string variableName = name.Substring(2, name.Length - 4);
-                        if (args.Child is null)
+
+                        bool isDelegate = ValueData is ICbEvent;
+                        BuildScriptInfo.CodeType codeType;
+                        if (isDelegate)
                         {
-                            result.Set(variableName, BuildScriptInfo.CodeType.Variable, variableName);
+                            codeType = BuildScriptInfo.CodeType.DelegateVariable;
                         }
                         else
                         {
-                            result.Set($"{variableName} = ", BuildScriptInfo.CodeType.Variable, variableName);
+                            codeType = BuildScriptInfo.CodeType.Variable;
+                        }
+
+                        if (args.Child is null)
+                        {
+                            result.Set(variableName, codeType, variableName);
+                        }
+                        else
+                        {
+                            result.Set($"{variableName} = ", codeType, variableName);
                         }
                         result.SetTypeName(CbSTUtils.GetTypeFullName(FunctionInfo.ClassType));
                         result.Add(args);
@@ -1042,8 +1054,7 @@ namespace CapyCSS.Controls.BaseControls
                         // イベント呼び出し
 
                         if (argResult.GetElementType() != BuildScriptInfo.CodeType.DelegateVariable
-                            && !connector.ValueData.IsNull
-                            && connector.ValueData is ICbEvent cbEvent)
+                            && connector.ValueData is ICbEvent cbEvent && !argResult.IsNullConstant())
                         {
                             string argStr = "";
                             // 引数情報を作成する

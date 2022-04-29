@@ -1,6 +1,4 @@
-﻿//#define SHOW_LINK_ARRAY   // リスト型を接続したときにリストの要素をコピーして表示する
-
-using CapyCSS.Controls.BaseControls;
+﻿using CapyCSS.Controls.BaseControls;
 using CapyCSS.Script;
 using CapyCSS.Controls;
 using CbVS.Script;
@@ -522,8 +520,7 @@ namespace CapyCSS.Controls
                     // イベント呼び出し
 
                     if (argResult.GetElementType() != BuildScriptInfo.CodeType.DelegateVariable
-                        && !node.ValueData.IsNull
-                        && node.ValueData is ICbEvent cbEvent)
+                        && node.ValueData is ICbEvent cbEvent && !argResult.IsNullConstant())
                     {
                         string argStr = "";
                         int argCount = cbEvent.ArgumentsNum;

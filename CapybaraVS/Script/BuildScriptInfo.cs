@@ -103,6 +103,15 @@ namespace CapyCSS.Script
         }
 
         /// <summary>
+        /// null定数か？
+        /// </summary>
+        /// <returns>true==null定数</returns>
+        public bool IsNullConstant()
+        {
+            return ScriptElement != null && ElementType == CodeType.Method && ScriptElement == CbSTUtils.NULL_STR;
+        }
+
+        /// <summary>
         /// キャストが必要であることを指示します。
         /// </summary>
         public void SetCast()
