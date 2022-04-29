@@ -7,9 +7,9 @@
              mc:Ignorable="d" 
              d:DesignHeight="185.497" d:DesignWidth="259.542">
     <Grid x:Name="BaseArea">
-        <Rectangle Fill="#197EDCFF" Stroke="#FF6A969C" StrokeThickness="2" RadiusX="4" RadiusY="4" />
+        <Rectangle Fill="{StaticResource GroupAreaFillBrush}" Stroke="{StaticResource GroupAreaStrokeBrush}" StrokeThickness="2" RadiusX="4" RadiusY="4" />
         <ContentControl MouseDoubleClick="ContentControl_MouseDoubleClick">
-            <TextBlock x:Name="TextView" FontFamily="Meiryo" FontSize="16" Margin="8,8,8,8" Foreground="#FF0027AC" TextWrapping="Wrap" />
+            <TextBlock x:Name="TextView" FontFamily="Meiryo" FontSize="16" Margin="8,8,8,8" Foreground="{StaticResource GroupAreaTextForegroundBrush}" TextWrapping="Wrap" />
         </ContentControl>
         <TextBox x:Name="Edit" Visibility="Collapsed" AcceptsReturn="True" FontSize="16" Margin="8,8,8,8" TextWrapping="Wrap" />
         <Border x:Name="ResizeAreaNWSE_D" HorizontalAlignment="Right" VerticalAlignment="Bottom" Width="20" Height="20" Background="#02FFFFFF" MouseDown="Border_MouseDownNWSE_D" MouseUp="Border_MouseUp" MouseLeave="Border_MouseLeave" MouseMove="Border_MouseMove" />

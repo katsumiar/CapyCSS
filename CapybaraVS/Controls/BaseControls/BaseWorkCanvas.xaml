@@ -6,7 +6,7 @@
              xmlns:local="clr-namespace:CapyCSS.Controls.BaseControls"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800" FocusVisualStyle="{x:Null}">
-    <Grid x:Name="CanvasBase" Background="Snow" PreviewDragOver="InfoCanvas_PreviewDragOver" AllowDrop="True" Drop="InfoCanvas_Drop" MouseWheel="CanvasMouseWheel" MouseMove="Grid_MouseMove" MouseLeave="Grid_MouseLeave" MouseDown="Grid_MouseDown" MouseUp="Grid_MouseUp" ClipToBounds="True">
+    <Grid x:Name="CanvasBase" Background="{StaticResource ScriptCanvasBackgroundBrush}" PreviewDragOver="InfoCanvas_PreviewDragOver" AllowDrop="True" Drop="InfoCanvas_Drop" MouseWheel="CanvasMouseWheel" MouseMove="Grid_MouseMove" MouseLeave="Grid_MouseLeave" MouseDown="Grid_MouseDown" MouseUp="Grid_MouseUp" ClipToBounds="True">
         <Image x:Name="BGImage" FocusVisualStyle="{x:Null}"/>
         <Canvas x:Name="GridCanvas" FocusVisualStyle="{x:Null}"/>
         <Canvas x:Name="ControlsCanvas" FocusVisualStyle="{x:Null}"/>

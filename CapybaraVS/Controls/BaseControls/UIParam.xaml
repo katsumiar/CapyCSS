@@ -8,21 +8,21 @@
              d:DesignHeight="450" d:DesignWidth="800" FocusVisualStyle="{x:Null}">
     <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
         <Grid>
-            <TextBox x:Name="Edit" Text="" KeyDown="Edit_KeyDown" MinWidth="32" Margin="0,2,0,2" MaxWidth="128" Background="Honeydew" HorizontalAlignment="Left" MaxHeight="160" />
-            <ComboBox x:Name="Select" HorizontalAlignment="Left" Margin="0,2,0,2" Visibility="Collapsed" Background="Honeydew" SelectionChanged="Select_SelectionChanged" />
+            <TextBox x:Name="Edit" Text="" KeyDown="Edit_KeyDown" MinWidth="32" Margin="0,2,0,2" MaxWidth="128" Foreground="{StaticResource ParamForegroundBrush}" Background="{StaticResource ParamBackgroundBrush}" BorderBrush="{StaticResource BlackBrush}" HorizontalAlignment="Left" MaxHeight="160" />
+            <ComboBox x:Name="Select" HorizontalAlignment="Left" Margin="0,2,0,2" Visibility="Collapsed" Foreground="{StaticResource ParamForegroundBrush}" Background="{StaticResource ParamBackgroundBrush}" SelectionChanged="Select_SelectionChanged" />
             <Grid x:Name="ImagePanel" Visibility="Collapsed" Background="DarkGray" >
                 <Image x:Name="ImageBox" Width="100" Height="100" Margin="2,2,2,2" />
             </Grid>
             <Grid x:Name="MediaPanel" Visibility="Collapsed" Background="DarkGray" >
                 <MediaElement x:Name="MediaBox" HorizontalAlignment="Left" Width="100" Height="100" Margin="2,2,2,2" MouseEnter="MediaBox_MouseEnter" MouseLeave="MediaBox_MouseLeave" />
             </Grid>
-            <Rectangle x:Name="Error" Visibility="Collapsed" Stroke="Red" StrokeThickness="2" Fill="#33FF0000"  />
+            <Rectangle x:Name="Error" Visibility="Collapsed" Stroke="Red" StrokeThickness="2" Fill="#33FF0000" />
         </Grid>
         <Grid>
-            <Rectangle x:Name="TypePanel" Fill="#668CA6D4" RadiusX="6" RadiusY="6" Margin="0,2,0,2" />
+            <Rectangle x:Name="TypePanel" Fill="{StaticResource ParamTypeBackgroundBrush}" RadiusX="6" RadiusY="6" Margin="0,2,0,2" />
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center">
-                <Label x:Name="TypeNameLabel" Content=""  FontStyle="Italic" FontSize="10" FontWeight="Bold" />
-                <local:NameLabel x:Name="ParamNameLabel" Margin="-3,0,0,0" />
+                <Label x:Name="TypeNameLabel" Content=""  Foreground="{StaticResource ParamTypeForegroundBrush}" FontStyle="Italic" FontSize="10" FontWeight="Bold" />
+                <local:NameLabel x:Name="ParamNameLabel" Foreground="{StaticResource ParamTypeForegroundBrush}" Margin="-3,0,0,0" />
             </StackPanel>
         </Grid>
     </StackPanel>

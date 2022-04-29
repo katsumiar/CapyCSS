@@ -7,6 +7,6 @@
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800" FocusVisualStyle="{x:Null}">
     <Grid x:Name="MainGrid" HorizontalAlignment="Center" VerticalAlignment="Center">
-        <Rectangle x:Name="waku" Visibility="Collapsed" Stroke="#FFFF69B4" StrokeThickness="3" Margin="-10,-10,-10,-10" />
+        <Rectangle x:Name="waku" Visibility="Collapsed" Stroke="{StaticResource SelectedNodeRectangleBrush}" StrokeThickness="3" Margin="-10,-10,-10,-10" />
     </Grid>
 </UserControl>

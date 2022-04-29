@@ -348,7 +348,7 @@ namespace CapyCSS.Controls.BaseControls
                 {
                     RectBox.RadiusX = 10;
                     RectBox.RadiusY = 10;
-                    RectBox.Fill = new SolidColorBrush(Color.FromArgb(80, 0xf0, 0x80, 0x80));//Brushes.LightCoral;
+                    RectBox.Fill = (Brush)Application.Current.FindResource("ConstructorNodeBackgroundBrush");
                 }
                 else if (functionInfo != null && functionInfo.ClassType == typeof(DummyArguments))
                 {
@@ -371,9 +371,9 @@ namespace CapyCSS.Controls.BaseControls
         private Brush NodeNormalColor = null;
 
         /// <summary>
-        /// Entry指定時のノード背景色です。
+        /// EntryPoint指定時のノード背景色です。
         /// </summary>
-        private Brush NodeEntryColor = (Brush)(new System.Windows.Media.BrushConverter()).ConvertFromString("#99BCBCFF");
+        private Brush NodeEntryColor = (Brush)Application.Current.FindResource("EntryPointNodeBackgroundBrush");
 
         private CommandCanvas _OwnerCommandCanvas = null;
 
@@ -1176,23 +1176,22 @@ namespace CapyCSS.Controls.BaseControls
         }
 
         /// <summary>
-        /// Forced チェックボックスの状態による枠の色を参照します。
+        /// Not Use Cache チェックボックスの状態によるノード枠の色を参照します。
         /// </summary>
         private Brush RectboxStroke
         {
             get
             {
-                byte alpha = 102;
                 if (FunctionInfo != null && FunctionInfo.IsConstructor)
                 {
                     // コンストラクタ
 
-                    return new SolidColorBrush(Color.FromArgb(alpha, 0xf0, 0x80, 0x80));//Brushes.LightCoral;
+                    return (Brush)Application.Current.FindResource("ConstructorNodeStrokeBrush");
                 }
                 return Forced.IsChecked == false ?
-                    new SolidColorBrush(Color.FromArgb(alpha, 0x90, 0x90, 0x90))//Brushes.Silver
+                    (Brush)Application.Current.FindResource("NormalNodeStrokeBrush")
                     :
-                    new SolidColorBrush(Color.FromArgb(alpha, 0x00, 0x00, 0xfa));//Brushes.LightSkyBlue;
+                    (Brush)Application.Current.FindResource("NotUseCacheNormalNodeStrokeBrush");
             }
         }
 
@@ -1463,11 +1462,14 @@ namespace CapyCSS.Controls.BaseControls
         {
             if (rootCurveLinks is null)
             {
-                ConnectorStroke = Brushes.Blue;
+                ConnectorStroke = (Brush)Application.Current.FindResource("LinkedConnectorStrokeBrush");
             }
             else
             {
-                ConnectorStroke = rootCurveLinks.Count == 0 ? Brushes.Blue : Brushes.CornflowerBlue;
+                ConnectorStroke = rootCurveLinks.Count == 0 ?
+                    (Brush)Application.Current.FindResource("LinkedConnectorStrokeBrush")
+                    :
+                    (Brush)Application.Current.FindResource("UnlinkedConnectorStrokeBrush");
             }
             UpdateMainPanelColor();
         }
@@ -1550,11 +1552,11 @@ namespace CapyCSS.Controls.BaseControls
             RectBox.Stroke = RectboxStroke;
             if (Forced.IsChecked == true)
             {
-                Forced.Foreground = Brushes.Tomato;
+                Forced.Foreground = (Brush)Application.Current.FindResource("CheckedNotUseCacheBrush");
             }
             else
             {
-                Forced.Foreground = Brushes.Black;
+                Forced.Foreground = (Brush)Application.Current.FindResource("NotUseCacheBrush");
             }
         }
 
@@ -1566,7 +1568,7 @@ namespace CapyCSS.Controls.BaseControls
         private void IsPublicExecute_Checked(object sender, RoutedEventArgs e)
         {
             OwnerCommandCanvas.CommandCanvasControl.AddPublicExecuteEntryPoint(OwnerCommandCanvas, ExecuteRoot);
-            IsPublicExecute.Foreground = Brushes.Tomato;
+            IsPublicExecute.Foreground = (Brush)Application.Current.FindResource("CheckedEntryPointBrush");
             RectBox.Fill = NodeEntryColor;
             EntryPointName.Visibility = Visibility.Visible;
 
@@ -1582,7 +1584,7 @@ namespace CapyCSS.Controls.BaseControls
         private void IsPublicExecute_Unchecked(object sender, RoutedEventArgs e)
         {
             OwnerCommandCanvas.CommandCanvasControl.RemovePublicExecuteEntryPoint(ExecuteRoot);
-            IsPublicExecute.Foreground = Brushes.Black;
+            IsPublicExecute.Foreground = (Brush)Application.Current.FindResource("EntryPointBrush");
             RectBox.Fill = NodeNormalColor;
             EntryPointName.Visibility = Visibility.Collapsed;
 
@@ -1605,11 +1607,11 @@ namespace CapyCSS.Controls.BaseControls
         {
             if (flg)
             {
-                EntryPointName.Background = Brushes.Tomato;
+                EntryPointName.Background = (Brush)Application.Current.FindResource("EntryPointNameCollisionBackgroundBrush");
             }
             else
             {
-                EntryPointName.Background = Brushes.NavajoWhite;
+                EntryPointName.Background = (Brush)Application.Current.FindResource("EntryPointNameBackgroundBrush");
             }
         }
 
@@ -1651,30 +1653,30 @@ namespace CapyCSS.Controls.BaseControls
                     {
                         // 絶対に接続不可
 
-                        curvePath.LineColor = Brushes.HotPink;
+                        curvePath.LineColor = (Brush)Application.Current.FindResource("CurvePathUnconnectableBrush");
                     }
                     else if (IsAssignment(target))
                     {
                         // 接続可能
 
-                        curvePath.LineColor = Brushes.Lime;
+                        curvePath.LineColor = (Brush)Application.Current.FindResource("CurvePathConnectableBrush");
                     }
                     else if (IsAssignmentCast(target))
                     {
                         // Castによる接続可能
 
-                        curvePath.LineColor = Brushes.Tomato;
+                        curvePath.LineColor = (Brush)Application.Current.FindResource("CurvePathCastConnectableBrush");
                     }
                     else
                     {
                         // 接続不可
 
-                        curvePath.LineColor = Brushes.HotPink;
+                        curvePath.LineColor = (Brush)Application.Current.FindResource("CurvePathUnconnectableBrush");
                     }
                 }
                 else
                 {
-                    curvePath.LineColor = Brushes.DeepSkyBlue;
+                    curvePath.LineColor = (Brush)Application.Current.FindResource("CurvePathDuringBrush");
                 }
 
                 // 仮のリンク曲線を更新

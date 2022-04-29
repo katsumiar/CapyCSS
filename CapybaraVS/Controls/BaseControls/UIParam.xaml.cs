@@ -113,13 +113,13 @@ namespace CapyCSS.Controls.BaseControls
                             self.ValueData.ValueString = text;
                         }
                         self.Edit.Text = self.ValueData.ValueUIString.Trim('\r', '\n');
-                        self.Edit.Background = Brushes.Honeydew;
+                        self.Edit.Background = (Brush)Application.Current.FindResource("ParamBackgroundBrush");
                         self.ToolTipUpdate();
                     }
                     catch (Exception ex)
                     {
                         System.Diagnostics.Debug.WriteLine(ex.Message);
-                        self.Edit.Background = Brushes.Salmon;
+                        self.Edit.Background = (Brush)Application.Current.FindResource("EditErrorBackgroundBrush");
                     }
                     self.ParamName = self.ValueData.Name;
                 });
@@ -261,7 +261,7 @@ namespace CapyCSS.Controls.BaseControls
 
                 if (valueData.Name == "self")
                 {
-                    TypePanel.Fill = Brushes.LightSalmon;
+                    TypePanel.Fill = (Brush)Application.Current.FindResource("SelfParamBackgroundBrush");
                 }
                 ParamName = valueData.Name;
             }
@@ -362,11 +362,11 @@ namespace CapyCSS.Controls.BaseControls
             Edit.IsReadOnly = valueData.IsReadOnlyValue || ReadOnly || valueData.IsNull;
             if (!Edit.IsReadOnly)
             {
-                Edit.Background = Brushes.Honeydew;
+                Edit.Background = (Brush)Application.Current.FindResource("ParamBackgroundBrush");
             }
             else
             {
-                Edit.Background = Brushes.Lavender;
+                Edit.Background = (Brush)Application.Current.FindResource("ReadOnlyParamBackgroundBrush");
             }
         }
 
@@ -493,11 +493,11 @@ namespace CapyCSS.Controls.BaseControls
             Select.IsTabStop = !Select.IsReadOnly;
             if (Select.IsReadOnly)
             {
-                Select.Foreground = Brushes.DarkGray;
+                Select.Foreground = (Brush)Application.Current.FindResource("ReadOnlyEnumParamForegroundBrush");
             }
             else
             {
-                Select.Foreground = Brushes.Black;
+                Select.Foreground = (Brush)Application.Current.FindResource("EnumParamForegroundBrush");
             }
         }
 
@@ -607,7 +607,10 @@ namespace CapyCSS.Controls.BaseControls
                 (self, getValue) =>
                 {
                     bool value = getValue(self);
-                    self.TypeNameLabel.Foreground = value ? Brushes.OrangeRed : Brushes.Black;
+                    self.TypeNameLabel.Foreground = value ?
+                        (Brush)Application.Current.FindResource("CaseParamForegroundBrush")
+                        : 
+                        (Brush)Application.Current.FindResource("ParamForegroundBrush");
                 });
 
         public static readonly DependencyProperty impCastTypeProperty = impCastType.Regist(false);

@@ -744,7 +744,7 @@ namespace CapyCSS.Controls.BaseControls
             for (int i = 0; i < witdhCount + EXTRA_LINE_COUNT; ++i)
             {
                 Line line = new Line();
-                line.Stroke = Brushes.LightSteelBlue;
+                line.Stroke = (Brush)Application.Current.FindResource("ScriptCavasGridLineBrush");
                 line.X1 = left + i * BACKGROUND_LINE_SPCAE;
                 line.X2 = line.X1;
                 line.Y1 = top - EXTRA_LINE_SIZE;
@@ -756,7 +756,7 @@ namespace CapyCSS.Controls.BaseControls
             for (int j = 0; j < heightCount + EXTRA_LINE_COUNT; ++j)
             {
                 Line line = new Line();
-                line.Stroke = Brushes.LightSteelBlue;
+                line.Stroke = (Brush)Application.Current.FindResource("ScriptCavasGridLineBrush");
                 line.X1 = left - EXTRA_LINE_SIZE;
                 line.X2 = left + displayWidth;
                 line.Y1 = top + j * BACKGROUND_LINE_SPCAE;
@@ -839,7 +839,7 @@ namespace CapyCSS.Controls.BaseControls
                     InfoCanvas.CaptureMouse();
                     rectangle = new Rectangle()
                     {
-                        Stroke = Brushes.DarkTurquoise,
+                        Stroke = (Brush)Application.Current.FindResource("CanvasRectangleBrush"),
                         StrokeThickness = 3,
                     };
 

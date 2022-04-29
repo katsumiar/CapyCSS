@@ -772,9 +772,9 @@ namespace CapyCSS
         private Path ellipsePath = null;
         private Path ellipseBorderPath = null;   // 縁取り用
 
-        private Brush DEFAULT_COLOR => Brushes.DodgerBlue;
-        private Brush DEFAULT_BORDER_COLOR => Brushes.Snow;
-        private Brush DEFAULT_FOCUS_COLOR => Brushes.Tomato;
+        private Brush DEFAULT_COLOR => (Brush)Application.Current.FindResource("CurvePathBrush");
+        private Brush DEFAULT_BORDER_COLOR => (Brush)Application.Current.FindResource("CurvePathBorderBrush");
+        private Brush DEFAULT_FOCUS_COLOR => (Brush)Application.Current.FindResource("CurvePathFocusBrush");
 
         //-----------------------------------------------------------------------------------
         /// <summary>

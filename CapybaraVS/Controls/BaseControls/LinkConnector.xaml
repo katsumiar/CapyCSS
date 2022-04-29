@@ -8,8 +8,8 @@
              d:DesignHeight="450" d:DesignWidth="800" FocusVisualStyle="{x:Null}">
     <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
         <StackPanel x:Name="MainPanel" HorizontalAlignment="Left" VerticalAlignment="Center" MouseLeftButtonDown="Grid_MouseDown" MouseEnter="MainPanel_MouseEnter" MouseLeave="MainPanel_MouseLeave" Orientation="Horizontal" Background="#00000000">
-            <Ellipse x:Name="EllipseType" Width="16" Height="16" Stroke="#FF0017FF" Fill="#7FD7F069" StrokeThickness="2" HorizontalAlignment="Center" VerticalAlignment="Center" />
-            <Rectangle x:Name="RectangleType" Visibility="Collapsed" Width="14" Height="14" Stroke="#FF0017FF" Fill="#7FD7F069" StrokeThickness="2" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="1,0,0,0" />
+            <Ellipse x:Name="EllipseType" Width="16" Height="16" Stroke="{StaticResource UnlinkedConnectorStrokeBrush}" Fill="#7FD7F069" StrokeThickness="2" HorizontalAlignment="Center" VerticalAlignment="Center" />
+            <Rectangle x:Name="RectangleType" Visibility="Collapsed" Width="14" Height="14" Stroke="{StaticResource UnlinkedConnectorStrokeBrush}" Fill="#7FD7F069" StrokeThickness="2" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="1,0,0,0" />
             <local:UIParam x:Name="ParamTextBox" />
             <Controls:DeleteIcon x:Name="Delete" Visibility="Collapsed" Width="14" Height="14" HorizontalAlignment="Center" VerticalAlignment="Center" />
         </StackPanel>

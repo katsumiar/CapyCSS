@@ -12,6 +12,6 @@
             <Rectangle Width="{Binding ActualWidth, ElementName=ellipse, Mode=OneWay}" Height="3" Fill="Black" />
             <Rectangle Height="{Binding ActualHeight, ElementName=ellipse, Mode=OneWay}" Width="3" Fill="Black" />
         </Grid>
-        <Label x:Name="Label" Content="" FontSize="11" />
+        <Label x:Name="Label" Content="" Foreground="{StaticResource AddLabelForegroundBrush}" FontSize="11" />
     </StackPanel>
 </UserControl>

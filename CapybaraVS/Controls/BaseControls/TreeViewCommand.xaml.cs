@@ -208,13 +208,13 @@ namespace CapyCSS.Controls.BaseControls
             {
                 if (LeftClickCommand is null)
                 {
-                    return Brushes.Gray;
+                    return (Brush)Application.Current.FindResource("EmptyCommandBrush");
                 }
                 if (!LeftClickCommand.CanExecute(null))
                 {
-                    return Brushes.Silver;
+                    return (Brush)Application.Current.FindResource("UnenableCommandBrush");
                 }
-                return Brushes.Black;
+                return (Brush)Application.Current.FindResource("EnableCommandBrush");
             }
             set {
                 OnPropertyChanged(nameof(Foreground));

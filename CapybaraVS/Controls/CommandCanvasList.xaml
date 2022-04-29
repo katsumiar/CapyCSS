@@ -23,7 +23,7 @@
             <Button Content="Convert C#" x:Name="ConvertCSS" Click="ConvertCSS_Click" Height="30" Margin="12,2,0,2" />
             <Button Content="Execute (F5)" x:Name="ExecuteButton" IsEnabled="False" Click="ExecuteButton_Click" Height="30" Margin="12,2,6,2" />
             <Grid>
-                <TextBox x:Name="EntryPointName" Height="24" Width="90" TextChanged="EntryPointName_TextChanged"/>
+                <TextBox x:Name="EntryPointName" Height="24" Width="90" BorderBrush="{StaticResource BlackBrush}" TextChanged="EntryPointName_TextChanged"/>
                 <TextBlock x:Name="EntryPointNamePh" Text="Entry Point Name" Height="24" FontSize="11" Margin="2,8,0,0" Foreground="#99000000" IsHitTestVisible="False"/>
             </Grid>
         </ToolBarPanel>

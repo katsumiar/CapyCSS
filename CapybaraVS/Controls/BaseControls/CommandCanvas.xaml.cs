@@ -678,8 +678,8 @@ namespace CapyCSS.Controls.BaseControls
                 {
                     Content = shortCutCommand.Name,
                     Height = 24,
-                    Background = Brushes.SeaGreen,
-                    BorderBrush = Brushes.DarkOliveGreen,
+                    Background = (Brush)Application.Current.FindResource("CommandShortcutButtonBackgroundBrush"),
+                    BorderBrush = (Brush)Application.Current.FindResource("CommandShortcutButtonBorderBrushBrush"),
                     Margin = new Thickness( 0, 0, 0, 2),
                 };
                 shortcutButton.Click += (o, e) => CommandMenu.ExecuteFindCommand(shortCutCommand.Command);
