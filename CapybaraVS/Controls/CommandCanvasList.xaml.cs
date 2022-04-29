@@ -417,6 +417,7 @@ namespace CapyCSS.Controls
                 new TabItem()
                 {
                     Header = newName,
+                    HorizontalAlignment = HorizontalAlignment.Left,
                     Content = CurrentScriptCanvas
                 }
                 );

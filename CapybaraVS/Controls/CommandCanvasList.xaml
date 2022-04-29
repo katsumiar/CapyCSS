@@ -28,7 +28,7 @@
             </Grid>
         </ToolBarPanel>
         <TabControl x:Name="Tab" Grid.Row="1" SelectionChanged="Tab_SelectionChanged">
-            <TabItem Header="TabItem1">
+            <TabItem Header="TabItem1" HorizontalAlignment="Left">
                 <TextBlock Text="TabItem1 Content" />
             </TabItem>
         </TabControl>
