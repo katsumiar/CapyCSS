@@ -6,8 +6,8 @@
     <UseWPF>true</UseWPF>
     <ApplicationIcon>Image\cpbvs_mUG_icon.ico</ApplicationIcon>
     <Copyright>Copyright (c) 2020 - 2022 Katsumi Aradono</Copyright>
-    <Version>0.4.0.1</Version>
-    <AssemblyVersion>0.4.0.1</AssemblyVersion>
+    <Version>0.4.1.0</Version>
+    <AssemblyVersion>0.4.1.0</AssemblyVersion>
     <Authors>Katsumi Aradono</Authors>
     <PackageId>CapyCSS</PackageId>
     <AssemblyName>CapyCSS</AssemblyName>
