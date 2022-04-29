@@ -8,18 +8,18 @@
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
-                <materialDesign:BundledTheme BaseTheme="Light" PrimaryColor="DeepPurple" SecondaryColor="Lime" />
+                <materialDesign:BundledTheme BaseTheme="Dark" PrimaryColor="DeepPurple" SecondaryColor="Lime" />
                 <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Defaults.xaml" />
             </ResourceDictionary.MergedDictionaries>
             <SolidColorBrush x:Key="BlackBrush" Color="#FF0A0A0A"/>
             <SolidColorBrush x:Key="CanvasRectangleBrush" Color="DarkTurquoise"/>
             <SolidColorBrush x:Key="SelectedNodeRectangleBrush" Color="#FFFF69B4"/>
-            <SolidColorBrush x:Key="ScriptCanvasBackgroundBrush" Color="Snow"/>
-            <SolidColorBrush x:Key="ScriptCavasGridLineBrush" Color="LightSteelBlue"/>
+            <SolidColorBrush x:Key="ScriptCanvasBackgroundBrush" Color="#FF050505"/>
+            <SolidColorBrush x:Key="ScriptCavasGridLineBrush" Color="DarkSlateGray"/>
             <SolidColorBrush x:Key="CommandShortcutButtonBackgroundBrush" Color="SeaGreen"/>
             <SolidColorBrush x:Key="CommandShortcutButtonBorderBrushBrush" Color="DarkOliveGreen"/>
             <SolidColorBrush x:Key="CurvePathBrush" Color="DodgerBlue"/>
-            <SolidColorBrush x:Key="CurvePathBorderBrush" Color="Snow"/>
+            <SolidColorBrush x:Key="CurvePathBorderBrush" Color="#FF050505"/>
             <SolidColorBrush x:Key="CurvePathFocusBrush" Color="Tomato"/>
             <SolidColorBrush x:Key="CurvePathUnconnectableBrush" Color="HotPink"/>
             <SolidColorBrush x:Key="CurvePathConnectableBrush" Color="Lime"/>
@@ -45,13 +45,14 @@
             <SolidColorBrush x:Key="SelfParamBackgroundBrush" Color="LightSalmon"/>
             <SolidColorBrush x:Key="ParamBackgroundBrush" Color="Honeydew"/>
             <SolidColorBrush x:Key="ReadOnlyParamBackgroundBrush" Color="Lavender"/>
-            <SolidColorBrush x:Key="EnumParamForegroundBrush" Color="#FF0A0A0A"/>
-            <SolidColorBrush x:Key="ReadOnlyEnumParamForegroundBrush" Color="DarkGray"/>
+            <SolidColorBrush x:Key="EnumParamForegroundBrush" Color="White"/>
+            <SolidColorBrush x:Key="EnumParamBackgroundBrush" Color="DarkCyan"/>
+            <SolidColorBrush x:Key="ReadOnlyEnumParamForegroundBrush" Color="LightGray"/>
             <SolidColorBrush x:Key="ParamForegroundBrush" Color="#FF0A0A0A"/>
             <SolidColorBrush x:Key="ParamTypeForegroundBrush" Color="#FF0A0A0A"/>
-            <SolidColorBrush x:Key="ParamTypeBackgroundBrush" Color="#668CA6D4"/>
+            <SolidColorBrush x:Key="ParamTypeBackgroundBrush" Color="#8800CED1"/>
             <SolidColorBrush x:Key="CaseParamForegroundBrush" Color="OrangeRed"/>
-            <SolidColorBrush x:Key="GroupAreaTextForegroundBrush" Color="#FF0027AC"/>
+            <SolidColorBrush x:Key="GroupAreaTextForegroundBrush" Color="DeepSkyBlue"/>
             <SolidColorBrush x:Key="GroupAreaFillBrush" Color="#197EDCFF"/>
             <SolidColorBrush x:Key="GroupAreaStrokeBrush" Color="#FF6A969C"/>
             <SolidColorBrush x:Key="AddLabelForegroundBrush" Color="#FF0A0A0A"/>

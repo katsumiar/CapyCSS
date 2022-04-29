@@ -124,7 +124,7 @@ namespace CapyCSS.Controls.BaseControls
             public int AssetId { get; set; } = 0;
             #region 固有定義
             public int DataVersion { get; set; } = 0;
-            public bool EnabelGridLine { get; set; } = false;
+            public bool EnabelGridLine { get; set; } = true;
             public bool EnableInfo { get; set; } = false;
             public double CanvasScale { get; set; } = 1.0;  // 不要になった
             public Matrix? CanvasRenderTransform { get; set; }
@@ -273,7 +273,7 @@ namespace CapyCSS.Controls.BaseControls
         private int before_GridCanvas_widthCount = 0;
         private int before_GridCanvas_heightCount = 0;
 
-        private bool enabelGridLine = false;
+        private bool enabelGridLine = true;
         
         /// <summary>
         /// 重ね合わせキャンバスの一元管理用リスト
