@@ -7,6 +7,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Linq;
 
 namespace CapyCSS
 {
@@ -74,8 +75,6 @@ namespace CapyCSS
 
             if (!(target is IMovableCanvas movementCanvas))
             {
-                // 単体移動時
-
                 if (target != null && target is Movable movable)
                 {
                     if (movable.ControlObject is IGroupList haveGroupNode)
@@ -148,37 +147,34 @@ namespace CapyCSS
                 {
                     // 画面全体を動かす
 
-                    if (OwnerCommandCanvas.ScriptWorkCanvas.SelectedNodes.Count == 0)
-                    {
-                        // 全体を移動
+                    Point movePoint = pos;
+                    movePoint.X -= dragOffset.X;
+                    movePoint.Y -= dragOffset.Y;
 
-                        Point movePoint = pos;
-                        movePoint.X -= dragOffset.X;
-                        movePoint.Y -= dragOffset.Y;
-
-                        Matrix matrix = movementCanvas.CanvasRenderTransform.Value;
-                        matrix.Translate(movePoint.X, movePoint.Y);
-                        movementCanvas.CanvasRenderTransform = new MatrixTransform(matrix);
-                    }
-                    else
-                    {
-                        // 選択されているノードを移動
-
-                        MoveSelectedNode(pos, OwnerCommandCanvas.ScriptWorkCanvas.SelectedNodes);
-                    }
+                    Matrix matrix = movementCanvas.CanvasRenderTransform.Value;
+                    matrix.Translate(movePoint.X, movePoint.Y);
+                    movementCanvas.CanvasRenderTransform = new MatrixTransform(matrix);
                 }
                 else
                 {
-                    // 個別のノードを移動
-
-                    if (groupList != null)
+                    if (OwnerCommandCanvas.ScriptWorkCanvas.SelectedNodes.Count != 0 && OwnerCommandCanvas.ScriptWorkCanvas.SelectedNodes.Contains(target))
                     {
-                        // グループ情報を持っているのでグループ（自身を含む）で移動する
+                        // 選択されたノードを移動
 
-                        MoveSelectedNode(pos, groupList, false);
+                        Point point = SingleMove(pos, isGridMove);
+                        MoveSelectedNode(point, isGridMove, OwnerCommandCanvas.ScriptWorkCanvas.SelectedNodes);
+                    }
+                    else if (groupList != null)
+                    {
+                        // グループを移動
+
+                        Point point = SingleMove(pos, isGridMove);
+                        MoveSelectedNode(point, isGridMove, groupList);
                     }
                     else
                     {
+                        // 個別のノードを移動
+
                         SingleMove(pos, isGridMove);
                     }
                 }
@@ -186,40 +182,52 @@ namespace CapyCSS
             }
         }
 
+        private double GUID_MOVE_POINT = (BaseWorkCanvas.BACKGROUND_LINE_SPCAE / 2);
+
+        /// <summary>
+        /// 単体のノードを移動します。
+        /// </summary>
+        /// <param name="pos">ドラッグ起点</param>
+        /// <param name="isGridMove">true:グリッド線に沿う</param>
+        /// <returns>移動量</returns>
         private Point SingleMove(Point pos, bool isGridMove)
         {
-            double x = pos.X - targetOffset.X;
-            double y = pos.Y - targetOffset.Y;
+            double sx = pos.X - targetOffset.X;
+            double sy = pos.Y - targetOffset.Y;
 
             if (isGridMove)
             {
-                x -= x % 30;
-                y -= y % 30;
+                sx += OwnerCommandCanvas.ScriptWorkCanvas.CanvasPos.X % GUID_MOVE_POINT;
+                sy += OwnerCommandCanvas.ScriptWorkCanvas.CanvasPos.Y % GUID_MOVE_POINT;
+                sx -= sx % GUID_MOVE_POINT;
+                sy -= sy % GUID_MOVE_POINT;
             }
 
-            Canvas.SetLeft(target, x);
-            Canvas.SetTop(target, y);
-            return pos;
+            double beforeX = Canvas.GetLeft(target);
+            double beforeY =  Canvas.GetTop(target);
+            Canvas.SetLeft(target, sx);
+            Canvas.SetTop(target, sy);
+            return new Point(sx - beforeX, sy - beforeY);
         }
 
-        private void MoveSelectedNode(Point currentPoint, ObservableCollection<Movable> movables, bool scale = true)
+        /// <summary>
+        /// グループ化されたノードを移動します。
+        /// </summary>
+        /// <param name="vec">移動量</param>
+        /// <param name="isGridMove">true:グリッド線に沿う</param>
+        /// <param name="movables">グループ化されたノードリスト</param>
+        private void MoveSelectedNode(Point vec, bool isGridMove, ObservableCollection<Movable> movables)
         {
-            double sx = currentPoint.X - dragOffset.X;
-            double sy = currentPoint.Y - dragOffset.Y;
-            
-            if (scale)
-            {
-                double ms = 1.0 / OwnerCommandCanvas.ScriptWorkCanvas.CanvasScale;
-                sx *= ms;
-                sy *= ms;
-            }
-
             foreach (var node in movables)
             {
+                if (node == target)
+                    continue;
+
                 Matrix matrix = node.RenderTransform.Value;
-                matrix.Translate(matrix.OffsetX + sx, matrix.OffsetY + sy);
+                matrix.Translate(matrix.OffsetX + vec.X, matrix.OffsetY + vec.Y);
                 var mt = new MatrixTransform(matrix);
                 Point newPos = mt.Transform(new Point(Canvas.GetLeft(node), Canvas.GetTop(node)));
+
                 Canvas.SetLeft(node, newPos.X);
                 Canvas.SetTop(node, newPos.Y);
             }

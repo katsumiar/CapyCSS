@@ -253,7 +253,7 @@ namespace CapyCSS.Controls.BaseControls
         /// <summary>
         /// グリッドラインの間隔
         /// </summary>
-        private const double BACKGROUND_LINE_SPCAE = 60;
+        public const double BACKGROUND_LINE_SPCAE = 60;
 
         /// <summary>
         /// グリッドラインの余剰描画数
@@ -413,52 +413,6 @@ namespace CapyCSS.Controls.BaseControls
         /// </summary>
         public double DisplayHeight => ActualHeight * (1.0 / CanvasScale);
 
-        private Point canvasTopLeft = new Point(0, 0);
-        private Point CanvasTopLeft
-        {
-            set
-            {
-                canvasTopLeft = value;
-                Thickness thickness = new Thickness(
-                    canvasTopLeft.X,
-                    canvasTopLeft.Y,
-                    0,
-                    0);
-                CanvasMargin = thickness;
-            }
-            get
-            {
-                return canvasTopLeft;
-            }
-        }
-        private Thickness CanvasMargin
-        {
-            set
-            {
-                foreach (var node in WorkCanvasList)
-                    node.Margin = value;
-            }
-            get
-            {
-                return GridCanvas.Margin;
-            }
-        }
-        private Size CanvasSize
-        {
-            set
-            {
-                foreach (var node in WorkCanvasList)
-                {
-                    node.Width = value.Width;
-                    node.Height = value.Height;
-                }
-            }
-            get
-            {
-                return new Size(GridCanvas.Width, GridCanvas.Height);
-            }
-        }
-
         /// <summary>
         /// キャンバスのRenderTransform
         /// </summary>
@@ -498,6 +452,17 @@ namespace CapyCSS.Controls.BaseControls
             set 
             {
                 CanvasAtScale(value);
+            }
+        }
+
+        /// <summary>
+        /// キャンバスの位置
+        /// </summary>
+        public Point CanvasPos
+        {
+            get {
+                Matrix matrix = CanvasRenderTransform.Value;
+                return new Point(matrix.OffsetX, matrix.OffsetY);
             }
         }
 
