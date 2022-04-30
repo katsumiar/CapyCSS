@@ -1,17 +1,14 @@
 # CapyCSS
-![CapyCSS 0 4 0 0](https://user-images.githubusercontent.com/63950487/156915429-2f4d55c3-7dac-4d4c-a59e-c339a39fbdca.gif)
+![capyCssSample](https://user-images.githubusercontent.com/63950487/166104378-daa5029d-7408-4426-ab18-7a84aadca806.png)
 
 ## 0.4.1.1 での変更
-
-・選択されているノードの移動は、選択されているノードをドラッグしたときに行うようにしました。
-・単体ノード同様に複数選択及びグループの移動でグリッド線に沿う移動操作を可能にしました。
+* 選択されているノードの移動は、選択されているノードをドラッグしたときに行うようにしました。
+* 単体ノード同様に複数選択及びグループの移動でグリッド線に沿う移動操作を可能にしました。
 
 ## 0.4.1.0 での変更
-
-・デザインをGray系に変更しました。
+* デザインをGray系に変更しました。
 
 ## 0.4.0.0 での変更
-
 * スクリプトをc#に変換する機能を「Convert C#」ボタン及びコマンドウインドウの「Command」の下に「Convert C#」として追加しました。
 * Sequenceノードを廃止し、VoidSequecneとResultSequenceの２つのシーケンスノードを用意しました。
 * スクリプトノードのライブラリ周りを見直しました。
@@ -40,15 +37,12 @@
 * 基本的なノードライブラリをCapyCSSbaseクラスライブラリに分離しました（UIの絡む処理は、まだ分離していません）。
 
 ### 0.4.1.1 で対応した不具合
-
-・場合によりグリッド線からズレて沿うようになっていた問題に対応しました。
+* 場合によりグリッド線からズレて沿うようになっていた問題に対応しました。
 
 ### 0.4.0.1 で対応した不具合
-
 * スクリプト実行後にc#へ変換すると正しくない型で変換される場合がある問題に対応しました。
 
 ### 0.4.0.0 で対応した不具合
-
 * staticメソッドの引数にref修飾があった場合、値が正しくリファレンスされていなかった問題に対応しました。
 * 公開されているのノードを消した後にExecuteボタンを押すとアサートが出る問題に対応しました。
 * メッセージ類が場合により正しく表示されない問題に対応しました。
@@ -202,34 +196,8 @@ public static ICollection<T> Filtering<T>(IEnumerable<T> samples, Predicate<T> p
 delegate 型の引数は、返し値の型と一致する型のノードと接続できます。ただし、Action だと無条件に接続できます。
 デリゲートの呼び出しでは、接続されたノードの結果が返されます。
 
-## Hello World!
-「Hello World!」と出力するサンプルです。<br>
-※内容が古くなっています。<br>
-![CapyCSS01](https://user-images.githubusercontent.com/63950487/97863495-6f7a3f00-1d4a-11eb-9ef4-0017be21d13e.png)
-<br>ホイールボタンをクリックするかスペースキーでコマンドウインドウが表示されます。
-その中からProgram→.Net Function→Input/Output→OutConsole→OutConsoleをクリックします。
-
-![CapyCSS02](https://user-images.githubusercontent.com/63950487/97861283-d4cc3100-1d46-11eb-9aed-1bf981d57ad3.png)
-<br>作業エリアをクリックすると型選択ウインドウが表示されますので、その中からstringを選択します。
-
-![CapyCSS03](https://user-images.githubusercontent.com/63950487/97861311-deee2f80-1d46-11eb-8352-ef904e6d8818.png)
-<br>引数nの部分に「Hello World!」と入力し、Runをクリックするとスクリプトが実行されます。
-
-![CapyCSS04](https://user-images.githubusercontent.com/63950487/97861328-e7df0100-1d46-11eb-9f44-2c72d97f86a1.png)
-<br>このように「Hello World!」と出力されます。
-
-![CapyCSS05](https://user-images.githubusercontent.com/63950487/97861338-eca3b500-1d46-11eb-8c6e-5cc957366621.png)
-<br>EntryをチェックするとF5キーで実行できるようになります。
-
-## 簡単な足し算
-
-![CapyCSS](https://user-images.githubusercontent.com/63950487/98212435-ef8ce880-1f86-11eb-9e4b-d2a6612d86ac.gif)
-<br>ノードを繋ぐことによって、一連のノードを実行できます。
-
-## グループ化及びテキスト
-
-![CapyCSS02](https://user-images.githubusercontent.com/63950487/98465611-6b986200-220d-11eb-8184-bd8b6a2e9bca.gif)
-<br>Test Areaを使うとノードのグループ化とテキストの書き込みが行えます。
+## 操作イメージ
+![capyCssSample02](https://user-images.githubusercontent.com/63950487/166105138-176991df-4194-4492-8dac-203696436d17.gif)
 
 ## ライセンス
 MITライセンス
