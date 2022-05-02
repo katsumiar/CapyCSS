@@ -1,5 +1,5 @@
 # CapyCSS
-![capyCssSample](https://user-images.githubusercontent.com/63950487/166104378-daa5029d-7408-4426-ab18-7a84aadca806.png)
+![capyCssSample04](https://user-images.githubusercontent.com/63950487/166207451-7cbb4335-be6e-4035-998c-b1521f503e4f.gif)
 
 ## 0.4.1.2 での変更
 * リスト型の内容のヒント表示を行うようにしました。
@@ -203,9 +203,6 @@ public static ICollection<T> Filtering<T>(IEnumerable<T> samples, Predicate<T> p
 ## メソッドからのメソッド呼び出し
 delegate 型の引数は、返し値の型と一致する型のノードと接続できます。ただし、Action だと無条件に接続できます。
 デリゲートの呼び出しでは、接続されたノードの結果が返されます。
-
-## 操作イメージ
-![capyCssSample02](https://user-images.githubusercontent.com/63950487/166105138-176991df-4194-4492-8dac-203696436d17.gif)
 
 ## ライセンス
 MITライセンス
