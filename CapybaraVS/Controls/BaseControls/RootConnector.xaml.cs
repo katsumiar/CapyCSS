@@ -344,19 +344,23 @@ namespace CapyCSS.Controls.BaseControls
             set
             {
                 functionInfo = value;
-                if (functionInfo != null && functionInfo.IsConstructor)
+
+                bool isConstructor = functionInfo != null && functionInfo.IsConstructor;
+                bool isList = functionInfo != null && IsSetVariableFunction() && CbList.HaveInterface(functionInfo.ClassType, typeof(IEnumerable<>));
+
+                if (isConstructor || isList)
                 {
-                    RectBox.RadiusX = 10;
-                    RectBox.RadiusY = 10;
-                    RectBox.Fill = (Brush)Application.Current.FindResource("ConstructorNodeBackgroundBrush");
+                    // ノードデザインをコンストラクタにする
+
+                    SetupConstructorNodeDesign();
                 }
                 else if (functionInfo != null && functionInfo.ClassType == typeof(DummyArguments))
                 {
-                    RectBox.RadiusX = 20;
-                    RectBox.RadiusY = 20;
-                    //RectBox.Fill = new SolidColorBrush(Color.FromArgb(80, 0xf0, 0x80, 0x80));//Brushes.LightCoral;
+                    // ノードデザインを仮引数参照にする
+
+                    SetupDummyArgumentsNodeDesign();
                 }
-                if (ValueData != null && ValueData.IsDelegate && IsGetVariavleFunction())
+                if (ValueData != null && ValueData.IsDelegate && IsGetVariableFunction())
                 {
                     // 変数参照デリゲートをマークする
 
@@ -365,10 +369,25 @@ namespace CapyCSS.Controls.BaseControls
             }
         }
 
-        /// <summary>
-        /// 通常のノード背景色です。
-        /// </summary>
-        private Brush NodeNormalColor = null;
+        private void SetupDummyArgumentsNodeDesign()
+        {
+            RectBox.RadiusX = 20;
+            RectBox.RadiusY = 20;
+        }
+
+        private void SetupConstructorNodeDesign()
+        {
+            RectBox.RadiusX = 10;
+            RectBox.RadiusY = 10;
+            RectBox.Fill = (Brush)Application.Current.FindResource("ConstructorNodeBackgroundBrush");
+        }
+
+        private void SetupNormalNodeDesign()
+        {
+            RectBox.RadiusX = 6;
+            RectBox.RadiusY = 6;
+            RectBox.Fill = (Brush)Application.Current.FindResource("NormalNodeBackgroundBrush");
+        }
 
         /// <summary>
         /// EntryPoint指定時のノード背景色です。
@@ -420,7 +439,6 @@ namespace CapyCSS.Controls.BaseControls
             DataContext = this;
             Box.ItemsSource = ListData;
 
-            NodeNormalColor = RectBox.Fill;
             ChangeLinkConnectorStroke();
             RectBox.Stroke = RectboxStroke;
             CheckBoxVisibility();
@@ -676,7 +694,7 @@ namespace CapyCSS.Controls.BaseControls
         public BuildScriptInfo RequestBuildScript()
         {
             BuildScriptInfo result;
-            if (IsGetVariavleFunction())
+            if (IsGetVariableFunction())
             {
                 // 変数参照はキャッシュしない
 
@@ -1009,10 +1027,29 @@ namespace CapyCSS.Controls.BaseControls
         /// <returns>true==変数参照メソッドノード</returns>
         private bool IsVariableFunction()
         {
-            return IsSetVariableFunction() || IsGetVariavleFunction();
+            return IsSetVariableFunction() || IsGetVariableFunction();
         }
 
-        private bool IsGetVariavleFunction()
+        /// <summary>
+        /// リスト変数書き込みメソッドを判定します。
+        /// </summary>
+        /// <returns>true==リスト変数書き込みメソッド</returns>
+        private bool IsSetVariableListFunction()
+        {
+            bool isList = functionInfo != null && IsSetVariableFunction() && CbList.HaveInterface(functionInfo.ClassType, typeof(IEnumerable<>));
+            return IsSetVariableFunction() && isList;
+        }
+
+        /// <summary>
+        /// リスト変数書き込みメソッドがリストを作成するかを判定します。
+        /// </summary>
+        /// <returns>true==リスト変数書き込みメソッド</returns>
+        private bool IsVariableListConstructor()
+        {
+            return IsSetVariableListFunction() && GetArgument(0).IsOpenNodeList;
+        }
+
+        private bool IsGetVariableFunction()
         {
             if (FunctionInfo is null || FunctionInfo.FuncCode is null)
             {
@@ -1255,7 +1292,27 @@ namespace CapyCSS.Controls.BaseControls
                 return new LinkConnector(this, index.ToString())
                 {
                     OwnerCommandCanvas = this.OwnerCommandCanvas,
-                    ValueData = variable
+                    ValueData = variable,
+                    ChangeLinkedEvent = (isLinked) =>
+                    {
+                        if (IsVariableListConstructor())
+                        {
+                            // ノードの接続状態に依ってコンストラクタからそうでないかが決まるノード
+
+                            if (isLinked)
+                            {
+                                // 引数に接続要求が来た
+
+                                SetupNormalNodeDesign();
+                            }
+                            else
+                            {
+                                // 引数に接続解除要求が来た
+
+                                SetupConstructorNodeDesign();
+                            }
+                        }
+                    }
                 };
             }
 
@@ -1344,7 +1401,7 @@ namespace CapyCSS.Controls.BaseControls
             get => NameText.ValueData;
             set
             {
-                if (value != null && value.IsDelegate && IsGetVariavleFunction())
+                if (value != null && value.IsDelegate && IsGetVariableFunction())
                 {
                     // 変数参照デリゲートをマークする
 
@@ -1579,7 +1636,7 @@ namespace CapyCSS.Controls.BaseControls
         {
             OwnerCommandCanvas.CommandCanvasControl.RemovePublicExecuteEntryPoint(ExecuteRoot);
             IsPublicExecute.Foreground = (Brush)Application.Current.FindResource("EntryPointBrush");
-            RectBox.Fill = NodeNormalColor;
+            RectBox.Fill = (Brush)Application.Current.FindResource("NormalNodeBackgroundBrush");
             EntryPointName.Visibility = Visibility.Collapsed;
 
             // 名前の衝突チェック
@@ -1921,7 +1978,6 @@ namespace CapyCSS.Controls.BaseControls
 
                     AssetXML?.Dispose();
                     AssetXML = null;
-                    NodeNormalColor = null;
                     NodeEntryColor = null;
                     _OwnerCommandCanvas = null;
 

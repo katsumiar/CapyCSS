@@ -18,7 +18,7 @@
         </Grid>
         <Grid x:Name="BoxMainPanel" HorizontalAlignment="Left" VerticalAlignment="Center">
             <Grid HorizontalAlignment="Center" VerticalAlignment="Top">
-                <Rectangle x:Name="RectBox" RadiusX="6" RadiusY="6" StrokeThickness="3" Fill="#99FFF5EE"/>
+                <Rectangle x:Name="RectBox" RadiusX="6" RadiusY="6" StrokeThickness="3" Fill="{StaticResource NormalNodeBackgroundBrush}"/>
                 <Grid HorizontalAlignment="Center" VerticalAlignment="Center" Margin="5,5,6,5">
                     <ListView x:Name="Box" Background="Transparent" BorderBrush="#00ABADB3" />
                 </Grid>

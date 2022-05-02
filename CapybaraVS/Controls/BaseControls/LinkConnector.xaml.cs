@@ -23,7 +23,7 @@ namespace CapyCSS.Controls.BaseControls
     /// <summary>
     /// LinkConnector.xaml の相互作用ロジック
     /// </summary>
-    public partial class LinkConnector 
+    public partial class LinkConnector
         : UserControl
         , ICurveLinkPoint
         , IDisposable
@@ -229,6 +229,11 @@ namespace CapyCSS.Controls.BaseControls
         }
         #endregion
 
+        /// <summary>
+        /// 接続が切り替わった際に呼ばれるイベントです。
+        /// </summary>
+        public Action<bool> ChangeLinkedEvent = null;
+
         private CommandCanvas _OwnerCommandCanvas = null;
 
         public CommandCanvas OwnerCommandCanvas
@@ -267,7 +272,7 @@ namespace CapyCSS.Controls.BaseControls
             ChangeLinkConnectorStroke();
             ParamTextBox.UpdateEvent =
                 new Action(
-                () => 
+                () =>
                 {
                     UpdateEvent?.Invoke();
                 }
@@ -294,7 +299,7 @@ namespace CapyCSS.Controls.BaseControls
         {
             BoxMainPanel.Visibility = Visibility.Visible;
             ConnectorList.CreateNodeEvent = new Func<ObservableCollection<LinkConnector>, ICbValue>(
-                (ListData) => 
+                (ListData) =>
                 {
                     return nodeType();
                 }
@@ -650,6 +655,11 @@ namespace CapyCSS.Controls.BaseControls
         /// </summary>
         private RootConnector eventLinkRootConnector = null;
 
+        /// <summary>
+        /// パラメータのノードリストが開いているか？
+        /// </summary>
+        public bool IsOpenNodeList => BoxMainPanel.Visibility == Visibility.Visible;
+
         public bool RequestLinkCurve(ICurveLinkRoot root)
         {
             if (linkCurveLinks is null)
@@ -672,8 +682,7 @@ namespace CapyCSS.Controls.BaseControls
                     ReadOnly = true;
                 }
 
-                if (BoxMainPanel.Visibility == Visibility.Visible &&
-                    value.IsList)
+                if (IsOpenNodeList && value.IsList)
                 {
                     // 接続可能かつリスト型の場合
 
@@ -856,8 +865,7 @@ namespace CapyCSS.Controls.BaseControls
         /// <param name="count">増やす要素の数</param>
         public void TryAddListNode(int count)
         {
-            if (BoxMainPanel.Visibility == Visibility.Visible &&
-                ValueData.IsList)
+            if (IsOpenNodeList && ValueData.IsList)
             {
                 // リンクされているリストを表示に再反映する
 
@@ -873,8 +881,7 @@ namespace CapyCSS.Controls.BaseControls
         /// </summary>
         private void UpdateConnectedList()
         {
-            if (BoxMainPanel.Visibility == Visibility.Visible &&
-                ValueData.IsList)
+            if (IsOpenNodeList && ValueData.IsList)
             {
                 // 接続されているリストを表示に再反映する
 
@@ -947,11 +954,11 @@ namespace CapyCSS.Controls.BaseControls
 
         private void ChangeLinkConnectorStroke()
         {
-            if (linkCurveLinks is null)
-                ConnectorStroke = Brushes.Blue;
-            else
-                ConnectorStroke =
-                    linkCurveLinks.Count == 0 ? Brushes.Blue : Brushes.CornflowerBlue;
+            Brush linkedBrush = (Brush)Application.Current.FindResource("LinkedConnectorStrokeBrush");
+            Brush unlinkedBrush = (Brush)Application.Current.FindResource("UnlinkedConnectorStrokeBrush");
+            bool isLinked = linkCurveLinks != null && linkCurveLinks.Count != 0;
+            ConnectorStroke = isLinked ? linkedBrush : unlinkedBrush;
+            ChangeLinkedEvent?.Invoke(isLinked);
         }
 
         private void MainPanel_MouseEnter(object sender, MouseEventArgs e)
