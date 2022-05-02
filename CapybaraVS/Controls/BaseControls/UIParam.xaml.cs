@@ -1,6 +1,4 @@
-﻿#define SHOW_LINK_ARRAY   // リスト型を接続したときにリストの要素をコピーして表示する
-
-using CapyCSS.Script;
+﻿using CapyCSS.Script;
 using CapyCSS.Script.Lib;
 using CbVS.Script;
 using System;
@@ -693,7 +691,6 @@ namespace CapyCSS.Controls.BaseControls
                     valueString = cbClass.ValueUIString;
                 }
             }
-#if !SHOW_LINK_ARRAY
             else if (ValueData.IsList)
             {
                 ICbList cbList = ValueData.GetListValue;
@@ -706,7 +703,6 @@ namespace CapyCSS.Controls.BaseControls
                     valueString = cbList.ValueUIString;
                 }
             }
-#endif
             else
             {
                 if (!ValueData.IsNull && ValueData.Data is ICbShowValue cbVSShow)
