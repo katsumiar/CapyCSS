@@ -642,7 +642,7 @@ namespace CapyCSS.Controls.BaseControls
                 // BaseWorkCanvas.AddScriptCommandRecent(string name)
                 // にブレークポイントを張ると name の内容でショートカットコードがわかります。
 
-                new ShortCutCommand() { Name = "Create Literal/Local Variable", Command = "Program.Literal/Local.Literal/Local : T" },
+                new ShortCutCommand() { Name = "Create Literal/Instance", Command = "Program.Literal/Local.Literal/Local : T" },
                 new ShortCutCommand() { Name = "Create Variable", Command = "Program.Variable.Create Variable : T" },
                 new ShortCutCommand() { Name = "Get Variable", Command = "Program.Variable.Get Variable" },
                 new ShortCutCommand() { Name = "Set Variable", Command = "Program.Variable.Set Variable" },
