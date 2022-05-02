@@ -1,8 +1,8 @@
 System.Collections.Generic.List<System.Action> funcs = null;
 var ActionCall02 = () => {
     funcs = new System.Collections.Generic.List<System.Action>() {
-            () => CapyCSSbase.Script.OutConsole( "dog" ),
-            () => CapyCSSbase.Script.OutConsole( "cat" )
+            () => CapyCSSbase.Script.OutConsole( "Hello" ),
+            () => CapyCSSbase.Script.OutConsole( "CapyCSS" )
         };
     CapyCSSbase.FlowLib.ForeachAction( funcs );
 };

@@ -1,8 +1,8 @@
 var ActionCall01 = () => {
     CapyCSSbase.FlowLib.ForeachAction(
         new System.Collections.Generic.List<System.Action>() {
-            () => CapyCSSbase.Script.OutConsole( "dog" ),
-            () => CapyCSSbase.Script.OutConsole( "cat" )
+            () => CapyCSSbase.Script.OutConsole( "Hello" ),
+            () => CapyCSSbase.Script.OutConsole( "CapyCSS" )
         }
     );
 };

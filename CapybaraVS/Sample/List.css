@@ -1,0 +1,13 @@
+System.Collections.Generic.List<System.Int32> SampleList = null;
+var List = () => {
+    SampleList = new System.Collections.Generic.List<System.Int32>() { 1 };
+    SampleList.Add( 3 );
+    SampleList.Add( 5 );
+    CapyCSSbase.Script.OutConsole( SampleList.Count );
+    CapyCSSbase.FlowLib.Foreach<System.Int32>(
+        SampleList,
+        ( ARG_1 ) => CapyCSSbase.Script.OutConsole( ARG_1 )
+    );
+};
+CapyCSSbase.Script.AddEntryPoint(nameof(List), List);
+

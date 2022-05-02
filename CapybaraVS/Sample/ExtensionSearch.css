@@ -10,8 +10,8 @@ var ExtensionSearch = () => {
                 CapyCSSbase.FlowLib.If(
                     CapyCSSbase.ListFactory.Contains<System.String>(
                         new System.Collections.Generic.List<System.String>() {
-                            ".txt",
-                            ".bat"
+                            ".exe",
+                            ".dll"
                         },
                         System.IO.Path.GetExtension( variable1 )
                     ),
