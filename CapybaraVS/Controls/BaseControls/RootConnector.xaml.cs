@@ -1182,12 +1182,6 @@ namespace CapyCSS.Controls.BaseControls
         {
             get
             {
-                if (FunctionInfo != null && FunctionInfo.IsConstructor)
-                {
-                    // コンストラクタ
-
-                    return (Brush)Application.Current.FindResource("ConstructorNodeStrokeBrush");
-                }
                 return Forced.IsChecked == false ?
                     (Brush)Application.Current.FindResource("NormalNodeStrokeBrush")
                     :

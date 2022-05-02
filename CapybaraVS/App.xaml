@@ -25,8 +25,7 @@
             <SolidColorBrush x:Key="CurvePathConnectableBrush" Color="Lime"/>
             <SolidColorBrush x:Key="CurvePathCastConnectableBrush" Color="Tomato"/>
             <SolidColorBrush x:Key="CurvePathDuringBrush" Color="DeepSkyBlue"/>
-            <SolidColorBrush x:Key="ConstructorNodeStrokeBrush" Color="#80f08080"/>
-            <SolidColorBrush x:Key="ConstructorNodeBackgroundBrush" Color="#66f08080"/>
+            <SolidColorBrush x:Key="ConstructorNodeBackgroundBrush" Color="#66ADFF2F"/>
             <SolidColorBrush x:Key="EntryPointNodeBackgroundBrush" Color="#99BCBCFF"/>
             <SolidColorBrush x:Key="NotUseCacheNormalNodeStrokeBrush" Color="#66909090"/>
             <SolidColorBrush x:Key="NormalNodeStrokeBrush" Color="#660000fa"/>
