@@ -685,7 +685,7 @@ namespace CapyCSS.Controls.BaseControls
                 shortcutButton.Click += (o, e) => CommandMenu.ExecuteFindCommand(shortCutCommand.Command);
                 stackPanel.Children.Add(shortcutButton);
             }
-
+            stackPanel.Margin = new Thickness(6, 4, 0, 6);
             moduleView.Content = stackPanel;
         }
 

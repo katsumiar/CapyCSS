@@ -25,7 +25,7 @@
                     </ListView.ItemContainerStyle>
                 </ListView>
             </Grid>
-            <BaseControls:AddLabel x:Name="AddOption" Caption="Add argument" MouseDown="AddOption_MouseDown" HorizontalAlignment="Left" Margin="6,0,0,0" />
+            <BaseControls:AddLabel x:Name="AddOption" Title="Add arguments" MouseDown="AddOption_MouseDown" HorizontalAlignment="Left" Margin="6,0,0,0" />
         </StackPanel>
     </Grid>
 </UserControl>

@@ -14,19 +14,19 @@
         <Grid Grid.Column="0">
             <BaseControls:BaseWorkCanvas x:Name="WorkCanvas" />
         </Grid>
-        <Expander IsExpanded="True" ExpandDirection="Right" HorizontalAlignment="Right" VerticalAlignment="Top" Foreground="Black" Background="#CCFFE4C4">
+        <Expander IsExpanded="True" ExpandDirection="Right" HorizontalAlignment="Right" VerticalAlignment="Top">
             <Expander.Header>
-                <TextBlock Text="Variable List" RenderTransformOrigin=".5,.5" FontWeight="Bold" FontSize="14">
+                <TextBlock Text="Variable List" RenderTransformOrigin=".5,.5" FontSize="20">
                     <TextBlock.LayoutTransform>
-                        <RotateTransform Angle="90" />
+                        <RotateTransform Angle="-90" />
                     </TextBlock.LayoutTransform>
                 </TextBlock>
             </Expander.Header>
             <Controls:Stack x:Name="WorkStack" HorizontalAlignment="Center" VerticalAlignment="Top" />
         </Expander>
-        <Expander x:Name="moduleView" IsExpanded="True"  ExpandDirection="Left" HorizontalAlignment="Left" VerticalAlignment="Top" Foreground="Black" Background="#CCFFE4C4">
+        <Expander x:Name="moduleView" IsExpanded="True"  ExpandDirection="Left" HorizontalAlignment="Left" VerticalAlignment="Top">
             <Expander.Header>
-                <TextBlock Text="Local Information" RenderTransformOrigin=".5,.5" FontWeight="Bold" FontSize="14">
+                <TextBlock Text="Local Information" RenderTransformOrigin=".5,.5" FontSize="20">
                     <TextBlock.LayoutTransform>
                         <RotateTransform Angle="90" />
                     </TextBlock.LayoutTransform>

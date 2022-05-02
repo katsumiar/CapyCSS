@@ -6,24 +6,24 @@
              xmlns:local="clr-namespace:CapyCSS.Controls.BaseControls"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
-    <Grid>
+    <Grid Margin="0,0,0,0">
         <StackPanel Margin="0,0,0,4">
-            <ComboBox x:Name="InportList" BorderBrush="{StaticResource BlackBrush}" DropDownOpened="ComboBox_DropDownOpened" SelectionChanged="InstallDllList_SelectionChanged" />
+            <ComboBox x:Name="InportList" DropDownOpened="ComboBox_DropDownOpened" SelectionChanged="InstallDllList_SelectionChanged" />
             <StackPanel x:Name="imputNameSpaceName" Orientation="Horizontal" Visibility="Collapsed">
-                <Label Content="NameSpace" Foreground="{StaticResource BlackBrush}" />
-                <TextBox x:Name="NameSpaceName" Width="200" Foreground="{StaticResource BlackBrush}" BorderBrush="{StaticResource BlackBrush}" Cursor="Arrow" />
+                <Label Content="NameSpace" />
+                <TextBox x:Name="NameSpaceName" Width="200" Cursor="Arrow" />
             </StackPanel>
             <StackPanel x:Name="imputNuGetName" Orientation="Horizontal" Visibility="Collapsed">
-                <Label Content="Package Name" Foreground="{StaticResource BlackBrush}" />
-                <TextBox x:Name="PackageName" Width="100" Foreground="{StaticResource BlackBrush}" BorderBrush="{StaticResource BlackBrush}" Cursor="Arrow" />
-                <Label Content="Version" Foreground="{StaticResource BlackBrush}" />
-                <TextBox x:Name="Version" Width="60" Foreground="{StaticResource BlackBrush}" BorderBrush="{StaticResource BlackBrush}" />
+                <Label Content="Package Name" />
+                <TextBox x:Name="PackageName" Width="100" Cursor="Arrow" />
+                <Label Content="Version" />
+                <TextBox x:Name="Version" Width="60" />
             </StackPanel>
-            <BaseControls:AddLabel Caption="Import" HorizontalAlignment="Left" MouseDown="AddLabel_MouseDown" />
+            <BaseControls:AddLabel Title="Import" HorizontalAlignment="Left" MouseDown="AddLabel_MouseDown" />
             <ListView x:Name="ImportList" Margin="0,6,0,3">
                 <ListView.ItemContainerStyle>
                     <Style TargetType="ListViewItem">
-                        <Setter Property="Foreground" Value="MidnightBlue" />
+                        <Setter Property="Foreground" Value="{StaticResource NameSpaceLabelForegroundBrush}" />
                         <Setter Property="Height" Value="20" />
                         <Setter Property="FontWeight" Value="Bold" />
                     </Style>

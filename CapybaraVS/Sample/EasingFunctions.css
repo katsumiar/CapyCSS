@@ -8,7 +8,7 @@ var EasingFunctions = () => {
                     ( ARG_1 ) => CapyCSS.EasingFunction.InOutSin( ARG_1 ),
                     0.05
                 ),
-                System.Windows.Media.Brushes.Navy,
+                System.Windows.Media.Brushes.CornflowerBlue,
                 CapyCSS.Controls.PlotWindow.DrawType.BarGraph
             ),
             CapyCSS.Script.Lib.Graph.CreatePlotInfo(
@@ -17,7 +17,7 @@ var EasingFunctions = () => {
                     ( ARG_1 ) => CapyCSS.EasingFunction.InOutSin( ARG_1 ),
                     0.05
                 ),
-                System.Windows.Media.Brushes.Red,
+                System.Windows.Media.Brushes.Coral,
                 CapyCSS.Controls.PlotWindow.DrawType.Line
             )
         },

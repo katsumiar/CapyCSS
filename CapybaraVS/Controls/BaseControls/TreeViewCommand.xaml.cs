@@ -214,7 +214,7 @@ namespace CapyCSS.Controls.BaseControls
                 {
                     return (Brush)Application.Current.FindResource("UnenableCommandBrush");
                 }
-                return (Brush)Application.Current.FindResource("EnableCommandBrush");
+                return (Brush)Application.Current.FindResource("PrimaryHueDarkForegroundBrush");
             }
             set {
                 OnPropertyChanged(nameof(Foreground));

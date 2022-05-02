@@ -7,11 +7,10 @@
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800" FocusVisualStyle="{x:Null}">
     <Grid HorizontalAlignment="Center">
-        <Rectangle Fill="#B2FFFFFF" />
         <ScrollViewer Margin="3,3,3,3" >
             <StackPanel x:Name="ListPanel" ScrollViewer.VerticalScrollBarVisibility="Auto" Margin="4,4,4,4">
                 <Grid>
-                    <Rectangle x:Name="ConnectorBackground" Visibility="Collapsed" RadiusX="3" RadiusY="3" Margin="10, 0,10,0" />
+                    <Rectangle x:Name="ConnectorBackground" Visibility="Collapsed" RadiusX="3" RadiusY="3" Margin="10,0,10,0" />
                     <ListView x:Name="StackList" Background="{x:Null}" BorderBrush="{x:Null}">
                         <ListView.ItemContainerStyle>
                             <Style TargetType="{x:Type ListViewItem}">

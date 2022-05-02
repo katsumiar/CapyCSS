@@ -19,32 +19,81 @@ namespace CapyCSS.Controls.BaseControls
     /// </summary>
     public partial class AddLabel : UserControl
     {
-        public static readonly DependencyProperty CaptionProperty =
-            DependencyProperty.Register("Caption",
-                                        typeof(string),
-                                        typeof(AddLabel),
-                                        new FrameworkPropertyMetadata("Caption", new PropertyChangedCallback(OnCaptionChanged)));
+        #region Title 添付プロパティ実装
+
+        private static ImplementDependencyProperty<AddLabel, string> impTitle =
+            new ImplementDependencyProperty<AddLabel, string>(
+                nameof(Title),
+                (self, getValue) =>
+                {
+                    string value = getValue(self);
+                    self.Label.Content = value;
+                });
+
+        public static readonly DependencyProperty TitleProperty = impTitle.Regist(null);
+
+        public string Title
+        {
+            get { return impTitle.GetValue(this); }
+            set { impTitle.SetValue(this, value); }
+        }
+
+        #endregion
+
+        #region Size 添付プロパティ実装
+
+        private static ImplementDependencyProperty<AddLabel, int> impSize =
+            new ImplementDependencyProperty<AddLabel, int>(
+                nameof(Size),
+                (self, getValue) =>
+                {
+                    int value = getValue(self);
+                    self.ellipse.Width = value;
+                    self.ellipse.Height = value;
+                    self.line1.Width = value - 6;
+                    self.line2.Height = value - 6;
+                });
+
+        public static readonly DependencyProperty SizeProperty = impSize.Regist(10);
+
+        public int Size
+        {
+            get { return impSize.GetValue(this); }
+            set { impSize.SetValue(this, value); }
+        }
+
+        #endregion
+
+        #region ForegroundBrush 添付プロパティ実装
+
+        private static ImplementDependencyProperty<AddLabel, Brush> impForegroundBrush =
+            new ImplementDependencyProperty<AddLabel, Brush>(
+                nameof(ForegroundBrush),
+                (self, getValue) =>
+                {
+                    Brush value = getValue(self);
+                    self.ellipse.Stroke = value;
+                    self.Label.Foreground = value;
+                    self.line1.Fill = value;
+                    self.line2.Fill = value;
+                });
+
+        public static readonly DependencyProperty ForegroundBrushProperty = impForegroundBrush.Regist(null);
+
+        public Brush ForegroundBrush
+        {
+            get { return impForegroundBrush.GetValue(this); }
+            set { impForegroundBrush.SetValue(this, value); }
+        }
+
+        #endregion
 
         public AddLabel()
         {
             InitializeComponent();
-        }
-
-        public string Caption
-        {
-            get { return (string)GetValue(CaptionProperty); }
-            set { SetValue(CaptionProperty, value); }
-        }
-
-        private static void OnCaptionChanged(DependencyObject obj, DependencyPropertyChangedEventArgs e)
-        {
-            // オブジェクトを取得して処理する
-
-            AddLabel ctrl = obj as AddLabel;
-            if (ctrl != null)
-            {
-                ctrl.Label.Content = ctrl.Caption;
-            }
+            Title = "Sample";
+            Size = 18;
+            ForegroundBrush = (Brush)Application.Current.FindResource("AddLabelForegroundBrush");
         }
 
         private void StackPanel_MouseEnter(object sender, MouseEventArgs e)
