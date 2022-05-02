@@ -242,6 +242,9 @@ namespace CapyCSS.Controls.BaseControls
             if (node is null)
                 return null;
 
+#if false   // 変数はスクリプト実行時に初期化されるようになったのでリストの特別扱いを止めた。
+            // ※初期化リストを実装する場合は、この機能を再有効化して活用できそう。
+
             bool isGroupWithinGroup = false;
             if (CbListValue != null && CbListValue.ValueData != null)
             {
@@ -271,6 +274,7 @@ namespace CapyCSS.Controls.BaseControls
                 ListPanel.Children[0].Visibility = Visibility.Visible;
             }
             else
+#endif
             {
                 var grp = new StackGroup();
                 grp.OwnerCommandCanvas = OwnerCommandCanvas;
