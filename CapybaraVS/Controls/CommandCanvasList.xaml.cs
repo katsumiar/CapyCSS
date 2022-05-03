@@ -186,7 +186,7 @@ namespace CapyCSS.Controls
             CommandCanvas result = null;
             foreach (TabItem tabItem in Tab.Items)
             {
-                if (tabItem.Header.ToString() == title)
+                if ((tabItem.Header as RemovableLabel).Title.ToString() == title)
                 {
                     return tabItem.Content as CommandCanvas;
                 }
@@ -196,7 +196,7 @@ namespace CapyCSS.Controls
 
         private CommandCanvas CurrentScriptCanvas = null;
 
-        public string CurrentScriptTitle => CurrentTabItem.Header.ToString();
+        public string CurrentScriptTitle => (CurrentTabItem.Header as RemovableLabel).Title.ToString();
 
         public CommandCanvasList()
         {
@@ -334,7 +334,7 @@ namespace CapyCSS.Controls
             Dispatcher.BeginInvoke(new Action(() =>
             {
                 CurrentScriptCanvas.SaveXML();
-                CurrentTabItem.Header = System.IO.Path.GetFileNameWithoutExtension(CurrentScriptCanvas.OpenFileName);
+                SetCurrentTabName(CurrentScriptCanvas.OpenFileName);
             }), DispatcherPriority.ApplicationIdle);
         }
 
@@ -348,7 +348,7 @@ namespace CapyCSS.Controls
                 CurrentScriptCanvas.OverwriteSaveXML();
                 if (CurrentScriptCanvas.OpenFileName != null && CurrentScriptCanvas.OpenFileName != "")
                 {
-                    CurrentTabItem.Header = System.IO.Path.GetFileNameWithoutExtension(CurrentScriptCanvas.OpenFileName);
+                    SetCurrentTabName(CurrentScriptCanvas.OpenFileName);
                 }
             }), DispatcherPriority.ApplicationIdle);
         }
@@ -419,7 +419,7 @@ namespace CapyCSS.Controls
         /// <param name="path">ファイルパス</param>
         public void SetCurrentTabName(string path)
         {
-            CurrentTabItem.Header = System.IO.Path.GetFileNameWithoutExtension(path);
+            (CurrentTabItem.Header as RemovableLabel).Title = System.IO.Path.GetFileNameWithoutExtension(path);
         }
 
         /// <summary>
@@ -446,14 +446,22 @@ namespace CapyCSS.Controls
         {
             string newName = $"New{newNumbering++}";
             CurrentScriptCanvas = CreateCanvas();
-            Tab.Items.Add(
-                new TabItem()
+            var newItem = new TabItem()
+            {
+                HorizontalAlignment = HorizontalAlignment.Left,
+                Content = CurrentScriptCanvas
+            };
+            newItem.Header = new RemovableLabel()
+            {
+                Title = newName,
+                ClickEvent = () =>
                 {
-                    Header = newName,
-                    HorizontalAlignment = HorizontalAlignment.Left,
-                    Content = CurrentScriptCanvas
+                    // タブ付属の削除機能
+
+                    RemoveScriptCanvas(newItem);
                 }
-                );
+            };
+            Tab.Items.Add(newItem);
             if (CurrentTabIndex == -1)
             {
                 CurrentTabIndex = 0;
@@ -929,13 +937,33 @@ namespace CapyCSS.Controls
         /// <param name="e"></param>
         private void DeleteButton_Click(object sender, RoutedEventArgs e)
         {
-            CurrentScriptCanvas.ClearWorkCanvas();
-            CanvasData.Remove(CurrentScriptCanvas);
-            CurrentScriptCanvas.Dispose();
-            Tab.Items.Remove(CurrentTabItem);
+            RemoveScriptCanvas(CurrentTabItem);
+        }
+
+        /// <summary>
+        /// タブを削除します。
+        /// </summary>
+        /// <param name="tabItem">タブ</param>
+        private void RemoveScriptCanvas(TabItem tabItem)
+        {
+            CommandCanvas commandCanvas = tabItem.Content as CommandCanvas;
+            commandCanvas.ClearWorkCanvas();
+            CanvasData.Remove(commandCanvas);
+            commandCanvas.Dispose();
+            if (Tab.Items.Count > 1 && Tab.Items[0].Equals(tabItem))
+            {
+                // 頭のタブを消すとタブ切り替えが上手く動かない
+
+                Tab.Items.Remove(tabItem);
+                Tab.SelectedIndex = 0;
+            }
+            else
+            {
+                Tab.Items.Remove(tabItem);
+            }
             if (Tab.Items.Count == 0)
             {
-                CurrentScriptCanvas = null;
+                commandCanvas = null;
                 RequestSetTitle();
             }
             UpdateButtonEnable();
@@ -1033,13 +1061,12 @@ namespace CapyCSS.Controls
             {
                 TabItem selectedTab = e.AddedItems[0] as TabItem;
                 int index = 0;
-                //CurrentTabIndex = -1;
                 foreach (var node in Tab.Items)
                 {
                     if (node == selectedTab)
                     {
                         CurrentTabIndex = index;
-                        SetCurrentScriptCanvas(index);
+                        SetCurrentScriptCanvas(CurrentTabIndex);
                         break;
                     }
                     index++;

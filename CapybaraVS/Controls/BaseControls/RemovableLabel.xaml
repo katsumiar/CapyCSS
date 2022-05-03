@@ -1,0 +1,15 @@
+﻿<UserControl xmlns:Controls="clr-namespace:CapyCSS.Controls"  x:Class="CapyCSS.Controls.BaseControls.RemovableLabel"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:CapyCSS.Controls.BaseControls"
+             mc:Ignorable="d" 
+             d:DesignHeight="43.43" d:DesignWidth="202.785">
+    <Grid>
+        <StackPanel Orientation="Horizontal" MouseEnter="Delete_MouseEnter" MouseLeave="Delete_MouseLeave" Background="#02000000">
+            <TextBlock x:Name="Caption" VerticalAlignment="Center" />
+            <Controls:DeleteIcon x:Name="Delete" Width="16" Height="16" VerticalAlignment="Center" Margin="6,0,0,0" Visibility="Collapsed" MouseEnter="Delete_MouseEnter_1" MouseLeave="Delete_MouseLeave_1" />
+        </StackPanel>
+    </Grid>
+</UserControl>

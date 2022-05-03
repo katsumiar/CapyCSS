@@ -28,11 +28,7 @@
             </Grid>
         </ToolBarPanel>
         <Grid Grid.Row="1">
-            <TabControl x:Name="Tab" SelectionChanged="Tab_SelectionChanged">
-                <TabItem Header="TabItem1" HorizontalAlignment="Left">
-                    <TextBlock Text="TabItem1 Content" />
-                </TabItem>
-            </TabControl>
+            <TabControl x:Name="Tab" SelectionChanged="Tab_SelectionChanged"/>
             <Grid x:Name="RunningPanel" Background="#4C000000" Visibility="Hidden">
                 <TextBlock Text="Running..." Foreground="{StaticResource RunningLabelForegroundBrush}" VerticalAlignment="Bottom" HorizontalAlignment="Right" FontSize="48" FontWeight="Bold" />
             </Grid>
