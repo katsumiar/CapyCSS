@@ -1221,20 +1221,20 @@ namespace CapyCSS.Controls.BaseControls
             var dropFiles = e.Data.GetData(System.Windows.DataFormats.FileDrop) as string[];
             if (dropFiles != null)
             {
-                foreach (var filename in dropFiles)
+                foreach (var path in dropFiles)
                 {
-                    if (System.IO.Path.HasExtension(filename))
+                    if (System.IO.Path.HasExtension(path))
                     {
-                        if (System.IO.Path.GetExtension(filename) == ".cbs")
+                        if (System.IO.Path.GetExtension(path) == ".cbs")
                         {
                             // スクリプトファイルを読み込む
 
-                            OwnerCommandCanvas.LoadXML(filename);
+                            OwnerCommandCanvas.CommandCanvasControl.AddNewContents(path);
                             return;
                         }
                     }
 
-                    CreateTextAsset(pos, filename);
+                    CreateTextAsset(pos, path);
                         
                     // 重ならないようにする（値は適当）
                     pos.X += 20;

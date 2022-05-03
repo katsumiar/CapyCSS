@@ -389,7 +389,7 @@ namespace CapyCSS.Controls
                     CurrentScriptCanvas.LoadXML();
                     if (CurrentScriptCanvas.OpenFileName != null && CurrentScriptCanvas.OpenFileName != "")
                     {
-                        CurrentTabItem.Header = System.IO.Path.GetFileNameWithoutExtension(CurrentScriptCanvas.OpenFileName);
+                        SetCurrentTabName(CurrentScriptCanvas.OpenFileName);
                     }
                 }
                 else
@@ -397,11 +397,44 @@ namespace CapyCSS.Controls
                     CurrentScriptCanvas.LoadXML(System.IO.Path.GetFullPath(reserveLoadCbsFilePath));
                     if (CurrentScriptCanvas.OpenFileName != null && CurrentScriptCanvas.OpenFileName != "")
                     {
-                        CurrentTabItem.Header = System.IO.Path.GetFileNameWithoutExtension(reserveLoadCbsFilePath);
+                        SetCurrentTabName(reserveLoadCbsFilePath);
                     }
                 }
                 reserveLoadCbsFilePath = null;
             }), DispatcherPriority.ApplicationIdle);
+        }
+
+        /// <summary>
+        /// カレントのスクリプトキャンバスにcbsファイルを読み込みます。
+        /// </summary>
+        /// <param name="path">ファイルパス</param>
+        public void LoadXMLCurrentScriptCanvas(string path)
+        {
+            CurrentScriptCanvas.LoadXML(path);
+        }
+
+        /// <summary>
+        /// カレントタブの名前を変更します。
+        /// </summary>
+        /// <param name="path">ファイルパス</param>
+        public void SetCurrentTabName(string path)
+        {
+            CurrentTabItem.Header = System.IO.Path.GetFileNameWithoutExtension(path);
+        }
+
+        /// <summary>
+        /// 新しいタブを作ってcbsファイルを読み込みます。
+        /// </summary>
+        /// <param name="path">cbsファイルのパス</param>
+        public void AddNewContents(string path)
+        {
+            AddNewContents();
+            this.Dispatcher.BeginInvoke(new Action(() =>
+                {
+                    LoadXMLCurrentScriptCanvas(path);
+                    SetCurrentTabName(path);
+                }
+                ), DispatcherPriority.ApplicationIdle);
         }
 
         private static int newNumbering = 1;
@@ -409,7 +442,7 @@ namespace CapyCSS.Controls
         /// <summary>
         /// 新規スクリプト作業領域を作成します。
         /// </summary>
-        private void AddNewContents()
+        public void AddNewContents()
         {
             string newName = $"New{newNumbering++}";
             CurrentScriptCanvas = CreateCanvas();
