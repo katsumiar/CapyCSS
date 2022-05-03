@@ -50,8 +50,9 @@ namespace CapyCSS.Controls
 
         private void DeleteIcon_SizeChanged(object sender, SizeChangedEventArgs e)
         {
-            Peke1.Width = ActualWidth * 0.1;
-            Peke1.Height = ActualHeight * 0.95;
+            double marginRate = 0.6;
+            Peke1.Width = ActualWidth * marginRate * 0.1;
+            Peke1.Height = ActualHeight * marginRate * 0.95;
             Peke2.Width = Peke1.Width;
             Peke2.Height = Peke1.Height;
         }

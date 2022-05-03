@@ -62,6 +62,9 @@
             <SolidColorBrush x:Key="NameSpaceLabelForegroundBrush" Color="#FF66CDAA"/>
             <SolidColorBrush x:Key="RunningLabelForegroundBrush" Color="#FFC53030"/>
             <SolidColorBrush x:Key="EntryPointHintLabelForegroundBrush" Color="#99ABABAB"/>
+            <SolidColorBrush x:Key="DeleteIconForegroundBrush" Color="Black"/>
+            <SolidColorBrush x:Key="DeleteIconStrokeBrush" Color="RoyalBlue"/>
+            <SolidColorBrush x:Key="DeleteIconBackgroundBrush" Color="CornflowerBlue"/>
         </ResourceDictionary>
     </Application.Resources>
 </Application>
