@@ -74,10 +74,9 @@ namespace CapyCSS.Controls
                 (self, getValue) =>
                 {
                     string value = getValue(self);
-                    if (value != null && value.Trim() != "")
+                    if (value != null)
                     {
-                        self.FilterText.Text = value;
-                        self.FilterText_KeyUp(null, null);
+                        self.FilteringCommand();
                     }
                 });
 
@@ -96,6 +95,7 @@ namespace CapyCSS.Controls
             InitializeComponent();
             filterProcTimer.Tick += EventHandler;
             filterProcTimer.IsEnabled = false;
+            DataContext = this;
         }
 
         public void SetPos(Point? pos = null)
@@ -116,12 +116,12 @@ namespace CapyCSS.Controls
             filterProcTimer.Stop();
 
             cancellationTokenSource?.Cancel();
-            searchTreeViewCommand.AssetTreeData.Clear();
+            filteringViewCommand.AssetTreeData.Clear();
 
             // 待機後の処理
             cancellationTokenSource = treeViewCommand.SetFilter(
-                searchTreeViewCommand,
-                FilterText.Text);
+                filteringViewCommand,
+                FilterString);
 
             filterProcTimer.IsEnabled = false;
         }
@@ -148,10 +148,10 @@ namespace CapyCSS.Controls
         System.Threading.CancellationTokenSource cancellationTokenSource = null;
         DispatcherTimer filterProcTimer = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(300) };
 
-        private void FilterText_KeyUp(object sender, KeyEventArgs e)
+        public void FilteringCommand()
         {
-            FilterText.Text = FilterText.Text.Trim();
-            if (FilterText.Text != "")
+            FilterString = FilterString.Trim();
+            if (FilterString != "")
             {
                 // フィルタリング処理は、タイマーで時間差を置いて処理する
 
@@ -162,8 +162,7 @@ namespace CapyCSS.Controls
                     return;
                 }
 
-                treeViewCommand.Visibility = Visibility.Collapsed;
-                searchTreeViewCommand.Visibility = Visibility.Visible;
+                ShowFilteringViewCommand();
                 filterProcTimer.IsEnabled = true;
                 filterProcTimer.Start();
             }
@@ -171,13 +170,24 @@ namespace CapyCSS.Controls
             {
                 // フィルタリング解除
 
-                treeViewCommand.Visibility = Visibility.Visible;
-                searchTreeViewCommand.Visibility = Visibility.Collapsed;
+                HideFilteringViewCommand();
                 cancellationTokenSource?.Cancel();
                 cancellationTokenSource = null;
                 filterProcTimer.Stop();
                 filterProcTimer.IsEnabled = false;
             }
+        }
+
+        private void HideFilteringViewCommand()
+        {
+            treeViewCommand.Visibility = Visibility.Visible;
+            filteringViewCommand.Visibility = Visibility.Collapsed;
+        }
+
+        public void ShowFilteringViewCommand()
+        {
+            treeViewCommand.Visibility = Visibility.Collapsed;
+            filteringViewCommand.Visibility = Visibility.Visible;
         }
 
         public void Dispose()
@@ -188,7 +198,7 @@ namespace CapyCSS.Controls
             Close();
             filterProcTimer.Tick -= EventHandler;
             filterProcTimer = null;
-            searchTreeViewCommand.AssetTreeData.Clear();
+            filteringViewCommand.AssetTreeData.Clear();
             treeViewCommand.AssetTreeData.Clear();
 
             GC.SuppressFinalize(this);

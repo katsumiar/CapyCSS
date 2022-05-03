@@ -24,14 +24,14 @@
             <TextBlock x:Name="MessageBox" Visibility="Collapsed" FontSize="20" FontWeight="Bold" />
             <StackPanel Orientation="Horizontal" FocusVisualStyle="{x:Null}">
                 <Label Content="Filter :" />
-                <TextBox x:Name="FilterText" KeyUp="FilterText_KeyUp" Width="385" />
+                <TextBox x:Name="FilterText" Text="{Binding FilterString,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" Width="385" />
             </StackPanel>
         </StackPanel>
         <ScrollViewer Grid.Row="1" x:Name="scrollViewer" VerticalScrollBarVisibility="Auto" VerticalAlignment="Top" HorizontalAlignment="Stretch" FocusVisualStyle="{x:Null}">
             <StackPanel>
                 <StackPanel x:Name="OpenListContents" HorizontalAlignment="Stretch" FocusVisualStyle="{x:Null}">
                     <BaseControls:TreeViewCommand x:Name="treeViewCommand"/>
-                    <BaseControls:TreeViewCommand x:Name="searchTreeViewCommand" Visibility="Collapsed" />
+                    <BaseControls:TreeViewCommand x:Name="filteringViewCommand" Visibility="Collapsed" />
                 </StackPanel>
             </StackPanel>
         </ScrollViewer>

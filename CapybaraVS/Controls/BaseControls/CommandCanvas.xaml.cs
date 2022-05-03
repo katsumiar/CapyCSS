@@ -1813,7 +1813,10 @@ namespace CapyCSS.Controls.BaseControls
         public void ShowCommandMenu(Point? pos = null, string filterString = null)
         {
             CommandMenuWindow.SetPos(pos);
-            CommandMenuWindow.FilterString = filterString;
+            if (filterString != null)
+            {
+                CommandMenuWindow.FilterString = filterString;
+            }
             CommandMenuWindow.ShowDialog();
         }
 
