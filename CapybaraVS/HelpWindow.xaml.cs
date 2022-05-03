@@ -14,13 +14,14 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using MahApps.Metro.Controls;
 
 namespace CapyCSS
 {
     /// <summary>
     /// HelpWindow.xaml の相互作用ロジック
     /// </summary>
-    public partial class HelpWindow : Window
+    public partial class HelpWindow : MetroWindow
     {
         public const string HELP = "Help:";
 
@@ -37,6 +38,7 @@ namespace CapyCSS
             Info.Text += Environment.NewLine;
             Info.Text += "Copyright notice:" + Environment.NewLine;
             Info.Text += "  Microsoft.NET " + Environment.Version.ToString() + " (" + (Environment.Is64BitProcess ? "64bit" : "32bit") + ")" + Environment.NewLine;
+            Info.Text += "  MahApps.Metro 2.4.9" + Environment.NewLine;
             Info.Text += "  Material Design In XAML Toolkit 4.5.0" + Environment.NewLine;
             Info.Text += "  Microsoft.ML.NET 1.7.1" + Environment.NewLine;
             Info.Text += "  Microsoft.ML.ImageAnalytics 1.7.1" + Environment.NewLine;

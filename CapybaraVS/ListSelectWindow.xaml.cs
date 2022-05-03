@@ -14,13 +14,14 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using MahApps.Metro.Controls;
 
 namespace CapyCSS
 {
     /// <summary>
     /// ListSelectWindow.xaml の相互作用ロジック
     /// </summary>
-    public partial class ListSelectWindow : Window
+    public partial class ListSelectWindow : MetroWindow
     {
         #region Caption 添付プロパティ実装
 

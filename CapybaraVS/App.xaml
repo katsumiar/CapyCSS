@@ -8,6 +8,10 @@
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Controls.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Fonts.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Themes/Light.Teal.xaml" />
+
                 <materialDesign:BundledTheme BaseTheme="Dark" PrimaryColor="DeepPurple" SecondaryColor="Lime" />
                 <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Defaults.xaml" />
             </ResourceDictionary.MergedDictionaries>
@@ -56,6 +60,8 @@
             <SolidColorBrush x:Key="GroupAreaStrokeBrush" Color="#FF6A969C"/>
             <SolidColorBrush x:Key="AddLabelForegroundBrush" Color="#FFFFFFFF"/>
             <SolidColorBrush x:Key="NameSpaceLabelForegroundBrush" Color="#FF66CDAA"/>
+            <SolidColorBrush x:Key="RunningLabelForegroundBrush" Color="#FFC53030"/>
+            <SolidColorBrush x:Key="EntryPointHintLabelForegroundBrush" Color="#99ABABAB"/>
         </ResourceDictionary>
     </Application.Resources>
 </Application>

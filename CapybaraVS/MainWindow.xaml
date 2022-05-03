@@ -1,4 +1,7 @@
-﻿<Window xmlns:Controls="clr-namespace:CapyCSS.Controls"  xmlns:BaseControls="clr-namespace:CapyCSS.Controls.BaseControls" 
+﻿<mah:MetroWindow
+        xmlns:mah="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
+        xmlns:Controls="clr-namespace:CapyCSS.Controls"
+        xmlns:BaseControls="clr-namespace:CapyCSS.Controls.BaseControls" 
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -14,8 +17,9 @@
         TextOptions.TextFormattingMode="Ideal" 
         TextOptions.TextRenderingMode="Auto"        
         Background="{DynamicResource MaterialDesignPaper}"
-        FontFamily="{DynamicResource MaterialDesignFont}">
+        FontFamily="{DynamicResource MaterialDesignFont}"
+        TitleCharacterCasing="Normal">
     <Grid>
         <Controls:CommandCanvasList x:Name="CommandControl" />
     </Grid>
-</Window>
+</mah:MetroWindow>

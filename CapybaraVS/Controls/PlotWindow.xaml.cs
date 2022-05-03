@@ -16,6 +16,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using System.Windows.Threading;
 using CapyCSSbase;
+using MahApps.Metro.Controls;
 
 namespace CapyCSS.Controls
 {
@@ -23,7 +24,7 @@ namespace CapyCSS.Controls
     /// PlotWindow.xaml の相互作用ロジック
     /// </summary>
     public partial class PlotWindow
-        : Window
+        : MetroWindow
         , IDisposable
     {
         private double magnification = 1.0;

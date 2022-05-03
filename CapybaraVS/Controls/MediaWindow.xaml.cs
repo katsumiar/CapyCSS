@@ -12,13 +12,14 @@ using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using System.Windows.Threading;
 using static CbVS.Script.Lib.Media;
+using MahApps.Metro.Controls;
 
 namespace CbVS.Controls
 {
     /// <summary>
     /// ImageWindow.xaml の相互作用ロジック
     /// </summary>
-    public partial class MediaWindow : Window
+    public partial class MediaWindow : MetroWindow
     {
         BitmapSource imageData = null;
 

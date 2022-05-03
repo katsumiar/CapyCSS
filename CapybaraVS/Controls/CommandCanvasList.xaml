@@ -6,14 +6,14 @@
              xmlns:local="clr-namespace:CapyCSS.Controls"
              mc:Ignorable="d" 
              d:DesignHeight="576.797" d:DesignWidth="913.672">
-    <Grid KeyDown="Grid_KeyDown" Background="PeachPuff">
+    <Grid KeyDown="Grid_KeyDown">
         <Grid.RowDefinitions>
             <RowDefinition Height="36" />
             <RowDefinition Height="*" />
             <RowDefinition Height="5" />
             <RowDefinition Height="160" />
         </Grid.RowDefinitions>
-        <ToolBarPanel Grid.Row="0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Background="PeachPuff" Orientation="Horizontal">
+        <ToolBarPanel Grid.Row="0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Orientation="Horizontal">
             <Button Content="Help" x:Name="HelpButton" Click="HelpButton_Click" Height="30" Margin="6,2,0,2" />
             <Button Content="Load(Ctrl+O)" x:Name="LoadButton" Click="LoadButton_Click" Height="30" Margin="6,2,0,2" />
             <Button Content="Save" x:Name="SaveButton" Click="SaveButton_Click" Height="30" Margin="6,2,0,2" />
@@ -23,8 +23,8 @@
             <Button Content="Convert C#" x:Name="ConvertCSS" Click="ConvertCSS_Click" Height="30" Margin="12,2,0,2" />
             <Button Content="Execute (F5)" x:Name="ExecuteButton" IsEnabled="False" Click="ExecuteButton_Click" Height="30" Margin="12,2,6,2" />
             <Grid>
-                <TextBox x:Name="EntryPointName" Height="24" Width="90" BorderBrush="{StaticResource BlackBrush}" TextChanged="EntryPointName_TextChanged"/>
-                <TextBlock x:Name="EntryPointNamePh" Text="Entry Point Name" Height="24" FontSize="11" Margin="2,8,0,0" Foreground="#99000000" IsHitTestVisible="False"/>
+                <TextBox x:Name="EntryPointName" Height="24" Width="90" TextChanged="EntryPointName_TextChanged"/>
+                <TextBlock x:Name="EntryPointNamePh" Text="Entry Point Name" Height="24" FontSize="11" Margin="2,8,0,0" Foreground="{StaticResource EntryPointHintLabelForegroundBrush}" IsHitTestVisible="False"/>
             </Grid>
         </ToolBarPanel>
         <Grid Grid.Row="1">
@@ -34,7 +34,7 @@
                 </TabItem>
             </TabControl>
             <Grid x:Name="RunningPanel" Background="#4C000000" Visibility="Hidden">
-                <TextBlock Text="Running..." Foreground="#FFC53030" VerticalAlignment="Bottom" HorizontalAlignment="Right" FontSize="48" FontWeight="Bold" />
+                <TextBlock Text="Running..." Foreground="{StaticResource RunningLabelForegroundBrush}" VerticalAlignment="Bottom" HorizontalAlignment="Right" FontSize="48" FontWeight="Bold" />
             </Grid>
         </Grid>
         <GridSplitter Grid.Row="2" Grid.ColumnSpan="1" HorizontalAlignment="Stretch"/>

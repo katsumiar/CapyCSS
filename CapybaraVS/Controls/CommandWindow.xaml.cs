@@ -14,6 +14,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using System.Windows.Threading;
+using MahApps.Metro.Controls;
 
 namespace CapyCSS.Controls
 {
@@ -21,7 +22,7 @@ namespace CapyCSS.Controls
     /// CommandWindow.xaml の相互作用ロジック
     /// </summary>
     public partial class CommandWindow
-        : Window
+        : MetroWindow
         , IDisposable
     {
         /// <summary>

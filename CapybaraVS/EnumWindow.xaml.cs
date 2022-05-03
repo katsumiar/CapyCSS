@@ -13,13 +13,14 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using System.Windows.Threading;
+using MahApps.Metro.Controls;
 
 namespace CapyCSS
 {
     /// <summary>
     /// EnumWindow.xaml の相互作用ロジック
     /// </summary>
-    public partial class EnumWindow : Window
+    public partial class EnumWindow : MetroWindow
     {
         #region Caption 添付プロパティ実装
 

@@ -1,4 +1,6 @@
-﻿<Window x:Class="CapyCSS.HelpWindow"
+﻿<mah:MetroWindow
+        xmlns:mah="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro" 
+        x:Class="CapyCSS.HelpWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -17,4 +19,4 @@
     <Grid>
         <TextBox x:Name="Info" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="6,6,6,6" IsReadOnly="True" VerticalScrollBarVisibility="Auto" BorderBrush="{x:Null}" Background="{x:Null}" />
     </Grid>
-</Window>
+</mah:MetroWindow>

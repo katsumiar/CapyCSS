@@ -10,13 +10,14 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using MahApps.Metro.Controls;
 
 namespace CapyCSS
 {
     /// <summary>
     /// OutputWindow.xaml の相互作用ロジック
     /// </summary>
-    public partial class OutputWindow : Window
+    public partial class OutputWindow : MetroWindow
     {
         public static OutputWindow CreateWindow(string title)
         {
