@@ -491,8 +491,6 @@ namespace CapyCSS.Controls.BaseControls
         /// <returns>返り値</returns>
         public object ExecuteRoot(bool fromScript, string entryPointName = null)
         {
-            object result = null;
-
             if (!fromScript)
             {
                 if (entryPointName.StartsWith(":"))
@@ -528,9 +526,33 @@ namespace CapyCSS.Controls.BaseControls
                     return null;    // false
                 }
 
-                if (!fromScript && CommandCanvasList.GetOwnerCursor() == Cursors.Wait)
+                if (CommandCanvasList.GetOwnerCursor() == Cursors.Wait)
                     return null;
+            }
 
+            try
+            {
+                if (!fromScript)
+                {
+                    OwnerCommandCanvas.ShowRunningPanel();
+                }
+                return _ExecuteRoot(fromScript, entryPointName);
+            }
+            finally
+            {
+                if (!fromScript)
+                {
+                    OwnerCommandCanvas.HideRunningPanel();
+                }
+            }
+        }
+
+        public object _ExecuteRoot(bool fromScript, string entryPointName = null)
+        {
+            object result = null;
+
+            if (!fromScript)
+            {
                 CommandCanvasList.SetOwnerCursor(Cursors.Wait);
                 OwnerCommandCanvas.CommandCanvasControl.CallAllExecuteEntryPointEnable(false);
                 OwnerCommandCanvas.CommandCanvasControl.MainLog.TryAutoClear();

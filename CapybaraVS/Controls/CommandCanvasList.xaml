@@ -27,11 +27,16 @@
                 <TextBlock x:Name="EntryPointNamePh" Text="Entry Point Name" Height="24" FontSize="11" Margin="2,8,0,0" Foreground="#99000000" IsHitTestVisible="False"/>
             </Grid>
         </ToolBarPanel>
-        <TabControl x:Name="Tab" Grid.Row="1" SelectionChanged="Tab_SelectionChanged">
-            <TabItem Header="TabItem1" HorizontalAlignment="Left">
-                <TextBlock Text="TabItem1 Content" />
-            </TabItem>
-        </TabControl>
+        <Grid Grid.Row="1">
+            <TabControl x:Name="Tab" SelectionChanged="Tab_SelectionChanged">
+                <TabItem Header="TabItem1" HorizontalAlignment="Left">
+                    <TextBlock Text="TabItem1 Content" />
+                </TabItem>
+            </TabControl>
+            <Grid x:Name="RunningPanel" Background="#4C000000" Visibility="Hidden">
+                <TextBlock Text="Running..." Foreground="#FFC53030" VerticalAlignment="Bottom" HorizontalAlignment="Right" FontSize="48" FontWeight="Bold" />
+            </Grid>
+        </Grid>
         <GridSplitter Grid.Row="2" Grid.ColumnSpan="1" HorizontalAlignment="Stretch"/>
         <CapybaraVS:OutPutLog x:Name="MainLog" Grid.Row="3" />
     </Grid>

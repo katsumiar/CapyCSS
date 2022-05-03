@@ -1126,6 +1126,22 @@ namespace CapyCSS.Controls
             BuildScriptAndOut();
         }
 
+        /// <summary>
+        /// スクリプト実行中パネルを表示します。
+        /// </summary>
+        public void ShowRunningPanel()
+        {
+            RunningPanel.Visibility = Visibility.Visible;
+        }
+
+        /// <summary>
+        /// スクリプト実行中パネルを消します。
+        /// </summary>
+        public void HideRunningPanel()
+        {
+            RunningPanel.Visibility = Visibility.Hidden;
+        }
+
         public void Dispose()
         {
             CbSTUtils.ForeachDispose(CanvasData);

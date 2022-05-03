@@ -1820,7 +1820,23 @@ namespace CapyCSS.Controls.BaseControls
             CommandMenuWindow.ShowDialog();
         }
 
-#region IDisposable Support
+        /// <summary>
+        /// スクリプト実行中パネルを表示します。
+        /// </summary>
+        public void ShowRunningPanel()
+        {
+            CommandCanvasControl?.ShowRunningPanel();
+        }
+
+        /// <summary>
+        /// スクリプト実行中パネルを消します。
+        /// </summary>
+        public void HideRunningPanel()
+        {
+            CommandCanvasControl?.HideRunningPanel();
+        }
+
+        #region IDisposable Support
         private bool disposedValue = false; // 重複する呼び出しを検出するには
 
         protected virtual void Dispose(bool disposing)
