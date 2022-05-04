@@ -1,0 +1,27 @@
+﻿<UserControl xmlns:BaseControls="clr-namespace:CapyCSS.Controls.BaseControls"  x:Class="CapyCSS.Controls.ProjectControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:CapyCSS.Controls"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800">
+    <Grid Margin="3">
+        <Grid Margin="3">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+            <StackPanel Grid.Row="0" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Top">
+                    <TextBlock Text="Project:" VerticalAlignment="Center" Margin="0,0,6,0" />
+                    <BaseControls:NameLabel x:Name="ProjectPath" LabelString="{Binding ProjectName, Mode=TwoWay}" VerticalAlignment="Center" />
+            </StackPanel>
+            <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" VerticalAlignment="Top" HorizontalAlignment="Stretch" FocusVisualStyle="{x:Null}">
+                <StackPanel>
+                    <Border Background="{StaticResource BorderBrush}" Height="1" />
+                    <BaseControls:TreeViewCommand x:Name="ProjectTree" />
+                </StackPanel>
+            </ScrollViewer>
+        </Grid>
+    </Grid>
+</UserControl>

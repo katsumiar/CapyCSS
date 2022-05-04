@@ -21,14 +21,22 @@ namespace CapyCSS.Controls.BaseControls
     public partial class RemovableLabel : UserControl
     {
         #region Title プロパティ実装
-
         private static ImplementDependencyProperty<RemovableLabel, string> impTitle =
             new ImplementDependencyProperty<RemovableLabel, string>(
                 nameof(Title),
                 (self, getValue) =>
                 {
                     var value = getValue(self);
-                    self.Caption.Text = value;
+                    if (self.Mask is null)
+                    {
+                        self.Caption.Text = value;
+                        self.Caption.ToolTip = null;
+                    }
+                    else
+                    {
+                        self.Caption.Text = self.Mask(value);
+                        self.Caption.ToolTip = value;
+                    }
                 });
 
         public static readonly DependencyProperty TitleProperty = impTitle.Regist("(none)");
@@ -38,11 +46,32 @@ namespace CapyCSS.Controls.BaseControls
             get { return impTitle.GetValue(this); }
             set { impTitle.SetValue(this, value); }
         }
+        #endregion
 
+        #region Mask プロパティ実装
+        private static ImplementDependencyProperty<RemovableLabel, Func<string,string>> impMask =
+            new ImplementDependencyProperty<RemovableLabel, Func<string, string>>(
+                nameof(Mask),
+                (self, getValue) =>
+                {
+                    var value = getValue(self);
+                    if (value != null)
+                    {
+                        self.Caption.Text = value(self.Title);
+                        self.Caption.ToolTip = self.Title;
+                    }
+                });
+
+        public static readonly DependencyProperty MaskProperty = impMask.Regist(null);
+
+        public Func<string, string> Mask
+        {
+            get { return impMask.GetValue(this); }
+            set { impMask.SetValue(this, value); }
+        }
         #endregion
 
         #region ClickEvent 添付プロパティ実装
-
         private static ImplementDependencyProperty<RemovableLabel, Action> impClickEvent =
             new ImplementDependencyProperty<RemovableLabel, Action>(
                 nameof(ClickEvent),
@@ -59,7 +88,6 @@ namespace CapyCSS.Controls.BaseControls
             get { return impClickEvent.GetValue(this); }
             set { impClickEvent.SetValue(this, value); }
         }
-
         #endregion
 
         public RemovableLabel()

@@ -125,10 +125,11 @@ namespace CapyCSS.Controls
         public _AssetXML<CommandCanvasList> AssetXML { get; set; } = null;
         #endregion
 
-        public ObservableCollection<CommandCanvas> CanvasData { get; set; } = new ObservableCollection<CommandCanvas>();
-
         public static CommandCanvasList Instance = null;
         public static OutPutLog OutPut => Instance.MainLog;
+
+        public const string CBSPROJ_FILTER = "CBS Project files (*.cbsproj)|*.cbsproj";
+        public const string CBS_FILTER = "CBS files (*.cbs)|*.cbs";
 
         public static string CAPYCSS_WORK_PATH = null;
         public static string CAPYCSS_INFO_PATH = @"CapyCSS.xml";
@@ -147,8 +148,6 @@ namespace CapyCSS.Controls
         public string DllDir = null;
 
         public string PackageDir = null;
-
-        private int CurrentTabIndex = -1;
 
         private List<string> scriptWorkRecentList = new List<string>();
 
@@ -170,33 +169,93 @@ namespace CapyCSS.Controls
         {
             get
             {
-                if (CurrentTabIndex == -1)
+                if (Tab.SelectedIndex == -1)
+                {
                     return null;
-                return Tab.Items[CurrentTabIndex] as TabItem;
+                }
+                return Tab.Items[Tab.SelectedIndex] as TabItem;
+            }
+        }
+
+        private CommandCanvas CurrentScriptCanvas
+        {
+            get
+            {
+                if (Tab.SelectedIndex == -1)
+                {
+                    return null;
+                }
+                return GetCommandCanvas(CurrentTabItem);
+            }
+        }
+
+        public string CurrentScriptTitle
+        {
+            get
+            {
+                if (Tab.SelectedIndex == -1)
+                {
+                    return null;
+                }
+                return System.IO.Path.GetFileNameWithoutExtension((CurrentTabItem.Header as RemovableLabel).Title);
             }
         }
 
         /// <summary>
-        /// タブタイトル名からスクリプトキャンバスを探す。
+        /// タブタイトルからスクリプトキャンバスを探す。
         /// </summary>
-        /// <param name="title"></param>
-        /// <returns></returns>
+        /// <param name="title">タイトル</param>
+        /// <returns>スクリプトキャンバス</returns>
         private CommandCanvas FindCommandCanvas(string title)
         {
             CommandCanvas result = null;
             foreach (TabItem tabItem in Tab.Items)
             {
-                if ((tabItem.Header as RemovableLabel).Title.ToString() == title)
+                string tabTitle = (tabItem.Header as RemovableLabel).Title;
+                tabTitle = System.IO.Path.GetFileNameWithoutExtension(tabTitle);
+                if (tabTitle == title)
                 {
-                    return tabItem.Content as CommandCanvas;
+                    result = tabItem.Content as CommandCanvas;
+                    break;
                 }
             }
             return result;
         }
 
-        private CommandCanvas CurrentScriptCanvas = null;
+        /// <summary>
+        /// パスからタブを探す。
+        /// </summary>
+        /// <param name="path"></param>
+        /// <returns>タブ</returns>
+        private TabItem FindTabFromPath(string path)
+        {
+            TabItem result = null;
+            foreach (TabItem tabItem in Tab.Items)
+            {
+                string tabTitle = (tabItem.Header as RemovableLabel).Title;
+                if (tabTitle == path)
+                {
+                    result = tabItem;
+                    break;
+                }
+            }
+            return result;
+        }
 
-        public string CurrentScriptTitle => (CurrentTabItem.Header as RemovableLabel).Title.ToString();
+        /// <summary>
+        /// タブタイトルからスクリプトキャンバスを探す。
+        /// </summary>
+        /// <param name="path"></param>
+        /// <returns></returns>
+        private CommandCanvas FindCommandCanvasFromPath(string path)
+        {
+            TabItem tab = FindTabFromPath(path);
+            if (tab == null)
+            {
+                return null;
+            }
+            return tab.Content as CommandCanvas;
+        }
 
         public CommandCanvasList()
         {
@@ -208,17 +267,16 @@ namespace CapyCSS.Controls
             // Consoleの出力先を変更する
             Console.SetOut(new SystemTextWriter());
 
-            Tab.Items.Clear();
             Dispatcher.BeginInvoke(new Action(() =>
             {
                 // アイドル状態になってから新規シートを作成する
 
-                AddNewContents();
                 if (reserveLoadCbsFilePath != null)
                 {
-                    // 起動読み込みをキックする（タイミングが不安…）
+                    // 起動読み込みをキックする
 
-                    KickLoadCbsFile();
+                    AddLoadContents(reserveLoadCbsFilePath);
+                    reserveLoadCbsFilePath = null;
                 }
             }), DispatcherPriority.ApplicationIdle);
         }
@@ -277,6 +335,105 @@ namespace CapyCSS.Controls
         }
 
         /// <summary>
+        /// カーソルがロックされているか判定します。
+        /// </summary>
+        /// <returns>true==ロックされている</returns>
+        public static bool IsCursorLock()
+        {
+            return GetOwnerCursor() == Cursors.Wait;
+        }
+
+        /// <summary>
+        /// カーソルをロックします。
+        /// ※UIが操作される処理用
+        /// </summary>
+        public static void CursorLock()
+        {
+            SetOwnerCursor(Cursors.Wait);
+            foreach (var item in Instance.Tab.Items)
+            {
+                (item as TabItem).IsEnabled = false;
+            }
+        }
+
+        /// <summary>
+        /// カーソルをアンロックします。
+        /// ※UIが操作される処理用
+        /// </summary>
+        public static void CursorUnlock()
+        {
+            SetOwnerCursor(null);
+            foreach (var item in Instance.Tab.Items)
+            {
+                (item as TabItem).IsEnabled = true;
+            }
+        }
+
+        /// <summary>
+        /// カーソルをロックして処理を呼び出します。
+        /// ※UIが操作される処理用
+        /// </summary>
+        /// <param name="action">処理</param>
+        public static void CursorLock(Action action)
+        {
+            if (action != null)
+            {
+                CursorLock();
+                CursorAfterUnlock(action);
+            }
+        }
+
+        /// <summary>
+        /// カーソルをロックして処理を呼び出します。
+        /// ※UIが操作される処理用
+        /// </summary>
+        /// <param name="action">処理</param>
+        /// <returns>true==処理を呼び出した</returns>
+        public static bool TryCursorLock(Action action)
+        {
+            if (action != null && !IsCursorLock())
+            {
+                CursorLock();
+                CursorAfterUnlock(action);
+                return true;
+            }
+            return false;
+        }
+
+        /// <summary>
+        /// カーソルをロックして処理を呼び出します。
+        /// ただし、処理後にロックを解除しません。
+        /// ※UIが操作される処理用
+        /// </summary>
+        /// <param name="action">処理</param>
+        /// <returns>true==処理を呼び出した</returns>
+        public static bool TryCursorLockNotUnlock(Action action)
+        {
+            if (action != null && !IsCursorLock())
+            {
+                CursorLock();
+                action();
+                return true;
+            }
+            return false;
+        }
+
+        /// <summary>
+        /// 処理を呼び出した後にカーソルをアンロックします。
+        /// ※UIが操作される処理用
+        /// </summary>
+        /// <param name="action">処理</param>
+        public static void CursorAfterUnlock(Action action)
+        {
+            Debug.Assert(action != null);
+            action();
+            Instance.Dispatcher.BeginInvoke(new Action(() =>
+            {
+                CursorUnlock();
+            }), DispatcherPriority.ApplicationIdle);
+        }
+
+        /// <summary>
         /// 全体的な情報を保存します。
         /// </summary>
         public void SaveInfo()
@@ -327,15 +484,76 @@ namespace CapyCSS.Controls
         }
 
         /// <summary>
+        /// キャンバスの作業を上書き保存します。
+        /// </summary>
+        public void OverwriteSaveXML()
+        {
+            if (IsCursorLock())
+            {
+                return;
+            }
+
+            string path;
+            if (CurrentScriptCanvas.OpenFileName == "")
+            {
+                path = ShowSaveDialog(CBS_FILTER, CurrentScriptCanvas.OpenFileName);
+
+                if (path is null)
+                {
+                    return;
+                }
+            }
+            else
+            {
+                path = CurrentScriptCanvas.OpenFileName;
+            }
+
+            CurrentScriptCanvas.SaveXML(path);
+        }
+
+        /// <summary>
         /// CBS ファイルを保存します。
         /// </summary>
         public void SaveCbsFile()
         {
-            Dispatcher.BeginInvoke(new Action(() =>
+            if (IsCursorLock())
             {
-                CurrentScriptCanvas.SaveXML();
-                SetCurrentTabName(CurrentScriptCanvas.OpenFileName);
-            }), DispatcherPriority.ApplicationIdle);
+                return;
+            }
+
+            string path = ShowSaveDialog(CBS_FILTER, CurrentScriptCanvas.OpenFileName);
+            if (path is null)
+            {
+                return;
+            }
+
+            CurrentScriptCanvas.SaveXML(path);
+            SetCurrentTabName(CurrentScriptCanvas.OpenFileName);
+        }
+
+        /// <summary>
+        /// 保存用ファイル選択ダイアログを表示します。
+        /// </summary>
+        /// <returns>保存するCBSファイルのパス</returns>
+        public static string ShowSaveDialog(string filter, string currentPath)
+        {
+            var dialog = new Microsoft.Win32.SaveFileDialog();
+
+            // ディレクトリを設定
+            dialog.InitialDirectory = System.IO.Path.GetDirectoryName(currentPath);
+
+            // ファイル名を設定
+            dialog.FileName = System.IO.Path.GetFileNameWithoutExtension(currentPath);
+
+            // ファイルの種類を設定
+            dialog.Filter = filter;
+
+            // ダイアログを表示する
+            if (dialog.ShowDialog() == true)
+            {
+                return dialog.FileName;
+            }
+            return null;
         }
 
         /// <summary>
@@ -345,7 +563,7 @@ namespace CapyCSS.Controls
         {
             Dispatcher.BeginInvoke(new Action(() =>
             {
-                CurrentScriptCanvas.OverwriteSaveXML();
+                OverwriteSaveXML();
                 if (CurrentScriptCanvas.OpenFileName != null && CurrentScriptCanvas.OpenFileName != "")
                 {
                     SetCurrentTabName(CurrentScriptCanvas.OpenFileName);
@@ -373,35 +591,62 @@ namespace CapyCSS.Controls
         /// <param name="path">CBSファイルのパス</param>
         public void LoadCbsFile(string path = null)
         {
-            reserveLoadCbsFilePath = path;
-            KickLoadCbsFile();
+            if (IsCursorLock())
+            {
+                return;
+            }
+
+            if (path is null)
+            {
+                path = ShowLoadDialog(CBS_FILTER);
+                if (path is null)
+                {
+                    return;
+                }
+            }
+
+            if (TryTabForcusByContainsPath(path))
+            {
+                return;
+            }
+
+            if (!File.Exists(path))
+            {
+                string msg = string.Format(CapyCSS.Language.Instance["SYSTEM_ModuleControler_04"], path);
+                ControlTools.ShowErrorMessage(msg);
+                return;
+            }
+
+            TryCursorLockNotUnlock(() =>
+                {
+                    try
+                    {
+                        LoadXMLCurrentScriptCanvas(path);
+                    }
+                    catch (Exception ex)
+                    {
+                        ControlTools.ShowErrorMessage(ex.Message);
+                        CursorUnlock();
+                    }
+                });
         }
 
         /// <summary>
-        /// 予約された CBS ファイルを読み込みます。
+        /// 既にファイルが読み込まれていればタブにフォーカスを当てます。
         /// </summary>
-        public void KickLoadCbsFile()
+        /// <param name="path">探すファイルパス</param>
+        /// <returns>true==見つかった</returns>
+        private bool TryTabForcusByContainsPath(string path)
         {
-            CurrentScriptCanvas?.Dispatcher.BeginInvoke(new Action(() =>
+            TabItem tab = FindTabFromPath(path);
+            if (tab != null)
             {
-                if (reserveLoadCbsFilePath is null)
-                {
-                    CurrentScriptCanvas.LoadXML();
-                    if (CurrentScriptCanvas.OpenFileName != null && CurrentScriptCanvas.OpenFileName != "")
-                    {
-                        SetCurrentTabName(CurrentScriptCanvas.OpenFileName);
-                    }
-                }
-                else
-                {
-                    CurrentScriptCanvas.LoadXML(System.IO.Path.GetFullPath(reserveLoadCbsFilePath));
-                    if (CurrentScriptCanvas.OpenFileName != null && CurrentScriptCanvas.OpenFileName != "")
-                    {
-                        SetCurrentTabName(reserveLoadCbsFilePath);
-                    }
-                }
-                reserveLoadCbsFilePath = null;
-            }), DispatcherPriority.ApplicationIdle);
+                // 既に存在するのでタブを表示するだけにする
+
+                tab.IsSelected = true;
+                return true;
+            }
+            return false;
         }
 
         /// <summary>
@@ -410,7 +655,101 @@ namespace CapyCSS.Controls
         /// <param name="path">ファイルパス</param>
         public void LoadXMLCurrentScriptCanvas(string path)
         {
-            CurrentScriptCanvas.LoadXML(path);
+            Debug.Assert(path != null);
+            CurrentScriptCanvas.LoadXML(
+                System.IO.Path.GetFullPath(path),
+                () =>
+                {
+                    SetCurrentTabName(path);
+                    CursorUnlock();
+                });
+        }
+
+        /// <summary>
+        /// ファイル作成用ダイアログを表示します。
+        /// </summary>
+        /// <returns>読み込むCBSファイルのパス</returns>
+        public static string MakeNewFileDialog(string filter)
+        {
+            var dialog = new Microsoft.Win32.OpenFileDialog();
+
+            dialog.AddExtension = true;
+            dialog.CheckFileExists = false;
+
+            // ファイルの種類を設定
+            dialog.Filter = filter;
+
+            if (!initFlg)
+            {
+                // 初期ディレクトリをサンプルのあるディレクトリにする
+
+                var sampleDir = GetSamplePath();
+                if (sampleDir != null)
+                {
+                    dialog.InitialDirectory = GetSamplePath();
+                }
+                initFlg = true;
+            }
+
+            // ダイアログを表示する
+            if (dialog.ShowDialog() == true)
+            {
+                return dialog.FileName;
+            }
+            return null;
+        }
+
+        /// <summary>
+        /// 読み込み用ファイル選択ダイアログを表示します。
+        /// </summary>
+        /// <returns>読み込むCBSファイルのパス</returns>
+        public static string ShowLoadDialog(string filter)
+        {
+            var dialog = new Microsoft.Win32.OpenFileDialog();
+
+            // ファイルの種類を設定
+            dialog.Filter = filter;
+
+            if (!initFlg)
+            {
+                // 初期ディレクトリをサンプルのあるディレクトリにする
+
+                var sampleDir = GetSamplePath();
+                if (sampleDir != null)
+                {
+                    dialog.InitialDirectory = GetSamplePath();
+                }
+                initFlg = true;
+            }
+
+            // ダイアログを表示する
+            if (dialog.ShowDialog() == true)
+            {
+                return dialog.FileName;
+            }
+            return null;
+        }
+        static bool initFlg = false;
+
+        /// <summary>
+        /// sample ディレクトリのフルパスを取得します。
+        /// </summary>
+        /// <returns>sampleディレクトリのフルパス</returns>
+        public static string GetSamplePath()
+        {
+            string exexPath = System.Environment.CommandLine;
+            if (exexPath == null)
+            {
+                return Environment.CurrentDirectory;
+            }
+            System.IO.FileInfo fi = new System.IO.FileInfo(exexPath.Replace("\"", ""));
+            string startupPath = fi.Directory.FullName;
+            var resultPath = System.IO.Path.Combine(startupPath, "Sample");
+            if (!Directory.Exists(resultPath))
+            {
+                return Environment.CurrentDirectory;
+            }
+            return System.IO.Path.Combine(startupPath, "Sample");
         }
 
         /// <summary>
@@ -419,22 +758,44 @@ namespace CapyCSS.Controls
         /// <param name="path">ファイルパス</param>
         public void SetCurrentTabName(string path)
         {
-            (CurrentTabItem.Header as RemovableLabel).Title = System.IO.Path.GetFileNameWithoutExtension(path);
+            var label = CurrentTabItem.Header as RemovableLabel;
+            label.Title = path;
+            RequestSetTitle();
         }
 
         /// <summary>
         /// 新しいタブを作ってcbsファイルを読み込みます。
         /// </summary>
         /// <param name="path">cbsファイルのパス</param>
-        public void AddNewContents(string path)
+        public void AddLoadContents(string path)
         {
-            AddNewContents();
-            this.Dispatcher.BeginInvoke(new Action(() =>
+            if (!File.Exists(path))
+            {
+                string msg = string.Format(CapyCSS.Language.Instance["SYSTEM_ModuleControler_04"], path);
+                ControlTools.ShowErrorMessage(msg);
+                return;
+            }
+            TryCursorLockNotUnlock(() =>
                 {
-                    LoadXMLCurrentScriptCanvas(path);
-                    SetCurrentTabName(path);
-                }
-                ), DispatcherPriority.ApplicationIdle);
+                    if (TryTabForcusByContainsPath(path))
+                    {
+                        CursorUnlock();
+                        return;
+                    }
+                    _AddNewContents();
+                    Dispatcher.BeginInvoke(new Action(() =>
+                        {
+                            try
+                            {
+                                LoadXMLCurrentScriptCanvas(path);   // ロック解除は内部で行われる。
+                            }
+                            catch (Exception ex)
+                            {
+                                ControlTools.ShowErrorMessage(ex.Message);
+                                CursorUnlock();
+                            }
+                        }), DispatcherPriority.ApplicationIdle);
+                });
         }
 
         private static int newNumbering = 1;
@@ -442,53 +803,64 @@ namespace CapyCSS.Controls
         /// <summary>
         /// 新規スクリプト作業領域を作成します。
         /// </summary>
-        public void AddNewContents()
+        /// <param name="path">新しいスクリプトファイル</param>
+        /// <returns>true==作成できた</returns>
+        public bool AddNewContents(string path = null)
         {
-            string newName = $"New{newNumbering++}";
-            CurrentScriptCanvas = CreateCanvas();
+            if (FindTabFromPath(path) != null)
+            {
+                // 既に存在している
+
+                ControlTools.ShowErrorMessage(CapyCSS.Language.Instance["Help:SYSTEM_Error_Exist"]);
+                return false;
+            }
+
+            CursorLock(() =>
+                {
+                    _AddNewContents(path);
+                });
+
+            return true;
+        }
+
+        private void _AddNewContents(string path = null)
+        {
+            CommandCanvas commandCanvas = new CommandCanvas(this);
+            if (path is null)
+            {
+                path = $"New{newNumbering++}";
+            }
+            else
+            {
+                commandCanvas.OpenFileName = path;
+            }
             var newItem = new TabItem()
             {
                 HorizontalAlignment = HorizontalAlignment.Left,
-                Content = CurrentScriptCanvas
+                Content = commandCanvas
             };
             newItem.Header = new RemovableLabel()
             {
-                Title = newName,
+                Title = path,
+                Mask = (n) => System.IO.Path.GetFileNameWithoutExtension(n),
                 ClickEvent = () =>
                 {
                     // タブ付属の削除機能
 
-                    RemoveScriptCanvas(newItem);
+                    TryCursorLock(() =>
+                    {
+                        RemoveScriptCanvas(newItem);
+                    });
                 }
             };
             Tab.Items.Add(newItem);
-            if (CurrentTabIndex == -1)
-            {
-                CurrentTabIndex = 0;
-            }
-            SetupScriptCommandRecent(CurrentScriptCanvas);
-            Dispatcher.BeginInvoke(new Action(() =>
-            {
-                // アイドル状態になって反映する
-
-                Tab.SelectedIndex = Tab.Items.Count - 1;
-            }), DispatcherPriority.ApplicationIdle);
+            newItem.IsSelected = true;
+            SetupScriptCommandRecent(commandCanvas);
         }
 
         ~CommandCanvasList()
         {
             Dispose();
-        }
-
-        /// <summary>
-        /// スクリプト用キャンバスを作成します。
-        /// </summary>
-        /// <returns></returns>
-        private CommandCanvas CreateCanvas()
-        {
-            var canvas = new CommandCanvas(this);
-            CanvasData.Add(canvas);
-            return canvas;
         }
 
         private bool backupIsEnebleExecuteButton = false;
@@ -517,7 +889,6 @@ namespace CapyCSS.Controls
             SaveButton.IsEnabled = enable;
             CommandMenuButton.IsEnabled = enable;
             AddButton.IsEnabled = enable;
-            DeleteButton.IsEnabled = enable;
             ConvertCSS.IsEnabled = ExecuteButton.IsEnabled;
         }
 
@@ -607,10 +978,9 @@ namespace CapyCSS.Controls
         private void UpdateButtonEnable()
         {
             ExecuteButton.IsEnabled = PublicExecuteEntryPointList.Any(s => s.owner == CurrentScriptCanvas);
-            LoadButton.IsEnabled = Tab.Items.Count != 0;
-            SaveButton.IsEnabled = Tab.Items.Count != 0;
-            DeleteButton.IsEnabled = Tab.Items.Count != 0;
-            CommandMenuButton.IsEnabled = Tab.Items.Count != 0;
+            LoadButton.IsEnabled = !IsEmptyScriptCanvas;
+            SaveButton.IsEnabled = !IsEmptyScriptCanvas;
+            CommandMenuButton.IsEnabled = !IsEmptyScriptCanvas;
             ConvertCSS.IsEnabled = ExecuteButton.IsEnabled;
         }
 
@@ -754,8 +1124,10 @@ namespace CapyCSS.Controls
 
         private object _CallPublicExecuteEntryPoint(bool fromScript, string entryPointName = null)
         {
-            if (!fromScript && CommandCanvasList.GetOwnerCursor() == Cursors.Wait)
+            if (!fromScript || IsCursorLock())
+            {
                 return null;
+            }
 
             object owner = null;
             if (string.IsNullOrWhiteSpace(entryPointName))
@@ -931,13 +1303,64 @@ namespace CapyCSS.Controls
         }
 
         /// <summary>
-        /// スクリプト作業領域を削除するボタンの処理です。
+        /// カレントのスクリプトキャンバスを消します。
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void DeleteButton_Click(object sender, RoutedEventArgs e)
+        private void RemoveCurrentScriptCanvas()
         {
-            RemoveScriptCanvas(CurrentTabItem);
+            if (CurrentScriptCanvas != null)
+            {
+                TryCursorLock(() =>
+                    {
+                        RemoveScriptCanvas(CurrentTabItem);
+                    });
+            }
+        }
+
+        /// <summary>
+        /// パスに一致するスクリプトキャンバスを消します。
+        /// </summary>
+        public void RemoveScriptCanvas(string path)
+        {
+            TabItem tab = FindTabFromPath(path);
+            if (CurrentScriptCanvas != null && tab != null)
+            {
+                TryCursorLock(() =>
+                {
+                    RemoveScriptCanvas(tab);
+                });
+            }
+        }
+
+        /// <summary>
+        /// スクリプトキャンバスが存在するかを確認します。
+        /// </summary>
+        public bool IsEmptyScriptCanvas => Tab.Items.Count == 0;
+
+        /// <summary>
+        /// すべてのスクリプトキャンバスを消します。
+        /// </summary>
+        public static void ClearScriptCanvas()
+        {
+            CursorLock(() =>
+                {
+                    Instance.InnerClearScriptCanvas();
+                });
+        }
+
+        /// <summary>
+        /// すべてのスクリプトキャンバスを消します。
+        /// </summary>
+        public void InnerClearScriptCanvas()
+        {
+            foreach (var item in Tab.Items)
+            {
+                ClearCommandCanvas(item as TabItem);
+            }
+
+            Dispatcher.BeginInvoke(new Action(() =>
+                {
+                    Tab.Items.Clear();
+                }), DispatcherPriority.Background);
         }
 
         /// <summary>
@@ -946,27 +1369,24 @@ namespace CapyCSS.Controls
         /// <param name="tabItem">タブ</param>
         private void RemoveScriptCanvas(TabItem tabItem)
         {
-            CommandCanvas commandCanvas = tabItem.Content as CommandCanvas;
-            commandCanvas.ClearWorkCanvas();
-            CanvasData.Remove(commandCanvas);
-            commandCanvas.Dispose();
-            if (Tab.Items.Count > 1 && Tab.Items[0].Equals(tabItem))
-            {
-                // 頭のタブを消すとタブ切り替えが上手く動かない
+            ClearCommandCanvas(tabItem);
 
-                Tab.Items.Remove(tabItem);
-                Tab.SelectedIndex = 0;
-            }
-            else
-            {
-                Tab.Items.Remove(tabItem);
-            }
-            if (Tab.Items.Count == 0)
-            {
-                commandCanvas = null;
-                RequestSetTitle();
-            }
-            UpdateButtonEnable();
+            Dispatcher.BeginInvoke(new Action(() =>
+                {
+                    Tab.Items.Remove(tabItem);
+                }), DispatcherPriority.Background);
+        }
+
+        /// <summary>
+        /// スクリプトキャンバスをクリアします。
+        /// </summary>
+        /// <param name="tabItem">タブ</param>
+        private void ClearCommandCanvas(TabItem tabItem)
+        {
+            var commandCanvas = tabItem.Content as CommandCanvas;
+            commandCanvas.ClearWorkCanvas();
+            commandCanvas.Dispose();
+            tabItem.Content = null;
         }
 
         /// <summary>
@@ -1057,41 +1477,47 @@ namespace CapyCSS.Controls
         /// <param name="e"></param>
         private void Tab_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (sender is TabControl && e.AddedItems.Count != 0)
-            {
-                TabItem selectedTab = e.AddedItems[0] as TabItem;
-                int index = 0;
-                foreach (var node in Tab.Items)
-                {
-                    if (node == selectedTab)
-                    {
-                        CurrentTabIndex = index;
-                        SetCurrentScriptCanvas(CurrentTabIndex);
-                        break;
-                    }
-                    index++;
-                }
-            }
+            RequestSetTitle();
+            UpdateButtonEnable();
+        }
+
+        public static void ResetTitle()
+        {
+            Instance?.RequestSetTitle();
         }
 
         /// <summary>
         /// タイトルのセットを依頼します。
         /// </summary>
-        /// <param name="filename">ファイル名</param>
-        public void RequestSetTitle(string filename = null)
+        public void RequestSetTitle()
         {
-            SetTitleFunc?.Invoke(filename);
+            if (CurrentScriptTitle is null || CurrentScriptCanvas is null)
+            {
+                SetTitleFunc?.Invoke($"{Project.ProjectName}");
+            }
+            else
+            {
+                if (string.IsNullOrWhiteSpace(CurrentScriptCanvas.OpenFileName))
+                {
+                    // New? のときは、OpenFileName は空。
+
+                    SetTitleFunc?.Invoke($"{Project.ProjectName} - {CurrentScriptTitle}");
+                }
+                else
+                {
+                    SetTitleFunc?.Invoke($"{Project.ProjectName} - {System.IO.Path.GetFileNameWithoutExtension(CurrentScriptCanvas.OpenFileName)}");
+                }
+            }
         }
 
         /// <summary>
-        /// カレントのスクリプト作業領域を切り替えます。
+        /// タブからスクリプトキャンバスを取得します。
         /// </summary>
-        /// <param name="index">スクリプト作業領域のインデックス番号</param>
-        private void SetCurrentScriptCanvas(int index)
+        /// <param name="item"></param>
+        /// <returns></returns>
+        private static CommandCanvas GetCommandCanvas(TabItem item)
         {
-            CurrentScriptCanvas = CanvasData[index];
-            CurrentScriptCanvas.SetupTitle();
-            UpdateButtonEnable();
+            return item.Content as CommandCanvas;
         }
 
         /// <summary>
@@ -1108,9 +1534,10 @@ namespace CapyCSS.Controls
                 scriptWorkRecentList.Add(name);
             }
 
-            foreach (var node in CanvasData)
+            foreach (var item in Tab.Items)
             {
-                node.WorkCanvas.AddScriptCommandRecent(name);
+                CommandCanvas commandCanvas = GetCommandCanvas(item as TabItem);
+                commandCanvas.WorkCanvas.AddScriptCommandRecent(name);
             }
         }
 
@@ -1147,9 +1574,10 @@ namespace CapyCSS.Controls
                 BaseWorkCanvas.BackGrountImagePath = path;
             }
 
-            foreach (var canvas in CommandCanvasList.Instance.CanvasData)
+            foreach (var item in Instance.Tab.Items)
             {
-                SetTargetWorkCanvasBB(canvas, path, stretch);
+                CommandCanvas commandCanvas = GetCommandCanvas(item as TabItem);
+                SetTargetWorkCanvasBB(commandCanvas, path, stretch);
             }
         }
 
@@ -1158,7 +1586,6 @@ namespace CapyCSS.Controls
             canvas.ScriptWorkCanvas.BGImage.Stretch = stretch;
             canvas.ScriptWorkCanvas.BGImage.Source = new BitmapImage(new Uri(path));
         }
-
 
         /// <summary>
         /// システムエラーを出力します。
@@ -1204,8 +1631,6 @@ namespace CapyCSS.Controls
 
         public void Dispose()
         {
-            CbSTUtils.ForeachDispose(CanvasData);
-            CanvasData = null;
             CapyCSS.Language.Instance.Dispose();
             ToolExec.KillProcess();
 

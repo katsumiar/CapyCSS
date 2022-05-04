@@ -2,6 +2,9 @@
 ![capyCssSample04](https://user-images.githubusercontent.com/63950487/166207451-7cbb4335-be6e-4035-998c-b1521f503e4f.gif)
 ※このイメージは、ScreenToGif によって作成されています。
 
+## 0.5.0.0 での変更
+* プロジェクトファイル（*.cbsproj）に対応しました。
+
 ## 0.4.1.2 での変更
 * リスト型の内容のヒント表示を行うようにしました。
 * デザインを調整しました。

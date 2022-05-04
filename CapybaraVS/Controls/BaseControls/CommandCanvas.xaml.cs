@@ -274,7 +274,7 @@ namespace CapyCSS.Controls.BaseControls
             ScriptWorkCanvas = WorkCanvas;
             ScriptWorkStack = WorkStack;
 
-            CommandCanvasList.SetOwnerCursor(Cursors.Wait);
+            //CommandCanvasList.SetOwnerCursor(Cursors.Wait);
 
             TypeMenuWindow = CommandWindow.Create();
             TypeMenuWindow.Title = "Type";
@@ -300,7 +300,7 @@ namespace CapyCSS.Controls.BaseControls
 
             DEBUG_Check();
             
-            CommandCanvasList.SetOwnerCursor(null);
+            //CommandCanvasList.SetOwnerCursor(null);
         }
 
         ~CommandCanvas()
@@ -617,20 +617,20 @@ namespace CapyCSS.Controls.BaseControls
         {
             // コマンドを追加
             {
-                var commandNode = new TreeMenuNode("Command");
-                commandNode.AddChild(new TreeMenuNode("Clear(Ctrl+Shift+N)", CreateImmediateExecutionCanvasCommand(() => ClearWorkCanvasWithConfirmation())));
-                commandNode.AddChild(new TreeMenuNode("Toggle ShowMouseInfo", CreateImmediateExecutionCanvasCommand(() => ScriptWorkCanvas.EnableInfo = ScriptWorkCanvas.EnableInfo ? false : true)));
-                commandNode.AddChild(new TreeMenuNode("Toggle ShowGridLine(Ctrl+G)", CreateImmediateExecutionCanvasCommand(() => ScriptCommandCanvas.ToggleGridLine())));
-                commandNode.AddChild(new TreeMenuNode("Save(Ctrl+S)", CreateImmediateExecutionCanvasCommand(() => CommandCanvasControl.SaveCbsFile())));
-                commandNode.AddChild(new TreeMenuNode("Load(Ctrl+O)", CreateImmediateExecutionCanvasCommand(() => CommandCanvasControl.LoadCbsFile())));
-                commandNode.AddChild(new TreeMenuNode("Convert C#", CreateImmediateExecutionCanvasCommand(() => CommandCanvasList.Instance?.BuildScriptAndOut())));
+                var commandNode = new TreeMenuNode(TreeMenuNode.NodeType.GROUP, "Command");
+                commandNode.AddChild(new TreeMenuNode(TreeMenuNode.NodeType.NORMAL, "Clear(Ctrl+Shift+N)", CreateImmediateExecutionCanvasCommand(() => ClearWorkCanvasWithConfirmation())));
+                commandNode.AddChild(new TreeMenuNode(TreeMenuNode.NodeType.NORMAL, "Toggle ShowMouseInfo", CreateImmediateExecutionCanvasCommand(() => ScriptWorkCanvas.EnableInfo = ScriptWorkCanvas.EnableInfo ? false : true)));
+                commandNode.AddChild(new TreeMenuNode(TreeMenuNode.NodeType.NORMAL, "Toggle ShowGridLine(Ctrl+G)", CreateImmediateExecutionCanvasCommand(() => ScriptCommandCanvas.ToggleGridLine())));
+                commandNode.AddChild(new TreeMenuNode(TreeMenuNode.NodeType.NORMAL, "Save(Ctrl+S)", CreateImmediateExecutionCanvasCommand(() => CommandCanvasControl.SaveCbsFile())));
+                commandNode.AddChild(new TreeMenuNode(TreeMenuNode.NodeType.NORMAL, "Load(Ctrl+O)", CreateImmediateExecutionCanvasCommand(() => CommandCanvasControl.LoadCbsFile())));
+                commandNode.AddChild(new TreeMenuNode(TreeMenuNode.NodeType.NORMAL, "Convert C#", CreateImmediateExecutionCanvasCommand(() => CommandCanvasList.Instance?.BuildScriptAndOut())));
                 treeViewCommand.AssetTreeData.Add(commandNode);
             }
 
             // 飾りを追加
             {
-                var decorationNode = new TreeMenuNode("Decoration");
-                decorationNode.AddChild(new TreeMenuNode("Text Area", CreateEventCanvasCommand(decorationNode.Name + ".Text Area", () => new GroupArea() { Name = "test", Width = 150, Height = 150 })));
+                var decorationNode = new TreeMenuNode(TreeMenuNode.NodeType.GROUP, "Decoration");
+                decorationNode.AddChild(new TreeMenuNode(TreeMenuNode.NodeType.NORMAL, "Text Area", CreateEventCanvasCommand(decorationNode.Name + ".Text Area", () => new GroupArea() { Name = "test", Width = 150, Height = 150 })));
                 treeViewCommand.AssetTreeData.Add(decorationNode);
             }
 
@@ -761,7 +761,7 @@ namespace CapyCSS.Controls.BaseControls
                     var recentNode = CommandMenu.GetRecent();
                     foreach (var node in value)
                     {
-                        recentNode.AddChild(new TreeMenuNode(node, CreateImmediateExecutionCanvasCommand(() =>
+                        recentNode.AddChild(new TreeMenuNode(TreeMenuNode.NodeType.NORMAL, node, CreateImmediateExecutionCanvasCommand(() =>
                         {
                             CommandMenu.ExecuteFindCommand(node);
                         })));
@@ -794,23 +794,6 @@ namespace CapyCSS.Controls.BaseControls
             outputWindow.AddBindText = writer.ToString();
         }
 
-        /// <summary>
-        /// キャンバスの作業を上書き保存します。
-        /// </summary>
-        public void OverwriteSaveXML()
-        {
-            if (CommandCanvasList.GetOwnerCursor() == Cursors.Wait)
-                return;
-
-            if (OpenFileName == "")
-            {
-                SaveXML();
-                return;
-            }
-
-            SaveXml(OpenFileName);
-        }
-
         private string openFileName = "";
 
         /// <summary>
@@ -822,47 +805,20 @@ namespace CapyCSS.Controls.BaseControls
             set
             {
                 openFileName = value;
-                SetupTitle();
             }
-        }
-
-        /// <summary>
-        /// タイトルのセットを依頼します。
-        /// </summary>
-        public void SetupTitle()
-        {
-            CommandCanvasControl.RequestSetTitle(System.IO.Path.GetFileName(openFileName));
-        }
-
-        /// <summary>
-        /// キャンバスの作業を保存します。
-        /// </summary>
-        public void SaveXML()
-        {
-            if (CommandCanvasList.GetOwnerCursor() == Cursors.Wait)
-                return;
-
-            string path = ShowSaveDialog();
-
-            if (path is null)
-                return;
-
-            SaveXml(path);
         }
 
         /// <summary>
         /// キャンバスの作業を保存します。
         /// </summary>
         /// <param name="path">ファイルのパス</param>
-        private void SaveXml(string path)
+        public void SaveXML(string path)
         {
             if (path is null)
                 return;
 
             if (CommandCanvasList.GetOwnerCursor() == Cursors.Wait)
                 return;
-
-            CommandCanvasList.SetOwnerCursor(Cursors.Wait);
 
             try
             {
@@ -884,50 +840,31 @@ namespace CapyCSS.Controls.BaseControls
                     File.WriteAllText(System.IO.Path.ChangeExtension(OpenFileName, ".css"), script);
                 }
 
-                Console.WriteLine($"Save...\"{path}.xml\"");
+                Console.WriteLine($"Saved...\"{path}\"");
             }
             catch (Exception ex)
             {
                 ControlTools.ShowErrorMessage(ex.Message);
             }
-
-            CommandCanvasList.SetOwnerCursor(null);
-        }
-
-        /// <summary>
-        /// キャンバスの作業を読み込みます。
-        /// </summary>
-        public void LoadXML()
-        {
-            if (CommandCanvasList.GetOwnerCursor() == Cursors.Wait)
-                return;
-
-            string path = ShowLoadDialog();
-            if (path is null)
-                return;
-
-            LoadXML(path);
         }
 
         /// <summary>
         /// キャンバスの作業を読み込みます。
         /// </summary>
         /// <param name="path">ファイルのパス</param>
-        public void LoadXML(string path)
+        public void LoadXML(string path, Action afterAction)
         {
-            if (CommandCanvasList.GetOwnerCursor() == Cursors.Wait)
+            if (path is null)
                 return;
 
             OpenFileName = path;
-            CommandCanvasList.SetOwnerCursor(Cursors.Wait);
-            ScriptWorkCanvas.Dispatcher.BeginInvoke(new Action(() =>
+            ScriptCommandCanvas.Dispatcher.BeginInvoke(new Action(() =>
             {
                 try
                 {
                     string text = File.ReadAllText(path);
                     if (!text.Contains("<CommandCanvas Id=") || !text.Contains("<DataVersion>"))
                     {
-                        CommandCanvasList.SetOwnerCursor(null);
                         ControlTools.ShowErrorMessage(CapyCSS.Language.Instance["SYSTEM_Error_DataFormat"]);
                         return;
                     }
@@ -941,8 +878,6 @@ namespace CapyCSS.Controls.BaseControls
                 {
                     try
                     {
-                        File.ReadAllText(path).Contains("<CommandCanvas Id=");
-
                         XmlSerializer serializer = new XmlSerializer(ScriptCommandCanvas.AssetXML.GetType());
 
                         XmlDocument doc = new XmlDocument();
@@ -959,18 +894,18 @@ namespace CapyCSS.Controls.BaseControls
                     }
                 }
                 ClearWorkCanvas(false);
-                GC.Collect();
                 CommandCanvasControl.MainLog.TryAutoClear();
-
+                //GC.Collect();
                 PointIdProvider.InitCheckRequest();
                 ScriptCommandCanvas.AssetXML.ReadAction(ScriptCommandCanvas);   // 優先順位 Background まで使われる 
+
+                Console.WriteLine($"Loaded...\"{path}\"");
 
                 ScriptCommandCanvas.Dispatcher.BeginInvoke(new Action(() =>
                 {
                     // アイドル状態になってから戻す
 
                     GC.Collect();
-                    CommandCanvasList.SetOwnerCursor(null);
                     if (CommandCanvasControl.IsAutoExecute)
                     {
                         // 起動時自動実行
@@ -982,7 +917,9 @@ namespace CapyCSS.Controls.BaseControls
                     {
                         CommandCanvasControl.IsAutoExit = false;
                     }
-                }), DispatcherPriority.SystemIdle); // ApplicationIdle でも良いと思うけども…
+                    afterAction?.Invoke();
+
+                }), DispatcherPriority.SystemIdle);
             }), DispatcherPriority.ApplicationIdle);
         }
 
@@ -1093,83 +1030,6 @@ namespace CapyCSS.Controls.BaseControls
         }
 #endregion
 
-        /// <summary>
-        /// 保存用ファイル選択ダイアログを表示します。
-        /// </summary>
-        /// <returns></returns>
-        public string ShowSaveDialog()
-        {
-            var dialog = new SaveFileDialog();
-
-            // ディレクトリを設定
-            dialog.InitialDirectory = System.IO.Path.GetDirectoryName(OpenFileName);
-
-            // ファイル名を設定
-            dialog.FileName = System.IO.Path.GetFileNameWithoutExtension(OpenFileName);
-
-            // ファイルの種類を設定
-            dialog.Filter = "CBS files (*.cbs)|*.cbs|all (*.*)|*.*";
-
-            // ダイアログを表示する
-            if (dialog.ShowDialog() == true)
-            {
-                return dialog.FileName;
-            }
-            return null;
-        }
-
-        /// <summary>
-        /// 読み込み用ファイル選択ダイアログを表示します。
-        /// </summary>
-        /// <returns></returns>
-        public string ShowLoadDialog()
-        {
-            var dialog = new OpenFileDialog();
-
-            // ファイルの種類を設定
-            dialog.Filter = "CBS files (*.cbs, *.xml)|*.cbs;*.xml|all (*.*)|*.*";
-
-            if (!initFlg)
-            {
-                // 初期ディレクトリをサンプルのあるディレクトリにする
-                
-                var sampleDir = GetSamplePath();
-                if (sampleDir != null)
-                {
-                    dialog.InitialDirectory = GetSamplePath();
-                }
-                initFlg = true;
-            }
-
-            // ダイアログを表示する
-            if (dialog.ShowDialog() == true)
-            {
-                return dialog.FileName;
-            }
-            return null;
-        }
-        static bool initFlg = false;
-
-        /// <summary>
-        /// sample ディレクトリのフルパスを取得します。
-        /// </summary>
-        /// <returns>sampleディレクトリのフルパス</returns>
-        public static string GetSamplePath()
-        {
-            string exexPath = System.Environment.CommandLine;
-            if (exexPath == null)
-            {
-                return Environment.CurrentDirectory;
-            }
-            System.IO.FileInfo fi = new System.IO.FileInfo(exexPath.Replace("\"", ""));
-            string startupPath = fi.Directory.FullName;
-            var resultPath = System.IO.Path.Combine(startupPath, "Sample");
-            if (!Directory.Exists(resultPath))
-            {
-                return Environment.CurrentDirectory;
-            }
-            return System.IO.Path.Combine(startupPath, "Sample");
-        }
 #endregion
 
 #region タイプリストを実装
@@ -1187,7 +1047,7 @@ namespace CapyCSS.Controls.BaseControls
         {
             // コマンドを追加
             {
-                var builtInGroup = new TreeMenuNode("Built-in type");
+                var builtInGroup = new TreeMenuNode(TreeMenuNode.NodeType.GROUP, "Built-in type");
                 foreach (var typeName in CbSTUtils.BuiltInTypeList)
                 {
                     TreeViewCommand.AddGroupedMenu(
@@ -1207,11 +1067,11 @@ namespace CapyCSS.Controls.BaseControls
 
                 }
                 treeViewCommand.AssetTreeData.Add(builtInGroup);
-                treeViewCommand.AssetTreeData.Add(typeWindow_classMenu = new TreeMenuNode(CbSTUtils.CLASS_STR));
-                treeViewCommand.AssetTreeData.Add(typeWindow_interfaceMenu = new TreeMenuNode(CbSTUtils.INTERFACE_STR));
-                treeViewCommand.AssetTreeData.Add(typeWindow_structMenu = new TreeMenuNode(CbSTUtils.STRUCT_STR));
-                treeViewCommand.AssetTreeData.Add(typeWindow_enumMenu = new TreeMenuNode(CbSTUtils.ENUM_STR));
-                treeViewCommand.AssetTreeData.Add(typeWindow_import = new TreeMenuNode(ApiImporter.MENU_TITLE_IMPORT));
+                treeViewCommand.AssetTreeData.Add(typeWindow_classMenu = new TreeMenuNode(TreeMenuNode.NodeType.GROUP, CbSTUtils.CLASS_STR));
+                treeViewCommand.AssetTreeData.Add(typeWindow_interfaceMenu = new TreeMenuNode(TreeMenuNode.NodeType.GROUP, CbSTUtils.INTERFACE_STR));
+                treeViewCommand.AssetTreeData.Add(typeWindow_structMenu = new TreeMenuNode(TreeMenuNode.NodeType.GROUP, CbSTUtils.STRUCT_STR));
+                treeViewCommand.AssetTreeData.Add(typeWindow_enumMenu = new TreeMenuNode(TreeMenuNode.NodeType.GROUP, CbSTUtils.ENUM_STR));
+                treeViewCommand.AssetTreeData.Add(typeWindow_import = new TreeMenuNode(TreeMenuNode.NodeType.GROUP, ApiImporter.MENU_TITLE_IMPORT));
             }
         }
 

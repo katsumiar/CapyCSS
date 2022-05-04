@@ -95,13 +95,20 @@ namespace CapyCSS.Controls.BaseControls
     /// </summary>
     public sealed class TreeMenuNode : INotifyPropertyChanged
     {
+        public enum NodeType
+        {
+            NORMAL,
+            GROUP,
+        }
+
         /// <summary>
         /// コンストラクタです。
         /// </summary>
         /// <param name="name">項目名</param>
         /// <param name="personCommand">実行コマンド</param>
-        public TreeMenuNode(string name, TreeMenuNodeCommand personCommand = null)
+        public TreeMenuNode(NodeType nodeType, string name, TreeMenuNodeCommand personCommand = null, TreeMenuNodeCommand deleteClickCommand = null)
         {
+            this.nodeType = nodeType;
             Name = name;
             Path = name;
             if (personCommand is null)
@@ -112,6 +119,7 @@ namespace CapyCSS.Controls.BaseControls
             {
                 LeftClickCommand = personCommand;
             }
+            DeleteClickCommand = deleteClickCommand;
         }
 
         /// <summary>
@@ -119,8 +127,9 @@ namespace CapyCSS.Controls.BaseControls
         /// </summary>
         /// <param name="name">項目名</param>
         /// <param name="personCommand">実行コマンド</param>
-        public TreeMenuNode(string name, string hintText, TreeMenuNodeCommand personCommand = null)
+        public TreeMenuNode(NodeType nodeType, string name, string hintText, TreeMenuNodeCommand personCommand = null, TreeMenuNodeCommand deleteClickCommand = null)
         {
+            this.nodeType = nodeType;
             Name = name;
             Path = name;
             if (hintText != null && hintText != "")
@@ -135,6 +144,7 @@ namespace CapyCSS.Controls.BaseControls
             {
                 LeftClickCommand = personCommand;
             }
+            DeleteClickCommand = deleteClickCommand;
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -143,6 +153,9 @@ namespace CapyCSS.Controls.BaseControls
             if (null == this.PropertyChanged) return;
             this.PropertyChanged(this, new PropertyChangedEventArgs(name));
         }
+
+        //-----------------------------------------------------------------------------------
+        private NodeType nodeType { get; set; }
 
         //-----------------------------------------------------------------------------------
         /// <summary>
@@ -194,14 +207,60 @@ namespace CapyCSS.Controls.BaseControls
             }
 
             Child.Add(node);
+
+            nodeType = TreeMenuNode.NodeType.GROUP;
+            OnPropertyChanged(nameof(MenuNodeView));
+            OnPropertyChanged(nameof(GroupNodeView));
+            OnPropertyChanged(nameof(GroupForeground));
+            OnPropertyChanged(nameof(IsGroupEnabled));
+        }
+
+        /// <summary>
+        /// すべての子をクリアします。
+        /// </summary>
+        public void ClearChild()
+        {
+            Child.Clear();
+            OnPropertyChanged(nameof(GroupForeground));
+            OnPropertyChanged(nameof(IsGroupEnabled));
+        }
+
+        /// <summary>
+        /// グループ用文字色です。
+        /// </summary>
+        public Brush GroupForeground
+        {
+            get
+            {
+                if (!IsGroupEnabled)
+                {
+                    return (Brush)Application.Current.FindResource("EmptyCommandBrush");
+                }
+                return (Brush)Application.Current.FindResource("CommandGroupBrush");
+            }
+            set {}
         }
 
         //-----------------------------------------------------------------------------------
         /// <summary>
         /// 左クリックイベントで呼ばれるイベントです。
         /// </summary>
-        public ICommand LeftClickCommand { get; set; }
+        public ICommand LeftClickCommand
+        {
+            get => leftClickCommand;
+            set
+            {
+                leftClickCommand = value;
+                OnPropertyChanged(nameof(Foreground));
+                OnPropertyChanged(nameof(IsEnabled));
+            }
+        }
+        private ICommand leftClickCommand = null;
 
+        //-----------------------------------------------------------------------------------
+        /// <summary>
+        /// コマンド用文字色です。
+        /// </summary>
         public Brush Foreground
         {
             get
@@ -210,17 +269,55 @@ namespace CapyCSS.Controls.BaseControls
                 {
                     return (Brush)Application.Current.FindResource("EmptyCommandBrush");
                 }
-                if (!LeftClickCommand.CanExecute(null))
+                if (!IsEnabled)
                 {
                     return (Brush)Application.Current.FindResource("UnenableCommandBrush");
                 }
-                return (Brush)Application.Current.FindResource("PrimaryHueDarkForegroundBrush");
+                return (Brush)Application.Current.FindResource("CommandBrush");
             }
-            set {
-                OnPropertyChanged(nameof(Foreground));
-                OnPropertyChanged(nameof(IsEnabled));
+            set {}
+        }
+
+        //-----------------------------------------------------------------------------------
+        /// <summary>
+        /// 削除アイコン左クリックイベントで呼ばれるイベントです。
+        /// </summary>
+        public ICommand DeleteClickCommand 
+        {
+            get => deleteClickCommand;
+            set
+            {
+                deleteClickCommand = value;
+                OnPropertyChanged(nameof(DeleteNodeView));
             }
         }
+        private ICommand deleteClickCommand = null;
+
+        /// <summary>
+        /// 削除アイコンの表示を制御します。
+        /// </summary>
+        public Visibility DeleteNodeView
+        {
+            get
+            {
+                if (DeleteClickCommand is null)
+                {
+                    return Visibility.Collapsed;
+                }
+                if (!DeleteClickCommand.CanExecute(null))
+                {
+                    return Visibility.Collapsed;
+                }
+                return Visibility.Visible;
+            }
+            set {}
+        }
+
+        //-----------------------------------------------------------------------------------
+        /// <summary>
+        /// グループか否かを判定します。
+        /// </summary>
+        public bool IsGroup => nodeType == NodeType.GROUP || Child.Count != 0;
 
         //-----------------------------------------------------------------------------------
         /// <summary>
@@ -228,7 +325,7 @@ namespace CapyCSS.Controls.BaseControls
         /// </summary>
         public Visibility MenuNodeView
         {
-            get => (Child.Count == 0) ? Visibility.Visible : Visibility.Collapsed;
+            get => !IsGroup ? Visibility.Visible : Visibility.Collapsed;
             set {}
         }
 
@@ -238,23 +335,88 @@ namespace CapyCSS.Controls.BaseControls
         /// </summary>
         public Visibility GroupNodeView
         {
-            get => (Child.Count != 0) ? Visibility.Visible : Visibility.Collapsed;
+            get => IsGroup ? Visibility.Visible : Visibility.Collapsed;
             set {}
         }
 
         //-----------------------------------------------------------------------------------
         /// <summary>
-        /// 有効状態を参照します。
+        /// グループを閉じるか判定します。
+        /// </summary>
+        private bool isExpanded = false;
+        public bool IsExpanded
+        {
+            get => isExpanded;
+            set 
+            {
+#if false
+                if (!IsGroupEnabled)
+                {
+                    isExpanded = false;
+                    OnPropertyChanged("IsGroupEnabled");
+                    OnPropertyChanged("GroupForeground");
+                    OnPropertyChanged("IsExpanded");
+                    return;
+                }
+#endif
+                isExpanded = value;
+                OnPropertyChanged("IsExpanded");
+            }
+        }
+
+        //-----------------------------------------------------------------------------------
+        /// <summary>
+        /// コマンドの有効状態を参照します。
         /// </summary>
         public bool IsEnabled
         {
             get
             {
-                if (LeftClickCommand is null)
+                if (LeftClickCommand is null || !LeftClickCommand.CanExecute(null))
                 {
-                    return true;
+                    return false;
                 }
-                return LeftClickCommand.CanExecute(null) && (Child.Count == 0);
+                return isEnabled;
+            }
+            set 
+            {
+                isEnabled = value;
+                OnPropertyChanged("IsEnabled");
+                OnPropertyChanged("Foreground");
+            }
+        }
+        private bool isEnabled = true;
+
+        //-----------------------------------------------------------------------------------
+        /// <summary>
+        /// グループ用の有効状態を参照します。
+        /// </summary>
+        public bool IsGroupEnabled
+        {
+            get
+            {
+#if true
+                return Child.Count > 0;
+#else
+                if (IsGroup)
+                {
+                    foreach (var child in Child)
+                    {
+                        if (IsGroup)
+                        {
+                            if (child.IsGroupEnabled)
+                                return true;
+                        }
+                        else
+                        {
+                            if (child.IsEnabled)
+                                return true;
+                        }
+                    }
+                    return false;
+                }
+                return IsEnabled;
+#endif
             }
             set {}
         }
@@ -270,7 +432,7 @@ namespace CapyCSS.Controls.BaseControls
         /// <summary>
         /// ツリーメニューコレクション
         /// </summary>
-        #region AssetTreeData 添付プロパティ実装
+#region AssetTreeData 添付プロパティ実装
 
         private static ImplementDependencyProperty<TreeViewCommand, ObservableCollection<TreeMenuNode>> impAssetTreeData =
             new ImplementDependencyProperty<TreeViewCommand, ObservableCollection<TreeMenuNode>>(
@@ -289,9 +451,9 @@ namespace CapyCSS.Controls.BaseControls
             set { impAssetTreeData.SetValue(this, value); }
         }
 
-        #endregion
+#endregion
 
-        #region OwnerCommandCanvas 添付プロパティ実装
+#region OwnerCommandCanvas 添付プロパティ実装
 
         private static ImplementDependencyProperty<TreeViewCommand, CommandCanvas> impOwnerCommandCanvas =
             new ImplementDependencyProperty<TreeViewCommand, CommandCanvas>(
@@ -309,7 +471,7 @@ namespace CapyCSS.Controls.BaseControls
             set { impOwnerCommandCanvas.SetValue(this, value); }
         }
 
-        #endregion
+#endregion
 
         public ObservableCollection<TreeMenuNode> BackupTreeData = null;
 
@@ -356,7 +518,7 @@ namespace CapyCSS.Controls.BaseControls
                     return node;
                 }
             }
-            var recentNode = new TreeMenuNode(RecentName);
+            var recentNode = new TreeMenuNode(TreeMenuNode.NodeType.NORMAL, RecentName);
             AssetTreeData.Add(recentNode);
             return recentNode;
         }
@@ -416,7 +578,7 @@ namespace CapyCSS.Controls.BaseControls
                 }
                 else
                 {
-                    node.Foreground = Brushes.Black;    // ダミー（更新目的）
+                    //node.Foreground = Brushes.Black;    // ダミー（更新目的）
                 }
             }
         }
@@ -633,7 +795,7 @@ namespace CapyCSS.Controls.BaseControls
                     {
                         if (treeView.Count < FilteringMax)
                         {
-                            treeView.Add(new TreeMenuNode(title, node.HintText, OwnerCommandCanvas.CreateImmediateExecutionCanvasCommand(() =>
+                            treeView.Add(new TreeMenuNode(TreeMenuNode.NodeType.NORMAL, title, node.HintText, OwnerCommandCanvas.CreateImmediateExecutionCanvasCommand(() =>
                             {
                                 ExecuteFindCommand(node.Path);
                             })));
@@ -693,7 +855,7 @@ namespace CapyCSS.Controls.BaseControls
                     {
                         if (treeView.Count < FilteringMax)
                         {
-                            var addNode = new TreeMenuNode(title, node.HintText, OwnerCommandCanvas.CreateImmediateExecutionCanvasCommand(() =>
+                            var addNode = new TreeMenuNode(TreeMenuNode.NodeType.NORMAL, title, node.HintText, OwnerCommandCanvas.CreateImmediateExecutionCanvasCommand(() =>
                             {
                                 ExecuteFindCommand(node.Path);
                             }));
@@ -719,7 +881,7 @@ namespace CapyCSS.Controls.BaseControls
                                 {
                                     // 新規の子メニューを追加
 
-                                    menuNode = new TreeMenuNode(menuTitle);
+                                    menuNode = new TreeMenuNode(TreeMenuNode.NodeType.NORMAL, menuTitle);
                                     treeView.Add(menuNode);
                                 }
                                 menuNode.Child.Add(addNode);
@@ -893,7 +1055,7 @@ namespace CapyCSS.Controls.BaseControls
                     }
                     if (temp == null)
                     {
-                        temp = new TreeMenuNode(arr[i]);
+                        temp = new TreeMenuNode(TreeMenuNode.NodeType.NORMAL, arr[i]);
                         group.AddChild(temp);
                     }
                     group = temp;
@@ -915,11 +1077,11 @@ namespace CapyCSS.Controls.BaseControls
             TreeMenuNode menu;
             if (help is null)
             {
-                menu = new TreeMenuNode(title, "", command);
+                menu = new TreeMenuNode(TreeMenuNode.NodeType.NORMAL, title, "", command);
             }
             else
             {
-                menu = new TreeMenuNode(title, help, command);
+                menu = new TreeMenuNode(TreeMenuNode.NodeType.NORMAL, title, help, command);
             }
             group.AddChild(menu);
         }

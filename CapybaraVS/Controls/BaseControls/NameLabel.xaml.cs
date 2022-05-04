@@ -121,23 +121,23 @@ namespace CapyCSS.Controls.BaseControls
 
         #endregion
 
-        #region CehckTitle プロパティ実装
+        #region CheckTitle プロパティ実装
 
-        private static ImplementDependencyProperty<NameLabel, bool> impCehckTitle =
+        private static ImplementDependencyProperty<NameLabel, bool> impCheckTitle =
             new ImplementDependencyProperty<NameLabel, bool>(
-                nameof(CehckTitle),
+                nameof(CheckTitle),
                 (self, getValue) =>
                 {
                     bool flg = getValue(self);
                     self.LabelControl.FontSize = flg ? 16 : 12;
                 });
 
-        public static readonly DependencyProperty CehckTitleProperty = impCehckTitle.Regist(false);
+        public static readonly DependencyProperty CheckTitleProperty = impCheckTitle.Regist(false);
 
-        public bool CehckTitle
+        public bool CheckTitle
         {
-            get { return impCehckTitle.GetValue(this); }
-            set { impCehckTitle.SetValue(this, value); }
+            get { return impCheckTitle.GetValue(this); }
+            set { impCheckTitle.SetValue(this, value); }
         }
 
         #endregion

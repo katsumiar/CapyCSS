@@ -44,6 +44,8 @@
             <SolidColorBrush x:Key="EntryPointNameCollisionBackgroundBrush" Color="Tomato"/>
             <SolidColorBrush x:Key="EmptyCommandBrush" Color="Gray"/>
             <SolidColorBrush x:Key="UnenableCommandBrush" Color="Silver"/>
+            <SolidColorBrush x:Key="CommandBrush" Color="MediumAquamarine"/>
+            <SolidColorBrush x:Key="CommandGroupBrush" Color="White"/>
             <SolidColorBrush x:Key="EditErrorBackgroundBrush" Color="Salmon"/>
             <SolidColorBrush x:Key="SelfParamBackgroundBrush" Color="LightSalmon"/>
             <SolidColorBrush x:Key="ParamBackgroundBrush" Color="Honeydew"/>
@@ -65,6 +67,7 @@
             <SolidColorBrush x:Key="DeleteIconForegroundBrush" Color="Black"/>
             <SolidColorBrush x:Key="DeleteIconStrokeBrush" Color="RoyalBlue"/>
             <SolidColorBrush x:Key="DeleteIconBackgroundBrush" Color="CornflowerBlue"/>
+            <SolidColorBrush x:Key="BorderBrush" Color="#FF565656"/>
         </ResourceDictionary>
     </Application.Resources>
 </Application>

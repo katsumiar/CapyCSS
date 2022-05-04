@@ -18,7 +18,7 @@ namespace CapyCSS.Script
         /// <returns>作成したグループ</returns>
         protected static TreeMenuNode CreateGroup(CommandCanvas OwnerCommandCanvas, string name)
         {
-            var newNode = new TreeMenuNode(name);
+            var newNode = new TreeMenuNode(TreeMenuNode.NodeType.GROUP, name);
             OwnerCommandCanvas.CommandMenu.AssetTreeData.Add(newNode);
             return newNode;
         }
@@ -31,7 +31,7 @@ namespace CapyCSS.Script
         /// <returns>作成したグループ</returns>
         public static TreeMenuNode CreateGroup(TreeMenuNode node, string name)
         {
-            var newNode = new TreeMenuNode(name);
+            var newNode = new TreeMenuNode(TreeMenuNode.NodeType.GROUP, name);
             node.AddChild(newNode);
             return newNode;
         }
@@ -45,7 +45,7 @@ namespace CapyCSS.Script
         {
             AddAsset(funcAssetDef);
             string title = TreeViewCommand.MakeGroup(ref group, funcAssetDef.MenuTitle);
-            var menu = new TreeMenuNode(title, funcAssetDef.HelpText);
+            var menu = new TreeMenuNode(TreeMenuNode.NodeType.NORMAL, title, funcAssetDef.HelpText);
             group.AddChild(menu);
             menu.LeftClickCommand = OwnerCommandCanvas.CreateEventCanvasCommand(
                 menu.Path, 
@@ -71,7 +71,7 @@ namespace CapyCSS.Script
         {
             AddAsset(funcAssetDef);
             string title = TreeViewCommand.MakeGroup(ref group, funcAssetDef.MenuTitle);
-            var menu = new TreeMenuNode(title, funcAssetDef.HelpText);
+            var menu = new TreeMenuNode(TreeMenuNode.NodeType.NORMAL, title, funcAssetDef.HelpText);
             group.AddChild(menu);
             menu.LeftClickCommand = OwnerCommandCanvas.CreateEventCanvasCommand(
                 menu.Path,
@@ -98,7 +98,7 @@ namespace CapyCSS.Script
         {
             AddAsset(funcAssetDef);
             string title = TreeViewCommand.MakeGroup(ref group, funcAssetDef.MenuTitle);
-            var menu = new TreeMenuNode(title, funcAssetDef.HelpText);
+            var menu = new TreeMenuNode(TreeMenuNode.NodeType.NORMAL, title, funcAssetDef.HelpText);
             group.AddChild(menu);
             menu.LeftClickCommand = OwnerCommandCanvas.CreateEventCanvasCommand(
                 menu.Path,
@@ -125,7 +125,7 @@ namespace CapyCSS.Script
         {
             AddAsset(funcAssetDef);
             string title = TreeViewCommand.MakeGroup(ref group, funcAssetDef.MenuTitle);
-            var menu = new TreeMenuNode(title, funcAssetDef.HelpText);
+            var menu = new TreeMenuNode(TreeMenuNode.NodeType.NORMAL, title, funcAssetDef.HelpText);
             group.AddChild(menu);
             menu.LeftClickCommand = OwnerCommandCanvas.CreateEventCanvasCommand(
                 menu.Path, 
@@ -152,7 +152,7 @@ namespace CapyCSS.Script
         {
             //AddAsset(funcAssetDef); 不要
             string title = TreeViewCommand.MakeGroup(ref group, funcAssetDef.MenuTitle);
-            var menu = new TreeMenuNode(title, funcAssetDef.HelpText);
+            var menu = new TreeMenuNode(TreeMenuNode.NodeType.NORMAL, title, funcAssetDef.HelpText);
             group.AddChild(menu);
             menu.LeftClickCommand = OwnerCommandCanvas.CreateEventCanvasCommand(
                 menu.Path,

@@ -25,7 +25,7 @@ namespace CapyCSS.Script.Lib
             if (!string.IsNullOrEmpty(currentDir))
                 dialog.InitialDirectory = currentDir;
             else
-                dialog.InitialDirectory = CommandCanvas.GetSamplePath();
+                dialog.InitialDirectory = CommandCanvasList.GetSamplePath();
             if (!string.IsNullOrEmpty(filter))
                 dialog.Filter = filter;
             if (dialog.ShowDialog() == true)
@@ -45,7 +45,7 @@ namespace CapyCSS.Script.Lib
             if (!string.IsNullOrEmpty(currentDir))
                 dialog.InitialDirectory = currentDir;
             else
-                dialog.InitialDirectory = CommandCanvas.GetSamplePath();
+                dialog.InitialDirectory = CommandCanvasList.GetSamplePath();
             if (dialog.ShowDialog() == true)
             {
                 return Path.GetDirectoryName(dialog.FileName);

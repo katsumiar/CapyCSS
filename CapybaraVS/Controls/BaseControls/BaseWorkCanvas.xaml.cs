@@ -898,7 +898,7 @@ namespace CapyCSS.Controls.BaseControls
                 {
                     // 未登録なので登録する
 
-                    recentNode.AddChild(new TreeMenuNode(name, OwnerCommandCanvas.CreateImmediateExecutionCanvasCommand(() =>
+                    recentNode.AddChild(new TreeMenuNode(TreeMenuNode.NodeType.NORMAL, name, OwnerCommandCanvas.CreateImmediateExecutionCanvasCommand(() =>
                     {
                         OwnerCommandCanvas.CommandMenu.ExecuteFindCommand(name);
                     })));
@@ -1229,7 +1229,7 @@ namespace CapyCSS.Controls.BaseControls
                         {
                             // スクリプトファイルを読み込む
 
-                            OwnerCommandCanvas.CommandCanvasControl.AddNewContents(path);
+                            OwnerCommandCanvas.CommandCanvasControl.AddLoadContents(path);
                             return;
                         }
                     }

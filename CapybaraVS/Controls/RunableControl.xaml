@@ -8,7 +8,7 @@
              d:DesignHeight="313" d:DesignWidth="600" FocusVisualStyle="{x:Null}">
     <StackPanel x:Name="MainGrid" HorizontalAlignment="Center" VerticalAlignment="Center" MinWidth="40" MinHeight="16">
         <Grid>
-            <local:NameLabel x:Name="CaptionLabel"  HorizontalAlignment="Center" VerticalAlignment="Center" CehckTitle="True" />
+            <local:NameLabel x:Name="CaptionLabel"  HorizontalAlignment="Center" VerticalAlignment="Center" CheckTitle="True" />
         </Grid>
         <Controls:LinkConnectorList x:Name="LinkConnectorListControl" />
         <Grid x:Name="SetGrid"/>
