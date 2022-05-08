@@ -1124,7 +1124,7 @@ namespace CapyCSS.Controls
 
         private object _CallPublicExecuteEntryPoint(bool fromScript, string entryPointName = null)
         {
-            if (!fromScript || IsCursorLock())
+            if (!fromScript && IsCursorLock())
             {
                 return null;
             }
