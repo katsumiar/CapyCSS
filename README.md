@@ -3,7 +3,7 @@
 ※このイメージは、ScreenToGif によって作成されています。
 
 ## 0.5.0.0 での変更
-![capyCssSample](https://user-images.githubusercontent.com/63950487/167278022-ca6b492d-6482-4013-bd0f-cdca3e96021d.png)
+![image](https://user-images.githubusercontent.com/63950487/167279679-3c5ab231-33a7-40ee-a086-f897969d1eb4.png)
 * プロジェクトファイル（*.cbsproj）に対応しました。
 
 ## 0.4.1.2 での変更
