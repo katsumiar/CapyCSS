@@ -135,7 +135,7 @@ namespace CapyCSS.Controls
         private string loadProjectName = "";
 
         private TreeMenuNode commandGroup = new TreeMenuNode(TreeMenuNode.NodeType.GROUP, "Command");
-        private TreeMenuNode cbsGroup = new TreeMenuNode(TreeMenuNode.NodeType.GROUP, "SCB Files");
+        private TreeMenuNode cbsGroup = new TreeMenuNode(TreeMenuNode.NodeType.GROUP, "CBS Files");
 
         private string ProjectFilePath = CommandCanvasList.GetSamplePath();
 
