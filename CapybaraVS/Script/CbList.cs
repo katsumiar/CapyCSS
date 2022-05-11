@@ -250,7 +250,7 @@ namespace CbVS.Script
         /// <summary>
         /// ノードの型名
         /// </summary>
-        public string ItemName => CbSTUtils._GetTypeName(typeof(T));
+        public string ItemName => CbSTUtils.GetTypeName(typeof(T));
 
         private Func<ICbValue> _ListNodeType = null;
 

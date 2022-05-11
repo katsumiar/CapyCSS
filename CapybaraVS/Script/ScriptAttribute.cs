@@ -823,7 +823,7 @@ namespace CapyCSS.Script
                 ParameterInfo[] paramsinfo = methodInfo.GetParameters();
                 foreach (ParameterInfo para in paramsinfo)
                 {
-                    addArg += "_" + CbSTUtils._GetTypeName(para.ParameterType);
+                    addArg += "_" + CbSTUtils.GetTypeName(para.ParameterType);
                 }
 
                 string nodeCode = methodInfo.ReflectedType.Namespace + "." + methodInfo.ReflectedType.Name + "." + methodInfo.Name + addArg;
@@ -1109,43 +1109,46 @@ namespace CapyCSS.Script
         /// 型制約を判定します。
         /// ※未完成
         /// </summary>
-        /// <param name="geneArg">制約を持つ型</param>
+        /// <param name="genericType">制約を持つ型</param>
         /// <param name="target">判定する型</param>
         /// <returns>true==制約を満たす</returns>
-        public static bool IsConstraint(Type geneArg, Type target)
+        public static bool IsConstraint(Type genericType, Type target)
         {
             GenericParameterAttributes sConstraints =
-                        geneArg.GenericParameterAttributes &
+                        genericType.GenericParameterAttributes &
                         GenericParameterAttributes.SpecialConstraintMask;
 
             if (sConstraints != GenericParameterAttributes.None)
             {
-                if (target.IsClass &&    // 構造体は含めない（デフォルトの挙動が有る）
-                    GenericParameterAttributes.None != (sConstraints &
-                    GenericParameterAttributes.DefaultConstructorConstraint))
+                if (target.IsClass &&    // 構造体は含めない（デフォルトコンストラクタが在る）
+                    GenericParameterAttributes.None != (sConstraints & GenericParameterAttributes.DefaultConstructorConstraint))
                 {
-                    var query = target.GetMethods(BindingFlags.Public).Where(n => n.IsConstructor);      // 公開コンストラクタを探す
+                    var query = target.GetConstructors(BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance);  // コンストラクタを取得
                     bool haveDefaultConstructer = query.Any(n => n.GetParameters().Length == 0);    // 引数無しを探す
                     if (!haveDefaultConstructer)
                         return false;    // 型がパラメーターなしのコンストラクターを持たなければ拒否
                 }
-                if (GenericParameterAttributes.None != (sConstraints &
-                    GenericParameterAttributes.ReferenceTypeConstraint))
+                if (GenericParameterAttributes.None != (sConstraints & GenericParameterAttributes.ReferenceTypeConstraint))
                 {
                     if (target.IsValueType || target.IsPointer)
                         return false;   // 型が参照型でなければ拒否（値型で無くポインタ型でも無ければ参照型）
                 }
-                if (GenericParameterAttributes.None != (sConstraints &
-                    GenericParameterAttributes.NotNullableValueTypeConstraint))
+                if (GenericParameterAttributes.None != (sConstraints & GenericParameterAttributes.NotNullableValueTypeConstraint))
                 {
                     if (!target.IsValueType)
-                        return false;   // 型が値型の場合は拒否
+                        return false;   // 型が参照型の場合は拒否
                     if (target.IsGenericType && target.GetGenericTypeDefinition() == typeof(Nullable<>))
-                        return false;   // Null許容型の場合は拒否
+                        return false;   // Null許容型の場合は拒否（この実装は怪しい…）
                 }
             }
 
-            return true;
+            foreach (var interfaceType in genericType.GetInterfaces())
+            {
+                if (!target.GetInterfaces().Contains(interfaceType))
+                    return false;   // インターフェイスを持っていない
+            }
+
+            return genericType != typeof(object) && genericType.BaseType.IsAssignableFrom(target);
         }
 
         /// <summary>
@@ -1183,7 +1186,7 @@ namespace CapyCSS.Script
                         paramsStr += ",";
                     }
 
-                    string argStr = CbSTUtils._GetTypeName(para.ParameterType);
+                    string argStr = CbSTUtils.GetTypeName(para.ParameterType);
                     argStr = ReplaceModifier(para, argStr);
                     paramsStr += argStr;
 

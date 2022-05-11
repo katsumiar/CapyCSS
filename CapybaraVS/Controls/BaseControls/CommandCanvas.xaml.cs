@@ -416,8 +416,8 @@ namespace CapyCSS.Controls.BaseControls
 
             Debug.Assert(CbSTUtils.GetTypeFullName(typeof(int)) == "System.Int32");
             Debug.Assert(CbSTUtils.GetTypeFullName(typeof(Rect)) == "System.Windows.Rect");
-            Debug.Assert(CbSTUtils.GetTypeFullName(typeof(Rect?)) == "System.Nullable<System.Windows.Rect>");
-            Debug.Assert(CbSTUtils.GetTypeFullName(typeof(IDictionary<int, Nullable<short>>)) == "System.Collections.Generic.IDictionary<System.Int32,System.Nullable<System.Int16>>");
+            Debug.Assert(CbSTUtils.GetTypeFullName(typeof(Rect?)) == "System.Windows.Rect?");
+            Debug.Assert(CbSTUtils.GetTypeFullName(typeof(IDictionary<int, Nullable<short>>)) == "System.Collections.Generic.IDictionary<System.Int32,System.Int16?>");
             Debug.Assert(CbSTUtils.GetTypeFullName(typeof(System.PlatformID)) == "System.PlatformID");
 
             // ジェネリック型名変換チェック
@@ -494,12 +494,47 @@ namespace CapyCSS.Controls.BaseControls
             foreach (var valueType in valueTypes)
                 CheckNullable(CbST.CbCreate(typeof(Nullable<>).MakeGenericType(new Type[] { valueType })));
 
+            // 型制約チェック
+            bool CheckConstraint(Type targetType, Type argType)
+            {
+                foreach (var n in targetType.GetGenericArguments())
+                {
+                    if (n.IsGenericParameter)
+                    {
+                        if (!ScriptImplement.IsConstraint(n, argType))
+                        {
+                            return false;
+                        }
+                    }
+                }
+                return true;
+            }
+            Debug.Assert(CheckConstraint(typeof(_constraintCheck1<>), typeof(_refConstraintCheck)));
+            Debug.Assert(!CheckConstraint(typeof(_constraintCheck1<>), typeof(_refNoConstConstraintCheck)));
+            Debug.Assert(CheckConstraint(typeof(_constraintCheck2<>), typeof(_valueConstraintCheck)));
+            Debug.Assert(!CheckConstraint(typeof(_constraintCheck2<>), typeof(_refNoConstConstraintCheck)));
+            Debug.Assert(CheckConstraint(typeof(_constraintCheck3<>), typeof(_refNoConstConstraintCheck)));
+            Debug.Assert(!CheckConstraint(typeof(_constraintCheck3<>), typeof(_refConstraintCheck)));
+            Debug.Assert(CheckConstraint(typeof(_constraintCheck4<>), typeof(_refNoConstConstraintCheck)));
+            Debug.Assert(!CheckConstraint(typeof(_constraintCheck4<>), typeof(_refConstraintCheck)));
+
             Console.WriteLine("ok");
         }
-#endregion
+        public class _refConstraintCheck {}
+        public class _refNoConstConstraintCheck : IComparable<_refConstraintCheck>
+        {
+            public _refNoConstConstraintCheck(int a) {}
+            public int CompareTo(_refConstraintCheck other) { throw new NotImplementedException(); }
+        }
+        public struct _valueConstraintCheck {}
+        public class _constraintCheck1<T> where T : class, new() {}
+        public class _constraintCheck2<T> where T : struct {}
+        public class _constraintCheck3<T> where T : _refNoConstConstraintCheck {}
+        public class _constraintCheck4<T> where T : IComparable<_refConstraintCheck> {}
+        #endregion
 
         //----------------------------------------------------------------------
-#region スクリプト内共有
+        #region スクリプト内共有
         private List<string> _inportNameSpaceModule = null;
         private List<string> _inportDllModule = null;
         private List<string> _inportNuGetModule = null;
@@ -1313,6 +1348,7 @@ namespace CapyCSS.Controls.BaseControls
             {
                 ControlTools.SetWindowPos(TypeMenuWindow, new Point(Mouse.GetPosition(this).X, Mouse.GetPosition(this).Y));
             }
+            TypeMenuWindow.treeViewCommand.RefreshItem();
             TypeMenuWindow.ShowDialog();
             if (SelectType is null)
             {

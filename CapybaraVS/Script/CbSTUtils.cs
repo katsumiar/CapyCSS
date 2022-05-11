@@ -250,11 +250,28 @@ namespace CapyCSS.Script
         /// <returns></returns>
         static public string GetTypeName(Type type, bool optimize = true)
         {
-            string typeName = type.FullName;
+            string typeName;
+            if (type.FullName == null || optimize)
+            {
+                typeName = type.Name;
+            }
+            else
+            {
+                typeName = type.FullName;
+            }
+            Debug.Assert(typeName != null);
+            if (optimize && tryOptimaizeName(ref typeName))
+            {
+                // 最適化できたならそのまま返す
+
+                return typeName;
+            }
             string newName = _GetTypeName(type, optimize);
 
-            if (optimize)
+            if (optimize && !type.IsArray && !type.IsByRef && !type.IsGenericType)
             {
+                // 結果を型名辞書を登録する
+
                 try
                 {
                     CbTypeNameListRwLock.AcquireWriterLock(Timeout.Infinite);
@@ -271,209 +288,177 @@ namespace CapyCSS.Script
             return newName;
         }
 
-        static public string _GetTypeName(Type type, bool optimize = true)
+        /// <summary>
+        /// 型名を最適化します。
+        /// </summary>
+        /// <param name="typeName">最適化対象の型名</param>
+        /// <returns>最適化後の型名</returns>
+        static private string optimaizeName(string typeName)
         {
-            string ret = __GetTypeName(type, optimize);
-            if (type.IsArray)
-            {
-                // 外した配列を付け直す
-
-                ret += "[]";
-            }
-            return ret;
+            tryOptimaizeName(ref typeName);
+            return typeName;
         }
 
-        static public string __GetTypeName(Type type, bool optimize = true)
+        /// <summary>
+        /// 型名の最適化を試します。
+        /// </summary>
+        /// <param name="typeName">最適化対象の型名</param>
+        /// <returns>true==最適化に成功</returns>
+        static private bool tryOptimaizeName(ref string typeName)
         {
-            if (type == typeof(Nullable))
+            try
             {
-                return type.Name;
-            }
-
-            bool isGeneName = false;
-            bool isNotGeneName = false;
-            if (type.IsGenericType)
-            {
-                // ジェネリック型内のジェネリックCbクラス用
-
-                if (type.GetGenericTypeDefinition() == typeof(CbClass<>) ||
-                    type.GetGenericTypeDefinition() == typeof(CbStruct<>) ||
-                    type.GetGenericTypeDefinition() == typeof(CbEnum<>))
+                CbTypeNameListRwLock.AcquireReaderLock(Timeout.Infinite);
+                if (CbTypeNameList.ContainsKey(typeName))
                 {
-                    isNotGeneName = true;
+                    typeName = CbTypeNameList[typeName];
+                    return true;
                 }
-                isGeneName = true;
             }
-            else if (type.Name.Contains("`"))
+            finally
             {
-                // out 修飾されていた場合あり得る
-
-                isGeneName = true;
+                CbTypeNameListRwLock.ReleaseReaderLock();
             }
+            return false;
+        }
 
-            string typeName = type.FullName;
-            if (typeName is null)
+        /// <summary>
+        /// 型名を文字列での表現にします。
+        /// </summary>
+        /// <param name="type">文字列表現対象の型</param>
+        /// <param name="optimize">true==最適化する</param>
+        /// <returns>型名の文字列での表現</returns>
+        static private string _GetTypeName(Type type, bool optimize = true)
+        {
+            // ジェネリック型のジェネリック引数を文字列表現で取り出す
+            string getGenericArgumentsName(Type type, bool optimize = true)
             {
-                typeName = type.Name;
-            }
-
-            if (type.IsByRef)
-            {
-                // リファレンスは一先ず外す
-
-                typeName = typeName.Replace("&", "");
-            }
-
-            string geneString = "";
-
-            if (type.IsArray)
-            {
-                // 配列は一先ず外す
-
-                typeName = typeName.Replace("[]", "");
-            }
-
-            if (optimize)
-            {
-                try
+                Type[] genericArgs = type.GetGenericArguments();
+                string genericArgsString = null;
+                foreach (Type genericArg in genericArgs)
                 {
-                    CbTypeNameListRwLock.AcquireReaderLock(Timeout.Infinite);
-                    if (CbTypeNameList.ContainsKey(typeName))
+                    string paramString;
+                    if (genericArg.IsGenericParameter || genericArg.IsGenericTypeParameter)
                     {
-                        return CbTypeNameList[typeName];
+                        // ジェネリックパラメータ
+
+                        paramString = genericArg.Name;
                     }
-                }
-                finally
-                {
-                    CbTypeNameListRwLock.ReleaseReaderLock();
-                }
-            }
-
-            if (isGeneName)
-            {
-                if (typeName.Contains("`"))
-                {
-                    // ジェネリック引数文字以降を削除
-
-                    typeName = typeName.Substring(0, typeName.IndexOf("`"));
-                }
-
-                foreach (Type arg in type.GenericTypeArguments)
-                {
-                    string newName = _GetTypeName(arg, optimize);
-                    if (geneString.Length != 0)
+                    else if (genericArg.IsGenericType && !IsNullable(type))
                     {
-                        geneString += ",";
-                    }
-                    geneString += newName;
-                }
-                if (!isNotGeneName)
-                {
-                    if (geneString == "")
-                    {
-                        string cname = type.FullName;
-                        if (cname is null)
-                        {
-                            // どうにもならない？
+                        // ジェネリック型のジェネリック引数
 
-                            return "*Unsupported type*";
-                        }
-                        if (cname != null && cname.StartsWith("System.ArraySegment`"))
-                        {
-                            // ArraySegment は、強引に対応
-
-                            if (type.IsGenericType)
-                            {
-                                return GetGenericTypeName(type);
-                            }
-
-                            cname = cname.Substring(cname.IndexOf('['));
-                            cname = cname.Substring(0, cname.IndexOf(','));
-                            cname = cname.Replace("[", "");
-                            return $"ArraySegment<{__GetTypeName(CbST.GetTypeEx(cname), optimize)}>";
-                        }
-                        else
-                        {
-                            if (cname.Last() == '&')
-                            {
-                                // リファレンスを取った型で試してみる
-
-                                cname = cname.TrimEnd('&');
-                                return __GetTypeName(CbST.GetTypeEx(cname), optimize);
-                            }
-                            else if (cname.EndsWith("[]"))
-                            {
-                                // 配列を取った型で試してみる
-
-                                cname = cname.TrimEnd(']');
-                                cname = cname.TrimEnd('[');
-                                return __GetTypeName(CbST.GetTypeEx(cname), optimize);
-                            }
-                            else if (type.ContainsGenericParameters)
-                            {
-                                // ジェネリックなパラメータを持っている
-
-                                return GetGenericTypeName(type);
-                            }
-                            else
-                            {
-                                Debug.Assert(false);
-                            }
-                        }
+                        paramString = getGenericTypeName(genericArg, optimize);
                     }
                     else
                     {
-                        geneString = "<" + geneString + ">";
+                        paramString = getTypeName(genericArg, optimize);
                     }
-                }
-            }
-
-            // ネームスペースを省略できるかチェックをここで行い、省略できるなら省略する
-            if (optimize)
-            {
-                typeName = Optimisation(typeName);
-                try
-                {
-                    CbTypeNameListRwLock.AcquireReaderLock(Timeout.Infinite);
-                    if (CbTypeNameList.ContainsKey(typeName))
+                    if (genericArgsString is null)
                     {
-                        typeName = CbTypeNameList[typeName];
+                        // 初回
+
+                        genericArgsString = paramString;
+                    }
+                    else
+                    {
+                        genericArgsString += $",{paramString}";
                     }
                 }
-                finally
-                {
-                    CbTypeNameListRwLock.ReleaseReaderLock();
-                }
+                return genericArgsString;
             }
 
-            if (type.IsEnum || type.IsInterface || type.IsClass)
+            // ジェネリック型の文字列表現を取得する
+            string getGenericTypeName(Type type, bool optimize = true)
             {
-                // enum定義のネームスペースを削除
+                string argsStr = getGenericArgumentsName(type, optimize);
+                Debug.Assert(argsStr != null);
+                return getTypeName(type, optimize, $"<{argsStr}>");
+            }
 
-                if (optimize)
+            // 型の文字列表現を取得する（ジェネリック型を渡しては駄目。ただしNull許容型は問題ない）
+            string getTypeName(Type type, bool optimize = true, string genericArguments = null)
+            {
+                string typeName;
+
+                if (IsNullable(type))
                 {
-                    typeName = typeName.Substring(typeName.IndexOf("+") + 1, typeName.Length - typeName.IndexOf("+") - 1);
+                    // null許容型
+
+                    typeName = getGenericArgumentsName(type, optimize) + "?";
                 }
                 else
                 {
-                    typeName = typeName.Replace('+', '.');
+                    if (type.FullName == null || optimize)
+                    {
+                        typeName = type.Name;
+                    }
+                    else
+                    {
+                        typeName = type.FullName;
+                    }
+                    Debug.Assert(typeName != null);
+                    if (type.IsByRef)
+                    {
+                        Debug.Assert(typeName.EndsWith("&"));
+                        typeName = typeName.Substring(0, typeName.Length - 1);
+                    }
+                    if (type.IsArray)
+                    {
+                        Debug.Assert(typeName.EndsWith("[]"));
+                        typeName = typeName.Substring(0, typeName.Length - 2);
+                    }
+                    if (typeName.Contains('`'))
+                    {
+                        // ジェネリックパラメータは排除する
+
+                        typeName = typeName.Substring(0, typeName.IndexOf('`'));
+                    }
+
+                    if (type.IsEnum || type.IsInterface || type.IsClass)
+                    {
+                        // enum定義のネームスペースを削除
+
+                        if (optimize)
+                        {
+                            typeName = typeName.Substring(typeName.IndexOf("+") + 1, typeName.Length - typeName.IndexOf("+") - 1);
+                        }
+                        else
+                        {
+                            typeName = typeName.Replace('+', '.');
+                        }
+                    }
+                    if (optimize)
+                    {
+                        typeName = optimaizeName(typeName);
+                    }
+                    if (genericArguments != null)
+                    {
+                        typeName += genericArguments;
+                    }
                 }
+                if (type.IsArray)
+                {
+                    Debug.Assert(!typeName.EndsWith("[]"));
+                    typeName += "[]";
+                }
+                if (type.IsByRef)
+                {
+                    Debug.Assert(!typeName.EndsWith("&"));
+                    typeName += "&";
+                }
+                return typeName;
             }
 
-            if (isNotGeneName && optimize)
-                return Optimisation(geneString);
+            // ここから
 
-            if (typeName == "Nullable")
+            if (type.IsGenericType && !IsNullable(type))
             {
-                typeName = geneString.Substring(1).Split('>')[0] + "?";
-                geneString = "";
-            }
+                // ジェネリック型
 
-            if (!optimize)
-            {
-                return typeName + geneString;
+                return getGenericTypeName(type, optimize);
             }
-            return Optimisation(typeName + geneString);
+            return getTypeName(type, optimize);
         }
 
         /// <summary>
@@ -895,6 +880,20 @@ namespace CapyCSS.Script
                 }
             }
             list.Clear();
+        }
+
+        /// <summary>
+        /// Null許容型かどうかを判定します。
+        /// </summary>
+        /// <param name="type"></param>
+        /// <returns></returns>
+        public static bool IsNullable(Type type)
+        {
+            if (!type.IsGenericType)
+            {
+                return false;
+            }
+            return type.GetGenericTypeDefinition() == typeof(Nullable<>);
         }
 
         /// <summary>

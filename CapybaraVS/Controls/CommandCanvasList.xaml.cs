@@ -428,9 +428,9 @@ namespace CapyCSS.Controls
             Debug.Assert(action != null);
             action();
             Instance.Dispatcher.BeginInvoke(new Action(() =>
-            {
-                CursorUnlock();
-            }), DispatcherPriority.ApplicationIdle);
+                {
+                    CursorUnlock();
+                }), DispatcherPriority.ApplicationIdle);
         }
 
         /// <summary>
@@ -562,13 +562,13 @@ namespace CapyCSS.Controls
         public void OverwriteCbsFile()
         {
             Dispatcher.BeginInvoke(new Action(() =>
-            {
-                OverwriteSaveXML();
-                if (CurrentScriptCanvas.OpenFileName != null && CurrentScriptCanvas.OpenFileName != "")
                 {
-                    SetCurrentTabName(CurrentScriptCanvas.OpenFileName);
-                }
-            }), DispatcherPriority.ApplicationIdle);
+                    OverwriteSaveXML();
+                    if (CurrentScriptCanvas.OpenFileName != null && CurrentScriptCanvas.OpenFileName != "")
+                    {
+                        SetCurrentTabName(CurrentScriptCanvas.OpenFileName);
+                    }
+                }), DispatcherPriority.ApplicationIdle);
         }
 
         /// <summary>

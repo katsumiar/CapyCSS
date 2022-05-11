@@ -203,7 +203,7 @@ namespace CapyCSS.Script
                     break;
             }
 
-            if (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Nullable<>))
+            if (CbSTUtils.IsNullable(type))
             {
                 Type param = type.GenericTypeArguments[0];
                 switch (param.Name)
@@ -1055,7 +1055,7 @@ namespace CapyCSS.Script
                 string typeName;
                 if (Value is null)
                 {
-                    typeName = CbSTUtils._GetTypeName(OriginalType);
+                    typeName = CbSTUtils.GetTypeName(OriginalType);
                 }
                 else
                 {

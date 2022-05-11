@@ -73,10 +73,13 @@ namespace CapyCSS.Controls.BaseControls
 
         //-----------------------------------------------------------------------------------
         /// <summary>
-        /// 
+        /// 実行可能かの変化を通知します。
         /// </summary>
-#pragma warning disable 67  // インターフェイスにより強制されるが現在未使用
-        public event EventHandler CanExecuteChanged;
+        public event EventHandler CanExecuteChanged
+        {
+            add { CommandManager.RequerySuggested += value; }
+            remove { CommandManager.RequerySuggested -= value; }
+        }
 
         //-----------------------------------------------------------------------------------
         /// <summary>
@@ -420,6 +423,15 @@ namespace CapyCSS.Controls.BaseControls
             }
             set {}
         }
+
+        /// <summary>
+        /// コマンドの状態を更新します。
+        /// </summary>
+        public void UpdateCommand()
+        {
+            OnPropertyChanged("IsEnabled");
+            OnPropertyChanged("Foreground");
+        }
     }
 
     /// <summary>
@@ -578,7 +590,7 @@ namespace CapyCSS.Controls.BaseControls
                 }
                 else
                 {
-                    //node.Foreground = Brushes.Black;    // ダミー（更新目的）
+                    node.UpdateCommand();
                 }
             }
         }
