@@ -107,7 +107,7 @@ namespace CapyCSS.Controls.BaseControls
         {
             if (ClickEvent != null)
             {
-                Delete.Visibility = Visibility.Collapsed;
+                Delete.Visibility = Visibility.Hidden;
             }
         }
 

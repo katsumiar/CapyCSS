@@ -9,7 +9,7 @@
     <Grid>
         <StackPanel Orientation="Horizontal" MouseEnter="Delete_MouseEnter" MouseLeave="Delete_MouseLeave" Background="#02000000">
             <TextBlock x:Name="Caption" VerticalAlignment="Center" />
-            <Controls:DeleteIcon x:Name="Delete" Width="16" Height="16" VerticalAlignment="Center" Margin="6,0,0,0" Visibility="Collapsed" MouseEnter="Delete_MouseEnter_1" MouseLeave="Delete_MouseLeave_1" />
+            <Controls:DeleteIcon x:Name="Delete" Width="16" Height="16" VerticalAlignment="Center" Margin="6,0,0,0" Visibility="Hidden" MouseEnter="Delete_MouseEnter_1" MouseLeave="Delete_MouseLeave_1" />
         </StackPanel>
     </Grid>
 </UserControl>

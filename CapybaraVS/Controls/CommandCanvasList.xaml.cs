@@ -836,7 +836,6 @@ namespace CapyCSS.Controls
             }
             var newItem = new TabItem()
             {
-                HorizontalAlignment = HorizontalAlignment.Left,
                 Content = commandCanvas
             };
             newItem.Header = new RemovableLabel()
@@ -1374,6 +1373,12 @@ namespace CapyCSS.Controls
             Dispatcher.BeginInvoke(new Action(() =>
                 {
                     Tab.Items.Remove(tabItem);
+                    if (Tab.Items.Count == 0)
+                    {
+                        // Tab.Items.Count が 0 でも画面上からタブが消えていないことがあるので無いよりもマシな対策…。
+
+                        Tab.Items.Clear();
+                    }
                 }), DispatcherPriority.Background);
         }
 
@@ -1384,9 +1389,10 @@ namespace CapyCSS.Controls
         private void ClearCommandCanvas(TabItem tabItem)
         {
             var commandCanvas = tabItem.Content as CommandCanvas;
+            tabItem.Content = null;
+            tabItem.Header = null;
             commandCanvas.ClearWorkCanvas();
             commandCanvas.Dispose();
-            tabItem.Content = null;
         }
 
         /// <summary>
