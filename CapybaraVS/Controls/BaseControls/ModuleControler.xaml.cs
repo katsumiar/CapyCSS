@@ -171,7 +171,7 @@ namespace CapyCSS.Controls.BaseControls
             }
 
             string dllPath = System.IO.Path.Combine(InstallDllDirectory, selectedValue);
-            if (File.Exists(selectedValue))
+            if (!File.Exists(dllPath))
             {
                 string msg = string.Format(CapyCSS.Language.Instance["SYSTEM_ModuleControler_04"], dllPath);
                 ControlTools.ShowErrorMessage(msg, DLL_MESSAGE_TITLE);
