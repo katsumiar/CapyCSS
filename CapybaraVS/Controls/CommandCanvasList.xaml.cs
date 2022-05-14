@@ -155,9 +155,29 @@ namespace CapyCSS.Controls
 
         public static Window OwnerWindow => ownerWindow;
 
+        private static int cursorOverwriteCounter = 0;
         public static void SetOwnerCursor(Cursor cursor)
         {
-            OwnerWindow.Cursor = cursor;
+            if (cursor != null)
+            {
+                cursorOverwriteCounter++;
+                if (OwnerWindow.Cursor == Cursors.Wait)
+                {
+                    // 待機中カーソルには上書きしない
+
+                    return;
+                }
+                OwnerWindow.Cursor = cursor;
+            }
+            else
+            {
+                cursorOverwriteCounter--;
+                if (cursorOverwriteCounter == 0)
+                {
+                    OwnerWindow.Cursor = cursor;
+                }
+                Debug.Assert(cursorOverwriteCounter >= 0);
+            }
         }
 
         public static Cursor GetOwnerCursor()
@@ -181,7 +201,7 @@ namespace CapyCSS.Controls
         {
             get
             {
-                if (Tab.SelectedIndex == -1)
+                if (CurrentTabItem is null)
                 {
                     return null;
                 }
@@ -193,7 +213,7 @@ namespace CapyCSS.Controls
         {
             get
             {
-                if (Tab.SelectedIndex == -1)
+                if (CurrentTabItem is null)
                 {
                     return null;
                 }
@@ -1324,9 +1344,9 @@ namespace CapyCSS.Controls
             if (CurrentScriptCanvas != null && tab != null)
             {
                 TryCursorLock(() =>
-                {
-                    RemoveScriptCanvas(tab);
-                });
+                    {
+                        RemoveScriptCanvas(tab);
+                    });
             }
         }
 
@@ -1373,13 +1393,8 @@ namespace CapyCSS.Controls
             Dispatcher.BeginInvoke(new Action(() =>
                 {
                     Tab.Items.Remove(tabItem);
-                    if (Tab.Items.Count == 0)
-                    {
-                        // Tab.Items.Count が 0 でも画面上からタブが消えていないことがあるので無いよりもマシな対策…。
-
-                        Tab.Items.Clear();
-                    }
-                }), DispatcherPriority.Background);
+                    Tab.Items.Refresh();
+                }), DispatcherPriority.Loaded);
         }
 
         /// <summary>
