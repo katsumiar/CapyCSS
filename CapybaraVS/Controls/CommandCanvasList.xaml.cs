@@ -394,12 +394,12 @@ namespace CapyCSS.Controls
         /// ※UIが操作される処理用
         /// </summary>
         /// <param name="action">処理</param>
-        public static void CursorLock(Action action)
+        public static void CursorLock(Action action, DispatcherObject dispatcherObject = null)
         {
             if (action != null)
             {
                 CursorLock();
-                CursorAfterUnlock(action);
+                CursorAfterUnlock(action, dispatcherObject);
             }
         }
 
@@ -409,12 +409,12 @@ namespace CapyCSS.Controls
         /// </summary>
         /// <param name="action">処理</param>
         /// <returns>true==処理を呼び出した</returns>
-        public static bool TryCursorLock(Action action)
+        public static bool TryCursorLock(Action action, DispatcherObject dispatcherObject = null)
         {
             if (action != null && !IsCursorLock())
             {
                 CursorLock();
-                CursorAfterUnlock(action);
+                CursorAfterUnlock(action, dispatcherObject);
                 return true;
             }
             return false;
@@ -443,10 +443,14 @@ namespace CapyCSS.Controls
         /// ※UIが操作される処理用
         /// </summary>
         /// <param name="action">処理</param>
-        public static void CursorAfterUnlock(Action action)
+        public static void CursorAfterUnlock(Action action, DispatcherObject dispatcherObject = null)
         {
             Debug.Assert(action != null);
             action();
+            if (dispatcherObject is null)
+            {
+                dispatcherObject = Instance;
+            }
             Instance.Dispatcher.BeginInvoke(new Action(() =>
                 {
                     CursorUnlock();
@@ -1373,7 +1377,7 @@ namespace CapyCSS.Controls
         {
             foreach (var item in Tab.Items)
             {
-                ClearCommandCanvas(item as TabItem);
+                DeleteCommandCanvas(item as TabItem);
             }
 
             Dispatcher.BeginInvoke(new Action(() =>
@@ -1388,7 +1392,7 @@ namespace CapyCSS.Controls
         /// <param name="tabItem">タブ</param>
         private void RemoveScriptCanvas(TabItem tabItem)
         {
-            ClearCommandCanvas(tabItem);
+            DeleteCommandCanvas(tabItem);
 
             Dispatcher.BeginInvoke(new Action(() =>
                 {
@@ -1398,10 +1402,10 @@ namespace CapyCSS.Controls
         }
 
         /// <summary>
-        /// スクリプトキャンバスをクリアします。
+        /// スクリプトキャンバスを削除します。
         /// </summary>
         /// <param name="tabItem">タブ</param>
-        private void ClearCommandCanvas(TabItem tabItem)
+        private void DeleteCommandCanvas(TabItem tabItem)
         {
             var commandCanvas = tabItem.Content as CommandCanvas;
             tabItem.Content = null;

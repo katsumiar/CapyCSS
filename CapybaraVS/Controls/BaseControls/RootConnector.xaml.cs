@@ -526,7 +526,7 @@ namespace CapyCSS.Controls.BaseControls
                     return null;    // false
                 }
 
-                if (CommandCanvasList.GetOwnerCursor() == Cursors.Wait)
+                if (CommandCanvasList.IsCursorLock())
                     return null;
             }
 

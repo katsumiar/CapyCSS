@@ -216,7 +216,7 @@ namespace CapyCSS.Controls
         /// </summary>
         public void ClearProject()
         {
-            if (CommandCanvasList.GetOwnerCursor() == Cursors.Wait)
+            if (CommandCanvasList.IsCursorLock())
             {
                 return;
             }
@@ -250,7 +250,7 @@ namespace CapyCSS.Controls
         /// </summary>
         public void NewProject()
         {
-            if (CommandCanvasList.GetOwnerCursor() == Cursors.Wait)
+            if (CommandCanvasList.IsCursorLock())
             {
                 return;
             }
@@ -277,7 +277,7 @@ namespace CapyCSS.Controls
         /// </summary>
         public void LoadProject()
         {
-            if (CommandCanvasList.GetOwnerCursor() == Cursors.Wait)
+            if (CommandCanvasList.IsCursorLock())
             {
                 return;
             }
@@ -327,7 +327,7 @@ namespace CapyCSS.Controls
         {
             Debug.Assert(ProjectFilePath != null);
 
-            if (CommandCanvasList.GetOwnerCursor() == Cursors.Wait)
+            if (CommandCanvasList.IsCursorLock())
             {
                 return;
             }
@@ -463,7 +463,7 @@ namespace CapyCSS.Controls
         {
             return new TreeMenuNodeCommand((a) =>
                 {
-                    if (CommandCanvasList.GetOwnerCursor() == Cursors.Wait)
+                    if (CommandCanvasList.IsCursorLock())
                     {
                         return; // 処理中は禁止
                     }

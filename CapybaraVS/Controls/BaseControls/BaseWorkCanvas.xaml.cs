@@ -774,7 +774,7 @@ namespace CapyCSS.Controls.BaseControls
 
         private void Grid_MouseDown(object sender, MouseButtonEventArgs e)
         {
-            if (CommandCanvasList.GetOwnerCursor() == Cursors.Wait)
+            if (CommandCanvasList.IsCursorLock())
                 return; // 処理中は禁止
 
             InfoCanvas.Focus();    // キーイベントを拾うためにフォーカスを当てる

@@ -633,7 +633,7 @@ namespace CapyCSS.Controls.BaseControls
         {
             return new TreeMenuNodeCommand((a) =>
                 {
-                    if (CommandCanvasList.GetOwnerCursor() == Cursors.Wait)
+                    if (CommandCanvasList.IsCursorLock())
                         return; // 処理中は禁止
 
                     CommandMenuWindow.CloseWindow();
@@ -852,7 +852,7 @@ namespace CapyCSS.Controls.BaseControls
             if (path is null)
                 return;
 
-            if (CommandCanvasList.GetOwnerCursor() == Cursors.Wait)
+            if (CommandCanvasList.IsCursorLock())
                 return;
 
             try
@@ -1586,28 +1586,23 @@ namespace CapyCSS.Controls.BaseControls
             }
         }
 
+        /// <summary>
+        /// 確認付きでスクリプトキャンバスをクリアします。
+        /// </summary>
         private void ClearWorkCanvasWithConfirmation()
         {
-            if (ControlTools.ShowSelectMessage(
-                        CapyCSS.Language.Instance["SYSTEM_ConfirmationDelete"],
-                        CapyCSS.Language.Instance["SYSTEM_Confirmation"],
-                        MessageBoxButton.OKCancel) == MessageBoxResult.OK)
-            {
-                CommandCanvasList.SetOwnerCursor(Cursors.Wait);
-                ScriptWorkCanvas.Dispatcher.BeginInvoke(new Action(() =>
+            CommandCanvasList.TryCursorLock(() =>
                 {
-                    ApiImporter.ClearModule(ApiImporter.GetBaseImportList());
-                    ClearWorkCanvas();
-                    ScriptCommandCanvas.Dispatcher.BeginInvoke(new Action(() =>
+                    if (ControlTools.ShowSelectMessage(
+                                CapyCSS.Language.Instance["SYSTEM_ConfirmationDelete"],
+                                CapyCSS.Language.Instance["SYSTEM_Confirmation"],
+                                MessageBoxButton.OKCancel) == MessageBoxResult.OK)
                     {
-                        // アイドル状態になってから戻す
-
+                        ApiImporter.ClearModule(ApiImporter.GetBaseImportList());
+                        ClearWorkCanvas();
                         GC.Collect();
-                        CommandCanvasList.SetOwnerCursor(null);
-
-                    }), DispatcherPriority.ApplicationIdle);
-                }), DispatcherPriority.ApplicationIdle);
-            }
+                    }
+                }, ScriptWorkCanvas);
         }
 
 #region ROOT_VALUE_TYPE
