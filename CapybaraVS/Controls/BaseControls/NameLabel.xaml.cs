@@ -236,6 +236,8 @@ namespace CapyCSS.Controls.BaseControls
                     EditControl.Focus();
                 }
             ), DispatcherPriority.Loaded);
+
+            e.Handled = true;
         }
 
         private void EditControl_KeyDown(object sender, KeyEventArgs e)
