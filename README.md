@@ -2,6 +2,10 @@
 ![capyCssSample04](https://user-images.githubusercontent.com/63950487/166207451-7cbb4335-be6e-4035-998c-b1521f503e4f.gif)
 ※このイメージは、ScreenToGif によって作成されています。
 
+## 0.5.0.2 での変更
+* UnDo/ReDoに追加しました。
+* スクリプトを編集すると表示で分かるようにしました（タイトル等）。
+
 ## 0.5.0.1 での変更
 * いくつかの不具合に対応しました。
 

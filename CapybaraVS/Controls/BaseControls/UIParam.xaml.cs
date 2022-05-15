@@ -469,33 +469,42 @@ namespace CapyCSS.Controls.BaseControls
         /// <param name="selectValue"></param>
         private void ShowEnumTypeParamViewer(ICbValue valueData, ICbValueEnum selectValue)
         {
-            Select.Visibility = Visibility.Visible;
-            Select.Items.Clear();
-
-            int selectIndex = 0;
-            int count = 0;
-            foreach (var node in selectValue.ElementList)
+            Select.SelectionChanged -= Select_SelectionChanged; // ユーザー操作として扱わないようにする
+            try
             {
-                Select.Items.Add(node);
-                if (node == valueData.ValueUIString ||
-                    selectValue.TypeName + "." + node == valueData.ValueUIString)
+                Select.Visibility = Visibility.Visible;
+                Select.Items.Clear();
+
+                int selectIndex = 0;
+                int count = 0;
+                foreach (var node in selectValue.ElementList)
                 {
-                    selectIndex = count;
+                    Select.Items.Add(node);
+                    if (node == valueData.ValueUIString ||
+                        selectValue.TypeName + "." + node == valueData.ValueUIString)
+                    {
+                        selectIndex = count;
+                    }
+                    count++;
                 }
-                count++;
-            }
-            Select.SelectedIndex = selectIndex;
 
-            Select.IsReadOnly = valueData.IsReadOnlyValue || ReadOnly || valueData.IsNull;
-            Select.IsHitTestVisible = !Select.IsReadOnly;
-            Select.IsTabStop = !Select.IsReadOnly;
-            if (Select.IsReadOnly)
-            {
-                Select.Foreground = (Brush)Application.Current.FindResource("ReadOnlyEnumParamForegroundBrush");
+                Select.SelectedIndex = selectIndex;
+
+                Select.IsReadOnly = valueData.IsReadOnlyValue || ReadOnly || valueData.IsNull;
+                Select.IsHitTestVisible = !Select.IsReadOnly;
+                Select.IsTabStop = !Select.IsReadOnly;
+                if (Select.IsReadOnly)
+                {
+                    Select.Foreground = (Brush)Application.Current.FindResource("ReadOnlyEnumParamForegroundBrush");
+                }
+                else
+                {
+                    Select.Foreground = (Brush)Application.Current.FindResource("EnumParamForegroundBrush");
+                }
             }
-            else
+            finally
             {
-                Select.Foreground = (Brush)Application.Current.FindResource("EnumParamForegroundBrush");
+                Select.SelectionChanged += Select_SelectionChanged;
             }
         }
 

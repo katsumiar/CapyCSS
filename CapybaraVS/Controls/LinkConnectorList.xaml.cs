@@ -240,7 +240,7 @@ namespace CapyCSS.Controls
             {
                 // 既存のノードへの接続を切る
 
-                node.RequestRemoveQurve();
+                node.RequestRemoveCurve();
             }
             if (ListData == connectedListData)
             {
@@ -439,7 +439,7 @@ namespace CapyCSS.Controls
             {
                 // 既存のノードへの接続を切る
 
-                node.RequestRemoveQurve();
+                node.RequestRemoveCurve();
             }
             if (ListData == connectedListData)
             {
@@ -574,6 +574,7 @@ namespace CapyCSS.Controls
                 return;
 
             AddListNode();
+            OwnerCommandCanvas.RecordUnDoPoint(CapyCSS.Language.Instance["Help:SYSTEM_COMMAND_AddArgumentElement"]);
         }
 
         /// <summary>

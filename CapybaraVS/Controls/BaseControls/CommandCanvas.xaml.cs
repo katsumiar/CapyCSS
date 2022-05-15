@@ -299,7 +299,9 @@ namespace CapyCSS.Controls.BaseControls
             });
 
             DEBUG_Check();
-            
+
+            RecordUnDoPoint(CapyCSS.Language.Instance["Help:SYSTEM_COMMAND_InitialPoint"]);
+
             //CommandCanvasList.SetOwnerCursor(null);
         }
 
@@ -616,9 +618,9 @@ namespace CapyCSS.Controls.BaseControls
             return new TreeMenuNodeCommand((a) =>
                 {
                     ClickEvent = action;
-                    ScriptWorkCanvas.ObjectSetCommand = ClickEvent;
-                    ScriptWorkCanvas.ObjectSetCommandName = path;
-                    ScriptWorkCanvas.ObjectSetExitCommand = new Action(() => ClickEvent = null);
+                    ScriptWorkCanvas.SetObjectCommand = ClickEvent;
+                    ScriptWorkCanvas.SetObjectCommandName = path;
+                    ScriptWorkCanvas.SetObjectExitCommand = new Action(() => ClickEvent = null);
                 }
             );
         }
@@ -857,12 +859,7 @@ namespace CapyCSS.Controls.BaseControls
 
             try
             {
-                var writer = new StringWriter();
-                var serializer = new XmlSerializer(ScriptCommandCanvas.AssetXML.GetType());
-                var namespaces = new XmlSerializerNamespaces();
-                namespaces.Add(string.Empty, string.Empty);
-                ScriptCommandCanvas.AssetXML.WriteAction();
-                serializer.Serialize(writer, ScriptCommandCanvas.AssetXML, namespaces);
+                StringWriter writer = SerializeScriptCanvas();
                 using (StreamWriter swriter = new StreamWriter(path, false))
                 {
                     swriter.WriteLine(writer.ToString());
@@ -881,6 +878,21 @@ namespace CapyCSS.Controls.BaseControls
             {
                 ControlTools.ShowErrorMessage(ex.Message);
             }
+        }
+
+        /// <summary>
+        /// スクリプトキャンバスのシリアライズ情報を取得します。
+        /// </summary>
+        /// <returns></returns>
+        public StringWriter SerializeScriptCanvas()
+        {
+            var writer = new StringWriter();
+            var serializer = new XmlSerializer(ScriptCommandCanvas.AssetXML.GetType());
+            var namespaces = new XmlSerializerNamespaces();
+            namespaces.Add(string.Empty, string.Empty);
+            ScriptCommandCanvas.AssetXML.WriteAction();
+            serializer.Serialize(writer, ScriptCommandCanvas.AssetXML, namespaces);
+            return writer;
         }
 
         /// <summary>
@@ -955,6 +967,30 @@ namespace CapyCSS.Controls.BaseControls
                     afterAction?.Invoke();
 
                 }), DispatcherPriority.SystemIdle);
+            }), DispatcherPriority.ApplicationIdle);
+        }
+
+        /// <summary>
+        /// スクリプトキャンバス情報をデシリアライズします。
+        /// </summary>
+        /// <param name="reader"></param>
+        public void DeserializeScriptCanvas(TextReader reader)
+        {
+            XmlSerializer serializer = new XmlSerializer(ScriptCommandCanvas.AssetXML.GetType());
+
+            XmlDocument doc = new XmlDocument();
+            doc.PreserveWhitespace = true;
+            doc.Load(reader);
+            XmlNodeReader nodeReader = new XmlNodeReader(doc.DocumentElement);
+            object data = (CommandCanvas._AssetXML<CommandCanvas>)serializer.Deserialize(nodeReader);
+            ScriptCommandCanvas.AssetXML = (CommandCanvas._AssetXML<CommandCanvas>)data;
+
+            ClearWorkCanvas(false);
+
+            ScriptCommandCanvas.Dispatcher.BeginInvoke(new Action(() =>
+            {
+                PointIdProvider.InitCheckRequest();
+                ScriptCommandCanvas.AssetXML.ReadAction(ScriptCommandCanvas);   // 優先順位 Background まで使われる
             }), DispatcherPriority.ApplicationIdle);
         }
 
@@ -1523,6 +1559,7 @@ namespace CapyCSS.Controls.BaseControls
         public void ToggleGridLine()
         {
             ScriptWorkCanvas.EnabelGridLine = ScriptWorkCanvas.EnabelGridLine ? false : true;
+            RecordUnDoPoint(CapyCSS.Language.Instance["Help:SYSTEM_COMMAND_ToggleGridLine"]);
         }
 
         private void Grid_KeyDown(object sender, KeyEventArgs e)
@@ -1600,12 +1637,81 @@ namespace CapyCSS.Controls.BaseControls
                     {
                         ApiImporter.ClearModule(ApiImporter.GetBaseImportList());
                         ClearWorkCanvas();
+                        RecordUnDoPoint(CapyCSS.Language.Instance["Help:SYSTEM_COMMAND_ClearScriptCanvas"]);
                         GC.Collect();
                     }
                 }, ScriptWorkCanvas);
         }
 
-#region ROOT_VALUE_TYPE
+        /// <summary>
+        /// UnDo履歴管理
+        /// </summary>
+        private CommandRecord commandRecord = new CommandRecord();
+
+        /// <summary>
+        /// UnDo履歴管理が初期状態か？
+        /// </summary>
+        public bool IsInitialPoint => commandRecord.IsInitialPoint;
+
+        /// <summary>
+        /// UnDo履歴をクリアします。
+        /// </summary>
+        public void ClearUnDoPoint()
+        {
+            commandRecord.Clear();
+        }
+
+        /// <summary>
+        /// UnDoポイントを記憶します。
+        /// </summary>
+        /// <param title="title">タイトル</param>
+        public void RecordUnDoPoint(string title)
+        {
+            StringWriter serializeData = SerializeScriptCanvas();
+            if (serializeData != null)
+            {
+                string serializeString = serializeData.ToString();
+                if (commandRecord.IsChanges(serializeString))
+                {
+                    commandRecord.Push(title, serializeString);
+                    CommandCanvasList.UpdateTitle();
+                }
+            }
+        }
+
+        /// <summary>
+        /// UnDoします。
+        /// </summary>
+        public void UnDo()
+        {
+            CommandCanvasList.TryCursorLock(() =>
+            {
+                string serializeString = commandRecord.Back();
+                if (serializeString != null)
+                {
+                    TextReader reader = new StringReader(serializeString);
+                    DeserializeScriptCanvas(reader);
+                }
+            });
+        }
+
+        /// <summary>
+        /// ReDoします。
+        /// </summary>
+        public void ReDo()
+        {
+            CommandCanvasList.TryCursorLock(() =>
+            {
+                string serializeString = commandRecord.Next();
+                if (serializeString != null)
+                {
+                    TextReader reader = new StringReader(serializeString);
+                    DeserializeScriptCanvas(reader);
+                }
+            });
+        }
+
+        #region ROOT_VALUE_TYPE
         private Type rootConnectorValueType = null;
         /// <summary>
         /// 接続操作されている RootConnector の型を参照します。

@@ -242,7 +242,7 @@ namespace CapyCSS.Controls
             loadProjectName = System.IO.Path.GetFileNameWithoutExtension(path);
             ProjectName = loadProjectName;
             ProjectFilePath = path;
-            CommandCanvasList.ResetTitle();
+            CommandCanvasList.UpdateTitle();
         }
 
         /// <summary>
@@ -498,7 +498,7 @@ namespace CapyCSS.Controls
                 }
                 ProjectFilePath = newName;
                 loadProjectName = System.IO.Path.GetFileNameWithoutExtension(ProjectFilePath);
-                CommandCanvasList.ResetTitle();
+                CommandCanvasList.UpdateTitle();
             }
             catch (Exception ex)
             {

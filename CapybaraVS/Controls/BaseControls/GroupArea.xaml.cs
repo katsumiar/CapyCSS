@@ -301,6 +301,10 @@ namespace CapyCSS.Controls.BaseControls
 
         private void EndDrug()
         {
+            if (sizeControlType != MouseControlType.NONE)
+            {
+                OwnerCommandCanvas.RecordUnDoPoint(CapyCSS.Language.Instance["Help:SYSTEM_COMMAND_EditTextAreaSize"]);
+            }
             sizeControlType = MouseControlType.NONE;
             captureObject?.ReleaseMouseCapture();
             captureObject = null;
@@ -338,6 +342,10 @@ namespace CapyCSS.Controls.BaseControls
             {
                 // フォーカスが外れたら内容が確定される
 
+                if (TextView.Text != Edit.Text)
+                {
+                    OwnerCommandCanvas.RecordUnDoPoint(CapyCSS.Language.Instance["Help:SYSTEM_COMMAND_EditTextArea"]);
+                }
                 TextView.Text = Edit.Text;
                 TextView.Visibility = Visibility.Visible;
                 Edit.Visibility = Visibility.Collapsed;

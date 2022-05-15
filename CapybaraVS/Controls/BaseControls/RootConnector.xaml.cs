@@ -59,31 +59,39 @@ namespace CapyCSS.Controls.BaseControls
             {
                 ReadAction = (self) =>
                 {
-                    self.TargetPointId = PointId;
-
-                    self.FuncCaption.AssetXML = Caption;
-                    self.FuncCaption.AssetXML.ReadAction?.Invoke(self.FuncCaption);
-
-                    if (Value != null && self.ValueData != null && Value != CbSTUtils.ERROR_STR)
+                    self.IsInitializing = true;
+                    try
                     {
-                        if (self.ValueData.IsStringableValue)
-                            self.ValueData.ValueString = Value;
-                        self.NameText.UpdateValueData();
+                        self.TargetPointId = PointId;
+
+                        self.FuncCaption.AssetXML = Caption;
+                        self.FuncCaption.AssetXML.ReadAction?.Invoke(self.FuncCaption);
+
+                        if (Value != null && self.ValueData != null && Value != CbSTUtils.ERROR_STR)
+                        {
+                            if (self.ValueData.IsStringableValue)
+                                self.ValueData.ValueString = Value;
+                            self.NameText.UpdateValueData();
+                        }
+
+                        self.ForcedChecked = ForcedChecked;
+                        self.IsPublicExecute.IsChecked = IsPublicExecute;
+                        if (EntryPointName != null)
+                        {
+                            self.EntryPointName.Text = EntryPointName;
+                        }
+
+                        for (int i = 0; i < Arguments.Count; ++i)
+                        {
+                            if (i >= self.ListData.Count)
+                                break;  // ここで作らなくても問題ない
+                            self.ListData[i].AssetXML = Arguments[i];
+                            self.ListData[i].AssetXML.ReadAction?.Invoke(self.ListData[i]);
+                        }
                     }
-
-                    self.ForcedChecked = ForcedChecked;
-                    self.IsPublicExecute.IsChecked = IsPublicExecute;
-                    if (EntryPointName != null)
+                    finally
                     {
-                        self.EntryPointName.Text = EntryPointName;
-                    }
-
-                    for (int i = 0; i < Arguments.Count; ++i)
-                    {
-                        if (i >= self.ListData.Count)
-                            break;  // ここで作らなくても問題ない
-                        self.ListData[i].AssetXML = Arguments[i];
-                        self.ListData[i].AssetXML.ReadAction?.Invoke(self.ListData[i]);
+                        self.IsInitializing = false;
                     }
 
                     // レイアウトが変更されるのでレイアウトの変更を待って続きを処理する必要がある
@@ -446,15 +454,20 @@ namespace CapyCSS.Controls.BaseControls
             Forced.ToolTip = CapyCSS.Language.Instance["SYSTEM_ArgumentForced"];
             IsPublicExecute.ToolTip = CapyCSS.Language.Instance["SYSTEM_IsPublicExecute"];
 
-            NameText.UpdateEvent =
-                new Action(
-                () =>
+            FuncCaption.UpdateEvent = () =>
+                {
+                    // ノード名が変更された
+
+                    OwnerCommandCanvas.RecordUnDoPoint(CapyCSS.Language.Instance["Help:SYSTEM_COMMAND_EditNodeName"]);
+                };
+
+            NameText.UpdateEvent = () =>
                 {
                     // 情報の変更を接続先に伝える
 
                     rootCurveLinks?.RequestUpdateRootValue();
-                }
-                );
+                    OwnerCommandCanvas.RecordUnDoPoint(CapyCSS.Language.Instance["Help:SYSTEM_COMMAND_EditArgumentInformation"]);
+                };
 
             // ノードの実行ボタンに実行機能を登録します。
             RunCommand = new RelayCommand(
@@ -619,6 +632,12 @@ namespace CapyCSS.Controls.BaseControls
         {
             Dispose();
         }
+
+        /// <summary>
+        /// 初期化中を判定します。
+        /// ※ロード及びペースト時に true になります。
+        /// </summary>
+        private bool IsInitializing = false;
 
         /// <summary>
         /// 実行ボタンの有効か無効かを制御します。
@@ -1522,6 +1541,7 @@ namespace CapyCSS.Controls.BaseControls
                 return false;
             var ret = rootCurveLinks.RequestLinkCurve(point);
             ChangeLinkConnectorStroke();
+            OwnerCommandCanvas.RecordUnDoPoint(CapyCSS.Language.Instance["Help:SYSTEM_COMMAND_LinkNode"]);
             return ret;
         }
 
@@ -1647,6 +1667,10 @@ namespace CapyCSS.Controls.BaseControls
 
             // 名前の衝突チェック
             CommandCanvasList.CheckPickupAllEntryPoint(OwnerCommandCanvas);
+            if (!IsInitializing)
+            {
+                OwnerCommandCanvas.RecordUnDoPoint(CapyCSS.Language.Instance["Help:SYSTEM_COMMAND_ChangeEntryPoint"]);
+            }
         }
 
         /// <summary>
@@ -1663,6 +1687,10 @@ namespace CapyCSS.Controls.BaseControls
 
             // 名前の衝突チェック
             CommandCanvasList.CheckPickupAllEntryPoint(OwnerCommandCanvas);
+            if (!IsInitializing)
+            {
+                OwnerCommandCanvas.RecordUnDoPoint(CapyCSS.Language.Instance["Help:SYSTEM_COMMAND_ChangeEntryPoint"]);
+            }
         }
 
         private void EntryPointName_TextChanged(object sender, TextChangedEventArgs e)
@@ -1670,6 +1698,10 @@ namespace CapyCSS.Controls.BaseControls
             // 名前の衝突チェック
 
             CommandCanvasList.CheckPickupAllEntryPoint(OwnerCommandCanvas);
+            if (!IsInitializing)
+            {
+                OwnerCommandCanvas.RecordUnDoPoint(CapyCSS.Language.Instance["Help:SYSTEM_COMMAND_EditEntryPointName"]);
+            }
         }
 
         /// <summary>

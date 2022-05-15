@@ -8,6 +8,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Linq;
+using CapyCSS.Controls;
 
 namespace CapyCSS
 {
@@ -26,6 +27,18 @@ namespace CapyCSS
         private Point targetOffset;
         private UIElement captureTarget = null;
         private ObservableCollection<Movable> groupList = null;
+
+        enum MoveRecord
+        {
+            none,
+            //
+            MoveCanvas,
+            MoveSelectedScriptNode,
+            MoveGroupScriptNode,
+            MoveScriptNode,
+        }
+
+        private MoveRecord moveRecord = MoveRecord.none;
 
         private CommandCanvas _OwnerCommandCanvas = null;
 
@@ -130,6 +143,22 @@ namespace CapyCSS
             {
                 captureTarget?.ReleaseMouseCapture();
                 isDrug = false;
+                switch (moveRecord)
+                {
+                    case MoveRecord.MoveCanvas:
+                        OwnerCommandCanvas.RecordUnDoPoint(CapyCSS.Language.Instance["Help:SYSTEM_COMMAND_MoveCanvas"]);
+                        break;
+                    case MoveRecord.MoveSelectedScriptNode:
+                        OwnerCommandCanvas.RecordUnDoPoint(CapyCSS.Language.Instance["Help:SYSTEM_COMMAND_MoveSelectedScriptNode"]);
+                        break;
+                    case MoveRecord.MoveGroupScriptNode:
+                        OwnerCommandCanvas.RecordUnDoPoint(CapyCSS.Language.Instance["Help:SYSTEM_COMMAND_MoveGroupScriptNode"]);
+                        break;
+                    case MoveRecord.MoveScriptNode:
+                        OwnerCommandCanvas.RecordUnDoPoint(CapyCSS.Language.Instance["Help:SYSTEM_COMMAND_MoveScriptNode"]);
+                        break;
+                }
+                moveRecord = MoveRecord.none;
             }
         }
 
@@ -151,9 +180,13 @@ namespace CapyCSS
                     movePoint.X -= dragOffset.X;
                     movePoint.Y -= dragOffset.Y;
 
-                    Matrix matrix = movementCanvas.CanvasRenderTransform.Value;
-                    matrix.Translate(movePoint.X, movePoint.Y);
-                    movementCanvas.CanvasRenderTransform = new MatrixTransform(matrix);
+                    if (Math.Abs(movePoint.X) > 0.001 && Math.Abs(movePoint.Y) > 0.001)
+                    {
+                        Matrix matrix = movementCanvas.CanvasRenderTransform.Value;
+                        matrix.Translate(movePoint.X, movePoint.Y);
+                        movementCanvas.CanvasRenderTransform = new MatrixTransform(matrix);
+                        moveRecord = MoveRecord.MoveCanvas;
+                    }
                 }
                 else
                 {
@@ -163,6 +196,7 @@ namespace CapyCSS
 
                         Point point = SingleMove(pos, isGridMove);
                         MoveSelectedNode(point, isGridMove, OwnerCommandCanvas.ScriptWorkCanvas.SelectedNodes);
+                        moveRecord = MoveRecord.MoveSelectedScriptNode;
                     }
                     else if (groupList != null)
                     {
@@ -170,12 +204,14 @@ namespace CapyCSS
 
                         Point point = SingleMove(pos, isGridMove);
                         MoveSelectedNode(point, isGridMove, groupList);
+                        moveRecord = MoveRecord.MoveGroupScriptNode;
                     }
                     else
                     {
                         // 個別のノードを移動
 
                         SingleMove(pos, isGridMove);
+                        moveRecord = MoveRecord.MoveScriptNode;
                     }
                 }
                 dragOffset = pos;

@@ -533,6 +533,8 @@ namespace CapyCSS.Controls
             }
 
             CurrentScriptCanvas.SaveXML(path);
+            CurrentScriptCanvas.ClearUnDoPoint();
+            CurrentScriptCanvas.RecordUnDoPoint(CapyCSS.Language.Instance["Help:SYSTEM_COMMAND_OverwriteScript"]);
         }
 
         /// <summary>
@@ -553,6 +555,8 @@ namespace CapyCSS.Controls
 
             CurrentScriptCanvas.SaveXML(path);
             SetCurrentTabName(CurrentScriptCanvas.OpenFileName);
+            CurrentScriptCanvas.ClearUnDoPoint();
+            CurrentScriptCanvas.RecordUnDoPoint(CapyCSS.Language.Instance["Help:SYSTEM_COMMAND_SaveScript"]);
         }
 
         /// <summary>
@@ -588,10 +592,6 @@ namespace CapyCSS.Controls
             Dispatcher.BeginInvoke(new Action(() =>
                 {
                     OverwriteSaveXML();
-                    if (CurrentScriptCanvas.OpenFileName != null && CurrentScriptCanvas.OpenFileName != "")
-                    {
-                        SetCurrentTabName(CurrentScriptCanvas.OpenFileName);
-                    }
                 }), DispatcherPriority.ApplicationIdle);
         }
 
@@ -685,6 +685,8 @@ namespace CapyCSS.Controls
                 () =>
                 {
                     SetCurrentTabName(path);
+                    CurrentScriptCanvas.ClearUnDoPoint();
+                    CurrentScriptCanvas.RecordUnDoPoint(CapyCSS.Language.Instance["Help:SYSTEM_COMMAND_LoadScript"]);
                     CursorUnlock();
                 });
         }
@@ -784,7 +786,7 @@ namespace CapyCSS.Controls
         {
             var label = CurrentTabItem.Header as RemovableLabel;
             label.Title = path;
-            RequestSetTitle();
+            updateTitle();
         }
 
         /// <summary>
@@ -1502,19 +1504,22 @@ namespace CapyCSS.Controls
         /// <param name="e"></param>
         private void Tab_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            RequestSetTitle();
+            updateTitle();
             UpdateButtonEnable();
         }
 
-        public static void ResetTitle()
+        /// <summary>
+        /// タイトルを更新します。
+        /// </summary>
+        public static void UpdateTitle()
         {
-            Instance?.RequestSetTitle();
+            Instance?.updateTitle();
         }
 
         /// <summary>
         /// タイトルのセットを依頼します。
         /// </summary>
-        public void RequestSetTitle()
+        private void updateTitle()
         {
             if (CurrentScriptTitle is null || CurrentScriptCanvas is null)
             {
@@ -1522,15 +1527,20 @@ namespace CapyCSS.Controls
             }
             else
             {
+                string changeState = "";
+                if (!CurrentScriptCanvas.IsInitialPoint)
+                {
+                    changeState = "*";
+                }
                 if (string.IsNullOrWhiteSpace(CurrentScriptCanvas.OpenFileName))
                 {
                     // New? のときは、OpenFileName は空。
 
-                    SetTitleFunc?.Invoke($"{Project.ProjectName} - {CurrentScriptTitle}");
+                    SetTitleFunc?.Invoke($"{Project.ProjectName} - {CurrentScriptTitle}{changeState}");
                 }
                 else
                 {
-                    SetTitleFunc?.Invoke($"{Project.ProjectName} - {System.IO.Path.GetFileNameWithoutExtension(CurrentScriptCanvas.OpenFileName)}");
+                    SetTitleFunc?.Invoke($"{Project.ProjectName} - {System.IO.Path.GetFileNameWithoutExtension(CurrentScriptCanvas.OpenFileName)}{changeState}");
                 }
             }
         }

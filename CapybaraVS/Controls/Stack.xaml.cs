@@ -367,7 +367,10 @@ namespace CapyCSS.Controls
                 StackData.Remove(stackGroup);
 
                 if (StackData.Count == 0)
+                {
                     Visibility = Visibility.Collapsed;
+                }
+                OwnerCommandCanvas.RecordUnDoPoint(CapyCSS.Language.Instance["Help:SYSTEM_COMMAND_EditDeleteVariable"]);
             };
             stackGroup.AddListNode(stackNode);
             StackData.Add(stackGroup);
@@ -480,6 +483,7 @@ namespace CapyCSS.Controls
 
                     node.VariableUpdate();
                 }
+                OwnerCommandCanvas.RecordUnDoPoint(CapyCSS.Language.Instance["Help:SYSTEM_COMMAND_EditVariableName"]);
             }
         }
 

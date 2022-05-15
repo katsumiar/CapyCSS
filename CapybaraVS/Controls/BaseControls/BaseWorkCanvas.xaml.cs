@@ -170,7 +170,7 @@ namespace CapyCSS.Controls.BaseControls
             {
                 ReadAction = (self, relPos) =>
                 {
-                    self.ClearSelectedContorls();
+                    self.ClearSelectedObjects();
                     var nodeList = new List<FrameworkElement>();
                     Point leftTopPoint = new Point(double.MaxValue, double.MaxValue);
                     foreach (var node in WorkCanvasAssetList)
@@ -214,7 +214,7 @@ namespace CapyCSS.Controls.BaseControls
                         }
                     }
                     WorkCanvasAssetList = workList;
-                    self.ClearSelectedContorls();
+                    self.ClearSelectedObjects();
                 };
             }
             [XmlAttribute("Id")]
@@ -359,14 +359,14 @@ namespace CapyCSS.Controls.BaseControls
         /// <summary>
         /// コントロールを返す処理を登録するとクリック時にコントロールをセットします。
         /// </summary>
-        public Func<object> ObjectSetCommand = null;
+        public Func<object> SetObjectCommand = null;
 
-        public string ObjectSetCommandName = null;
+        public string SetObjectCommandName = null;
 
         /// <summary>
-        /// ObjectSetCommand の終了時処理
+        /// SetObjectCommand の終了時処理
         /// </summary>
-        public Action ObjectSetExitCommand = null;
+        public Action SetObjectExitCommand = null;
 
         /// <summary>
         /// キャンバスの子コントロールを消す
@@ -387,9 +387,9 @@ namespace CapyCSS.Controls.BaseControls
             }
             InfoCanvas.Children.Clear();
 
-            ObjectSetCommand = null;
-            ObjectSetExitCommand = null;
-            ObjectSetCommandName = null;
+            SetObjectCommand = null;
+            SetObjectExitCommand = null;
+            SetObjectCommandName = null;
 
             mouseDragObserver = null;
             SelectedNodes?.Clear();
@@ -788,7 +788,7 @@ namespace CapyCSS.Controls.BaseControls
             startPoint.X = pos.X;
             startPoint.Y = pos.Y;
 
-            if (ObjectSetCommand is null)
+            if (SetObjectCommand is null)
             {
                 if (e.ChangedButton == MouseButton.Middle && e.ButtonState == MouseButtonState.Pressed)
                 {
@@ -799,7 +799,7 @@ namespace CapyCSS.Controls.BaseControls
                 {
                     // 選択用矩形描写開始
 
-                    ClearSelectedContorls();
+                    ClearSelectedObjects();
 
                     InfoCanvas.CaptureMouse();
                     rectangle = new Rectangle()
@@ -844,13 +844,13 @@ namespace CapyCSS.Controls.BaseControls
         /// <param name="setPos">ノードを置く位置</param>
         public void ProcessCommand(Point setPos)
         {
-            object obj = ObjectSetCommand?.Invoke();
+            object obj = SetObjectCommand?.Invoke();
             OwnerCommandCanvas.InstalledMultiRootConnector = null;
             if (obj != null)
             {
                 if (obj is UIElement element)
                 {
-                    // ObjectSetCommandがコントロールを返したのでCanvasにセットする
+                    // SetObjectCommand がコントロールを返したのでCanvasにセットする
 
                     // ムーバブルコントロールに入れる
                     Movable movable = new Movable(this);
@@ -877,7 +877,8 @@ namespace CapyCSS.Controls.BaseControls
                     }
 
                     // 全てのワークに最近使ったスクリプトノードを記録します。
-                    OwnerCommandCanvas.CommandCanvasControl.AddScriptCommandRecent(ObjectSetCommandName);
+                    OwnerCommandCanvas.CommandCanvasControl.AddScriptCommandRecent(SetObjectCommandName);
+                    OwnerCommandCanvas.RecordUnDoPoint(CapyCSS.Language.Instance["Help:SYSTEM_COMMAND_AddScriptNode"]);
                 }
             }
             ResetCommand();
@@ -912,9 +913,9 @@ namespace CapyCSS.Controls.BaseControls
         /// </summary>
         public void ResetCommand()
         {
-            ObjectSetCommand = null;
-            ObjectSetExitCommand?.Invoke();
-            ObjectSetExitCommand = null;
+            SetObjectCommand = null;
+            SetObjectExitCommand?.Invoke();
+            SetObjectExitCommand = null;
         }
 
         private void Grid_MouseUp(object sender, MouseButtonEventArgs e)
@@ -1009,7 +1010,7 @@ namespace CapyCSS.Controls.BaseControls
         /// <summary>
         /// 選択中アセットを解除します。
         /// </summary>
-        public void ClearSelectedContorls()
+        public void ClearSelectedObjects()
         {
             foreach (var node in SelectedNodes)
             {
@@ -1040,7 +1041,7 @@ namespace CapyCSS.Controls.BaseControls
                         break;
 
                     case Key.Space: // 選択解除
-                        ClearSelectedContorls();
+                        ClearSelectedObjects();
                         break;
 
                     case Key.C:
@@ -1086,6 +1087,14 @@ namespace CapyCSS.Controls.BaseControls
 
                     case Key.N: // 使用済み
                         break;
+
+                    case Key.Y:
+                        OwnerCommandCanvas.ReDo();
+                        break;
+
+                    case Key.Z:
+                        OwnerCommandCanvas.UnDo();
+                        break;
                 }
             }
             else if ((Keyboard.GetKeyStates(Key.LeftShift) & KeyStates.Down) > 0 ||
@@ -1107,9 +1116,13 @@ namespace CapyCSS.Controls.BaseControls
                         e.Handled = true;
                         break;
 
-                    case Key.J: // スクリプト全体を画面に収める（スクリプトは画面中央に表示する）
+                    case Key.J:
+                        // スクリプト全体を画面に収める（スクリプトは画面中央に表示する）
+                        
                         AdjustScriptScale();
                         AdjustScriptCenterPos();
+                        OwnerCommandCanvas.RecordUnDoPoint(CapyCSS.Language.Instance["Help:SYSTEM_COMMAND_AdjustDisplayScript"]);
+
                         e.Handled = true;
                         break;
 
@@ -1149,6 +1162,8 @@ namespace CapyCSS.Controls.BaseControls
 
             PointIdProvider.InitCheckRequest();
             CopyAssetXML.ReadAction(this, startPoint);
+
+            OwnerCommandCanvas.RecordUnDoPoint(CapyCSS.Language.Instance["Help:SYSTEM_COMMAND_PasteScript"]);
         }
 
         /// <summary>
@@ -1189,7 +1204,8 @@ namespace CapyCSS.Controls.BaseControls
                     node.Dispose();
                     ControlsCanvas.Children.Remove(node);
                 }
-                ClearSelectedContorls();
+                ClearSelectedObjects();
+                OwnerCommandCanvas.RecordUnDoPoint(CapyCSS.Language.Instance["Help:SYSTEM_COMMAND_DeleteNode"]);
             }
         }
 
@@ -1265,6 +1281,8 @@ namespace CapyCSS.Controls.BaseControls
                 // ドロップ位置の座標でセットする
                 Canvas.SetLeft(movable, pos.X);
                 Canvas.SetTop(movable, pos.Y);
+
+                OwnerCommandCanvas.RecordUnDoPoint(CapyCSS.Language.Instance["Help:SYSTEM_COMMAND_AddScriptNode"]);
             }
         }
 
@@ -1422,9 +1440,9 @@ namespace CapyCSS.Controls.BaseControls
                     rectangle = null;
                     SelectedNodes = null;
                     _OwnerCommandCanvas = null;
-                    ObjectSetCommand = null;
-                    ObjectSetCommandName = null;
-                    ObjectSetExitCommand = null;
+                    SetObjectCommand = null;
+                    SetObjectCommandName = null;
+                    SetObjectExitCommand = null;
                     NotifyCollectionChangedListeners = null;
                 }
                 disposedValue = true;

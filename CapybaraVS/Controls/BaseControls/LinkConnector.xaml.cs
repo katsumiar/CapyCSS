@@ -275,6 +275,7 @@ namespace CapyCSS.Controls.BaseControls
                 () =>
                 {
                     UpdateEvent?.Invoke();
+                    OwnerCommandCanvas.RecordUnDoPoint(CapyCSS.Language.Instance["Help:SYSTEM_COMMAND_EditArgumentInformation"]);
                 }
                 );
 
@@ -900,7 +901,9 @@ namespace CapyCSS.Controls.BaseControls
                 ConnectorList?.Disconnect();
             }
             if (!ClearLock)
-                RemoveQurveUpdate();
+            {
+                RemoveCurveUpdate();
+            }
             ChangeLinkConnectorStroke();
         }
 
@@ -910,7 +913,7 @@ namespace CapyCSS.Controls.BaseControls
             {
                 return;
             }
-            RequestRemoveQurve();
+            RequestRemoveCurve();
             e.Handled = true;
         }
 
@@ -925,12 +928,12 @@ namespace CapyCSS.Controls.BaseControls
                 || isDoubleClick
                 )
             {
-                RequestRemoveQurve();
+                RequestRemoveCurve();
                 e.Handled = true;
             }
         }
 
-        public void RequestRemoveQurve()
+        public void RequestRemoveCurve()
         {
             linkCurveLinks?.CloseLink();
             if (backupValueData != null)
@@ -940,11 +943,12 @@ namespace CapyCSS.Controls.BaseControls
                 backupValueData = null;
                 ConnectorList.Disconnect();
             }
-            RemoveQurveUpdate();
+            RemoveCurveUpdate();
             ChangeLinkConnectorStroke();
+            OwnerCommandCanvas.RecordUnDoPoint(CapyCSS.Language.Instance["Help:SYSTEM_COMMAND_RemoveLink"]);
         }
 
-        private void RemoveQurveUpdate()
+        private void RemoveCurveUpdate()
         {
             connectValueData = null;
             ReadOnly = false;
