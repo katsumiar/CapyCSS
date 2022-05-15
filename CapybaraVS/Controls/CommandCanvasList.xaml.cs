@@ -1558,20 +1558,25 @@ namespace CapyCSS.Controls
             }
             else
             {
-                string changeState = "";
+                string currentScriptChangeState = "";
+                string projectChangeState = "";
                 if (!CurrentScriptCanvas.IsInitialPoint)
                 {
-                    changeState = "*";
+                    currentScriptChangeState = "*";
+                }
+                if (Project.ChangedFlag)
+                {
+                    projectChangeState = "*";
                 }
                 if (string.IsNullOrWhiteSpace(CurrentScriptCanvas.OpenFileName))
                 {
                     // New? のときは、OpenFileName は空。
 
-                    SetTitleFunc?.Invoke($"{Project.ProjectName} - {CurrentScriptTitle}{changeState}");
+                    SetTitleFunc?.Invoke($"{Project.ProjectName}{projectChangeState} - {CurrentScriptTitle}{currentScriptChangeState}");
                 }
                 else
                 {
-                    SetTitleFunc?.Invoke($"{Project.ProjectName} - {System.IO.Path.GetFileNameWithoutExtension(CurrentScriptCanvas.OpenFileName)}{changeState}");
+                    SetTitleFunc?.Invoke($"{Project.ProjectName}{projectChangeState} - {System.IO.Path.GetFileNameWithoutExtension(CurrentScriptCanvas.OpenFileName)}{currentScriptChangeState}");
                 }
                 (CurrentTabItem.Header as RemovableLabel).ChangedFlag = !CurrentScriptCanvas.IsInitialPoint;
             }
@@ -1712,6 +1717,7 @@ namespace CapyCSS.Controls
                 }
             }
 
+            Project.Dispose();
             CapyCSS.Language.Instance.Dispose();
             ToolExec.KillProcess();
 

@@ -25,7 +25,9 @@ namespace CapyCSS.Controls
     /// <summary>
     /// ProjectControl.xaml の相互作用ロジック
     /// </summary>
-    public partial class ProjectControl : UserControl
+    public partial class ProjectControl 
+        : UserControl
+        , IDisposable
     {
         #region XML定義
         [XmlRoot(nameof(ProjectControl))]
@@ -123,6 +125,26 @@ namespace CapyCSS.Controls
         {
             get { return impProjectName.GetValue(this); }
             set { impProjectName.SetValue(this, value); }
+        }
+        #endregion
+
+        #region ChangedFlag 添付プロパティ実装
+        private static ImplementDependencyProperty<ProjectControl, bool> impChangedFlag =
+            new ImplementDependencyProperty<ProjectControl, bool>(
+                nameof(ChangedFlag),
+                (self, getValue) =>
+                {
+                    bool value = getValue(self);
+                    self.ChangedState.Visibility = value ? Visibility.Visible : Visibility.Collapsed;
+                    CommandCanvasList.UpdateTitle();
+                });
+
+        public static readonly DependencyProperty ChangedFlagProperty = impChangedFlag.Regist(false);
+
+        public bool ChangedFlag
+        {
+            get { return impChangedFlag.GetValue(this); }
+            set { impChangedFlag.SetValue(this, value); }
         }
         #endregion
 
@@ -230,6 +252,7 @@ namespace CapyCSS.Controls
                 cbsGroup.ClearChild();
                 CommandCanvasList.ClearScriptCanvas();
                 UpdateCommandEnable();
+                ChangedFlag = false;
             }
         }
 
@@ -243,6 +266,7 @@ namespace CapyCSS.Controls
             ProjectName = loadProjectName;
             ProjectFilePath = path;
             CommandCanvasList.UpdateTitle();
+            ChangedFlag = true;
         }
 
         /// <summary>
@@ -270,6 +294,7 @@ namespace CapyCSS.Controls
             CommandCanvasList.ClearScriptCanvas();
             SetProjectName(path);
             UpdateCommandEnable();
+            ChangedFlag = true;
         }
 
         /// <summary>
@@ -292,6 +317,7 @@ namespace CapyCSS.Controls
             SetProjectName(path);   // 相対ディレクトリの基準がセットされるので readProjectFile の前に処理する
             readProjectFile(path);
             UpdateCommandEnable();
+            ChangedFlag = false;
         }
 
         private void readProjectFile(string path)
@@ -312,6 +338,8 @@ namespace CapyCSS.Controls
                     AssetXML.ReadAction(this);
 
                     Console.WriteLine($"Loaded...\"{path}\"");
+
+                    ChangedFlag = false;
                 }
                 catch (Exception ex)
                 {
@@ -354,6 +382,8 @@ namespace CapyCSS.Controls
                 }
 
                 Console.WriteLine($"Saved...\"{path}\"");
+
+                ChangedFlag = false;
             }
             catch (Exception ex)
             {
@@ -400,6 +430,7 @@ namespace CapyCSS.Controls
             }
 
             AddCbsFile(path);
+            ChangedFlag = true;
         }
 
         /// <summary>
@@ -430,6 +461,7 @@ namespace CapyCSS.Controls
                 {
                     CommandCanvasList.Instance?.RemoveScriptCanvas(path);
                     cbsGroup.Child.Remove(node);
+                    ChangedFlag = true;
                 }
             });
             if (!File.Exists(path))
@@ -487,7 +519,10 @@ namespace CapyCSS.Controls
         {
             if (!IsOpenProject)
             {
-                ProjectName = loadProjectName;
+                if (ProjectName != INIT_PROJECT_NAME)
+                {
+                    ProjectName = loadProjectName;
+                }
                 return;
             }
 
@@ -512,6 +547,17 @@ namespace CapyCSS.Controls
                 ProjectName = loadProjectName;
             }
             UpdateCommandEnable();
+        }
+
+        public void Dispose()
+        {
+            if (ChangedFlag && ControlTools.ShowSelectMessage(
+                        CapyCSS.Language.Instance["SYSTEM_SaveProjectConfirmation"],
+                        CapyCSS.Language.Instance["SYSTEM_Confirmation"],
+                        MessageBoxButton.YesNo) == MessageBoxResult.Yes)
+            {
+                SaveProject();
+            }
         }
     }
 }

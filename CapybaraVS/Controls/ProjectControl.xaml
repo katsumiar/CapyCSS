@@ -15,6 +15,7 @@
             <StackPanel Grid.Row="0" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Top">
                     <TextBlock Text="Project:" VerticalAlignment="Center" Margin="0,0,6,0" />
                     <BaseControls:NameLabel x:Name="ProjectPath" LabelString="{Binding ProjectName, Mode=TwoWay}" VerticalAlignment="Center" />
+                    <TextBlock x:Name="ChangedState" Text="*" VerticalAlignment="Center" Visibility="Collapsed" />
             </StackPanel>
             <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" VerticalAlignment="Top" HorizontalAlignment="Stretch" FocusVisualStyle="{x:Null}">
                 <StackPanel>
