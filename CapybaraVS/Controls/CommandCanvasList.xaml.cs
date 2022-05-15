@@ -636,11 +636,44 @@ namespace CapyCSS.Controls
                 {
                     return;
                 }
-            }
+                TabItem tab = FindTabFromPath(path);
+                if (tab != null)
+                {
+                    tab.IsSelected = true;
+                    if (!(tab.Content as CommandCanvas).IsInitialPoint)
+                    {
+                        if (ControlTools.ShowSelectMessage(
+                                    CapyCSS.Language.Instance["SYSTEM_ConfirmationReloadScript"],
+                                    CapyCSS.Language.Instance["SYSTEM_Confirmation"],
+                                    MessageBoxButton.OKCancel) == MessageBoxResult.Cancel)
+                        {
+                            // 読み直さないのでフォーカスを当てるだけ
 
-            if (TryTabForcusByContainsPath(path))
+                            return;
+                        }
+
+                        // 再読み込みのフロー
+                    }
+                    else
+                    {
+                        // スクリプトキャンバスと同じファイルでキャンバスは編集されていないのでフォーカスを当てるだけ
+
+                        return;
+                    }
+                }
+                else
+                {
+                    // 新しいタブで新規に読み込むフロー
+                }
+            }
+            else
             {
-                return;
+                // プロジェクトからの依頼
+
+                if (TryTabForcusByContainsPath(path))
+                {
+                    return;
+                }
             }
 
             if (!File.Exists(path))
