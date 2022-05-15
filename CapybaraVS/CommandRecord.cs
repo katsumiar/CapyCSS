@@ -6,62 +6,97 @@ using System.Threading.Tasks;
 
 namespace CapyCSS
 {
-    internal class CommandRecord
+    internal class CommandRecord<T>
+        where T : class, IComparable
     {
-        struct UndoPoint
+        struct Record
         {
+            /// <summary>
+            /// 履歴タイトルです。
+            /// </summary>
             public string title;
-            public string text;
+            /// <summary>
+            /// 履歴の状態です。
+            /// </summary>
+            public T data;
         }
 
-        private List<UndoPoint> undoStack = new List<UndoPoint>();
-        public bool IsStack => undoStack.Count != 0;
+        private List<Record> undoStack = new List<Record>();
         private int CurrentPoint = -1;
 
+        /// <summary>
+        /// 履歴があるか判定します。
+        /// </summary>
+        public bool IsStack => undoStack.Count != 0;
+        
+        /// <summary>
+        /// 履歴が初期位置（編集されていない状態）を指しているかを判定します。
+        /// </summary>
         public bool IsInitialPoint => CurrentPoint <= 0;
 
+        /// <summary>
+        /// 履歴をクリアします。
+        /// </summary>
         public void Clear()
         {
             undoStack.Clear();
             CurrentPoint = -1;
         }
         
-        public bool IsChanges(string str)
+        /// <summary>
+        /// 履歴対象が現在の履歴と比較して変化しているかを判定します。
+        /// </summary>
+        /// <param name="data"></param>
+        /// <returns>true==変化している</returns>
+        public bool IsChanges(T data)
         {
             if (!IsStack)
             {
                 return true;
             }
-            string last = undoStack.Last().text;
-            return last != str;
+            T last = undoStack.Last().data;
+            return last.CompareTo(data) != 0;
         }
 
-        public void Push(string title, string str)
+        /// <summary>
+        /// 履歴に現在の状態を積みます。
+        /// </summary>
+        /// <param name="title">履歴タイトル</param>
+        /// <param name="data">状態</param>
+        public void Push(string title, T data)
         {
             if (CurrentPoint != -1 && CurrentPoint + 1 < undoStack.Count)
             {
                 undoStack.RemoveRange(CurrentPoint + 1, undoStack.Count - 1);
             }
-            undoStack.Add(new UndoPoint { title = title, text = str });
+            undoStack.Add(new Record { title = title, data = data });
             CurrentPoint = undoStack.Count - 1;
         }
         
-        public string Back()
+        /// <summary>
+        /// 履歴を１つ遡ります。
+        /// </summary>
+        /// <returns>遡った状態</returns>
+        public T Back()
         {
             if (CurrentPoint <= 0)
             {
                 return null;
             }
-            return undoStack[--CurrentPoint].text;
+            return undoStack[--CurrentPoint].data;
         }
         
-        public string Next()
+        /// <summary>
+        /// 履歴を１つ先に進めます。
+        /// </summary>
+        /// <returns>進めた状態</returns>
+        public T Next()
         {
             if (CurrentPoint >= undoStack.Count - 1)
             {
                 return null;
             }
-            return undoStack[++CurrentPoint].text;
+            return undoStack[++CurrentPoint].data;
         }
     }
 }

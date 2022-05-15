@@ -1644,12 +1644,12 @@ namespace CapyCSS.Controls.BaseControls
         }
 
         /// <summary>
-        /// UnDo履歴管理
+        /// UnDo管理
         /// </summary>
-        private CommandRecord commandRecord = new CommandRecord();
+        private CommandRecord<string> commandRecord = new CommandRecord<string>();
 
         /// <summary>
-        /// UnDo履歴管理が初期状態か？
+        /// UnDo履歴が初期状態か？
         /// </summary>
         public bool IsInitialPoint => commandRecord.IsInitialPoint;
 
@@ -1662,7 +1662,7 @@ namespace CapyCSS.Controls.BaseControls
         }
 
         /// <summary>
-        /// UnDoポイントを記憶します。
+        /// 編集状態をUnDo履歴に記録します。
         /// </summary>
         /// <param title="title">タイトル</param>
         public void RecordUnDoPoint(string title)
@@ -1691,6 +1691,7 @@ namespace CapyCSS.Controls.BaseControls
                 {
                     TextReader reader = new StringReader(serializeString);
                     DeserializeScriptCanvas(reader);
+                    CommandCanvasList.UpdateTitle();
                 }
             });
         }
@@ -1707,6 +1708,7 @@ namespace CapyCSS.Controls.BaseControls
                 {
                     TextReader reader = new StringReader(serializeString);
                     DeserializeScriptCanvas(reader);
+                    CommandCanvasList.UpdateTitle();
                 }
             });
         }

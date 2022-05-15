@@ -288,17 +288,17 @@ namespace CapyCSS.Controls
             Console.SetOut(new SystemTextWriter());
 
             Dispatcher.BeginInvoke(new Action(() =>
-            {
-                // アイドル状態になってから新規シートを作成する
-
-                if (reserveLoadCbsFilePath != null)
                 {
-                    // 起動読み込みをキックする
+                    // アイドル状態になってから新規シートを作成する
 
-                    AddLoadContents(reserveLoadCbsFilePath);
-                    reserveLoadCbsFilePath = null;
-                }
-            }), DispatcherPriority.ApplicationIdle);
+                    if (reserveLoadCbsFilePath != null)
+                    {
+                        // 起動読み込みをキックする
+
+                        AddLoadContents(reserveLoadCbsFilePath);
+                        reserveLoadCbsFilePath = null;
+                    }
+                }), DispatcherPriority.ApplicationIdle);
         }
 
         /// <summary>
@@ -451,7 +451,7 @@ namespace CapyCSS.Controls
             {
                 dispatcherObject = Instance;
             }
-            Instance.Dispatcher.BeginInvoke(new Action(() =>
+            dispatcherObject.Dispatcher.BeginInvoke(new Action(() =>
                 {
                     CursorUnlock();
                 }), DispatcherPriority.ApplicationIdle);
