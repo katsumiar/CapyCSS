@@ -510,7 +510,7 @@ namespace CapyCSS.Controls
         /// <summary>
         /// キャンバスの作業を上書き保存します。
         /// </summary>
-        public void OverwriteSaveXML()
+        public void OverwriteSaveXML(CommandCanvas commandCanvas)
         {
             if (IsCursorLock())
             {
@@ -518,9 +518,9 @@ namespace CapyCSS.Controls
             }
 
             string path;
-            if (CurrentScriptCanvas.OpenFileName == "")
+            if (commandCanvas.OpenFileName == "")
             {
-                path = ShowSaveDialog(CBS_FILTER, CurrentScriptCanvas.OpenFileName);
+                path = ShowSaveDialog(CBS_FILTER, commandCanvas.OpenFileName);
 
                 if (path is null)
                 {
@@ -529,12 +529,12 @@ namespace CapyCSS.Controls
             }
             else
             {
-                path = CurrentScriptCanvas.OpenFileName;
+                path = commandCanvas.OpenFileName;
             }
 
-            CurrentScriptCanvas.SaveXML(path);
-            CurrentScriptCanvas.ClearUnDoPoint();
-            CurrentScriptCanvas.RecordUnDoPoint(CapyCSS.Language.Instance["Help:SYSTEM_COMMAND_OverwriteScript"]);
+            commandCanvas.SaveXML(path);
+            commandCanvas.ClearUnDoPoint();
+            commandCanvas.RecordUnDoPoint(CapyCSS.Language.Instance["Help:SYSTEM_COMMAND_OverwriteScript"]);
         }
 
         /// <summary>
@@ -542,21 +542,30 @@ namespace CapyCSS.Controls
         /// </summary>
         public void SaveCbsFile()
         {
+            saveCbsFile(CurrentScriptCanvas);
+        }
+
+        /// <summary>
+        /// CBS ファイルを保存します。
+        /// </summary>
+        /// <param name="commandCanvas">スクリプトキャンバス</param>
+        public void saveCbsFile(CommandCanvas commandCanvas)
+        {
             if (IsCursorLock())
             {
                 return;
             }
 
-            string path = ShowSaveDialog(CBS_FILTER, CurrentScriptCanvas.OpenFileName);
+            string path = ShowSaveDialog(CBS_FILTER, commandCanvas.OpenFileName);
             if (path is null)
             {
                 return;
             }
 
-            CurrentScriptCanvas.SaveXML(path);
-            SetCurrentTabName(CurrentScriptCanvas.OpenFileName);
-            CurrentScriptCanvas.ClearUnDoPoint();
-            CurrentScriptCanvas.RecordUnDoPoint(CapyCSS.Language.Instance["Help:SYSTEM_COMMAND_SaveScript"]);
+            commandCanvas.SaveXML(path);
+            SetCurrentTabName(commandCanvas.OpenFileName);
+            commandCanvas.ClearUnDoPoint();
+            commandCanvas.RecordUnDoPoint(CapyCSS.Language.Instance["Help:SYSTEM_COMMAND_SaveScript"]);
         }
 
         /// <summary>
@@ -591,7 +600,7 @@ namespace CapyCSS.Controls
         {
             Dispatcher.BeginInvoke(new Action(() =>
                 {
-                    OverwriteSaveXML();
+                    OverwriteSaveXML(CurrentScriptCanvas);
                 }), DispatcherPriority.ApplicationIdle);
         }
 
@@ -1689,6 +1698,20 @@ namespace CapyCSS.Controls
 
         public void Dispose()
         {
+            var saveTargets = Tab.Items.Cast<TabItem>()
+                                        .Where(n => !(n.Content as CommandCanvas).IsInitialPoint)
+                                        .Select(n => n.Content as CommandCanvas);
+            if (saveTargets.Count() != 0 && ControlTools.ShowSelectMessage(
+                        CapyCSS.Language.Instance["SYSTEM_SaveConfirmation"],
+                        CapyCSS.Language.Instance["SYSTEM_Confirmation"],
+                        MessageBoxButton.OKCancel) == MessageBoxResult.OK)
+            {
+                foreach (var commandCanvas in saveTargets)
+                {
+                    saveCbsFile(commandCanvas);
+                }
+            }
+
             CapyCSS.Language.Instance.Dispose();
             ToolExec.KillProcess();
 

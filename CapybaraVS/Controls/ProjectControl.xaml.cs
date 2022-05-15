@@ -423,8 +423,14 @@ namespace CapyCSS.Controls
                 );
             node.DeleteClickCommand = new TreeMenuNodeCommand((a) =>
             {
-                CommandCanvasList.Instance?.RemoveScriptCanvas(path);
-                cbsGroup.Child.Remove(node);
+                if (ControlTools.ShowSelectMessage(
+                        CapyCSS.Language.Instance["SYSTEM_ConfirmationRemoveScript"],
+                        CapyCSS.Language.Instance["SYSTEM_Confirmation"],
+                        MessageBoxButton.OKCancel) == MessageBoxResult.OK)
+                {
+                    CommandCanvasList.Instance?.RemoveScriptCanvas(path);
+                    cbsGroup.Child.Remove(node);
+                }
             });
             if (!File.Exists(path))
             {
