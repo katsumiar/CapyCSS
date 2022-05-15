@@ -871,11 +871,10 @@ namespace CapyCSS.Controls
                 ClickEvent = () =>
                 {
                     // タブ付属の削除機能
-
                     TryCursorLock(() =>
-                    {
-                        RemoveScriptCanvas(newItem);
-                    });
+                        {
+                            RemoveScriptCanvas(newItem);
+                        });
                 }
             };
             Tab.Items.Add(newItem);
@@ -1377,6 +1376,18 @@ namespace CapyCSS.Controls
         /// </summary>
         public void InnerClearScriptCanvas()
         {
+            bool IsAnyInitialPoint = Tab.Items.Cast<TabItem>().Any(n => !(n.Content as CommandCanvas).IsInitialPoint);
+            if (IsAnyInitialPoint &&
+                ControlTools.ShowSelectMessage(
+                        CapyCSS.Language.Instance["SYSTEM_ConfirmationDestructionScript"],
+                        CapyCSS.Language.Instance["SYSTEM_Confirmation"],
+                        MessageBoxButton.OKCancel) == MessageBoxResult.Cancel)
+            {
+                // 削除を取りやめ
+
+                return;
+            }
+
             foreach (var item in Tab.Items)
             {
                 DeleteCommandCanvas(item as TabItem);
@@ -1394,6 +1405,17 @@ namespace CapyCSS.Controls
         /// <param name="tabItem">タブ</param>
         private void RemoveScriptCanvas(TabItem tabItem)
         {
+            if (!CurrentScriptCanvas.IsInitialPoint &&
+                ControlTools.ShowSelectMessage(
+                        CapyCSS.Language.Instance["SYSTEM_ConfirmationDestructionScript"],
+                        CapyCSS.Language.Instance["SYSTEM_Confirmation"],
+                        MessageBoxButton.OKCancel) == MessageBoxResult.Cancel)
+            {
+                // 削除を取りやめ
+
+                return;
+            }
+
             DeleteCommandCanvas(tabItem);
 
             Dispatcher.BeginInvoke(new Action(() =>
