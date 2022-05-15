@@ -1704,7 +1704,7 @@ namespace CapyCSS.Controls
             if (saveTargets.Count() != 0 && ControlTools.ShowSelectMessage(
                         CapyCSS.Language.Instance["SYSTEM_SaveConfirmation"],
                         CapyCSS.Language.Instance["SYSTEM_Confirmation"],
-                        MessageBoxButton.OKCancel) == MessageBoxResult.OK)
+                        MessageBoxButton.YesNo) == MessageBoxResult.Yes)
             {
                 foreach (var commandCanvas in saveTargets)
                 {
