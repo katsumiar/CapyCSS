@@ -1564,6 +1564,7 @@ namespace CapyCSS.Controls
                 {
                     SetTitleFunc?.Invoke($"{Project.ProjectName} - {System.IO.Path.GetFileNameWithoutExtension(CurrentScriptCanvas.OpenFileName)}{changeState}");
                 }
+                (CurrentTabItem.Header as RemovableLabel).ChangedFlag = !CurrentScriptCanvas.IsInitialPoint;
             }
         }
 

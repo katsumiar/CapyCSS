@@ -90,6 +90,25 @@ namespace CapyCSS.Controls.BaseControls
         }
         #endregion
 
+        #region ChangedFlag 添付プロパティ実装
+        private static ImplementDependencyProperty<RemovableLabel, bool> impChangedFlag =
+            new ImplementDependencyProperty<RemovableLabel, bool>(
+                nameof(ChangedFlag),
+                (self, getValue) =>
+                {
+                    bool value = getValue(self);
+                    self.ChangedState.Visibility = value ? Visibility.Visible : Visibility.Collapsed;
+                });
+
+        public static readonly DependencyProperty ChangedFlagProperty = impChangedFlag.Regist(false);
+
+        public bool ChangedFlag
+        {
+            get { return impChangedFlag.GetValue(this); }
+            set { impChangedFlag.SetValue(this, value); }
+        }
+        #endregion
+
         public RemovableLabel()
         {
             InitializeComponent();
