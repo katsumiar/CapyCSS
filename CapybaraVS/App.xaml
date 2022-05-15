@@ -40,6 +40,7 @@
             <SolidColorBrush x:Key="CheckedNotUseCacheBrush" Color="Tomato"/>
             <SolidColorBrush x:Key="EntryPointBrush" Color="#FF0A0A0A"/>
             <SolidColorBrush x:Key="CheckedEntryPointBrush" Color="Tomato"/>
+            <SolidColorBrush x:Key="EntryPointNameBrush" Color="Black"/>
             <SolidColorBrush x:Key="EntryPointNameBackgroundBrush" Color="NavajoWhite"/>
             <SolidColorBrush x:Key="EntryPointNameCollisionBackgroundBrush" Color="Tomato"/>
             <SolidColorBrush x:Key="EmptyCommandBrush" Color="Gray"/>
