@@ -18,7 +18,7 @@ namespace CapyCSS
         public bool IsStack => undoStack.Count != 0;
         private int CurrentPoint = -1;
 
-        public bool IsInitialPoint => undoStack.Count == 1;
+        public bool IsInitialPoint => CurrentPoint <= 0;
 
         public void Clear()
         {
