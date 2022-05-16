@@ -21,26 +21,26 @@ namespace CapyCSS
             public T data;
         }
 
-        private List<Record> undoStack = new List<Record>();
-        private int CurrentPoint = -1;
+        private List<Record> commandStack = new List<Record>();
+        private int currentPoint = -1;
 
         /// <summary>
         /// 履歴があるか判定します。
         /// </summary>
-        public bool IsStack => undoStack.Count != 0;
+        public bool IsStack => commandStack.Count != 0;
         
         /// <summary>
         /// 履歴が初期位置（編集されていない状態）を指しているかを判定します。
         /// </summary>
-        public bool IsInitialPoint => CurrentPoint <= 0;
+        public bool IsInitialPoint => currentPoint <= 0;
 
         /// <summary>
         /// 履歴をクリアします。
         /// </summary>
         public void Clear()
         {
-            undoStack.Clear();
-            CurrentPoint = -1;
+            commandStack.Clear();
+            currentPoint = -1;
         }
         
         /// <summary>
@@ -54,7 +54,7 @@ namespace CapyCSS
             {
                 return true;
             }
-            T last = undoStack.Last().data;
+            T last = commandStack.Last().data;
             return last.CompareTo(data) != 0;
         }
 
@@ -65,13 +65,18 @@ namespace CapyCSS
         /// <param name="data">状態</param>
         public void Push(string title, T data)
         {
-            if (CurrentPoint != -1 && CurrentPoint + 1 < undoStack.Count)
+            if (currentPoint != -1 && currentPoint + 1 < commandStack.Count)
             {
-                undoStack.RemoveRange(CurrentPoint + 1, undoStack.Count - 1);
+                commandStack.RemoveRange(currentPoint + 1, commandStack.Count - 1);
             }
-            undoStack.Add(new Record { title = title, data = data });
-            CurrentPoint = undoStack.Count - 1;
+            commandStack.Add(new Record { title = title, data = data });
+            currentPoint = commandStack.Count - 1;
         }
+
+        /// <summary>
+        /// Back()が有効か？
+        /// </summary>
+        public bool IsBack => currentPoint > 0;
         
         /// <summary>
         /// 履歴を１つ遡ります。
@@ -79,12 +84,17 @@ namespace CapyCSS
         /// <returns>遡った状態</returns>
         public T Back()
         {
-            if (CurrentPoint <= 0)
+            if (!IsBack)
             {
                 return null;
             }
-            return undoStack[--CurrentPoint].data;
+            return commandStack[--currentPoint].data;
         }
+
+        /// <summary>
+        /// Next()が有効か？
+        /// </summary>
+        public bool IsNext => currentPoint < commandStack.Count - 1;
         
         /// <summary>
         /// 履歴を１つ先に進めます。
@@ -92,11 +102,11 @@ namespace CapyCSS
         /// <returns>進めた状態</returns>
         public T Next()
         {
-            if (CurrentPoint >= undoStack.Count - 1)
+            if (!IsNext)
             {
                 return null;
             }
-            return undoStack[++CurrentPoint].data;
+            return commandStack[++currentPoint].data;
         }
     }
 }

@@ -4,7 +4,9 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:CapyCSS.Controls"
-             xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"  x:Class="CapyCSS.Controls.CommandCanvasList"
+             xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             x:Class="CapyCSS.Controls.CommandCanvasList"
              mc:Ignorable="d" 
              d:DesignHeight="576.797" d:DesignWidth="913.672">
     <DockPanel>
@@ -29,13 +31,15 @@
                 <RowDefinition Height="160" />
             </Grid.RowDefinitions>
             <ToolBarPanel Grid.Row="0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Orientation="Horizontal">
-                <Button Content="Help" x:Name="HelpButton" Click="HelpButton_Click" Height="30" Margin="6,2,0,2" />
-                <Button Content="Load(Ctrl+O)" x:Name="LoadButton" Click="LoadButton_Click" Height="30" Margin="6,2,0,2" />
-                <Button Content="Save" x:Name="SaveButton" Click="SaveButton_Click" Height="30" Margin="6,2,0,2" />
-                <Button Content="New(Ctrl+N)" x:Name="AddButton" Click="AddButton_Click" Height="30" Margin="6,2,0,2" />
-                <Button Content="Command Menu(Space)" x:Name="CommandMenuButton" Click="CommandMenuButton_Click" Height="30" Margin="12,2,0,2" />
-                <Button Content="Convert C#" x:Name="ConvertCSS" Click="ConvertCSS_Click" Height="30" Margin="12,2,0,2" />
-                <Button Content="Execute (F5)" x:Name="ExecuteButton" IsEnabled="False" Click="ExecuteButton_Click" Height="30" Margin="12,2,6,2" />
+                <Button Content="{materialDesign:PackIcon Kind=HelpCircle}" x:Name="HelpButton" Click="HelpButton_Click" Height="30" Margin="6,2,0,2" />
+                <Button Content="{materialDesign:PackIcon Kind=FolderDownload}" x:Name="LoadButton" ToolTip="Load(Ctrl+O)" Click="LoadButton_Click" Height="30" Margin="6,2,0,2" />
+                <Button Content="{materialDesign:PackIcon Kind=FolderUpload}" x:Name="SaveButton" ToolTip="Save" Click="SaveButton_Click" Height="30" Margin="6,2,0,2" />
+                <Button Content="{materialDesign:PackIcon Kind=FileDocumentPlus}" x:Name="AddButton" ToolTip="New(Ctrl+N)" Click="AddButton_Click" Height="30" Margin="6,2,0,2" />
+                <Button Content="{materialDesign:PackIcon Kind=Toolbox}" x:Name="CommandMenuButton" ToolTip="Command Menu(Space)" Click="CommandMenuButton_Click" Height="30" Margin="12,2,0,2" />
+                <Button Content="{materialDesign:PackIcon Kind=UndoVariant}" x:Name="undo" ToolTip="UnDo" Click="UnDo" Height="30" Margin="12,2,0,2" />
+                <Button Content="{materialDesign:PackIcon Kind=RedoVariant}" x:Name="redo" ToolTip="ReDo" Click="ReDo" Height="30" Margin="6,2,0,2" Cursor="Hand" />
+                <Button Content="C#" x:Name="ConvertCSS" ToolTip="Convert to C#" Click="ConvertCSS_Click" Height="30" Margin="12,2,0,2" Cursor="Hand" />
+                <Button Content="{materialDesign:PackIcon Kind=Play}" x:Name="ExecuteButton" ToolTip="Execute(F5)" IsEnabled="False" Click="ExecuteButton_Click" Height="30" Margin="12,2,6,2" Cursor="Hand" />
                 <Grid>
                     <TextBox x:Name="EntryPointName" Height="24" Width="90" TextChanged="EntryPointName_TextChanged"/>
                     <TextBlock x:Name="EntryPointNamePh" Text="Entry Point Name" Height="24" FontSize="11" Margin="2,8,0,0" Foreground="{StaticResource EntryPointHintLabelForegroundBrush}" IsHitTestVisible="False"/>

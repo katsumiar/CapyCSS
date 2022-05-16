@@ -943,6 +943,8 @@ namespace CapyCSS.Controls
                 // ※ 復元として動作する
 
                 ExecuteButton.IsEnabled = backupIsEnebleExecuteButton;
+                undo.IsEnabled = CurrentScriptCanvas != null && CurrentScriptCanvas.CanUnDo;
+                redo.IsEnabled = CurrentScriptCanvas != null && CurrentScriptCanvas.CanReDo;
             }
             else
             {
@@ -950,6 +952,8 @@ namespace CapyCSS.Controls
 
                 backupIsEnebleExecuteButton = ExecuteButton.IsEnabled;
                 ExecuteButton.IsEnabled = false;
+                undo.IsEnabled = false;
+                redo.IsEnabled = false;
             }
             LoadButton.IsEnabled = enable;
             SaveButton.IsEnabled = enable;
@@ -1048,6 +1052,8 @@ namespace CapyCSS.Controls
             SaveButton.IsEnabled = !IsEmptyScriptCanvas;
             CommandMenuButton.IsEnabled = !IsEmptyScriptCanvas;
             ConvertCSS.IsEnabled = ExecuteButton.IsEnabled;
+            undo.IsEnabled = CurrentScriptCanvas != null && CurrentScriptCanvas.CanUnDo;
+            redo.IsEnabled = CurrentScriptCanvas != null && CurrentScriptCanvas.CanReDo;
         }
 
         /// <summary>
@@ -1612,7 +1618,31 @@ namespace CapyCSS.Controls
                     SetTitleFunc?.Invoke($"{Project.ProjectName}{projectChangeState} - {System.IO.Path.GetFileNameWithoutExtension(CurrentScriptCanvas.OpenFileName)}{currentScriptChangeState}");
                 }
                 (CurrentTabItem.Header as RemovableLabel).ChangedFlag = !CurrentScriptCanvas.IsInitialPoint;
+
+                // UnDo/ReDo ボタンの状態反映
+                undo.IsEnabled = CurrentScriptCanvas != null && CurrentScriptCanvas.CanUnDo;
+                redo.IsEnabled = CurrentScriptCanvas != null && CurrentScriptCanvas.CanReDo;
             }
+        }
+
+        /// <summary>
+        /// UnDo を実行します。
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        public void UnDo(object sender, RoutedEventArgs e)
+        {
+            CurrentScriptCanvas?.UnDo();
+        }
+
+        /// <summary>
+        /// ReDo を実行します。
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        public void ReDo(object sender, RoutedEventArgs e)
+        {
+            CurrentScriptCanvas?.ReDo();
         }
 
         /// <summary>

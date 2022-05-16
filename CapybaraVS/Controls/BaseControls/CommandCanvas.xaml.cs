@@ -1654,6 +1654,16 @@ namespace CapyCSS.Controls.BaseControls
         public bool IsInitialPoint => commandRecord.IsInitialPoint;
 
         /// <summary>
+        /// UnDoできるか？
+        /// </summary>
+        public bool CanUnDo => commandRecord.IsBack;
+
+        /// <summary>
+        /// ReDoできるか？
+        /// </summary>
+        public bool CanReDo => commandRecord.IsNext;
+
+        /// <summary>
         /// UnDo履歴をクリアします。
         /// </summary>
         public void ClearUnDoPoint()

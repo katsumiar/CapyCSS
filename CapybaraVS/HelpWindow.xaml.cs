@@ -39,7 +39,8 @@ namespace CapyCSS
             Info.Text += "Copyright notice:" + Environment.NewLine;
             Info.Text += "  Microsoft.NET " + Environment.Version.ToString() + " (" + (Environment.Is64BitProcess ? "64bit" : "32bit") + ")" + Environment.NewLine;
             Info.Text += "  MahApps.Metro 2.4.9" + Environment.NewLine;
-            Info.Text += "  Material Design In XAML Toolkit 4.5.0" + Environment.NewLine;
+            Info.Text += "  MahApps.Metro.IconPacks 4.11.0" + Environment.NewLine;
+            Info.Text += "  MaterialDesignThemes 4.5.0" + Environment.NewLine;
             Info.Text += "  Microsoft.ML.NET 1.7.1" + Environment.NewLine;
             Info.Text += "  Microsoft.ML.ImageAnalytics 1.7.1" + Environment.NewLine;
             Info.Text += "  Microsoft.ML.OnnxRuntime 1.11.0" + Environment.NewLine;
