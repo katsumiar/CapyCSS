@@ -217,7 +217,8 @@ namespace CapyCSS.Controls
                 {
                     return null;
                 }
-                return System.IO.Path.GetFileNameWithoutExtension((CurrentTabItem.Header as RemovableLabel).Title);
+                var header = CurrentTabItem.Header as RemovableLabel;
+                return header is null ? null : System.IO.Path.GetFileNameWithoutExtension(header.Title);
             }
         }
 
