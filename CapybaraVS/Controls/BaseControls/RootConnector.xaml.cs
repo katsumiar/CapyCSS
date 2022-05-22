@@ -1734,6 +1734,15 @@ namespace CapyCSS.Controls.BaseControls
                 curvePath?.Dispose();
                 curvePath = new CurvePath(CurveCanvas, this);
 
+                MouseDown += (s, e) => {
+                    if (e.ChangedButton == MouseButton.Right && e.ButtonState == MouseButtonState.Pressed)
+                    {
+                        // 接続操作をキャンセルする
+
+                        curvePath?.Dispose();
+                        curvePath = null;
+                    }
+                };
                 MouseMove += Grid_MouseMove;
                 MouseUp += Grid_MouseLeftButtonUp;
                 CaptureMouse();
