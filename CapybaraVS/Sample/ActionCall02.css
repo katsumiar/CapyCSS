@@ -1,10 +1,10 @@
-System.Collections.Generic.List<System.Action> funcs = null;
+System.Collections.Generic.List<System.Action> actions = null;
 var ActionCall02 = () => {
-    funcs = new System.Collections.Generic.List<System.Action>() {
+    actions = new System.Collections.Generic.List<System.Action>() {
             () => CapyCSSbase.Script.OutConsole( "Hello" ),
             () => CapyCSSbase.Script.OutConsole( "CapyCSS" )
         };
-    CapyCSSbase.FlowLib.ForeachAction( funcs );
+    CapyCSSbase.FlowLib.ForeachAction( actions );
 };
 CapyCSSbase.Script.AddEntryPoint(nameof(ActionCall02), ActionCall02);
 
