@@ -1135,7 +1135,6 @@ namespace CapyCSS.Controls.BaseControls
                             return CanTypeMenuExecuteEvent(CbST.GetTypeEx(typeName.Key));
                         }
                         );
-
                 }
                 treeViewCommand.AssetTreeData.Add(builtInGroup);
                 treeViewCommand.AssetTreeData.Add(typeWindow_classMenu = new TreeMenuNode(TreeMenuNode.NodeType.GROUP, CbSTUtils.CLASS_STR));

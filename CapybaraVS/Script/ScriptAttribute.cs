@@ -109,8 +109,8 @@ namespace CapyCSS.Script
             // 基本のDLLを追加する
             foreach (var dllName in CbSTUtils.BaseDllList)
             {
-                Assembly capyCSSbase = Assembly.Load(dllName);
-                GetApiFromAssemblyForScriptMethodAttribute(OwnerCommandCanvas, node, capyCSSbase);
+                Assembly assembly = Assembly.Load(dllName);
+                GetApiFromAssemblyForScriptMethodAttribute(OwnerCommandCanvas, node, assembly);
             }
         }
 
@@ -341,7 +341,7 @@ namespace CapyCSS.Script
             ICollection<string> importNames,
             Action<Type> importType)
         {
-            Type[] types = null;
+            Type[] types;
             if (module is null)
             {
                 types = asm.GetTypes();
@@ -350,7 +350,6 @@ namespace CapyCSS.Script
             {
                 types = module.GetTypes();
             }
-
             ImportScriptMethods(OwnerCommandCanvas, importMethod, module, importNames, importType, types);
         }
 
@@ -493,7 +492,7 @@ namespace CapyCSS.Script
 #if !DEBUG_IMPORT
                 catch (Exception ex)
                 {
-                    CommandCanvasList.ErrorLog += nameof(ScriptImplement) + "." + nameof(ImportScriptMethods) + ": " + ex.Message + Environment.NewLine + Environment.NewLine;
+                    CommandCanvasList.ErrorLog += nameof(ScriptImplement) + "." + nameof(CreateMakeImportConstructorInfoTasks) + ": " + ex.Message + Environment.NewLine + Environment.NewLine;
                 }
 #endif
             }
@@ -521,7 +520,7 @@ namespace CapyCSS.Script
 #if !DEBUG_IMPORT
                 catch (Exception ex)
                 {
-                    CommandCanvasList.ErrorLog += nameof(ScriptImplement) + "." + nameof(ImportScriptMethods) + ": " + ex.Message + Environment.NewLine + Environment.NewLine;
+                    CommandCanvasList.ErrorLog += nameof(ScriptImplement) + "." + nameof(CreateMakeImportMethodInfoTasks) + ": " + ex.Message + Environment.NewLine + Environment.NewLine;
                 }
 #endif
             }
@@ -584,7 +583,7 @@ namespace CapyCSS.Script
 #if !DEBUG_IMPORT
                         catch (Exception ex)
                         {
-                            CommandCanvasList.ErrorLog += nameof(ScriptImplement) + "." + nameof(ImportScriptMethods) + ": " + ex.Message + Environment.NewLine + Environment.NewLine;
+                            CommandCanvasList.ErrorLog += nameof(ScriptImplement) + "." + nameof(GetApiFromAssemblyForScriptMethodAttribute) + ": " + ex.Message + Environment.NewLine + Environment.NewLine;
                         }
 #endif
                     }
@@ -605,7 +604,7 @@ namespace CapyCSS.Script
 #if !DEBUG_IMPORT
                     catch (Exception ex)
                     {
-                        CommandCanvasList.ErrorLog += nameof(ScriptImplement) + "." + nameof(ImportScriptMethods) + ": " + ex.Message + Environment.NewLine + Environment.NewLine;
+                        CommandCanvasList.ErrorLog += nameof(ScriptImplement) + "." + nameof(GetApiFromAssemblyForScriptMethodAttribute) + ": " + ex.Message + Environment.NewLine + Environment.NewLine;
                     }
 #endif
                 }
