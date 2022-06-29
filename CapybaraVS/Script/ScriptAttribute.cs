@@ -256,6 +256,17 @@ namespace CapyCSS.Script
             if (!classType.IsInterface && methodInfo.IsAbstract)
                 return false;   // 抽象メソッドは呼べない
 
+            if (methodInfo is MethodInfo method)
+            {
+                var returnParameter = method.ReturnParameter;
+                if (typeof(IAsyncResult).IsAssignableFrom(returnParameter.ParameterType))
+                {
+                    // Task や async を返すものは今のところ使えない
+
+                    return false;
+                }
+            }
+
             return true;
         }
 
@@ -280,6 +291,13 @@ namespace CapyCSS.Script
 
             if (!classType.IsClass)
                 return false;   // クラス以外は、扱わない
+
+            if (typeof(Exception).IsAssignableFrom(classType) || typeof(IAsyncResult).IsAssignableFrom(classType))
+            {
+                // 例外クラスは扱わない
+
+                return false;
+            }
 
             return true;
         }
@@ -436,12 +454,6 @@ namespace CapyCSS.Script
 
                 if (!IsAcceptClass(classType))
                     continue;   // 扱えない
-
-                string className = classType.Name;
-                if (className.EndsWith("Exception"))
-                    continue;   // 例外は扱わない
-                if (className.StartsWith("Async"))
-                    continue;   // 本システムで特殊な扱いをしているので扱わない
 
                 if (!classType.IsAbstract)
                 {
