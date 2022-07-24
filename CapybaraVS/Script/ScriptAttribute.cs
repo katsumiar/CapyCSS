@@ -745,6 +745,8 @@ namespace CapyCSS.Script
             return tasks;
         }
 
+        static Type _VoidType = null;
+
         /// <summary>
         /// クラスとメソッド情報からスクリプトで使えるように取り込みます。
         /// </summary>
@@ -795,16 +797,18 @@ namespace CapyCSS.Script
                 // 静的メソッドでは無いので所属するクラスの情報を取得
 
                 var refType = methodInfo.ReflectedType;
-                if (refType.IsValueType   // 絞り込み
+                if ((_VoidType != null && refType == _VoidType) ||
+                    (_VoidType == null
+                        && refType.IsValueType   // 絞り込み
                         && refType.Name == "Void"   // 絞り込み
-                        && refType.FullName == "System.Void")
+                        && refType.FullName == "System.Void"))
                 {
                     // System.Void に所属するものには対応しない
                     // System.Void は、ジェネリック引数に使えないので CbStruct で管理できない…
 
+                    _VoidType = refType;
                     return null;
                 }
-
                 var selfType = TryGetCbType(methodInfo.ReflectedType);
                 if (selfType is null)
                     return null;
@@ -824,12 +828,15 @@ namespace CapyCSS.Script
                 else
                 {
                     // 返り値の型を準備
-                    if (returnType.IsValueType   // 絞り込み
-                        && returnType.Name == "Void"   // 絞り込み
-                        && returnType.FullName == "System.Void")
+                    if ((_VoidType != null && returnType == _VoidType) ||
+                        (_VoidType == null
+                            && returnType.IsValueType   // 絞り込み
+                            && returnType.Name == "Void"   // 絞り込み
+                            && returnType.FullName == "System.Void"))
                     {
                         // void 型は専用のクラスを利用する
 
+                        _VoidType = returnType;
                         retType = TryGetCbType(CbVoid.T);
                     }
                     else
@@ -916,7 +923,7 @@ namespace CapyCSS.Script
 
                     menuName = methodAttr.Path + nodeName;
                 }
-                else if (methodAttr is null)
+                else
                 {
                     // 名前を作成する
 
@@ -1014,52 +1021,65 @@ namespace CapyCSS.Script
                     nodeHintTitle += " : " + returnTypeString;
                 }
 
-                string helpCode = $"{classType.Namespace}:{className}." + nodeName.Replace(" ", "_");
-                menuName = menuName + " " + addState;
-                helpCode = nodeCode + " " + addState;
+                string helpCode = $"{classType.Namespace}:{className}." + nodeName.Replace(" ", "_") + " " + addState;
 
-                // スクリプトノード用のヒント
-                string nodeHint = null;
-                // ノード用ヒントを取得
-                nodeHint = Language.Instance[$"Assembly.{helpCode}/node"];
-                nodeHint = $"【{nodeHintTitle}】" + (nodeHint is null ? "" : Environment.NewLine + nodeHint);
-
-                string hint = null;
                 bool _oldSpecification = false;
-                string addTitleMessage = "";
                 bool isRunable = false;
                 if (methodAttr != null)
                 {
-                    // メニュー用ヒントをリソースから取得
-                    hint = Language.Instance[$"Assembly.{helpCode}/menu"];
-
                     // 古い仕様指定されているか？
                     _oldSpecification = methodAttr.OldSpecification;
-                    if (_oldSpecification)
-                    {
-                        addTitleMessage += CbSTUtils.MENU_OLD_SPECIFICATION;
-                    }
-
                     isRunable = methodAttr.IsRunable;
-                    if (isRunable)
-                    {
-                        addTitleMessage += CbSTUtils.MENU_RUNABLE;
-                    }
                 }
 
-                if (hint is null)
-                    hint = nodeHint;
-                if (hint is null)
-                    hint = "";
+                Func<string> getNodeHint = () =>
+                {
+                    // スクリプトノード用のヒント
+                    string nodeHint = Language.Instance[$"Assembly.{helpCode}/node"];
+                    return nodeHint = $"【{nodeHintTitle}】" + (nodeHint is null ? "" : Environment.NewLine + nodeHint);
+                };
+
+                Func<string> getHint = () =>
+                {
+                    // メニュー用ヒントをリソースから取得
+                    string hint = Language.Instance[$"Assembly.{helpCode}/menu"];
+                    if (hint is null)
+                    {
+                        hint = getNodeHint();
+                    }
+                    if (hint is null)
+                    {
+                        hint = "";
+                    }
+                    return hint;
+                };
+
+                Func<string> getMenuTitle = () =>
+                {
+                    // メニュー項目名
+                    string addTitleMessage = "";
+                    if (methodAttr != null)
+                    {
+                        if (methodAttr.OldSpecification)
+                        {
+                            addTitleMessage += CbSTUtils.MENU_OLD_SPECIFICATION;
+                        }
+                        else if (methodAttr.IsRunable)
+                        {
+                            addTitleMessage += CbSTUtils.MENU_RUNABLE;
+                        }
+                    }
+                    return menuName + " " + addState + addTitleMessage;
+                };
 
                 // ノード化依頼用の情報をセット
                 AutoImplementFunctionInfo autoImplementFunctionInfo = new AutoImplementFunctionInfo()
                 {
                     assetCode = nodeCode,
-                    menuTitle = menuName + addTitleMessage,
+                    menuTitle = getMenuTitle,
                     funcTitle = nodeTitle,
-                    hint = hint,
-                    nodeHint = nodeHint,
+                    hint = getHint,
+                    nodeHint = getNodeHint,
                     classType = classType,
                     returnType = () => retType(""),
                     argumentTypeList = argumentList,

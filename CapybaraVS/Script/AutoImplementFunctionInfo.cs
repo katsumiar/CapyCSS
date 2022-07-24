@@ -18,15 +18,15 @@ namespace CapyCSS.Script
         /// <summary>
         /// メニュー用ヒントメッセージ
         /// </summary>
-        public string hint;
+        public Func<string> hint;
         /// <summary>
         /// ノード用ヒントメッセージ
         /// </summary>
-        public string nodeHint;
+        public Func<string> nodeHint;
         /// <summary>
         /// メニュー用アセット名
         /// </summary>
-        public string menuTitle;
+        public Func<string> menuTitle;
         /// <summary>
         /// ノード用アセット名
         /// </summary>

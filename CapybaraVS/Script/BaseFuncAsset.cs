@@ -370,9 +370,9 @@ namespace CapyCSS.Script
     // TODO 今は役割が変わっているので名前を変える
     class LiteralType : IFuncAssetLiteralDef
     {
-        public string MenuTitle => "Literal/Local : T";
+        public Func<string> MenuTitle => () => "Literal/Local : T";
 
-        public string HelpText => Language.Instance[ApiImporter.BASE_LIB_TAG_PRE + nameof(LiteralType)];
+        public Func<string> HelpText => () => Language.Instance[ApiImporter.BASE_LIB_TAG_PRE + nameof(LiteralType)];
 
         public IList<TypeRequest> typeRequests => new List<TypeRequest>()
         {
@@ -385,9 +385,9 @@ namespace CapyCSS.Script
     {
         public string AssetCode => nameof(Sum);
 
-        public string HelpText => Language.Instance[ApiImporter.BASE_LIB_TAG_PRE + AssetCode];
+        public Func<string> HelpText => () => Language.Instance[ApiImporter.BASE_LIB_TAG_PRE + AssetCode];
 
-        public string MenuTitle => $"{AssetCode}({CbSTUtils.LIST_STR}<T>) : T";
+        public Func<string> MenuTitle => () => $"{AssetCode}({CbSTUtils.LIST_STR}<T>) : T";
 
         public IList<TypeRequest> typeRequests => new List<TypeRequest>()
         {
@@ -398,7 +398,7 @@ namespace CapyCSS.Script
         {
             col.MakeFunction(
                 $"{AssetCode}<{col.SelectedVariableTypeName[0]}>",
-                HelpText,
+                HelpText(),
                 CbST.CbCreateTF(col.SelectedVariableType[0].GenericTypeArguments[0]),  // 返し値の型
                 new List<ICbValue>()  // 引数
                 {
@@ -437,9 +437,9 @@ namespace CapyCSS.Script
     {
         public string AssetCode => nameof(VoidSequence);
 
-        public string HelpText => Language.Instance[ApiImporter.BASE_LIB_TAG_PRE + AssetCode];
+        public Func<string> HelpText => () => Language.Instance[ApiImporter.BASE_LIB_TAG_PRE + AssetCode];
 
-        public string MenuTitle => $"{AssetCode}";
+        public Func<string> MenuTitle => () => $"{AssetCode}";
 
         private volatile IEnumerable<ICbValue> argList;
 
@@ -452,7 +452,7 @@ namespace CapyCSS.Script
         {
             col.MakeFunction(
                 $"{AssetCode}",
-                HelpText,
+                HelpText(),
                 CbVoid.TF,  // 返し値の型
                 new List<ICbValue>()  // 引数
                 {
@@ -496,9 +496,9 @@ namespace CapyCSS.Script
     {
         public string AssetCode => nameof(ResultSequence);
 
-        public string HelpText => Language.Instance[ApiImporter.BASE_LIB_TAG_PRE + AssetCode];
+        public Func<string> HelpText => () => Language.Instance[ApiImporter.BASE_LIB_TAG_PRE + AssetCode];
 
-        public string MenuTitle => $"{AssetCode}(T) : T";
+        public Func<string> MenuTitle => () => $"{AssetCode}(T) : T";
 
         private volatile IEnumerable<ICbValue> argList;
 
@@ -511,7 +511,7 @@ namespace CapyCSS.Script
         {
             col.MakeFunction(
                 $"{AssetCode}",
-                HelpText,
+                HelpText(),
                 CbST.CbCreateTF(col.SelectedVariableType[0]),  // 返し値の型
                 new List<ICbValue>()  // 引数
                 {
@@ -558,9 +558,9 @@ namespace CapyCSS.Script
     {
         public string AssetCode => nameof(Inc);
 
-        public string HelpText => Language.Instance[ApiImporter.BASE_LIB_TAG_PRE + AssetCode];
+        public Func<string> HelpText => () => Language.Instance[ApiImporter.BASE_LIB_TAG_PRE + AssetCode];
 
-        public string MenuTitle => $"{AssetCode}(T) : T";
+        public Func<string> MenuTitle => () => $"{AssetCode}(T) : T";
 
         public IList<TypeRequest> typeRequests => new List<TypeRequest>()
         {
@@ -571,7 +571,7 @@ namespace CapyCSS.Script
         {
             col.MakeFunction(
                 $"{AssetCode}<{col.SelectedVariableTypeName[0]}>",
-                HelpText,
+                HelpText(),
                 CbST.CbCreateTF(col.SelectedVariableType[0]),  // 返し値の型
                 new List<ICbValue>()  // 引数
                 {
@@ -607,9 +607,9 @@ namespace CapyCSS.Script
     {
         public string AssetCode => nameof(Dec);
 
-        public string HelpText => Language.Instance[ApiImporter.BASE_LIB_TAG_PRE + AssetCode];
+        public Func<string> HelpText => () => Language.Instance[ApiImporter.BASE_LIB_TAG_PRE + AssetCode];
 
-        public string MenuTitle => $"{AssetCode}(T) : T";
+        public Func<string> MenuTitle => () => $"{AssetCode}(T) : T";
 
         public IList<TypeRequest> typeRequests => new List<TypeRequest>()
         {
@@ -620,7 +620,7 @@ namespace CapyCSS.Script
         {
             col.MakeFunction(
                 $"{AssetCode}<{col.SelectedVariableTypeName[0]}>",
-                HelpText,
+                HelpText(),
                 CbST.CbCreateTF(col.SelectedVariableType[0]),  // 返し値の型
                 new List<ICbValue>()  // 引数
                 {
@@ -656,9 +656,9 @@ namespace CapyCSS.Script
     {
         public string AssetCode => nameof(Modulo);
 
-        public string HelpText => Language.Instance[ApiImporter.BASE_LIB_TAG_PRE + AssetCode];
+        public Func<string> HelpText => () => Language.Instance[ApiImporter.BASE_LIB_TAG_PRE + AssetCode];
 
-        public string MenuTitle => $"{AssetCode}(T, T) : T";
+        public Func<string> MenuTitle => () => $"{AssetCode}(T, T) : T";
 
         public IList<TypeRequest> typeRequests => new List<TypeRequest>()
         {
@@ -669,7 +669,7 @@ namespace CapyCSS.Script
         {
             col.MakeFunction(
                 $"{AssetCode}<{col.SelectedVariableTypeName[0]}, {col.SelectedVariableTypeName[0]}>",
-                HelpText,
+                HelpText(),
                 CbST.CbCreateTF(col.SelectedVariableType[0]),  // 返し値の型
                 new List<ICbValue>()  // 引数
                 {
@@ -706,9 +706,9 @@ namespace CapyCSS.Script
     {
         public string AssetCode => nameof(Multiply);
 
-        public string HelpText => Language.Instance[ApiImporter.BASE_LIB_TAG_PRE + AssetCode];
+        public Func<string> HelpText => () => Language.Instance[ApiImporter.BASE_LIB_TAG_PRE + AssetCode];
 
-        public string MenuTitle => $"{AssetCode}(T, {CbSTUtils.LIST_STR}<T>) : T";
+        public Func<string> MenuTitle => () => $"{AssetCode}(T, {CbSTUtils.LIST_STR}<T>) : T";
 
         public IList<TypeRequest> typeRequests => new List<TypeRequest>()
         {
@@ -719,7 +719,7 @@ namespace CapyCSS.Script
         {
             col.MakeFunction(
                 $"{AssetCode}<{CbSTUtils.GetTypeName(col.SelectedVariableType[0].GenericTypeArguments[0])}, {col.SelectedVariableTypeName[0]}>",
-                HelpText,
+                HelpText(),
                 CbST.CbCreateTF(col.SelectedVariableType[0].GenericTypeArguments[0]),  // 返し値の型
                 new List<ICbValue>()  // 引数
                 {
@@ -761,9 +761,9 @@ namespace CapyCSS.Script
     {
         public string AssetCode => nameof(Divide);
 
-        public string HelpText => Language.Instance[ApiImporter.BASE_LIB_TAG_PRE + AssetCode];
+        public Func<string> HelpText => () => Language.Instance[ApiImporter.BASE_LIB_TAG_PRE + AssetCode];
 
-        public string MenuTitle => $"{AssetCode}(T, {CbSTUtils.LIST_STR}<T>) : T";
+        public Func<string> MenuTitle => () => $"{AssetCode}(T, {CbSTUtils.LIST_STR}<T>) : T";
 
         public IList<TypeRequest> typeRequests => new List<TypeRequest>()
         {
@@ -774,7 +774,7 @@ namespace CapyCSS.Script
         {
             col.MakeFunction(
                 $"{AssetCode}<{CbSTUtils.GetTypeName(col.SelectedVariableType[0].GenericTypeArguments[0])}, {col.SelectedVariableTypeName[0]}>",
-                HelpText,
+                HelpText(),
                 CbST.CbCreateTF(col.SelectedVariableType[0].GenericTypeArguments[0]),  // 返し値の型
                 new List<ICbValue>()  // 引数
                 {
@@ -815,9 +815,9 @@ namespace CapyCSS.Script
     {
         public string AssetCode => nameof(Subtract);
 
-        public string HelpText => Language.Instance[ApiImporter.BASE_LIB_TAG_PRE + AssetCode];
+        public Func<string> HelpText => () => Language.Instance[ApiImporter.BASE_LIB_TAG_PRE + AssetCode];
 
-        public string MenuTitle => $"{AssetCode}(T, {CbSTUtils.LIST_STR}<T>) : T" + CbSTUtils.MENU_OLD_SPECIFICATION;
+        public Func<string> MenuTitle => () => $"{AssetCode}(T, {CbSTUtils.LIST_STR}<T>) : T" + CbSTUtils.MENU_OLD_SPECIFICATION;
 
         public IList<TypeRequest> typeRequests => new List<TypeRequest>()
         {
@@ -828,7 +828,7 @@ namespace CapyCSS.Script
         {
             col.MakeFunction(
                 $"{AssetCode}<{CbSTUtils.GetTypeName(col.SelectedVariableType[0].GenericTypeArguments[0])}, {col.SelectedVariableTypeName[0]}>",
-                HelpText,
+                HelpText(),
                 CbST.CbCreateTF(col.SelectedVariableType[0].GenericTypeArguments[0]),  // 返し値の型
                 new List<ICbValue>()  // 引数
                 {
@@ -870,9 +870,9 @@ namespace CapyCSS.Script
     {
         public string AssetCode => nameof(CallFile);
 
-        public string HelpText => Language.Instance[ApiImporter.BASE_LIB_TAG_PRE + AssetCode];
+        public Func<string> HelpText => () => Language.Instance[ApiImporter.BASE_LIB_TAG_PRE + AssetCode];
 
-        public string MenuTitle => $"{AssetCode}({CbSTUtils.STRING_STR}, {CbSTUtils.BOOL_STR}, {CbSTUtils.LIST_STR}<{CbSTUtils.STRING_STR}>) : {CbSTUtils.FUNC_STR}<{CbSTUtils.INT_STR}>";
+        public Func<string> MenuTitle => () => $"{AssetCode}({CbSTUtils.STRING_STR}, {CbSTUtils.BOOL_STR}, {CbSTUtils.LIST_STR}<{CbSTUtils.STRING_STR}>) : {CbSTUtils.FUNC_STR}<{CbSTUtils.INT_STR}>";
 
         public IList<TypeRequest> typeRequests => new List<TypeRequest>()
         {
@@ -883,7 +883,7 @@ namespace CapyCSS.Script
         {
             col.MakeFunction(
                 $"{AssetCode}",
-                HelpText,
+                HelpText(),
                 CbFunc<Func<int>, CbInt>.TF,   // 返し値の型
                 new List<ICbValue>()      // 引数
                 {
@@ -931,7 +931,7 @@ namespace CapyCSS.Script
     {
         public string AssetCode => nameof(GetVariable);
 
-        public string HelpText => Language.Instance[ApiImporter.BASE_LIB_TAG_PRE + nameof(_GetVariable)];
+        public Func<string> HelpText => () => Language.Instance[ApiImporter.BASE_LIB_TAG_PRE + nameof(_GetVariable)];
 
         public bool ImplAsset(MultiRootConnector col, bool isReBuildMode = false)
         {
@@ -942,7 +942,7 @@ namespace CapyCSS.Script
 
                 col.MakeFunction(
                     variableGetter.MakeName,
-                    HelpText,
+                    HelpText(),
                     CbST.CbCreateTF(col.SelectedVariableType[0]),  // 返し値の型
                     null,   // 引数はなし
                     new Func<IList<ICbValue>, DummyArgumentsMemento, ICbValue>(
@@ -996,9 +996,9 @@ namespace CapyCSS.Script
     //-----------------------------------------------------------------
     class CreateVariable : _GetVariable, IFuncCreateVariableAssetDef
     {
-        public string MenuTitle => "Create Variable : T";
+        public Func<string> MenuTitle => () => "Create Variable : T";
 
-        public new string HelpText => Language.Instance[ApiImporter.BASE_LIB_TAG_PRE + nameof(CreateVariable)];
+        public new Func<string> HelpText => () => Language.Instance[ApiImporter.BASE_LIB_TAG_PRE + nameof(CreateVariable)];
 
         public List<TypeRequest> typeRequests => new List<TypeRequest>()
         {
@@ -1009,9 +1009,9 @@ namespace CapyCSS.Script
     //-----------------------------------------------------------------
     class GetVariable : _GetVariable, IFuncCreateVariableAssetDef
     {
-        public string MenuTitle => "Get Variable";
+        public Func<string> MenuTitle => () => "Get Variable";
 
-        public new string HelpText => Language.Instance[ApiImporter.BASE_LIB_TAG_PRE + nameof(GetVariable)];
+        public new Func<string> HelpText => () => Language.Instance[ApiImporter.BASE_LIB_TAG_PRE + nameof(GetVariable)];
 
         public List<TypeRequest> typeRequests => null;    // 選択を意味する
     }
@@ -1021,9 +1021,9 @@ namespace CapyCSS.Script
     {
         public string AssetCode => nameof(SetVariable);
 
-        public string HelpText => Language.Instance[ApiImporter.BASE_LIB_TAG_PRE + nameof(SetVariable)];
+        public Func<string> HelpText => () => Language.Instance[ApiImporter.BASE_LIB_TAG_PRE + nameof(SetVariable)];
 
-        public string MenuTitle => "Set Variable";
+        public Func<string> MenuTitle => () => "Set Variable";
 
         public List<TypeRequest> typeRequests => null;    // 選択を意味する
 
@@ -1036,7 +1036,7 @@ namespace CapyCSS.Script
 
                 col.MakeFunction(
                     variableGetter.MakeName,
-                    HelpText,
+                    HelpText(),
                     CbVoid.TF,  // 返し値の型
                     new List<ICbValue>()  // 引数
                     {
@@ -1095,9 +1095,9 @@ namespace CapyCSS.Script
     {
         public string AssetCode => nameof(DummyArguments);
 
-        public string HelpText => Language.Instance[ApiImporter.BASE_LIB_TAG_PRE + nameof(DummyArguments)];
+        public Func<string> HelpText => () => Language.Instance[ApiImporter.BASE_LIB_TAG_PRE + nameof(DummyArguments)];
 
-        public string MenuTitle => "DummyArguments<T> : T";
+        public Func<string> MenuTitle => () => "DummyArguments<T> : T";
 
         public IList<TypeRequest> typeRequests => new List<TypeRequest>()
         {
@@ -1108,7 +1108,7 @@ namespace CapyCSS.Script
         {
             col.MakeFunction(
                 "DummyArguments<" + col.SelectedVariableTypeName[0] + ">",
-                HelpText,
+                HelpText(),
                 CbST.CbCreateTF(col.SelectedVariableType[0]),  // 返し値の型
                 new List<ICbValue>()  // 引数
                 {
@@ -1150,9 +1150,9 @@ namespace CapyCSS.Script
     {
         public string AssetCode => nameof(SwitchEnum);
 
-        public string HelpText => Language.Instance[ApiImporter.BASE_LIB_TAG_PRE + nameof(SwitchEnum)];
+        public Func<string> HelpText => () => Language.Instance[ApiImporter.BASE_LIB_TAG_PRE + nameof(SwitchEnum)];
 
-        public string MenuTitle => $"Switch Case<TEnum> : {CbSTUtils.VOID_STR}";
+        public Func<string> MenuTitle => () => $"Switch Case<TEnum> : {CbSTUtils.VOID_STR}";
 
         public IList<TypeRequest> typeRequests => new List<TypeRequest>()
         {
@@ -1186,7 +1186,7 @@ namespace CapyCSS.Script
 
             col.MakeFunction(
                 $"Switch Case<{col.SelectedVariableTypeName[0]}>",
-                HelpText,
+                HelpText(),
                 CbVoid.TF,  // 返し値の型
                 args,  // 引数
                 new Func<IList<ICbValue>, DummyArgumentsMemento, ICbValue>(
@@ -1239,9 +1239,9 @@ namespace CapyCSS.Script
     {
         public string AssetCode => nameof(OutConsole);
 
-        public string HelpText => Language.Instance[ApiImporter.BASE_LIB_TAG_PRE + nameof(OutConsole)];
+        public Func<string> HelpText => () => Language.Instance[ApiImporter.BASE_LIB_TAG_PRE + nameof(OutConsole)];
 
-        public string MenuTitle => $"{AssetCode}(T) : T";
+        public Func<string> MenuTitle => () => $"{AssetCode}(T) : T";
 
         public IList<TypeRequest> typeRequests => new List<TypeRequest>()
         {
@@ -1252,7 +1252,7 @@ namespace CapyCSS.Script
         {
             col.MakeFunction(
                 $"{AssetCode}<{col.SelectedVariableTypeName[0]}>",
-                HelpText,
+                HelpText(),
                 CbST.CbCreateTF(col.SelectedVariableType[0]),  // 返し値の型
                 new List<ICbValue>()  // 引数
                 {
@@ -1293,9 +1293,9 @@ namespace CapyCSS.Script
     {
         public string AssetCode => nameof(Abs);
 
-        public string HelpText => Language.Instance[ApiImporter.BASE_LIB_TAG_PRE + nameof(Abs)];
+        public Func<string> HelpText => () => Language.Instance[ApiImporter.BASE_LIB_TAG_PRE + nameof(Abs)];
 
-        public string MenuTitle => $"{AssetCode}(T) : T";
+        public Func<string> MenuTitle => () => $"{AssetCode}(T) : T";
 
         public IList<TypeRequest> typeRequests => new List<TypeRequest>()
         {
@@ -1306,7 +1306,7 @@ namespace CapyCSS.Script
         {
             col.MakeFunction(
                 $"{AssetCode}<{col.SelectedVariableTypeName[0]}>",
-                HelpText,
+                HelpText(),
                 CbST.CbCreateTF(col.SelectedVariableType[0]),  // 返し値の型
                 new List<ICbValue>()  // 引数
                 {
@@ -1341,9 +1341,9 @@ namespace CapyCSS.Script
     {
         public string AssetCode => "Dispose";
 
-        public string HelpText => Language.Instance[ApiImporter.BASE_LIB_TAG_PRE + AssetCode];
+        public Func<string> HelpText => () => Language.Instance[ApiImporter.BASE_LIB_TAG_PRE + AssetCode];
 
-        public string MenuTitle => $"{AssetCode}(IDisposable) : void";
+        public Func<string> MenuTitle => () => $"{AssetCode}(IDisposable) : void";
 
         public IList<TypeRequest> typeRequests => new List<TypeRequest>()
         {
@@ -1354,7 +1354,7 @@ namespace CapyCSS.Script
         {
             col.MakeFunction(
                 $"{AssetCode}",
-                HelpText,
+                HelpText(),
                 CbVoid.TF,  // 返し値の型
                 new List<ICbValue>()  // 引数
                 {
@@ -1390,9 +1390,9 @@ namespace CapyCSS.Script
     {
         public string AssetCode => nameof(Pow);
 
-        public string HelpText => Language.Instance[ApiImporter.BASE_LIB_TAG_PRE + AssetCode];
+        public Func<string> HelpText => () => Language.Instance[ApiImporter.BASE_LIB_TAG_PRE + AssetCode];
 
-        public string MenuTitle => $"{AssetCode}({CbSTUtils.DOUBLE_STR}, {CbSTUtils.DOUBLE_STR}) : {CbSTUtils.DOUBLE_STR}" + CbSTUtils.MENU_OLD_SPECIFICATION;
+        public Func<string> MenuTitle => () => $"{AssetCode}({CbSTUtils.DOUBLE_STR}, {CbSTUtils.DOUBLE_STR}) : {CbSTUtils.DOUBLE_STR}" + CbSTUtils.MENU_OLD_SPECIFICATION;
 
         public IList<TypeRequest> typeRequests => new List<TypeRequest>()
         {
@@ -1403,7 +1403,7 @@ namespace CapyCSS.Script
         {
             col.MakeFunction(
                 $"{AssetCode}",
-                HelpText,
+                HelpText(),
                 CbST.CbCreateTF<double>(),      // 返し値の型
                 new List<ICbValue>()  // 引数
                 {
@@ -1442,9 +1442,9 @@ namespace CapyCSS.Script
     {
         public string AssetCode => nameof(Rand);
 
-        public string HelpText => Language.Instance[ApiImporter.BASE_LIB_TAG_PRE + AssetCode];
+        public Func<string> HelpText => () => Language.Instance[ApiImporter.BASE_LIB_TAG_PRE + AssetCode];
 
-        public string MenuTitle => $"{AssetCode}({CbSTUtils.INT_STR}, {CbSTUtils.INT_STR}) : {CbSTUtils.INT_STR}" + CbSTUtils.MENU_OLD_SPECIFICATION;
+        public Func<string> MenuTitle => () => $"{AssetCode}({CbSTUtils.INT_STR}, {CbSTUtils.INT_STR}) : {CbSTUtils.INT_STR}" + CbSTUtils.MENU_OLD_SPECIFICATION;
 
         public IList<TypeRequest> typeRequests => new List<TypeRequest>()
         {
@@ -1455,7 +1455,7 @@ namespace CapyCSS.Script
         {
             col.MakeFunction(
                 $"{AssetCode}",
-                HelpText,
+                HelpText(),
                 CbST.CbCreateTF<int>(),   // 返し値の型
                 new List<ICbValue>()  // 引数
                 {

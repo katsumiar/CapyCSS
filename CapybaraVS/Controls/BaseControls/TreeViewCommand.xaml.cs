@@ -130,14 +130,14 @@ namespace CapyCSS.Controls.BaseControls
         /// </summary>
         /// <param name="name">項目名</param>
         /// <param name="personCommand">実行コマンド</param>
-        public TreeMenuNode(NodeType nodeType, string name, string hintText, TreeMenuNodeCommand personCommand = null, TreeMenuNodeCommand deleteClickCommand = null)
+        public TreeMenuNode(NodeType nodeType, string name, Func<string> hintText, TreeMenuNodeCommand personCommand = null, TreeMenuNodeCommand deleteClickCommand = null)
         {
             this.nodeType = nodeType;
             Name = name;
             Path = name;
-            if (hintText != null && hintText != "")
+            if (hintText != null)
             {
-                HintText = hintText;
+                _hintTextFunc = hintText;
             }
             if (personCommand is null)
             {
@@ -177,7 +177,23 @@ namespace CapyCSS.Controls.BaseControls
         /// <summary>
         /// 説明を参照します。
         /// </summary>
-        public string HintText { get; set; } = null;
+        public string HintText
+        {
+            get
+            {
+                if (_hintText is null && _hintTextFunc != null)
+                {
+                    _hintText = _hintTextFunc();
+                }
+                return _hintText;
+            }
+            //set
+            //{
+            //    _hintText = value;
+            //}
+        }
+        public string _hintText = null;
+        public Func<string> _hintTextFunc = null;
 
         //-----------------------------------------------------------------------------------
         /// <summary>
@@ -807,7 +823,7 @@ namespace CapyCSS.Controls.BaseControls
                     {
                         if (treeView.Count < FilteringMax)
                         {
-                            treeView.Add(new TreeMenuNode(TreeMenuNode.NodeType.NORMAL, title, node.HintText, OwnerCommandCanvas.CreateImmediateExecutionCanvasCommand(() =>
+                            treeView.Add(new TreeMenuNode(TreeMenuNode.NodeType.NORMAL, title, node._hintTextFunc, OwnerCommandCanvas.CreateImmediateExecutionCanvasCommand(() =>
                             {
                                 ExecuteFindCommand(node.Path);
                             })));
@@ -867,7 +883,7 @@ namespace CapyCSS.Controls.BaseControls
                     {
                         if (treeView.Count < FilteringMax)
                         {
-                            var addNode = new TreeMenuNode(TreeMenuNode.NodeType.NORMAL, title, node.HintText, OwnerCommandCanvas.CreateImmediateExecutionCanvasCommand(() =>
+                            var addNode = new TreeMenuNode(TreeMenuNode.NodeType.NORMAL, title, node._hintTextFunc, OwnerCommandCanvas.CreateImmediateExecutionCanvasCommand(() =>
                             {
                                 ExecuteFindCommand(node.Path);
                             }));
@@ -1079,7 +1095,7 @@ namespace CapyCSS.Controls.BaseControls
         public static void AddGroupedMenu(
             TreeMenuNode node,
             string name,
-            string help = null,
+            Func<string> help = null,
             Action<object> executeEvent = null,
             Func<object, bool> canExecuteEvent = null)
         {
@@ -1089,7 +1105,7 @@ namespace CapyCSS.Controls.BaseControls
             TreeMenuNode menu;
             if (help is null)
             {
-                menu = new TreeMenuNode(TreeMenuNode.NodeType.NORMAL, title, "", command);
+                menu = new TreeMenuNode(TreeMenuNode.NodeType.NORMAL, title, command);
             }
             else
             {

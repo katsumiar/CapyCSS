@@ -22,7 +22,7 @@ namespace CapyCSS.Script
         /// <summary>
         /// 説明
         /// </summary>
-        string HelpText { get; }
+        Func<string> HelpText { get; }
 
         /// <summary>
         /// アセット処理を実装する
@@ -40,7 +40,7 @@ namespace CapyCSS.Script
         /// <summary>
         /// アセットツリー上の名前
         /// </summary>
-        string MenuTitle { get; }
+        Func<string> MenuTitle { get; }
     }
 
     /// <summary>
@@ -51,7 +51,7 @@ namespace CapyCSS.Script
         /// <summary>
         /// アセットツリー上の名前
         /// </summary>
-        string MenuTitle { get; }
+        Func<string> MenuTitle { get; }
 
         /// <summary>
         /// 型選択リストの受け入れ項目
@@ -69,7 +69,7 @@ namespace CapyCSS.Script
         /// <summary>
         /// アセットツリー上の名前
         /// </summary>
-        string MenuTitle { get; }
+        Func<string> MenuTitle { get; }
 
         /// <summary>
         /// 型選択リストの受け入れ項目
@@ -86,7 +86,7 @@ namespace CapyCSS.Script
         /// <summary>
         /// アセットツリー上の名前
         /// </summary>
-        string MenuTitle { get; }
+        Func<string> MenuTitle { get; }
 
 
         /// <summary>
@@ -104,12 +104,12 @@ namespace CapyCSS.Script
         /// <summary>
         /// 説明
         /// </summary>
-        string HelpText { get; }
+        Func<string> HelpText { get; }
 
         /// <summary>
         /// アセットツリー上の名前
         /// </summary>
-        string MenuTitle { get; }
+        Func<string> MenuTitle { get; }
 
         /// <summary>
         /// 型選択リストの受け入れ項目

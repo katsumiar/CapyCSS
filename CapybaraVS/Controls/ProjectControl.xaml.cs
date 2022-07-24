@@ -449,7 +449,7 @@ namespace CapyCSS.Controls
             var node = new TreeMenuNode(
                 TreeMenuNode.NodeType.NORMAL,
                 System.IO.Path.GetFileNameWithoutExtension(path),
-                path,
+                () => path,
                 CreateImmediateExecutionCanvasCommand(() => OpenScript(path))
                 );
             node.DeleteClickCommand = new TreeMenuNodeCommand((a) =>

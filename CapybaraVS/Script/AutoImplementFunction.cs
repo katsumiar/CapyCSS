@@ -67,15 +67,15 @@ namespace CapyCSS.Script
 
         public string FuncCode { get; set; } = "";
 
-        protected string hint = "";
+        protected Func<string> hint = () => "";
 
-        public string HelpText => hint;
+        public Func<string> HelpText => hint;
 
-        protected string nodeHint = "";
+        protected Func<string> nodeHint = () => "";
 
-        public string NodeHelpText => nodeHint;
+        public Func<string> NodeHelpText => nodeHint;
 
-        public string MenuTitle { get; set; } = "";
+        public Func<string> MenuTitle { get; set; } = () => "";
 
         public string FuncTitle { get; set; } = "";
 
@@ -245,7 +245,7 @@ namespace CapyCSS.Script
             col.FunctionInfo = this;
             col.MakeFunction(
                 funcTitle + exTitle,
-                NodeHelpText,
+                NodeHelpText(),
                 returnType,
                 argumentTypeList,
                 new Func<IList<ICbValue>, DummyArgumentsMemento, ICbValue>(

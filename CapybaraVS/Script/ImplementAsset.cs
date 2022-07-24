@@ -44,14 +44,15 @@ namespace CapyCSS.Script
         protected static void CreateAssetMenu(CommandCanvas OwnerCommandCanvas, TreeMenuNode group, IFuncCreateAssetDef funcAssetDef)
         {
             AddAsset(funcAssetDef);
-            string title = TreeViewCommand.MakeGroup(ref group, funcAssetDef.MenuTitle);
+            string menuTitle = funcAssetDef.MenuTitle();
+            string title = TreeViewCommand.MakeGroup(ref group, menuTitle);
             var menu = new TreeMenuNode(TreeMenuNode.NodeType.NORMAL, title, funcAssetDef.HelpText);
             group.AddChild(menu);
             menu.LeftClickCommand = OwnerCommandCanvas.CreateEventCanvasCommand(
                 menu.Path, 
                 () => {
                     var result = CbScript.CreateFunction(OwnerCommandCanvas, funcAssetDef.AssetCode);
-                    if (funcAssetDef.MenuTitle.Contains(CbSTUtils.MENU_OLD_SPECIFICATION))
+                    if (menuTitle.Contains(CbSTUtils.MENU_OLD_SPECIFICATION))
                     {
                         // メニューで非表示にしたのでここには来なくなった
 
@@ -70,7 +71,8 @@ namespace CapyCSS.Script
         public static void CreateAssetMenu(CommandCanvas OwnerCommandCanvas, TreeMenuNode group, IFuncCreateVariableAssetDef funcAssetDef)
         {
             AddAsset(funcAssetDef);
-            string title = TreeViewCommand.MakeGroup(ref group, funcAssetDef.MenuTitle);
+            string menuTitle = funcAssetDef.MenuTitle();
+            string title = TreeViewCommand.MakeGroup(ref group, menuTitle);
             var menu = new TreeMenuNode(TreeMenuNode.NodeType.NORMAL, title, funcAssetDef.HelpText);
             group.AddChild(menu);
             menu.LeftClickCommand = OwnerCommandCanvas.CreateEventCanvasCommand(
@@ -78,7 +80,7 @@ namespace CapyCSS.Script
                 () => 
                 { 
                     var result = CbScript.CreateFreeTypeVariableFunction(OwnerCommandCanvas, funcAssetDef.AssetCode, funcAssetDef.typeRequests);
-                    if (funcAssetDef.MenuTitle.Contains(CbSTUtils.MENU_OLD_SPECIFICATION))
+                    if (menuTitle.Contains(CbSTUtils.MENU_OLD_SPECIFICATION))
                     {
                         // メニューで非表示にしたのでここには来なくなった
 
@@ -97,7 +99,8 @@ namespace CapyCSS.Script
         public static void CreateAssetMenu(CommandCanvas OwnerCommandCanvas, TreeMenuNode group, IFuncCreateVariableListAssetDef funcAssetDef)
         {
             AddAsset(funcAssetDef);
-            string title = TreeViewCommand.MakeGroup(ref group, funcAssetDef.MenuTitle);
+            string menuTitle = funcAssetDef.MenuTitle();
+            string title = TreeViewCommand.MakeGroup(ref group, menuTitle);
             var menu = new TreeMenuNode(TreeMenuNode.NodeType.NORMAL, title, funcAssetDef.HelpText);
             group.AddChild(menu);
             menu.LeftClickCommand = OwnerCommandCanvas.CreateEventCanvasCommand(
@@ -105,7 +108,7 @@ namespace CapyCSS.Script
                 () =>
                 { 
                     var result = CbScript.CreateFreeTypeVariableFunction(OwnerCommandCanvas, funcAssetDef.AssetCode, null, true);
-                    if (funcAssetDef.MenuTitle.Contains(CbSTUtils.MENU_OLD_SPECIFICATION))
+                    if (menuTitle.Contains(CbSTUtils.MENU_OLD_SPECIFICATION))
                     {
                         // メニューで非表示にしたのでここには来なくなった
 
@@ -124,7 +127,8 @@ namespace CapyCSS.Script
         public static void CreateAssetMenu(CommandCanvas OwnerCommandCanvas, TreeMenuNode group, IFuncAssetWithArgumentDef funcAssetDef)
         {
             AddAsset(funcAssetDef);
-            string title = TreeViewCommand.MakeGroup(ref group, funcAssetDef.MenuTitle);
+            string menuTitle = funcAssetDef.MenuTitle();
+            string title = TreeViewCommand.MakeGroup(ref group, menuTitle);
             var menu = new TreeMenuNode(TreeMenuNode.NodeType.NORMAL, title, funcAssetDef.HelpText);
             group.AddChild(menu);
             menu.LeftClickCommand = OwnerCommandCanvas.CreateEventCanvasCommand(
@@ -132,7 +136,7 @@ namespace CapyCSS.Script
                 () =>
                 {
                     var result = CbScript.CreateFreeTypeFunction(OwnerCommandCanvas, funcAssetDef.AssetCode, funcAssetDef.typeRequests);
-                    if (funcAssetDef.MenuTitle.Contains(CbSTUtils.MENU_OLD_SPECIFICATION))
+                    if (menuTitle.Contains(CbSTUtils.MENU_OLD_SPECIFICATION))
                     {
                         // メニューで非表示にしたのでここには来なくなった
 
@@ -151,14 +155,15 @@ namespace CapyCSS.Script
         public static void CreateAssetMenu(CommandCanvas OwnerCommandCanvas, TreeMenuNode group, IFuncAssetLiteralDef funcAssetDef)
         {
             //AddAsset(funcAssetDef); 不要
-            string title = TreeViewCommand.MakeGroup(ref group, funcAssetDef.MenuTitle);
+            string menuTitle = funcAssetDef.MenuTitle();
+            string title = TreeViewCommand.MakeGroup(ref group, menuTitle);
             var menu = new TreeMenuNode(TreeMenuNode.NodeType.NORMAL, title, funcAssetDef.HelpText);
             group.AddChild(menu);
             menu.LeftClickCommand = OwnerCommandCanvas.CreateEventCanvasCommand(
                 menu.Path,
                 () => { 
                     var result = CbScript.SelectVariableType(OwnerCommandCanvas, funcAssetDef.typeRequests);
-                    if (funcAssetDef.MenuTitle.Contains(CbSTUtils.MENU_OLD_SPECIFICATION))
+                    if (menuTitle.Contains(CbSTUtils.MENU_OLD_SPECIFICATION))
                     {
                         // メニューで非表示にしたのでここには来なくなった
 
