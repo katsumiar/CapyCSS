@@ -41,10 +41,6 @@ namespace CapyCSS
             Info.Text += "  MahApps.Metro 2.4.9" + Environment.NewLine;
             Info.Text += "  MahApps.Metro.IconPacks 4.11.0" + Environment.NewLine;
             Info.Text += "  MaterialDesignThemes 4.5.0" + Environment.NewLine;
-            Info.Text += "  Microsoft.ML.NET 1.7.1" + Environment.NewLine;
-            Info.Text += "  Microsoft.ML.ImageAnalytics 1.7.1" + Environment.NewLine;
-            Info.Text += "  Microsoft.ML.OnnxRuntime 1.11.0" + Environment.NewLine;
-            Info.Text += "  Microsoft.ML.OnnxTransformer 1.7.1" + Environment.NewLine;
             Info.Text += "  System.Drawing.Common 6.0.0" + Environment.NewLine;
 
             Info.Text += Environment.NewLine;
