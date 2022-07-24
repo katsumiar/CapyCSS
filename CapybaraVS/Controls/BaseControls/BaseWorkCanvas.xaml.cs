@@ -184,10 +184,16 @@ namespace CapyCSS.Controls.BaseControls
                         self.SelectedNodes.Add(movableAsset);
                         if (relPos != null)
                         {
-                            var el = movableAsset as FrameworkElement;
-                            nodeList.Add(el);
-                            leftTopPoint.X = Math.Min(leftTopPoint.X, Canvas.GetLeft(el));
-                            leftTopPoint.Y = Math.Min(leftTopPoint.Y, Canvas.GetTop(el));
+                            nodeList.Add(movableAsset);
+
+                            // レイヤー設定
+                            if (movableAsset.ControlObject is IDisplayPriority dp)
+                            {
+                                Canvas.SetZIndex(movableAsset, dp.Priority);
+                            }
+
+                            leftTopPoint.X = Math.Min(leftTopPoint.X, Canvas.GetLeft(movableAsset));
+                            leftTopPoint.Y = Math.Min(leftTopPoint.Y, Canvas.GetTop(movableAsset));
                         }
                     }
                     foreach (var node in nodeList)
