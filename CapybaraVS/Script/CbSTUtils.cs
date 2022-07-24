@@ -439,7 +439,7 @@ namespace CapyCSS.Script
                 }
                 if (type.IsArray)
                 {
-                    Debug.Assert(!typeName.EndsWith("[]"));
+                    //Debug.Assert(!typeName.EndsWith("[]"));
                     typeName += "[]";
                 }
                 if (type.IsByRef)

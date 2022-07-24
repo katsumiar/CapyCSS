@@ -797,10 +797,10 @@ namespace CapyCSS.Controls
 
         private void AccordionOpenIcon_MouseLeave(object sender, MouseEventArgs e)
         {
-            CommandCanvasList.SetOwnerCursor(null);
+            CommandCanvasList.ResetOwnerCursor(Cursors.Hand);
         }
 
-#region IDisposable Support
+        #region IDisposable Support
         private bool disposedValue = false; // 重複する呼び出しを検出するには
 
         protected virtual void Dispose(bool disposing)

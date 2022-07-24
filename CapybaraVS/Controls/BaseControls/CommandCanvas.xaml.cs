@@ -289,7 +289,7 @@ namespace CapyCSS.Controls.BaseControls
 
             ClickEntryEvent = new Action(() =>
             {
-                CommandCanvasList.SetOwnerCursor(null);
+                CommandCanvasList.ResetOwnerCursor(Cursors.Hand);
             });
 
             ClickExitEvent = new Action(() =>
@@ -301,8 +301,6 @@ namespace CapyCSS.Controls.BaseControls
             DEBUG_Check();
 
             RecordUnDoPoint(CapyCSS.Language.Instance["Help:SYSTEM_COMMAND_InitialPoint"]);
-
-            //CommandCanvasList.SetOwnerCursor(null);
         }
 
         ~CommandCanvas()

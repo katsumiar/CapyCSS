@@ -93,12 +93,18 @@ namespace CapyCSS.Controls.BaseControls
         private void AddLabel_MouseDown(object sender, MouseButtonEventArgs e)
         {
             CommandCanvasList.SetOwnerCursor(Cursors.Wait);
-            if (AddLabel_MouseDown())
+            try
             {
-                InportList.SelectedIndex = (int)ImportMenu.Init;
-                InstallDllList_SelectionChanged(null, null);
+                if (AddLabel_MouseDown())
+                {
+                    InportList.SelectedIndex = (int)ImportMenu.Init;
+                    InstallDllList_SelectionChanged(null, null);
+                }
             }
-            CommandCanvasList.SetOwnerCursor(null);
+            finally
+            {
+                CommandCanvasList.ResetOwnerCursor(Cursors.Wait);
+            }
         }
         private bool AddLabel_MouseDown()
         {

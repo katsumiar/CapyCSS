@@ -103,7 +103,7 @@ namespace CapyCSS.Controls.BaseControls
 
         private void StackPanel_MouseLeave(object sender, MouseEventArgs e)
         {
-            CommandCanvasList.SetOwnerCursor(null);
+            CommandCanvasList.ResetOwnerCursor(Cursors.Hand);
         }
     }
 }

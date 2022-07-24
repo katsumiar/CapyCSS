@@ -275,7 +275,7 @@ namespace CapyCSS.Controls.BaseControls
 
         private void LabelControl_MouseLeave(object sender, MouseEventArgs e)
         {
-            CommandCanvasList.SetOwnerCursor(null);
+            CommandCanvasList.ResetOwnerCursor(Cursors.Hand);
         }
 
         protected virtual void Dispose(bool disposing)

@@ -211,21 +211,26 @@ namespace CapyCSS.Script
                 return true;
             }
             CommandCanvasList.SetOwnerCursor(Cursors.Wait);
-            if (ImportGroupNode is null)
+            try
             {
-                ImportGroupNode = CreateGroup(ProgramNode, MENU_TITLE_IMPORT);
+                if (ImportGroupNode is null)
+                {
+                    ImportGroupNode = CreateGroup(ProgramNode, MENU_TITLE_IMPORT);
+                }
+                string name = ScriptImplement.ImportScriptMethodsFromNuGet(OwnerCommandCanvas, ImportGroupNode, packageDir, pkgName);
+                if (name != null)
+                {
+                    ModulueNameList.Add(name);  // インポートリストに表示
+                    NuGetModuleList.Add(pkgName);
+                    Console.WriteLine($"NuGet successed.");
+                    return true;
+                }
+                Console.WriteLine($"faild.");
             }
-            string name = ScriptImplement.ImportScriptMethodsFromNuGet(OwnerCommandCanvas, ImportGroupNode, packageDir, pkgName);
-            if (name != null)
+            finally
             {
-                ModulueNameList.Add(name);  // インポートリストに表示
-                NuGetModuleList.Add(pkgName);
-                Console.WriteLine($"NuGet successed.");
-                CommandCanvasList.SetOwnerCursor(null);
-                return true;
+                CommandCanvasList.ResetOwnerCursor(Cursors.Wait);
             }
-            Console.WriteLine($"faild.");
-            CommandCanvasList.SetOwnerCursor(null);
             return false;
         }
 

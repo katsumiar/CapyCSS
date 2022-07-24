@@ -69,7 +69,7 @@ namespace CapyCSS.Controls
 
         private void Grid_MouseLeave(object sender, MouseEventArgs e)
         {
-            CommandCanvasList.SetOwnerCursor(null);
+            CommandCanvasList.ResetOwnerCursor(Cursors.Hand);
         }
     }
 }

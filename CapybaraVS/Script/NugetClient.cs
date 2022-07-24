@@ -117,20 +117,29 @@ namespace CapyCSS.Script
             List<string> dllList = new List<string>();
             List<string> libPathList = new List<string>(CapyCSSbase.FileLib.GetDirectories(packageDir, true));
             libPathList.Sort((a, b) => b.CompareTo(a));
-            foreach (var dir in libPathList)
+
+            List<string> targetList = new List<string> { "net6.0", "net5.0", "netstandard2.1", "netstandard2.0" };
+            foreach (var target in targetList)
             {
-                if (dir.Contains(@"\ref\"))
-                    continue;
-                if (dir.Contains("netstandard"))
+                foreach (var dir in libPathList)
+                {
+                    if (dir.Contains(@"\ref\"))
+                        continue;
+                    if (dir.EndsWith(target))
                     {
-                    ICollection<string> dll = CapyCSSbase.FileLib.GetFiles(dir, "*.dll");
-                    if (dll.Count != 0)
-                    {
-                        bool isHit = dllList.Any((n) => dir.StartsWith(n.Substring(0, n.IndexOf("netstandard"))));
-                        if (isHit)
-                            continue;
-                        dllList.Add(dll.First());
-                    } 
+                        ICollection<string> dll = CapyCSSbase.FileLib.GetFiles(dir, "*.dll");
+                        if (dll.Count != 0)
+                        {
+                            bool isHit = dllList.Any((n) => dir.StartsWith(n.Substring(0, n.IndexOf(target))));
+                            if (isHit)
+                                continue;
+                            dllList.Add(dll.First());
+                        }
+                    }
+                }
+                if (dllList.Count != 0)
+                {
+                    break;
                 }
             }
 

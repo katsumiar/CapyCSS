@@ -564,66 +564,69 @@ namespace CapyCSS.Controls.BaseControls
         {
             object result = null;
 
-            if (!fromScript)
+            CommandCanvasList.SetOwnerCursor(Cursors.Wait);
+            try
             {
-                CommandCanvasList.SetOwnerCursor(Cursors.Wait);
-                OwnerCommandCanvas.CommandCanvasControl.CallAllExecuteEntryPointEnable(false);
-                OwnerCommandCanvas.CommandCanvasControl.MainLog.TryAutoClear();
-                GC.Collect();
+                if (!fromScript)
+                {
+                    OwnerCommandCanvas.CommandCanvasControl.CallAllExecuteEntryPointEnable(false);
+                    OwnerCommandCanvas.CommandCanvasControl.MainLog.TryAutoClear();
+                    GC.Collect();
+                }
+
+                if (IsPublicExecute.IsChecked.Value &&
+                    !(entryPointName is null && GetEntryPointName().Length == 0) &&
+                    (entryPointName is null || entryPointName != GetEntryPointName()))
+                {
+                    // エントリーポイントに名前が付けられていて、且つ名前が一致しない
+
+                    OwnerCommandCanvas.CommandCanvasControl.CallAllExecuteEntryPointEnable(true);
+                    return null;
+                }
+
+                // スクリプトを実行する
+
+                Stopwatch sw = null;
+                if (!fromScript)
+                {
+                    OwnerCommandCanvas.EnabledScriptHoldActionMode = true;  // 表示更新処理を保留する
+
+                    sw = new Stopwatch();
+                    sw.Start();
+                }
+
+                OwnerCommandCanvas.WorkStack.Initialize();  // 変数の初期化
+                result = RequestExecute(null, null);
+
+                if (!fromScript)
+                {
+                    sw.Stop();
+                    TimeSpan ts = sw.Elapsed;
+                    Console.WriteLine($"Execute Time: {sw.ElapsedMilliseconds} (ms)");
+                    OwnerCommandCanvas.CommandCanvasControl.MainLog.Flush();
+
+                    OwnerCommandCanvas.EnabledScriptHoldActionMode = false; // 保留した表示更新処理を実行する
+                }
+
+                if (result != null)
+                {
+                    if (result.GetType() == typeof(CbClass<CbVoid>) || result.GetType() == typeof(CbClass<CbClass<CbVoid>>))
+                    {
+                        return null;
+                    }
+                }
             }
-
-            if (IsPublicExecute.IsChecked.Value &&
-                !(entryPointName is null && GetEntryPointName().Length == 0) &&
-                (entryPointName is null || entryPointName != GetEntryPointName()))
+            finally
             {
-                // エントリーポイントに名前が付けられていて、且つ名前が一致しない
-
-                CommandCanvasList.SetOwnerCursor(null);
-                OwnerCommandCanvas.CommandCanvasControl.CallAllExecuteEntryPointEnable(true);
-                return null;
-            }
-
-            // スクリプトを実行する
-
-            Stopwatch sw = null;
-            if (!fromScript)
-            {
-                OwnerCommandCanvas.EnabledScriptHoldActionMode = true;  // 表示更新処理を保留する
-
-                sw = new Stopwatch();
-                sw.Start();
-            }
-
-            OwnerCommandCanvas.WorkStack.Initialize();  // 変数の初期化
-            result = RequestExecute(null, null);
-
-            if (!fromScript)
-            {
-                sw.Stop();
-                TimeSpan ts = sw.Elapsed;
-                Console.WriteLine($"Execute Time: {sw.ElapsedMilliseconds} (ms)");
-                OwnerCommandCanvas.CommandCanvasControl.MainLog.Flush();
-
-                OwnerCommandCanvas.EnabledScriptHoldActionMode = false; // 保留した表示更新処理を実行する
-
-
                 this.Dispatcher.BeginInvoke(new Action(() =>
                 {
                     // アイドル状態（画面の更新処理が終わってから）になってから戻す
 
                     OwnerCommandCanvas.CommandCanvasControl.CallAllExecuteEntryPointEnable(true);
                     GC.Collect();
-                    CommandCanvasList.SetOwnerCursor(null);
+                    CommandCanvasList.ResetOwnerCursor(Cursors.Wait);
 
                 }), DispatcherPriority.ApplicationIdle);
-            }
-
-            if (result != null)
-            {
-                if (result.GetType() == typeof(CbClass<CbVoid>) || result.GetType() == typeof(CbClass<CbClass<CbVoid>>))
-                {
-                    return null;
-                }
             }
             return result;
         }
@@ -720,6 +723,14 @@ namespace CapyCSS.Controls.BaseControls
                 }
                 rootCurveLinks?.RequestUpdateRootValue();
                 NameText.UpdateValueData();
+            }
+            else
+            {
+                if (ValueData is ICbClass cbClass)
+                {
+                    var ret = Activator.CreateInstance(ValueData.OriginalType);
+                    ValueData.Data = ret;
+                }
             }
 
             functionStack.Add(this);    // 実行済みであることを記録する
@@ -2007,7 +2018,7 @@ namespace CapyCSS.Controls.BaseControls
 
         private void EllipseType_MouseLeave(object sender, MouseEventArgs e)
         {
-            CommandCanvasList.SetOwnerCursor(null);
+            CommandCanvasList.ResetOwnerCursor(Cursors.Hand);
         }
 
         //-----------------------------------------------------------------------------------

@@ -155,31 +155,75 @@ namespace CapyCSS.Controls
 
         public static Window OwnerWindow => ownerWindow;
 
-        private static int cursorOverwriteCounter = 0;
+        private static IDictionary<Cursor, int> CursolLockCounter = null;
+        private static IEnumerable<Cursor> LockTargetCursors = new List<Cursor>() { Cursors.Wait, Cursors.Hand };
+
+        /// <summary>
+        /// カーソル形状を変更します。
+        /// </summary>
+        /// <param name="cursor">変更するカーソル形状</param>
         public static void SetOwnerCursor(Cursor cursor)
         {
-            if (cursor != null)
+            Debug.Assert(cursor != null);
+            if (CursolLockCounter is null)
             {
-                cursorOverwriteCounter++;
-                if (OwnerWindow.Cursor == Cursors.Wait)
-                {
-                    // 待機中カーソルには上書きしない
+                // ロックカウンターの初期化
 
-                    return;
+                CursolLockCounter = new Dictionary<Cursor, int>();
+                foreach (var node in LockTargetCursors)
+                {
+                   CursolLockCounter.Add(node, 0);
                 }
-                OwnerWindow.Cursor = cursor;
             }
-            else
+
+            if (LockTargetCursors.Contains(cursor))
             {
-                cursorOverwriteCounter--;
-                if (cursorOverwriteCounter == 0)
+                if (!(OwnerWindow.Cursor == Cursors.Wait && cursor != Cursors.Wait))
                 {
                     OwnerWindow.Cursor = cursor;
                 }
-                Debug.Assert(cursorOverwriteCounter >= 0);
+                CursolLockCounter[cursor]++;
+            }
+            else
+            {
+                OwnerWindow.Cursor = cursor;
             }
         }
 
+        /// <summary>
+        /// カーソルをリセットします。
+        /// </summary>
+        /// <param name="cursor">リセットするカーソル形状</param>
+        public static void ResetOwnerCursor(Cursor cursor)
+        {
+            Debug.Assert(cursor != null);
+            if (CursolLockCounter is null)
+            {
+                return;
+            }
+
+            if (LockTargetCursors.Contains(cursor))
+            {
+                Debug.Assert(CursolLockCounter[cursor] >= 0);
+                CursolLockCounter[cursor]--;
+                if (CursolLockCounter[cursor] == 0)
+                {
+                    if (!(OwnerWindow.Cursor == Cursors.Wait && cursor != Cursors.Wait))
+                    {
+                        OwnerWindow.Cursor = null;
+                    }
+                }
+            }
+            else
+            {
+                OwnerWindow.Cursor = null;
+            }
+        }
+
+        /// <summary>
+        /// カーソル形状を参照します。
+        /// </summary>
+        /// <returns>カーソル形状</returns>
         public static Cursor GetOwnerCursor()
         {
             return OwnerWindow.Cursor;
@@ -383,7 +427,7 @@ namespace CapyCSS.Controls
         /// </summary>
         public static void CursorUnlock()
         {
-            SetOwnerCursor(null);
+            CommandCanvasList.ResetOwnerCursor(Cursors.Wait);
             foreach (var item in Instance.Tab.Items)
             {
                 (item as TabItem).IsEnabled = true;

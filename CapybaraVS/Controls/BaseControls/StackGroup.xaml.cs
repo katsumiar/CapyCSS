@@ -354,7 +354,7 @@ namespace CapyCSS.Controls.BaseControls
             CommandCanvasList.SetOwnerCursor(Cursors.Wait);
             Dispatcher.BeginInvoke(new Action(() =>
                 {
-                    CommandCanvasList.SetOwnerCursor(null);
+                    CommandCanvasList.ResetOwnerCursor(Cursors.Wait);
                 }),
                 DispatcherPriority.ApplicationIdle
             );
@@ -507,7 +507,7 @@ namespace CapyCSS.Controls.BaseControls
 
         private void Accordion1_MouseLeave(object sender, MouseEventArgs e)
         {
-            CommandCanvasList.SetOwnerCursor(null);
+            CommandCanvasList.ResetOwnerCursor(Cursors.Hand);
         }
 
         protected virtual void Dispose(bool disposing)
