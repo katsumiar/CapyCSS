@@ -213,12 +213,21 @@ namespace CapyCSS.Script
         };
 
         /// <summary>
-        /// 初期実装のDLLリストです。
+        /// 基本DLLリストです。
         /// ※CapyCSSattributeが使われていることが前提です。
         /// </summary>
         static public readonly IEnumerable<string> BaseDllList = new List<string>()
         {
             "CapyCSSbase",
+        };
+
+        /// <summary>
+        /// 自動追加DLLリストです。
+        /// </summary>
+        static public readonly IEnumerable<string> AutoImportDllList = new List<string>()
+        {
+            // ここでDLLを指定するとスクリプトを開くときに自動で取り込みます。
+            // 例）"XXX.dll"
         };
 
         private static ReaderWriterLock CbTypeNameListRwLock = new ReaderWriterLock();

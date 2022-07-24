@@ -106,11 +106,26 @@ namespace CapyCSS.Script
             Assembly asm = Assembly.GetExecutingAssembly();
             GetApiFromAssemblyForScriptMethodAttribute(OwnerCommandCanvas, node, asm);
 
-            // 基本のDLLを追加する
+            // 基本DLLを追加する
             foreach (var dllName in CbSTUtils.BaseDllList)
             {
                 Assembly assembly = Assembly.Load(dllName);
                 GetApiFromAssemblyForScriptMethodAttribute(OwnerCommandCanvas, node, assembly);
+            }
+        }
+
+        /// <summary>
+        /// 自動追加DLLを読み込み、ノード化します。
+        /// </summary>
+        /// <param name="OwnerCommandCanvas">オーナーキャンバス</param>
+        /// <param name="node">登録先のノード</param>
+        public static void ImportAutoDll(
+            CommandCanvas OwnerCommandCanvas,
+            TreeMenuNode node)
+        {
+            foreach (var dllPath in CbSTUtils.AutoImportDllList)
+            {
+                ScriptImplement.ImportScriptMethodsFromDllFile(OwnerCommandCanvas, node, dllPath, null);
             }
         }
 

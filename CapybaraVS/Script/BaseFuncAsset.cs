@@ -109,6 +109,14 @@ namespace CapyCSS.Script
 
                 ScriptImplement.ImportScriptMethods(ownerCommandCanvas, DotNet);
             }
+
+            {
+                if (ImportGroupNode is null)
+                {
+                    ImportGroupNode = CreateGroup(ProgramNode, MENU_TITLE_IMPORT);
+                }
+                ScriptImplement.ImportAutoDll(ownerCommandCanvas, ImportGroupNode);
+            }
         }
 
         /// <summary>
@@ -315,9 +323,13 @@ namespace CapyCSS.Script
                         // DLL
 
                         string name = rd.Substring(ModuleControler.HEADER_DLL.Length);
-                        var path = DllModulePathList.Find(n => n.EndsWith(name));
-                        Debug.Assert(path != null);
-                        DllModulePathList.Remove(path);
+
+                        if (!CbSTUtils.AutoImportDllList.Contains(name))
+                        {
+                            var path = DllModulePathList.Find(n => n.EndsWith(name));
+                            Debug.Assert(path != null);
+                            DllModulePathList.Remove(path);
+                        }
                     }
                 }
             }
