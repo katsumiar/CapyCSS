@@ -388,6 +388,7 @@ namespace CapyCSS.Controls.BaseControls
             RectBox.RadiusX = 10;
             RectBox.RadiusY = 10;
             RectBox.Fill = (Brush)Application.Current.FindResource("ConstructorNodeBackgroundBrush");
+            NameText.Fill = (Brush)Application.Current.FindResource("ConstructorTypeBackgroundBrush");
         }
 
         private void SetupNormalNodeDesign()
@@ -395,6 +396,7 @@ namespace CapyCSS.Controls.BaseControls
             RectBox.RadiusX = 6;
             RectBox.RadiusY = 6;
             RectBox.Fill = (Brush)Application.Current.FindResource("NormalNodeBackgroundBrush");
+            NameText.Fill = (Brush)Application.Current.FindResource("ParamTypeBackgroundBrush");
         }
 
         /// <summary>

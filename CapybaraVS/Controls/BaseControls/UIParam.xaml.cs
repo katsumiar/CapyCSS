@@ -629,6 +629,25 @@ namespace CapyCSS.Controls.BaseControls
         }
         #endregion
 
+        #region Fill 添付プロパティ実装
+        private static ImplementDependencyProperty<UIParam, Brush> impFill =
+            new ImplementDependencyProperty<UIParam, Brush>(
+                nameof(Fill),
+                (self, getValue) =>
+                {
+                    Brush value = getValue(self);
+                    self.TypePanel.Fill = value;
+                });
+
+        public static readonly DependencyProperty impFillProperty = impFill.Regist((Brush)Application.Current.FindResource("ParamTypeBackgroundBrush"));
+
+        public Brush Fill
+        {
+            get { return impFill.GetValue(this); }
+            set { impFill.SetValue(this, value); }
+        }
+        #endregion
+
         private CommandCanvas _OwnerCommandCanvas = null;
         private bool disposedValue;
 

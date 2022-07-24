@@ -30,6 +30,7 @@
             <SolidColorBrush x:Key="CurvePathCastConnectableBrush" Color="Tomato"/>
             <SolidColorBrush x:Key="CurvePathDuringBrush" Color="DeepSkyBlue"/>
             <SolidColorBrush x:Key="ConstructorNodeBackgroundBrush" Color="#66ADFF2F"/>
+            <SolidColorBrush x:Key="ConstructorTypeBackgroundBrush" Color="LightSalmon"/>
             <SolidColorBrush x:Key="EntryPointNodeBackgroundBrush" Color="#99BCBCFF"/>
             <SolidColorBrush x:Key="NormalNodeBackgroundBrush" Color="#99FFF5EE"/>
             <SolidColorBrush x:Key="NotUseCacheNormalNodeStrokeBrush" Color="#66909090"/>
