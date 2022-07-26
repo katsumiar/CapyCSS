@@ -32,8 +32,8 @@
             </Grid.RowDefinitions>
             <ToolBarPanel Grid.Row="0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Orientation="Horizontal">
                 <Button Content="{materialDesign:PackIcon Kind=HelpCircle}" x:Name="HelpButton" Click="HelpButton_Click" Height="30" Margin="6,2,0,2" />
-                <Button Content="{materialDesign:PackIcon Kind=FolderDownload}" x:Name="LoadButton" ToolTip="Load(Ctrl+O)" Click="LoadButton_Click" Height="30" Margin="6,2,0,2" />
-                <Button Content="{materialDesign:PackIcon Kind=FolderUpload}" x:Name="SaveButton" ToolTip="Save" Click="SaveButton_Click" Height="30" Margin="6,2,0,2" />
+                <Button Content="{materialDesign:PackIcon Kind=FolderUpload}" x:Name="LoadButton" ToolTip="Load(Ctrl+O)" Click="LoadButton_Click" Height="30" Margin="6,2,0,2" />
+                <Button Content="{materialDesign:PackIcon Kind=FolderDownload}" x:Name="SaveButton" ToolTip="Save" Click="SaveButton_Click" Height="30" Margin="6,2,0,2" />
                 <Button Content="{materialDesign:PackIcon Kind=FileDocumentPlus}" x:Name="AddButton" ToolTip="New(Ctrl+N)" Click="AddButton_Click" Height="30" Margin="6,2,0,2" />
                 <Button Content="{materialDesign:PackIcon Kind=Toolbox}" x:Name="CommandMenuButton" ToolTip="Command Menu(Space)" Click="CommandMenuButton_Click" Height="30" Margin="12,2,0,2" />
                 <Button Content="{materialDesign:PackIcon Kind=UndoVariant}" x:Name="undo" ToolTip="UnDo" Click="UnDo" Height="30" Margin="12,2,0,2" />
