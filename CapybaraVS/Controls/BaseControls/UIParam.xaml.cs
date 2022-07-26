@@ -106,11 +106,7 @@ namespace CapyCSS.Controls.BaseControls
                     string text = getValue(self);
                     try
                     {
-                        if (self.ValueData.IsStringableValue)
-                        {
-                            self.ValueData.ValueString = text;
-                        }
-                        self.Edit.Text = self.ValueData.ValueUIString.Trim('\r', '\n');
+                        self.EditText = self.ValueData.ValueUIString.Trim('\r', '\n');
                         self.Edit.Background = (Brush)Application.Current.FindResource("ParamBackgroundBrush");
                         self.ToolTipUpdate();
                     }
@@ -128,6 +124,28 @@ namespace CapyCSS.Controls.BaseControls
         {
             get { return impParamEdit.GetValue(this); }
             set { impParamEdit.SetValue(this, value); }
+        }
+
+        private string EditText
+        {
+            get {
+                if (Password.Visibility == Visibility.Visible)
+                {
+                    return Password.Password;
+                }
+                return Edit.Text;
+            }
+            set
+            {
+                if (Password.Visibility == Visibility.Visible)
+                {
+                    Password.Password = value;
+                }
+                else
+                {
+                    Edit.Text = value;
+                }
+            }
         }
         #endregion
 
@@ -339,24 +357,31 @@ namespace CapyCSS.Controls.BaseControls
                 }
             }
 
-            Edit.Visibility = Visibility.Visible;
+            if (valueData is CbText)
+            {
+                // CbText型の編集を準備
+
+                ShowTextTypeParamEdit();
+            }
+            else if (valueData is CbPassword)
+            {
+                // CbPassword型の編集を準備
+
+                ShowPasswordTypeParamEdit();
+            }
+            else
+            {
+                // 通常の編集を準備
+
+                ShowOthersTypeParamEdit();
+            }
+
             if (valueData.ValueUIString != null)
             {
                 ParamEdit = valueData.ValueUIString;
             }
             ToolTipUpdate();    // 必ず更新確認が必要
-            if (valueData is CbText cbText)
-            {
-                // cbText型の場合は、編集領域を広げる
-
-                ShowTextTypeParamEdit();
-            }
-            else
-            {
-                // 通常の編集領域
-
-                ShowOthersTypeParamEdit();
-            }
+            
             Edit.IsReadOnly = valueData.IsReadOnlyValue || ReadOnly || valueData.IsNull;
             if (!Edit.IsReadOnly)
             {
@@ -388,11 +413,18 @@ namespace CapyCSS.Controls.BaseControls
             }
         }
 
+        private void ShowPasswordTypeParamEdit()
+        {
+            Password.Visibility = Visibility.Visible;
+            Edit.MaxHeight = 36;
+        }
+
         /// <summary>
         /// 一般的なパラメータ表示を行います。
         /// </summary>
         private void ShowOthersTypeParamEdit()
         {
+            Edit.Visibility = Visibility.Visible;
             Edit.MaxHeight = 36;
         }
 
@@ -459,7 +491,6 @@ namespace CapyCSS.Controls.BaseControls
             Edit.AcceptsTab = true;
             Edit.VerticalScrollBarVisibility = ScrollBarVisibility.Auto;
             Edit.HorizontalScrollBarVisibility = ScrollBarVisibility.Auto;
-            //Edit.TextWrapping = TextWrapping.Wrap;
         }
 
         /// <summary>
@@ -744,7 +775,7 @@ namespace CapyCSS.Controls.BaseControls
             }
             if (valueString is null)
             {
-                valueString = Edit.Text;
+                valueString = EditText;
             }
             Edit.ToolTip = valueString.Trim('\r', '\n');
         }
@@ -759,9 +790,19 @@ namespace CapyCSS.Controls.BaseControls
 
         private void ExitEditMode(object sender = null, RoutedEventArgs e = null)
         {
-            // 編集した後に正しい形式に変換する
+            if (ValueData.IsStringableValue)
+            {
+                // 値を文字列として入力から受け取れる型なので値を取り込む
 
-            ParamEdit = Edit.Text;
+                ValueData.ValueString = EditText;
+            }
+            if (!ValueData.IsSecretString)
+            {
+                // 秘密型でなければ入力に反映する（秘密型は反映しても仕方ないし、反映するとマスク値が反映される）
+
+                ParamEdit = ValueData.ValueString;
+            }
+            // LinkConnectorに反映する
             UpdateEvent?.Invoke();
         }
 

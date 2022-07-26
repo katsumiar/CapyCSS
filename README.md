@@ -13,6 +13,7 @@
 * コンストラクタノードの場合に返し値の型のパーツも色替えするようにしました。
 * 未使用のパッケージを外しました。
 * 「スクリプトへのDLL自動取り込み機能」機能を追加しました。
+* UI上で表示を隠したい文字列を扱うpassword型に対応しました。
 
 ## 0.5.0.1 での変更
 * いくつかの不具合に対応しました。
@@ -224,9 +225,6 @@ public static ICollection<T> Filtering<T>(IEnumerable<T> samples, Predicate<T> p
 * paramsパラメータ配列
 * null許容型（ver0.3.4.0 からスクリプト上での扱いにも対応）
 
-※リテラルノードのみ独自のtext型を用意しています。string型とobject型へ代入可能です。
-<br>※オーバーロードに対応しています。
-
 ## スクリプトが対応するメソッドの戻り値の型
 * Type: int, string, double, byte, sbyte, long, short, ushort, uint, ulong, char, float, decimal, bool, object
 * 配列
@@ -238,6 +236,10 @@ public static ICollection<T> Filtering<T>(IEnumerable<T> samples, Predicate<T> p
 * Generics
 * void
 * null許容型
+
+## 独自の型
+* text型（UI上で複数行の編集領域を持つstring型です）
+* password型（UI上で表示をマスクする為のstring型です）
 
 ## メソッドからのメソッド呼び出し
 delegate 型の引数は、返し値の型と一致する型のノードと接続できます。ただし、Action だと無条件に接続できます。

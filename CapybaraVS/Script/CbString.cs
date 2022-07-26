@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using System.IO;
 using CbVS.Script;
 
 namespace CapyCSS.Script
@@ -45,6 +46,8 @@ namespace CapyCSS.Script
             {
                 if (IsError)
                     return CbSTUtils.ERROR_STR;
+                if (IsSecretString)
+                    return CbSTUtils.UI_SECRET_MASK;
                 if (IsNull)
                 {
                     if (IsNull)
@@ -99,6 +102,7 @@ namespace CapyCSS.Script
                 {
                     ValueString = n.ValueString;
                 }
+                IsSecretString = n.IsSecretString;
                 IsLiteral = n.IsLiteral;
                 if (IsError)
                 {

@@ -33,7 +33,7 @@ namespace CbVS.Script
         /// <summary>
         /// すべての型
         /// </summary>
-        public static Func<Type, bool> AcceptAll => t => t != typeof(CbNull) && t != typeof(CbText);
+        public static Func<Type, bool> AcceptAll => t => t != typeof(CbNull) && t != typeof(CbText) && t != typeof(CbPassword);
 
         /// <summary>
         /// Enum 型

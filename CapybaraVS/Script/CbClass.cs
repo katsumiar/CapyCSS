@@ -291,7 +291,7 @@ namespace CapyCSS.Script
                     Value = (dynamic)n.Data;
                     isNull = n.IsNull;
                 }
-
+                IsSecretString = n.IsSecretString;
                 IsLiteral = n.IsLiteral;
                 if (IsError)
                 {

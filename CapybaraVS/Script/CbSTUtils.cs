@@ -40,6 +40,7 @@ namespace CapyCSS.Script
         public const string BOOL_STR = "bool";
         public const string STRING_STR = "string";
         public const string TEXT_STR = "text";
+        public const string PASSWORD_STR = "password";
         public const string IMAGE_PATH_STR = "ImagePath";
 
         public const string INTERFACE_GROUP_STR = "interface.";
@@ -70,6 +71,8 @@ namespace CapyCSS.Script
         public const string UI_OUT_STR = "[out]";           // UI上の out の表現
         public const string UI_IN_STR = "[in]";             // UI上の in の表現
 
+        public const string UI_SECRET_MASK = "*****";       // 秘密情報のマスク表示
+
         public const string MENU_STATIC = "[static]";       // コマンドメニュー上での静的表現
         public const string MENU_VIRTUAL = "[override]";    // コマンドメニュー上でのオーバーライド表現
 
@@ -95,6 +98,7 @@ namespace CapyCSS.Script
             { LIST_TYPE.FullName, "List<T>" },
             { NULLABLE_TYPE.FullName, "T?" },
             { typeof(CbText).FullName, TEXT_STR },
+            { typeof(CbPassword).FullName, PASSWORD_STR },
             { typeof(IList<>).FullName, INTERFACE_GROUP_STR + "IList<T>" },
             { typeof(ICollection<>).FullName, INTERFACE_GROUP_STR + "ICollection<T>" },
             { typeof(IEnumerable<>).FullName, INTERFACE_GROUP_STR + "IEnumerable<T>" },
@@ -189,6 +193,7 @@ namespace CapyCSS.Script
             { nameof(CbObject), OBJECT_STR },
             { nameof(CbList), LIST_STR },
             { nameof(CbText), TEXT_STR },
+            { nameof(CbPassword), PASSWORD_STR },
             { nameof(CbImagePath), IMAGE_PATH_STR },
 
             { nameof(CbVoid), VOID_STR },

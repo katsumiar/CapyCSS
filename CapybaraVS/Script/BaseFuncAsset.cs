@@ -1265,7 +1265,7 @@ namespace CapyCSS.Script
                         try
                         {
                             ret.Set(argument[0]);
-                            string str = argument[0].ValueUIString;
+                            string str = argument[0].ValueString;
                             Console.WriteLine(str);
                             CommandCanvasList.OutPut.Flush();
                         }

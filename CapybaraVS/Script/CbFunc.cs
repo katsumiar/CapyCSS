@@ -384,6 +384,7 @@ namespace CbVS.Script
                     IsVariableDelegate = cbEvent.IsVariableDelegate;
                     _value = (cbEvent as CbFunc<T, RT>)._value;
                 }
+                IsSecretString = n.IsSecretString;
                 if (IsError)
                 {
                     // エラーからの復帰

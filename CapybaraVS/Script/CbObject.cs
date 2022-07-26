@@ -85,6 +85,7 @@ namespace CapyCSS.Script
                         Value = n.Data;
                     }
                 }
+                IsSecretString = n.IsSecretString;
                 IsLiteral = n.IsLiteral;
                 if (IsError)
                 {

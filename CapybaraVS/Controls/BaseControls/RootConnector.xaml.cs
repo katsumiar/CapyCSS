@@ -70,7 +70,13 @@ namespace CapyCSS.Controls.BaseControls
                         if (Value != null && self.ValueData != null && Value != CbSTUtils.ERROR_STR)
                         {
                             if (self.ValueData.IsStringableValue)
+                            {
+                                if (self.ValueData.IsSecretString)
+                                {
+                                    Value = CbPassword.Decrypt(Value);
+                                }
                                 self.ValueData.ValueString = Value;
+                            }
                             self.NameText.UpdateValueData();
                         }
 
@@ -127,7 +133,16 @@ namespace CapyCSS.Controls.BaseControls
                     Caption = self.FuncCaption.AssetXML;
 
                     if (!(self.ValueData is ICbValueList) && self.ValueData != null)
-                        Value = self.ValueData.ValueUIString;
+                    {
+                        if (self.ValueData.IsStringableValue)
+                        {
+                            Value = self.ValueData.ValueString;
+                            if (self.ValueData.IsSecretString)
+                            {
+                                Value = CbPassword.Encrypt(Value);
+                            }
+                        }
+                    }
 
                     ForcedChecked = self.ForcedChecked;
 

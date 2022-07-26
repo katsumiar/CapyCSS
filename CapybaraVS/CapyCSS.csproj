@@ -267,6 +267,12 @@
     <None Update="Sample\Nullable.css">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="Sample\Password.cbs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Sample\Password.css">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="Sample\ReferenceTest.cbs">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </None>

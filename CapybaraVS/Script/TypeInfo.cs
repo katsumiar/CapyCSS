@@ -198,6 +198,7 @@ namespace CapyCSS.Script
                 case nameof(String): return typeof(CbString);
                 case nameof(Object): return typeof(CbObject);
                 case nameof(CbText): return typeof(CbText);
+                case nameof(CbPassword): return typeof(CbPassword);
                 case nameof(CbImagePath): return typeof(CbImagePath);
                 default:
                     break;
@@ -438,6 +439,7 @@ namespace CapyCSS.Script
                 case nameof(String): return CbString.Create(name);
                 case nameof(Object): return CbObject.Create(name);
                 case nameof(CbText): return CbText.Create(name);
+                case nameof(CbPassword): return CbPassword.Create(name);
                 case nameof(CbImagePath): return CbImagePath.Create(name);
                 default:
                     break;
@@ -643,7 +645,7 @@ namespace CapyCSS.Script
             {
                 cbList.Value = null;
             }
-            else if (cbValue is ICbClass || cbValue is ICbEvent || cbValue.MyType == typeof(CbString))
+            else if (cbValue is ICbClass || cbValue is ICbEvent || cbValue.MyType == typeof(CbString) || cbValue.MyType == typeof(CbPassword))
             {
                 cbValue.Data = null;
             }
@@ -780,6 +782,10 @@ namespace CapyCSS.Script
         /// null許容型か？
         /// </summary>
         bool IsNullable { get; }
+        /// <summary>
+        /// 秘密文字列型か？
+        /// </summary>
+        bool IsSecretString { get; }
         bool IsAssignment(ICbValue obj, bool isCast = false);
         bool IsError { get; set; }
         string ErrorMessage { get; set; }
@@ -1229,6 +1235,11 @@ namespace CapyCSS.Script
 
         protected bool isNull = false;
 
+        /// <summary>
+        /// 秘密文字列型か？
+        /// </summary>
+        public virtual bool IsSecretString { get; set; } = false;
+
         public virtual void Set(ICbValue n)
         {
             try
@@ -1325,6 +1336,7 @@ namespace CapyCSS.Script
                     isNull = n.IsNull;
                 }
                 IsLiteral = n.IsLiteral;
+                IsSecretString = n.IsSecretString;
                 if (IsError)
                 {
                     IsError = false;
@@ -1553,6 +1565,8 @@ namespace CapyCSS.Script
         public bool IsNull { get => false; }
 
         public bool IsNullable { get; set; } = false;
+
+        public bool IsSecretString { get; set; } = false;
 
         public object Data 
         { 

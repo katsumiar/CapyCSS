@@ -64,6 +64,10 @@ namespace CapyCSS.Controls.BaseControls
                         self.defaultValueData = self.ValueData;
                         if (self.ValueData.IsStringableValue)
                         {
+                            if (self.ValueData.IsSecretString)
+                            {
+                                Value = CbPassword.Decrypt(Value);
+                            }
                             self.ValueData.ValueString = Value;
                         }
                     }
@@ -91,11 +95,19 @@ namespace CapyCSS.Controls.BaseControls
                     {
                         if (self.backupValueData is null)
                         {
-                            Value = self.ValueData.ValueUIString;
+                            Value = self.ValueData.ValueString;
+                            if (self.ValueData.IsStringableValue && self.ValueData.IsSecretString)
+                            {
+                                Value = CbPassword.Encrypt(Value);
+                            }
                         }
-                        else
+                        else if (self.backupValueData.IsStringableValue)
                         {
-                            Value = self.backupValueData.ValueUIString;
+                            Value = self.backupValueData.ValueString;
+                            if (self.backupValueData.IsSecretString)
+                            {
+                                Value = CbPassword.Encrypt(Value);
+                            }
                         }
                     }
 

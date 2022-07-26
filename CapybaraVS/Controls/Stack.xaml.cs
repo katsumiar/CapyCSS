@@ -110,6 +110,10 @@ namespace CapyCSS.Controls
                     {
                         if (self.ValueData != null && self.ValueData.IsStringableValue)
                         {
+                            if (self.ValueData.IsSecretString)
+                            {
+                                Value = CbPassword.Decrypt(Value);
+                            }
                             self.ValueData.ValueString = Value;
                         }
                     }
@@ -125,11 +129,15 @@ namespace CapyCSS.Controls
                 {
                     Id = self.Id;
                     AssetValueType = self.ValueData.OriginalType.FullName;
-                    if (!self.ValueData.IsDelegate)
+                    if (!self.ValueData.IsDelegate && self.ValueData.IsStringableValue)
                     {
                         // イベント系以外の値は保存対象
 
-                        Value = self.ValueData.ValueUIString;
+                        Value = self.ValueData.ValueString;
+                        if (self.ValueData.IsSecretString)
+                        {
+                            Value = CbPassword.Encrypt(Value);
+                        }
                     }
                     Name = self.ValueData.Name;
                 };
