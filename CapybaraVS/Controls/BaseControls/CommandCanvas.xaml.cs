@@ -36,7 +36,6 @@ namespace CapyCSS.Controls.BaseControls
         CommandCanvas OwnerCommandCanvas { get; set; }
     }
 
-
     public interface IAsset
     {
         int AssetId { get; set; }
@@ -575,6 +574,11 @@ namespace CapyCSS.Controls.BaseControls
         }
 
         /// <summary>
+        /// CommandMenu.MouseRightButtonDown にイベントが登録されたら true になる
+        /// </summary>
+        private bool isEnableClickEvent = false;
+
+        /// <summary>
         /// クリック実行呼び出し処理用イベントを参照します。
         /// </summary>
         public Func<object> ClickEvent
@@ -590,15 +594,24 @@ namespace CapyCSS.Controls.BaseControls
 
                     // コマンドツリー上でのコマンドキャンセルイベントを消す
                     CommandMenu.MouseRightButtonDown -= (s, e) => ScriptWorkCanvas.ResetCommand();
+
+                    isEnableClickEvent = false;
                 }
                 else
                 {
                     // クリックイベントを有効にする
 
-                    ClickExitEvent?.Invoke();
+                    if (!isEnableClickEvent)
+                    {
+                        // ※条件を付けてマウスカーソルのハンドボタンが多重に登録されないようにしている
+
+                        ClickExitEvent?.Invoke();
+                    }
 
                     // コマンドツリー上でのコマンドキャンセルイベントを登録する
                     CommandMenu.MouseRightButtonDown += (s, e) => ScriptWorkCanvas.ResetCommand();
+
+                    isEnableClickEvent = true;
                 }
                 ScriptWorkClickEvent = value;
             }

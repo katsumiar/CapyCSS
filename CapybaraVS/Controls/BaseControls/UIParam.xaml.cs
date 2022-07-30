@@ -709,6 +709,7 @@ namespace CapyCSS.Controls.BaseControls
                 }
                 );
             Edit.LostFocus += ExitEditMode;
+            Password.LostFocus += ExitEditMode;
         }
 
         private void ToolTipUpdate()
