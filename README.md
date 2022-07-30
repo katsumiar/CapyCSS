@@ -1,5 +1,6 @@
 # CapyCSS
-![capyCssSample04](https://user-images.githubusercontent.com/63950487/166207451-7cbb4335-be6e-4035-998c-b1521f503e4f.gif)
+![CapyCSS_password2](https://user-images.githubusercontent.com/63950487/181871393-c5b38fa6-26ca-4ab3-8d44-dd6ac5df2eea.gif)
+※新しく追加されたpassword型は、場合によって秘密属性がストリップされるので注意。<br>
 ※このイメージは、ScreenToGif によって作成されています。
 
 ## 0.5.0.2 での変更
