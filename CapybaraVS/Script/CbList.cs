@@ -190,7 +190,7 @@ namespace CbVS.Script
         {
             get
             {
-                return CbSTUtils.DataToString(Data);
+                return CbSTUtils.DataToString(TypeName, ItemName, Data);
             }
         }
 

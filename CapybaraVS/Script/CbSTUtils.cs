@@ -198,6 +198,8 @@ namespace CapyCSS.Script
 
             { nameof(CbVoid), VOID_STR },
             { nameof(CbNull), NULL_STR },
+            { "CbFunc", FUNC_STR },
+            { $"CbClass<{VOID_STR}>", VOID_STR },
         };
 
         /// <summary>
@@ -281,6 +283,10 @@ namespace CapyCSS.Script
                 return typeName;
             }
             string newName = _GetTypeName(type, optimize);
+            if (optimize && type.IsGenericType)
+            {
+                tryOptimaizeName(ref newName);
+            }
 
             if (optimize && !type.IsArray && !type.IsByRef && !type.IsGenericType)
             {
@@ -368,6 +374,10 @@ namespace CapyCSS.Script
                     {
                         paramString = getTypeName(genericArg, optimize);
                     }
+                    if (optimize)
+                    {
+                        tryOptimaizeName(ref paramString);
+                    }
                     if (genericArgsString is null)
                     {
                         // 初回
@@ -426,7 +436,11 @@ namespace CapyCSS.Script
                     {
                         // ジェネリックパラメータは排除する
 
-                        typeName = typeName.Substring(0, typeName.IndexOf('`'));
+                        typeName = stripGenericString(typeName);
+                        if (optimize)
+                        {
+                            tryOptimaizeName(ref typeName);
+                        }
                     }
 
                     if (type.IsEnum || type.IsInterface || type.IsClass)
@@ -979,6 +993,16 @@ namespace CapyCSS.Script
         }
 
         /// <summary>
+        /// 型名からジェネリック情報を削除します。
+        /// </summary>
+        /// <param name="name">型名</param>
+        /// <returns>ジェネリック情報を削除した型名</returns>
+        static private string stripGenericString(string name)
+        {
+            return name.Substring(0, name.IndexOf('`'));
+        }
+
+        /// <summary>
         /// ジェネリックなパラメータかジェネリック型がジェネリックなパラメータを持つか判定します。
         /// </summary>
         /// <param name="type">型</param>
@@ -1014,6 +1038,10 @@ namespace CapyCSS.Script
         /// <returns>データ内容</returns>
         public static string DataToString(object data, int indent = 0)
         {
+            return DataToString(null, null, data, indent);
+        }
+        public static string DataToString(string typeName, string nodeTypeName, object data, int indent = 0)
+        {
             string indentStr = new string(' ', indent);
             if (data is null)
             {
@@ -1027,24 +1055,28 @@ namespace CapyCSS.Script
             if (!(data is string) &&
                 data is System.Collections.IEnumerable list)
             {
-                string nodeTypeName = null;
+                string _nodeTypeName = nodeTypeName;
                 int count = 0;
                 foreach (var node in list)
                 {
-                    valueString += DataToString(node, indent + 2) + Environment.NewLine;
+                    valueString += DataToString(null, null, node, indent + 2) + Environment.NewLine;
                     if (count == 0)
                     {
-                        nodeTypeName = GetTypeName(node);
+                        _nodeTypeName ??= GetTypeName(node);
                     }
                     count++;
                 }
+                if (typeName is null)
+                {
+                    typeName = nameof(System.Collections.IEnumerable);
+                }
                 if (count != 0)
                 {
-                    valueString = $"{nameof(System.Collections.IEnumerable)} {count}-{nodeTypeName}" + Environment.NewLine + valueString;
+                    valueString = $"{typeName} {count}-{_nodeTypeName}" + Environment.NewLine + valueString;
                 }
                 else
                 {
-                    valueString = $"{nameof(System.Collections.IEnumerable)} 0" + Environment.NewLine + valueString;
+                    valueString = $"{typeName} 0" + Environment.NewLine + valueString;
                 }
             }
             else if (data is ICbShowValue showValue)
