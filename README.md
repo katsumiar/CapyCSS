@@ -1,5 +1,5 @@
 # CapyCSS
-![CapyCSS_password2](https://user-images.githubusercontent.com/63950487/181871393-c5b38fa6-26ca-4ab3-8d44-dd6ac5df2eea.gif)
+![CapyCSS_password2](https://user-images.githubusercontent.com/63950487/181904549-6c6910e5-5415-4408-a224-3f907c37e745.gif)
 ※新しく追加されたpassword型は、場合によって秘密属性がストリップされるので注意。<br>
 ※このイメージは、ScreenToGif によって作成されています。
 
@@ -11,6 +11,7 @@
 * スクリプトの全体移動の動きが変（マウスカーソルが滑る？）
 * ショートカットノードコマンドを複数選択すると配置後にマウスカーソルが元に戻らない
 * pasword型の編集でフォーカスを失っても値が実際に反映していない
+* 新規スクリプト「New～」の状態でCtrl+sで保存時にタブ中のスクリプト名が反映されない
 
 ## 特徴
 * ビジュアルなスクリプトを作成することができます。
