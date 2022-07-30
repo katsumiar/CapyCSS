@@ -137,26 +137,33 @@ namespace CapyCSS
             return HitTestResultBehavior.Continue;
         }
 
+        private Point beforePoint;  // 移動前の位置
+
         public void MouseUp(object sender, MouseButtonEventArgs e)
         {
             if (isDrug)
             {
+                Point pos = e.GetPosition(targetCanvas);
                 captureTarget?.ReleaseMouseCapture();
                 isDrug = false;
-                switch (moveRecord)
+                var distance = Math.Sqrt((Math.Pow(beforePoint.X - pos.X, 2) + Math.Pow(beforePoint.Y - pos.Y, 2)));
+                if (distance > 0.00001)
                 {
-                    case MoveRecord.MoveCanvas:
-                        OwnerCommandCanvas.RecordUnDoPoint(CapyCSS.Language.Instance["Help:SYSTEM_COMMAND_MoveCanvas"]);
-                        break;
-                    case MoveRecord.MoveSelectedScriptNode:
-                        OwnerCommandCanvas.RecordUnDoPoint(CapyCSS.Language.Instance["Help:SYSTEM_COMMAND_MoveSelectedScriptNode"]);
-                        break;
-                    case MoveRecord.MoveGroupScriptNode:
-                        OwnerCommandCanvas.RecordUnDoPoint(CapyCSS.Language.Instance["Help:SYSTEM_COMMAND_MoveGroupScriptNode"]);
-                        break;
-                    case MoveRecord.MoveScriptNode:
-                        OwnerCommandCanvas.RecordUnDoPoint(CapyCSS.Language.Instance["Help:SYSTEM_COMMAND_MoveScriptNode"]);
-                        break;
+                    switch (moveRecord)
+                    {
+                        case MoveRecord.MoveCanvas:
+                            OwnerCommandCanvas.RecordUnDoPoint(CapyCSS.Language.Instance["Help:SYSTEM_COMMAND_MoveCanvas"]);
+                            break;
+                        case MoveRecord.MoveSelectedScriptNode:
+                            OwnerCommandCanvas.RecordUnDoPoint(CapyCSS.Language.Instance["Help:SYSTEM_COMMAND_MoveSelectedScriptNode"]);
+                            break;
+                        case MoveRecord.MoveGroupScriptNode:
+                            OwnerCommandCanvas.RecordUnDoPoint(CapyCSS.Language.Instance["Help:SYSTEM_COMMAND_MoveGroupScriptNode"]);
+                            break;
+                        case MoveRecord.MoveScriptNode:
+                            OwnerCommandCanvas.RecordUnDoPoint(CapyCSS.Language.Instance["Help:SYSTEM_COMMAND_MoveScriptNode"]);
+                            break;
+                    }
                 }
                 moveRecord = MoveRecord.none;
             }
@@ -180,12 +187,13 @@ namespace CapyCSS
                     movePoint.X -= dragOffset.X;
                     movePoint.Y -= dragOffset.Y;
 
-                    if (Math.Abs(movePoint.X) > 0.001 && Math.Abs(movePoint.Y) > 0.001)
+                    Matrix matrix = movementCanvas.CanvasRenderTransform.Value;
+                    matrix.Translate(movePoint.X, movePoint.Y);
+                    movementCanvas.CanvasRenderTransform = new MatrixTransform(matrix);
+                    if (moveRecord == MoveRecord.none)
                     {
-                        Matrix matrix = movementCanvas.CanvasRenderTransform.Value;
-                        matrix.Translate(movePoint.X, movePoint.Y);
-                        movementCanvas.CanvasRenderTransform = new MatrixTransform(matrix);
                         moveRecord = MoveRecord.MoveCanvas;
+                        beforePoint = pos;
                     }
                 }
                 else
@@ -196,7 +204,11 @@ namespace CapyCSS
 
                         Point point = SingleMove(pos, isGridMove);
                         MoveSelectedNode(point, isGridMove, OwnerCommandCanvas.ScriptWorkCanvas.SelectedNodes);
-                        moveRecord = MoveRecord.MoveSelectedScriptNode;
+                        if (moveRecord == MoveRecord.none)
+                        {
+                            moveRecord = MoveRecord.MoveSelectedScriptNode;
+                            beforePoint = pos;
+                        }
                     }
                     else if (groupList != null)
                     {
@@ -204,14 +216,22 @@ namespace CapyCSS
 
                         Point point = SingleMove(pos, isGridMove);
                         MoveSelectedNode(point, isGridMove, groupList);
-                        moveRecord = MoveRecord.MoveGroupScriptNode;
+                        if (moveRecord == MoveRecord.none)
+                        {
+                            moveRecord = MoveRecord.MoveGroupScriptNode;
+                            beforePoint = pos;
+                        }
                     }
                     else
                     {
                         // 個別のノードを移動
 
                         SingleMove(pos, isGridMove);
-                        moveRecord = MoveRecord.MoveScriptNode;
+                        if (moveRecord == MoveRecord.none)
+                        {
+                            moveRecord = MoveRecord.MoveScriptNode;
+                            beforePoint = pos;
+                        }
                     }
                 }
                 dragOffset = pos;
