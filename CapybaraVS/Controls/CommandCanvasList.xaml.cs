@@ -562,8 +562,9 @@ namespace CapyCSS.Controls
                 return;
             }
 
+            bool isShowSaveDialog = commandCanvas.OpenFileName == "";
             string path;
-            if (commandCanvas.OpenFileName == "")
+            if (isShowSaveDialog)
             {
                 path = ShowSaveDialog(CBS_FILTER, commandCanvas.OpenFileName);
 
@@ -578,6 +579,12 @@ namespace CapyCSS.Controls
             }
 
             commandCanvas.SaveXML(path);
+            if (isShowSaveDialog)
+            {
+                // 正式に名前が決まったのでタブにも反映する
+
+                SetCurrentTabName(commandCanvas.OpenFileName);
+            }
             commandCanvas.ClearUnDoPoint();
             commandCanvas.RecordUnDoPoint(CapyCSS.Language.Instance["Help:SYSTEM_COMMAND_OverwriteScript"]);
         }
