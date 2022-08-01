@@ -161,6 +161,8 @@ namespace CapyCSS.Controls
 
         private string ProjectFilePath = CommandCanvasList.GetSamplePath();
 
+        private string currentProjectDirectory = CommandCanvasList.GetSamplePath();
+
         public ProjectControl()
         {
             InitializeComponent();
@@ -236,14 +238,19 @@ namespace CapyCSS.Controls
         /// <summary>
         /// プロジェクトをクリアします。
         /// </summary>
-        public void ClearProject()
+        public bool ClearProject(bool forced = false)
         {
-            if (CommandCanvasList.IsCursorLock())
+            if (!forced && CommandCanvasList.IsCursorLock())
             {
-                return;
+                return false;
             }
 
-            if (ControlTools.ShowSelectMessage(
+            bool isModified = ChangedFlag || CommandCanvasList.Instance.IsModified;
+            if (!isModified)
+            {
+                return true;
+            }
+            if (isModified && ControlTools.ShowSelectMessage(
                         CapyCSS.Language.Instance["SYSTEM_ConfirmationDelete"],
                         CapyCSS.Language.Instance["SYSTEM_Confirmation"],
                         MessageBoxButton.OKCancel) == MessageBoxResult.OK)
@@ -253,15 +260,18 @@ namespace CapyCSS.Controls
                 CommandCanvasList.ClearScriptCanvas();
                 UpdateCommandEnable();
                 ChangedFlag = false;
+                return true;
             }
+            return false;
         }
 
         /// <summary>
         /// プロジェクト情報をセットします。
         /// </summary>
-        /// <param name="path"></param>
+        /// <param name="path">プロジェクトファイルのパス</param>
         private void SetProjectName(string path)
         {
+            Directory.SetCurrentDirectory(System.IO.Path.GetDirectoryName(path));
             loadProjectName = System.IO.Path.GetFileNameWithoutExtension(path);
             ProjectName = loadProjectName;
             ProjectFilePath = path;
@@ -279,22 +289,45 @@ namespace CapyCSS.Controls
                 return;
             }
 
-            string path = CommandCanvasList.MakeNewFileDialog(CommandCanvasList.CBSPROJ_FILTER);
-            if (path is null || loadProjectName == path)
+            if (!ClearProject(true))
             {
+                return;
+            }
+
+            string path;
+
+            var dialog = CreateProject.Create();
+            dialog.ProjectPath = currentProjectDirectory;
+            var result = dialog.ShowDialog();
+            if (result.HasValue && result.Value)
+            {
+                path = System.IO.Path.Combine(dialog.ProjectPath, dialog.ProjectFile);
+                var projectDirectory = Directory.CreateDirectory(path);
+                if (!projectDirectory.Exists)
+                {
+                    // プロジェクト用ディレクトリ作成に失敗
+
+                    return;
+                }
+                path = System.IO.Path.Combine(path, dialog.ProjectFile + CommandCanvasList.CBSPROJ_EXT);
+            }
+            else
+            {
+                // キャンセル
+
                 return;
             }
 
             if (File.Exists(path))
             {
-                ControlTools.ShowErrorMessage(CapyCSS.Language.Instance["Help:SYSTEM_Error_Exist"]);
+                ControlTools.ShowErrorMessage(CapyCSS.Language.Instance["Help:SYSTEM_Error_Exists"]);
                 return;
             }
 
-            CommandCanvasList.ClearScriptCanvas();
             SetProjectName(path);
             UpdateCommandEnable();
-            ChangedFlag = true;
+            _SaveProject();
+            CommandCanvasList.HideAddScriptButton();
         }
 
         /// <summary>
@@ -307,17 +340,35 @@ namespace CapyCSS.Controls
                 return;
             }
 
-            string path = CommandCanvasList.ShowLoadDialog(CommandCanvasList.CBSPROJ_FILTER);
+            if (!ClearProject(true))
+            {
+                return;
+            }
+
+            string path = CommandCanvasList.ShowLoadDialog(CommandCanvasList.CBSPROJ_FILTER, currentProjectDirectory);
             if (path is null)
             {
                 return;
             }
 
+            {
+                // プロジェクトディレクトリ階層をプロジェクト用カレントディレクトリとして保存する
+                // ※プロジェクトのディレクトリの一つ上の階層がプロジェクトディレクトリになる。
+                DirectoryInfo directoryInfo = new DirectoryInfo(System.IO.Path.GetDirectoryName(path));
+                currentProjectDirectory = directoryInfo.Parent.FullName;
+            }
+
+            _LoadProject(path);
+        }
+
+        private void _LoadProject(string path)
+        {
             CommandCanvasList.ClearScriptCanvas();
             SetProjectName(path);   // 相対ディレクトリの基準がセットされるので readProjectFile の前に処理する
             readProjectFile(path);
             UpdateCommandEnable();
             ChangedFlag = false;
+            CommandCanvasList.HideAddScriptButton();
         }
 
         private void readProjectFile(string path)
@@ -353,14 +404,18 @@ namespace CapyCSS.Controls
         /// </summary>
         public void SaveProject()
         {
-            Debug.Assert(ProjectFilePath != null);
-
             if (CommandCanvasList.IsCursorLock())
             {
                 return;
             }
 
-            string path = CommandCanvasList.ShowSaveDialog(CommandCanvasList.CBSPROJ_FILTER, ProjectFilePath);
+            _SaveProject();
+        }
+
+        private void _SaveProject()
+        {
+            Debug.Assert(ProjectFilePath != null);
+            string path = ProjectFilePath;
             if (path is null)
             {
                 return;
@@ -397,7 +452,8 @@ namespace CapyCSS.Controls
         /// </summary>
         private void AddNewCbsFile()
         {
-            string path = CommandCanvasList.MakeNewFileDialog(CommandCanvasList.CBS_FILTER);
+            // プロジェクトディレクトリ（カレントディレクトリ）にファイルを作成する。
+            string path = CommandCanvasList.ShowSaveDialog(CommandCanvasList.CBS_FILTER, Environment.CurrentDirectory, true);
             if (path is null)
             {
                 return;
@@ -405,14 +461,15 @@ namespace CapyCSS.Controls
 
             if (File.Exists(path) || ContainsCBS(path))
             {
-                ControlTools.ShowErrorMessage(CapyCSS.Language.Instance["Help:SYSTEM_Error_Exist"]);
+                ControlTools.ShowErrorMessage(CapyCSS.Language.Instance["Help:SYSTEM_Error_Exists"]);
                 return;
             }
 
             if (CommandCanvasList.Instance.AddNewContents(path))
             {
-                CommandCanvasList.Instance.OverwriteCbsFile();
+                CommandCanvasList.Instance.OverwriteCbsFile(true /* forced */);
                 AddCbsFile(path);
+                ChangedFlag = true;
             }
             UpdateCommandEnable();
         }
@@ -422,8 +479,8 @@ namespace CapyCSS.Controls
         /// </summary>
         private void AddCbsFile()
         {
-            string path = CommandCanvasList.ShowLoadDialog(CommandCanvasList.CBS_FILTER);
-
+            // プロジェクトディレクトリ（カレントディレクトリ）をカレントにファイルを探す。
+            string path = CommandCanvasList.ShowLoadDialog(CommandCanvasList.CBS_FILTER, Environment.CurrentDirectory);
             if (path is null)
             {
                 return;
@@ -528,18 +585,27 @@ namespace CapyCSS.Controls
 
             try
             {
-                string dir = System.IO.Path.GetDirectoryName(ProjectFilePath);
-                string ext = System.IO.Path.GetExtension(ProjectFilePath);
-                string newName = System.IO.Path.Combine(dir, name + ext);
-
-                if (File.Exists(ProjectFilePath))
+                string oldDir = System.IO.Path.GetDirectoryName(ProjectFilePath);
+                if (Directory.Exists(oldDir))
                 {
-                    System.IO.File.Move(ProjectFilePath, newName);
-                    Console.WriteLine($"Rename...\"{ProjectFilePath}\" => \"{newName}\"");
+                    DirectoryInfo directoryInfo = new DirectoryInfo(oldDir);
+                    string newDir = System.IO.Path.Combine(directoryInfo.Parent.FullName, name);
+
+                    // カレントディレクトリの設定が残っているとディレクトリ名を変更できないので、一先ず一つ上の階層に設定する。
+                    Directory.SetCurrentDirectory(directoryInfo.Parent.FullName);
+
+                    // プロジェクトディレクトリ名を変更
+                    Directory.Move(oldDir, newDir);
+
+                    // プロジェクトファイル名を変更
+                    string ext = System.IO.Path.GetExtension(ProjectFilePath);
+                    string oldProjectFileName = System.IO.Path.Combine(newDir, System.IO.Path.GetFileName(ProjectFilePath));
+                    string newProjectFileName = System.IO.Path.Combine(newDir, name + ext);
+                    File.Move(oldProjectFileName, newProjectFileName);
+
+                    // 新しいプロジェクト名を反映
+                    _LoadProject(newProjectFileName);
                 }
-                ProjectFilePath = newName;
-                loadProjectName = System.IO.Path.GetFileNameWithoutExtension(ProjectFilePath);
-                CommandCanvasList.UpdateTitle();
             }
             catch (Exception ex)
             {

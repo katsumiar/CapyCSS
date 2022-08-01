@@ -860,12 +860,12 @@ namespace CapyCSS.Controls.BaseControls
         /// キャンバスの作業を保存します。
         /// </summary>
         /// <param name="path">ファイルのパス</param>
-        public void SaveXML(string path)
+        public void SaveXML(string path, bool forced = false)
         {
             if (path is null)
                 return;
 
-            if (CommandCanvasList.IsCursorLock())
+            if (!forced && CommandCanvasList.IsCursorLock())
                 return;
 
             try

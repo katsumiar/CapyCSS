@@ -2,6 +2,7 @@
 using CapyCSS.Controls.BaseControls;
 using CapyCSS.Script;
 using CapyCSSattribute;
+using Microsoft.WindowsAPICodePack.Dialogs;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -128,8 +129,15 @@ namespace CapyCSS.Controls
         public static CommandCanvasList Instance = null;
         public static OutPutLog OutPut => Instance.MainLog;
 
-        public const string CBSPROJ_FILTER = "CBS Project files (*.cbsproj)|*.cbsproj";
-        public const string CBS_FILTER = "CBS files (*.cbs)|*.cbs";
+        public const string CBSPROJ_EXT = ".cbsproj";
+        public static readonly List<Tuple<string, string>> CBSPROJ_FILTER = new List<Tuple<string, string>>
+        {
+            new Tuple<string, string>("CBS Project Directory", $"*{CBSPROJ_EXT}"),
+        };
+        public static readonly List<Tuple<string, string>> CBS_FILTER = new List<Tuple<string, string>>
+        {
+            new Tuple<string, string>("CBS files", "*.cbs"),
+        };
 
         public static string CAPYCSS_WORK_PATH = null;
         public static string CAPYCSS_INFO_PATH = @"CapyCSS.xml";
@@ -400,6 +408,22 @@ namespace CapyCSS.Controls
         }
 
         /// <summary>
+        /// スクリプト追加ボタンを非表示にします。
+        /// </summary>
+        private void hideAddScriptButton()
+        {
+            AddButton.Visibility = Visibility.Collapsed;
+        }
+
+        /// <summary>
+        /// スクリプト追加ボタンを非表示にします。
+        /// </summary>
+        public static void HideAddScriptButton()
+        {
+            Instance.hideAddScriptButton();
+        }
+
+        /// <summary>
         /// カーソルがロックされているか判定します。
         /// </summary>
         /// <returns>true==ロックされている</returns>
@@ -503,6 +527,21 @@ namespace CapyCSS.Controls
         }
 
         /// <summary>
+        /// スクリプトが修正されているか？
+        /// </summary>
+        /// <returns><see langword="true"/>==修正されている</returns>
+        public bool IsModified
+        {
+            get
+            {
+                var saveTargets = Tab.Items.Cast<TabItem>()
+                                .Where(n => !(n.Content as CommandCanvas).IsInitialPoint)
+                                .Select(n => n.Content as CommandCanvas);
+                return saveTargets.Count() != 0;
+            }
+        }
+
+        /// <summary>
         /// 全体的な情報を保存します。
         /// </summary>
         public void SaveInfo()
@@ -555,9 +594,9 @@ namespace CapyCSS.Controls
         /// <summary>
         /// キャンバスの作業を上書き保存します。
         /// </summary>
-        public void OverwriteSaveXML(CommandCanvas commandCanvas)
+        public void OverwriteSaveXML(CommandCanvas commandCanvas, bool forced = false)
         {
-            if (IsCursorLock())
+            if (!forced && IsCursorLock())
             {
                 return;
             }
@@ -566,7 +605,7 @@ namespace CapyCSS.Controls
             string path;
             if (isShowSaveDialog)
             {
-                path = ShowSaveDialog(CBS_FILTER, commandCanvas.OpenFileName);
+                path = ShowSaveDialog(CBS_FILTER, commandCanvas.OpenFileName, true);
 
                 if (path is null)
                 {
@@ -578,15 +617,18 @@ namespace CapyCSS.Controls
                 path = commandCanvas.OpenFileName;
             }
 
-            commandCanvas.SaveXML(path);
+            commandCanvas.SaveXML(path, forced);
             if (isShowSaveDialog)
             {
                 // 正式に名前が決まったのでタブにも反映する
 
                 SetCurrentTabName(commandCanvas.OpenFileName);
             }
-            commandCanvas.ClearUnDoPoint();
-            commandCanvas.RecordUnDoPoint(CapyCSS.Language.Instance["Help:SYSTEM_COMMAND_OverwriteScript"]);
+            if (!forced)
+            {
+                commandCanvas.ClearUnDoPoint();
+                commandCanvas.RecordUnDoPoint(CapyCSS.Language.Instance["Help:SYSTEM_COMMAND_OverwriteScript"]);
+            }
         }
 
         /// <summary>
@@ -608,7 +650,7 @@ namespace CapyCSS.Controls
                 return;
             }
 
-            string path = ShowSaveDialog(CBS_FILTER, commandCanvas.OpenFileName);
+            string path = ShowSaveDialog(CBS_FILTER, commandCanvas.OpenFileName, true);
             if (path is null)
             {
                 return;
@@ -623,37 +665,74 @@ namespace CapyCSS.Controls
         /// <summary>
         /// 保存用ファイル選択ダイアログを表示します。
         /// </summary>
+        /// <param name="filters">フィルター</param>
+        /// <param name="addExtention">拡張子の自動付加（filters が１件だけであること）</param>
+        /// <param name="currentPath">カレントパス</param>
         /// <returns>保存するCBSファイルのパス</returns>
-        public static string ShowSaveDialog(string filter, string currentPath)
+        public static string ShowSaveDialog(IEnumerable<Tuple<string, string>> filters, string currentPath = null, bool addExtention = false)
         {
-            var dialog = new Microsoft.Win32.SaveFileDialog();
-
-            // ディレクトリを設定
-            dialog.InitialDirectory = System.IO.Path.GetDirectoryName(currentPath);
-
-            // ファイル名を設定
-            dialog.FileName = System.IO.Path.GetFileNameWithoutExtension(currentPath);
-
-            // ファイルの種類を設定
-            dialog.Filter = filter;
-
-            // ダイアログを表示する
-            if (dialog.ShowDialog() == true)
+            string fileName = null;
+            string currentDirectory = null;
+            if (currentPath != null && Path.GetExtension(currentPath) != "")
             {
-                return dialog.FileName;
+                fileName = System.IO.Path.GetFileNameWithoutExtension(currentPath);
+                currentDirectory = System.IO.Path.GetDirectoryName(currentDirectory);
             }
-            return null;
+            else
+            {
+                currentDirectory = currentPath;
+            }
+            using (var dialog = new CommonOpenFileDialog(fileName)
+            {
+                Title = CapyCSS.Language.Instance["Help:SYSTEM_SelectDirectory"],
+                InitialDirectory = currentDirectory,
+                DefaultDirectory = GetSamplePath(),
+                EnsureValidNames = true,
+                EnsurePathExists = false,
+            })
+            {
+                foreach (var filter in filters)
+                {
+                    dialog.Filters.Add(new CommonFileDialogFilter(filter.Item1, filter.Item2));
+                }
+                if (dialog.ShowDialog() != CommonFileDialogResult.Ok)
+                {
+                    return null;
+                }
+                string result = dialog.FileName;
+                if (addExtention)
+                {
+                    // 拡張子の自動付加
+
+                    Debug.Assert(filters.Count() == 1);
+                    if (Path.GetExtension(result) == "")
+                    {
+                        // 拡張子が付いていないのでフィルターの拡張子を参考にして付ける
+
+                        string filterExtention = filters.First().Item2;
+                        result += filterExtention.Substring(filterExtention.IndexOf('.'));
+                    }
+                }
+                return result;
+            }
         }
 
         /// <summary>
         /// CBS ファイルを上書き保存します。
         /// </summary>
-        public void OverwriteCbsFile()
+        public void OverwriteCbsFile(bool forced = false)
         {
-            Dispatcher.BeginInvoke(new Action(() =>
-                {
-                    OverwriteSaveXML(CurrentScriptCanvas);
-                }), DispatcherPriority.ApplicationIdle);
+            if (forced)
+            {
+                OverwriteSaveXML(CurrentScriptCanvas, true);
+            }
+            else
+            {
+                Dispatcher.BeginInvoke(new Action(() =>
+                    {
+                        OverwriteSaveXML(CurrentScriptCanvas);
+                    }), DispatcherPriority.ApplicationIdle);
+            }
         }
 
         /// <summary>
@@ -786,70 +865,54 @@ namespace CapyCSS.Controls
         }
 
         /// <summary>
-        /// ファイル作成用ダイアログを表示します。
+        /// ディレクトリ選択用ダイアログを開きます。
         /// </summary>
-        /// <returns>読み込むCBSファイルのパス</returns>
-        public static string MakeNewFileDialog(string filter)
+        /// <returns></returns>
+        public static string SelectDirectroyDialog(string initDirectory = null)
         {
-            var dialog = new Microsoft.Win32.OpenFileDialog();
-
-            dialog.AddExtension = true;
-            dialog.CheckFileExists = false;
-
-            // ファイルの種類を設定
-            dialog.Filter = filter;
-
-            if (!initFlg)
+            using (var dialog = new CommonOpenFileDialog()
             {
-                // 初期ディレクトリをサンプルのあるディレクトリにする
-
-                var sampleDir = GetSamplePath();
-                if (sampleDir != null)
+                Title = CapyCSS.Language.Instance["Help:SYSTEM_SelectDirectory"],
+                InitialDirectory = initDirectory,
+                DefaultDirectory = GetSamplePath(),
+                IsFolderPicker = true,
+            })
+            {
+                if (dialog.ShowDialog() != CommonFileDialogResult.Ok)
                 {
-                    dialog.InitialDirectory = GetSamplePath();
+                    return null;
                 }
-                initFlg = true;
-            }
-
-            // ダイアログを表示する
-            if (dialog.ShowDialog() == true)
-            {
                 return dialog.FileName;
             }
-            return null;
         }
 
         /// <summary>
         /// 読み込み用ファイル選択ダイアログを表示します。
         /// </summary>
         /// <returns>読み込むCBSファイルのパス</returns>
-        public static string ShowLoadDialog(string filter)
+        public static string ShowLoadDialog(IEnumerable<Tuple<string, string>> filters, string currentDirectory = null)
         {
-            var dialog = new Microsoft.Win32.OpenFileDialog();
-
-            // ファイルの種類を設定
-            dialog.Filter = filter;
-
-            if (!initFlg)
+            using (var dialog = new CommonOpenFileDialog()
             {
-                // 初期ディレクトリをサンプルのあるディレクトリにする
-
-                var sampleDir = GetSamplePath();
-                if (sampleDir != null)
+                Title = CapyCSS.Language.Instance["Help:SYSTEM_SelectFile"],
+                InitialDirectory=currentDirectory,
+                DefaultDirectory = GetSamplePath(),
+                EnsurePathExists = true,
+            })
+            {
+                foreach (var filter in filters)
                 {
-                    dialog.InitialDirectory = GetSamplePath();
+                    dialog.Filters.Add(new CommonFileDialogFilter(filter.Item1, filter.Item2));
                 }
-                initFlg = true;
-            }
-
-            // ダイアログを表示する
-            if (dialog.ShowDialog() == true)
-            {
+                if (dialog.ShowDialog() != CommonFileDialogResult.Ok)
+                {
+                    return null;
+                }
                 return dialog.FileName;
             }
-            return null;
         }
-        static bool initFlg = false;
+
+        private static string _samplePath = null;
 
         /// <summary>
         /// sample ディレクトリのフルパスを取得します。
@@ -857,19 +920,24 @@ namespace CapyCSS.Controls
         /// <returns>sampleディレクトリのフルパス</returns>
         public static string GetSamplePath()
         {
-            string exexPath = System.Environment.CommandLine;
+            _samplePath ??= getSamplePath();
+            return _samplePath;
+        }
+        private static string getSamplePath()
+        {
+            string exexPath = Environment.CommandLine;
             if (exexPath == null)
             {
                 return Environment.CurrentDirectory;
             }
-            System.IO.FileInfo fi = new System.IO.FileInfo(exexPath.Replace("\"", ""));
+            FileInfo fi = new FileInfo(exexPath.Replace("\"", ""));
             string startupPath = fi.Directory.FullName;
-            var resultPath = System.IO.Path.Combine(startupPath, "Sample");
+            var resultPath = Path.Combine(startupPath, "Sample");
             if (!Directory.Exists(resultPath))
             {
                 return Environment.CurrentDirectory;
             }
-            return System.IO.Path.Combine(startupPath, "Sample");
+            return Path.Combine(startupPath, "Sample");
         }
 
         /// <summary>
@@ -931,7 +999,7 @@ namespace CapyCSS.Controls
             {
                 // 既に存在している
 
-                ControlTools.ShowErrorMessage(CapyCSS.Language.Instance["Help:SYSTEM_Error_Exist"]);
+                ControlTools.ShowErrorMessage(CapyCSS.Language.Instance["Help:SYSTEM_Error_Exists"]);
                 return false;
             }
 
@@ -1463,12 +1531,19 @@ namespace CapyCSS.Controls
         /// <summary>
         /// すべてのスクリプトキャンバスを消します。
         /// </summary>
-        public static void ClearScriptCanvas()
+        public static void ClearScriptCanvas(bool forced = false)
         {
-            CursorLock(() =>
-                {
-                    Instance.InnerClearScriptCanvas();
-                });
+            if (forced)
+            {
+                Instance.InnerClearScriptCanvas();
+            }
+            else
+            {
+                CursorLock(() =>
+                    {
+                        Instance.InnerClearScriptCanvas();
+                    });
+            }
         }
 
         /// <summary>

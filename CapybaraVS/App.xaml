@@ -70,6 +70,8 @@
             <SolidColorBrush x:Key="DeleteIconStrokeBrush" Color="RoyalBlue"/>
             <SolidColorBrush x:Key="DeleteIconBackgroundBrush" Color="CornflowerBlue"/>
             <SolidColorBrush x:Key="BorderBrush" Color="#FF565656"/>
+            <SolidColorBrush x:Key="NormalFontBrush" Color="White"/>
+            <SolidColorBrush x:Key="LinkedFontBrush" Color="Blue"/>
         </ResourceDictionary>
     </Application.Resources>
 </Application>
