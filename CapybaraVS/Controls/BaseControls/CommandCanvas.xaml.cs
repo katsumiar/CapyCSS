@@ -666,12 +666,12 @@ namespace CapyCSS.Controls.BaseControls
             // コマンドを追加
             {
                 var commandNode = new TreeMenuNode(TreeMenuNode.NodeType.GROUP, "Command");
-                commandNode.AddChild(new TreeMenuNode(TreeMenuNode.NodeType.NORMAL, "Clear(Ctrl+Shift+N)", CreateImmediateExecutionCanvasCommand(() => ClearWorkCanvasWithConfirmation())));
-                commandNode.AddChild(new TreeMenuNode(TreeMenuNode.NodeType.NORMAL, "Toggle ShowMouseInfo", CreateImmediateExecutionCanvasCommand(() => ScriptWorkCanvas.EnableInfo = ScriptWorkCanvas.EnableInfo ? false : true)));
-                commandNode.AddChild(new TreeMenuNode(TreeMenuNode.NodeType.NORMAL, "Toggle ShowGridLine(Ctrl+G)", CreateImmediateExecutionCanvasCommand(() => ScriptCommandCanvas.ToggleGridLine())));
-                commandNode.AddChild(new TreeMenuNode(TreeMenuNode.NodeType.NORMAL, "Save(Ctrl+S)", CreateImmediateExecutionCanvasCommand(() => CommandCanvasControl.SaveCbsFile())));
-                commandNode.AddChild(new TreeMenuNode(TreeMenuNode.NodeType.NORMAL, "Load(Ctrl+O)", CreateImmediateExecutionCanvasCommand(() => CommandCanvasControl.LoadCbsFile())));
-                commandNode.AddChild(new TreeMenuNode(TreeMenuNode.NodeType.NORMAL, "Convert C#", CreateImmediateExecutionCanvasCommand(() => CommandCanvasList.Instance?.BuildScriptAndOut())));
+                commandNode.AddChild(new TreeMenuNode(TreeMenuNode.NodeType.DEFULT_COMMAND, "Clear(Ctrl+Shift+N)", CreateImmediateExecutionCanvasCommand(() => ClearWorkCanvasWithConfirmation())));
+                commandNode.AddChild(new TreeMenuNode(TreeMenuNode.NodeType.DEFULT_COMMAND, "Toggle ShowMouseInfo", CreateImmediateExecutionCanvasCommand(() => ScriptWorkCanvas.EnableInfo = ScriptWorkCanvas.EnableInfo ? false : true)));
+                commandNode.AddChild(new TreeMenuNode(TreeMenuNode.NodeType.DEFULT_COMMAND, "Toggle ShowGridLine(Ctrl+G)", CreateImmediateExecutionCanvasCommand(() => ScriptCommandCanvas.ToggleGridLine())));
+                commandNode.AddChild(new TreeMenuNode(TreeMenuNode.NodeType.DEFULT_COMMAND, "Save(Ctrl+S)", CreateImmediateExecutionCanvasCommand(() => CommandCanvasControl.SaveCbsFile())));
+                commandNode.AddChild(new TreeMenuNode(TreeMenuNode.NodeType.DEFULT_COMMAND, "Load(Ctrl+O)", CreateImmediateExecutionCanvasCommand(() => CommandCanvasControl.LoadCbsFile())));
+                commandNode.AddChild(new TreeMenuNode(TreeMenuNode.NodeType.DEFULT_COMMAND, "Convert C#", CreateImmediateExecutionCanvasCommand(() => CommandCanvasList.Instance?.BuildScriptAndOut())));
                 treeViewCommand.AssetTreeData.Add(commandNode);
             }
 
@@ -809,7 +809,7 @@ namespace CapyCSS.Controls.BaseControls
                     var recentNode = CommandMenu.GetRecent();
                     foreach (var node in value)
                     {
-                        recentNode.AddChild(new TreeMenuNode(TreeMenuNode.NodeType.NORMAL, node, CreateImmediateExecutionCanvasCommand(() =>
+                        recentNode.AddChild(new TreeMenuNode(TreeMenuNode.NodeType.RECENT_COMMAND, node, CreateImmediateExecutionCanvasCommand(() =>
                         {
                             CommandMenu.ExecuteFindCommand(node);
                         })));

@@ -47,6 +47,9 @@
             <SolidColorBrush x:Key="EmptyCommandBrush" Color="Gray"/>
             <SolidColorBrush x:Key="UnenableCommandBrush" Color="Silver"/>
             <SolidColorBrush x:Key="CommandBrush" Color="MediumAquamarine"/>
+            <SolidColorBrush x:Key="DefaultCommandBrush" Color="BurlyWood"/>
+            <SolidColorBrush x:Key="RecentCommandBrush" Color="LightSkyBlue"/>
+            <SolidColorBrush x:Key="FilteringCommandBrush" Color="LightSkyBlue"/>
             <SolidColorBrush x:Key="CommandGroupBrush" Color="White"/>
             <SolidColorBrush x:Key="EditErrorBackgroundBrush" Color="Salmon"/>
             <SolidColorBrush x:Key="SelfParamBackgroundBrush" Color="LightSalmon"/>

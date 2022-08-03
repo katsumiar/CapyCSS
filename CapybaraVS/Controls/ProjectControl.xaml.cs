@@ -187,12 +187,12 @@ namespace CapyCSS.Controls
             {
                 // コマンドを追加
 
-                commandGroup.AddChild(new TreeMenuNode(TreeMenuNode.NodeType.NORMAL, "New Project", CreateImmediateExecutionCanvasCommand(() => NewProject())));
-                commandGroup.AddChild(new TreeMenuNode(TreeMenuNode.NodeType.NORMAL, "Load Project", CreateImmediateExecutionCanvasCommand(() => LoadProject())));
-                commandGroup.AddChild(new TreeMenuNode(TreeMenuNode.NodeType.NORMAL, COMMAND_SAVE_PROJECT, CreateImmediateExecutionCanvasCommand(() => SaveProject())));
-                commandGroup.AddChild(new TreeMenuNode(TreeMenuNode.NodeType.NORMAL, COMMAND_CLEAR_PROJECT, CreateImmediateExecutionCanvasCommand(() => ClearProject())));
-                commandGroup.AddChild(new TreeMenuNode(TreeMenuNode.NodeType.NORMAL, COMMAND_ADD_NEW_CBS_FILE, CreateImmediateExecutionCanvasCommand(() => AddNewCbsFile())));
-                commandGroup.AddChild(new TreeMenuNode(TreeMenuNode.NodeType.NORMAL, COMMAND_ADD_CBS_FILE, CreateImmediateExecutionCanvasCommand(() => AddCbsFile())));
+                commandGroup.AddChild(new TreeMenuNode(TreeMenuNode.NodeType.DEFULT_COMMAND, "New Project", CreateImmediateExecutionCanvasCommand(() => NewProject())));
+                commandGroup.AddChild(new TreeMenuNode(TreeMenuNode.NodeType.DEFULT_COMMAND, "Load Project", CreateImmediateExecutionCanvasCommand(() => LoadProject())));
+                commandGroup.AddChild(new TreeMenuNode(TreeMenuNode.NodeType.DEFULT_COMMAND, COMMAND_SAVE_PROJECT, CreateImmediateExecutionCanvasCommand(() => SaveProject())));
+                commandGroup.AddChild(new TreeMenuNode(TreeMenuNode.NodeType.DEFULT_COMMAND, COMMAND_CLEAR_PROJECT, CreateImmediateExecutionCanvasCommand(() => ClearProject())));
+                commandGroup.AddChild(new TreeMenuNode(TreeMenuNode.NodeType.DEFULT_COMMAND, COMMAND_ADD_NEW_CBS_FILE, CreateImmediateExecutionCanvasCommand(() => AddNewCbsFile())));
+                commandGroup.AddChild(new TreeMenuNode(TreeMenuNode.NodeType.DEFULT_COMMAND, COMMAND_ADD_CBS_FILE, CreateImmediateExecutionCanvasCommand(() => AddCbsFile())));
                 commandGroup.IsExpanded = true;
                 treeViewCommand.AssetTreeData.Add(commandGroup);
             }

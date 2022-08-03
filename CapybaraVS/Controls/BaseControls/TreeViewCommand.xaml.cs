@@ -102,6 +102,9 @@ namespace CapyCSS.Controls.BaseControls
         {
             NORMAL,
             GROUP,
+            DEFULT_COMMAND,
+            RECENT_COMMAND,
+            FILTERING_COMMAND,
         }
 
         /// <summary>
@@ -114,6 +117,10 @@ namespace CapyCSS.Controls.BaseControls
             this.nodeType = nodeType;
             Name = name;
             Path = name;
+            GroupClickCommand = new TreeMenuNodeCommand()
+            {
+                ExecuteEvent = (o) => { IsExpanded = !IsExpanded; }
+            };
             if (personCommand is null)
             {
                 LeftClickCommand = null;
@@ -135,6 +142,7 @@ namespace CapyCSS.Controls.BaseControls
             this.nodeType = nodeType;
             Name = name;
             Path = name;
+            GroupClickCommand = null;
             if (hintText != null)
             {
                 _hintTextFunc = hintText;
@@ -262,7 +270,7 @@ namespace CapyCSS.Controls.BaseControls
 
         //-----------------------------------------------------------------------------------
         /// <summary>
-        /// 左クリックイベントで呼ばれるイベントです。
+        /// コマンドノードの左クリックイベントで呼ばれるイベントです。
         /// </summary>
         public ICommand LeftClickCommand
         {
@@ -275,6 +283,22 @@ namespace CapyCSS.Controls.BaseControls
             }
         }
         private ICommand leftClickCommand = null;
+
+        //-----------------------------------------------------------------------------------
+        /// <summary>
+        /// グループノードの左クリックイベントで呼ばれるイベントです。
+        /// </summary>
+        public ICommand GroupClickCommand
+        {
+            get => groupClickCommand;
+            set
+            {
+                groupClickCommand = value;
+                OnPropertyChanged(nameof(Foreground));
+                OnPropertyChanged(nameof(IsEnabled));
+            }
+        }
+        private ICommand groupClickCommand = null;
 
         //-----------------------------------------------------------------------------------
         /// <summary>
@@ -291,6 +315,15 @@ namespace CapyCSS.Controls.BaseControls
                 if (!IsEnabled)
                 {
                     return (Brush)Application.Current.FindResource("UnenableCommandBrush");
+                }
+                switch (nodeType)
+                {
+                    case NodeType.DEFULT_COMMAND:
+                        return (Brush)Application.Current.FindResource("DefaultCommandBrush");
+                    case NodeType.RECENT_COMMAND:
+                        return (Brush)Application.Current.FindResource("RecentCommandBrush");
+                    case NodeType.FILTERING_COMMAND:
+                        return (Brush)Application.Current.FindResource("FilteringCommandBrush");
                 }
                 return (Brush)Application.Current.FindResource("CommandBrush");
             }
@@ -546,7 +579,7 @@ namespace CapyCSS.Controls.BaseControls
                     return node;
                 }
             }
-            var recentNode = new TreeMenuNode(TreeMenuNode.NodeType.NORMAL, RecentName);
+            var recentNode = new TreeMenuNode(TreeMenuNode.NodeType.RECENT_COMMAND, RecentName);
             AssetTreeData.Add(recentNode);
             return recentNode;
         }
@@ -823,7 +856,7 @@ namespace CapyCSS.Controls.BaseControls
                     {
                         if (treeView.Count < FilteringMax)
                         {
-                            treeView.Add(new TreeMenuNode(TreeMenuNode.NodeType.NORMAL, title, node._hintTextFunc, OwnerCommandCanvas.CreateImmediateExecutionCanvasCommand(() =>
+                            treeView.Add(new TreeMenuNode(TreeMenuNode.NodeType.FILTERING_COMMAND, title, node._hintTextFunc, OwnerCommandCanvas.CreateImmediateExecutionCanvasCommand(() =>
                             {
                                 ExecuteFindCommand(node.Path);
                             })));
@@ -883,7 +916,7 @@ namespace CapyCSS.Controls.BaseControls
                     {
                         if (treeView.Count < FilteringMax)
                         {
-                            var addNode = new TreeMenuNode(TreeMenuNode.NodeType.NORMAL, title, node._hintTextFunc, OwnerCommandCanvas.CreateImmediateExecutionCanvasCommand(() =>
+                            var addNode = new TreeMenuNode(TreeMenuNode.NodeType.RECENT_COMMAND, title, node._hintTextFunc, OwnerCommandCanvas.CreateImmediateExecutionCanvasCommand(() =>
                             {
                                 ExecuteFindCommand(node.Path);
                             }));
