@@ -1247,7 +1247,7 @@ namespace CapyCSS.Controls.BaseControls
                 {
                     if (System.IO.Path.HasExtension(path))
                     {
-                        if (System.IO.Path.GetExtension(path) == ".cbs")
+                        if (System.IO.Path.GetExtension(path) == CommandCanvasList.CBS_EXT)
                         {
                             // スクリプトファイルを読み込む
 

@@ -92,6 +92,14 @@ namespace CapyCSS.Controls.BaseControls
         }
     }
 
+    public interface IMenuCommand
+        : ICommand
+    {
+        TreeMenuNode.NodeType NodeType { get; }
+        string Name { get; }
+        Func<string> HintText { get; }
+    }
+
     //-----------------------------------------------------------------------------------
     /// <summary>
     /// ツリーメニューを構成するノードクラスです。
@@ -112,7 +120,17 @@ namespace CapyCSS.Controls.BaseControls
         /// </summary>
         /// <param name="name">項目名</param>
         /// <param name="personCommand">実行コマンド</param>
-        public TreeMenuNode(NodeType nodeType, string name, TreeMenuNodeCommand personCommand = null, TreeMenuNodeCommand deleteClickCommand = null)
+        public TreeMenuNode(IMenuCommand personCommand = null, ICommand deleteClickCommand = null)
+        {
+            makeMenuNode(personCommand.NodeType, personCommand.Name, personCommand.HintText, personCommand, null);
+        }
+
+        /// <summary>
+        /// コンストラクタです。
+        /// </summary>
+        /// <param name="name">項目名</param>
+        /// <param name="personCommand">実行コマンド</param>
+        public TreeMenuNode(NodeType nodeType, string name, ICommand personCommand = null, ICommand deleteClickCommand = null)
         {
             this.nodeType = nodeType;
             Name = name;
@@ -137,7 +155,12 @@ namespace CapyCSS.Controls.BaseControls
         /// </summary>
         /// <param name="name">項目名</param>
         /// <param name="personCommand">実行コマンド</param>
-        public TreeMenuNode(NodeType nodeType, string name, Func<string> hintText, TreeMenuNodeCommand personCommand = null, TreeMenuNodeCommand deleteClickCommand = null)
+        public TreeMenuNode(NodeType nodeType, string name, Func<string> hintText, ICommand personCommand = null, ICommand deleteClickCommand = null)
+        {
+            makeMenuNode(nodeType, name, hintText, personCommand, deleteClickCommand);
+        }
+
+        private void makeMenuNode(NodeType nodeType, string name, Func<string> hintText, ICommand personCommand, ICommand deleteClickCommand)
         {
             this.nodeType = nodeType;
             Name = name;

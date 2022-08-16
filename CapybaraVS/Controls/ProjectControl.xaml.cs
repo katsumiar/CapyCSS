@@ -1,10 +1,13 @@
-﻿using CapyCSS.Controls.BaseControls;
+﻿using CapyCSS.Command;
+using CapyCSS.Controls.BaseControls;
+using CapyCSS.Script;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -19,6 +22,7 @@ using System.Windows.Shapes;
 using System.Windows.Threading;
 using System.Xml;
 using System.Xml.Serialization;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.Window;
 
 namespace CapyCSS.Controls
 {
@@ -44,7 +48,7 @@ namespace CapyCSS.Controls
             {
                 ReadAction = (self) =>
                 {
-                    string basePath = System.IO.Path.GetDirectoryName(self.ProjectFilePath);
+                    string basePath = System.IO.Path.GetDirectoryName(self.projectFilePath);
                     if (CbsPathList != null)
                     {
                         self.cbsGroup.Child.Clear();
@@ -52,6 +56,15 @@ namespace CapyCSS.Controls
                         {
                             string tempPath = System.IO.Path.GetFullPath(path, basePath);
                             self.AddCbsFile(tempPath);
+                        }
+                    }
+
+                    if (DllList != null)
+                    {
+                        self.dllGroup.Child.Clear();
+                        foreach (var path in DllList)
+                        {
+                            self.AddDllFile(path);
                         }
                     }
 
@@ -63,17 +76,34 @@ namespace CapyCSS.Controls
             {
                 WriteAction = () =>
                 {
-                    string basePath = System.IO.Path.GetDirectoryName(self.ProjectFilePath);
+                    string basePath = System.IO.Path.GetDirectoryName(self.projectFilePath);
                     CbsPathList = new List<string>();
                     foreach (var item in self.cbsGroup.Child)
                     {
                         string tempPath = System.IO.Path.GetRelativePath(basePath, item.HintText);
                         CbsPathList.Add(tempPath);
                     }
+
+                    DllList = new List<string>();
+                    foreach (var item in self.dllGroup.Child)
+                    {
+                        DllList.Add(item.HintText);
+                    }
                 };
             }
             #region 固有定義
+            /// <summary>
+            /// CBSファイルパスリストです。
+            /// ※プロジェクトディレクトリからの相対パスになります。
+            /// </summary>
             public List<string> CbsPathList { get; set; } = null;
+
+            /// <summary>
+            /// DLLリストです。
+            /// ※プロジェクトディレクトリ直下である必要がある為、ファイル名のみ管理します。
+            /// </summary>
+            public List<string> DllList { get; set; } = null;
+            #endregion
 
             protected virtual void Dispose(bool disposing)
             {
@@ -96,7 +126,6 @@ namespace CapyCSS.Controls
                 Dispose(disposing: true);
                 GC.SuppressFinalize(this);
             }
-            #endregion
         }
         public _AssetXML<ProjectControl> AssetXML { get; set; } = null;
         #endregion
@@ -149,19 +178,29 @@ namespace CapyCSS.Controls
         #endregion
 
         public const string INIT_PROJECT_NAME = "(no name)";
-        private const string COMMAND_SAVE_PROJECT = "Save Project";
-        private const string COMMAND_CLEAR_PROJECT = "Clear Project";
-        private const string COMMAND_ADD_NEW_CBS_FILE = "Add New CBS File";
-        private const string COMMAND_ADD_CBS_FILE = "Add CBS File";
 
         private string loadProjectName = "";
 
         private TreeMenuNode commandGroup = new TreeMenuNode(TreeMenuNode.NodeType.GROUP, "Command");
         private TreeMenuNode cbsGroup = new TreeMenuNode(TreeMenuNode.NodeType.GROUP, "CBS Files");
+        private TreeMenuNode dllGroup = new TreeMenuNode(TreeMenuNode.NodeType.GROUP, "DLL Files");
 
-        private string ProjectFilePath = CommandCanvasList.GetSamplePath();
+        public static ProjectControl Instance => instance;
+        private static ProjectControl instance = null;
 
-        private string currentProjectDirectory = CommandCanvasList.GetSamplePath();
+        /// <summary>
+        /// プロジェクトファイル(.cbs)パスです。
+        /// </summary>
+        public string ProjectFilePath => projectFilePath;
+
+        private string projectFilePath = CommandCanvasList.GetSamplePath();
+
+        /// <summary>
+        /// プロジェクトのルートディレクトリです。
+        /// </summary>
+        public string ParentProjectDirectory => parentProjectDirectory;
+
+        private string parentProjectDirectory = CommandCanvasList.GetSamplePath();
 
         public ProjectControl()
         {
@@ -171,6 +210,8 @@ namespace CapyCSS.Controls
 
             ProjectTree.AssetTreeData = new ObservableCollection<TreeMenuNode>();
             MakeCommandMenu(ProjectTree);
+
+            instance = this;
         }
 
         /// <summary>
@@ -187,15 +228,17 @@ namespace CapyCSS.Controls
             {
                 // コマンドを追加
 
-                commandGroup.AddChild(new TreeMenuNode(TreeMenuNode.NodeType.DEFULT_COMMAND, "New Project", CreateImmediateExecutionCanvasCommand(() => NewProject())));
-                commandGroup.AddChild(new TreeMenuNode(TreeMenuNode.NodeType.DEFULT_COMMAND, "Load Project", CreateImmediateExecutionCanvasCommand(() => LoadProject())));
-                commandGroup.AddChild(new TreeMenuNode(TreeMenuNode.NodeType.DEFULT_COMMAND, COMMAND_SAVE_PROJECT, CreateImmediateExecutionCanvasCommand(() => SaveProject())));
-                commandGroup.AddChild(new TreeMenuNode(TreeMenuNode.NodeType.DEFULT_COMMAND, COMMAND_CLEAR_PROJECT, CreateImmediateExecutionCanvasCommand(() => ClearProject())));
-                commandGroup.AddChild(new TreeMenuNode(TreeMenuNode.NodeType.DEFULT_COMMAND, COMMAND_ADD_NEW_CBS_FILE, CreateImmediateExecutionCanvasCommand(() => AddNewCbsFile())));
-                commandGroup.AddChild(new TreeMenuNode(TreeMenuNode.NodeType.DEFULT_COMMAND, COMMAND_ADD_CBS_FILE, CreateImmediateExecutionCanvasCommand(() => AddCbsFile())));
+                commandGroup.AddChild(new TreeMenuNode(Command.NewProject.Create()));
+                commandGroup.AddChild(new TreeMenuNode(Command.LoadProject.Create()));
+                commandGroup.AddChild(new TreeMenuNode(Command.SaveProject.Create()));
+                commandGroup.AddChild(new TreeMenuNode(Command.ClearProject.Create()));
+                commandGroup.AddChild(new TreeMenuNode(Command.AddNewCbsFile.Create()));
+                commandGroup.AddChild(new TreeMenuNode(Command.AddCbsFile.Create()));
+                commandGroup.AddChild(new TreeMenuNode(Command.ImportDLL.Create()));
                 commandGroup.IsExpanded = true;
                 treeViewCommand.AssetTreeData.Add(commandGroup);
             }
+            treeViewCommand.AssetTreeData.Add(dllGroup);
             treeViewCommand.AssetTreeData.Add(cbsGroup);
             UpdateCommandEnable();
         }
@@ -206,10 +249,11 @@ namespace CapyCSS.Controls
         private void UpdateCommandEnable()
         {
             string[] commands = new string[] {
-                COMMAND_SAVE_PROJECT,
-                COMMAND_CLEAR_PROJECT,
-                COMMAND_ADD_NEW_CBS_FILE,
-                COMMAND_ADD_CBS_FILE,
+                Command.SaveProject._Name,
+                Command.ClearProject._Name,
+                Command.AddNewCbsFile._Name,
+                Command.AddCbsFile._Name,
+                Command.ImportDLL._Name,
             };
             foreach (string command in commands)
             {
@@ -256,6 +300,7 @@ namespace CapyCSS.Controls
                         MessageBoxButton.OKCancel) == MessageBoxResult.OK)
             {
                 ProjectName = INIT_PROJECT_NAME;
+                dllGroup.ClearChild();
                 cbsGroup.ClearChild();
                 CommandCanvasList.ClearScriptCanvas();
                 UpdateCommandEnable();
@@ -274,7 +319,7 @@ namespace CapyCSS.Controls
             Directory.SetCurrentDirectory(System.IO.Path.GetDirectoryName(path));
             loadProjectName = System.IO.Path.GetFileNameWithoutExtension(path);
             ProjectName = loadProjectName;
-            ProjectFilePath = path;
+            projectFilePath = path;
             CommandCanvasList.UpdateTitle();
             ChangedFlag = true;
         }
@@ -297,7 +342,7 @@ namespace CapyCSS.Controls
             string path;
 
             var dialog = CreateProject.Create();
-            dialog.ProjectPath = currentProjectDirectory;
+            dialog.ProjectPath = parentProjectDirectory;
             var result = dialog.ShowDialog();
             if (result.HasValue && result.Value)
             {
@@ -326,6 +371,13 @@ namespace CapyCSS.Controls
 
             SetProjectName(path);
             UpdateCommandEnable();
+
+            // デフォルトのDLLとして登録する
+            foreach (var dllPath in CbSTUtils.AutoImportDllList)
+            {
+                AddDllFile(dllPath);
+            }
+
             _SaveProject();
             CommandCanvasList.HideAddScriptButton();
         }
@@ -345,7 +397,7 @@ namespace CapyCSS.Controls
                 return;
             }
 
-            string path = CommandCanvasList.ShowLoadDialog(CommandCanvasList.CBSPROJ_FILTER, currentProjectDirectory);
+            string path = CommandCanvasList.ShowLoadDialog(CommandCanvasList.CBSPROJ_FILTER, parentProjectDirectory);
             if (path is null)
             {
                 return;
@@ -355,20 +407,32 @@ namespace CapyCSS.Controls
                 // プロジェクトディレクトリ階層をプロジェクト用カレントディレクトリとして保存する
                 // ※プロジェクトのディレクトリの一つ上の階層がプロジェクトディレクトリになる。
                 DirectoryInfo directoryInfo = new DirectoryInfo(System.IO.Path.GetDirectoryName(path));
-                currentProjectDirectory = directoryInfo.Parent.FullName;
+                parentProjectDirectory = directoryInfo.Parent.FullName;
             }
 
-            _LoadProject(path);
+#if false
+            // プロジェクトを読み込む
+            LoadProject(path);
+#else
+            // 新しい実行ファイルでプロジェクトを読み込む
+            ProcessStartInfo pInfo = new ProcessStartInfo();
+            pInfo.FileName = CommandCanvasList.DOTNET;
+            pInfo.Arguments = Assembly.GetEntryAssembly().Location + " " + path;
+            Process.Start(pInfo);
+#endif
         }
 
-        private void _LoadProject(string path)
+        /// <summary>
+        /// プロジェクトファイルを読み込みます。
+        /// ※起動時に引数指定している場合に呼ばれます。
+        /// </summary>
+        /// <param name="path"></param>
+        public void LoadProject(string path)
         {
-            CommandCanvasList.ClearScriptCanvas();
             SetProjectName(path);   // 相対ディレクトリの基準がセットされるので readProjectFile の前に処理する
             readProjectFile(path);
             UpdateCommandEnable();
             ChangedFlag = false;
-            CommandCanvasList.HideAddScriptButton();
         }
 
         private void readProjectFile(string path)
@@ -414,8 +478,8 @@ namespace CapyCSS.Controls
 
         private void _SaveProject()
         {
-            Debug.Assert(ProjectFilePath != null);
-            string path = ProjectFilePath;
+            Debug.Assert(projectFilePath != null);
+            string path = projectFilePath;
             if (path is null)
             {
                 return;
@@ -450,7 +514,7 @@ namespace CapyCSS.Controls
         /// <summary>
         /// 新しいcbsファイルをプロジェクトに追加します。
         /// </summary>
-        private void AddNewCbsFile()
+        public void AddNewCbsFile()
         {
             // プロジェクトディレクトリ（カレントディレクトリ）にファイルを作成する。
             string path = CommandCanvasList.ShowSaveDialog(CommandCanvasList.CBS_FILTER, Environment.CurrentDirectory, true);
@@ -477,7 +541,7 @@ namespace CapyCSS.Controls
         /// <summary>
         /// cbsファイルをプロジェクトに追加します。
         /// </summary>
-        private void AddCbsFile()
+        public void AddCbsFile()
         {
             // プロジェクトディレクトリ（カレントディレクトリ）をカレントにファイルを探す。
             string path = CommandCanvasList.ShowLoadDialog(CommandCanvasList.CBS_FILTER, Environment.CurrentDirectory);
@@ -548,6 +612,93 @@ namespace CapyCSS.Controls
             CommandCanvasList.Instance?.AddLoadContents(path);
         }
 
+
+        /// <summary>
+        /// dllファイルをプロジェクトに追加します。
+        /// </summary>
+        public void AddDllFile()
+        {
+            // プロジェクトディレクトリ（カレントディレクトリ）をカレントにファイルを探す。
+            string path = CommandCanvasList.ShowLoadDialog(CommandCanvasList.DLL_FILTER, Environment.CurrentDirectory);
+            if (path is null)
+            {
+                return;
+            }
+
+            AddDllFile(path);
+            ChangedFlag = true;
+        }
+
+        /// <summary>
+        /// dllファイルをプロジェクトに追加します。
+        /// </summary>
+        /// <param name="path">dllファイルパス</param>
+        public void AddDllFile(string path)
+        {
+            string dllFileName = System.IO.Path.GetFileName(path);
+            string localDir = System.IO.Path.GetDirectoryName(ProjectFilePath);
+            string localPath = System.IO.Path.Combine(localDir, dllFileName);
+
+            TreeMenuNode node = null;
+            if (dllGroup != null && dllGroup.Child.Count > 0)
+            {
+                node = dllGroup.Child.First(c => c.HintText == localPath);
+            }
+            if (node is null)
+            {
+                // 未登録
+
+                node = new TreeMenuNode(
+                    TreeMenuNode.NodeType.NORMAL,
+                    System.IO.Path.GetFileNameWithoutExtension(localPath),  // Item Name
+                    () => localPath                                         // Item Hint
+                    );
+                node.DeleteClickCommand = new TreeMenuNodeCommand((a) =>
+                {
+                    if (ControlTools.ShowSelectMessage(
+                            CapyCSS.Language.Instance["SYSTEM_ConfirmationRemoveScript"],
+                            CapyCSS.Language.Instance["SYSTEM_Confirmation"],
+                            MessageBoxButton.OKCancel) == MessageBoxResult.OK)
+                    {
+                        //File.Delete(localPath); 削除はしない
+                        dllGroup.Child.Remove(node);
+                        ChangedFlag = true;
+                    }
+                });
+                dllGroup.AddChild(node);
+                dllGroup.IsExpanded = true;
+            }
+
+            if (!File.Exists(path))
+            {
+                // インポート元のDLLファイルが見つからない
+
+                node.IsEnabled = false;
+            }
+            else
+            {
+                if (!File.Exists(localPath))
+                {
+                    // インポート先にDLLファイルが見つからないのでコピーする
+
+                    File.Copy(path, localPath);
+                }
+
+                // DLLファイルを取り込む
+                Assembly.LoadFrom(dllFileName);
+            }
+        }
+
+        /// <summary>
+        /// dll一覧に登録されているか確認します。
+        /// </summary>
+        /// <param name="path">cbsのパス</param>
+        /// <returns>true==存在している</returns>
+        private bool ContainsDll(string path)
+        {
+            return dllGroup.Child.Any(c => c.HintText == path);
+        }
+
         /// <summary>
         /// 即時実行用コマンドを作成します。
         /// </summary>
@@ -585,7 +736,7 @@ namespace CapyCSS.Controls
 
             try
             {
-                string oldDir = System.IO.Path.GetDirectoryName(ProjectFilePath);
+                string oldDir = System.IO.Path.GetDirectoryName(projectFilePath);
                 if (Directory.Exists(oldDir))
                 {
                     DirectoryInfo directoryInfo = new DirectoryInfo(oldDir);
@@ -598,13 +749,13 @@ namespace CapyCSS.Controls
                     Directory.Move(oldDir, newDir);
 
                     // プロジェクトファイル名を変更
-                    string ext = System.IO.Path.GetExtension(ProjectFilePath);
-                    string oldProjectFileName = System.IO.Path.Combine(newDir, System.IO.Path.GetFileName(ProjectFilePath));
+                    string ext = System.IO.Path.GetExtension(projectFilePath);
+                    string oldProjectFileName = System.IO.Path.Combine(newDir, System.IO.Path.GetFileName(projectFilePath));
                     string newProjectFileName = System.IO.Path.Combine(newDir, name + ext);
                     File.Move(oldProjectFileName, newProjectFileName);
 
                     // 新しいプロジェクト名を反映
-                    _LoadProject(newProjectFileName);
+                    LoadProject(newProjectFileName);
                 }
             }
             catch (Exception ex)

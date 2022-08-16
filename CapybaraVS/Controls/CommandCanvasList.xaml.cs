@@ -129,6 +129,8 @@ namespace CapyCSS.Controls
         public static CommandCanvasList Instance = null;
         public static OutPutLog OutPut => Instance.MainLog;
 
+        public const string DOTNET = "dotnet";
+        public const string CBS_EXT = ".cbs";
         public const string CBSPROJ_EXT = ".cbsproj";
         public static readonly List<Tuple<string, string>> CBSPROJ_FILTER = new List<Tuple<string, string>>
         {
@@ -137,6 +139,10 @@ namespace CapyCSS.Controls
         public static readonly List<Tuple<string, string>> CBS_FILTER = new List<Tuple<string, string>>
         {
             new Tuple<string, string>("CBS files", "*.cbs"),
+        };
+        public static readonly List<Tuple<string, string>> DLL_FILTER = new List<Tuple<string, string>>
+        {
+            new Tuple<string, string>("DLL files", "*.dll"),
         };
 
         public static string CAPYCSS_WORK_PATH = null;
@@ -348,7 +354,22 @@ namespace CapyCSS.Controls
                     {
                         // 起動読み込みをキックする
 
-                        AddLoadContents(reserveLoadCbsFilePath);
+                        string ext = Path.GetExtension(reserveLoadCbsFilePath);
+
+                        if (ext == CommandCanvasList.CBS_EXT)
+                        {
+                            // CBSファイル読み込み
+
+                            AddLoadContents(reserveLoadCbsFilePath);
+                        }
+                        else if (ext == CommandCanvasList.CBSPROJ_EXT)
+                        {
+                            // プロジェクトファイル読み込み
+
+                            ProjectExpander.IsExpanded = true;
+                            ProjectControl.Instance.LoadProject(reserveLoadCbsFilePath);
+                        }
+
                         reserveLoadCbsFilePath = null;
                     }
                 }), DispatcherPriority.ApplicationIdle);
@@ -360,7 +381,7 @@ namespace CapyCSS.Controls
         /// <param name="owner">オーナーウインドウ</param>
         /// <param name="setTitleFunc">タイトル表示処理（func(filename)）</param>
         /// <param name="closingFunc">終了処理</param>
-        /// <param name="autoLoadCbsFile">起動時読み込みcbsファイル</param>
+        /// <param name="autoLoadFile">起動時読み込みcbsファイル</param>
         /// <param name="isAutoExecute">起動時実行</param>
         /// <param name="isAutoExit">自動終了</param>
         public void Setup(
@@ -368,7 +389,7 @@ namespace CapyCSS.Controls
             string path,
             Action<string> setTitleFunc = null,
             Action closingFunc = null,
-            string autoLoadCbsFile = null,
+            string autoLoadFile = null,
             bool isAutoExecute = false,
             bool isAutoExit = false)
         {
@@ -393,9 +414,9 @@ namespace CapyCSS.Controls
             PackageDir = packageDir;
             CallClosing = closingFunc;
             SetTitleFunc(null);
-            if (autoLoadCbsFile != null)
+            if (autoLoadFile != null)
             {
-                SetLoadCbsFile(autoLoadCbsFile);
+                SetLoadFile(autoLoadFile);
             }
             if (!File.Exists(CAPYCSS_INFO_PATH))
             {
@@ -680,7 +701,23 @@ namespace CapyCSS.Controls
             }
             else
             {
-                currentDirectory = currentPath;
+                if (String.IsNullOrWhiteSpace(currentPath))
+                {
+                    string projectFile = ProjectControl.Instance.ProjectFilePath;
+
+                    if (projectFile != null)
+                    {
+                        currentDirectory = System.IO.Path.GetDirectoryName(projectFile);
+                    }
+                    else
+                    {
+                        currentDirectory = GetSamplePath();
+                    }
+                }
+                else
+                {
+                    currentDirectory = currentPath;
+                }
             }
             using (var dialog = new CommonOpenFileDialog(fileName)
             {
@@ -741,10 +778,10 @@ namespace CapyCSS.Controls
         private string reserveLoadCbsFilePath = null;
 
         /// <summary>
-        /// CBS ファイル読み込みを予約します。
+        /// ファイル読み込みを予約します。
         /// </summary>
-        /// <param name="path">CBSファイルのパス</param>
-        public void SetLoadCbsFile(string path = null)
+        /// <param name="path">ファイルのパス</param>
+        public void SetLoadFile(string path = null)
         {
             reserveLoadCbsFilePath = path;
         }

@@ -107,22 +107,12 @@ namespace CapyCSS.Controls.BaseControls
                 {
                     self.AssetId = AssetId;
                     self._inportNameSpaceModule = ImportNameSpaceModule;
-                    self._inportDllModule = ImportDllModule;
-                    self._inportNuGetModule = ImportNuGetModule;
 
                     {// 不要なモジュールを削除する
                         List<string> importModules = new List<string>();
                         foreach (var module in ImportNameSpaceModule)
                         {
                             importModules.Add(ModuleControler.HEADER_NAMESPACE + module);
-                        }
-                        foreach (var module in ImportDllModule)
-                        {
-                            importModules.Add(ModuleControler.HEADER_DLL + module);
-                        }
-                        foreach (var module in ImportNuGetModule)
-                        {
-                            importModules.Add(ModuleControler.HEADER_NUGET + module);
                         }
 
                         // 基本的なインポートモジュールを追加
@@ -193,8 +183,6 @@ namespace CapyCSS.Controls.BaseControls
                     AssetId = self.AssetId;
                     DataVersion = DATA_VERSION;
                     ImportNameSpaceModule = self.ApiImporter.NameSpaceModuleList;
-                    ImportDllModule = self.ApiImporter.DllModulePathList;
-                    ImportNuGetModule = self.ApiImporter.NuGetModuleList;
                     self.WorkCanvas.AssetXML.WriteAction?.Invoke();
                     WorkCanvas = self.WorkCanvas.AssetXML;
                     self.WorkStack.AssetXML.WriteAction?.Invoke();
@@ -217,8 +205,6 @@ namespace CapyCSS.Controls.BaseControls
             public int DataVersion { get; set; } = 0;
             public BaseWorkCanvas._AssetXML<BaseWorkCanvas> WorkCanvas { get; set; } = null;
             public List<string> ImportNameSpaceModule { get; set; } = null;
-            public List<string> ImportDllModule { get; set; } = null;
-            public List<string> ImportNuGetModule { get; set; } = null;
             public Stack._AssetXML<Stack> WorkStack { get; set; } = null;
             [XmlArrayItem("Asset")]
             public List<Movable._AssetXML<Movable>> WorkCanvasAssetList { get; set; } = null;
@@ -237,10 +223,6 @@ namespace CapyCSS.Controls.BaseControls
                         WorkCanvas = null;
                         ImportNameSpaceModule?.Clear();
                         ImportNameSpaceModule = null;
-                        ImportDllModule?.Clear();
-                        ImportDllModule = null;
-                        ImportNuGetModule?.Clear();
-                        ImportNuGetModule = null;
                         WorkStack?.Dispose();
                         WorkStack = null;
                         CbSTUtils.ForeachDispose(WorkCanvasAssetList);
@@ -535,8 +517,6 @@ namespace CapyCSS.Controls.BaseControls
         //----------------------------------------------------------------------
         #region スクリプト内共有
         private List<string> _inportNameSpaceModule = null;
-        private List<string> _inportDllModule = null;
-        private List<string> _inportNuGetModule = null;
         public ApiImporter ApiImporter = null;
         private ModuleControler moduleControler = null;
         public CommandWindow CommandMenuWindow = null;
@@ -752,32 +732,6 @@ namespace CapyCSS.Controls.BaseControls
                     ApiImporter.ImportNameSpace(imp);
                 }
                 _inportNameSpaceModule = null;
-            }
-            if (_inportNuGetModule != null)
-            {
-                // NuGetインポートの復元
-
-                foreach (var imp in _inportNuGetModule)
-                {
-                    ApiImporter.ImportNuGet(CommandCanvasControl.PackageDir, imp);
-                }
-                _inportNuGetModule = null;
-            }
-            if (_inportDllModule != null)
-            {
-                // DLL インポートの復元
-
-                foreach (var imp in _inportDllModule)
-                {
-                    if (!moduleControler.CheckImportable(imp))
-                    {
-                        // dll のインポートに失敗
-
-                        return false;
-                    }
-                    ApiImporter.ImportDll(imp, null);
-                }
-                _inportDllModule = null;
             }
             return true;
         }
@@ -1870,8 +1824,6 @@ namespace CapyCSS.Controls.BaseControls
                     TypeMenuWindow = null;
 
                     _inportNameSpaceModule = null;
-                    _inportDllModule = null;
-                    _inportNuGetModule = null;
 
                     ApiImporter = null;
                     moduleControler = null;
