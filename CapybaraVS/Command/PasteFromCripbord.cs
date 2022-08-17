@@ -9,12 +9,12 @@ using System.Windows.Input;
 
 namespace CapyCSS.Command
 {
-    internal class SaveProject
+    internal class PasteFromCripbord
         : IMenuCommand
     {
         public static IMenuCommand Create()
         {
-            return new SaveProject();
+            return new PasteFromCripbord();
         }
 
         public static bool TryExecute(object parameter = null)
@@ -30,8 +30,8 @@ namespace CapyCSS.Command
 
         public TreeMenuNode.NodeType NodeType => TreeMenuNode.NodeType.DEFULT_COMMAND;
         public string Name => _Name;
-        public static string _Name => "Save Project";
-        public Func<string> HintText => () => _Name;
+        public static string _Name => "Paste From Cripbord";
+        public Func<string> HintText => () => $"{_Name}(Ctrl+V)";
 
         /// <summary>
         /// 実行可能かの変化を通知します。
@@ -44,17 +44,29 @@ namespace CapyCSS.Command
 
         public bool CanExecute(object parameter)
         {
-            if (ProjectControl.Instance is null || CommandCanvasList.Instance is null)
+            var self = CommandCanvasList.Instance;
+            if (self is null)
             {
                 return false;
             }
-            return ProjectControl.Instance.IsOpenProject && CommandCanvasList.Instance.IsScriptRunningMask;
+            return !self.IsEmptyScriptCanvas && self.IsScriptRunningMask;
         }
 
         public void Execute(object parameter)
         {
-            ProjectControl.Instance.SaveProject();
-            CommandCanvasList.Instance?.CurrentScriptCanvas?.CloseCommandWindow();
+            var self = CommandCanvasList.Instance;
+            if (self != null)
+            {
+                try
+                {
+                    self.CurrentWorkCanvas?.PasteFromCripbord();
+                }
+                catch (Exception ex)
+                {
+                    ControlTools.ShowErrorMessage($"{nameof(PasteFromCripbord)}: " + ex.Message);
+                }
+                self.CurrentScriptCanvas?.CloseCommandWindow();
+            }
         }
     }
 }

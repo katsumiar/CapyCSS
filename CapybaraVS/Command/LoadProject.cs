@@ -12,15 +12,26 @@ namespace CapyCSS.Command
     internal class LoadProject
         : IMenuCommand
     {
-        public static LoadProject Create()
+        public static IMenuCommand Create()
         {
             return new LoadProject();
+        }
+
+        public static bool TryExecute(object parameter = null)
+        {
+            var self = Create();
+            if (self.CanExecute(parameter))
+            {
+                self.Execute(parameter);
+                return true;
+            }
+            return false;
         }
 
         public TreeMenuNode.NodeType NodeType => TreeMenuNode.NodeType.DEFULT_COMMAND;
         public string Name => _Name;
         public static string _Name => "Load Project";
-        public Func<string> HintText => null;
+        public Func<string> HintText => () => _Name;
 
         /// <summary>
         /// 実行可能かの変化を通知します。
@@ -33,12 +44,18 @@ namespace CapyCSS.Command
 
         public bool CanExecute(object parameter)
         {
-            return true;
+            var self = CommandCanvasList.Instance;
+            if (self is null)
+            {
+                return false;
+            }
+            return self.IsScriptRunningMask;
         }
 
         public void Execute(object parameter)
         {
             ProjectControl.Instance.LoadProject();
+            CommandCanvasList.Instance?.CurrentScriptCanvas?.CloseCommandWindow();
         }
     }
 }

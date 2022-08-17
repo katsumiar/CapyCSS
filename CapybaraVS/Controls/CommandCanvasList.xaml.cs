@@ -6,6 +6,7 @@ using Microsoft.WindowsAPICodePack.Dialogs;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel.Design;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -255,7 +256,10 @@ namespace CapyCSS.Controls
             }
         }
 
-        private CommandCanvas CurrentScriptCanvas
+        /// <summary>
+        /// カレントのスクリプトキャンバスを参照します。
+        /// </summary>
+        public CommandCanvas CurrentScriptCanvas
         {
             get
             {
@@ -264,6 +268,21 @@ namespace CapyCSS.Controls
                     return null;
                 }
                 return GetCommandCanvas(CurrentTabItem);
+            }
+        }
+
+        /// <summary>
+        /// カレントの低レベルスクリプトキャンバスを参照します。
+        /// </summary>
+        public BaseWorkCanvas CurrentWorkCanvas
+        {
+            get
+            {
+                if (CurrentScriptCanvas is null)
+                {
+                    return null;
+                }
+                return CurrentScriptCanvas.ScriptWorkCanvas;
             }
         }
 
@@ -345,6 +364,17 @@ namespace CapyCSS.Controls
 
             // Consoleの出力先を変更する
             Console.SetOut(new SystemTextWriter());
+
+            // ボタンに機能を登録する。
+            SetButtonCommand(HelpButton, Command.ShowHelp.Create());
+            SetButtonCommand(LoadButton, Command.LoadScript.Create());
+            SetButtonCommand(SaveButton, Command.SaveScript.Create());
+            SetButtonCommand(AddButton, Command.AddNewScript.Create());
+            SetButtonCommand(CommandMenuButton, Command.ShowCommandMenu.Create());
+            SetButtonCommand(undo, Command.UnDo.Create());
+            SetButtonCommand(redo, Command.ReDo.Create());
+            SetButtonCommand(ConvertCSS, Command.ConvertCS.Create());
+            SetButtonCommand(ExecuteButton, Command.ExecuteScript.Create());
 
             Dispatcher.BeginInvoke(new Action(() =>
                 {
@@ -1086,37 +1116,34 @@ namespace CapyCSS.Controls
             Dispose();
         }
 
-        private bool backupIsEnebleExecuteButton = false;
+        private bool isScriptRunningMask = true;
+        public bool IsScriptRunningMask => isScriptRunningMask;
 
         /// <summary>
-        /// 実行ボタンの有効か無効かを制御します。
+        /// 実行ボタンの有効/無効を制御します。
         /// </summary>
-        /// <param name="enable">true = 有効</param>
-        public void SetExecuteButtonEnable(bool enable)
+        /// <param name="enable">スクリプト実行時 == false</param>
+        public void ScriptRunningMask(bool enable)
         {
-            if (enable)
+            isScriptRunningMask = enable;
+            if (isScriptRunningMask)
             {
-                // 実行解除時
-                // ※ 復元として動作する
+                // スクリプト実行終了時は、状態をチェックするトリガーが無いので、強制的に更新する
 
-                ExecuteButton.IsEnabled = backupIsEnebleExecuteButton;
-                undo.IsEnabled = CurrentScriptCanvas != null && CurrentScriptCanvas.CanUnDo;
-                redo.IsEnabled = CurrentScriptCanvas != null && CurrentScriptCanvas.CanReDo;
+                CommandManager.InvalidateRequerySuggested();
             }
-            else
-            {
-                // 実行時
+        }
 
-                backupIsEnebleExecuteButton = ExecuteButton.IsEnabled;
-                ExecuteButton.IsEnabled = false;
-                undo.IsEnabled = false;
-                redo.IsEnabled = false;
-            }
-            LoadButton.IsEnabled = enable;
-            SaveButton.IsEnabled = enable;
-            CommandMenuButton.IsEnabled = enable;
-            AddButton.IsEnabled = enable;
-            ConvertCSS.IsEnabled = ExecuteButton.IsEnabled;
+        /// <summary>
+        /// ボタンにコマンドを登録します。
+        /// </summary>
+        /// <param name="button">対象のボタン</param>
+        /// <param name="menuCommand">コマンド</param>
+        private void SetButtonCommand(Button button, IMenuCommand menuCommand)
+        {
+            //button.Content = menuCommand.Name;
+            button.ToolTip = menuCommand.HintText();
+            button.Command = menuCommand;
         }
 
         public delegate object NodeFunction(bool fromScript, string entryPointName);
@@ -1151,7 +1178,7 @@ namespace CapyCSS.Controls
         public void ClearPublicExecuteEntryPoint(object owner)
         {
             AllExecuteEntryPointList.Clear();
-            AddAllExecuteEntryPointEnable(SetExecuteButtonEnable);
+            AddAllExecuteEntryPointEnable(ScriptRunningMask);
             if (owner is null)
             {
                 PublicExecuteEntryPointList.Clear();
@@ -1160,7 +1187,6 @@ namespace CapyCSS.Controls
             {
                 PublicExecuteEntryPointList.RemoveAll(s => s.owner == owner);
             }
-            UpdateButtonEnable();
         }
 
         /// <summary>
@@ -1196,21 +1222,15 @@ namespace CapyCSS.Controls
         public void AddPublicExecuteEntryPoint(object owner, NodeFunction func)
         {
             PublicExecuteEntryPointList.Add(new EntryPoint(owner, func));
-            UpdateButtonEnable();
         }
 
         /// <summary>
-        /// ボタンの有効無効を一括設定します。
+        /// スクリプトのエントリーポイントがカレントスクリプトに含まれているかを判定します。
         /// </summary>
-        private void UpdateButtonEnable()
+        /// <returns></returns>
+        public bool IsEntryPointsContainsCurrentScriptCanvas()
         {
-            ExecuteButton.IsEnabled = PublicExecuteEntryPointList.Any(s => s.owner == CurrentScriptCanvas);
-            LoadButton.IsEnabled = !IsEmptyScriptCanvas;
-            SaveButton.IsEnabled = !IsEmptyScriptCanvas;
-            CommandMenuButton.IsEnabled = !IsEmptyScriptCanvas;
-            ConvertCSS.IsEnabled = ExecuteButton.IsEnabled;
-            undo.IsEnabled = CurrentScriptCanvas != null && CurrentScriptCanvas.CanUnDo;
-            redo.IsEnabled = CurrentScriptCanvas != null && CurrentScriptCanvas.CanReDo;
+            return PublicExecuteEntryPointList.Any(s => s.owner == CurrentScriptCanvas);
         }
 
         /// <summary>
@@ -1219,7 +1239,6 @@ namespace CapyCSS.Controls
         public void RemovePublicExecuteEntryPoint(NodeFunction func)
         {
             PublicExecuteEntryPointList.RemoveAll(s => s.function == func);
-            UpdateButtonEnable();
         }
 
         [ScriptMethod(path: CapyCSSbase.FlowLib.LIB_FLOW_NAME)]
@@ -1502,36 +1521,6 @@ namespace CapyCSS.Controls
         }
 
         /// <summary>
-        /// スクリプト読み込みボタンの処理です。
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void LoadButton_Click(object sender, RoutedEventArgs e)
-        {
-            LoadCbsFile();
-        }
-
-        /// <summary>
-        /// スクリプト保存ボタンの処理です。
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void SaveButton_Click(object sender, RoutedEventArgs e)
-        {
-            SaveCbsFile();
-        }
-
-        /// <summary>
-        /// 追加ボタンの処理です。
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void AddButton_Click(object sender, RoutedEventArgs e)
-        {
-            AddNewContents();
-        }
-
-        /// <summary>
         /// カレントのスクリプトキャンバスを消します。
         /// </summary>
         private void RemoveCurrentScriptCanvas()
@@ -1651,21 +1640,19 @@ namespace CapyCSS.Controls
         }
 
         /// <summary>
-        /// コマンドメニューを表示ボタンの処理です。
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void CommandMenuButton_Click(object sender, RoutedEventArgs e)
-        {
-            CurrentScriptCanvas.ShowCommandMenu(new Point());
-        }
-
-        /// <summary>
         /// スクリプト実行ボタンの処理です。
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
         private void ExecuteButton_Click(object sender, RoutedEventArgs e)
+        {
+            ExecuteScriptFromEntryPoint();
+        }
+
+        /// <summary>
+        /// エントリーポイントからスクリプトを起動します。
+        /// </summary>
+        public void ExecuteScriptFromEntryPoint()
         {
             object result = CallPublicExecuteEntryPoint(false, EntryPointName.Text.Trim());
             if (result != null)
@@ -1696,17 +1683,17 @@ namespace CapyCSS.Controls
                 switch (e.Key)
                 {
                     case Key.S: // 保存
-                        OverwriteCbsFile();
+                        Command.OverwriteScript.TryExecute();
                         e.Handled = true;
                         break;
 
                     case Key.O: // 読み込み
-                        LoadCbsFile();
+                        Command.LoadScript.TryExecute();
                         e.Handled = true;
                         break;
 
                     case Key.N: // 新規項目の追加
-                        AddNewContents();
+                        Command.AddNewScript.TryExecute();
                         e.Handled = true;
                         break;
                 }
@@ -1724,7 +1711,7 @@ namespace CapyCSS.Controls
                 switch (e.Key)
                 {
                     case Key.F5:    // スクリプト実行
-                        CallPublicExecuteEntryPoint(false);
+                        Command.ExecuteScript.TryExecute();
                         e.Handled = true;
                         break;
                 }
@@ -1739,7 +1726,6 @@ namespace CapyCSS.Controls
         private void Tab_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             updateTitle();
-            UpdateButtonEnable();
         }
 
         /// <summary>
@@ -1790,26 +1776,6 @@ namespace CapyCSS.Controls
         }
 
         /// <summary>
-        /// UnDo を実行します。
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        public void UnDo(object sender, RoutedEventArgs e)
-        {
-            CurrentScriptCanvas?.UnDo();
-        }
-
-        /// <summary>
-        /// ReDo を実行します。
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        public void ReDo(object sender, RoutedEventArgs e)
-        {
-            CurrentScriptCanvas?.ReDo();
-        }
-
-        /// <summary>
         /// タブからスクリプトキャンバスを取得します。
         /// </summary>
         /// <param name="item"></param>
@@ -1851,15 +1817,10 @@ namespace CapyCSS.Controls
             }
         }
 
-        private void HelpButton_Click(object sender, RoutedEventArgs e)
-        {
-            ShowHelpWindow();
-        }
-
         /// <summary>
         /// ヘルプウィンドウを表示します。
         /// </summary>
-        private static void ShowHelpWindow()
+        public static void ShowHelpWindow()
         {
             var helpWindow = HelpWindow.Create();
             helpWindow.ShowDialog();
@@ -1905,11 +1866,6 @@ namespace CapyCSS.Controls
         private void EntryPointName_TextChanged(object sender, TextChangedEventArgs e)
         {
             EntryPointNamePh.Visibility = (EntryPointName.Text.Trim().Length != 0) ? Visibility.Hidden : Visibility.Visible;
-        }
-
-        private void ConvertCSS_Click(object sender, RoutedEventArgs e)
-        {
-            BuildScriptAndOut();
         }
 
         /// <summary>

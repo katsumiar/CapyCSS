@@ -275,7 +275,7 @@ namespace CapyCSS.Controls.BaseControls
 
             ClickExitEvent = new Action(() =>
             {
-                CommandMenuWindow.CloseWindow();
+                CloseCommandWindow();
                 CommandCanvasList.SetOwnerCursor(Cursors.Hand);
             });
 
@@ -629,29 +629,37 @@ namespace CapyCSS.Controls.BaseControls
                     if (CommandCanvasList.IsCursorLock())
                         return; // 処理中は禁止
 
-                    CommandMenuWindow.CloseWindow();
+                    CloseCommandWindow();
 
                     action?.Invoke();
                 }
             );
         }
 
+        /// <summary>
+        /// コマンドウインドウを消します。
+        /// </summary>
+        public void CloseCommandWindow()
+        {
+            CommandMenuWindow?.CloseWindow();
+        }
+
 #endregion
 
         //----------------------------------------------------------------------
-#region アセットリストを実装
+#region 機能を登録
 
         private void MakeCommandMenu(TreeViewCommand treeViewCommand)
         {
             // コマンドを追加
             {
                 var commandNode = new TreeMenuNode(TreeMenuNode.NodeType.GROUP, "Command");
-                commandNode.AddChild(new TreeMenuNode(TreeMenuNode.NodeType.DEFULT_COMMAND, "Clear(Ctrl+Shift+N)", CreateImmediateExecutionCanvasCommand(() => ClearWorkCanvasWithConfirmation())));
-                commandNode.AddChild(new TreeMenuNode(TreeMenuNode.NodeType.DEFULT_COMMAND, "Toggle ShowMouseInfo", CreateImmediateExecutionCanvasCommand(() => ScriptWorkCanvas.EnableInfo = ScriptWorkCanvas.EnableInfo ? false : true)));
-                commandNode.AddChild(new TreeMenuNode(TreeMenuNode.NodeType.DEFULT_COMMAND, "Toggle ShowGridLine(Ctrl+G)", CreateImmediateExecutionCanvasCommand(() => ScriptCommandCanvas.ToggleGridLine())));
-                commandNode.AddChild(new TreeMenuNode(TreeMenuNode.NodeType.DEFULT_COMMAND, "Save(Ctrl+S)", CreateImmediateExecutionCanvasCommand(() => CommandCanvasControl.SaveCbsFile())));
-                commandNode.AddChild(new TreeMenuNode(TreeMenuNode.NodeType.DEFULT_COMMAND, "Load(Ctrl+O)", CreateImmediateExecutionCanvasCommand(() => CommandCanvasControl.LoadCbsFile())));
-                commandNode.AddChild(new TreeMenuNode(TreeMenuNode.NodeType.DEFULT_COMMAND, "Convert C#", CreateImmediateExecutionCanvasCommand(() => CommandCanvasList.Instance?.BuildScriptAndOut())));
+                commandNode.AddChild(new TreeMenuNode(Command.ClearCanvas.Create()));
+                commandNode.AddChild(new TreeMenuNode(Command.ToggleMouseInfo.Create()));
+                commandNode.AddChild(new TreeMenuNode(Command.ToggleGridLine.Create()));
+                commandNode.AddChild(new TreeMenuNode(Command.SaveScript.Create()));
+                commandNode.AddChild(new TreeMenuNode(Command.LoadScript.Create()));
+                commandNode.AddChild(new TreeMenuNode(Command.ConvertCS.Create()));
                 treeViewCommand.AssetTreeData.Add(commandNode);
             }
 
@@ -681,6 +689,14 @@ namespace CapyCSS.Controls.BaseControls
 
             ApiImporter.ImportBaseModule();
             ImportModule(); // 起動時に外部からインポートモジュールを設定される可能性がある
+        }
+
+        /// <summary>
+        /// マウス情報の表示を切り替えます。
+        /// </summary>
+        public void ToggleMouseInfo()
+        {
+            ScriptWorkCanvas.EnableInfo = ScriptWorkCanvas.EnableInfo ? false : true;
         }
 
         struct ShortCutCommand
@@ -1541,7 +1557,7 @@ namespace CapyCSS.Controls.BaseControls
                 {
                     // CommandCanvasList で使用
                     case Key.N: // 全クリア
-                        ClearWorkCanvasWithConfirmation();
+                        Command.ClearCanvas.TryExecute();
                         break;
                 }
             }
@@ -1558,7 +1574,7 @@ namespace CapyCSS.Controls.BaseControls
                         break;
 
                     case Key.G:
-                        ToggleGridLine();
+                        Command.ToggleGridLine.TryExecute();
                         e.Handled = true;
                         break;
 
@@ -1590,7 +1606,7 @@ namespace CapyCSS.Controls.BaseControls
         /// <summary>
         /// 確認付きでスクリプトキャンバスをクリアします。
         /// </summary>
-        private void ClearWorkCanvasWithConfirmation()
+        public void ClearWorkCanvasWithConfirmation()
         {
             CommandCanvasList.TryCursorLock(() =>
                 {

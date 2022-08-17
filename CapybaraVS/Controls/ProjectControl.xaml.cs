@@ -248,35 +248,7 @@ namespace CapyCSS.Controls
         /// </summary>
         private void UpdateCommandEnable()
         {
-            string[] commands = new string[] {
-                Command.SaveProject._Name,
-                Command.ClearProject._Name,
-                Command.AddNewCbsFile._Name,
-                Command.AddCbsFile._Name,
-                Command.ImportDLL._Name,
-            };
-            foreach (string command in commands)
-            {
-                SetCommandEnable(command, IsOpenProject);
-            }
-        }
-
-        /// <summary>
-        /// コマンドの有効状態をセットします。
-        /// </summary>
-        /// <param name="name">コマンド名</param>
-        /// <param name="enable">true==有効</param>
-        private void SetCommandEnable(string name, bool enable)
-        {
-            foreach (var item in commandGroup.Child)
-            {
-                var node = item as TreeMenuNode;
-                if (node.Name == name)
-                {
-                    node.IsEnabled = enable;
-                    break;
-                }
-            }
+            ProjectTree.RefreshItem();
         }
 
         /// <summary>
@@ -410,16 +382,19 @@ namespace CapyCSS.Controls
                 parentProjectDirectory = directoryInfo.Parent.FullName;
             }
 
-#if false
-            // プロジェクトを読み込む
-            LoadProject(path);
-#else
-            // 新しい実行ファイルでプロジェクトを読み込む
-            ProcessStartInfo pInfo = new ProcessStartInfo();
-            pInfo.FileName = CommandCanvasList.DOTNET;
-            pInfo.Arguments = Assembly.GetEntryAssembly().Location + " " + path;
-            Process.Start(pInfo);
-#endif
+            if (IsOpenProject)
+            {
+                // 新しい実行ファイルでプロジェクトを読み込む
+                ProcessStartInfo pInfo = new ProcessStartInfo();
+                pInfo.FileName = CommandCanvasList.DOTNET;
+                pInfo.Arguments = Assembly.GetEntryAssembly().Location + " " + path;
+                Process.Start(pInfo);
+            }
+            else
+            {
+                // プロジェクトを読み込む
+                LoadProject(path);
+            }
         }
 
         /// <summary>
@@ -429,10 +404,12 @@ namespace CapyCSS.Controls
         /// <param name="path"></param>
         public void LoadProject(string path)
         {
+            CommandCanvasList.ClearScriptCanvas();
             SetProjectName(path);   // 相対ディレクトリの基準がセットされるので readProjectFile の前に処理する
             readProjectFile(path);
             UpdateCommandEnable();
             ChangedFlag = false;
+            CommandCanvasList.HideAddScriptButton();
         }
 
         private void readProjectFile(string path)
@@ -611,7 +588,6 @@ namespace CapyCSS.Controls
         {
             CommandCanvasList.Instance?.AddLoadContents(path);
         }
-
 
         /// <summary>
         /// dllファイルをプロジェクトに追加します。
