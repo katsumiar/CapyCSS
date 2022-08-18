@@ -7,19 +7,18 @@
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800" HorizontalAlignment="Center" VerticalAlignment="Center" FocusVisualStyle="{x:Null}">
     <Grid HorizontalAlignment="Center" VerticalAlignment="Center">
-        <Grid x:Name="oldSpecification" Visibility="Collapsed" ToolTip="This is an old specification method.">
+        <Grid x:Name="oldSpecification" Visibility="Collapsed" ToolTip="This is an old specification method." Margin="-10">
             <Rectangle RadiusX="10" RadiusY="20" StrokeThickness="8" Fill="{StaticResource OldSpecificationFill}"/>
             <Rectangle Stroke="{StaticResource OldSpecificationStroke}" RadiusX="10" RadiusY="20" StrokeThickness="8"/>
             <Label Content="Old specifications" HorizontalAlignment="Left" VerticalAlignment="Top" FontSize="30" Foreground="{StaticResource OldSpecificationForeground}" FontWeight="Bold" />
         </Grid>
-        <Grid x:Name="errorType" Visibility="Collapsed" ToolTip="No definition for this method found.">
+        <Grid x:Name="errorType" Visibility="Collapsed" ToolTip="No definition for this method found." Margin="-10">
             <Rectangle RadiusX="10" RadiusY="20" StrokeThickness="8" Fill="{StaticResource ErrorNodeFill}"/>
             <Rectangle Stroke="{StaticResource ErrorNodeStroke}" RadiusX="10" RadiusY="20" StrokeThickness="8"/>
-            <Label Content="No definition" HorizontalAlignment="Left" VerticalAlignment="Top" FontSize="30" Foreground="{StaticResource ErrorNodeForeground}" FontWeight="Bold" />
-            <Label Name="ErrorNodeName" HorizontalAlignment="Center" VerticalAlignment="Top" Foreground="{StaticResource ErrorNodeNameForeground}"/>
         </Grid>
         <StackPanel x:Name="MainPanel" HorizontalAlignment="Center" VerticalAlignment="Center">
             <BaseControls:RootConnector x:Name="LinkConnectorControl" HorizontalAlignment="Right" />
+            <Label x:Name="errorText" Content="No definition" Visibility="Collapsed" HorizontalAlignment="Left" VerticalAlignment="Top" FontSize="30" Foreground="{StaticResource ErrorNodeForeground}" FontWeight="Bold" />
         </StackPanel>
     </Grid>
 </UserControl>

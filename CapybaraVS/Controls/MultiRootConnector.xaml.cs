@@ -768,13 +768,8 @@ namespace CapyCSS.Controls
                     // 存在しないメソッド定義
 
                     errorType.Visibility = Visibility.Visible;
-                    LinkConnectorControl.Visibility = Visibility.Collapsed;
-
-                    string errorNodeName = AssetFuncType.TrimEnd('#');
-                    var errorNodeNames = errorNodeName.Split('.');
-                    ErrorNodeName.Content = errorNodeNames[errorNodeNames.Length - 1];
-                    ErrorNodeName.ToolTip = errorNodeName;
-                    CommandCanvasList.ErrorLog += "[No definition] " + errorNodeName + Environment.NewLine;
+                    errorText.Visibility = Visibility.Visible;
+                    CommandCanvasList.ErrorLog += "[No definition] " + AssetFuncType + Environment.NewLine;
                     return;
                 }
                 AssetFuncType = methodDef.AssetCode;    // 正しいメソッド定義にリセットする
