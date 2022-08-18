@@ -1842,16 +1842,24 @@ namespace CapyCSS.Controls
         /// <summary>
         /// システムエラーを出力します。
         /// </summary>
-        public static void ShowSystemErrorLog()
+        public static void ShowSystemErrorLog(string title = null)
         {
             if (ErrorLog.Length != 0)
             {
                 OutputWindow outputWindow = new OutputWindow();
-                outputWindow.Title = "SystemError";
+                if (title is null)
+                {
+                    outputWindow.Title = $"System Error";
+                }
+                else
+                {
+                    outputWindow.Title = $"System Error[{title}]";
+                }
                 outputWindow.Owner = CommandCanvasList.OwnerWindow;
                 outputWindow.Show();
 
                 outputWindow.AddBindText = ErrorLog;
+                ErrorLog = "";
             }
         }
 

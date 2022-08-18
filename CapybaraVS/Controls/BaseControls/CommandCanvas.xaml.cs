@@ -946,6 +946,7 @@ namespace CapyCSS.Controls.BaseControls
                         CommandCanvasControl.IsAutoExit = false;
                     }
                     afterAction?.Invoke();
+                    CommandCanvasList.ShowSystemErrorLog(System.IO.Path.GetFileName(path));
 
                 }), DispatcherPriority.SystemIdle);
             }), DispatcherPriority.ApplicationIdle);

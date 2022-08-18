@@ -75,6 +75,13 @@
             <SolidColorBrush x:Key="BorderBrush" Color="#FF565656"/>
             <SolidColorBrush x:Key="NormalFontBrush" Color="White"/>
             <SolidColorBrush x:Key="LinkedFontBrush" Color="Blue"/>
+            <SolidColorBrush x:Key="OldSpecificationForeground" Color="#FFDA8115"/>
+            <SolidColorBrush x:Key="OldSpecificationStroke" Color="#FFE2B61E"/>
+            <SolidColorBrush x:Key="OldSpecificationFill" Color="#4CD89431"/>
+            <SolidColorBrush x:Key="ErrorNodeNameForeground" Color="White"/>
+            <SolidColorBrush x:Key="ErrorNodeForeground" Color="Red"/>
+            <SolidColorBrush x:Key="ErrorNodeStroke" Color="#FF9C402B"/>
+            <SolidColorBrush x:Key="ErrorNodeFill" Color="#4CD86731"/>
         </ResourceDictionary>
     </Application.Resources>
 </Application>

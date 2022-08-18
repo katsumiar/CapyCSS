@@ -664,7 +664,9 @@ namespace CapyCSS.Controls
                 return;
 
             if (AssetType == FunctionType.ConnectorType)
+            {
                 MakeMultiRootConnector();
+            }
 
             if (AssetType == FunctionType.LiteralType)
             {
@@ -673,7 +675,9 @@ namespace CapyCSS.Controls
             }
 
             if (AssetType == FunctionType.FuncType)
+            {
                 MakeFunctionType();
+            }
         }
 
         /// <summary>
@@ -753,28 +757,35 @@ namespace CapyCSS.Controls
 
         private void MakeFunctionType()
         {
-            IFuncAssetDef asset = AssetFunctionList.FirstOrDefault(m => m.AssetCode == AssetFuncType);
-            if (asset is null)
+            IFuncAssetDef methodDef = AssetFunctionList.FirstOrDefault(m => m.AssetCode == AssetFuncType);
+            if (methodDef is null)
             {
-                // 恐らく古い形式のアセットコード
+                // メソッド定義が見つからない
 
-                asset = AssetFunctionList.FirstOrDefault(m => m.AssetCode.Contains(AssetFuncType));
-                if (asset is null)
+                methodDef = AssetFunctionList.FirstOrDefault(m => m.AssetCode.Contains(AssetFuncType));
+                if (methodDef is null)
                 {
-                    // 存在しないアセットコード
+                    // 存在しないメソッド定義
 
-                    Console.WriteLine("Implement Error: " + AssetFuncType);
+                    errorType.Visibility = Visibility.Visible;
+                    LinkConnectorControl.Visibility = Visibility.Collapsed;
+
+                    string errorNodeName = AssetFuncType.TrimEnd('#');
+                    var errorNodeNames = errorNodeName.Split('.');
+                    ErrorNodeName.Content = errorNodeNames[errorNodeNames.Length - 1];
+                    ErrorNodeName.ToolTip = errorNodeName;
+                    CommandCanvasList.ErrorLog += "[No definition] " + errorNodeName + Environment.NewLine;
                     return;
                 }
-                AssetFuncType = asset.AssetCode;    // 正しいアセットコードにリセットする
+                AssetFuncType = methodDef.AssetCode;    // 正しいメソッド定義にリセットする
             }
-            if (asset != null)
+            if (methodDef != null)
             {
                 if (IsReBuildMode)
                 {
                     // スレッドとの絡みでノード間の接続が面倒になっている……
 
-                    if (!asset.ImplAsset(this, IsReBuildMode))
+                    if (!methodDef.ImplAsset(this, IsReBuildMode))
                     {
                         // 失敗かキャンセル
 
@@ -787,7 +798,7 @@ namespace CapyCSS.Controls
                     Dispatcher.BeginInvoke(
                         new Action(() =>
                             {
-                                if (!asset.ImplAsset(this, IsReBuildMode))
+                                if (!methodDef.ImplAsset(this, IsReBuildMode))
                                 {
                                     // 失敗かキャンセル
 
