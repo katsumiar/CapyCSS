@@ -493,7 +493,7 @@ namespace CapyCSS.Controls
         public void AddNewCbsFile()
         {
             // プロジェクトディレクトリ（カレントディレクトリ）にファイルを作成する。
-            string path = CommandCanvasList.ShowSaveDialog(CommandCanvasList.CBS_FILTER, Environment.CurrentDirectory, true);
+            string path = CommandCanvasList.ShowSaveDialog(CapyCSS.Language.Instance["Help:SYSTEM_SelectAddScriptFile"], CommandCanvasList.CBS_FILTER, Environment.CurrentDirectory, true);
             if (path is null)
             {
                 return;

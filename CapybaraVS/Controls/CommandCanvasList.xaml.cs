@@ -648,7 +648,7 @@ namespace CapyCSS.Controls
             string path;
             if (isShowSaveDialog)
             {
-                path = ShowSaveDialog(CBS_FILTER, commandCanvas.OpenFileName, true);
+                path = ShowSaveDialog(CapyCSS.Language.Instance["Help:SYSTEM_SelectSaveScriptFile"], CBS_FILTER, commandCanvas.OpenFileName, true);
 
                 if (path is null)
                 {
@@ -693,7 +693,7 @@ namespace CapyCSS.Controls
                 return;
             }
 
-            string path = ShowSaveDialog(CBS_FILTER, commandCanvas.OpenFileName, true);
+            string path = ShowSaveDialog(CapyCSS.Language.Instance["Help:SYSTEM_SelectSaveScriptFile"], CBS_FILTER, commandCanvas.OpenFileName, true);
             if (path is null)
             {
                 return;
@@ -712,7 +712,7 @@ namespace CapyCSS.Controls
         /// <param name="addExtention">拡張子の自動付加（filters が１件だけであること）</param>
         /// <param name="currentPath">カレントパス</param>
         /// <returns>保存するCBSファイルのパス</returns>
-        public static string ShowSaveDialog(IEnumerable<Tuple<string, string>> filters, string currentPath = null, bool addExtention = false)
+        public static string ShowSaveDialog(string title, IEnumerable<Tuple<string, string>> filters, string currentPath = null, bool addExtention = false)
         {
             string fileName = null;
             string currentDirectory = null;
@@ -743,7 +743,7 @@ namespace CapyCSS.Controls
             }
             using (var dialog = new CommonOpenFileDialog(fileName)
             {
-                Title = CapyCSS.Language.Instance["Help:SYSTEM_SelectDirectory"],
+                Title = title,
                 InitialDirectory = currentDirectory,
                 DefaultDirectory = GetSamplePath(),
                 EnsureValidNames = true,
