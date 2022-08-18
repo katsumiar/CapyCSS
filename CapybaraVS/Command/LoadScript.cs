@@ -9,6 +9,9 @@ using System.Windows.Input;
 
 namespace CapyCSS.Command
 {
+    /// <summary>
+    /// スクリプトファイルを読み込みます。
+    /// </summary>
     internal class LoadScript
         : IMenuCommand
     {
@@ -49,6 +52,11 @@ namespace CapyCSS.Command
             {
                 return false;
             }
+            var addCbsFile = AddCbsFile.Create();
+            if (addCbsFile.CanExecute(null))
+            {
+                return true;
+            }
             return !self.IsEmptyScriptCanvas && self.IsScriptRunningMask;
         }
 
@@ -57,7 +65,12 @@ namespace CapyCSS.Command
             var self = CommandCanvasList.Instance;
             if (self != null)
             {
-                self.LoadCbsFile();
+                if (!Command.AddCbsFile.TryExecute())
+                {
+                    // プロジェクトが開かれていないので、プロジェクト外でスクリプトを読み込む
+
+                    self.LoadCbsFile();
+                }
                 self.CurrentScriptCanvas?.CloseCommandWindow();
             }
         }

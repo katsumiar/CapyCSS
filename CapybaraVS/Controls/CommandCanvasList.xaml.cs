@@ -467,14 +467,6 @@ namespace CapyCSS.Controls
         }
 
         /// <summary>
-        /// スクリプト追加ボタンを非表示にします。
-        /// </summary>
-        public static void HideAddScriptButton()
-        {
-            Instance.hideAddScriptButton();
-        }
-
-        /// <summary>
         /// カーソルがロックされているか判定します。
         /// </summary>
         /// <returns>true==ロックされている</returns>
@@ -1550,7 +1542,7 @@ namespace CapyCSS.Controls
         }
 
         /// <summary>
-        /// スクリプトキャンバスが存在するかを確認します。
+        /// スクリプトキャンバスが空であることを確認します。
         /// </summary>
         public bool IsEmptyScriptCanvas => Tab.Items.Count == 0;
 

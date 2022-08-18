@@ -351,7 +351,6 @@ namespace CapyCSS.Controls
             }
 
             _SaveProject();
-            CommandCanvasList.HideAddScriptButton();
         }
 
         /// <summary>
@@ -385,6 +384,7 @@ namespace CapyCSS.Controls
             if (IsOpenProject)
             {
                 // 新しい実行ファイルでプロジェクトを読み込む
+
                 ProcessStartInfo pInfo = new ProcessStartInfo();
                 pInfo.FileName = CommandCanvasList.DOTNET;
                 pInfo.Arguments = Assembly.GetEntryAssembly().Location + " " + path;
@@ -393,6 +393,8 @@ namespace CapyCSS.Controls
             else
             {
                 // プロジェクトを読み込む
+
+                CommandCanvasList.ClearScriptCanvas();
                 LoadProject(path);
             }
         }
@@ -404,12 +406,10 @@ namespace CapyCSS.Controls
         /// <param name="path"></param>
         public void LoadProject(string path)
         {
-            CommandCanvasList.ClearScriptCanvas();
             SetProjectName(path);   // 相対ディレクトリの基準がセットされるので readProjectFile の前に処理する
             readProjectFile(path);
             UpdateCommandEnable();
             ChangedFlag = false;
-            CommandCanvasList.HideAddScriptButton();
         }
 
         private void readProjectFile(string path)

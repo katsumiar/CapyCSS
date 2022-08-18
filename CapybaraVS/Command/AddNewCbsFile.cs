@@ -9,6 +9,9 @@ using System.Windows.Input;
 
 namespace CapyCSS.Command
 {
+    /// <summary>
+    /// プロジェクトにスクリプトを追加します。
+    /// </summary>
     internal class AddNewCbsFile
         : IMenuCommand
     {

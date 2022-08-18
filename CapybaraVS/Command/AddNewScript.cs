@@ -9,6 +9,9 @@ using System.Windows.Input;
 
 namespace CapyCSS.Command
 {
+    /// <summary>
+    /// スクリプトを追加します。
+    /// </summary>
     internal class AddNewScript
         : IMenuCommand
     {
@@ -44,7 +47,17 @@ namespace CapyCSS.Command
 
         public bool CanExecute(object parameter)
         {
-            return CommandCanvasList.Instance.IsScriptRunningMask;
+            var self = CommandCanvasList.Instance;
+            if (self is null)
+            {
+                return false;
+            }
+            var addNewCbsFile = AddNewCbsFile.Create();
+            if (addNewCbsFile.CanExecute(null))
+            {
+                return true;
+            }
+            return self.IsScriptRunningMask;
         }
 
         public void Execute(object parameter)
@@ -52,7 +65,13 @@ namespace CapyCSS.Command
             var self = CommandCanvasList.Instance;
             if (self != null)
             {
-                self.AddNewContents();
+                if (!Command.AddNewCbsFile.TryExecute())
+                {
+                    // プロジェクトが開かれていないので、プロジェクト外でスクリプトを追加
+
+                    self.AddNewContents();
+                }
+
                 self.CurrentScriptCanvas?.CloseCommandWindow();
             }
         }
