@@ -231,7 +231,6 @@ namespace CapyCSS.Controls
                 commandGroup.AddChild(new TreeMenuNode(Command.NewProject.Create()));
                 commandGroup.AddChild(new TreeMenuNode(Command.LoadProject.Create()));
                 commandGroup.AddChild(new TreeMenuNode(Command.SaveProject.Create()));
-                commandGroup.AddChild(new TreeMenuNode(Command.ClearProject.Create()));
                 commandGroup.AddChild(new TreeMenuNode(Command.AddNewCbsFile.Create()));
                 commandGroup.AddChild(new TreeMenuNode(Command.AddCbsFile.Create()));
                 commandGroup.AddChild(new TreeMenuNode(Command.ImportDLL.Create()));

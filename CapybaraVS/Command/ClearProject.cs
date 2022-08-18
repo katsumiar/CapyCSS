@@ -9,6 +9,10 @@ using System.Windows.Input;
 
 namespace CapyCSS.Command
 {
+    /// <summary>
+    /// プロジェクトをクリアします。
+    /// ※DLLとの絡みから本機能は使わない。
+    /// </summary>
     internal class ClearProject
         : IMenuCommand
     {
