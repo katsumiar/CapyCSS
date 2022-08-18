@@ -9,6 +9,9 @@ using System.Windows.Input;
 
 namespace CapyCSS.Command
 {
+    /// <summary>
+    /// マウス情報の表示を切り替えます。
+    /// </summary>
     internal class ToggleMouseInfo
         : IMenuCommand
     {

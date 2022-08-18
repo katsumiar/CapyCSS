@@ -9,6 +9,9 @@ using System.Windows.Input;
 
 namespace CapyCSS.Command
 {
+    /// <summary>
+    /// スクリプトが画面左上端に来るように表示位置を調整します。
+    /// </summary>
     internal class AdjustScriptLeftTopPos
         : IMenuCommand
     {

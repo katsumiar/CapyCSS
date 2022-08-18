@@ -9,6 +9,9 @@ using System.Windows.Input;
 
 namespace CapyCSS.Command
 {
+    /// <summary>
+    /// プロジェクトにDLLを取り込みます。
+    /// </summary>
     internal class ImportDLL
         : IMenuCommand
     {

@@ -9,6 +9,9 @@ using System.Windows.Input;
 
 namespace CapyCSS.Command
 {
+    /// <summary>
+    /// スクリプトを保存します。
+    /// </summary>
     internal class SaveScript
         : IMenuCommand
     {

@@ -9,6 +9,9 @@ using System.Windows.Input;
 
 namespace CapyCSS.Command
 {
+    /// <summary>
+    /// スクリプトが画面に収まるように表示位置とスケールを調整します。
+    /// </summary>
     internal class AdjustScriptToScreen
         : IMenuCommand
     {

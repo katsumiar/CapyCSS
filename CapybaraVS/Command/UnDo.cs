@@ -9,6 +9,9 @@ using System.Windows.Input;
 
 namespace CapyCSS.Command
 {
+    /// <summary>
+    /// アンドゥします。
+    /// </summary>
     internal class UnDo
         : IMenuCommand
     {

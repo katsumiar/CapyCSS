@@ -9,6 +9,9 @@ using System.Windows.Input;
 
 namespace CapyCSS.Command
 {
+    /// <summary>
+    /// リドゥします。
+    /// </summary>
     internal class ReDo
         : IMenuCommand
     {

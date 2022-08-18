@@ -10,6 +10,9 @@ using System.Windows.Input;
 
 namespace CapyCSS.Command
 {
+    /// <summary>
+    /// コマンドウインドウを呼び出します。
+    /// </summary>
     internal class ShowCommandMenu
         : IMenuCommand
     {

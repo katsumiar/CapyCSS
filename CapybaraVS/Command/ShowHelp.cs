@@ -9,6 +9,9 @@ using System.Windows.Input;
 
 namespace CapyCSS.Command
 {
+    /// <summary>
+    /// ヘルプを呼び出します。
+    /// </summary>
     internal class ShowHelp
         : IMenuCommand
     {

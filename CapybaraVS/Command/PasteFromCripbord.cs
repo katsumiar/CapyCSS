@@ -9,6 +9,9 @@ using System.Windows.Input;
 
 namespace CapyCSS.Command
 {
+    /// <summary>
+    /// クリップボードからペーストします。
+    /// </summary>
     internal class PasteFromCripbord
         : IMenuCommand
     {

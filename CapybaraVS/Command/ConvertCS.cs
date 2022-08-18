@@ -9,6 +9,9 @@ using System.Windows.Input;
 
 namespace CapyCSS.Command
 {
+    /// <summary>
+    /// スクリプトをc#言語に変換します。
+    /// </summary>
     internal class ConvertCS
         : IMenuCommand
     {

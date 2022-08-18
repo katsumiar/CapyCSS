@@ -9,6 +9,9 @@ using System.Windows.Input;
 
 namespace CapyCSS.Command
 {
+    /// <summary>
+    /// プロジェクトを読み込みます。
+    /// </summary>
     internal class LoadProject
         : IMenuCommand
     {

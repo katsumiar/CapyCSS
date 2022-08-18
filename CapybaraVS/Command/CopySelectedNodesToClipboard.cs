@@ -9,6 +9,9 @@ using System.Windows.Input;
 
 namespace CapyCSS.Command
 {
+    /// <summary>
+    /// 選択されているスクリプトをクリップボードにコピーします。
+    /// </summary>
     internal class CopySelectedNodesToClipboard
         : IMenuCommand
     {

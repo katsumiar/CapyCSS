@@ -9,6 +9,9 @@ using System.Windows.Input;
 
 namespace CapyCSS.Command
 {
+    /// <summary>
+    /// カレントのスクリプトをクリアします。
+    /// </summary>
     internal class ClearCanvas
         : IMenuCommand
     {

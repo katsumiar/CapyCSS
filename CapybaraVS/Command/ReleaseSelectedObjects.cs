@@ -9,6 +9,9 @@ using System.Windows.Input;
 
 namespace CapyCSS.Command
 {
+    /// <summary>
+    /// スクリプトの選択状態を解除します。
+    /// </summary>
     internal class ReleaseSelectedObjects
         : IMenuCommand
     {

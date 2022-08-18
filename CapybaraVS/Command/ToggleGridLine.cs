@@ -9,6 +9,9 @@ using System.Windows.Input;
 
 namespace CapyCSS.Command
 {
+    /// <summary>
+    /// グリッドラインの表示を切り替えます。
+    /// </summary>
     internal class ToggleGridLine
         : IMenuCommand
     {

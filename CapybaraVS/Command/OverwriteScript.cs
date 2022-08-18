@@ -9,6 +9,9 @@ using System.Windows.Input;
 
 namespace CapyCSS.Command
 {
+    /// <summary>
+    /// スクリプトファイルを上書きします。
+    /// </summary>
     internal class OverwriteScript
         : IMenuCommand
     {
