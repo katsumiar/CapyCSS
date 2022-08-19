@@ -30,8 +30,8 @@ namespace CapyCSS
             InitializeComponent();
 
             Title = MainWindow.AppName;
-            Info.Text = MainWindow.AppName + Environment.NewLine;
-            Info.Text += "Version " + MainWindow.AppVersion + Environment.NewLine;
+            Info.Text = MainWindow.AppName;
+            Info.Text += " Version " + MainWindow.AppVersion + Environment.NewLine;
 
             Info.Text += "© 2022 Aradono Katsumi" + Environment.NewLine;
             Info.Text += "All rights reserved." + Environment.NewLine;
@@ -42,6 +42,7 @@ namespace CapyCSS
             Info.Text += "  MahApps.Metro.IconPacks 4.11.0" + Environment.NewLine;
             Info.Text += "  MaterialDesignThemes 4.5.0" + Environment.NewLine;
             Info.Text += "  System.Drawing.Common 6.0.0" + Environment.NewLine;
+            Info.Text += "  Microsoft-WindowsAPICodePack-Shell 1.1.4" + Environment.NewLine;
 
             Info.Text += Environment.NewLine;
             Info.Text += "Shortcut Key:" + Environment.NewLine;

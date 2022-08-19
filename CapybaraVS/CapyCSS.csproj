@@ -310,7 +310,7 @@
     <None Update="Sample\Web.css">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="Windows-API-Code-Pack-1.1.LICENSE">
+    <None Update="Microsoft-Windows-API-Code-Pack-Shell.LICENSE">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>
