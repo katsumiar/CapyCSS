@@ -16,13 +16,13 @@ namespace CapyCSS.Script.Lib
     {
         public const string LIB_Script_NAME = "Script.Message";
 
-        [ScriptMethod(path: LIB_Script_NAME)]
+        [ScriptMethod(path: LIB_Script_NAME, methodName: $"{CbSTUtils.SCRIPT_ONLY} {nameof(ShowMessage)}")]
         public static void ShowMessage(string title, string contents)
         {
             ControlTools.ShowSelectMessage(title, contents);
         }
 
-        [ScriptMethod(path: LIB_Script_NAME)]
+        [ScriptMethod(path: LIB_Script_NAME, methodName: $"{CbSTUtils.SCRIPT_ONLY} {nameof(ShowConfirmMessage)}")]
         public static MessageBoxResult ShowConfirmMessage(string title, string contents)
         {
             return ControlTools.ShowSelectMessage(title, contents, MessageBoxButton.OKCancel);

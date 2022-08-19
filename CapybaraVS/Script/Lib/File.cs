@@ -14,10 +14,10 @@ namespace CapyCSS.Script.Lib
     [ScriptClass]
     public static class FileLib
     {
-        private const string LIB_NAME = "File";
+        private const string LIB_NAME = "File.Browse";
 
         //------------------------------------------------------------------
-        [ScriptMethod(path: LIB_NAME)]
+        [ScriptMethod(path: LIB_NAME, methodName: $"{CbSTUtils.SCRIPT_ONLY} {nameof(BrowseFile)}")]
         public static string BrowseFile(string title, string currentDir, string filterName = "all", string filterExt = "*.*")
         {
             return BrowseFile(
@@ -30,7 +30,7 @@ namespace CapyCSS.Script.Lib
                 );
         }
 
-        [ScriptMethod(path: LIB_NAME)]
+        [ScriptMethod(path: LIB_NAME, methodName: $"{CbSTUtils.SCRIPT_ONLY} {nameof(BrowseFile)}")]
         public static string BrowseFile(string title, string currentDir, IEnumerable<Tuple<string, string>> filters = null)
         {
             if (string.IsNullOrEmpty(currentDir))
@@ -61,7 +61,7 @@ namespace CapyCSS.Script.Lib
         }
 
         //------------------------------------------------------------------
-        [ScriptMethod(path: LIB_NAME)]
+        [ScriptMethod(path: LIB_NAME, methodName: $"{CbSTUtils.SCRIPT_ONLY} {nameof(BrowseFolder)}")]
         public static string BrowseFolder(string title, string currentDir)
         {
             if (string.IsNullOrEmpty(currentDir))
