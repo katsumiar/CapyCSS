@@ -29,7 +29,7 @@ namespace CapyCSS.Controls.BaseControls
         // 過去のインポートの再取り込み時の識別用文字列
         public const string HEADER_NAMESPACE = "namespace ";
 
-        public ModuleControler(ApiImporter apiImporter, string installDllDirectory, string installNuGetDirectory)
+        public ModuleControler(ApiImporter apiImporter)
         {
             ApiImporter = apiImporter;
             InitializeComponent();

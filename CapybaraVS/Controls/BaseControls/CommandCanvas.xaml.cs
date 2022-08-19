@@ -707,11 +707,7 @@ namespace CapyCSS.Controls.BaseControls
 
         private void MakeModuleControler(IEnumerable<ShortCutCommand> shortCutCommands)
         {
-            moduleControler = new ModuleControler(
-                ApiImporter,
-                CommandCanvasControl.DllDir,
-                CommandCanvasControl.PackageDir
-            );
+            moduleControler = new ModuleControler(ApiImporter);
 
             var stackPanel = new StackPanel();
             stackPanel.Orientation = Orientation.Vertical;

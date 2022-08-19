@@ -149,8 +149,6 @@ namespace CapyCSS.Controls
 
         public static string CAPYCSS_WORK_PATH = null;
         public static string CAPYCSS_INFO_PATH = @"CapyCSS.xml";
-        public static string CAPYCSS_DLL_DIR_PATH = @"dll"; // DLL保存用ディレクトリ
-        public static string CAPYCSS_PACKAGE_DIR_PATH = @"package"; // NuGet保存用ディレクトリ
 
         public bool IsAutoExecute = false;   // スクリプトの自動実行
         public bool IsAutoExit = false;      // スクリプトの自動実行後自動終了
@@ -160,10 +158,6 @@ namespace CapyCSS.Controls
         public Action<string> SetTitleFunc = null;
 
         public static Action CallClosing = null;
-
-        public string DllDir = null;
-
-        public string PackageDir = null;
 
         private List<string> scriptWorkRecentList = new List<string>();
 
@@ -430,19 +424,7 @@ namespace CapyCSS.Controls
 
             CAPYCSS_WORK_PATH = path;
             CAPYCSS_INFO_PATH = Path.Combine(CAPYCSS_WORK_PATH, CAPYCSS_INFO_PATH);
-            string dllDir = Path.Combine(CAPYCSS_WORK_PATH, CAPYCSS_DLL_DIR_PATH);
-            string packageDir = Path.Combine(CAPYCSS_WORK_PATH, CAPYCSS_PACKAGE_DIR_PATH);
-            if (!Directory.Exists(dllDir))
-            {
-                Directory.CreateDirectory(dllDir);
-            }
-            if (!Directory.Exists(packageDir))
-            {
-                Directory.CreateDirectory(packageDir);
-            }
 
-            DllDir = dllDir;
-            PackageDir = packageDir;
             CallClosing = closingFunc;
             SetTitleFunc(null);
             if (autoLoadFile != null)
