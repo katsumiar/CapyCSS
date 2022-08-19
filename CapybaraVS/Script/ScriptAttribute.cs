@@ -41,59 +41,6 @@ namespace CapyCSS.Script
         }
 
         /// <summary>
-        /// NuGetをでインストールしてメソッドを取り込み、ノード化します。
-        /// </summary>
-        /// <param name="OwnerCommandCanvas">オーナーキャンバス</param>
-        /// <param name="node">登録先のノード</param>
-        /// <param name="packageDir"></param>
-        /// <param name="packageName">パッケージ名</param>
-        /// <returns>インポートしたパッケージ名</returns>
-        public static string ImportScriptMethodsFromNuGet(
-            CommandCanvas OwnerCommandCanvas,
-            TreeMenuNode node,
-            string packageDir,
-            string packageName)
-        {
-            string pkgId;
-            string ver = "(" + packageName.Split("(")[1];
-            Console.WriteLine($"NuGet {packageName}.");
-#if !DEBUG_IMPORT
-            try
-#endif
-            {
-                IEnumerable<NugetClient.PackageInfo> packageList = CapyCSS.Script.NugetClient.install(packageDir, packageName, out pkgId);
-                if (packageList is null)
-                {
-                    return null;
-                }
-                foreach (var package in packageList)
-                {
-#if true
-                    ScriptImplement.ImportScriptMethodsFromDllFile(OwnerCommandCanvas, node, package.Path, null, $"{package.Name}({package.Version})", packageName);
-#else
-                    if (package == packageList.Last())
-                    {
-                        ScriptImplement.ImportScriptMethodsFromDllFile(OwnerCommandCanvas, node, package.Path, null, $"{package.Name}({package.Version})");
-                    }
-                    else
-                    {
-                        Assembly.LoadFrom(package.Path);
-                        CommandCanvasList.OutPut.OutLine(nameof(ScriptImplement), $"imported {package.Name}({package.Version}) package.");
-                    }
-#endif
-                }
-            }
-#if !DEBUG_IMPORT
-            catch (WebException)
-            {
-                Console.WriteLine($"NG.");
-                return null;
-            }
-#endif
-            return ModuleControler.HEADER_NUGET + pkgId + ver;
-        }
-
-        /// <summary>
         /// 本アプリ内のメソッドを取り込み、ノード化します。
         /// </summary>
         /// <param name="OwnerCommandCanvas">オーナーキャンバス</param>
@@ -111,21 +58,6 @@ namespace CapyCSS.Script
             {
                 Assembly assembly = Assembly.Load(dllName);
                 GetApiFromAssemblyForScriptMethodAttribute(OwnerCommandCanvas, node, assembly);
-            }
-        }
-
-        /// <summary>
-        /// 自動追加DLLを読み込み、ノード化します。
-        /// </summary>
-        /// <param name="OwnerCommandCanvas">オーナーキャンバス</param>
-        /// <param name="node">登録先のノード</param>
-        public static void ImportAutoDll(
-            CommandCanvas OwnerCommandCanvas,
-            TreeMenuNode node)
-        {
-            foreach (var dllPath in CbSTUtils.AutoImportDllList)
-            {
-                ScriptImplement.ImportScriptMethodsFromDllFile(OwnerCommandCanvas, node, dllPath, null);
             }
         }
 
@@ -169,95 +101,6 @@ namespace CapyCSS.Script
             }
             Console.WriteLine($"imported namespace {name}");
             return outputName;
-        }
-
-        /// <summary>
-        /// DLLファイルを読み込んでメソッドをスクリプトで使えるように取り込みます。
-        /// </summary>
-        /// <param name="OwnerCommandCanvas">オーナーキャンバス</param>
-        /// <param name="importDestNode">登録先のノード</param>
-        /// <param name="path"></param>
-        /// <param name="importNameList">取り込む名前リスト</param>
-        /// <param name="moduleName">モジュール名（NuGet用）</param>
-        /// <param name="ownerModuleName">親モジュール名（NuGet用）</param>
-        /// <returns>インポートしたモジュール名</returns>
-        public static string ImportScriptMethodsFromDllFile(
-            CommandCanvas OwnerCommandCanvas,
-            TreeMenuNode importDestNode,
-            string path,
-            ICollection<string> importNameList,
-            string moduleName = null,
-            string ownerModuleName = null)
-        {
-#if !DEBUG_IMPORT
-            try
-#endif
-            {
-                var asm = Assembly.LoadFrom(path);
-                Module mod = asm.GetModule(path);
-                string name = Path.GetFileName(path);
-
-                string methodGroupName;
-                if (moduleName is null)
-                {
-                    // DLL
-
-                    methodGroupName = ModuleControler.HEADER_DLL + name;
-                }
-                else
-                {
-                    // NuGet
-
-                    methodGroupName = ModuleControler.HEADER_DLL + moduleName + $":{ownerModuleName}";
-                }
-                ImportingName = methodGroupName;
-
-                ICollection<AutoImplementFunctionInfo> addMethodInfos = new List<AutoImplementFunctionInfo>();
-                ICollection<Type> addTypeInfos = new List<Type>();
-                ImportScriptMethods(
-                    OwnerCommandCanvas,
-                    (info) => addMethodInfos.Add(info),
-                    asm,
-                    mod,
-                    importNameList,
-                    (t) => addTypeInfos.Add(t)
-                    );
-                var methodGroup = ImplementAsset.CreateGroup(importDestNode, methodGroupName);
-                foreach (var methodInfo in addMethodInfos)
-                {
-                    // スレッド上で処理できないのでここで登録する
-
-                    CreateMethodNode(OwnerCommandCanvas, methodGroup, methodInfo);
-                }
-                foreach (var typeInfo in addTypeInfos)
-                {
-                    // スレッド上で処理できないのでここで登録する
-
-                    OwnerCommandCanvas.AddImportTypeMenu(typeInfo);
-                }
-                if (moduleName is null)
-                {
-                    // DLL
-
-                    Console.WriteLine($"imported {name}");
-                    CommandCanvasList.OutPut.Flush();
-                }
-                else
-                {
-                    // NuGet
-
-                    Console.WriteLine($"imported {moduleName}");
-                    CommandCanvasList.OutPut.Flush();
-                }
-                return ModuleControler.HEADER_DLL + name;
-            }
-#if !DEBUG_IMPORT
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Import Dll Error: {ex.Message}.");
-            }
-            return null;
-#endif
         }
 
         /// <summary>

@@ -109,14 +109,6 @@ namespace CapyCSS.Script
 
                 ScriptImplement.ImportScriptMethods(ownerCommandCanvas, DotNet);
             }
-
-            {
-                if (ImportGroupNode is null)
-                {
-                    ImportGroupNode = CreateGroup(ProgramNode, MENU_TITLE_IMPORT);
-                }
-                ScriptImplement.ImportAutoDll(ownerCommandCanvas, ImportGroupNode);
-            }
         }
 
         /// <summary>
@@ -147,29 +139,6 @@ namespace CapyCSS.Script
         }
 
         /// <summary>
-        /// スクリプトにDLLをインポートします。
-        /// </summary>
-        /// <param name="path">DLLファイルのパス</param>
-        /// <param name="ignoreClassList">拒否するクラスのリスト</param>
-        public void ImportDll(string path, List<string> ignoreClassList = null)
-        {
-            if (DllModulePathList.Contains(path))
-            {
-                return;
-            }
-            if (ImportGroupNode is null)
-            {
-                ImportGroupNode = CreateGroup(ProgramNode, MENU_TITLE_IMPORT);
-            }
-            string name = ScriptImplement.ImportScriptMethodsFromDllFile(OwnerCommandCanvas, ImportGroupNode, path, ignoreClassList);
-            if (name != null)
-            {
-                ModulueNameList.Add(name);  // インポートリストに表示
-                DllModulePathList.Add(path);
-            }
-        }
-
-        /// <summary>
         /// スクリプトにネームスペースをインポートします。
         /// </summary>
         /// <param name="nameSpaceName">ネームスペース名</param>
@@ -195,54 +164,6 @@ namespace CapyCSS.Script
         }
 
         /// <summary>
-        /// スクリプトにNuGetでインポートします。
-        /// </summary>
-        /// <param name="packageDir">パッケージ格納ディレクトリ</param>
-        /// <param name="pkgName">パッケージ名</param>
-        /// <param name="version">バージョン</param>
-        /// <returns>true==成功</returns>
-        public bool ImportNuGet(string packageDir, string pkgName, string version)
-        {
-            return ImportNuGet(packageDir, pkgName + $"({version})");
-        }
-
-        /// <summary>
-        /// スクリプトにNuGetでインポートします。
-        /// </summary>
-        /// <param name="packageDir">パッケージ格納ディレクトリ</param>
-        /// <param name="pkgName">パッケージ名</param>
-        /// <returns>true==成功</returns>
-        public bool ImportNuGet(string packageDir, string pkgName)
-        {
-            if (NuGetModuleList.Contains(pkgName))
-            {
-                return true;
-            }
-            CommandCanvasList.SetOwnerCursor(Cursors.Wait);
-            try
-            {
-                if (ImportGroupNode is null)
-                {
-                    ImportGroupNode = CreateGroup(ProgramNode, MENU_TITLE_IMPORT);
-                }
-                string name = ScriptImplement.ImportScriptMethodsFromNuGet(OwnerCommandCanvas, ImportGroupNode, packageDir, pkgName);
-                if (name != null)
-                {
-                    ModulueNameList.Add(name);  // インポートリストに表示
-                    NuGetModuleList.Add(pkgName);
-                    Console.WriteLine($"NuGet successed.");
-                    return true;
-                }
-                Console.WriteLine($"faild.");
-            }
-            finally
-            {
-                CommandCanvasList.ResetOwnerCursor(Cursors.Wait);
-            }
-            return false;
-        }
-
-        /// <summary>
         /// モジュールの登録を削除します。
         /// </summary>
         public void ClearModule(ICollection<string> importList)
@@ -262,20 +183,6 @@ namespace CapyCSS.Script
                     if (removeList.Count == 0)
                     {
                         break;
-                    }
-                    if (ns.StartsWith(ModuleControler.HEADER_DLL))
-                    {
-                        string name = ns.Substring(ModuleControler.HEADER_DLL.Length);
-                        string path = importList.First(n => n.EndsWith(name));
-                        removeList.Remove(ModuleControler.HEADER_DLL + Path.GetFileName(name));
-                    }
-                    else if (ns.StartsWith(ModuleControler.HEADER_NUGET))
-                    {
-                        string name = ns.Substring(ModuleControler.HEADER_NUGET.Length);
-                        foreach (var path in removeList.FindAll(n => n.EndsWith(name)))
-                        {
-                            removeList.Remove(path);
-                        }
                     }
                     else
                     {
@@ -307,29 +214,6 @@ namespace CapyCSS.Script
 
                         string name = rd.Substring(ModuleControler.HEADER_NAMESPACE.Length);
                         NameSpaceModuleList.Remove(name);
-                    }
-                    else if (rd.StartsWith(ModuleControler.HEADER_DLL) && rd.Contains(':'))
-                    {
-                        // NuGet
-
-                        string name = rd.Substring(rd.IndexOf(':') + 1);
-                        NuGetModuleList.Remove(name);
-                        ModulueNameList.Remove(ModuleControler.HEADER_NUGET + name);
-                        string temp = rd.Substring(ModuleControler.HEADER_DLL.Length);
-                        NugetClient.RemoveLoadedPackage(temp.Substring(0, temp.IndexOf(':')));
-                    }
-                    else if (rd.StartsWith(ModuleControler.HEADER_DLL))
-                    {
-                        // DLL
-
-                        string name = rd.Substring(ModuleControler.HEADER_DLL.Length);
-
-                        if (!CbSTUtils.AutoImportDllList.Contains(name))
-                        {
-                            var path = DllModulePathList.Find(n => n.EndsWith(name));
-                            Debug.Assert(path != null);
-                            DllModulePathList.Remove(path);
-                        }
                     }
                 }
             }

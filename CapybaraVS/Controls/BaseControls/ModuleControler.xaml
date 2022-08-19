@@ -8,16 +8,9 @@
              d:DesignHeight="450" d:DesignWidth="800">
     <Grid Margin="0,0,0,0">
         <StackPanel Margin="0,0,0,4">
-            <ComboBox x:Name="InportList" DropDownOpened="ComboBox_DropDownOpened" SelectionChanged="InstallDllList_SelectionChanged" />
-            <StackPanel x:Name="imputNameSpaceName" Orientation="Horizontal" Visibility="Collapsed">
+            <StackPanel x:Name="imputNameSpaceName" Orientation="Horizontal">
                 <Label Content="NameSpace" />
                 <TextBox x:Name="NameSpaceName" Width="200" Cursor="Arrow" />
-            </StackPanel>
-            <StackPanel x:Name="imputNuGetName" Orientation="Horizontal" Visibility="Collapsed">
-                <Label Content="Package Name" />
-                <TextBox x:Name="PackageName" Width="100" Cursor="Arrow" />
-                <Label Content="Version" />
-                <TextBox x:Name="Version" Width="60" />
             </StackPanel>
             <BaseControls:AddLabel Title="Import" HorizontalAlignment="Left" MouseDown="AddLabel_MouseDown" />
             <ListView x:Name="ImportList" Margin="0,6,0,3">

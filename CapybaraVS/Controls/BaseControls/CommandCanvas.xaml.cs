@@ -107,22 +107,12 @@ namespace CapyCSS.Controls.BaseControls
                 {
                     self.AssetId = AssetId;
                     self._inportNameSpaceModule = ImportNameSpaceModule;
-                    self._inportDllModule = ImportDllModule;
-                    self._inportNuGetModule = ImportNuGetModule;
 
                     {// 不要なモジュールを削除する
                         List<string> importModules = new List<string>();
                         foreach (var module in ImportNameSpaceModule)
                         {
                             importModules.Add(ModuleControler.HEADER_NAMESPACE + module);
-                        }
-                        foreach (var module in ImportDllModule)
-                        {
-                            importModules.Add(ModuleControler.HEADER_DLL + module);
-                        }
-                        foreach (var module in ImportNuGetModule)
-                        {
-                            importModules.Add(ModuleControler.HEADER_NUGET + module);
                         }
 
                         // 基本的なインポートモジュールを追加
@@ -193,8 +183,6 @@ namespace CapyCSS.Controls.BaseControls
                     AssetId = self.AssetId;
                     DataVersion = DATA_VERSION;
                     ImportNameSpaceModule = self.ApiImporter.NameSpaceModuleList;
-                    ImportDllModule = self.ApiImporter.DllModulePathList;
-                    ImportNuGetModule = self.ApiImporter.NuGetModuleList;
                     self.WorkCanvas.AssetXML.WriteAction?.Invoke();
                     WorkCanvas = self.WorkCanvas.AssetXML;
                     self.WorkStack.AssetXML.WriteAction?.Invoke();
@@ -217,8 +205,6 @@ namespace CapyCSS.Controls.BaseControls
             public int DataVersion { get; set; } = 0;
             public BaseWorkCanvas._AssetXML<BaseWorkCanvas> WorkCanvas { get; set; } = null;
             public List<string> ImportNameSpaceModule { get; set; } = null;
-            public List<string> ImportDllModule { get; set; } = null;
-            public List<string> ImportNuGetModule { get; set; } = null;
             public Stack._AssetXML<Stack> WorkStack { get; set; } = null;
             [XmlArrayItem("Asset")]
             public List<Movable._AssetXML<Movable>> WorkCanvasAssetList { get; set; } = null;
@@ -237,10 +223,6 @@ namespace CapyCSS.Controls.BaseControls
                         WorkCanvas = null;
                         ImportNameSpaceModule?.Clear();
                         ImportNameSpaceModule = null;
-                        ImportDllModule?.Clear();
-                        ImportDllModule = null;
-                        ImportNuGetModule?.Clear();
-                        ImportNuGetModule = null;
                         WorkStack?.Dispose();
                         WorkStack = null;
                         CbSTUtils.ForeachDispose(WorkCanvasAssetList);
@@ -293,7 +275,7 @@ namespace CapyCSS.Controls.BaseControls
 
             ClickExitEvent = new Action(() =>
             {
-                CommandMenuWindow.CloseWindow();
+                CloseCommandWindow();
                 CommandCanvasList.SetOwnerCursor(Cursors.Hand);
             });
 
@@ -535,8 +517,6 @@ namespace CapyCSS.Controls.BaseControls
         //----------------------------------------------------------------------
         #region スクリプト内共有
         private List<string> _inportNameSpaceModule = null;
-        private List<string> _inportDllModule = null;
-        private List<string> _inportNuGetModule = null;
         public ApiImporter ApiImporter = null;
         private ModuleControler moduleControler = null;
         public CommandWindow CommandMenuWindow = null;
@@ -649,29 +629,37 @@ namespace CapyCSS.Controls.BaseControls
                     if (CommandCanvasList.IsCursorLock())
                         return; // 処理中は禁止
 
-                    CommandMenuWindow.CloseWindow();
+                    CloseCommandWindow();
 
                     action?.Invoke();
                 }
             );
         }
 
+        /// <summary>
+        /// コマンドウインドウを消します。
+        /// </summary>
+        public void CloseCommandWindow()
+        {
+            CommandMenuWindow?.CloseWindow();
+        }
+
 #endregion
 
         //----------------------------------------------------------------------
-#region アセットリストを実装
+#region 機能を登録
 
         private void MakeCommandMenu(TreeViewCommand treeViewCommand)
         {
             // コマンドを追加
             {
                 var commandNode = new TreeMenuNode(TreeMenuNode.NodeType.GROUP, "Command");
-                commandNode.AddChild(new TreeMenuNode(TreeMenuNode.NodeType.NORMAL, "Clear(Ctrl+Shift+N)", CreateImmediateExecutionCanvasCommand(() => ClearWorkCanvasWithConfirmation())));
-                commandNode.AddChild(new TreeMenuNode(TreeMenuNode.NodeType.NORMAL, "Toggle ShowMouseInfo", CreateImmediateExecutionCanvasCommand(() => ScriptWorkCanvas.EnableInfo = ScriptWorkCanvas.EnableInfo ? false : true)));
-                commandNode.AddChild(new TreeMenuNode(TreeMenuNode.NodeType.NORMAL, "Toggle ShowGridLine(Ctrl+G)", CreateImmediateExecutionCanvasCommand(() => ScriptCommandCanvas.ToggleGridLine())));
-                commandNode.AddChild(new TreeMenuNode(TreeMenuNode.NodeType.NORMAL, "Save(Ctrl+S)", CreateImmediateExecutionCanvasCommand(() => CommandCanvasControl.SaveCbsFile())));
-                commandNode.AddChild(new TreeMenuNode(TreeMenuNode.NodeType.NORMAL, "Load(Ctrl+O)", CreateImmediateExecutionCanvasCommand(() => CommandCanvasControl.LoadCbsFile())));
-                commandNode.AddChild(new TreeMenuNode(TreeMenuNode.NodeType.NORMAL, "Convert C#", CreateImmediateExecutionCanvasCommand(() => CommandCanvasList.Instance?.BuildScriptAndOut())));
+                commandNode.AddChild(new TreeMenuNode(Command.ClearCanvas.Create()));
+                commandNode.AddChild(new TreeMenuNode(Command.ToggleMouseInfo.Create()));
+                commandNode.AddChild(new TreeMenuNode(Command.ToggleGridLine.Create()));
+                commandNode.AddChild(new TreeMenuNode(Command.SaveScript.Create()));
+                commandNode.AddChild(new TreeMenuNode(Command.LoadScript.Create()));
+                commandNode.AddChild(new TreeMenuNode(Command.ConvertCS.Create()));
                 treeViewCommand.AssetTreeData.Add(commandNode);
             }
 
@@ -703,6 +691,14 @@ namespace CapyCSS.Controls.BaseControls
             ImportModule(); // 起動時に外部からインポートモジュールを設定される可能性がある
         }
 
+        /// <summary>
+        /// マウス情報の表示を切り替えます。
+        /// </summary>
+        public void ToggleMouseInfo()
+        {
+            ScriptWorkCanvas.EnableInfo = ScriptWorkCanvas.EnableInfo ? false : true;
+        }
+
         struct ShortCutCommand
         {
             public string Name { get; set; }
@@ -711,11 +707,7 @@ namespace CapyCSS.Controls.BaseControls
 
         private void MakeModuleControler(IEnumerable<ShortCutCommand> shortCutCommands)
         {
-            moduleControler = new ModuleControler(
-                ApiImporter,
-                CommandCanvasControl.DllDir,
-                CommandCanvasControl.PackageDir
-            );
+            moduleControler = new ModuleControler(ApiImporter);
 
             var stackPanel = new StackPanel();
             stackPanel.Orientation = Orientation.Vertical;
@@ -753,32 +745,6 @@ namespace CapyCSS.Controls.BaseControls
                 }
                 _inportNameSpaceModule = null;
             }
-            if (_inportNuGetModule != null)
-            {
-                // NuGetインポートの復元
-
-                foreach (var imp in _inportNuGetModule)
-                {
-                    ApiImporter.ImportNuGet(CommandCanvasControl.PackageDir, imp);
-                }
-                _inportNuGetModule = null;
-            }
-            if (_inportDllModule != null)
-            {
-                // DLL インポートの復元
-
-                foreach (var imp in _inportDllModule)
-                {
-                    if (!moduleControler.CheckImportable(imp))
-                    {
-                        // dll のインポートに失敗
-
-                        return false;
-                    }
-                    ApiImporter.ImportDll(imp, null);
-                }
-                _inportDllModule = null;
-            }
             return true;
         }
 
@@ -809,7 +775,7 @@ namespace CapyCSS.Controls.BaseControls
                     var recentNode = CommandMenu.GetRecent();
                     foreach (var node in value)
                     {
-                        recentNode.AddChild(new TreeMenuNode(TreeMenuNode.NodeType.NORMAL, node, CreateImmediateExecutionCanvasCommand(() =>
+                        recentNode.AddChild(new TreeMenuNode(TreeMenuNode.NodeType.RECENT_COMMAND, node, CreateImmediateExecutionCanvasCommand(() =>
                         {
                             CommandMenu.ExecuteFindCommand(node);
                         })));
@@ -860,12 +826,12 @@ namespace CapyCSS.Controls.BaseControls
         /// キャンバスの作業を保存します。
         /// </summary>
         /// <param name="path">ファイルのパス</param>
-        public void SaveXML(string path)
+        public void SaveXML(string path, bool forced = false)
         {
             if (path is null)
                 return;
 
-            if (CommandCanvasList.IsCursorLock())
+            if (!forced && CommandCanvasList.IsCursorLock())
                 return;
 
             try
@@ -976,6 +942,7 @@ namespace CapyCSS.Controls.BaseControls
                         CommandCanvasControl.IsAutoExit = false;
                     }
                     afterAction?.Invoke();
+                    CommandCanvasList.ShowSystemErrorLog(System.IO.Path.GetFileName(path));
 
                 }), DispatcherPriority.SystemIdle);
             }), DispatcherPriority.ApplicationIdle);
@@ -1587,7 +1554,7 @@ namespace CapyCSS.Controls.BaseControls
                 {
                     // CommandCanvasList で使用
                     case Key.N: // 全クリア
-                        ClearWorkCanvasWithConfirmation();
+                        Command.ClearCanvas.TryExecute();
                         break;
                 }
             }
@@ -1604,7 +1571,7 @@ namespace CapyCSS.Controls.BaseControls
                         break;
 
                     case Key.G:
-                        ToggleGridLine();
+                        Command.ToggleGridLine.TryExecute();
                         e.Handled = true;
                         break;
 
@@ -1636,7 +1603,7 @@ namespace CapyCSS.Controls.BaseControls
         /// <summary>
         /// 確認付きでスクリプトキャンバスをクリアします。
         /// </summary>
-        private void ClearWorkCanvasWithConfirmation()
+        public void ClearWorkCanvasWithConfirmation()
         {
             CommandCanvasList.TryCursorLock(() =>
                 {
@@ -1870,8 +1837,6 @@ namespace CapyCSS.Controls.BaseControls
                     TypeMenuWindow = null;
 
                     _inportNameSpaceModule = null;
-                    _inportDllModule = null;
-                    _inportNuGetModule = null;
 
                     ApiImporter = null;
                     moduleControler = null;

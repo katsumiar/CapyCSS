@@ -88,6 +88,8 @@ namespace CapyCSS.Script
 
         public const string MENU_RUNABLE = " [runable]";    // 任意実行可能ノード
 
+        public const string SCRIPT_ONLY = "[Script Only]";  // CapyCSSスクリプトだけで利用可能を示す
+
         /// <summary>
         /// ユーザーによる型作成時に組み込み型選択肢に出てくる型情報です。
         /// </summary>

@@ -170,7 +170,7 @@ namespace CapyCSS.Controls.BaseControls
             {
                 ReadAction = (self, relPos) =>
                 {
-                    self.ClearSelectedObjects();
+                    self.ReleaseSelectedObject();
                     var nodeList = new List<FrameworkElement>();
                     Point leftTopPoint = new Point(double.MaxValue, double.MaxValue);
                     foreach (var node in WorkCanvasAssetList)
@@ -220,7 +220,7 @@ namespace CapyCSS.Controls.BaseControls
                         }
                     }
                     WorkCanvasAssetList = workList;
-                    self.ClearSelectedObjects();
+                    self.ReleaseSelectedObject();
                 };
             }
             [XmlAttribute("Id")]
@@ -805,7 +805,7 @@ namespace CapyCSS.Controls.BaseControls
                 {
                     // 選択用矩形描写開始
 
-                    ClearSelectedObjects();
+                    ReleaseSelectedObject();
 
                     InfoCanvas.CaptureMouse();
                     rectangle = new Rectangle()
@@ -905,7 +905,7 @@ namespace CapyCSS.Controls.BaseControls
                 {
                     // 未登録なので登録する
 
-                    recentNode.AddChild(new TreeMenuNode(TreeMenuNode.NodeType.NORMAL, name, OwnerCommandCanvas.CreateImmediateExecutionCanvasCommand(() =>
+                    recentNode.AddChild(new TreeMenuNode(TreeMenuNode.NodeType.RECENT_COMMAND, name, OwnerCommandCanvas.CreateImmediateExecutionCanvasCommand(() =>
                     {
                         OwnerCommandCanvas.CommandMenu.ExecuteFindCommand(name);
                     })));
@@ -1014,9 +1014,18 @@ namespace CapyCSS.Controls.BaseControls
         }
 
         /// <summary>
+        /// 選択されているかを判定します。
+        /// </summary>
+        /// <returns></returns>
+        public bool IsSelected()
+        {
+            return SelectedNodes.Count > 0;
+        }
+
+        /// <summary>
         /// 選択中アセットを解除します。
         /// </summary>
-        public void ClearSelectedObjects()
+        public void ReleaseSelectedObject()
         {
             foreach (var node in SelectedNodes)
             {
@@ -1042,64 +1051,42 @@ namespace CapyCSS.Controls.BaseControls
 
                 switch (e.Key)
                 {
-                    case Key.A: // 全選択
-                        SelectAll();
+                    case Key.A:// 全選択
+                        Command.SelectAll.TryExecute();
+                        e.Handled = true;
                         break;
 
-                    case Key.Space: // 選択解除
-                        ClearSelectedObjects();
+                    case Key.Space:// 選択解除
+                        Command.ReleaseSelectedObjects.TryExecute();
+                        e.Handled = true;
                         break;
 
-                    case Key.C:
-                        try
-                        {
-                            // 選択された作業内容をxmlシリアライズしてクリップボードにコピーする
-
-                            CopySelectedNodesToClipboard();
-                        }
-                        catch (Exception ex)
-                        {
-                            ControlTools.ShowErrorMessage(nameof(CanvasBase_KeyDown) + ": [Key.C] " + ex.Message);
-                        }
+                    case Key.C:// コピー
+                        Command.CopySelectedNodesToClipboard.TryExecute();
+                        e.Handled = true;
                         break;
 
-                    case Key.V:
-                        try
-                        {
-                            var reader = new StringReader(Clipboard.GetText());
-                            string text = reader.ReadToEnd();
-                            if (!IsSerializeCBSdata(text))
-                            {
-                                // テキストの内容に合わせて貼り付ける
-
-                                CreateTextAsset(startPoint, text);
-                            }
-                            else
-                            {
-                                // クリップボードのxmlをデシリアライズしてアセットをキャンバスに置く
-
-                                PasteNodesFromClipboard();
-                            }
-                        }
-                        catch (Exception ex)
-                        {
-                            ControlTools.ShowErrorMessage(nameof(CanvasBase_KeyDown) + ": [Key.V] " + ex.Message);
-                        }
+                    case Key.V:// ペースト
+                        Command.PasteFromCripbord.TryExecute();
+                        e.Handled = true;
                         break;
 
-                    case Key.J: // スクリプト全体の左上位置を画面に合わせる
-                        AdjustScriptLeftTopPos();
+                    case Key.J:// スクリプト全体の左上位置を画面に合わせる
+                        Command.AdjustScriptLeftTopPos.TryExecute();
+                        e.Handled = true;
                         break;
 
-                    case Key.N: // 使用済み
+                    case Key.N:// 使用済み
                         break;
 
-                    case Key.Y:
-                        OwnerCommandCanvas.ReDo();
+                    case Key.Y:// ReDo
+                        Command.ReDo.TryExecute();
+                        e.Handled = true;
                         break;
 
-                    case Key.Z:
-                        OwnerCommandCanvas.UnDo();
+                    case Key.Z:// UnDo
+                        Command.UnDo.TryExecute();
+                        e.Handled = true;
                         break;
                 }
             }
@@ -1115,28 +1102,52 @@ namespace CapyCSS.Controls.BaseControls
             {
                 switch (e.Key)
                 {
-                    case Key.Space:
-                        // コマンドウインドウを表示する
-
-                        OwnerCommandCanvas.ShowCommandMenu(pos);
+                    case Key.Space:// コマンドウインドウを表示する
+                        Command.ShowCommandMenu.TryExecute(pos);
                         e.Handled = true;
                         break;
 
-                    case Key.J:
-                        // スクリプト全体を画面に収める（スクリプトは画面中央に表示する）
-                        
-                        AdjustScriptScale();
-                        AdjustScriptCenterPos();
-                        OwnerCommandCanvas.RecordUnDoPoint(CapyCSS.Language.Instance["Help:SYSTEM_COMMAND_AdjustDisplayScript"]);
-
+                    case Key.J:// スクリプト全体を画面に収める（スクリプトは画面中央に表示する）
+                        Command.AdjustScriptToScreen.TryExecute();
                         e.Handled = true;
                         break;
 
-                    case Key.Delete:
-                        DeleteSelectedNodes();
+                    case Key.Delete:// 選択されているオブジェクトを削除する
+                        Command.DeleteSelectedObjects.TryExecute();
                         e.Handled = true;
                         break;
                 }
+            }
+        }
+
+        /// <summary>
+        /// スクリプトを画面に納める様にスケールと位置を調整します。
+        /// </summary>
+        public void AdjustScriptToScreen()
+        {
+            AdjustScriptScale();
+            AdjustScriptCenterPos();
+            OwnerCommandCanvas.RecordUnDoPoint(CapyCSS.Language.Instance["Help:SYSTEM_COMMAND_AdjustDisplayScript"]);
+        }
+
+        /// <summary>
+        /// クリップボードからペーストします。
+        /// </summary>
+        public void PasteFromCripbord()
+        {
+            var reader = new StringReader(Clipboard.GetText());
+            string text = reader.ReadToEnd();
+            if (!IsSerializeCBSdata(text))
+            {
+                // テキストの内容に合わせて貼り付ける
+
+                CreateTextAsset(startPoint, text);
+            }
+            else
+            {
+                // クリップボードのxmlをデシリアライズしてアセットをキャンバスに置く
+
+                PasteNodesFromClipboard();
             }
         }
 
@@ -1175,7 +1186,7 @@ namespace CapyCSS.Controls.BaseControls
         /// <summary>
         /// 選択されているノードをシリアライズしてクリップボードにコピーします。
         /// </summary>
-        private void CopySelectedNodesToClipboard()
+        public void CopySelectedNodesToClipboard()
         {
             try
             {
@@ -1197,7 +1208,7 @@ namespace CapyCSS.Controls.BaseControls
         /// <summary>
         /// 選択されているノードを削除します。
         /// </summary>
-        public void DeleteSelectedNodes()
+        public void DeleteSelectedObjects()
         {
             if (SelectedNodes.Count != 0 &&
                     ControlTools.ShowSelectMessage(
@@ -1210,7 +1221,7 @@ namespace CapyCSS.Controls.BaseControls
                     node.Dispose();
                     ControlsCanvas.Children.Remove(node);
                 }
-                ClearSelectedObjects();
+                ReleaseSelectedObject();
                 OwnerCommandCanvas.RecordUnDoPoint(CapyCSS.Language.Instance["Help:SYSTEM_COMMAND_DeleteNode"]);
             }
         }
@@ -1247,7 +1258,7 @@ namespace CapyCSS.Controls.BaseControls
                 {
                     if (System.IO.Path.HasExtension(path))
                     {
-                        if (System.IO.Path.GetExtension(path) == ".cbs")
+                        if (System.IO.Path.GetExtension(path) == CommandCanvasList.CBS_EXT)
                         {
                             // スクリプトファイルを読み込む
 
