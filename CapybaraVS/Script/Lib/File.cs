@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using System.Windows.Media.Imaging;
+using Microsoft.WindowsAPICodePack.Dialogs;
 
 namespace CapyCSS.Script.Lib
 {
@@ -17,40 +18,70 @@ namespace CapyCSS.Script.Lib
 
         //------------------------------------------------------------------
         [ScriptMethod(path: LIB_NAME)]
-        public static string BrowseFile(string title, string currentDir, string filter = "all (*.*)|*.*")
+        public static string BrowseFile(string title, string currentDir, string filterName = "all", string filterExt = "*.*")
         {
-            var dialog = new OpenFileDialog();
-            if (!string.IsNullOrEmpty(title))
-                dialog.Title = title;
-            if (!string.IsNullOrEmpty(currentDir))
-                dialog.InitialDirectory = currentDir;
-            else
-                dialog.InitialDirectory = CommandCanvasList.GetSamplePath();
-            if (!string.IsNullOrEmpty(filter))
-                dialog.Filter = filter;
-            if (dialog.ShowDialog() == true)
+            return BrowseFile(
+                title,
+                currentDir,
+                new List<Tuple<string, string>>()
+                {
+                    new Tuple<string, string>(filterName, filterExt)
+                }
+                );
+        }
+
+        [ScriptMethod(path: LIB_NAME)]
+        public static string BrowseFile(string title, string currentDir, IEnumerable<Tuple<string, string>> filters = null)
+        {
+            if (string.IsNullOrEmpty(currentDir))
             {
+                currentDir = CommandCanvasList.GetSamplePath();
+            }
+
+            using (var dialog = new CommonOpenFileDialog()
+            {
+                Title = title,
+                InitialDirectory = currentDir,
+                EnsurePathExists = true,
+            })
+            {
+                if (filters != null)
+                {
+                    foreach (var filter in filters)
+                    {
+                        dialog.Filters.Add(new CommonFileDialogFilter(filter.Item1, filter.Item2));
+                    }
+                }
+                if (dialog.ShowDialog() != CommonFileDialogResult.Ok)
+                {
+                    return null;
+                }
                 return dialog.FileName;
             }
-            return null;
         }
 
         //------------------------------------------------------------------
         [ScriptMethod(path: LIB_NAME)]
         public static string BrowseFolder(string title, string currentDir)
         {
-            var dialog = new OpenFileDialog() { FileName = "SelectFolder", Filter = "Folder|.", CheckFileExists = false };
-            if (!string.IsNullOrEmpty(title))
-                dialog.Title = title;
-            if (!string.IsNullOrEmpty(currentDir))
-                dialog.InitialDirectory = currentDir;
-            else
-                dialog.InitialDirectory = CommandCanvasList.GetSamplePath();
-            if (dialog.ShowDialog() == true)
+            if (string.IsNullOrEmpty(currentDir))
             {
-                return Path.GetDirectoryName(dialog.FileName);
+                currentDir = CommandCanvasList.GetSamplePath();
             }
-            return null;
+
+            using (var dialog = new CommonOpenFileDialog()
+            {
+                Title = title,
+                InitialDirectory = currentDir,
+                IsFolderPicker = true,
+            })
+            {
+                if (dialog.ShowDialog() != CommonFileDialogResult.Ok)
+                {
+                    return null;
+                }
+                return dialog.FileName;
+            }
         }
     }
 }
