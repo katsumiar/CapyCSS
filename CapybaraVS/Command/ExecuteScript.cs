@@ -60,6 +60,7 @@ namespace CapyCSS.Command
             var self = CommandCanvasList.Instance;
             if (self != null)
             {
+                ProjectControl.ConfirmationRebootByRemoveDLL();
                 self.ExecuteScriptFromEntryPoint();
                 self.CurrentScriptCanvas?.CloseCommandWindow();
             }

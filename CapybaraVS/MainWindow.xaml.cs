@@ -106,11 +106,5 @@ namespace CapyCSS
             CommandControl.Dispose();
             App.Instance.SaveAppInfo();
         }
-
-        [ScriptMethod]
-        public static void SetExitCode(int code)
-        {
-            Environment.Exit(code);
-        }
     }
 }

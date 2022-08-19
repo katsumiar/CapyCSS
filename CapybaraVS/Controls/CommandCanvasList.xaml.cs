@@ -12,6 +12,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using System.Threading.Channels;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -637,11 +638,11 @@ namespace CapyCSS.Controls
         /// <summary>
         /// キャンバスの作業を上書き保存します。
         /// </summary>
-        public void OverwriteSaveXML(CommandCanvas commandCanvas, bool forced = false)
+        public bool OverwriteSaveXML(CommandCanvas commandCanvas, bool forced = false)
         {
             if (!forced && IsCursorLock())
             {
-                return;
+                return false;
             }
 
             bool isShowSaveDialog = commandCanvas.OpenFileName == "";
@@ -652,7 +653,7 @@ namespace CapyCSS.Controls
 
                 if (path is null)
                 {
-                    return;
+                    return false;
                 }
             }
             else
@@ -672,6 +673,7 @@ namespace CapyCSS.Controls
                 commandCanvas.ClearUnDoPoint();
                 commandCanvas.RecordUnDoPoint(CapyCSS.Language.Instance["Help:SYSTEM_COMMAND_OverwriteScript"]);
             }
+            return true;
         }
 
         /// <summary>
@@ -774,6 +776,44 @@ namespace CapyCSS.Controls
                 }
                 return result;
             }
+        }
+
+        /// <summary>
+        /// すべての変更を保存します。
+        /// </summary>
+        /// <returns>true==保存できた</returns>
+        public static bool SaveAllChanges()
+        {
+            return Instance.saveAllChanges();
+        }
+
+        /// <summary>
+        /// すべての変更を保存します。
+        /// </summary>
+        /// <returns>true==保存できた</returns>
+        private bool saveAllChanges()
+        {
+            try
+            {
+                var saveTargets = Tab.Items.Cast<TabItem>()
+                    .Where(n => !(n.Content as CommandCanvas).IsInitialPoint)
+                    .Select(n => n.Content as CommandCanvas);
+                foreach (var target in saveTargets)
+                {
+                    if (!OverwriteSaveXML(target, true))
+                    {
+                        // 途中でキャンセルされた
+
+                        return false;
+                    }
+                }
+                SaveInfo();
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+            return true;
         }
 
         /// <summary>
@@ -1745,7 +1785,7 @@ namespace CapyCSS.Controls
                 {
                     currentScriptChangeState = "*";
                 }
-                if (Project.ChangedFlag)
+                if (Project.IsModified)
                 {
                     projectChangeState = "*";
                 }
@@ -1882,6 +1922,13 @@ namespace CapyCSS.Controls
         public void HideRunningPanel()
         {
             RunningPanel.Visibility = Visibility.Hidden;
+        }
+
+
+        [ScriptMethod]
+        public static void SetExitCode(int code)
+        {
+            Environment.Exit(code);
         }
 
         public void Dispose()
