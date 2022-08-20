@@ -116,24 +116,20 @@ namespace CapyCSS.Script
 
             if (methodInfo is MethodInfo method)
             {
-                var returnParameter = method.ReturnParameter;
-                if (typeof(IAsyncResult).IsAssignableFrom(returnParameter.ParameterType))
-                {
-                    // Task や async を返すものは今のところ使えない
+                // Task や async を返すものは今のところ使えないので取り込まない
 
+                if (typeof(IAsyncResult).IsAssignableFrom(method.ReturnParameter.ParameterType))
+                {
                     return false;
                 }
                 foreach (var arg in method.GetParameters())
                 {
                     if (typeof(IAsyncResult).IsAssignableFrom(arg.ParameterType))
                     {
-                        // Task や async を受け取るものは今のところ使えない
-
                         return false;
                     }
                 }
             }
-
             return true;
         }
 
