@@ -123,6 +123,15 @@ namespace CapyCSS.Script
 
                     return false;
                 }
+                foreach (var arg in method.GetParameters())
+                {
+                    if (typeof(IAsyncResult).IsAssignableFrom(arg.ParameterType))
+                    {
+                        // Task や async を受け取るものは今のところ使えない
+
+                        return false;
+                    }
+                }
             }
 
             return true;
