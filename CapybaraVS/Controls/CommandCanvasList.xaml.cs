@@ -1868,18 +1868,15 @@ namespace CapyCSS.Controls
         {
             if (ErrorLog.Length != 0)
             {
-                OutputWindow outputWindow = new OutputWindow();
                 if (title is null)
                 {
-                    outputWindow.Title = $"System Error";
+                    title = $"Error";
                 }
                 else
                 {
-                    outputWindow.Title = $"System Error[{title}]";
+                    title = $"Error - {title}";
                 }
-                outputWindow.Owner = CommandCanvasList.OwnerWindow;
-                outputWindow.Show();
-
+                OutputWindow outputWindow = OutputWindow.CreateWindow(title);
                 outputWindow.AddBindText = ErrorLog;
                 ErrorLog = "";
             }
