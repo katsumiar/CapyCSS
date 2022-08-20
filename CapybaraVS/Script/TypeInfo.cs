@@ -454,6 +454,8 @@ namespace CapyCSS.Script
                     _mame = type.FullName;
                 else if (type.Name != null)
                     _mame = type.Name;
+                if (_mame.EndsWith("[][]"))
+                    return null;    // 一次元配列までしか対応していない
                 Type tType = CbST.GetTypeEx(_mame);
                 if (tType != null)
                 {
