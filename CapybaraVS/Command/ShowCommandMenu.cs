@@ -21,12 +21,12 @@ namespace CapyCSS.Command
             return new ShowCommandMenu();
         }
 
-        public static bool TryExecute(object parameter = null)
+        public static bool TryExecute(Point? pos, string filterString = null)
         {
             var self = Create();
-            if (self.CanExecute(parameter))
+            if (self.CanExecute(pos.Value))
             {
-                self.Execute(parameter);
+                (self as ShowCommandMenu).Execute(pos, filterString);
                 return true;
             }
             return false;
@@ -49,11 +49,11 @@ namespace CapyCSS.Command
         public bool CanExecute(object parameter)
         {
             var self = CommandCanvasList.Instance;
-            if (self is null)
+            if (self is null || !self.IsCommandMask)
             {
                 return false;
             }
-            return !self.IsEmptyScriptCanvas && self.IsScriptRunningMask;
+            return !self.IsEmptyScriptCanvas;
         }
 
         public void Execute(object parameter)
@@ -68,6 +68,23 @@ namespace CapyCSS.Command
                 else
                 {
                     self.CurrentScriptCanvas?.ShowCommandMenu(new Point());
+                }
+                self.CurrentScriptCanvas?.CloseCommandWindow();
+            }
+        }
+
+        public void Execute(Point? pos, string filterString)
+        {
+            var self = CommandCanvasList.Instance;
+            if (self != null)
+            {
+                if (pos.HasValue)
+                {
+                    self.CurrentScriptCanvas?.ShowCommandMenu(pos.Value, filterString);
+                }
+                else
+                {
+                    self.CurrentScriptCanvas?.ShowCommandMenu(new Point(), filterString);
                 }
                 self.CurrentScriptCanvas?.CloseCommandWindow();
             }

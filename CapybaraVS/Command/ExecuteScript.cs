@@ -48,11 +48,11 @@ namespace CapyCSS.Command
         public bool CanExecute(object parameter)
         {
             var self = CommandCanvasList.Instance;
-            if (self is null)
+            if (self is null || !self.IsCommandMask)
             {
                 return false;
             }
-            return self.IsEntryPointsContainsCurrentScriptCanvas() && self.IsScriptRunningMask;
+            return self.IsEntryPointsContainsCurrentScriptCanvas();
         }
 
         public void Execute(object parameter)

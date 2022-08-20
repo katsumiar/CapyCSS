@@ -48,11 +48,12 @@ namespace CapyCSS.Command
 
         public bool CanExecute(object parameter)
         {
-            if (ProjectControl.Instance is null || CommandCanvasList.Instance is null)
+            var self = CommandCanvasList.Instance;
+            if (ProjectControl.Instance is null || self is null || !self.IsCommandMask)
             {
                 return false;
             }
-            return ProjectControl.Instance.IsOpenProject && CommandCanvasList.Instance.IsScriptRunningMask;
+            return ProjectControl.Instance.IsOpenProject;
         }
 
         public void Execute(object parameter)

@@ -499,6 +499,8 @@ namespace CapyCSS.Controls.BaseControls
             Debug.Assert(CheckConstraint(typeof(_constraintCheck4<>), typeof(_refNoConstConstraintCheck)));
             Debug.Assert(!CheckConstraint(typeof(_constraintCheck4<>), typeof(_refConstraintCheck)));
 
+            
+
             Console.WriteLine("ok");
         }
         public class _refConstraintCheck {}
@@ -1803,7 +1805,9 @@ namespace CapyCSS.Controls.BaseControls
             {
                 CommandMenuWindow.FilterString = filterString;
             }
+            CommandCanvasList.Instance?.SetCommandMask(false);
             CommandMenuWindow.ShowDialog();
+            CommandCanvasList.Instance?.SetCommandMask(true);
         }
 
         /// <summary>

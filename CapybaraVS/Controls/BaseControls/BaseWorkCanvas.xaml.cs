@@ -798,7 +798,7 @@ namespace CapyCSS.Controls.BaseControls
             {
                 if (e.ChangedButton == MouseButton.Middle && e.ButtonState == MouseButtonState.Pressed)
                 {
-                    OwnerCommandCanvas.ShowCommandMenu(new Point(Mouse.GetPosition(null).X, Mouse.GetPosition(null).Y));
+                    Command.ShowCommandMenu.TryExecute(new Point(Mouse.GetPosition(null).X, Mouse.GetPosition(null).Y));
                 }
                 else if ((Keyboard.GetKeyStates(Key.LeftShift) & KeyStates.Down) > 0 ||
                     (Keyboard.GetKeyStates(Key.RightShift) & KeyStates.Down) > 0)

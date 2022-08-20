@@ -26,6 +26,7 @@ using System.Windows.Shapes;
 using System.Windows.Threading;
 using System.Xml;
 using System.Xml.Serialization;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.Window;
 using Path = System.IO.Path;
 
 namespace CapyCSS.Controls
@@ -1130,17 +1131,17 @@ namespace CapyCSS.Controls
             Dispose();
         }
 
-        private bool isScriptRunningMask = true;
-        public bool IsScriptRunningMask => isScriptRunningMask;
+        private bool isCommandMask = true;
+        public bool IsCommandMask => isCommandMask;
 
         /// <summary>
-        /// 実行ボタンの有効/無効を制御します。
+        /// ボタンの有効/無効を制御します。
         /// </summary>
-        /// <param name="enable">スクリプト実行時 == false</param>
-        public void ScriptRunningMask(bool enable)
+        /// <param name="enable">ボタンを無効化 == false</param>
+        public void SetCommandMask(bool enable)
         {
-            isScriptRunningMask = enable;
-            if (isScriptRunningMask)
+            isCommandMask = enable;
+            if (isCommandMask)
             {
                 // スクリプト実行終了時は、状態をチェックするトリガーが無いので、強制的に更新する
 
@@ -1192,7 +1193,7 @@ namespace CapyCSS.Controls
         public void ClearPublicExecuteEntryPoint(object owner)
         {
             AllExecuteEntryPointList.Clear();
-            AddAllExecuteEntryPointEnable(ScriptRunningMask);
+            AddAllExecuteEntryPointEnable(SetCommandMask);
             if (owner is null)
             {
                 PublicExecuteEntryPointList.Clear();
