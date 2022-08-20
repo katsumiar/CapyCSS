@@ -413,7 +413,11 @@ namespace CapyCSS.Controls.BaseControls
             void CheckCreateCbType(Type type, Type ifc = null)
             {
                 var cbType = CbST.CbCreate(type);
-                Debug.Assert(cbType != null);
+                if (cbType == null)
+                {
+                    Debug.Assert(type.Name.EndsWith("[][]"));
+                    return;
+                }
                 if (cbType.OriginalType == typeof(CbGeneMethArg))
                     return;
                 Debug.Assert(cbType.OriginalType == type);
@@ -445,6 +449,7 @@ namespace CapyCSS.Controls.BaseControls
             CheckCreateCbType(typeof(IEnumerable<Dictionary<int, double>>), typeof(ICbList));
             
             CheckCreateCbType(typeof(Dictionary<short, char>));
+            CheckCreateCbType(typeof(int[][]));
 
             // 型生成時ジェネリックパラメータの置き換えチェック
             void CheckGenericType(ICbValue cbType)
@@ -498,8 +503,6 @@ namespace CapyCSS.Controls.BaseControls
             Debug.Assert(!CheckConstraint(typeof(_constraintCheck3<>), typeof(_refConstraintCheck)));
             Debug.Assert(CheckConstraint(typeof(_constraintCheck4<>), typeof(_refNoConstConstraintCheck)));
             Debug.Assert(!CheckConstraint(typeof(_constraintCheck4<>), typeof(_refConstraintCheck)));
-
-            
 
             Console.WriteLine("ok");
         }
