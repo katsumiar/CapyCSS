@@ -2,9 +2,9 @@ name: .NET Sdk
 
 on:
   push:
-    branches: [ 0.6.0.0 ]
+    branches: [ 1.0.0beta ]
   pull_request:
-    branches: [ 0.6.0.0 ]
+    branches: [ 1.0.0beta ]
 
 jobs:
   build:
