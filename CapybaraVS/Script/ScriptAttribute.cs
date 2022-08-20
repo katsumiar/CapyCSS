@@ -116,16 +116,45 @@ namespace CapyCSS.Script
 
             if (methodInfo is MethodInfo method)
             {
-                var returnParameter = method.ReturnParameter;
-                if (typeof(IAsyncResult).IsAssignableFrom(returnParameter.ParameterType))
-                {
-                    // Task や async を返すものは今のところ使えない
+                // Task や async を返すものは今のところ使えないので取り込まない
 
+                if (CheckTaskType(method.ReturnParameter.ParameterType))
+                {
                     return false;
                 }
+                foreach (var arg in method.GetParameters())
+                {
+                    if (CheckTaskType(arg.ParameterType))
+                    {
+                        return false;
+                    }
+                }
             }
-
             return true;
+        }
+
+        private static bool CheckTaskType(Type type)
+        {
+            if (typeof(IAsyncResult).IsAssignableFrom(type))
+            {
+                return true;
+            }
+            if (typeof(ValueTask).IsAssignableFrom(type))
+            {
+                return true;
+            }
+            if (type.IsGenericType)
+            {
+                if (type.GetGenericTypeDefinition() == typeof(ValueTask<>))
+                {
+                    return true;
+                }
+                if (type.GetGenericTypeDefinition() == typeof(IAsyncEnumerator<>))
+                {
+                    return true;
+                }
+            }
+            return false;
         }
 
         /// <summary>

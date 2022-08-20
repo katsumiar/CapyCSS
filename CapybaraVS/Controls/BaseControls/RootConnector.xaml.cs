@@ -1909,8 +1909,8 @@ namespace CapyCSS.Controls.BaseControls
                     string targetName = rootValue.TypeName;
 
                     // コマンドウインドウを開く
-                    OwnerCommandCanvas.ShowCommandMenu(e.GetPosition(null), CbSTUtils.StripParamater(targetName));
-                    
+                    Command.ShowCommandMenu.TryExecute(e.GetPosition(null), CbSTUtils.StripParamater(targetName));
+
                     // コマンドが登録されていたら実行する
                     OwnerCommandCanvas.ProcessCommand(setPos);
                 }

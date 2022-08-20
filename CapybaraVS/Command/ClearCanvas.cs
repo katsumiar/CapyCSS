@@ -52,7 +52,7 @@ namespace CapyCSS.Command
             {
                 return false;
             }
-            return !self.IsEmptyScriptCanvas && self.IsScriptRunningMask;
+            return !self.IsEmptyScriptCanvas && self.IsCommandMask;
         }
 
         public void Execute(object parameter)

@@ -57,7 +57,7 @@ namespace CapyCSS.Command
             {
                 return true;
             }
-            return self.IsScriptRunningMask;
+            return self.IsCommandMask;
         }
 
         public void Execute(object parameter)
