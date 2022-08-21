@@ -166,6 +166,7 @@ namespace CapyCSS
     public interface ICurveLinkRoot 
         : ITargetPoint
         , ICbExecutable
+        , ILinkCheck
     {
         /// <summary>
         /// 接続元が保持するデータを参照する
@@ -620,6 +621,7 @@ namespace CapyCSS
     public abstract class LinkCurveLinks
         : ICloseLink
         , ICbExecutable
+        , ILinkCheck
     {
         protected List<ICurveLinkRoot> CurveLinkRootData { get; set; } = new List<ICurveLinkRoot>();
 
@@ -661,6 +663,25 @@ namespace CapyCSS
                 curveLinkRoot.RequestRemoveCurveLinkRoot(_self);
             }
             CurveLinkRootData.Remove(curveLinkRoot);
+        }
+
+        public bool LinkCheck()
+        {
+            bool isCollision = false;
+            foreach (var curveLinkRoot in CurveLinkRootData)
+            {
+                // 接続している複数のルートをチェックする
+
+                if (curveLinkRoot is null)
+                    continue;
+
+                isCollision = curveLinkRoot.LinkCheck();
+                if (isCollision)
+                {
+                    break;
+                }
+            }
+            return isCollision;
         }
 
         public object RequestExecute(List<object> functionStack, DummyArgumentsMemento dummyArguments)

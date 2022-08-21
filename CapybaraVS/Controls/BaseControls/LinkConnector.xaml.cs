@@ -26,6 +26,7 @@ namespace CapyCSS.Controls.BaseControls
     public partial class LinkConnector
         : UserControl
         , ICurveLinkPoint
+        , ILinkCheck
         , IDisposable
         , IHaveCommandCanvas
     {
@@ -317,6 +318,45 @@ namespace CapyCSS.Controls.BaseControls
                     return nodeType();
                 }
                 );
+        }
+
+        private bool _connectionReservation = false;
+
+        /// <summary>
+        /// 接続予約を有効にする。
+        /// </summary>
+        public void OnConnectionReservation()
+        {
+            Debug.Assert(_connectionReservation == false);
+            _connectionReservation = true;
+        }
+
+        /// <summary>
+        /// 接続予約を無効にする。
+        /// </summary>
+        public void OffConnectionReservation()
+        {
+            Debug.Assert(_connectionReservation == true);
+            _connectionReservation = false;
+        }
+
+        public bool LinkCheck()
+        {
+            bool isCollision;
+            if (_connectionReservation)
+            {
+                // 接続予約に行き会った
+
+                return true;
+            }
+            isCollision = ConnectorList.LinkCheck();
+            if (!isCollision && linkCurveLinks != null)
+            {
+                // 接続しているルートをチェックする
+
+                isCollision = linkCurveLinks.LinkCheck();
+            }
+            return isCollision;
         }
 
         /// <summary>
