@@ -879,6 +879,19 @@ namespace CapyCSS.Script
     }
 
     /// <summary>
+    /// ノード間の接続チェックインターフェイス
+    /// </summary>
+    public interface ILinkCheck
+    {
+        /// <summary>
+        /// ノードのリンクがループ構造を形成するかどうかをチェックします。
+        /// ※予め接続予約（LinkConnectorのOnConnectionReservation()）を入れておく必要がある。
+        /// </summary>
+        /// <returns>true==ループ構造を形成する</returns>
+        bool LinkCheck();
+    }
+
+    /// <summary>
     /// データ表示インターフェイス（※TODO 実装を見直す）
     /// </summary>
     public interface ICbShowValue

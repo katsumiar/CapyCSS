@@ -32,6 +32,7 @@ namespace CapyCSS.Controls.BaseControls
     public partial class RootConnector 
         : UserControl
         , ICurveLinkRoot
+        , ILinkCheck
         , IDisposable
     {
         #region ID管理
@@ -701,6 +702,25 @@ namespace CapyCSS.Controls.BaseControls
                 if (value.Trim() != "")
                     FuncCaption.ToolTip = value;
             }
+        }
+
+        public bool LinkCheck()
+        {
+            bool isCollision = false;
+            foreach (var node in ListData)
+            {
+                if (node is LinkConnector connector)
+                {
+                    // 接続しているノードから先をチェックする
+
+                    isCollision = connector.LinkCheck();
+                    if (isCollision)
+                    {
+                        break;
+                    }
+                }
+            }
+            return isCollision;
         }
 
         public object RequestExecute(List<object> functionStack, DummyArgumentsMemento dummyArguments)
@@ -1791,7 +1811,8 @@ namespace CapyCSS.Controls.BaseControls
                 {
                     // 接続できる場所の上にいる
 
-                    if (IsNgAssignment(target))
+                    target?.OnConnectionReservation();  // LinkCheck() 用
+                    if (IsNgAssignment(target) || LinkCheck())
                     {
                         // 絶対に接続不可
 
@@ -1815,6 +1836,7 @@ namespace CapyCSS.Controls.BaseControls
 
                         curvePath.LineColor = (Brush)Application.Current.FindResource("CurvePathUnconnectableBrush");
                     }
+                    target?.OffConnectionReservation();  // LinkCheck() 用
                 }
                 else
                 {
@@ -1924,7 +1946,8 @@ namespace CapyCSS.Controls.BaseControls
                         target = OwnerCommandCanvas.GetLinkConnectorFromInstalledMultiRootConnector(rootValue.OriginalType);
                     }
 
-                    if (IsNgAssignment(target))
+                    target?.OnConnectionReservation();  // LinkCheck() 用
+                    if (IsNgAssignment(target) || LinkCheck())
                     {
                         // 絶対に接続不可
 
@@ -1957,6 +1980,7 @@ namespace CapyCSS.Controls.BaseControls
                             target.CastType = backup;
                         }
                     }
+                    target?.OffConnectionReservation();  // LinkCheck() 用
 
                     MouseMove -= Grid_MouseMove;
                     MouseUp -= Grid_MouseLeftButtonUp;

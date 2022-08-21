@@ -28,6 +28,7 @@ namespace CapyCSS.Controls
         : UserControl
         , IDisposable
         , ICbExecutable
+        , ILinkCheck
     {
         #region XML定義
         [XmlRoot(nameof(LinkConnectorList))]
@@ -476,6 +477,22 @@ namespace CapyCSS.Controls
             }
             CbSTUtils.ForeachDispose(ListData);
             //ListData.Clear();
+        }
+
+        public bool LinkCheck()
+        {
+            bool isCollision = false;
+            foreach (var node in ListData)
+            {
+                // リスト要素に接続するルートをチェックする
+
+                isCollision = node.LinkCheck();
+                if (isCollision)
+                {
+                    break;
+                }
+            }
+            return isCollision;
         }
 
         /// <summary>
