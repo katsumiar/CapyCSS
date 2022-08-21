@@ -39,7 +39,7 @@
 * 作者の趣味でc#とwpfの勉強の為、そして気まぐれで制作されています。
 
 ## ターゲット環境
-* .NET6
+* .NET Desktop 6.0.8
 * c＃
 
 ## 「The data version are incompatible.」と表示される場合の対処方法
