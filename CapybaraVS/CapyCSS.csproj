@@ -75,7 +75,7 @@
     <None Update="CapybaraVS-en-US.htxt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="dotnet.standard.LICENSE">
+    <None Update="dotnet.runtime.LICENSE">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="hText\BaseLib-en-US.htxt">
