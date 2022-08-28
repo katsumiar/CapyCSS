@@ -90,6 +90,9 @@ namespace CapyCSS.Script
 
         public const string SCRIPT_ONLY = "[Script Only]";  // CapyCSSスクリプトだけで利用可能を示す
 
+        public static string Shell = "powershell.exe";      // シェル
+        public static string ShellOption = "-c ";           // シェルコマンドオプション
+
         /// <summary>
         /// ユーザーによる型作成時に組み込み型選択肢に出てくる型情報です。
         /// </summary>

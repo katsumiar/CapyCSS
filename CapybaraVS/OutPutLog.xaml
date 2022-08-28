@@ -7,7 +7,7 @@
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
     <Grid>
-        <TextBox x:Name="Log" Background="#FF272727" BorderBrush="#FF959595" VerticalScrollBarVisibility="Auto" Foreground="White" />
+        <TextBox x:Name="Log" Background="#FF272727" BorderBrush="#FF959595" VerticalScrollBarVisibility="Auto" KeyDown="Log_KeyDown" Foreground="White" FontFamily="MyricaM M" />
         <Grid HorizontalAlignment="Right" VerticalAlignment="Top" Background="#FF6C6C6C" Margin="0,4,20,0" >
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="1,0,2,0" >
                 <CheckBox x:Name="AutoClear" Foreground="White" Content="Auto Clear" />

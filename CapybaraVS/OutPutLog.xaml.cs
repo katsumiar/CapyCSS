@@ -1,7 +1,11 @@
 ﻿using CapyCSS.Controls;
+using CapyCSS.Script;
+using Microsoft.VisualBasic.Logging;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
@@ -90,6 +94,65 @@ namespace CapyCSS
             afterPutTimer = new DispatcherTimer();
             afterPutTimer.Interval = new TimeSpan(0, 0, 1);
             afterPutTimer.Tick += (x,e) => { Flush(); };
+        }
+
+        private void Log_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter)
+            {
+                int startPos = Log.SelectionStart;
+                int lineCount = Log.Text.Substring(0, startPos).Count((c) => c == '\n');
+                string[] lines = Log.Text.Split(Environment.NewLine);
+
+                string currentLine = lines[lineCount].Trim();
+                if (currentLine.StartsWith(">"))
+                {
+                    // コマンドを実行する
+
+                    string command = currentLine.Substring(1, currentLine.Length - 1);
+                    if (command == "cls")
+                    {
+                        // クリアコマンド
+
+                        Log.Text = "";
+                    }
+                    else
+                    {
+                        // シェルコマンドを実行する
+
+                        TryAutoClear();
+                        CommandExecuter(command);
+                    }
+                }
+                else
+                {
+                    // 改行コードを挿入する
+
+                    Log.Text = Log.Text.Insert(startPos, Environment.NewLine);
+                    Log.SelectionStart = startPos + 1;
+                    Log.Focus();
+                }
+            }
+        }
+
+        private void CommandExecuter(string command)
+        {
+            ProcessStartInfo processStartInfo = new ProcessStartInfo(CbSTUtils.Shell, CbSTUtils.ShellOption + command);
+            processStartInfo.CreateNoWindow = true;
+            processStartInfo.UseShellExecute = false;
+            processStartInfo.RedirectStandardOutput = true;
+            processStartInfo.RedirectStandardError = true;
+            processStartInfo.WorkingDirectory = Environment.CurrentDirectory;
+            Process process = Process.Start(processStartInfo);
+            string output = process.StandardOutput.ReadToEnd();
+            string error = process.StandardError.ReadToEnd();
+            int code = process.ExitCode;
+            process.Close();
+            Log.Text += error;
+            Log.Text += output;
+            Log.Text += $"Exit Code: {code}" + Environment.NewLine;
+            Log.SelectionStart = Log.Text.Length - 1;
+            Log.ScrollToEnd();
         }
     }
 
