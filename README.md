@@ -1,7 +1,5 @@
 # CapyCSS
-![CapyCSS_password2](https://user-images.githubusercontent.com/63950487/181904549-6c6910e5-5415-4408-a224-3f907c37e745.gif)
-※新しく追加されたpassword型は、場合によって秘密属性がストリップされるので注意。<br>
-※このイメージは、ScreenToGif によって作成されています。
+![CapyCSS_sample](https://user-images.githubusercontent.com/63950487/187065619-405376eb-064f-4f32-8152-ee19d31a568b.gif)
 
 ## 1.0.0.0beta での変更
 * 1.0.0.0betaでの対応は、主に不具合対応です。
