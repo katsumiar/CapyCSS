@@ -732,7 +732,11 @@ namespace CapyCSS.Controls
             TreeMenuNode node = null;
             if (dllGroup != null && dllGroup.Child.Count > 0)
             {
-                node = dllGroup.Child.First(c => c.HintText == localPath);
+                var nodeList = dllGroup.Child.Where(c => c.HintText == localPath);
+                if (nodeList.Count() > 0)
+                {
+                    node = nodeList.First();
+                }
             }
             if (node is null)
             {
