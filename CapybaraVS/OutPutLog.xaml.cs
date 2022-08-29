@@ -148,6 +148,7 @@ namespace CapyCSS
             string error = process.StandardError.ReadToEnd();
             int code = process.ExitCode;
             process.Close();
+            Log.Text += Environment.NewLine;
             Log.Text += error;
             Log.Text += output;
             Log.Text += $"Exit Code: {code}" + Environment.NewLine;
