@@ -24,13 +24,15 @@ namespace CapyCSS.Controls.BaseControls
     /// </summary>
     public partial class ModuleControler : UserControl
     {
+        private CommandCanvas OwnerCommandCanvas = null;
         private ApiImporter ApiImporter = null;
 
         // 過去のインポートの再取り込み時の識別用文字列
         public const string HEADER_NAMESPACE = "namespace ";
 
-        public ModuleControler(ApiImporter apiImporter)
+        public ModuleControler(CommandCanvas owner, ApiImporter apiImporter)
         {
+            OwnerCommandCanvas = owner;
             ApiImporter = apiImporter;
             InitializeComponent();
             ImportList.ItemsSource = apiImporter.ModulueNameList;
@@ -65,7 +67,12 @@ namespace CapyCSS.Controls.BaseControls
             }
 
             // ネームスペースをインポートする
-            return ApiImporter.ImportNameSpace(imputText);
+            bool isInport = ApiImporter.ImportNameSpace(imputText);
+            if (isInport)
+            {
+                OwnerCommandCanvas?.NotifyNonScriptModified();
+            }
+            return isInport;
         }
     }
 }

@@ -712,7 +712,7 @@ namespace CapyCSS.Controls.BaseControls
 
         private void MakeModuleControler(IEnumerable<ShortCutCommand> shortCutCommands)
         {
-            moduleControler = new ModuleControler(ApiImporter);
+            moduleControler = new ModuleControler(this, ApiImporter);
 
             var stackPanel = new StackPanel();
             stackPanel.Orientation = Orientation.Vertical;
@@ -992,6 +992,7 @@ namespace CapyCSS.Controls.BaseControls
             LinkConnectorListHoldAction.Clear();
             ScriptCommandCanvas.HideWorkStack();
             InstalledMultiRootConnector = null;
+            ClearNonScriptModified();
 
             if (full)
             {
@@ -1632,8 +1633,9 @@ namespace CapyCSS.Controls.BaseControls
 
         /// <summary>
         /// UnDo履歴が初期状態か？
+        /// ※アンドゥできない変更が有った場合も true を返します。
         /// </summary>
-        public bool IsInitialPoint => commandRecord.IsInitialPoint;
+        public bool IsInitialPoint => !isNonScriptModified && commandRecord.IsInitialPoint;
 
         /// <summary>
         /// UnDoできるか？
@@ -1651,6 +1653,7 @@ namespace CapyCSS.Controls.BaseControls
         public void ClearUnDoPoint()
         {
             commandRecord.Clear();
+            ClearNonScriptModified();
         }
 
         /// <summary>
@@ -1827,6 +1830,28 @@ namespace CapyCSS.Controls.BaseControls
         public void HideRunningPanel()
         {
             CommandCanvasControl?.HideRunningPanel();
+        }
+
+        /// <summary>
+        /// スクリプト以外の修正がされているか判定します。
+        /// </summary>
+        private bool isNonScriptModified = false;
+
+        /// <summary>
+        /// スクリプト以外の変更を通知します。
+        /// </summary>
+        public void NotifyNonScriptModified()
+        {
+            isNonScriptModified = true;
+            CommandCanvasList.UpdateTitle();
+        }
+
+        /// <summary>
+        /// スクリプト以外の変更状態をクリアします。
+        /// </summary>
+        public void ClearNonScriptModified()
+        {
+            isNonScriptModified = false;
         }
 
         #region IDisposable Support
