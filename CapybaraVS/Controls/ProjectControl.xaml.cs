@@ -64,7 +64,8 @@ namespace CapyCSS.Controls
                         self.dllGroup.Child.Clear();
                         foreach (var path in DllList)
                         {
-                            self.AddDllFile(path);
+                            string tempPath = System.IO.Path.GetFullPath(path, basePath);
+                            self.AddDllFile(tempPath);
                         }
                     }
 
@@ -87,7 +88,8 @@ namespace CapyCSS.Controls
                     DllList = new List<string>();
                     foreach (var item in self.dllGroup.Child)
                     {
-                        DllList.Add(item.HintText);
+                        string tempPath = System.IO.Path.GetRelativePath(basePath, item.HintText);
+                        DllList.Add(tempPath);
                     }
                 };
             }
