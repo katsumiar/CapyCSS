@@ -474,15 +474,10 @@ namespace CbVS.Script
             }
         }
 
-        private bool _isNull()
-        {
-            return _value is null || _value.IsNull || Callback is null;
-        }
-
         /// <summary>
         /// 変数の持つ値は null か？
         /// </summary>
-        public override bool IsNull => CbNull.Is(_value) || (_isNull() && !CbVoid.Is(_value));
+        public override bool IsNull => Callback is null;
 
         /// <summary>
         /// 値の文字列表現
