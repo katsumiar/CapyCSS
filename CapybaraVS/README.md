@@ -3,6 +3,7 @@
 
 ## 1.0.0.0beta での変更
 * ログエリアの行頭に「>」を書いて「>コマンド」でシェルコマンド（PowerShell）を実行できるようにしました。
+* 「[プロジェクトファイル名]&[cbsファイル]」形式でプロジェクトファイル中のcbsファイルを自動で開けるようにしました。
 
 ### 1.0.0.0beta で対応した不具合
 * コマンドの検索で InvalidOperationException が出る。
@@ -54,12 +55,16 @@ Documentフォルダにある古い「CapyCSS」フォルダを削除して下�
 オプションとして-aeを指定した場合、スクリプト実行後に自動的に終了します。
 オプションとして-aseを指定した場合、-asと-aeを併せて実行した場合と同様になります。
 ```
-CapyCSS.exe script.cbs
-CapyCSS.exe -as script.cbs
-CapyCSS.exe -as -ae script.cbs
-CapyCSS.exe -ase script.cbs
+CapyCSS.exe [cbsファイル]
+CapyCSS.exe [プロジェクトファイル名]&[cbsファイル]
+CapyCSS.exe -as [cbsファイル]
+CapyCSS.exe -as -ae [cbsファイル]
+CapyCSS.exe -ase [cbsファイル]
+CapyCSS.exe -as [プロジェクトファイル名]&[cbsファイル]
+CapyCSS.exe -ase [プロジェクトファイル名]&[cbsファイル]
+※カレントディレクトリは、「CapyCSS実行ファイルのあるディレクトリ\Sample」になります。
 ```
-「SetExitCode」ノードを使って終了コードをセットできます。
+「SetExitCode」ノードを使って終了コードをセットできます（ノードが実行された時点で強制終了します）。
 
 ## コンソール出力
 

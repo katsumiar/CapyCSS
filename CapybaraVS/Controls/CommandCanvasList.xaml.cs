@@ -374,32 +374,121 @@ namespace CapyCSS.Controls
             SetButtonCommand(ExecuteButton, Command.ExecuteScript.Create());
 
             Dispatcher.BeginInvoke(new Action(() =>
+            {
+                // アイドル状態になってから自動読み込み
+
+                autoLoad();
+            }), DispatcherPriority.ApplicationIdle);
+        }
+
+        /// <summary>
+        /// 自動読み込みを処理します。
+        /// </summary>
+        private void autoLoad()
+        {
+            if (autoLoadFilePath != null)
+            {
+                // 起動読み込みをキックする
+
+                if (autoLoadFilePath.Contains('&'))
                 {
-                    // アイドル状態になってから新規シートを作成する
+                    // [プロジェクトファイル]&[CBSファイル] 形式での読み込み
 
-                    if (reserveLoadCbsFilePath != null)
+                    autoLoadProject();
+                }
+                else
+                {
+                    autoLoadFile();
+                }
+                autoLoadFilePath = null;
+            }
+        }
+
+        /// <summary>
+        /// ファイルの自動読み込みを処理します。
+        /// </summary>
+        private void autoLoadFile()
+        {
+            string loadFilePath = autoLoadFilePath;
+            if (!Path.IsPathRooted(loadFilePath))
+            {
+                // 絶対パスでないので絶対パスに置き換える
+
+                loadFilePath = System.IO.Path.GetFullPath(loadFilePath, CommandCanvasList.GetSamplePath());
+            }
+            if (File.Exists(loadFilePath))
+            {
+                string ext = Path.GetExtension(loadFilePath);
+                if (ext == CommandCanvasList.CBS_EXT)
+                {
+                    // CBSファイル読み込み
+
+                    AddLoadContents(loadFilePath);
+                }
+                else if (ext == CommandCanvasList.CBSPROJ_EXT)
+                {
+                    // プロジェクトファイル読み込み
+
+                    ProjectExpander.IsExpanded = true;
+                    ProjectControl.Instance.LoadProject(loadFilePath);
+                }
+                else
+                {
+                    Console.WriteLine($"{loadFilePath}\nInvalid file extension in autoload file.");
+                }
+            }
+            else
+            {
+                Console.WriteLine($"{loadFilePath}\nFile not found.");
+            }
+        }
+
+        /// <summary>
+        /// [プロジェクトファイル]&[CBSファイル] 形式での自動読み込みを処理します。
+        /// </summary>
+        private void autoLoadProject()
+        {
+            var files = autoLoadFilePath.Split('&');
+            if (files.Length == 2)
+            {
+                if (Path.GetExtension(files[0]) == CommandCanvasList.CBSPROJ_EXT
+                    && Path.GetExtension(files[1]) == CommandCanvasList.CBS_EXT)
+                {
+                    string projectFile = files[0];
+                    if (!Path.IsPathRooted(projectFile))
                     {
-                        // 起動読み込みをキックする
+                        // 絶対パスでないので絶対パスに置き換える
 
-                        string ext = Path.GetExtension(reserveLoadCbsFilePath);
-
-                        if (ext == CommandCanvasList.CBS_EXT)
-                        {
-                            // CBSファイル読み込み
-
-                            AddLoadContents(reserveLoadCbsFilePath);
-                        }
-                        else if (ext == CommandCanvasList.CBSPROJ_EXT)
-                        {
-                            // プロジェクトファイル読み込み
-
-                            ProjectExpander.IsExpanded = true;
-                            ProjectControl.Instance.LoadProject(reserveLoadCbsFilePath);
-                        }
-
-                        reserveLoadCbsFilePath = null;
+                        projectFile = System.IO.Path.GetFullPath(projectFile, CommandCanvasList.GetSamplePath());
                     }
-                }), DispatcherPriority.ApplicationIdle);
+                    string cbsFile = System.IO.Path.Combine(Path.GetDirectoryName(projectFile), Path.GetFileName(files[1]));
+                    if (!File.Exists(projectFile))
+                    {
+                        Console.WriteLine($"{projectFile}\nProject File not found.");
+                    }
+                    else if (!File.Exists(cbsFile))
+                    {
+                        Console.WriteLine($"{cbsFile}\nCBS File not found.");
+                    }
+                    else
+                    {
+                        // プロジェクトファイル読み込み
+                        ProjectExpander.IsExpanded = true;
+                        ProjectControl.Instance.LoadProject(projectFile);
+
+                        // CBSファイル読み込み
+                        AddLoadContents(Path.GetFileName(cbsFile));
+                    }
+                }
+                else
+                {
+                    Console.WriteLine($"{autoLoadFilePath}\nInvalid file extension in autoload file.");
+                }
+            }
+            else
+            {
+                Console.WriteLine($"{autoLoadFilePath}\nFormat error in autoload file.");
+            }
         }
 
         /// <summary>
@@ -821,7 +910,7 @@ namespace CapyCSS.Controls
         /// <summary>
         /// 読み込み予約cbsファイルです。
         /// </summary>
-        private string reserveLoadCbsFilePath = null;
+        private string autoLoadFilePath = null;
 
         /// <summary>
         /// ファイル読み込みを予約します。
@@ -829,7 +918,7 @@ namespace CapyCSS.Controls
         /// <param name="path">ファイルのパス</param>
         public void SetLoadFile(string path = null)
         {
-            reserveLoadCbsFilePath = path;
+            autoLoadFilePath = path;
         }
 
         /// <summary>
