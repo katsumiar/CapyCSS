@@ -1371,7 +1371,7 @@ namespace CapyCSS.Controls
         public object CallPublicExecuteEntryPoint(bool fromScript, string entryPointName = null)
         {
             var result = _CallPublicExecuteEntryPoint(fromScript, entryPointName);
-            if (!fromScript)
+            if (IsAutoExit)
             {
                 Dispatcher.BeginInvoke(new Action(() =>
                 {
