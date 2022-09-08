@@ -939,8 +939,9 @@ namespace CapyCSS.Controls.BaseControls
                     {
                         // 起動時自動実行
 
-                        CommandCanvasControl.CallPublicExecuteEntryPoint(false);
+                        CommandCanvasControl.CallPublicExecuteEntryPoint(true);
                         CommandCanvasControl.IsAutoExecute = false;
+                        Console.WriteLine($"Auto Executed.");
                     }
                     else
                     {
