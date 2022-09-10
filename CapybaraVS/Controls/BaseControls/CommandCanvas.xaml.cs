@@ -665,6 +665,7 @@ namespace CapyCSS.Controls.BaseControls
                 commandNode.AddChild(new TreeMenuNode(Command.SaveScript.Create()));
                 commandNode.AddChild(new TreeMenuNode(Command.LoadScript.Create()));
                 commandNode.AddChild(new TreeMenuNode(Command.ConvertCS.Create()));
+                commandNode.AddChild(new TreeMenuNode(Command.CreateCsProject.Create()));
                 treeViewCommand.AssetTreeData.Add(commandNode);
             }
 

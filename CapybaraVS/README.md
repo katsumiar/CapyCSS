@@ -4,6 +4,7 @@
 ## 1.0.0.0beta での変更
 * ログエリアの行頭に「>」を書いて「>コマンド」でシェルコマンド（PowerShell）を実行できるようにしました。
 * 「[プロジェクトファイル名]&[cbsファイル]」形式でプロジェクトファイル中のcbsファイルを自動で開けるようにしました。
+* 「Make .NET Project」ボタンを追加しました。
 
 ### 1.0.0.0beta で対応した不具合
 * コマンドの検索で InvalidOperationException が出る。
@@ -43,7 +44,7 @@
 * 作者の趣味でc#とwpfの勉強の為、そして気まぐれで制作されています。
 
 ## ターゲット環境
-* .NET Desktop 6.0.8
+* .NET Desktop 6
 * c＃
 
 ## 「The data version are incompatible.」と表示される場合の対処方法

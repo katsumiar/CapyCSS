@@ -860,6 +860,21 @@ namespace CapyCSS.Controls
             UpdateCommandEnable();
         }
 
+        /// <summary>
+        /// インポートするDLLリストを取得します。
+        /// </summary>
+        /// <returns></returns>
+        public IEnumerable<string> GetDllList()
+        {
+            var result = new List<string>();
+            foreach (var item in dllGroup.Child)
+            {
+                string tempPath = item.HintText;
+                result.Add(tempPath);
+            }
+            return result;
+        }
+
         public void Dispose()
         {
             if (IsModified && ControlTools.ShowSelectMessage(

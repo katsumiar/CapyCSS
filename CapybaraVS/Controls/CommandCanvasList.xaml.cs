@@ -372,6 +372,7 @@ namespace CapyCSS.Controls
             SetButtonCommand(redo, Command.ReDo.Create());
             SetButtonCommand(ConvertCSS, Command.ConvertCS.Create());
             SetButtonCommand(ExecuteButton, Command.ExecuteScript.Create());
+            SetButtonCommand(OutDotNetSDKButton, Command.CreateCsProject.Create());
 
             Dispatcher.BeginInvoke(new Action(() =>
             {
@@ -1246,7 +1247,10 @@ namespace CapyCSS.Controls
         /// <param name="menuCommand">コマンド</param>
         private void SetButtonCommand(Button button, IMenuCommand menuCommand)
         {
-            //button.Content = menuCommand.Name;
+            if (button.Content is null || (button.Content is string title && title == ""))
+            {
+                button.Content = menuCommand.Name;
+            }
             button.ToolTip = menuCommand.HintText();
             button.Command = menuCommand;
         }
@@ -1994,6 +1998,34 @@ namespace CapyCSS.Controls
             RunningPanel.Visibility = Visibility.Hidden;
         }
 
+        /// <summary>
+        /// シェルコマンドを実行します。
+        /// </summary>
+        /// <param name="command"></param>
+        public int CommandShellExecuter(string command, Encoding encoding)
+        {
+            return MainLog.CommandShellExecuter(command, encoding);
+        }
+
+        /// <summary>
+        /// コマンドを実行します。
+        /// </summary>
+        /// <param name="command"></param>
+        public int CommandExecuter(string command, Encoding encoding)
+        {
+            return MainLog.CommandExecuter(command, encoding);
+        }
+
+        /// <summary>
+        /// .NETプロジェクトを作成します。
+        /// </summary>
+        public void CreateCsProject()
+        {
+            TryCursorLock(() =>
+            {
+                CsProject.CreateCsProject();
+            });
+        }
 
         [ScriptMethod]
         public static void SetExitCode(int code)
