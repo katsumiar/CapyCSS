@@ -1,5 +1,5 @@
 # CapyCSS
-![CapyCSS_sample](https://user-images.githubusercontent.com/63950487/187065619-405376eb-064f-4f32-8152-ee19d31a568b.gif)
+![CapyCSS_netproject](https://user-images.githubusercontent.com/63950487/189475693-e937a85b-d228-450b-9288-fc376a7200a4.gif)
 
 ## 1.0.0.0beta での変更
 * ログエリアの行頭に「>」を書いて「>コマンド」でシェルコマンド（PowerShell）を実行できるようにしました。
