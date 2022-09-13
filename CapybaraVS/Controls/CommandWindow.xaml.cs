@@ -112,6 +112,14 @@ namespace CapyCSS.Controls
             Close();
         }
 
+        /// <summary>
+        /// コマンドの有効状態を反映します。
+        /// </summary>
+        public void UpdateCommandEnable()
+        {
+            treeViewCommand.RefreshItem();
+        }
+
         void EventHandler(object sender, EventArgs e)
         {
             filterProcTimer.Stop();

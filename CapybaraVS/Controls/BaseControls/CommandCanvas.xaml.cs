@@ -1813,9 +1813,8 @@ namespace CapyCSS.Controls.BaseControls
             {
                 CommandMenuWindow.FilterString = filterString;
             }
-            CommandCanvasList.Instance?.SetCommandMask(false);
+            CommandMenuWindow.UpdateCommandEnable();
             CommandMenuWindow.ShowDialog();
-            CommandCanvasList.Instance?.SetCommandMask(true);
         }
 
         /// <summary>
