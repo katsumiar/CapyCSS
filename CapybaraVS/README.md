@@ -1,9 +1,10 @@
 # CapyCSS
-![CapyCSS_sample](https://user-images.githubusercontent.com/63950487/187065619-405376eb-064f-4f32-8152-ee19d31a568b.gif)
+![CapyCSS_netproject](https://user-images.githubusercontent.com/63950487/189475693-e937a85b-d228-450b-9288-fc376a7200a4.gif)
 
 ## 1.0.0.0beta での変更
 * ログエリアの行頭に「>」を書いて「>コマンド」でシェルコマンド（PowerShell）を実行できるようにしました。
 * 「[プロジェクトファイル名]&[cbsファイル]」形式でプロジェクトファイル中のcbsファイルを自動で開けるようにしました。
+* 「Make .NET Project」ボタンを追加しました。
 
 ### 1.0.0.0beta で対応した不具合
 * コマンドの検索で InvalidOperationException が出る。
@@ -15,6 +16,7 @@
 * プロジェクトファイルのDLLパスが絶対パスになっている。
 * 配列でないデリゲート変数のnull判定が正しく判定されない。
 * -as -ase オプション起動でスクリプトが実行されない。
+* コマンドウインドウの「Command」下のメニューが無効になっている。
 
 ## 0.6.0.0 での変更
 * プロジェクトファイルをプロジェクトディレクトリ下で管理するようにしました。
@@ -43,7 +45,7 @@
 * 作者の趣味でc#とwpfの勉強の為、そして気まぐれで制作されています。
 
 ## ターゲット環境
-* .NET Desktop 6.0.8
+* .NET Desktop 6
 * c＃
 
 ## 「The data version are incompatible.」と表示される場合の対処方法

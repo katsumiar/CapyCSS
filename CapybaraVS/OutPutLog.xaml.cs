@@ -121,7 +121,7 @@ namespace CapyCSS
                         // シェルコマンドを実行する
 
                         TryAutoClear();
-                        CommandExecuter(command);
+                        CommandShellExecuter(command, Encoding.Default);
                     }
                 }
                 else
@@ -135,25 +135,43 @@ namespace CapyCSS
             }
         }
 
-        private void CommandExecuter(string command)
+        public int CommandShellExecuter(string command, Encoding encoding)
         {
             ProcessStartInfo processStartInfo = new ProcessStartInfo(CbSTUtils.Shell, CbSTUtils.ShellOption + command);
+            return BaseCommandExecuter(processStartInfo, encoding);
+        }
+
+        public int CommandExecuter(string command, Encoding encoding)
+        {
+            ProcessStartInfo processStartInfo = new ProcessStartInfo(command);
+            return BaseCommandExecuter(processStartInfo, encoding);
+        }
+
+        private int BaseCommandExecuter(ProcessStartInfo processStartInfo, Encoding encoding)
+        {
             processStartInfo.CreateNoWindow = true;
             processStartInfo.UseShellExecute = false;
             processStartInfo.RedirectStandardOutput = true;
             processStartInfo.RedirectStandardError = true;
             processStartInfo.WorkingDirectory = Environment.CurrentDirectory;
+            if (encoding != Encoding.Default)
+            {
+                processStartInfo.StandardErrorEncoding = encoding;
+                processStartInfo.StandardOutputEncoding = encoding;
+            }
             Process process = Process.Start(processStartInfo);
             string output = process.StandardOutput.ReadToEnd();
             string error = process.StandardError.ReadToEnd();
             int code = process.ExitCode;
             process.Close();
             Log.Text += Environment.NewLine;
+
             Log.Text += error;
             Log.Text += output;
             Log.Text += $"Exit Code: {code}" + Environment.NewLine;
             Log.SelectionStart = Log.Text.Length - 1;
             Log.ScrollToEnd();
+            return code;
         }
     }
 

@@ -503,6 +503,10 @@ namespace CapyCSS.Controls.BaseControls
         {
             OnPropertyChanged("IsEnabled");
             OnPropertyChanged("Foreground");
+            foreach (var node in Child)
+            {
+                node.UpdateCommand();
+            }
         }
     }
 
@@ -656,14 +660,7 @@ namespace CapyCSS.Controls.BaseControls
         {
             foreach (var node in treeView)
             {
-                if (node.Child.Count != 0)
-                {
-                    _RefreshItem(node.Child);
-                }
-                else
-                {
-                    node.UpdateCommand();
-                }
+                node.UpdateCommand();
             }
         }
 
