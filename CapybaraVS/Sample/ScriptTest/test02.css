@@ -1,0 +1,49 @@
+var test02 = () => {
+    CapyCSSbase.FlowLib.Foreach<System.Boolean>(
+        new System.Collections.Generic.List<System.Boolean>() {
+            CapyCSSbase.FlowLib.And(
+                new System.Collections.Generic.List<System.Boolean>() {
+                    true,
+                    true,
+                    true
+                },
+                false
+            ),
+            CapyCSSbase.FlowLib.Or(
+                new System.Collections.Generic.List<System.Boolean>() {
+                    false,
+                    true,
+                    false
+                },
+                false
+            ),
+            CapyCSSbase.FlowLib.Not(
+                CapyCSSbase.FlowLib.And(
+                    new System.Collections.Generic.List<System.Boolean>() {
+                        true,
+                        false,
+                        true
+                    },
+                    false
+                )
+            ),
+            CapyCSSbase.FlowLib.Not(
+                CapyCSSbase.FlowLib.Or(
+                    new System.Collections.Generic.List<System.Boolean>() {
+                        false,
+                        false,
+                        false
+                    },
+                    false
+                )
+            )
+        },
+        ( ARG_1 ) => CapyCSSbase.FlowLib.If(
+                ARG_1,
+                () => CapyCSSbase.Script.OutConsole( "GOOD" ),
+                () => CapyCSSbase.Script.OutConsole( "NG" )
+            )
+    );
+};
+test02.Invoke();
+
