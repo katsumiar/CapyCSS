@@ -63,7 +63,7 @@ namespace CapyCSSbase
         {
             if (samples is null || samples.Count() == 0)
                 return false;
-            bool result = true;
+            bool result = false;
             if (invert)
             {
                 foreach (var sample in samples)
