@@ -64,7 +64,6 @@ namespace CapyCSS.Script
                 copyOriginal = n;
                 if (n is CbClass<CbNull>)
                 {
-                    Debug.Assert(false);    // このパスは無い
                     Value = null;
                 }
                 else if (n is ICbEvent || n is ICbClass)
