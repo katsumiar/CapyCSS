@@ -1066,6 +1066,12 @@ namespace CapyCSS.Script
                     return false;   // インターフェイスを持っていない
             }
 
+            if (genericType.IsGenericParameter)
+            {
+                // ジェネリックパラメーターならここで条件を満たしている
+
+                return true;
+            }
             return genericType != typeof(object) && genericType.BaseType.IsAssignableFrom(target);
         }
 

@@ -1,5 +1,4 @@
 ﻿using CapyCSS.Controls;
-using CapyCSS.Controls.BaseControls;
 using CbVS.Script;
 using System;
 using System.Collections.Generic;
@@ -7,8 +6,6 @@ using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Input;
 using static CapyCSS.Controls.BaseControls.CommandCanvas;
 using static CapyCSS.Script.ScriptImplement;
 
@@ -665,13 +662,12 @@ namespace CapyCSS.Script
                     // 返し値がジェネリックパラメータ
 
                     genericParameters.Add(n.ReturnType.Name);
-                    if (genericParams.Count() == genericParameters.Count)
-                    {
+
+                    if (EqualGenericParameter(parameters, genericParameters))
                         return ScriptImplement.IsConstraint(n.ReturnType, genericParams.Last());
-                    }
                     return false;
                 }
-                return genericParams.Count() == genericParameters.Count;
+                return EqualGenericParameter(parameters, genericParameters);
             });
             if (methods.Count() == 1)
             {
@@ -682,6 +678,29 @@ namespace CapyCSS.Script
 
             // 該当するメソッドが無かった
             return new Tuple<object, bool>(null, false);
+        }
+
+        /// <summary>
+        /// 呼び出すメソッドのパラメータに使われたジェネリックパラメータと指定するジェネリックパラメータの組み合わせが同じかを判定します。
+        /// </summary>
+        /// <param name="methodParameters">呼び出すメソッドのパラメータ</param>
+        /// <param name="genericParameters">呼び出す予定のジェネリックパラメータ</param>
+        /// <returns>true==同じ</returns>
+        private static bool EqualGenericParameter(ParameterInfo[] methodParameters, ICollection<string> genericParameters)
+        {
+            ICollection<string> methodGenericParameters = new List<string>();
+            foreach (var param in methodParameters)
+            {
+                var paramType = param.ParameterType;
+                if (paramType.IsGenericType)
+                {
+                    foreach (var genericArgument in paramType.GetGenericArguments())
+                    {
+                        methodGenericParameters.Add(genericArgument.Name);
+                    }
+                }
+            }
+            return methodGenericParameters.SequenceEqual(genericParameters);
         }
 
         /// <summary>

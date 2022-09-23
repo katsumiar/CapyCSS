@@ -1,0 +1,208 @@
+var test01 = () => {
+    CapyCSSbase.FlowLib.If(
+        true,
+        () => CapyCSSbase.Script.OutConsole( "GOOD" ),
+        () => CapyCSSbase.Script.OutConsole( "NG" )
+    );
+    CapyCSSbase.FlowLib.If(
+        false,
+        () => CapyCSSbase.Script.OutConsole( "NG" ),
+        () => CapyCSSbase.Script.OutConsole( "GOOD" )
+    );
+    CapyCSSbase.Script.OutConsole(
+        CapyCSSbase.FlowLib.If<System.String>(
+            true,
+            () => "GOOD",
+            () => "NG"
+        )
+    );
+    CapyCSSbase.Script.OutConsole(
+        CapyCSSbase.FlowLib.If<System.String>(
+            false,
+            () => "NG",
+            () => "GOOD"
+        )
+    );
+    CapyCSSbase.Script.OutConsole(
+        CapyCSSbase.FlowLib.If_Value<System.String>(
+            true,
+            "GOOD",
+            "NG"
+        )
+    );
+    CapyCSSbase.Script.OutConsole(
+        CapyCSSbase.FlowLib.If_Value<System.String>(
+            false,
+            "NG",
+            "GOOD"
+        )
+    );
+    CapyCSSbase.Script.OutConsole(
+        CapyCSSbase.FlowLib.IsNull<System.String>(
+            null,
+            "GOOD",
+            "NG"
+        )
+    );
+    CapyCSSbase.Script.OutConsole(
+        CapyCSSbase.FlowLib.IsNull<System.String>(
+            "GOOD",
+            "NG",
+            "GOOD"
+        )
+    );
+    CapyCSSbase.FlowLib.NotNull<System.String>(
+        "GOOD",
+        ( ARG_1 ) => CapyCSSbase.Script.OutConsole( ARG_1 )
+    );
+    CapyCSSbase.FlowLib.Foreach<System.String>(
+        new System.Collections.Generic.List<System.String>() {
+            CapyCSSbase.Script.Sum(
+                new System.Collections.Generic.List<System.String>() {
+                    "GOOD",
+                    "1"
+                }
+            ),
+            CapyCSSbase.Script.Sum(
+                new System.Collections.Generic.List<System.String>() {
+                    "GOOD",
+                    "2"
+                }
+            ),
+            CapyCSSbase.Script.Sum(
+                new System.Collections.Generic.List<System.String>() {
+                    "GOOD",
+                    "_OK"
+                }
+            )
+        },
+        ( ARG_1 ) => CapyCSSbase.Script.OutConsole( ARG_1 )
+    );
+    CapyCSSbase.FlowLib.Foreach<System.String>(
+        new System.Collections.Generic.List<System.String>() {
+            "GOOD1",
+            "GOOD2",
+            "GOOD_OK"
+        },
+        ( ARG_1 ) => CapyCSSbase.Script.OutConsole( ARG_1 )
+    );
+    CapyCSSbase.FlowLib.ForeachAction(
+        new System.Collections.Generic.List<System.Action>() {
+            () => CapyCSSbase.Script.OutConsole(
+                    CapyCSSbase.Script.Sum(
+                        new System.Collections.Generic.List<System.String>() {
+                            "GOOD",
+                            "1"
+                        }
+                    )
+                ),
+            () => CapyCSSbase.Script.OutConsole(
+                    CapyCSSbase.Script.Sum(
+                        new System.Collections.Generic.List<System.String>() {
+                            "GOOD",
+                            "2"
+                        }
+                    )
+                ),
+            () => CapyCSSbase.Script.OutConsole(
+                    CapyCSSbase.Script.Sum(
+                        new System.Collections.Generic.List<System.String>() {
+                            "GOOD",
+                            "_OK"
+                        }
+                    )
+                )
+        }
+    );
+    CapyCSSbase.FlowLib.If(
+        CapyCSSbase.FlowLib.ForeachReturn<System.String, System.Boolean>(
+            new System.Collections.Generic.List<System.String>() {
+                CapyCSSbase.Script.Sum(
+                    new System.Collections.Generic.List<System.String>() {
+                        "GOOD",
+                        "1"
+                    }
+                ),
+                CapyCSSbase.Script.Sum(
+                    new System.Collections.Generic.List<System.String>() {
+                        "GOOD",
+                        "2"
+                    }
+                ),
+                CapyCSSbase.Script.Sum(
+                    new System.Collections.Generic.List<System.String>() {
+                        "GOOD",
+                        "_OK"
+                    }
+                )
+            },
+            ( ARG_1 ) => CapyCSSbase.FlowLib.If_Value<System.Boolean?>(
+                    CapyCSSbase.FlowLib.Eq(
+                        ARG_1,
+                        CapyCSSbase.Script.Sum(
+                            new System.Collections.Generic.List<System.String>() {
+                                "GOOD",
+                                "_OK"
+                            }
+                        )
+                    ),
+                    new System.Boolean?(),
+                    null
+                ),
+            false
+        ),
+        () => CapyCSSbase.Script.OutConsole( "GOOD" ),
+        () => CapyCSSbase.Script.OutConsole( "NG" )
+    );
+    {
+        CapyCSSbase.Script.OutConsole( CapyCSSbase.Script.As<System.String>( "GOOD" ) );
+        CapyCSSbase.Script.OutConsole(
+            CapyCSSbase.FlowLib.IsNull<System.String>(
+                CapyCSSbase.Script.As<System.String>( 999 ),
+                "GOOD",
+                "NG"
+            )
+        );
+        CapyCSSbase.FlowLib.Foreach<System.Boolean>(
+            new System.Collections.Generic.List<System.Boolean>() {
+                CapyCSSbase.Script.Is<System.String>( "GOOD" ),
+                CapyCSSbase.FlowLib.Not( CapyCSSbase.Script.Is<System.String>( 999 ) ),
+                CapyCSSbase.FlowLib.Ne(
+                    11,
+                    22
+                ),
+                CapyCSSbase.FlowLib.Gt(
+                    22,
+                    11
+                ),
+                CapyCSSbase.FlowLib.Ge(
+                    22,
+                    11
+                ),
+                CapyCSSbase.FlowLib.Ge(
+                    11,
+                    11
+                ),
+                CapyCSSbase.FlowLib.Lt(
+                    11,
+                    22
+                ),
+                CapyCSSbase.FlowLib.Le(
+                    11,
+                    22
+                ),
+                CapyCSSbase.FlowLib.Le(
+                    11,
+                    11
+                )
+            },
+            ( ARG_1 ) => CapyCSSbase.FlowLib.If(
+                    ARG_1,
+                    () => CapyCSSbase.Script.OutConsole( "GOOD" ),
+                    () => CapyCSSbase.Script.OutConsole( "NG" )
+                )
+        );
+    };
+};
+test01.Invoke();
+
