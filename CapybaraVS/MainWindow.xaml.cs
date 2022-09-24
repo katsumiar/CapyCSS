@@ -60,7 +60,7 @@ namespace CapyCSS
 
                     var assm = Assembly.GetExecutingAssembly();
                     var name = assm.GetName();
-                    Title = name.Name + " ver " + AppVersion + "beta";
+                    Title = name.Name + " ver " + AppVersion + "-beta.5";
                     if (filename != null && filename != "")
                         Title += $" [{filename}]";
                 }, CallClosing, App.EntryLoadFile, App.IsAutoExecute, App.IsAutoExit);
