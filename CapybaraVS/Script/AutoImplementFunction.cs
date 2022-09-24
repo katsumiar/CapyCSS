@@ -570,8 +570,6 @@ namespace CapyCSS.Script
             }
             else
             {
-
-
                 if (methodArguments is null)
                 {
                     // 引数のないメソッド
@@ -601,11 +599,14 @@ namespace CapyCSS.Script
                     var resultFindMethod = InvokeFindMethod(classType, returnValue.OriginalType, genericParams, tempCallArguments, classInstance, args);
                     if (resultFindMethod.Item2)
                     {
+                        // メソッド呼び出し結果を返し値に登録する
+
                         result = resultFindMethod.Item1;
                     }
                     else
                     {
-                        // このパスには来ない筈（型制約判定が未完成なので来るかも...）
+                        // メソッドが見つからなかった
+                        
                         throw new Exception($"{FuncCode}{CbSTUtils.GetGenericParamatersString(args.Select(n => n.GetType()).ToArray(), "(", ")")} method not found.");
                     }
                     ReturnArgumentsValue(classInstance, callArguments, args);
@@ -616,13 +617,15 @@ namespace CapyCSS.Script
         }
 
         /// <summary>
-        /// 該当するメソッドを探して呼び出します。
+        /// 該当するメソッドを探して呼び出します。該当するメソッドを探して呼び出します。
         /// </summary>
-        /// <param name="classType">クラス情報</param>
-        /// <param name="argTypes">引数型情報</param>
-        /// <param name="classInstance">クラスインスタンス</param>
-        /// <param name="args">引数</param>
-        /// <returns>Tuple(呼び出したメソッドの返し値, メソッドが見つかった==true)</returns>
+        /// <param name="classType">メソッドの所属するクラスの型情報</param>
+        /// <param name="returnType">返し値の型</param>
+        /// <param name="genericParams">メソッドのジェネリックパラメータ型情報リスト</param>
+        /// <param name="argTypes">引数の型情報リスト</param>
+        /// <param name="classInstance">メソッドの所属するクラスのインスタンス（静的メソッドならnull）</param>
+        /// <param name="args">呼び出すメソッドに渡す引数配列</param>
+        /// <returns>呼び出し結果</returns>
         private Tuple<object, bool> InvokeFindMethod(
             Type classType,
             Type returnType,
@@ -636,18 +639,11 @@ namespace CapyCSS.Script
             // メソッド名と引数の数でフィルタリング
             var methods = classType.GetMethods(attr).Where(n => n.Name == FuncCode && n.GetParameters().Length == args.Length);
 
-            if (methods.Count() == 1)
-            {
-                // 該当するメソッドが一つだけ見つかった
-
-                return MakeAndCallMethod(genericParams, classInstance, args, methods.First());
-            }
-
             // 引数の一致で探す
-            methods = methods.Where(n =>
+            var targetMethod = methods.FirstOrDefault(n =>
             {
                 var parameters = n.GetParameters();
-                ICollection<string> genericParameters = new List<string>();
+                IDictionary<string, Type> genericParameters = new Dictionary<string, Type>();
                 for (int i = 0; i < argTypes.Count; ++i)
                 {
                     // 引数の型の一致判定
@@ -661,46 +657,19 @@ namespace CapyCSS.Script
                 {
                     // 返し値がジェネリックパラメータ
 
-                    genericParameters.Add(n.ReturnType.Name);
-
-                    if (EqualGenericParameter(parameters, genericParameters))
-                        return ScriptImplement.IsConstraint(n.ReturnType, genericParams.Last());
-                    return false;
+                    return IsMatchType(n.ReturnType, genericParams.Last(), genericParameters);
                 }
-                return EqualGenericParameter(parameters, genericParameters);
-            });
-            if (methods.Count() == 1)
+                return true;
+            }, null);
+            if (targetMethod != null)
             {
                 // 該当するメソッドが一つだけ見つかった
 
-                return MakeAndCallMethod(genericParams, classInstance, args, methods.First());
+                return MakeAndCallMethod(genericParams, classInstance, args, targetMethod);
             }
 
             // 該当するメソッドが無かった
             return new Tuple<object, bool>(null, false);
-        }
-
-        /// <summary>
-        /// 呼び出すメソッドのパラメータに使われたジェネリックパラメータと指定するジェネリックパラメータの組み合わせが同じかを判定します。
-        /// </summary>
-        /// <param name="methodParameters">呼び出すメソッドのパラメータ</param>
-        /// <param name="genericParameters">呼び出す予定のジェネリックパラメータ</param>
-        /// <returns>true==同じ</returns>
-        private static bool EqualGenericParameter(ParameterInfo[] methodParameters, ICollection<string> genericParameters)
-        {
-            ICollection<string> methodGenericParameters = new List<string>();
-            foreach (var param in methodParameters)
-            {
-                var paramType = param.ParameterType;
-                if (paramType.IsGenericType)
-                {
-                    foreach (var genericArgument in paramType.GetGenericArguments())
-                    {
-                        methodGenericParameters.Add(genericArgument.Name);
-                    }
-                }
-            }
-            return methodGenericParameters.SequenceEqual(genericParameters);
         }
 
         /// <summary>
@@ -733,32 +702,45 @@ namespace CapyCSS.Script
         /// <param name="argType">引数の型</param>
         /// <param name="genericParameters">メソッド作成時に使用するジェネリック引数</param>
         /// <returns>true==型の一致に該当する</returns>
-        private bool IsMatchType(Type paramType, Type argType, ICollection<string> genericParameters)
+        private bool IsMatchType(Type paramType, Type argType, IDictionary<string, Type> genericParameters)
         {
             if (paramType.IsGenericParameter)
             {
                 // 型がジェネリックパラメータ
 
-                if (!genericParameters.Contains(paramType.Name))
+                if (!genericParameters.ContainsKey(paramType.Name))
                 {
-                    // 登場したジェネリックパラメータを記録しておく
+                    if (!ScriptImplement.IsConstraint(paramType, argType))
+                    {
+                        // 型制約が一致しない
 
-                    genericParameters.Add(paramType.Name);
+                        return false;
+                    }
+
+                    // 登場したジェネリックパラメータを適用した型と一緒に記憶しておく
+                    genericParameters.Add(paramType.Name, argType);
+                    return true;
                 }
-                return ScriptImplement.IsConstraint(paramType, argType);
+
+                // ジェネリックパラメータに適用されている型と型が一致するか判定する
+                return genericParameters[paramType.Name] == argType;
             }
             if (paramType.IsGenericType)
             {
                 // 型がジェネリック型
 
                 if (paramType.GenericTypeArguments.Length != argType.GenericTypeArguments.Length)
+                {
                     return false;   // ジェネリック引数の数が異なる
+                }
                 for (int i = 0; i < paramType.GenericTypeArguments.Length; i++)
                 {
                     var _paramType = paramType.GenericTypeArguments[i];
                     var _argType = argType.GenericTypeArguments[i];
                     if (!IsMatchType(_paramType, _argType, genericParameters))
+                    {
                         return false;
+                    }
                 }
             }
             else
