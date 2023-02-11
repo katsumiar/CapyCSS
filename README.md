@@ -1,6 +1,9 @@
 # CapyCSS
 ![CapyCSS_netproject](https://user-images.githubusercontent.com/63950487/189475693-e937a85b-d228-450b-9288-fc376a7200a4.gif)
 
+## 悩み
+* 色々分かってきたので作り直したい。今度は、ポリシー等を定めて別な書き方で。ともあれ、とにもかくにもBlazorを採用したい…。
+
 ## 1.0.0.0beta での変更
 * ログエリアの行頭に「>」を書いて「>コマンド」でシェルコマンド（PowerShell）を実行できるようにしました。
 * 「[プロジェクトファイル名]&[cbsファイル]」形式でプロジェクトファイル中のcbsファイルを自動で開けるようにしました。
@@ -47,7 +50,7 @@
 * 作者の趣味でc#とwpfの勉強の為、そして気まぐれで制作されています。
 
 ## ターゲット環境
-* .NET Desktop 6
+* .NET6 Desktop
 * c＃
 
 ## 「The data version are incompatible.」と表示される場合の対処方法
