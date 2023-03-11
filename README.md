@@ -1,4 +1,4 @@
-![](https://img.shields.io/github/license/katsumiar/CapyCSS)
+[![MIT License](http://img.shields.io/badge/license-MIT-blue.svg?style=flat)](LICENSE)
 
 # CapyCSS
 ![CapyCSS_netproject](https://user-images.githubusercontent.com/63950487/189475693-e937a85b-d228-450b-9288-fc376a7200a4.gif)
