@@ -44,7 +44,8 @@ If launched from the console, the outputs from the "Call File" and "OutConsole" 
 * Use Ctrl + S to save the script, Ctrl + O to load a script, Ctrl + N to create a new script, and Ctrl + Shift + N to clear the script.
 * Press 'j' key to adjust the script display to the center of the screen, and Ctrl + j to adjust it to the upper-left corner of the screen.
 * Press F5 to execute the node with the "Entry Point" checkbox checked.
-※Note that you can edit node and argument names by double-clicking on them, but variable names can only be edited in the variable list on the left side of the screen.
+
+Note: That you can edit node and argument names by double-clicking on them, but variable names can only be edited in the variable list on the left side of the screen.
 
 ## Convenient features of the script
 * Hover over an argument to view its contents.
