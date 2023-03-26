@@ -1018,61 +1018,83 @@ namespace CapyCSS.Script
                     return false;
                 }
 
-                return IsConstraint(geneArg, t);
+                return IsConstraintSatisfied(geneArg, t);
             };
             return isAccept;
         }
 
         /// <summary>
-        /// 型制約を判定します。
-        /// ※未完成
+        /// IsConstraintSatisfiedの複数ジェネリックパラメータ対応版です。
         /// </summary>
-        /// <param name="genericType">制約を持つ型</param>
-        /// <param name="target">判定する型</param>
-        /// <returns>true==制約を満たす</returns>
-        public static bool IsConstraint(Type genericType, Type target)
+        /// <param name="genericTypeDefinition">ジェネリック型</param>
+        /// <param name="targetTypes">ジェネリック引数配列</param>
+        /// <returns></returns>
+        public static bool AreConstraintsSatisfied(Type genericTypeDefinition, Type[] targetTypes)
         {
-            GenericParameterAttributes sConstraints =
-                        genericType.GenericParameterAttributes &
-                        GenericParameterAttributes.SpecialConstraintMask;
+            Type[] genericTypes = genericTypeDefinition.GetGenericArguments();
+
+            if (targetTypes is null)
+            {
+                return genericTypes.Length == 0;
+            }
+
+            // Check if the number of generic parameters matches the number of target types
+            if (genericTypes.Length != targetTypes.Length)
+            {
+                // The number of generic parameters and target types must be the same.
+                return false;
+            }
+
+            return genericTypes.Zip(targetTypes, IsConstraintSatisfied).All(result => result);
+        }
+
+        /// <summary>
+        /// genericType型のジェネリック引数target型がパラメータ制約を満たすかどうかを判断します。
+        /// ※要検証
+        /// </summary>
+        /// <param name="genericType">ジェネリック引数を持つ型</param>
+        /// <param name="target">パラメータ制約を満たすかどうかを判断する型</param>
+        /// <returns>true==制約を満たす</returns>
+        public static bool IsConstraintSatisfied(Type genericType, Type targetType)
+        {
+            var sConstraints = genericType.GenericParameterAttributes & GenericParameterAttributes.SpecialConstraintMask;
 
             if (sConstraints != GenericParameterAttributes.None)
             {
-                if (target.IsClass &&    // 構造体は含めない（デフォルトコンストラクタが在る）
-                    GenericParameterAttributes.None != (sConstraints & GenericParameterAttributes.DefaultConstructorConstraint))
+                if (targetType.IsClass && (sConstraints & GenericParameterAttributes.DefaultConstructorConstraint) != GenericParameterAttributes.None)
                 {
-                    var query = target.GetConstructors(BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance);  // コンストラクタを取得
-                    bool haveDefaultConstructer = query.Any(n => n.GetParameters().Length == 0);    // 引数無しを探す
-                    if (!haveDefaultConstructer)
-                        return false;    // 型がパラメーターなしのコンストラクターを持たなければ拒否
+                    var constructors = targetType.GetConstructors(BindingFlags.Public | BindingFlags.Instance);
+                    bool haveDefaultConstructor = constructors.Any(constructor => constructor.GetParameters().Length == 0);
+                    if (!haveDefaultConstructor)
+                        return false;
                 }
-                if (GenericParameterAttributes.None != (sConstraints & GenericParameterAttributes.ReferenceTypeConstraint))
+
+                if ((sConstraints & GenericParameterAttributes.ReferenceTypeConstraint) != GenericParameterAttributes.None)
                 {
-                    if (target.IsValueType || target.IsPointer)
-                        return false;   // 型が参照型でなければ拒否（値型で無くポインタ型でも無ければ参照型）
+                    if (targetType.IsValueType || targetType.IsPointer)
+                        return false;
                 }
-                if (GenericParameterAttributes.None != (sConstraints & GenericParameterAttributes.NotNullableValueTypeConstraint))
+
+                if ((sConstraints & GenericParameterAttributes.NotNullableValueTypeConstraint) != GenericParameterAttributes.None)
                 {
-                    if (!target.IsValueType)
-                        return false;   // 型が参照型の場合は拒否
-                    if (target.IsGenericType && target.GetGenericTypeDefinition() == typeof(Nullable<>))
-                        return false;   // Null許容型の場合は拒否（この実装は怪しい…）
+                    if (!targetType.IsValueType || (targetType.IsGenericType && targetType.GetGenericTypeDefinition() == typeof(Nullable<>)))
+                        return false;// C# 8.0以降のNullable Reference Typesは、後々考える
                 }
             }
 
-            foreach (var interfaceType in genericType.GetInterfaces())
-            {
-                if (!target.GetInterfaces().Contains(interfaceType))
-                    return false;   // インターフェイスを持っていない
-            }
+            if (genericType.GetInterfaces().Any(interfaceType => !targetType.GetInterfaces().Contains(interfaceType)))
+                return false;
 
             if (genericType.IsGenericParameter)
-            {
-                // ジェネリックパラメーターならここで条件を満たしている
-
                 return true;
-            }
-            return genericType != typeof(object) && genericType.BaseType.IsAssignableFrom(target);
+
+            if (genericType != typeof(object) && genericType.BaseType.IsAssignableFrom(targetType))
+                return true;
+
+            if (genericType.IsAssignableFrom(targetType))
+                return true;
+
+            return false;
         }
 
         /// <summary>

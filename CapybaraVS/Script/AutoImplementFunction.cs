@@ -710,7 +710,7 @@ namespace CapyCSS.Script
 
                 if (!genericParameters.ContainsKey(paramType.Name))
                 {
-                    if (!ScriptImplement.IsConstraint(paramType, argType))
+                    if (!ScriptImplement.IsConstraintSatisfied(paramType, argType))
                     {
                         // 型制約が一致しない
 

@@ -28,6 +28,7 @@ using System.Windows.Shapes;
 using System.Windows.Threading;
 using System.Xml;
 using System.Xml.Serialization;
+using System.Reflection.Metadata;
 
 namespace CapyCSS.Controls.BaseControls
 {
@@ -481,42 +482,74 @@ namespace CapyCSS.Controls.BaseControls
                 CheckNullable(CbST.CbCreate(typeof(Nullable<>).MakeGenericType(new Type[] { valueType })));
 
             // 型制約チェック
-            bool CheckConstraint(Type targetType, Type argType)
+            var typeTupleList = new List<(Type, Type[])>
             {
-                foreach (var n in targetType.GetGenericArguments())
-                {
-                    if (n.IsGenericParameter)
-                    {
-                        if (!ScriptImplement.IsConstraint(n, argType))
-                        {
-                            return false;
-                        }
-                    }
-                }
-                return true;
+                (typeof(_SimpleClass), null),
+
+                (typeof(_SimpleGenericClass<>), new Type[] { typeof(int) }),
+                (typeof(_SimpleGenericClass<>), new Type[] { typeof(string) }),
+                (typeof(_SimpleGenericClass<>), new Type[] { typeof(_ClassWithInterface) }),
+                (typeof(_MultipleGenericClass<,>), new Type[] { typeof(int), typeof(string) }),
+                (typeof(_MultipleGenericClass<,>), new Type[] { typeof(_ClassWithInterface), typeof(_DefaultConstructorClass) }),
+
+                // Reference type constraint
+                (typeof(_ReferenceTypeClass<>), new Type[] { typeof(string) }),
+                (typeof(_ReferenceTypeClass<>), new Type[] { typeof(_ClassWithInterface) }),
+
+                // Value type constraint
+                (typeof(_ValueTypeClass<>), new Type[] { typeof(int) }),
+                (typeof(_ValueTypeClass<>), new Type[] { typeof(TimeSpan) }),
+
+                // Interface constraint
+                (typeof(_GenericClassWithInterface<>), new Type[] { typeof(_ClassWithInterface) }),
+
+                // Inherited class constraint
+                (typeof(_InheritedClass<>), new Type[] { typeof(_ClassWithInterface) }),
+
+                // Multiple constraints
+                (typeof(_MultiConstraintClass<>), new Type[] { typeof(_ClassWithInterface) }),
+
+                // Nested generic type definition
+                (typeof(_NestedGenericClass<>), new Type[] { typeof(_NoConstraintNestedGenericClass<_ClassWithInterface>.NestedClass) }),
+            };
+            foreach (var (type, types) in typeTupleList)
+            {
+                Debug.Assert(ScriptImplement.AreConstraintsSatisfied(type, types));
             }
-            Debug.Assert(CheckConstraint(typeof(_constraintCheck1<>), typeof(_refConstraintCheck)));
-            Debug.Assert(!CheckConstraint(typeof(_constraintCheck1<>), typeof(_refNoConstConstraintCheck)));
-            Debug.Assert(CheckConstraint(typeof(_constraintCheck2<>), typeof(_valueConstraintCheck)));
-            Debug.Assert(!CheckConstraint(typeof(_constraintCheck2<>), typeof(_refNoConstConstraintCheck)));
-            Debug.Assert(CheckConstraint(typeof(_constraintCheck3<>), typeof(_refNoConstConstraintCheck)));
-            Debug.Assert(!CheckConstraint(typeof(_constraintCheck3<>), typeof(_refConstraintCheck)));
-            Debug.Assert(CheckConstraint(typeof(_constraintCheck4<>), typeof(_refNoConstConstraintCheck)));
-            Debug.Assert(!CheckConstraint(typeof(_constraintCheck4<>), typeof(_refConstraintCheck)));
+            // 各制約条件に対応するネガティブテストケース
+            var ngTypeTupleList = new List<(Type, Type[])>
+            {
+                (typeof(_ClassWithDefaultConstructor<>), new Type[] { typeof(_NoDefaultConstructor) }),
+                (typeof(_ClassWithReferenceTypeConstraint<>), new Type[] { typeof(int) }),
+                (typeof(_ClassWithInterfaceConstraint<>), new Type[] { typeof(_SimpleClass) }),
+                (typeof(_ClassWithMultipleConstraints<,>), new Type[] { typeof(_NoDefaultConstructor), typeof(int) }),
+            };
+            foreach (var (type, types) in ngTypeTupleList)
+            {
+                Debug.Assert(!ScriptImplement.AreConstraintsSatisfied(type, types));
+            }
 
             Console.WriteLine("ok");
         }
-        public class _refConstraintCheck {}
-        public class _refNoConstConstraintCheck : IComparable<_refConstraintCheck>
-        {
-            public _refNoConstConstraintCheck(int a) {}
-            public int CompareTo(_refConstraintCheck other) { throw new NotImplementedException(); }
-        }
-        public struct _valueConstraintCheck {}
-        public class _constraintCheck1<T> where T : class, new() {}
-        public class _constraintCheck2<T> where T : struct {}
-        public class _constraintCheck3<T> where T : _refNoConstConstraintCheck {}
-        public class _constraintCheck4<T> where T : IComparable<_refConstraintCheck> {}
+        public class _SimpleGenericClass<T> { }
+        public class _MultipleGenericClass<T1, T2> { }
+        public class _ReferenceTypeClass<T> where T : class { }
+        public class _ValueTypeClass<T> where T : struct { }
+        public class _InheritedClass<T> where T : _ClassWithInterface { }
+        public class _MultiConstraintClass<T> where T : class, _ISampleInterface, new() { }
+        public class _NestedGenericClass<T> where T : _NoConstraintNestedGenericClass<T>.NestedClass { }
+        public interface _ISampleInterface { }
+        public class _ClassWithInterface : _ISampleInterface { public _ClassWithInterface() { } }
+        public class _DefaultConstructorClass { }
+        public class _GenericClassWithInterface<T> where T : _ISampleInterface { }
+        public class _NoConstraintNestedGenericClass<T> { public class NestedClass { } }
+        public class _NoDefaultConstructor { public _NoDefaultConstructor(int x) { } }
+        public class _SimpleClass { }
+        public class _ClassWithDefaultConstructor<T> where T : new() { }
+        public class _ClassWithReferenceTypeConstraint<T> where T : class { }
+        public class _ClassWithInterfaceConstraint<T> where T : _ISampleInterface { }
+        public class _ClassWithMultipleConstraints<T1, T2> where T1 : new() where T2 : class, _ISampleInterface { }
+
         #endregion
 
         //----------------------------------------------------------------------
