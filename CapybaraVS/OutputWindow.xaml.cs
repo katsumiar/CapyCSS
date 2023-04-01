@@ -11,6 +11,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using MahApps.Metro.Controls;
+using System.Windows.Forms;
 
 namespace CapyCSS
 {
@@ -19,13 +20,13 @@ namespace CapyCSS
     /// </summary>
     public partial class OutputWindow : MetroWindow
     {
-        public static OutputWindow CreateWindow(string title)
+        public static OutputWindow CreateWindow(string title, Point? pos = null)
         {
             var outputWindow = new OutputWindow();
             outputWindow.Title = "[" + title + "]";
             outputWindow.Owner = CommandCanvasList.OwnerWindow;
+            ControlTools.SetWindowPos(outputWindow, pos);
             outputWindow.Show();
-            ControlTools.SetWindowPos(outputWindow, null);
             return outputWindow;
         }
 

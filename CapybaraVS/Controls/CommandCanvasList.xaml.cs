@@ -1625,7 +1625,7 @@ namespace CapyCSS.Controls
             string script = BuildScript(owner);
             if (!string.IsNullOrWhiteSpace(script))
             {
-                OutputWindow.CreateWindow(CurrentScriptTitle).AddBindText = script;
+                OutputWindow.CreateWindow(CurrentScriptTitle, new Point(Mouse.GetPosition(this).X, Mouse.GetPosition(this).Y)).AddBindText = script;
             }
         }
 

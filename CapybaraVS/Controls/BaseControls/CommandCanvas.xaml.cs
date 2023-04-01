@@ -1400,7 +1400,10 @@ namespace CapyCSS.Controls.BaseControls
             SelectType = null;
             if (positionSet && _CanTypeMenuExecuteEventIndex == 0)
             {
-                ControlTools.SetWindowPos(TypeMenuWindow, new Point(Mouse.GetPosition(this).X, Mouse.GetPosition(this).Y));
+                if (checkType)
+                {
+                    ControlTools.SetWindowPos(TypeMenuWindow, new Point(Mouse.GetPosition(CommandCanvasList.OwnerWindow).X, Mouse.GetPosition(CommandCanvasList.OwnerWindow).Y));
+                }
             }
             TypeMenuWindow.treeViewCommand.RefreshItem();
             TypeMenuWindow.ShowDialog();
