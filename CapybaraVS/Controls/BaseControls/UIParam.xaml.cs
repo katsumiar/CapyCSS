@@ -489,9 +489,12 @@ namespace CapyCSS.Controls.BaseControls
             Edit.MaxHeight = Edit.MinHeight = Edit.Height = 300;
             Edit.AcceptsReturn = true;
             Edit.AcceptsTab = true;
-            Edit.VerticalScrollBarVisibility = ScrollBarVisibility.Auto;
+            Edit.TextWrapping = TextWrapping.Wrap;
+            Edit.VerticalContentAlignment = VerticalAlignment.Top;
+			Edit.VerticalScrollBarVisibility = ScrollBarVisibility.Auto;
             Edit.HorizontalScrollBarVisibility = ScrollBarVisibility.Auto;
-        }
+			Edit.Visibility = Visibility.Visible;
+		}
 
         /// <summary>
         /// enum型のパラメータを表示します。
