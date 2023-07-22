@@ -38,11 +38,11 @@ namespace CapyCSS
             Info.Text += Environment.NewLine;
             Info.Text += "Copyright notice:" + Environment.NewLine;
             Info.Text += "  Microsoft.NET " + Environment.Version.ToString() + " (" + (Environment.Is64BitProcess ? "64bit" : "32bit") + ")" + Environment.NewLine;
-            Info.Text += "  MahApps.Metro 2.4.9" + Environment.NewLine;
+            Info.Text += "  MahApps.Metro 2.4.10" + Environment.NewLine;
             Info.Text += "  MahApps.Metro.IconPacks 4.11.0" + Environment.NewLine;
-            Info.Text += "  MaterialDesignThemes 4.5.0" + Environment.NewLine;
-            Info.Text += "  System.Drawing.Common 6.0.0" + Environment.NewLine;
-            Info.Text += "  Microsoft-WindowsAPICodePack-Shell 1.1.4" + Environment.NewLine;
+            Info.Text += "  MaterialDesignThemes 4.9.0" + Environment.NewLine;
+            Info.Text += "  System.Drawing.Common 7.0.0" + Environment.NewLine;
+            Info.Text += "  Microsoft-WindowsAPICodePack-Shell 1.1.5" + Environment.NewLine;
 
             Info.Text += Environment.NewLine;
             Info.Text += "Shortcut Key:" + Environment.NewLine;
