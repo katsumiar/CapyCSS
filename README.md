@@ -1,114 +1,128 @@
-[![MIT License](http://img.shields.io/badge/license-MIT-blue.svg?style=flat)](LICENSE)
-
 # CapyCSS
 ![CapyCSS_netproject](https://user-images.githubusercontent.com/63950487/189475693-e937a85b-d228-450b-9288-fc376a7200a4.gif)
 
-## Features
-CapyCSS is a visual scripting tool for C# that enables node-based programming. By importing DLLs, creating scripts can be easily achieved.
+## 特徴
+* ビジュアル環境でc#なスクリプトを作成することができます。
+* dllをインポートしてメソッドをスクリプトで使うことができます（インポート後にnamespaceで取り込んで下さい）。
+* 作者の趣味でc#とwpfの勉強の為、そして気まぐれで制作されています。
 
-## Target Environment
-* .NET Desktop 6
-* c#
+## ターゲット環境
+* .NET7 Desktop
+* c＃
 
-## Solution for "The data version are incompatible."
-Please delete the old "CapyCSS" folder in your Documents directory.
+## 「The data version are incompatible.」と表示される場合の対処方法
+Documentフォルダにある古い「CapyCSS」フォルダを削除して下さい。
 
-## Execution options
-When a script file is specified as a command-line argument, it is loaded at startup. If the -as option is also specified, nodes with the "Entry Point" checkbox selected will be executed after the script is loaded. If the -ae option is specified, the program will automatically exit after the script is executed. If the -ase option is specified, the program will execute -as and -ae sequentially.
+## 実行オプション
+保存したスクリプトファイルをコマンド引数で指定すると、起動時に自動的に読み込まれます。
+オプションとして-asが併せて指定されている場合、「Entry」をチェックされたノードは、スクリプトのロード後に自動で実行されます。
+オプションとして-aeを指定した場合、スクリプト実行後に自動的に終了します。
+オプションとして-aseを指定した場合、-asと-aeを併せて実行した場合と同様になります。
 ```
-CapyCSS.exe [cbs fils]
-CapyCSS.exe [project file]&[cbs fils]
-CapyCSS.exe -as [cbs fils]
-CapyCSS.exe -as -ae [cbs fils]
-CapyCSS.exe -ase [cbs fils]
-CapyCSS.exe -as [project file]&[cbs fils]
-CapyCSS.exe -ase [project file]&[cbs fils]
-Note: The current directory is set to "CapyCSS executable file directory\Sample".
+CapyCSS.exe [cbsファイル]
+CapyCSS.exe [プロジェクトファイル名]&[cbsファイル]
+CapyCSS.exe -as [cbsファイル]
+CapyCSS.exe -as -ae [cbsファイル]
+CapyCSS.exe -ase [cbsファイル]
+CapyCSS.exe -as [プロジェクトファイル名]&[cbsファイル]
+CapyCSS.exe -ase [プロジェクトファイル名]&[cbsファイル]
+※カレントディレクトリは、「CapyCSS実行ファイルのあるディレクトリ\Sample」になります。
 ```
-Note: You can set an exit code using the "SetExitCode" node, which will force the program to terminate when the node is executed.
+「SetExitCode」ノードを使って終了コードをセットできます（ノードが実行された時点で強制終了します）。
 
-## Console output
-If launched from the console, the outputs from the "Call File" and "OutConsole" nodes will also be displayed in the console.
+## コンソール出力
 
-## Instructions
-* You can display the command window by pressing the space bar or wheel button.
-* Once the command window is displayed, you can place nodes by clicking on an item under the "Program" section of the command menu.
-* To connect nodes, left-click and drag the circle of one node to the square of another node.
-* You can disconnect connected nodes by holding down the Ctrl key and left-clicking on the square (double-clicking also works).
-* Hold down the Shift key and drag your mouse to select multiple nodes.
-* To delete selected nodes, press the Delete key.
-* You can move a node by left-clicking on its name and dragging it (Ctrl key moves the node along the guide).
-* You can move the entire screen by left-clicking and dragging (if nodes are selected, they will move with the screen).
-* You can zoom in or out by rotating the wheel button.
-* Use Ctrl + A to select all nodes, Ctrl + Space to deselect, Ctrl + C to copy selected nodes, and Ctrl + V to paste copied nodes.
-* Use Ctrl + S to save the script, Ctrl + O to load a script, Ctrl + N to create a new script, and Ctrl + Shift + N to clear the script.
-* Press 'j' key to adjust the script display to the center of the screen, and Ctrl + j to adjust it to the upper-left corner of the screen.
-* Press F5 to execute the node with the "Entry Point" checkbox checked.
+コンソールから起動した場合は、「Call File」や「OutConsole」系のノードからの出力は、コンソールにも出力されます。
 
-Note: That you can edit node and argument names by double-clicking on them, but variable names can only be edited in the variable list on the left side of the screen.
+## 操作方法
+* スペースキーもしくはホイールボタンの押下でコマンドウインドウを表示できます。
+* コマンドウインドウを表示し、コマンドメニューの「Program」下から項目をクリックしてノードを配置できます。
+* ノードの○を左クリックしてドラッグし、ノードの□に接続できます。
+* Ctrlキーを押しながら□を左クリックすると、接続しているノードを切断できます（ダブルクリックでも可能になりました）。
+* Shiftキーを押しながらマウスをドラッグして範囲内のノードを複数選択します。
+* Deleteキーで選択されているノードを削除できます。
+* ノード名を左クリックしてノードをドラッグ移動できます（Ctrlキーを押下した状態だと、ガイドに沿って移動します）。
+* 画面を左クリックして画面全体をドラッグ移動できます（選択されたノードがある場合、選択されているノードが移動します）。
+* ホイールボタンの回転で表示を拡大もしくは縮小できます。
+* Ctrl + Aで全選択
+* Ctrl + Spaceで選択解除
+* Ctrl + Cで選択したノードをコピーできます。
+* Ctrl + Vでコピーされているノードを貼り付けられます。
+* Ctrl + Sでスクリプトを上書き保存できます。
+* Ctrl + Oでスクリプトの読み込みができます。
+* Ctrl + Nで新規にスクリプトを作成できます。
+* Ctrl + Shift + Nでスクリプトをクリアできます。
+* jキーでスクリプトの表示を画面の中央に画面に収まるように調整します。
+* Ctrl + jキーでスクリプトの表示位置を画面の左上に調整します。
+* F5でEntryをチェックされたノードをすべて実行できます。
 
-## Convenient features of the script
-* Hover over an argument to view its contents.
-* Simply drag and drop numbers and characters to create constant nodes.
-* The node connections allow for flexible casting, though it does not guarantee execution.
+※ノード名、引数名はダブルクリックで編集できます。ただし、変数名は画面左側の変数名一覧でのみダブルクリックで編集できます。
 
-## Hint display
-This software supports both English (machine translated) and Japanese.<br>
-To display the interface in Japanese, you need to modify the content of the app.xml file created after execution.<br>
-Change the following line from:<br>
-&lt;Language>en-US&lt;/Language&gt;<br>
-to: <br>
-&lt;Language>ja-JP&lt;/Language&gt;<br>
-After restarting the application, the new settings will take effect.<br>
-Note: Currently under adjustment.
+## スクリプトの便利な機能
+* 引数の上にカーソルを置くと内容を確認できます。
+* 数字と文字をドラッグアンドドロップするだけで定数ノードを作成できます。
+* ノードの接続時に柔軟なキャスト（接続）が可能です（実行を保証するものではありません）。
 
-## Features supported by method import
-* Class constructor (includes the ability to create new instances).
-* Method (accepts the 'this' keyword as an argument).
-* Static method.
-* Getter (retrieves the value of a private field).
-* Setter (sets the value of a private field).
+## ヒント表示
+※只今、調整中です。
+<br>英語と日本語をサポートします。ただし、初期状態では英語のみの機械翻訳です。
+<br>日本語で表示するには、実行後に作成されるapp.xmlファイルの内容を変更します。
+<br>```<Language>en-US</Language>```
+<br>上記の内容を次のように変更します。
+<br>```<Language>ja-JP</Language>```
+<br>再起動すると設定が適用されます。
 
-The class to which the method belongs must have a public access modifier.<br>
-Abstract classes are excluded.<br>
-The method must have a public access modifier.<br>
+## メソッドのインポートでサポートされる機能
+* クラスのコンストラクタ（new する機能が取り込まれます）
+* メソッド(thisを受け取る引数が追加されます)
+* 静的メソッド
+* ゲッター
+* セッター
 
-## The argument type (and modifiers) of the method supported by the script
-* int, string, double, byte, sbyte, long, short, ushort, uint, ulong, char, float, decimal, bool, object
-* Arrays (Supported for scripting from ver0.3.5.0 onwards) Note: up to one dimension only.
-* Types that have IEnumerable (can be manipulated on UI)
+※メソッドの所属するクラスは、パブリックである必要があります。
+<br>※抽象クラスは、対象外です。
+<br>※メソッドは、パブリックである必要があります。
+
+## スクリプトが対応するメソッドの引数の型（及び修飾子など）
+* Type: int, string, double, byte, sbyte, long, short, ushort, uint, ulong, char, float, decimal, bool, object
+* 配列（ver0.3.5.0 からスクリプト上での扱いにも対応）※ただし、一次元まで。
+* IEnumerableを持つ型（※UI上で要素を操作できます）
 * Class
 * Struct
 * Interface
 * Delegate
 * Enum
 * Generics
-* Initializer value
-* ref (reference)
-* out parameter modifier
-* in parameter modifier
-* params parameter array
-* Nullable types (Supported for scripting from ver0.3.4.0 onwards)
+* 初期化値
+* ref（リファレンス）
+* outパラメーター修飾子
+* inパラメーター修飾子
+* paramsパラメータ配列
+* null許容型（ver0.3.4.0 からスクリプト上での扱いにも対応）
 
-## The return type of the method supported by the script
-* int, string, double, byte, sbyte, long, short, ushort, uint, ulong, char, float, decimal, bool, object
-* Arrays
+## スクリプトが対応するメソッドの戻り値の型
+* Type: int, string, double, byte, sbyte, long, short, ushort, uint, ulong, char, float, decimal, bool, object
+* 配列
 * Class
 * Struct
 * Interface
 * Delegate
 * Enum
 * Generics
-* Void
-* Nullable type
+* void
+* null許容型
 
-## Custom types
-* text type (a string type that has a multi-line editing area on the UI)
-* password type (a string type that masks its display on the UI)
+## 独自の型
+* text型（UI上で複数行の編集領域を持つstring型です）
+* password型（UI上で表示をマスクする為のstring型です）
 
-## Method calls from within a method
-Delegate-type arguments can be connected to nodes of matching return type. However, for Action-types, connection is unconditional.<br>
-When referencing a delegate variable, the execution result of the connected node is returned.
+## メソッドからのメソッド呼び出し
+delegate 型の引数は、返し値の型と一致する型のノードと接続できます。ただし、Action だと無条件に接続できます。
+デリゲートの呼び出しでは、接続されたノードの結果が返されます。
 
-## License
-CapyCSS is open source software released under the [MIT License](https://github.com/katsumiar/CapyCSS/blob/main/LICENSE). [![MIT License](http://img.shields.io/badge/license-MIT-blue.svg?style=flat)](LICENSE)
+## スクリプトへのDLL自動取り込み機能
+CbSTUtils.AutoImportDllList で Dll を指定するとプロジェクト作成時に最初に自動で取り込まれるようになります。
+スクリプトに最低限入れたい機能を追加したいときに活用して下さい。
+
+## ライセンス
+MITライセンス

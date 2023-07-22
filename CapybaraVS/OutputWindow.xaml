@@ -18,6 +18,6 @@
         mc:Ignorable="d"
         Title="OutputWindow" Height="526" Width="690">
     <Grid>
-        <TextBox x:Name="Log" TextWrapping="Wrap" Text="{Binding BindText}" VerticalScrollBarVisibility="Auto" IsReadOnly="True" />
+        <TextBox x:Name="Log" TextWrapping="Wrap" Text="{Binding BindText}" VerticalScrollBarVisibility="Auto" IsReadOnly="True" VerticalContentAlignment="Top" />
     </Grid>
 </mah:MetroWindow>
