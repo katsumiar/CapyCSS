@@ -1,9 +1,12 @@
 ﻿using CapyCSS.Controls;
+using ControlzEx.Standard;
 using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Interop;
+using System.Windows.Media.Media3D;
 using System.Windows.Threading;
 
 namespace CapyCSS
@@ -123,7 +126,6 @@ namespace CapyCSS
         }
     }
 
-
     public class ControlTools
     {
         public static T FindAncestor<T>(DependencyObject findObject) where T : class
@@ -153,59 +155,27 @@ namespace CapyCSS
         /// <param name="pos">表示位置指定</param>
         public static void SetWindowPos(Window self, Point? pos)
         {
-            if (pos.HasValue)
+            if (CommandCanvasList.OwnerWindow.WindowState == WindowState.Maximized)
             {
-                self.Left = pos.Value.X;
-                self.Top = pos.Value.Y;
-
-
-                if (CommandCanvasList.OwnerWindow.WindowState != WindowState.Maximized)
-                {
-                    // ウインドウが最大化されても元のサイズが帰ってくるようなので、最大化していないときだけ相対位置にする
-
-                    self.Left += CommandCanvasList.OwnerWindow.Left;
-                    self.Top += CommandCanvasList.OwnerWindow.Top;
-                }
-                else
-                {
-                    if (CommandCanvasList.OwnerWindow.Left > SystemParameters.PrimaryScreenWidth)
-                    {
-                        // セカンダリディスプレイでクリックされた
-
-                        self.Left += SystemParameters.PrimaryScreenWidth;
-                    }
-                }
+                // 最大化している時は、ウインドウの正しい位置を取得できないので、親ウインドウの存在しているディスプレイを特定し、
+                // そのディスプレイ位置を親ウインドウの位置として扱う。
+                System.Drawing.Rectangle rect = new System.Drawing.Rectangle((int)CommandCanvasList.OwnerWindow.Left,
+                                                                            (int)CommandCanvasList.OwnerWindow.Top,
+                                                                            (int)CommandCanvasList.OwnerWindow.Width,
+                                                                            (int)CommandCanvasList.OwnerWindow.Height);
+                System.Windows.Forms.Screen screen = System.Windows.Forms.Screen.FromRectangle(rect);
+                self.Left = screen.Bounds.Location.X;
+                self.Top = screen.Bounds.Location.Y;
             }
             else
             {
-                // 位置指定なし
-
-                positionAdjustment(self);
+                self.Left = CommandCanvasList.OwnerWindow.Left;
+                self.Top = CommandCanvasList.OwnerWindow.Top;
             }
-        }
-
-        /// <summary>
-        /// 同じディスプレイに表示するように位置を調整します。
-        /// </summary>
-        /// <param name="self">調整対象のウインドウ</param>
-        private static void positionAdjustment(Window self)
-        {
-            if (CommandCanvasList.OwnerWindow.Left > SystemParameters.PrimaryScreenWidth)
+            if (pos.HasValue)
             {
-                // セカンダリディスプレイでクリックされた
-
-                if (self.Left < SystemParameters.PrimaryScreenWidth)
-                {
-                    // プライマリディスプレイでクリックされたがセカンダリディスプレイに表示された
-
-                    self.Left += SystemParameters.PrimaryScreenWidth;
-                }
-            }
-            else if (self.Left > SystemParameters.PrimaryScreenWidth)
-            {
-                // プライマリディスプレイでクリックされたがセカンダリディスプレイに表示された
-
-                self.Left -= SystemParameters.PrimaryScreenWidth;
+                self.Left += pos.Value.X;
+                self.Top += pos.Value.Y;
             }
         }
 
