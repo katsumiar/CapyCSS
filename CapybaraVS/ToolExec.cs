@@ -66,47 +66,58 @@ namespace CapyCSS
             }
         }
 
-        /// <summary>
-        /// プロセスを実行します。
-        /// ※redirectがfalseの場合、実行ファイルを呼び出すと終わりを待たずにすぐに返ります。
-        /// </summary>
-        /// <param name="redirect">リダイレクトするか？</param>
-        /// <returns>呼び出された実行ファイルの終了コード（リダイレクトでない場合は、常に 0）</returns>
-        public int Start(bool redirect = false)
-        {
-            string execOption = null;
-            foreach (var node in ParamList)
-            {
-                execOption ??= new string("");
-                if (execOption != "")
-                    execOption += " ";
-                execOption += node;
-            }
+		/// <summary>
+		/// プロセスを実行します。
+		/// ※redirectがfalseの場合、実行ファイルを呼び出すと終わりを待たずにすぐに返ります。
+		/// </summary>
+		/// <param name="redirect">リダイレクトするか？</param>
+		/// <returns>呼び出された実行ファイルの終了コード（リダイレクトでない場合は、常に 0）</returns>
+		public int Start(bool redirect = false)
+		{
+			string execOption = null;
+			foreach (var node in ParamList)
+			{
+				execOption ??= new string("");
+				if (execOption != "")
+					execOption += " ";
+				execOption += node;
+			}
 
-            ProcessStartInfo psInfo = new ProcessStartInfo();
-            psInfo.FileName = ExecPath;
-            if (execOption != null)
-                psInfo.Arguments = execOption;
-            psInfo.CreateNoWindow = true;                   // コンソールウィンドウを開かない
-            psInfo.UseShellExecute = !redirect;             // シェル機能を使用するか？
-            psInfo.RedirectStandardOutput = redirect;       // 標準出力をリダイレクトするか？
+			ProcessStartInfo psInfo = new ProcessStartInfo();
 
-            Process p = new Process();
-            p.StartInfo = psInfo;
-            p.Start();
+			// Check if the file is a .lnk file
+			if (!ExecPath.EndsWith(".exe"))
+			{
+				psInfo.FileName = "cmd.exe";
+				psInfo.Arguments = $"/C \"{ExecPath}\" {execOption}";
+			}
+			else
+			{
+				psInfo.FileName = ExecPath;
+				if (execOption != null)
+					psInfo.Arguments = execOption;
+			}
 
-            if (psInfo.RedirectStandardOutput)
-            {
-                p.WaitForExit();
-                string output = p.StandardOutput.ReadToEnd();   // 標準出力の読み取り
-                CommandCanvasList.OutPut.OutString(nameof(ToolExec), output);
-                CommandCanvasList.OutPut.Flush();
-                return p.ExitCode;
-            }
+			psInfo.CreateNoWindow = true;                   // コンソールウィンドウを開かない
+			psInfo.UseShellExecute = !redirect;             // シェル機能を使用するか？
+			psInfo.RedirectStandardOutput = redirect;       // 標準出力をリダイレクトするか？
 
-            ProcessList ??= new List<Process>();
-            ProcessList.Add(p);
-            return 0;
-        }
-    }
+			Process p = new Process();
+			p.StartInfo = psInfo;
+			p.Start();
+
+			if (psInfo.RedirectStandardOutput)
+			{
+				p.WaitForExit();
+				string output = p.StandardOutput.ReadToEnd();   // 標準出力の読み取り
+				CommandCanvasList.OutPut.OutString(nameof(ToolExec), output);
+				CommandCanvasList.OutPut.Flush();
+				return p.ExitCode;
+			}
+
+			ProcessList ??= new List<Process>();
+			ProcessList.Add(p);
+			return 0;
+		}
+	}
 }
