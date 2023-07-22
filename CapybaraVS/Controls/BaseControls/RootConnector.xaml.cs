@@ -620,7 +620,7 @@ namespace CapyCSS.Controls.BaseControls
                 {
                     sw.Stop();
                     TimeSpan ts = sw.Elapsed;
-                    Console.WriteLine($"Execute Time: {sw.ElapsedMilliseconds} (ms)");
+                    Console.WriteLine($"execution time: {sw.ElapsedMilliseconds} (ms)");
                     OwnerCommandCanvas.CommandCanvasControl.MainLog.Flush();
 
                     OwnerCommandCanvas.EnabledScriptHoldActionMode = false; // 保留した表示更新処理を実行する
@@ -1153,7 +1153,7 @@ namespace CapyCSS.Controls.BaseControls
         /// <returns>true==変数代入メソッドノード</returns>
         private bool IsSetVariableFunction()
         {
-            return FunctionInfo.FuncCode == $"[{nameof(SetVariable)}]";
+            return FunctionInfo != null && FunctionInfo.FuncCode == $"[{nameof(SetVariable)}]";
         }
 
         /// <summary>
@@ -1629,7 +1629,7 @@ namespace CapyCSS.Controls.BaseControls
                 bool isLiteral = ValueData.IsLiteral;
                 bool isNotConstructor = FunctionInfo is null || !FunctionInfo.IsConstructor;
                 bool isNoReturn = ValueData is CbVoid;
-                bool isRootOrNoReturnOrDummyArguments = rootCurveLinks.Count < 2 || isNoReturn || functionInfo.ClassType == typeof(DummyArguments);
+                bool isRootOrNoReturnOrDummyArguments = rootCurveLinks.Count < 2 || isNoReturn || (functionInfo != null && functionInfo.ClassType == typeof(DummyArguments));
                 if (isLiteral || (isNotConstructor && isRootOrNoReturnOrDummyArguments))
                 {
                     // 仮引数ノードかルートか返し値がVoid、あるいは接続先が一つだけの場合はキャッシュしない
