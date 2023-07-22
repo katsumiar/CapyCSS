@@ -94,13 +94,13 @@ namespace CapyCSS.Script
             Type cbStructType = openedType.MakeGenericType(type);
 
             object result = cbStructType.InvokeMember(
-                        nameof(CbStruct<dummy>.Create),//"Create",
+                        nameof(CbStruct<_dummy>.Create),//"Create",
                         BindingFlags.InvokeMethod,
                         null, null, new object[] { name }) as ICbValue;
             return result as ICbValue;
         }
 
-        private struct dummy {};
+        private struct _dummy {};
 
         /// <summary>
         /// 構造体を判定します。

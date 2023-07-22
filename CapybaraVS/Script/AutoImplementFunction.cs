@@ -696,13 +696,14 @@ namespace CapyCSS.Script
         }
 
         /// <summary>
-        /// メソッドの引数の型の一致を判定します。
+        /// 未確定のジェネリックパラメータを持つかもしれない型（paramType）と比較対象の型（comparedType）の一致を判定します。
+        /// paramTypeがジェネリック型の場合、未確定のパラメータをgenericParametersの辞書に載っている型で確定します。
         /// </summary>
-        /// <param name="paramType">メソッドの引数の型</param>
-        /// <param name="argType">引数の型</param>
+        /// <param name="paramType">未確定のジェネリックパラメータを持つかもしれない型</param>
+        /// <param name="comparedType">比較対象の型（確定した型）</param>
         /// <param name="genericParameters">メソッド作成時に使用するジェネリック引数</param>
-        /// <returns>true==型の一致に該当する</returns>
-        private bool IsMatchType(Type paramType, Type argType, IDictionary<string, Type> genericParameters)
+        /// <returns>true==一致する</returns>
+        private bool IsMatchType(Type paramType, Type comparedType, IDictionary<string, Type> genericParameters)
         {
             if (paramType.IsGenericParameter)
             {
@@ -710,7 +711,7 @@ namespace CapyCSS.Script
 
                 if (!genericParameters.ContainsKey(paramType.Name))
                 {
-                    if (!ScriptImplement.IsConstraint(paramType, argType))
+                    if (!ScriptImplement.IsConstraintSatisfied(paramType, comparedType))
                     {
                         // 型制約が一致しない
 
@@ -718,25 +719,25 @@ namespace CapyCSS.Script
                     }
 
                     // 登場したジェネリックパラメータを適用した型と一緒に記憶しておく
-                    genericParameters.Add(paramType.Name, argType);
+                    genericParameters.Add(paramType.Name, comparedType);
                     return true;
                 }
 
                 // ジェネリックパラメータに適用されている型と型が一致するか判定する
-                return genericParameters[paramType.Name] == argType;
+                return genericParameters[paramType.Name] == comparedType;
             }
             if (paramType.IsGenericType)
             {
                 // 型がジェネリック型
 
-                if (paramType.GenericTypeArguments.Length != argType.GenericTypeArguments.Length)
+                if (paramType.GenericTypeArguments.Length != comparedType.GenericTypeArguments.Length)
                 {
                     return false;   // ジェネリック引数の数が異なる
                 }
                 for (int i = 0; i < paramType.GenericTypeArguments.Length; i++)
                 {
                     var _paramType = paramType.GenericTypeArguments[i];
-                    var _argType = argType.GenericTypeArguments[i];
+                    var _argType = comparedType.GenericTypeArguments[i];
                     if (!IsMatchType(_paramType, _argType, genericParameters))
                     {
                         return false;
@@ -747,18 +748,18 @@ namespace CapyCSS.Script
             {
                 // 通常の型
 
-                if (argType != paramType)
+                if (comparedType != paramType)
                 {
-                    if (argType.FullName != null && paramType.FullName != null)
+                    if (comparedType.FullName != null && paramType.FullName != null)
                     {
-                        if (argType.FullName != paramType.FullName.Replace("&", ""))
+                        if (comparedType.FullName != paramType.FullName.Replace("&", ""))
                         {
                             return false;
                         }
                     }
                     else
                     {
-                        if (argType.Name != paramType.Name.Replace("&", ""))
+                        if (comparedType.Name != paramType.Name.Replace("&", ""))
                         {
                             return false;
                         }
