@@ -10,7 +10,7 @@
         <local:NameLabel x:Name="FuncCaption" CheckTitle="True" LabelString="" HorizontalAlignment="Right" />
         <Grid x:Name="RootMainPanel" HorizontalAlignment="Right" VerticalAlignment="Center" MouseEnter="RootMainPanel_MouseEnter" MouseLeave="RootMainPanel_MouseLeave">
             <StackPanel x:Name="RootLinkMainPanel" HorizontalAlignment="Center" VerticalAlignment="Center" MouseLeftButtonDown="Grid_MouseLeftButtonDown" Orientation="Horizontal">
-                <CheckBox x:Name="Forced" Content="Not Use Cache" Click="Forced_Click" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,0,6,0" FontStyle="Italic" />
+                <CheckBox x:Name="Forced" Content="Don't Use Cache" Click="Forced_Click" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,0,6,0" FontStyle="Italic" />
                 <local:UIParam x:Name="NameText" />
                 <Ellipse x:Name="EllipseType" Width="22" Height="22" Stroke="{StaticResource UnlinkedConnectorStrokeBrush}" Fill="#7F78D862" StrokeThickness="2" HorizontalAlignment="Center" VerticalAlignment="Center" MouseEnter="EllipseType_MouseEnter" MouseLeave="EllipseType_MouseLeave" />
                 <Rectangle x:Name="RectangleType" Visibility="Collapsed" Width="20" Height="20" Stroke="{StaticResource UnlinkedConnectorStrokeBrush}" Fill="#7F78D862" StrokeThickness="2" HorizontalAlignment="Center" VerticalAlignment="Center" />
