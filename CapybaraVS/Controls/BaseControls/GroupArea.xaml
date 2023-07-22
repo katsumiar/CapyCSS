@@ -11,7 +11,7 @@
         <ContentControl MouseDoubleClick="ContentControl_MouseDoubleClick">
             <TextBlock x:Name="TextView" FontFamily="Meiryo" FontSize="16" Margin="8,8,8,8" Foreground="{StaticResource GroupAreaTextForegroundBrush}" TextWrapping="Wrap" />
         </ContentControl>
-        <TextBox x:Name="Edit" Visibility="Collapsed" AcceptsReturn="True" FontSize="16" Margin="8,8,8,8" TextWrapping="Wrap" />
+        <TextBox x:Name="Edit" Visibility="Collapsed" AcceptsReturn="True" FontSize="16" Margin="8,8,8,8" TextWrapping="Wrap" VerticalContentAlignment="Top" />
         <Border x:Name="ResizeAreaNWSE_D" HorizontalAlignment="Right" VerticalAlignment="Bottom" Width="20" Height="20" Background="#02FFFFFF" MouseDown="Border_MouseDownNWSE_D" MouseUp="Border_MouseUp" MouseLeave="Border_MouseLeave" MouseMove="Border_MouseMove" />
         <Border x:Name="ResizeAreaNESW_D" HorizontalAlignment="Left" VerticalAlignment="Bottom" Width="20" Height="20" Background="#02FFFFFF" MouseDown="Border_MouseDownNESW_D"  MouseUp="Border_MouseUp" MouseLeave="Border_MouseLeave" MouseMove="Border_MouseMove" />
         <Border x:Name="ResizeAreaNESW_U" HorizontalAlignment="Right" VerticalAlignment="Top" Width="20" Height="20" Background="#02FFFFFF" MouseDown="Border_MouseDownNESW_U" MouseUp="Border_MouseUp" MouseLeave="Border_MouseLeave" MouseMove="Border_MouseMove" />
