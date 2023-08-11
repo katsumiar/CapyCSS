@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace CapyCSS.Script
 {
@@ -16,12 +17,18 @@ namespace CapyCSS.Script
 
         public override string TypeName => "ImagePath";
 
-        public CbImagePath(string n = "", string name = "")
+        public static bool IsExtension(string path)
+        {
+			var imageExtensions = new List<string>() { ".png", ".gif", ".jpg", ".jpeg", ".bmp", ".tif", ".tiff", ".ico", ".heic" };
+			return imageExtensions.Contains(System.IO.Path.GetExtension(path.ToLower()));
+		}
+
+		public CbImagePath(string n = "", string name = "")
             : base(n, name)
         {
         }
 
-        public static new CbImagePath Create(string name = "") => new CbImagePath("", name);
+		public static new CbImagePath Create(string name = "") => new CbImagePath("", name);
 
         public static new CbImagePath Create(string n, string name) => new CbImagePath(n, name);
 

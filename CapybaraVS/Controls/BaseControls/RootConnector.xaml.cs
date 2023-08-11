@@ -68,7 +68,13 @@ namespace CapyCSS.Controls.BaseControls
                         self.FuncCaption.AssetXML = Caption;
                         self.FuncCaption.AssetXML.ReadAction?.Invoke(self.FuncCaption);
 
-                        if (Value != null && self.ValueData != null && Value != CbSTUtils.ERROR_STR)
+                        if (RootParam != null)
+                        {
+                            self.NameText.AssetXML = RootParam;
+                            self.NameText.AssetXML.ReadAction?.Invoke(self.NameText);
+                        }
+
+						if (Value != null && self.ValueData != null && Value != CbSTUtils.ERROR_STR)
                         {
                             if (self.ValueData.IsStringableValue)
                             {
@@ -76,9 +82,9 @@ namespace CapyCSS.Controls.BaseControls
                                 {
                                     Value = CbPassword.Decrypt(Value);
                                 }
-                                self.ValueData.ValueString = Value;
+								self.ValueData.ValueString = Value;
                             }
-                            self.NameText.UpdateValueData();
+							self.NameText.UpdateValueData();
                         }
 
                         self.ForcedChecked = ForcedChecked;
@@ -133,7 +139,10 @@ namespace CapyCSS.Controls.BaseControls
                     self.FuncCaption.AssetXML.WriteAction?.Invoke();
                     Caption = self.FuncCaption.AssetXML;
 
-                    if (!(self.ValueData is ICbValueList) && self.ValueData != null)
+					self.NameText.AssetXML.WriteAction?.Invoke();
+					RootParam = self.NameText.AssetXML;
+
+					if (!(self.ValueData is ICbValueList) && self.ValueData != null)
                     {
                         if (self.ValueData.IsStringableValue)
                         {
@@ -143,7 +152,8 @@ namespace CapyCSS.Controls.BaseControls
                                 Value = CbPassword.Encrypt(Value);
                             }
                         }
-                    }
+						self.NameText.AssetXML.WriteAction?.Invoke();
+					}
 
                     ForcedChecked = self.ForcedChecked;
 
@@ -165,7 +175,8 @@ namespace CapyCSS.Controls.BaseControls
             public int PointId { get; set; } = 0;
             #region 固有定義
             public NameLabel._AssetXML<NameLabel> Caption { get; set; } = null;
-            public string Value { get; set; } = null;
+			public UIParam._AssetXML<UIParam> RootParam{ get; set; } = null;
+			public string Value { get; set; } = null;
             public bool ForcedChecked { get; set; } = false;
             public RootCurveLinks._AssetXML<RootCurveLinks> Connector { get; set; } = null;
             [XmlArrayItem("LinkConnector")]

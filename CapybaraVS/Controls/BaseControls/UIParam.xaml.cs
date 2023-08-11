@@ -48,8 +48,18 @@ namespace CapyCSS.Controls.BaseControls
                     self.ParamNameLabel.AssetXML = ParamNameLabel;
                     self.ParamNameLabel.AssetXML.ReadAction?.Invoke(self.ParamNameLabel);
 
-                    // 次回の為の初期化
-                    self.AssetXML = new _AssetXML<UIParam>(self);
+                    if (ResizeAreaType != ResizeAreaType.None)
+                    {
+						self.Dispatcher.BeginInvoke(new Action(() =>
+						{
+							// ノードを起き終わってから接続線を繋げる
+
+							self.InitResizeArea(ResizeAreaType, ResizeAreaWidth, ResizeAreaHeight);
+						}), DispatcherPriority.Background);
+                    }
+
+					// 次回の為の初期化
+					self.AssetXML = new _AssetXML<UIParam>(self);
                 };
             }
             public _AssetXML(OwnerClass self)
@@ -58,15 +68,23 @@ namespace CapyCSS.Controls.BaseControls
                 {
                     ParamNameLabelOverlap = self.ParamNameLabelOverlap;
                     ParamName = self.ParamName;
-
-                    self.ParamNameLabel.AssetXML.WriteAction?.Invoke();
+                    ResizeAreaType = self.resizeAreaType;
+                    if (ResizeAreaType != ResizeAreaType.None)
+                    {
+                        ResizeAreaWidth = self.ResizeablePanel.Width;
+                        ResizeAreaHeight = self.ResizeablePanel.Height;
+                    }
+					self.ParamNameLabel.AssetXML.WriteAction?.Invoke();
                     ParamNameLabel = self.ParamNameLabel.AssetXML;
                 };
             }
             #region 固有定義
             public string ParamName { get; set; } = "";
             public string ParamNameLabelOverlap { get; set; } = "";
-            public NameLabel._AssetXML<NameLabel> ParamNameLabel { get; set; } = null;
+            public ResizeAreaType ResizeAreaType { get; set; } = ResizeAreaType.None;
+            public double ResizeAreaWidth { get; set; } = 0;
+			public double ResizeAreaHeight { get; set; } = 0;
+			public NameLabel._AssetXML<NameLabel> ParamNameLabel { get; set; } = null;
 
             protected virtual void Dispose(bool disposing)
             {
@@ -288,7 +306,7 @@ namespace CapyCSS.Controls.BaseControls
 
             if (!valueData.IsVisibleValue)
             {
-                Select.Visibility = Edit.Visibility = Visibility.Collapsed;
+                Select.Visibility = ResizeablePanel.Visibility = Edit.Visibility = Visibility.Collapsed;
             }
             Error.Visibility = valueData.IsError ? Visibility.Visible : Visibility.Collapsed;
             if (valueData.IsError)
@@ -297,7 +315,7 @@ namespace CapyCSS.Controls.BaseControls
             }
             else if (valueData is ICbClass && valueData.TypeName == CbSTUtils.VOID_STR)
             {
-                Edit.Visibility = Visibility.Collapsed;
+				ResizeablePanel.Visibility = Edit.Visibility = Visibility.Collapsed;
             }
         }
 
@@ -356,8 +374,17 @@ namespace CapyCSS.Controls.BaseControls
                     return;
                 }
             }
+			if (valueData is CbMoviePath cbMoviePath)
+			{
+				// 動画を表示する
 
-            if (valueData is CbText)
+				if (ShowMoviePathTypeParamViewer(cbMoviePath))
+				{
+					return;
+				}
+			}
+
+			if (valueData is CbText)
             {
                 // CbText型の編集を準備
 
@@ -416,17 +443,22 @@ namespace CapyCSS.Controls.BaseControls
         private void ShowPasswordTypeParamEdit()
         {
             Password.Visibility = Visibility.Visible;
-            Edit.MaxHeight = 36;
-        }
+		}
 
-        /// <summary>
-        /// 一般的なパラメータ表示を行います。
-        /// </summary>
-        private void ShowOthersTypeParamEdit()
+		/// <summary>
+		/// 一般的なパラメータ表示を行います。
+		/// </summary>
+		private void ShowOthersTypeParamEdit()
         {
-            Edit.Visibility = Visibility.Visible;
-            Edit.MaxHeight = 36;
-        }
+			Edit.Visibility = Visibility.Visible;
+			ResizeablePanel.Visibility = Visibility.Visible;
+			Edit.MinWidth = 32;
+			Edit.MaxWidth = 128;
+            Edit.MaxHeight= 32;
+			ResizeablePanel.HorizontalAlignment = HorizontalAlignment.Center;
+            ResizeablePanel.VerticalAlignment = VerticalAlignment.Center;
+            ResizeablePanel.Background = null;
+		}
 
         /// <summary>
         /// ImageSource型のパラメータを表示します。
@@ -434,74 +466,101 @@ namespace CapyCSS.Controls.BaseControls
         /// <param name="imageSource"></param>
         private void ShowImageSourceTypeParamViewer(ImageSource imageSource)
         {
-            ImageBox.Source = imageSource;
-            ImagePanel.Visibility = Visibility.Visible;
-        }
+			ImageBox.Source = imageSource;
+			InitResizeArea(ResizeAreaType.Image, 240, 240);
+			ImagePanel.Visibility = Visibility.Visible;
+			ResizeablePanel.Visibility = Visibility.Visible;
+		}
 
-        /// <summary>
-        /// Image型のパラメータを表示します。
-        /// </summary>
-        /// <param name="image"></param>
-        private void ShowImageTypeParamViewer(Image image)
+		/// <summary>
+		/// Image型のパラメータを表示します。
+		/// </summary>
+		/// <param name="image"></param>
+		private void ShowImageTypeParamViewer(Image image)
         {
-            ImageBox = image;
-            ImagePanel.Visibility = Visibility.Visible;
-        }
+			ImageBox = image;
+			InitResizeArea(ResizeAreaType.Image, 240, 240);
+			ImagePanel.Visibility = Visibility.Visible;
+			ResizeablePanel.Visibility = Visibility.Visible;
+		}
 
-        /// <summary>
-        /// ImagePath型のパラメータを表示します。
-        /// </summary>
-        /// <param name="imagePath"></param>
-        private bool ShowImagePathTypeParamViewer(CbImagePath cbImagePath)
+		/// <summary>
+		/// ImagePath型のパラメータを表示します。
+		/// </summary>
+		/// <param name="cbImagePath">画像のファイルパス</param>
+		private bool ShowImagePathTypeParamViewer(CbImagePath cbImagePath)
         {
-            if (!System.IO.File.Exists(cbImagePath.Value))
-            {
-                return false;
-            }
-            ImageBox.ToolTip = cbImagePath.Value;
-            ImageBox.Source = new BitmapImage(new Uri(cbImagePath.Value));
-            ImageBox.Width = 240;
-            ImageBox.Height = 240;
-            ImagePanel.Visibility = Visibility.Visible;
-            return true;
+//            if (!System.IO.File.Exists(cbImagePath.Value))
+//            {
+//                return false;
+//            }
+    		ImageBox.ToolTip = cbImagePath.Value;
+			ImageBox.Source = new BitmapImage(new Uri(cbImagePath.Value));
+			InitResizeArea(ResizeAreaType.Image, 240, 240);
+			ImagePanel.Visibility = Visibility.Visible;
+			ResizeablePanel.Visibility = Visibility.Visible;
+			return true;
         }
 
-        /// <summary>
-        /// MediaPlayer型のパラメータを表示します。
-        /// </summary>
-        /// <param name="mediaPlayer"></param>
-        private void ShowMediaPlayerTypeParamViewer(MediaPlayer mediaPlayer)
+		/// <summary>
+		/// ImagePath型のパラメータを表示します。
+		/// </summary>
+		/// <param name="cbMoviePath">動画のファイルパス</param>
+		private bool ShowMoviePathTypeParamViewer(CbMoviePath cbMoviePath)
+		{
+//			if (!System.IO.File.Exists(cbMoviePath.Value))
+//			{
+//				return false;
+//			}
+			MediaBox.ToolTip = cbMoviePath.Value;
+			var media = new MediaPlayer();
+			media.Open(new Uri(cbMoviePath.Value));
+			ShowMediaPlayerTypeParamViewer(media);
+			return true;
+		}
+
+		/// <summary>
+		/// MediaPlayer型のパラメータを表示します。
+		/// </summary>
+		/// <param name="mediaPlayer"></param>
+		private void ShowMediaPlayerTypeParamViewer(MediaPlayer mediaPlayer)
         {
             MediaPlayer image = mediaPlayer;
-            MediaBox.Source = image.Source;
+			//MediaBox.Width = 360;
+			//MediaBox.Height = (MediaBox.Width * 9) / 16;    // フルHDのアスペクト比（16:9）
+			int width = 360;
+			InitResizeArea(ResizeAreaType.Movie, width, (width * 9) / 16);
+			MediaBox.Source = image.Source;
             MediaBox.LoadedBehavior = MediaState.Stop;
             MediaBox.Visibility = Visibility.Visible;
             MediaPanel.Visibility = Visibility.Visible;
-        }
+			ResizeablePanel.Visibility = Visibility.Visible;
+		}
 
-        /// <summary>
-        /// Text型のパラメータを表示します。
-        /// </summary>
-        private void ShowTextTypeParamEdit()
+		/// <summary>
+		/// Text型のパラメータを表示します。
+		/// </summary>
+		private void ShowTextTypeParamEdit()
         {
             Edit.ToolTip = null;
-            Edit.MaxWidth = Edit.MinWidth = Edit.Width = 360;
-            Edit.MaxHeight = Edit.MinHeight = Edit.Height = 300;
-            Edit.AcceptsReturn = true;
+			Edit.AcceptsReturn = true;
             Edit.AcceptsTab = true;
-            Edit.TextWrapping = TextWrapping.Wrap;
+            Edit.Padding = new Thickness(10);
+			Edit.TextWrapping = TextWrapping.Wrap;
             Edit.VerticalContentAlignment = VerticalAlignment.Top;
 			Edit.VerticalScrollBarVisibility = ScrollBarVisibility.Auto;
             Edit.HorizontalScrollBarVisibility = ScrollBarVisibility.Auto;
 			Edit.Visibility = Visibility.Visible;
+			ResizeablePanel.Visibility = Visibility.Visible;
+            InitResizeArea(ResizeAreaType.Edit, 300, 300);
 		}
 
-        /// <summary>
-        /// enum型のパラメータを表示します。
-        /// </summary>
-        /// <param name="valueData"></param>
-        /// <param name="selectValue"></param>
-        private void ShowEnumTypeParamViewer(ICbValue valueData, ICbValueEnum selectValue)
+		/// <summary>
+		/// enum型のパラメータを表示します。
+		/// </summary>
+		/// <param name="valueData"></param>
+		/// <param name="selectValue"></param>
+		private void ShowEnumTypeParamViewer(ICbValue valueData, ICbValueEnum selectValue)
         {
             Select.SelectionChanged -= Select_SelectionChanged; // ユーザー操作として扱わないようにする
             try
@@ -547,7 +606,8 @@ namespace CapyCSS.Controls.BaseControls
         /// </summary>
         private void HideParamViewers()
         {
-            Edit.Visibility = Visibility.Collapsed;
+			ResizeablePanel.Visibility = Visibility.Collapsed;
+			Edit.Visibility = Visibility.Collapsed;
             Select.Visibility = Visibility.Collapsed;
             ImagePanel.Visibility = Visibility.Collapsed;
             MediaPanel.Visibility = Visibility.Collapsed;
@@ -685,7 +745,16 @@ namespace CapyCSS.Controls.BaseControls
         private CommandCanvas _OwnerCommandCanvas = null;
         private bool disposedValue;
 
-        public CommandCanvas OwnerCommandCanvas
+        public enum ResizeAreaType
+        {
+            None = 0,
+            Edit,
+            Image,
+            Movie,
+        }
+        private ResizeAreaType resizeAreaType = ResizeAreaType.None;
+
+		public CommandCanvas OwnerCommandCanvas
         {
             get => _OwnerCommandCanvas;
             set
@@ -713,9 +782,11 @@ namespace CapyCSS.Controls.BaseControls
                 );
             Edit.LostFocus += ExitEditMode;
             Password.LostFocus += ExitEditMode;
-        }
 
-        private void ToolTipUpdate()
+			ResizeArea.QueryCursor += ShapeQueryCursor;
+		}
+
+		private void ToolTipUpdate()
         {
             string valueString = null;
             if (ValueData is CbObject cbObject)
@@ -836,13 +907,129 @@ namespace CapyCSS.Controls.BaseControls
             MediaBox.Stop();
         }
 
-        protected virtual void Dispose(bool disposing)
+		private Point startPoint;
+		private UIElement captureObject = null;
+		private UIElement movableControl = null;
+		// 高さと幅は、内部で独自に管理する（リアルタイムでの取得だとタイミング上の問題で振れる）
+		private double _witdh;
+		private double _height;
+		private readonly double minWidth = 36;
+		private readonly double minHeight = 36;
+
+        private void InitResizeArea(ResizeAreaType resizeAreaType, double width, double height)
+        {
+            FrameworkElement target = Edit;
+            switch (resizeAreaType)
+            {
+                case ResizeAreaType.Edit:
+                    target = Edit;
+                    break;
+                case ResizeAreaType.Image:
+                    target = ImageBox;
+                    break;
+                case ResizeAreaType.Movie:
+                    target = MediaBox;
+                    break;
+            }
+
+			Binding widthBinding = new Binding
+			{
+				Source = ResizeablePanel,
+				Path = new PropertyPath("ActualWidth")
+			};
+
+			Binding heightBinding = new Binding
+			{
+				Source = ResizeablePanel,
+				Path = new PropertyPath("ActualHeight")
+			};
+
+			target.SetBinding(TextBox.MinWidthProperty, widthBinding);
+			target.SetBinding(TextBox.MinHeightProperty, heightBinding);
+
+			ResizeablePanel.Width = width;
+			ResizeablePanel.Height = height;
+
+			ResizeArea.Visibility = Visibility.Visible; 
+            _witdh = ResizeablePanel.Width;
+			_height = ResizeablePanel.Height;
+            this.resizeAreaType = resizeAreaType;
+		}
+
+		private void Border_MouseDown(object sender, MouseButtonEventArgs e)
+		{
+			initMouseControl(sender, e);
+		}
+
+		private void initMouseControl(object sender, MouseButtonEventArgs e)
+		{
+			startPoint = PointToScreen(Mouse.GetPosition(this));
+			captureObject = sender as UIElement;
+			captureObject.CaptureMouse();
+			movableControl = (Parent as FrameworkElement).Parent as UIElement;
+			e.Handled = true;
+		}
+
+		private void ShapeQueryCursor(object sender, QueryCursorEventArgs e)
+		{
+			e.Cursor = Cursors.SizeNWSE;
+			e.Handled = true;
+		}
+		private void Border_MouseMove(object sender, MouseEventArgs e)
+		{
+            if (captureObject != null)
+            {
+                Point currentPoint = PointToScreen(Mouse.GetPosition(this));
+                double offsetX = currentPoint.X - startPoint.X;
+                double offsetY = currentPoint.Y - startPoint.Y;
+                startPoint = currentPoint;
+
+                double ms = 1.0 / OwnerCommandCanvas.ScriptWorkCanvas.CanvasScale;
+                offsetX *= ms;
+                offsetY *= ms;
+
+                double setWitdh = _witdh + offsetX;
+                double setHeight = _height + offsetY;
+                if (setWitdh >= minWidth + 2)
+                {
+                    ResizeablePanel.Width = _witdh = setWitdh;
+                }
+                if (setHeight >= minHeight + 2)
+                {
+                    ResizeablePanel.Height = _height = setHeight;
+                }
+            }
+			e.Handled = true;
+		}
+
+		private void EndDrug()
+		{
+			captureObject?.ReleaseMouseCapture();
+			captureObject = null;
+			movableControl = null;
+		}
+
+		private void Border_MouseLeave(object sender, MouseEventArgs e)
+		{
+			// ※キャプチャしているので意味が無くなっている
+
+			EndDrug();
+			e.Handled = true;
+		}
+
+		private void Border_MouseUp(object sender, MouseButtonEventArgs e)
+		{
+			EndDrug();
+			e.Handled = true;
+		}
+
+		protected virtual void Dispose(bool disposing)
         {
             if (!disposedValue)
             {
                 if (disposing)
                 {
-                    Edit.LostFocus -= ExitEditMode;
+					Edit.LostFocus -= ExitEditMode;
                     Edit.ToolTip = null;
                     AssetXML?.Dispose();
                     AssetXML = null;

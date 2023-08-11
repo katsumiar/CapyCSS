@@ -8,14 +8,17 @@
              d:DesignHeight="450" d:DesignWidth="800" FocusVisualStyle="{x:Null}">
     <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
         <Grid>
-            <TextBox x:Name="Edit" Text="" KeyDown="Edit_KeyDown" MinWidth="32" Margin="0,2,0,2" Visibility="Collapsed" MaxWidth="128" Foreground="{StaticResource ParamForegroundBrush}" Background="{StaticResource ParamBackgroundBrush}" BorderBrush="{StaticResource BlackBrush}" HorizontalAlignment="Left" MaxHeight="160" Cursor="Arrow" />
             <PasswordBox x:Name="Password" KeyDown="Edit_KeyDown" MinWidth="32" Margin="0,2,0,2" Visibility="Collapsed" MaxWidth="128" Foreground="{StaticResource ParamForegroundBrush}" Background="{StaticResource ParamBackgroundBrush}" BorderBrush="{StaticResource BlackBrush}" HorizontalAlignment="Left" MaxHeight="160" />
             <ComboBox x:Name="Select" HorizontalAlignment="Left" Margin="0,2,0,2" Visibility="Collapsed" Foreground="{StaticResource EnumParamForegroundBrush}" Background="{StaticResource EnumParamBackgroundBrush}" SelectionChanged="Select_SelectionChanged" />
-            <Grid x:Name="ImagePanel" Visibility="Collapsed" Background="DarkGray" >
-                <Image x:Name="ImageBox" Width="100" Height="100" Margin="2,2,2,2" />
-            </Grid>
-            <Grid x:Name="MediaPanel" Visibility="Collapsed" Background="DarkGray" >
-                <MediaElement x:Name="MediaBox" HorizontalAlignment="Left" Width="100" Height="100" Margin="2,2,2,2" MouseEnter="MediaBox_MouseEnter" MouseLeave="MediaBox_MouseLeave" />
+            <Grid x:Name="ResizeablePanel" Visibility="Collapsed">
+                <TextBox x:Name="Edit" Text="" KeyDown="Edit_KeyDown" Margin="0,2,0,2" Visibility="Collapsed" Foreground="{StaticResource ParamForegroundBrush}" Background="{StaticResource ParamBackgroundBrush}" BorderBrush="{StaticResource BlackBrush}" Cursor="Arrow" />
+                <Grid x:Name="ImagePanel" Cursor="Arrow" Visibility="Collapsed" Background="DarkGray">
+                    <Image x:Name="ImageBox" Width="100" Height="100" Margin="2,2,2,2" />
+                </Grid>
+                <Grid x:Name="MediaPanel" Cursor="Arrow" Visibility="Collapsed" Background="DarkGray">
+                    <MediaElement x:Name="MediaBox" HorizontalAlignment="Left" Width="100" Height="100" Margin="2,2,2,2" MouseEnter="MediaBox_MouseEnter" MouseLeave="MediaBox_MouseLeave" />
+                </Grid>
+                <Border x:Name="ResizeArea" Visibility="Collapsed" HorizontalAlignment="Right" VerticalAlignment="Bottom" Width="20" Height="20" Background="#02FFFFFF" MouseDown="Border_MouseDown" MouseUp="Border_MouseUp" MouseLeave="Border_MouseLeave" MouseMove="Border_MouseMove" />
             </Grid>
             <Rectangle x:Name="Error" Visibility="Collapsed" Stroke="Red" StrokeThickness="2" Fill="#33FF0000" />
         </Grid>
